@@ -74,7 +74,7 @@ DOT        : '.';
 COMMA      : '،';
 
 // Literals
-ID         : [أ-ي_][أ-ي٠-٩_0-9]*;
+ID         : [أ-ي٠-٩_0-9][أ-ي_]*;
 NUMBER     : [٠-٩0-9]+ ((',' | '٫') [٠-٩0-9]+)?;
 STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) (~["\r\n])* (DoubleQuotationMark | DoubleQuotationMarkRight);
 
