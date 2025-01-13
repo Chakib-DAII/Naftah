@@ -28,6 +28,7 @@ program: statement+;
 
 // Statement: Can be an assignment, function call, or control flow
 statement: assignment
+         | functionDeclaration
          | functionCall
          | ifStatement
          | returnStatement
@@ -35,6 +36,9 @@ statement: assignment
 
 // Assignment: variable or constant assignment
 assignment: (VARIABLE | CONSTANT) ID ASSIGN expression;
+
+// Function declaration: Can have arguments and return values
+functionDeclaration: FUNCTION functionCall block;
 
 // Function call: Can have arguments and return values
 functionCall: ID LPAREN argumentList? RPAREN;
