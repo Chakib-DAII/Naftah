@@ -33,8 +33,8 @@ statement: assignment
          | returnStatement
          | block;
 
-// Assignment: variable assignment
-assignment: VARIABLE ID ASSIGN expression;
+// Assignment: variable or constant assignment
+assignment: (VARIABLE | CONSTANT) ID ASSIGN expression;
 
 // Function call: Can have arguments and return values
 functionCall: ID LPAREN argumentList? RPAREN;
