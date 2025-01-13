@@ -39,7 +39,7 @@ statement: assignment #assignmentStatement
 assignment: (VARIABLE | CONSTANT) ID ASSIGN expression;
 
 // Function declaration: Can have arguments and return values
-functionDeclaration: FUNCTION functionCall block;
+functionDeclaration: FUNCTION functionCall (COLON returnTypeExpression)? block;
 
 // Function call: Can have arguments and return values
 functionCall: ID LPAREN argumentList? RPAREN;
@@ -69,7 +69,14 @@ expression: LPAREN expression RPAREN #parenthesisExpression
           | expression GE expression #greaterThanEqualsExpression
           | expression EQ expression #equalsExpression
           | expression NEQ expression #notEqualsExpression
-          | NUMBER #numberExpression
+          | typeExpression #typeExpressionExpression
+          ;
+
+returnTypeExpression: VOID #voidReturnExpression
+          | typeExpression #typeReturnExpression
+          ;
+
+typeExpression: NUMBER #numberExpression
           | STRING #stringExpression
           | ID #idExpression
           ;
