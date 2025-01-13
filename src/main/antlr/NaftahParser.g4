@@ -56,18 +56,18 @@ returnStatement: RETURN expression?;
 block: LBRACE statement+ RBRACE;
 
 // Expressions: Can be numbers, strings, variables, binary operations
-expression: NUMBER
-          | STRING
-          | ID
-          | expression PLUS expression
-          | expression MINUS expression
+expression: LPAREN expression RPAREN
           | expression MUL expression
           | expression DIV expression
           | expression MOD expression
+          | expression PLUS expression
+          | expression MINUS expression
           | expression LT expression
           | expression GT expression
           | expression LE expression
           | expression GE expression
           | expression EQ expression
           | expression NEQ expression
-          | LPAREN expression RPAREN;
+          | NUMBER
+          | STRING
+          | ID;
