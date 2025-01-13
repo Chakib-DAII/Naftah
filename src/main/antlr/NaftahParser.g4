@@ -39,7 +39,11 @@ statement: assignment #assignmentStatement
 assignment: (VARIABLE | CONSTANT) ID ASSIGN expression;
 
 // Function declaration: Can have arguments and return values
-functionDeclaration: FUNCTION functionCall (COLON returnTypeExpression)? block;
+functionDeclaration: FUNCTION functionCall ID (LPAREN argumentDeclarationList? RPAREN)? (COLON returnTypeExpression)? block;
+
+argumentDeclarationList: argumentDeclaration (COMMA argumentDeclaration)*;
+
+argumentDeclaration: ID COLON typeExpression? (ASSIGN typeExpression)?; // TODO: fix separation etween type and value; yhose are values. will naftah be a type programming language?
 
 // Function call: Can have arguments and return values
 functionCall: ID LPAREN argumentList? RPAREN;
@@ -69,14 +73,14 @@ expression: LPAREN expression RPAREN #parenthesisExpression
           | expression GE expression #greaterThanEqualsExpression
           | expression EQ expression #equalsExpression
           | expression NEQ expression #notEqualsExpression
-          | typeExpression #typeExpressionExpression
+          | typeExpression #typeExpressionExpression // TODO: fix separation etween type and value; those are values. will naftah be a type programming language?
           ;
 
 returnTypeExpression: VOID #voidReturnExpression
-          | typeExpression #typeReturnExpression
+          | typeExpression #typeReturnExpression // TODO: fix separation etween type and value; yhose are values. will naftah be a type programming language?
           ;
 
 typeExpression: NUMBER #numberExpression
           | STRING #stringExpression
-          | ID #idExpression
+          | ID #idExpression  // TODO: fix separation etween type and value; yhose are values. will naftah be a type programming language?
           ;
