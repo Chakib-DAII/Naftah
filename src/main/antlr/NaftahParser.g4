@@ -27,12 +27,13 @@ options {
 program: statement+;
 
 // Statement: Can be an assignment, function call, or control flow
-statement: assignment
-         | functionDeclaration
-         | functionCall
-         | ifStatement
-         | returnStatement
-         | block;
+statement: assignment #assignmentStatement
+         | functionDeclaration #functionDeclarationStatement
+         | functionCall #functionCallStatement
+         | ifStatement #ifStatementStatement
+         | returnStatement #returnStatementStatement
+         | block #blockStatement
+         ;
 
 // Assignment: variable or constant assignment
 assignment: (VARIABLE | CONSTANT) ID ASSIGN expression;
@@ -56,18 +57,19 @@ returnStatement: RETURN expression?;
 block: LBRACE statement+ RBRACE;
 
 // Expressions: Can be numbers, strings, variables, binary operations
-expression: LPAREN expression RPAREN
-          | expression MUL expression
-          | expression DIV expression
-          | expression MOD expression
-          | expression PLUS expression
-          | expression MINUS expression
-          | expression LT expression
-          | expression GT expression
-          | expression LE expression
-          | expression GE expression
-          | expression EQ expression
-          | expression NEQ expression
-          | NUMBER
-          | STRING
-          | ID;
+expression: LPAREN expression RPAREN #parenthesisExpression
+          | expression MUL expression #mulExpression
+          | expression DIV expression #divExpression
+          | expression MOD expression #modExpression
+          | expression PLUS expression #plusExpression
+          | expression MINUS expression #minusExpression
+          | expression LT expression #lessThanExpression
+          | expression GT expression #greaterThanExpression
+          | expression LE expression #lessThanEqualsExpression
+          | expression GE expression #greaterThanEqualsExpression
+          | expression EQ expression #equalsExpression
+          | expression NEQ expression #notEqualsExpression
+          | NUMBER #numberExpression
+          | STRING #stringExpression
+          | ID #idExpression
+          ;
