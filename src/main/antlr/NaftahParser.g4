@@ -43,7 +43,7 @@ functionDeclaration: FUNCTION functionCall ID (LPAREN argumentDeclarationList? R
 
 argumentDeclarationList: argumentDeclaration (COMMA argumentDeclaration)*;
 
-argumentDeclaration: ID COLON type? (ASSIGN type)?;
+argumentDeclaration: ID (COLON type)? (ASSIGN value)?;
 
 // Function call: Can have arguments and return values
 functionCall: ID LPAREN argumentList? RPAREN;
@@ -73,10 +73,13 @@ expression: LPAREN expression RPAREN #parenthesisExpression
           | expression GE expression #greaterThanEqualsExpression
           | expression EQ expression #equalsExpression
           | expression NEQ expression #notEqualsExpression
-          | NUMBER #numberExpression
-          | STRING #stringExpression
-          | qualifiedName #qualifiedNameExpression
+          | value #valueExpression
           ;
+
+value: NUMBER #numberValue
+     | STRING #stringValue
+     | ID #idValue
+     ;
 
 returnType: VOID #voidReturnType
           | type #typeReturnType
