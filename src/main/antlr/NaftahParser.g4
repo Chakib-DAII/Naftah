@@ -36,7 +36,7 @@ statement: assignment #assignmentStatement
          ;
 
 // Assignment: variable or constant assignment
-assignment: (VARIABLE | CONSTANT) ID ASSIGN expression;
+assignment: (VARIABLE | CONSTANT) ID (COLON type)? ASSIGN expression;
 
 // Function declaration: Can have arguments and return values
 functionDeclaration: FUNCTION functionCall ID (LPAREN argumentDeclarationList? RPAREN)? (COLON returnType)? block;
