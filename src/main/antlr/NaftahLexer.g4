@@ -78,6 +78,29 @@ ID         : [أ-ي٠-٩_0-9][أ-ي_]*;
 NUMBER     : [٠-٩0-9]+ ((',' | '٫') [٠-٩0-9]+)?;
 STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) (~["\r\n])* (DoubleQuotationMark | DoubleQuotationMarkRight);
 
+// Types
+VAR              : 'أي_نوع' | 'أي_نمط';
+
+fragment BOOLEAN : 'بوليان' | 'منطقي';
+fragment CHAR    : 'حرف' | 'رمز';
+fragment BYTE    : 'عدد_قصير_جدا' | 'قصير_جدا';
+fragment SHORT   : 'عدد_قصير' | 'قصير';
+fragment INT     : 'عدد_صحيح' | 'عدد';
+fragment LONG    : 'عدد_طويل' | 'طويل';
+fragment FLOAT   : 'عدد_عائم' | 'عائم';
+fragment DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
+
+BuiltInType
+    :   BOOLEAN
+    |   CHAR
+    |   BYTE
+    |   SHORT
+    |   INT
+    |   LONG
+    |   FLOAT
+    |   DOUBLE
+    ;
+
 // Whitespace and comments
 WS         : [ \t\r\n]+ -> skip;
 LINE_COMMENT : '--' ~[\r\n]* -> skip;
