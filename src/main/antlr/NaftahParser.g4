@@ -39,7 +39,7 @@ statement: assignment #assignmentStatement
 assignment: (VARIABLE | CONSTANT) ID (COLON type)? ASSIGN expression;
 
 // Function declaration: Can have arguments and return values
-functionDeclaration: FUNCTION functionCall ID (LPAREN argumentDeclarationList? RPAREN)? (COLON returnType)? block;
+functionDeclaration: FUNCTION ID LPAREN argumentDeclarationList? RPAREN (COLON returnType)? block;
 
 // Function declaration argument list: argumentDeclarations separated by commas
 argumentDeclarationList: argumentDeclaration (COMMA argumentDeclaration)*;
