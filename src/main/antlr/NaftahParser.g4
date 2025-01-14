@@ -41,8 +41,10 @@ assignment: (VARIABLE | CONSTANT) ID (COLON type)? ASSIGN expression;
 // Function declaration: Can have arguments and return values
 functionDeclaration: FUNCTION functionCall ID (LPAREN argumentDeclarationList? RPAREN)? (COLON returnType)? block;
 
+// Function declaration argument list: argumentDeclarations separated by commas
 argumentDeclarationList: argumentDeclaration (COMMA argumentDeclaration)*;
 
+// Argument declaration : argument id with optional type and assignment
 argumentDeclaration: ID (COLON type)? (ASSIGN value)?;
 
 // Function call: Can have arguments and return values
@@ -60,7 +62,7 @@ returnStatement: RETURN expression?;
 // Block: A block of statements enclosed in curly braces
 block: LBRACE statement+ RBRACE;
 
-// Expressions: Can be numbers, strings, variables, binary operations
+// Expressions: Can be value, binary operations
 expression: LPAREN expression RPAREN #parenthesisExpression
           | expression MUL expression #mulExpression
           | expression DIV expression #divExpression
@@ -74,20 +76,24 @@ expression: LPAREN expression RPAREN #parenthesisExpression
           | expression EQ expression #equalsExpression
           | expression NEQ expression #notEqualsExpression
           | value #valueExpression
-          ;
+          ; // TODO: add unary operations
 
+// Value: Can be numbers, strings, ID
 value: NUMBER #numberValue
      | STRING #stringValue
      | ID #idValue
      ;
 
+// Return type: Can be void, any, builtinType or qualifiedName
 returnType: VOID #voidReturnType
           | type #typeReturnType
           ;
 
+// Type: Can be any, builtinType or qualifiedName
 type: VAR #varType
     | BuiltInType #builtInType
     | qualifiedName #qualifiedNameType
     ;
 
+// QualifiedName: ID separated by COLONs
 qualifiedName: ID (COLON ID)*;
