@@ -43,9 +43,9 @@ gradlew idea
 #### Variable declaration
 ````naftah 
 متغير ش تعيين ١
-متغير ت تعيين 2
+ثابت ت تعيين 2
 متغير ع تعيين 15
-متغير ي تعيين ١
+ثابت ي تعيين ١
 ````
 
 #### Function call
@@ -66,3 +66,23 @@ gradlew idea
 {
 أنهي
 ````
+
+
+TODO: enrich and think more about grammars and syntax
+add more lexer rules and parser rules 
+add Context to have all the programs data, (like a heap and stack simulation)
+add support for builtin functions and reuse of java libraries (think about 
+how to bind java types and packages to our language and reuse them 
+and how to make it open to support any java library in addition to jdk code)
+think about how to make this programming language 
+ - minimalistic
+ - procedural
+ - object oriented but simple
+ - functional api and lamdas support in the syntax
+
+
+Ensure that Terminal Supports RTL:
+Many modern terminals (e.g., Windows Terminal, iTerm2, GNOME Terminal, and Terminal on macOS) support RTL languages, including Arabic, as long as the system supports the UTF-8 encoding.
+Ensure your terminal’s font supports Arabic characters.
+
+for functions from arabic to builtin we can use annotations as marker
