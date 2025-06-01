@@ -651,16 +651,38 @@ public final class NumberUtils {
         return result;
     }
 
+    /**
+     * Raises a number {@link Number} to the power of another.
+     *
+     * @param base the base number
+     * @param exponent the exponent
+     * @return the result of raising {@code base} to the power of {@code exponent}, as a {@code Number}
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number pow(T base, int exponent) {
         DynamicNumber dx = DynamicNumber.of(base);
-        return pow(base,exponent);
+        return pow(dx,exponent);
     }
 
+    /**
+     * Raises a number represented as string to the power of another.
+     *
+     * @param base the base number
+     * @param exponent the exponent
+     * @return the result of raising {@code base} to the power of {@code exponent}, as a {@code Number}
+     */
     public static Number pow(String base, int exponent) {
         DynamicNumber dx = DynamicNumber.of(base);
-        return pow(base,exponent);
+        return pow(dx,exponent);
     }
 
+    /**
+     * Raises a number {@link DynamicNumber} to the power of another.
+     *
+     * @param base the base number
+     * @param exponent the exponent
+     * @return the result of raising {@code base} to the power of {@code exponent}, as a {@code Number}
+     */
     public static Number pow(DynamicNumber base, int exponent) {
         if (base.isBigDecimal() || base.isBigInteger()) {
             return base.asBigDecimal().pow(exponent);
@@ -670,29 +692,70 @@ public final class NumberUtils {
         return Math.pow(base.asDouble(), exponent);
     }
 
+    /**
+     *  Rounds the given number {@link Number} to the nearest integer.
+     *
+     * @param x the number to round
+     * @return the rounded number
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number round(T x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return round(dx);
     }
 
+    /**
+     *  Rounds the given number represented as string to the nearest integer.
+     *
+     * @param x the number to round
+     * @return the rounded number
+     */
     public static Number round(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return round(dx);
     }
+
+    /**
+     *  Rounds the given number {@link DynamicNumber} to the nearest integer.
+     *
+     * @param dx the number to round
+     * @return the rounded number
+     */
     public static Number round(DynamicNumber dx) {
         if (dx.isDecimal() || dx.isInteger()) return dx.asBigDecimal().round(MathContext.UNLIMITED);
         if (dx.isDouble() || dx.isLong()) return Math.round(dx.asDouble());
         return Math.round(dx.asFloat());
     }
+
+    /**
+     * Returns the largest integer less than or equal the given number {@link Number} to the nearest integer.
+     *
+     * @param x the number to round
+     * @return the rounded number
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number floor(T x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return floor(dx);
     }
 
+    /**
+     * Returns the largest integer less than or equal the given number represented as string to the nearest integer.
+     *
+     * @param x the number to round
+     * @return the rounded number
+     */
     public static Number floor(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return floor(dx);
     }
+
+    /**
+     * Returns the largest integer less than or equal the given number {@link DynamicNumber} to the nearest integer.
+     *
+     * @param dx the number to round
+     * @return the rounded number
+     */
     public static Number floor(DynamicNumber dx) {
         if (dx.isBigDecimal()) {
             return dx.asBigDecimal().setScale(0, RoundingMode.FLOOR);
@@ -715,15 +778,36 @@ public final class NumberUtils {
             );
         }
     }
+
+    /**
+     * Returns the smallest integer greater than or equal the given number {@link Number} to the nearest integer.
+     *
+     * @param x the number to apply ceiling to
+     * @return the ceiling value
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number ceil(T x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return ceil(dx);
     }
 
+    /**
+     * Returns the smallest integer greater than or equal the given number represented as string to the nearest integer.
+     *
+     * @param x the number to apply ceiling to
+     * @return the ceiling value
+     */
     public static Number ceil(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return ceil(dx);
     }
+
+    /**
+     * Returns the smallest integer greater than or equal the given number {@link DynamicNumber} to the nearest integer.
+     *
+     * @param dx the number to apply ceiling to
+     * @return the ceiling value
+     */
     public static Number ceil(DynamicNumber dx) {
         if (dx.isBigDecimal()) {
             return dx.asBigDecimal().setScale(0, RoundingMode.CEILING);
@@ -746,15 +830,36 @@ public final class NumberUtils {
             );
         }
     }
+
+    /**
+     * Returns the negation of the given number {@link Number}.
+     *
+     * @param x the number to negate
+     * @return the negated number
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number negate(T x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return negate(dx);
     }
 
+    /**
+     * Returns the negation of the given number represented as string.
+     *
+     * @param x the number to negate
+     * @return the negated number
+     */
     public static Number negate(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return negate(dx);
     }
+
+    /**
+     * Returns the negation of the given number {@link DynamicNumber}.
+     *
+     * @param dx the number to negate
+     * @return the negated number
+     */
     public static Number negate(DynamicNumber dx) {
         Number result;
         if (dx.isBigDecimal()) result = dx.asBigDecimal().negate();
@@ -773,87 +878,217 @@ public final class NumberUtils {
         }
         return result;
     }
+
+    /**
+     * Returns the square root of the given number {@link Number}.
+     *
+     * @param x the number to compute the square root of
+     * @return the square root of the number
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number sqrt(T x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return sqrt(dx);
     }
 
+    /**
+     * Returns the square root of the given number represented as string.
+     *
+     * @param x the number to compute the square root of
+     * @return the square root of the number
+     */
     public static Number sqrt(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return sqrt(dx);
     }
+
+    /**
+     * Returns the square root of the given number {@link DynamicNumber}.
+     *
+     * @param dx the number to compute the square root of
+     * @return the square root of the number
+     */
     public static Number sqrt(DynamicNumber dx) {
         if (dx.isBigDecimal()) return dx.asBigDecimal().sqrt(MathContext.UNLIMITED);
         if (dx.isBigInteger()) return dx.asBigInteger().sqrt();
         return Math.sqrt(dx.asDouble());
     }
+
+    /**
+     * Returns the absolute value of the given number {@link Number}.
+     *
+     * @param x the number to compute the absolute value of
+     * @return the absolute value of the number
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number abs(T x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return abs(dx);
     }
 
+    /**
+     * Returns the absolute value of the given number represented as string.
+     *
+     * @param x the number to compute the absolute value of
+     * @return the absolute value of the number
+     */
     public static Number abs(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return abs(dx);
     }
+
+    /**
+     * Returns the absolute value of the given number {@link DynamicNumber}.
+     *
+     * @param dx the number to compute the absolute value of
+     * @return the absolute value of the number
+     */
     public static Number abs(DynamicNumber dx) {
         if (dx.isDecimal()) return dx.asBigDecimal().abs();
         if (dx.isBigInteger()) return dx.asBigInteger().abs();
         return Math.abs(dx.asDouble());
     }
+
+    /**
+     * Returns the signum of the given number {@link Number}.
+     *
+     * @param x the number to compute the signum of
+     * @return -1 if the number is negative, 0 if zero, and 1 if positive
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static <T extends Number> int signum(T x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return signum(dx);
     }
 
+    /**
+     * Returns the signum of the given number represented as string.
+     *
+     * @param x the number to compute the signum of
+     * @return -1 if the number is negative, 0 if zero, and 1 if positive
+     */
     public static int signum(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return signum(dx);
     }
+
+    /**
+     * Returns the signum of the given number {@link DynamicNumber}.
+     *
+     * @param dx the number to compute the signum of
+     * @return -1 if the number is negative, 0 if zero, and 1 if positive
+     */
     public static int signum(DynamicNumber dx) {
         if (dx.isDecimal()) return dx.asBigDecimal().signum();
         if (dx.isInteger()) return dx.asBigInteger().signum();
         return Double.compare(dx.asDouble(), 0);
     }
+
+    /**
+     * Checks if the given number {@link Number} is zero.
+     *
+     * @param x the number to check
+     * @return {@code true} if the number is zero; {@code false} otherwise
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static <T extends Number> boolean isZero(T x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return isZero(dx);
     }
 
+    /**
+     * Checks if the given number is zero represented as string.
+     *
+     * @param x the number to check
+     * @return {@code true} if the number is zero; {@code false} otherwise
+     */
     public static boolean isZero(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return isZero(dx);
     }
+
+    /**
+     * Checks if the given number {@link DynamicNumber} is zero.
+     *
+     * @param dx the number to check
+     * @return {@code true} if the number is zero; {@code false} otherwise
+     */
     public static boolean isZero(DynamicNumber dx) {
         return signum(dx) == 0;
     }
 
+    /**
+     * Checks if two numbers {@link Number} are equal.
+     *
+     * @param x the first number
+     * @param y the second number
+     * @return {@code true} if {@code x} and {@code y} are equal in value; {@code false} otherwise
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> boolean equals(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return equals(dx,dy);
     }
 
+    /**
+     * Checks if two numbers, represented as strings, are equal.
+     *
+     * @param x the first number
+     * @param y the second number
+     * @return {@code true} if {@code x} and {@code y} are equal in value; {@code false} otherwise
+     */
     public static  boolean equals(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return equals(dx,dy);
     }
+
+    /**
+     * Checks if two numbers {@link DynamicNumber} are equal.
+     *
+     * @param dx the first number
+     * @param dy the second number
+     * @return {@code true} if {@code dx} and {@code dy} are equal in value; {@code false} otherwise
+     */
     public static boolean equals(DynamicNumber dx, DynamicNumber dy) {
         return compare(dx, dy) == 0;
     }
 
+    /**
+     * Compares two numbers {@link Number}.
+     *
+     * @param x the first number
+     * @param y the second number
+     * @return a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x > y}
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> int compare(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return compare(dx,dy);
     }
 
+    /**
+     * Compares two numbers, represented as strings.
+     *
+     * @param x the first number
+     * @param y the second number
+     * @return a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x > y}
+     */
     public static int compare(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return compare(dx,dy);
     }
+
+    /**
+     * Compares two numbers {@link DynamicNumber}.
+     *
+     * @param dx the first number
+     * @param dy the second number
+     * @return a negative integer if {@code dx < dy}; zero if {@code dx == dy}; a positive integer if {@code dx > dy}
+     */
     public static int compare(DynamicNumber dx, DynamicNumber dy) {
         if (dx.isDecimal() || dy.isDecimal()) {
             return dx.asBigDecimal().compareTo(dy.asBigDecimal());
@@ -1014,6 +1249,22 @@ public final class NumberUtils {
         }
     }
 
+    /**
+     * Performs an unsigned (logical) right shift on a {@link BigInteger}.
+     * <p>
+     * Unlike signed right shift, this operation fills high-order bits with zeros regardless
+     * of the sign of the {@code BigInteger}. Since {@code BigInteger} does not have a built-in
+     * unsigned right shift, this method emulates it for non-negative values. If the value is
+     * negative, the behavior may not match unsigned semantics in lower-level languages like Java's
+     * primitive types.
+     * </p>
+     *
+     * @param value the {@code BigInteger} to shift; must not be {@code null}
+     * @param n the number of bits to shift right; must be non-negative
+     * @return the result of shifting {@code value} to the right by {@code n} bits, using zero-fill
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws IllegalArgumentException if {@code n} is negative
+     */
     public static BigInteger unsignedShiftRight(BigInteger value, int n) {
         if (value.signum() >= 0) {
             // If positive, normal shiftRight works as unsigned
