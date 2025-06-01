@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 /**
  * Utility class for dynamically parsing and performing arithmetic operations on various numeric types.
@@ -12,6 +13,10 @@ import java.math.RoundingMode;
  * @author Chakib Daii
  */
 public final class NumberUtils {
+
+    private static final BigInteger LONG_MIN = BigInteger.valueOf(Long.MIN_VALUE);
+
+    private static final BigInteger LONG_MAX = BigInteger.valueOf(Long.MAX_VALUE);
 
     /**
      * Parses a string into the most appropriate {@link Number} type.
@@ -25,6 +30,7 @@ public final class NumberUtils {
      * @throws RuntimeException if parsing fails or if value is NaN or infinite
      */
     public static Number parseDynamicNumber(String text) {
+        Objects.requireNonNull(text, "text must not be null");
         try {
             if (text.contains(".") || text.toLowerCase().contains("e")) {
                 try {
@@ -79,6 +85,117 @@ public final class NumberUtils {
             throw new RuntimeException("Invalid number format: " + text, ex);
         }
     }
+
+    /**
+     * Convert the given number into an instance of the given target class.
+     * @param number the number to convert
+     * @param targetClass the target class to convert to
+     * @return the converted number
+     * @throws IllegalArgumentException if the target class is not supported
+     * (i.e. not a standard Number subclass as included in the JDK)
+     * @see java.lang.Byte
+     * @see java.lang.Short
+     * @see java.lang.Integer
+     * @see java.lang.Long
+     * @see java.math.BigInteger
+     * @see java.lang.Float
+     * @see java.lang.Double
+     * @see java.math.BigDecimal
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Number> T convertNumberToTargetClass(Number number, Class<T> targetClass)
+            throws IllegalArgumentException {
+        Objects.requireNonNull(number, "Number must not be null");
+        Objects.requireNonNull(targetClass, "Target class must not be null");
+
+        if (targetClass.isInstance(number)) {
+            return (T) number;
+        }
+        else if (Byte.class == targetClass) {
+            long value = checkedLongValue(number, targetClass);
+            if (value < Byte.MIN_VALUE || value > Byte.MAX_VALUE) {
+                raiseOverflowException(number, targetClass);
+            }
+            return (T) Byte.valueOf(number.byteValue());
+        }
+        else if (Short.class == targetClass) {
+            long value = checkedLongValue(number, targetClass);
+            if (value < Short.MIN_VALUE || value > Short.MAX_VALUE) {
+                raiseOverflowException(number, targetClass);
+            }
+            return (T) Short.valueOf(number.shortValue());
+        }
+        else if (Integer.class == targetClass) {
+            long value = checkedLongValue(number, targetClass);
+            if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
+                raiseOverflowException(number, targetClass);
+            }
+            return (T) Integer.valueOf(number.intValue());
+        }
+        else if (Long.class == targetClass) {
+            long value = checkedLongValue(number, targetClass);
+            return (T) Long.valueOf(value);
+        }
+        else if (BigInteger.class == targetClass) {
+            if (number instanceof BigDecimal bigDecimal) {
+                // do not lose precision - use BigDecimal's own conversion
+                return (T) bigDecimal.toBigInteger();
+            }
+            // original value is not a Big* number - use standard long conversion
+            return (T) BigInteger.valueOf(number.longValue());
+        }
+        else if (Float.class == targetClass) {
+            return (T) Float.valueOf(number.floatValue());
+        }
+        else if (Double.class == targetClass) {
+            return (T) Double.valueOf(number.doubleValue());
+        }
+        else if (BigDecimal.class == targetClass) {
+            // always use BigDecimal(String) here to avoid unpredictability of BigDecimal(double)
+            // (see BigDecimal javadoc for details)
+            return (T) new BigDecimal(number.toString());
+        }
+        else {
+            throw new IllegalArgumentException("Could not convert number [" + number + "] of type [" +
+                    number.getClass().getName() + "] to unsupported target class [" + targetClass.getName() + "]");
+        }
+    }
+
+    /**
+     * Check for a {@code BigInteger}/{@code BigDecimal} long overflow
+     * before returning the given number as a long value.
+     * @param number the number to convert
+     * @param targetClass the target class to convert to
+     * @return the long value, if convertible without overflow
+     * @throws IllegalArgumentException if there is an overflow
+     * @see #raiseOverflowException
+     */
+    private static long checkedLongValue(Number number, Class<? extends Number> targetClass) {
+        BigInteger bigInt = null;
+        if (number instanceof BigInteger bigInteger) {
+            bigInt = bigInteger;
+        }
+        else if (number instanceof BigDecimal bigDecimal) {
+            bigInt = bigDecimal.toBigInteger();
+        }
+        // Effectively analogous to JDK 8's BigInteger.longValueExact()
+        if (bigInt != null && (bigInt.compareTo(LONG_MIN) < 0 || bigInt.compareTo(LONG_MAX) > 0)) {
+            raiseOverflowException(number, targetClass);
+        }
+        return number.longValue();
+    }
+
+    /**
+     * Raise an <em>overflow</em> exception for the given number and target class.
+     * @param number the number we tried to convert
+     * @param targetClass the target class we tried to convert to
+     * @throws IllegalArgumentException if there is an overflow
+     */
+    private static void raiseOverflowException(Number number, Class<?> targetClass) {
+        throw new IllegalArgumentException("Could not convert number [" + number + "] of type [" +
+                number.getClass().getName() + "] to target class [" + targetClass.getName() + "]: overflow");
+    }
+
     // ==============================
     // Arithmetic Operations
     // ==============================
@@ -102,9 +219,8 @@ public final class NumberUtils {
      * @param x
      * @param y
      * @return
-     * @param <T>
      */
-    public static  <T extends Number> Number add(String x, String y) {
+    public static  Number add(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return add(dx,dy);
@@ -155,13 +271,13 @@ public final class NumberUtils {
         return subtract(dx,dy);
     }
 
-    public static  <T extends Number> Number subtract(String x, String y) {
+    public static Number subtract(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return subtract(dx,dy);
     }
 
-    public static  <T extends Number> Number subtract(DynamicNumber dx, DynamicNumber dy) {
+    public static  Number subtract(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -198,13 +314,13 @@ public final class NumberUtils {
         return multiply(dx,dy);
     }
 
-    public static  <T extends Number> Number multiply(String x, String y) {
+    public static  Number multiply(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return multiply(dx,dy);
     }
 
-    public static  <T extends Number> Number multiply(DynamicNumber dx, DynamicNumber dy) {
+    public static  Number multiply(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -240,13 +356,13 @@ public final class NumberUtils {
         return divide(dx,dy);
     }
 
-    public static  <T extends Number> Number divide(String x, String y) {
+    public static  Number divide(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return divide(dx,dy);
     }
 
-    public static  <T extends Number> Number divide(DynamicNumber dx, DynamicNumber dy) {
+    public static  Number divide(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -282,13 +398,13 @@ public final class NumberUtils {
         return modulo(dx,dy);
     }
 
-    public static  <T extends Number> Number modulo(String x, String y) {
+    public static  Number modulo(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return modulo(dx,dy);
     }
 
-    public static  <T extends Number> Number modulo(DynamicNumber dx, DynamicNumber dy) {
+    public static  Number modulo(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -325,12 +441,12 @@ public final class NumberUtils {
         return max(dx,dy);
     }
 
-    public static  <T extends Number> Number max(String x, String y) {
+    public static  Number max(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return max(dx,dy);
     }
-    public static  <T extends Number> Number max(DynamicNumber dx, DynamicNumber dy) {
+    public static  Number max(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -363,12 +479,12 @@ public final class NumberUtils {
         return min(dx,dy);
     }
 
-    public static  <T extends Number> Number min(String x, String y) {
+    public static  Number min(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return min(dx,dy);
     }
-    public static  <T extends Number> Number min(DynamicNumber dx, DynamicNumber dy) {
+    public static  Number min(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -394,7 +510,18 @@ public final class NumberUtils {
         }
         return result;
     }
-    public static <T extends Number> Number pow(DynamicNumber base, int exponent) {
+
+    public static  <T extends Number> Number pow(T base, int exponent) {
+        DynamicNumber dx = DynamicNumber.of(base);
+        return pow(base,exponent);
+    }
+
+    public static Number pow(String base, int exponent) {
+        DynamicNumber dx = DynamicNumber.of(base);
+        return pow(base,exponent);
+    }
+
+    public static Number pow(DynamicNumber base, int exponent) {
         if (base.isBigDecimal() || base.isBigInteger()) {
             return base.asBigDecimal().pow(exponent);
         } else if (base.isBigInteger()) {
@@ -408,11 +535,11 @@ public final class NumberUtils {
         return round(dx);
     }
 
-    public static  <T extends Number> Number round(String x) {
+    public static Number round(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return round(dx);
     }
-    public static  <T extends Number> Number round(DynamicNumber dx) {
+    public static Number round(DynamicNumber dx) {
         if (dx.isDecimal() || dx.isInteger()) return dx.asBigDecimal().round(MathContext.UNLIMITED);
         if (dx.isDouble() || dx.isLong()) return Math.round(dx.asDouble());
         return Math.round(dx.asFloat());
@@ -422,11 +549,11 @@ public final class NumberUtils {
         return floor(dx);
     }
 
-    public static  <T extends Number> Number floor(String x) {
+    public static Number floor(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return floor(dx);
     }
-    public static  <T extends Number> Number floor(DynamicNumber dx) {
+    public static Number floor(DynamicNumber dx) {
         if (dx.isBigDecimal()) {
             return dx.asBigDecimal().setScale(0, RoundingMode.FLOOR);
         } else if (dx.isBigInteger()) {
@@ -453,11 +580,11 @@ public final class NumberUtils {
         return ceil(dx);
     }
 
-    public static  <T extends Number> Number ceil(String x) {
+    public static Number ceil(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return ceil(dx);
     }
-    public static  <T extends Number> Number ceil(DynamicNumber dx) {
+    public static Number ceil(DynamicNumber dx) {
         if (dx.isBigDecimal()) {
             return dx.asBigDecimal().setScale(0, RoundingMode.CEILING);
         } else if (dx.isBigInteger()) {
@@ -484,11 +611,11 @@ public final class NumberUtils {
         return negate(dx);
     }
 
-    public static  <T extends Number> Number negate(String x) {
+    public static Number negate(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return negate(dx);
     }
-    public static <T extends Number> Number negate(DynamicNumber dx) {
+    public static Number negate(DynamicNumber dx) {
         Number result;
         if (dx.isBigDecimal()) result = dx.asBigDecimal().negate();
         else if (dx.isDouble()) result = -dx.asDouble();
@@ -511,11 +638,11 @@ public final class NumberUtils {
         return sqrt(dx);
     }
 
-    public static  <T extends Number> Number sqrt(String x) {
+    public static Number sqrt(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return sqrt(dx);
     }
-    public static  <T extends Number> Number sqrt(DynamicNumber dx) {
+    public static Number sqrt(DynamicNumber dx) {
         if (dx.isBigDecimal()) return dx.asBigDecimal().sqrt(MathContext.UNLIMITED);
         if (dx.isBigInteger()) return dx.asBigInteger().sqrt();
         return Math.sqrt(dx.asDouble());
@@ -525,11 +652,11 @@ public final class NumberUtils {
         return abs(dx);
     }
 
-    public static  <T extends Number> Number abs(String x) {
+    public static Number abs(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return abs(dx);
     }
-    public static  <T extends Number> Number abs(DynamicNumber dx) {
+    public static Number abs(DynamicNumber dx) {
         if (dx.isDecimal()) return dx.asBigDecimal().abs();
         if (dx.isBigInteger()) return dx.asBigInteger().abs();
         return Math.abs(dx.asDouble());
@@ -539,7 +666,7 @@ public final class NumberUtils {
         return signum(dx);
     }
 
-    public static <T extends Number> int signum(String x) {
+    public static int signum(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return signum(dx);
     }
@@ -553,7 +680,7 @@ public final class NumberUtils {
         return isZero(dx);
     }
 
-    public static <T extends Number> boolean isZero(String x) {
+    public static boolean isZero(String x) {
         DynamicNumber dx = DynamicNumber.of(x);
         return isZero(dx);
     }
@@ -567,7 +694,7 @@ public final class NumberUtils {
         return equals(dx,dy);
     }
 
-    public static  <T extends Number> boolean equals(String x, String y) {
+    public static  boolean equals(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return equals(dx,dy);
@@ -582,7 +709,7 @@ public final class NumberUtils {
         return compare(dx,dy);
     }
 
-    public static  <T extends Number> int compare(String x, String y) {
+    public static int compare(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return compare(dx,dy);
