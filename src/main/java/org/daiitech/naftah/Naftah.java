@@ -14,6 +14,9 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.core.NaftahSystem;
+import org.daiitech.naftah.core.parser.DefaultNaftahParserVisitor;
+import org.daiitech.naftah.core.parser.NaftahLexer;
+import org.daiitech.naftah.core.parser.NaftahParser;
 import picocli.CommandLine;
 
 /**
@@ -44,18 +47,17 @@ public final class Naftah {
     CharStream input = CharStreams.fromPath(searchForNaftahScriptFile(args[0]).toPath());
 
     // Create a lexer and token stream
-    org.daiitech.naftah.NaftahLexer lexer = new org.daiitech.naftah.NaftahLexer(input);
+    NaftahLexer lexer = new NaftahLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
 
     // Create a parser
-    org.daiitech.naftah.NaftahParser parser = new org.daiitech.naftah.NaftahParser(tokens);
+    NaftahParser parser = new NaftahParser(tokens);
 
     // Parse the input and get the parse tree
     ParseTree tree = parser.program();
 
     // Create a visitor and visit the parse tree
-    org.daiitech.naftah.NaftahParserBaseVisitor visitor =
-        new org.daiitech.naftah.NaftahParserBaseVisitor();
+    DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
     visitor.visit(tree);
   }
 
