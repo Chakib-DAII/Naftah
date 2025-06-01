@@ -1102,6 +1102,13 @@ public final class NumberUtils {
         }
     }
 
+    /**
+     * Performs a bitwise AND operation on the given numbers {@link DynamicNumber}.
+     *
+     * @param dx the first number
+     * @param dy the first number
+     * @return the number representing {@code x & y}
+     */
     public static Number and(DynamicNumber dx, DynamicNumber dy) {
         if (dx.isDecimal() || dy.isDecimal()) {
             throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
@@ -1123,6 +1130,13 @@ public final class NumberUtils {
         }
     }
 
+    /**
+     * Performs a bitwise OR operation on the given numbers {@link DynamicNumber}.
+     *
+     * @param dx the first number
+     * @param dy the first number
+     * @return the number representing {@code x | y}
+     */
     public static Number or(DynamicNumber dx, DynamicNumber dy) {
         if (dx.isDecimal() || dy.isDecimal()) {
             throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
@@ -1144,6 +1158,13 @@ public final class NumberUtils {
         }
     }
 
+    /**
+     * Performs a bitwise XOR operation on the given numbers {@link DynamicNumber}.
+     *
+     * @param dx the first number
+     * @param dy the first number
+     * @return the number representing {@code x ^ y}
+     */
     public static Number xor(DynamicNumber dx, DynamicNumber dy) {
         if (dx.isDecimal() || dy.isDecimal()) {
             throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
@@ -1165,6 +1186,12 @@ public final class NumberUtils {
         }
     }
 
+    /**
+     * Performs a bitwise NOT operation on the given number {@link DynamicNumber}.
+     *
+     * @param dx the number to apply bitwise NOT operation to
+     * @return the number representing {@code ~x}
+     */
     public static Number not(DynamicNumber dx) {
         if (dx.isDecimal()) {
             throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
@@ -1186,6 +1213,16 @@ public final class NumberUtils {
         }
     }
 
+    /**
+     * Shifts the given number {@link DynamicNumber} to the left (signed shift).
+     * <p>
+     * This is equivalent to multiplying the value by {@code 2^n}.
+     * </p>
+     *
+     * @param dx the number to shift
+     * @param positions the number of bits to shift to the left; must be non-negative
+     * @return the result of {@code value << n}
+     */
     public static Number shiftLeft(DynamicNumber dx, int positions) {
         if (dx.isDecimal()) {
             throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
@@ -1207,6 +1244,16 @@ public final class NumberUtils {
         }
     }
 
+    /**
+     * Shifts the given number {@link DynamicNumber} to the right (signed shift).
+     * <p>
+     * This is equivalent to dividing the value by {@code 2^n}, with sign extension.
+     * </p>
+     *
+     * @param dx the number to shift
+     * @param positions the number of bits to shift to the right; must be non-negative
+     * @return the result of {@code value >> n}
+     */
     public static Number shiftRight(DynamicNumber dx, int positions) {
         if (dx.isDecimal()) {
             throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
@@ -1228,6 +1275,16 @@ public final class NumberUtils {
         }
     }
 
+    /**
+     * Shifts the given number {@link DynamicNumber} to the right (unsigned shift).
+     * <p>
+     * This is equivalent to dividing the value by {@code 2^n}, with sign extension.
+     * </p>
+     *
+     * @param dx the number to shift
+     * @param positions the number of bits to shift to the right; must be non-negative
+     * @return  the result of an unsigned right shift (zero-fill) of {@code value} by {@code n} bits
+     */
     public static Number unsignedShiftRight(DynamicNumber dx, int positions) {
         if (dx.isDecimal()) {
             throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
