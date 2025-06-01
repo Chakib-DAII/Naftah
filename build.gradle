@@ -138,9 +138,61 @@ ImplementationVersion=${version}
 BundleVersion=${version}
 BuildDate=$date
 BuildTime=$time
+Class-Path= ${configurations.runtimeClasspath
+					.files
+					.collect { "libs/${it.name}" }
+					.join(' ')
+			}
 """)
 		}
 	}
 }
 
 processResources.dependsOn generateReleasePropertiesFile
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'org.daiitech.naftah.Naftah',
+				'Implementation-Title': 'NAFTAH',
+				'Implementation-Version': project.version,
+				'Implementation-Vendor': 'DaiiTech',
+				'Built-By': System.getProperty('user.name'),
+				'Built-Date':  LocalDateTime.now().format("yyyy-MM-dd'T'HH:mm"),
+				// 👇 Class-Path attribute (relative paths to JARs in /libs/)
+				'Class-Path': configurations.runtimeClasspath
+						.files
+						.collect { "libs/${it.name}" }
+						.join(' ')
+		)
+	}
+}
+
+// Task to copy dependencies to /build/libs/libs/
+tasks.register('copyDependencies', Copy) {
+	from configurations.runtimeClasspath
+	into "$buildDir/libs/libs"
+}
+
+jar.dependsOn processResources
+jar.finalizedBy copyDependencies
+
+tasks.register('fatJar', Jar) {
+	archiveBaseName = "${project.name}-fat"
+	manifest {
+		attributes(
+				'Main-Class': 'org.daiitech.naftah.Naftah',
+				'Implementation-Title': 'NAFTAH',
+				'Implementation-Version': project.version,
+				'Implementation-Vendor': 'DaiiTech',
+				'Built-By': System.getProperty('user.name'),
+				'Built-Date':  LocalDateTime.now().format("yyyy-MM-dd'T'HH:mm")
+		)
+	}
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+	with jar
+}
