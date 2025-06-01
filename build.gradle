@@ -6,6 +6,7 @@ plugins {
 	id 'antlr'
 	id 'idea'
 	id 'checkstyle'
+	id 'com.diffplug.spotless' version '6.21.0'
 }
 
 group = 'org.daiitech'
@@ -74,6 +75,31 @@ checkstyle {
 	toolVersion = '10.0'
 	configFile = file("config/checkstyle/checkstyle.xml")
 	ignoreFailures = false
+	showViolations = true
+}
+
+spotless {
+	java {
+		// Using Google Java Format for formatting
+		googleJavaFormat('1.17.0')
+	}
+}
+
+// This task formats the code, but doesn't run on build by default
+tasks.register('format') {
+	group = 'formatting'
+	description = 'Formats all Java source files.'
+
+	dependsOn 'spotlessApply'
+}
+check.dependsOn checkstyleMain, checkstyleTest
+
+// lint + format in one custom task
+tasks.register('lintAndFormat') {
+	group = 'verification'
+	description = 'Run checkstyle lint and auto-format code.'
+
+	dependsOn checkstyleMain, checkstyleTest, spotlessApply
 }
 
 tasks.register('generateReleasePropertiesFile') {
