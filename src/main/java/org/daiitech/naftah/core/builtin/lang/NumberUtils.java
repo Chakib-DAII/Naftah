@@ -18,6 +18,10 @@ public final class NumberUtils {
 
     private static final BigInteger LONG_MAX = BigInteger.valueOf(Long.MAX_VALUE);
 
+    public NumberUtils() {
+        throw new IllegalStateException("Illegal usage.");
+    }
+
     /**
      * Parses a string into the most appropriate {@link Number} type.
      * <ul>
