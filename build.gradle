@@ -30,6 +30,14 @@ dependencies {
 	implementation 'info.picocli:picocli:4.7.6'
 }
 
+tasks.withType(JavaCompile).configureEach  {
+	options.encoding = 'UTF-8'
+}
+
+tasks.withType(ProcessResources).configureEach  {
+	filteringCharset = 'UTF-8'
+}
+
 generateGrammarSource {
 	maxHeapSize = "128m"
 	arguments += ['-package', 'org.daiitech.naftah', '-visitor', '-no-listener']
