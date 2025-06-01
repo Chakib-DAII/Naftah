@@ -2,6 +2,7 @@ package org.daiitech.naftah.core.builtin.lang;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 
 /**
  * @author Chakib Daii
@@ -10,10 +11,12 @@ public class DynamicNumber {
     private final Number value;
 
     public DynamicNumber(Number value) {
+        Objects.requireNonNull(value, "value must not be null");
         this.value = value;
     }
 
     public DynamicNumber(String value) {
+        Objects.requireNonNull(value, "value must not be null");
         this.value = NumberUtils.parseDynamicNumber(value);
     }
 
