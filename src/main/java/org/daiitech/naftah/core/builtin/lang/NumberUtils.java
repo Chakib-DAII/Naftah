@@ -730,4 +730,168 @@ public final class NumberUtils {
             );
         }
     }
+
+    public static Number and(DynamicNumber dx, DynamicNumber dy) {
+        if (dx.isDecimal() || dy.isDecimal()) {
+            throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
+        } else if (dx.isBigInteger()) {
+            return dx.asBigInteger().and(dy.asBigInteger());
+        } else if (dx.isLong()) {
+            return dx.asLong() & dy.asLong();
+        } else if (dx.isInt()) {
+            return dx.asInt() & dy.asInt();
+        } else if (dx.isShort()) {
+            return dx.asShort() & dy.asShort();
+        } else if (dx.isByte()) {
+            return dx.asByte() & dy.asByte();
+        } else {
+            // Unknown or unsupported number types
+            throw new UnsupportedOperationException(
+                    "Unsupported number type: " + dx.get().getClass()
+            );
+        }
+    }
+
+    public static Number or(DynamicNumber dx, DynamicNumber dy) {
+        if (dx.isDecimal() || dy.isDecimal()) {
+            throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
+        } else if (dx.isBigInteger()) {
+            return dx.asBigInteger().or(dy.asBigInteger());
+        } else if (dx.isLong()) {
+            return dx.asLong() | dy.asLong();
+        } else if (dx.isInt()) {
+            return dx.asInt() | dy.asInt();
+        } else if (dx.isShort()) {
+            return dx.asShort() | dy.asShort();
+        } else if (dx.isByte()) {
+            return dx.asByte() | dy.asByte();
+        } else {
+            // Unknown or unsupported number types
+            throw new UnsupportedOperationException(
+                    "Unsupported number type: " + dx.get().getClass()
+            );
+        }
+    }
+
+    public static Number xor(DynamicNumber dx, DynamicNumber dy) {
+        if (dx.isDecimal() || dy.isDecimal()) {
+            throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
+        } else if (dx.isBigInteger()) {
+            return dx.asBigInteger().xor(dy.asBigInteger());
+        } else if (dx.isLong()) {
+            return dx.asLong() ^ dy.asLong();
+        } else if (dx.isInt()) {
+            return dx.asInt() ^ dy.asInt();
+        } else if (dx.isShort()) {
+            return dx.asShort() ^ dy.asShort();
+        } else if (dx.isByte()) {
+            return dx.asByte() ^ dy.asByte();
+        } else {
+            // Unknown or unsupported number types
+            throw new UnsupportedOperationException(
+                    "Unsupported number type: " + dx.get().getClass()
+            );
+        }
+    }
+
+    public static Number not(DynamicNumber dx) {
+        if (dx.isDecimal()) {
+            throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
+        } else if (dx.isBigInteger()) {
+            return dx.asBigInteger().not();
+        } else if (dx.isLong()) {
+            return ~dx.asLong();
+        } else if (dx.isInt()) {
+            return ~dx.asInt();
+        } else if (dx.isShort()) {
+            return ~dx.asShort();
+        } else if (dx.isByte()) {
+            return ~dx.asByte();
+        } else {
+            // Unknown or unsupported number types
+            throw new UnsupportedOperationException(
+                    "Unsupported number type: " + dx.get().getClass()
+            );
+        }
+    }
+
+    public static Number shiftLeft(DynamicNumber dx, int positions) {
+        if (dx.isDecimal()) {
+            throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
+        } else if (dx.isBigInteger()) {
+            return dx.asBigInteger().shiftLeft(positions);
+        } else if (dx.isLong()) {
+            return dx.asLong() << positions;
+        } else if (dx.isInt()) {
+            return dx.asInt() << positions;
+        } else if (dx.isShort()) {
+            return dx.asShort() << positions;
+        } else if (dx.isByte()) {
+            return dx.asByte() << positions;
+        } else {
+            // Unknown or unsupported number types
+            throw new UnsupportedOperationException(
+                    "Unsupported number type: " + dx.get().getClass()
+            );
+        }
+    }
+
+    public static Number shiftRight(DynamicNumber dx, int positions) {
+        if (dx.isDecimal()) {
+            throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
+        } else if (dx.isBigInteger()) {
+            return dx.asBigInteger().shiftRight(positions);
+        } else if (dx.isLong()) {
+            return dx.asLong() >> positions;
+        } else if (dx.isInt()) {
+            return dx.asInt() >> positions;
+        } else if (dx.isShort()) {
+            return dx.asShort() >> positions;
+        } else if (dx.isByte()) {
+            return dx.asByte() >> positions;
+        } else {
+            // Unknown or unsupported number types
+            throw new UnsupportedOperationException(
+                    "Unsupported number type: " + dx.get().getClass()
+            );
+        }
+    }
+
+    public static Number unsignedShiftRight(DynamicNumber dx, int positions) {
+        if (dx.isDecimal()) {
+            throw new UnsupportedOperationException("Bitwise operations are not supported on floating-point numbers.");
+        } else if (dx.isBigInteger()) {
+            return unsignedShiftRight(dx.asBigInteger(), positions);
+        } else if (dx.isLong()) {
+            return dx.asLong() >>> positions;
+        } else if (dx.isInt()) {
+            return dx.asInt() >>> positions;
+        } else if (dx.isShort()) {
+            return dx.asShort() >>> positions;
+        } else if (dx.isByte()) {
+            return dx.asByte() >>> positions;
+        } else {
+            // Unknown or unsupported number types
+            throw new UnsupportedOperationException(
+                    "Unsupported number type: " + dx.get().getClass()
+            );
+        }
+    }
+
+    public static BigInteger unsignedShiftRight(BigInteger value, int n) {
+        if (value.signum() >= 0) {
+            // If positive, normal shiftRight works as unsigned
+            return value.shiftRight(n);
+        } else {
+            // For negative values:
+            // 1. Add 2^(bitLength) to get the unsigned equivalent positive value
+            int bitLength = value.bitLength();
+            BigInteger twoPowerBitLength = BigInteger.ONE.shiftLeft(bitLength);
+            BigInteger unsignedValue = value.add(twoPowerBitLength);
+
+            // 2. Shift right logically
+            return unsignedValue.shiftRight(n);
+        }
+    }
+
 }
