@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @author Chakib Daii
  **/
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RUNTIME)
 public @interface NaftahFnProvider {
     String name();
