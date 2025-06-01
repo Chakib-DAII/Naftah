@@ -207,22 +207,23 @@ public final class NumberUtils {
     /**
      * Adds two {@link Number} values.
      *
-     * @param x
-     * @param y
-     * @return
-     * @param <T>
+     * @param x left operand
+     * @param y right operand
+     * @return the result of addition
+     * @param <T> concrete type that extends @{@link Number}
      */
     public static  <T extends Number> Number add(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return add(dx,dy);
     }
+
     /**
      * Adds two numeric values represented as strings.
      *
-     * @param x
-     * @param y
-     * @return
+     * @param x left operand
+     * @param y right operand
+     * @return the result of addition
      */
     public static  Number add(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
@@ -233,12 +234,11 @@ public final class NumberUtils {
     /**
      * Adds two {@link DynamicNumber} instances with type promotion.
      *
-     * @param dx
-     * @param dy
-     * @return
-     * @param <T>
+     * @param dx left operand
+     * @param dy right operand
+     * @return the result of addition
      */
-    public static  <T extends Number> Number add(DynamicNumber dx, DynamicNumber dy) {
+    public static Number add(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -269,19 +269,41 @@ public final class NumberUtils {
         return result;
     }
 
+    /**
+     * Subtracts two {@link Number} values.
+     *
+     * @param x left operand
+     * @param y right operand
+     * @return the result of subtraction
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number subtract(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return subtract(dx,dy);
     }
 
+    /**
+     * Subtracts two numeric values represented as strings.
+     *
+     * @param x left operand
+     * @param y right operand
+     * @return the result of subtraction
+     */
     public static Number subtract(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return subtract(dx,dy);
     }
 
-    public static  Number subtract(DynamicNumber dx, DynamicNumber dy) {
+    /**
+     * Subtracts two {@link DynamicNumber} instances with type promotion.
+     *
+     * @param dx left operand
+     * @param dy right operand
+     * @return the result of subtraction
+     */
+    public static Number subtract(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -312,18 +334,40 @@ public final class NumberUtils {
         return result;
     }
 
+    /**
+     * Multiplies two {@link Number} values.
+     *
+     * @param x left operand
+     * @param y right operand
+     * @return the result of multiplication
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number multiply(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return multiply(dx,dy);
     }
 
+    /**
+     * Multiplies two numeric values represented as strings.
+     *
+     * @param x left operand
+     * @param y right operand
+     * @return the result of multiplication
+     */
     public static  Number multiply(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return multiply(dx,dy);
     }
 
+    /**
+     * Multiplies two {@link DynamicNumber} instances with type promotion.
+     *
+     * @param dx left operand
+     * @param dy right operand
+     * @return the result of multiplication
+     */
     public static  Number multiply(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
@@ -354,18 +398,41 @@ public final class NumberUtils {
         }
         return result;}
 
+
+    /**
+     * Divides two {@link Number} values.
+     *
+     * @param x the dividend
+     * @param y the divisor
+     * @return the result of division
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number divide(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return divide(dx,dy);
     }
 
+    /**
+     * Divides two numeric values represented as strings.
+     *
+     * @param x the dividend
+     * @param y the divisor
+     * @return the result of division
+     */
     public static  Number divide(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return divide(dx,dy);
     }
 
+    /**
+     * Divides two {@link DynamicNumber} instances with type promotion.
+     *
+     * @param dx the dividend
+     * @param dy the divisor
+     * @return the result of division
+     */
     public static  Number divide(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
@@ -394,21 +461,44 @@ public final class NumberUtils {
                     "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass()
             );
         }
-        return result;}
+        return result;
+    }
 
-    public static  <T extends Number> Number modulo(T x, T y) {
+    /**
+     * Computes the modulo (remainder) of two {@link Number} values.
+     *
+     * @param x the dividend
+     * @param y the divisor
+     * @return the result of division
+     * @param <T> concrete type that extends @{@link Number}
+     */
+    public static <T extends Number> Number modulo(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return modulo(dx,dy);
     }
 
+    /**
+     * Computes the modulo (remainder) of two numeric values represented as strings.
+     *
+     * @param x the dividend
+     * @param y the divisor
+     * @return the result of division
+     */
     public static  Number modulo(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return modulo(dx,dy);
     }
 
-    public static  Number modulo(DynamicNumber dx, DynamicNumber dy) {
+    /**
+     * Computes the modulo (remainder) of two {@link DynamicNumber} instances with type promotion.
+     *
+     * @param dx the dividend
+     * @param dy the divisor
+     * @return the result of division
+     */
+    public static Number modulo(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
             if (dx.isBigDecimal() || dy.isBigDecimal()) {
@@ -439,17 +529,40 @@ public final class NumberUtils {
         return result;
     }
 
+    /**
+     * Returns the greater of two {@link Number} values.
+     *
+     * @param x the first number
+     * @param y the second number
+     * @return the greatest of {@code x} and {@code y}, as a {@code Number}
+     * @param <T> concrete type that extends @{@link Number}
+     */
     public static  <T extends Number> Number max(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return max(dx,dy);
     }
 
+    /**
+     * Returns the greater of two numeric values represented as strings.
+     *
+     * @param x the first number
+     * @param y the second number
+     * @return the greatest of {@code x} and {@code y}, as a {@code Number}
+     */
     public static  Number max(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return max(dx,dy);
     }
+
+    /**
+     * Returns the greater of two {@link DynamicNumber} instances with type promotion.
+     *
+     * @param dx the first number
+     * @param dy the second number
+     * @return the greatest of {@code dx} and {@code dy}, as a {@code Number}
+     */
     public static  Number max(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
@@ -477,17 +590,40 @@ public final class NumberUtils {
         return result;
     }
 
-    public static  <T extends Number> Number min(T x, T y) {
+    /**
+     * Returns the lesser of two {@link Number} values.
+     *
+     * @param x the first number
+     * @param y the second number
+     * @return the least of {@code x} and {@code y}, as a {@code Number}
+     * @param <T> concrete type that extends @{@link Number}
+     */
+    public static <T extends Number> Number min(T x, T y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return min(dx,dy);
     }
 
+    /**
+     * Returns the lesser of two numeric values represented as strings.
+     *
+     * @param x the first number
+     * @param y the second number
+     * @return the least of {@code x} and {@code y}, as a {@code Number}
+     */
     public static  Number min(String x, String y) {
         DynamicNumber dx = DynamicNumber.of(x);
         DynamicNumber dy = DynamicNumber.of(y);
         return min(dx,dy);
     }
+
+    /**
+     * Returns the lesser of two {@link DynamicNumber} instances with type promotion.
+     *
+     * @param dx the first number
+     * @param dy the second number
+     * @return the least of {@code dx} and {@code dy}, as a {@code Number}
+     */
     public static  Number min(DynamicNumber dx, DynamicNumber dy) {
         Number result;
         if (dx.isDecimal() || dy.isDecimal()) {
