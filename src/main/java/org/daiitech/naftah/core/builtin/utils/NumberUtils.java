@@ -1,4 +1,6 @@
-package org.daiitech.naftah.core.builtin.lang;
+package org.daiitech.naftah.core.builtin.utils;
+
+import org.daiitech.naftah.core.builtin.lang.DynamicNumber;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

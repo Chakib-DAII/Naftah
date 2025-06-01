@@ -1,6 +1,6 @@
 package org.daiitech.naftah.core.builtin;
 
-import org.daiitech.naftah.core.builtin.lang.NumberUtils;
+import org.daiitech.naftah.core.builtin.utils.NumberUtils;
 
 /**
  * @author Chakib Daii
