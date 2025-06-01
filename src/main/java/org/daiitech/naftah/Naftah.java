@@ -43,7 +43,7 @@ public final class Naftah {
 
   public static void main(String[] args) throws IOException {
     // TODO: update this logic to be more sophisticated and handle args and commands
-    // Create an input stream from the Lua code
+    // Create an input stream from the Naftah code
     CharStream input = CharStreams.fromPath(searchForNaftahScriptFile(args[0]).toPath());
 
     // Create a lexer and token stream
