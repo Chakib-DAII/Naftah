@@ -41,7 +41,7 @@ tasks.withType(ProcessResources).configureEach  {
 
 generateGrammarSource {
 	maxHeapSize = "128m"
-	arguments += ['-package', 'org.daiitech.naftah', '-visitor', '-no-listener']
+	arguments += ['-package', 'org.daiitech.naftah.core.parser', '-visitor', '-no-listener']
 }
 
 compileJava.dependsOn generateGrammarSource
