@@ -1,10 +1,9 @@
 package org.daiitech.naftah.core.builtin.lang;
 
-import org.daiitech.naftah.core.builtin.utils.NumberUtils;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
+import org.daiitech.naftah.core.builtin.utils.NumberUtils;
 
 /**
  * @author Chakib Daii

@@ -1,12 +1,11 @@
 package org.daiitech.naftah.core.builtin.utils;
 
-import org.daiitech.naftah.core.builtin.lang.DynamicNumber;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Objects;
+import org.daiitech.naftah.core.builtin.lang.DynamicNumber;
 
 /**
  * Utility class for dynamically parsing and performing arithmetic operations on various numeric
