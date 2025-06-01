@@ -4,11 +4,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * @author Chakib Daii
- **/
+ */
 class NaftahTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+  @Test
+  void contextLoads() {}
 }
