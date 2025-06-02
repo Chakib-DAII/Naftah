@@ -75,8 +75,17 @@ expression: LPAREN expression RPAREN #parenthesisExpression
           | expression GE expression #greaterThanEqualsExpression
           | expression EQ expression #equalsExpression
           | expression NEQ expression #notEqualsExpression
+          | expression BITWISE_AND expression #bitwiseAndExpression
+          | expression BITWISE_OR expression #bitwiseOrExpression
+          | expression BITWISE_XOR expression #bitwiseXorExpression
+          | NOT expression #notExpression
+          | BITWISE_NOT expression #bitwiseNotExpression
+          | INCREMENT expression #preIncrementExpression
+          | expression INCREMENT #postIncrementExpression
+          | DECREMENT expression #preDecrementExpression
+          | expression DECREMENT #postDecrementExpression
           | value #valueExpression
-          ; // TODO: add unary operations
+          ;
 
 // Value: Can be numbers, strings, ID
 value: NUMBER #numberValue
