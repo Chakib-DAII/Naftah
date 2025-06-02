@@ -1,0 +1,67 @@
+package org.daiitech.naftah.core.utils;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
+import java.util.logging.LogManager;
+
+/**
+ * @author Chakib Daii
+ **/
+public class JulLoggerConfig {
+
+    private static boolean initialized = false;
+    public static synchronized void initialize(String propertiesPath) throws IOException {
+        try (InputStream configFile = Files.newInputStream(Path.of(propertiesPath))) {
+            initialize(configFile);
+        }
+    }
+    public static synchronized void initializeFromResources(String propertiesPath) throws IOException {
+        try (InputStream configStream = JulLoggerConfig.class.getClassLoader().getResourceAsStream(propertiesPath)) {
+            if (configStream == null) {
+                throw new FileNotFoundException("Resource not found: " + propertiesPath);
+            }
+
+            // Step 2: Read properties (not yet loading into LogManager)
+            Properties tempProps = new Properties();
+            tempProps.load(configStream);
+
+            // Step 3: Extract file pattern and resolve file path
+            String pattern = tempProps.getProperty("java.util.logging.FileHandler.pattern");
+            if (pattern != null) {
+                Path logPath = Paths.get(pattern).toAbsolutePath();
+                Files.createDirectories(logPath.getParent());  // Ensure parent dir exists
+                if (!Files.exists(logPath)) {
+                    Files.createFile(logPath);                 // Create empty log file
+                }
+            }
+
+            // Step 4: Reload the stream (LogManager needs a fresh one)
+            try (InputStream configStream1 = Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream(propertiesPath)) {
+                if (configStream1 == null) {
+                    throw new IOException("Cannot re-read resource: " + propertiesPath);
+                }
+                initialize(configStream1);
+            }
+        }
+    }
+
+    /**
+     * Initialize JUL logging from an external properties file path.
+     * This method is synchronized to prevent multiple initializations.
+     * @param configFile the path to the logging.properties file
+     * @throws IOException if the properties file cannot be loaded
+     */
+    public static synchronized void initialize(InputStream configFile) throws IOException {
+        if (!initialized) {
+            LogManager.getLogManager().readConfiguration(configFile);
+            initialized = true;
+        }
+    }
+}
