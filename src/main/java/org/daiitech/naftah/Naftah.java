@@ -47,7 +47,8 @@ public final class Naftah {
     initLogger();
     // TODO: update this logic to be more sophisticated and handle args and commands
     // Create an input stream from the Naftah code
-    CharStream input = CharStreams.fromPath(searchForNaftahScriptFile(args[0]).toPath(), StandardCharsets.UTF_8);
+    CharStream input =
+        CharStreams.fromPath(searchForNaftahScriptFile(args[0]).toPath(), StandardCharsets.UTF_8);
 
     // Create a lexer and token stream
     NaftahLexer lexer = new NaftahLexer(input);
