@@ -140,7 +140,7 @@ BuildDate=$date
 BuildTime=$time
 Class-Path= ${configurations.runtimeClasspath
 					.files
-					.collect { "libs/${it.name}" }
+					.collect { "lib/${it.name}" }
 					.join(' ')
 			}
 """)
@@ -159,26 +159,27 @@ jar {
 				'Implementation-Vendor': 'DaiiTech',
 				'Built-By': System.getProperty('user.name'),
 				'Built-Date':  LocalDateTime.now().format("yyyy-MM-dd'T'HH:mm"),
-				// 👇 Class-Path attribute (relative paths to JARs in /libs/)
+				// 👇 Class-Path attribute (relative paths to JARs in /lib/)
 				'Class-Path': configurations.runtimeClasspath
 						.files
-						.collect { "libs/${it.name}" }
+						.collect { "lib/${it.name}" }
 						.join(' ')
 		)
 	}
 }
 
-// Task to copy dependencies to /build/libs/libs/
+// Task to copy dependencies to /build/libs/lib/
 tasks.register('copyDependencies', Copy) {
 	from configurations.runtimeClasspath
-	into "$buildDir/libs/libs"
+	into "$buildDir/libs/lib"
 }
 
 jar.dependsOn processResources
 jar.finalizedBy copyDependencies
 
 tasks.register('fatJar', Jar) {
-	archiveBaseName = "${project.name}-fat"
+	archiveBaseName = "${project.name}-standalone"
+	destinationDirectory.set(file("$buildDir/libs/"))
 	manifest {
 		attributes(
 				'Main-Class': 'org.daiitech.naftah.Naftah',
@@ -195,4 +196,57 @@ tasks.register('fatJar', Jar) {
 		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
 	}
 	with jar
+}
+
+tasks.register('baseDistZip', Zip) {
+	// Set the name of the output zip file
+	destinationDirectory.set(file("$buildDir/distributions"))
+	archiveBaseName.set("${project.name}")
+
+	from('.') {
+		include 'INSTALL', 'LICENSE'
+		into '.'
+	}
+
+	from('src/main/bin') {
+		into 'bin'
+	}
+
+	from('learn-by-example') {
+		into 'learn-by-example'
+	}
+
+	// Avoid execution by itself
+	enabled = false
+}
+
+tasks.register('dist', Zip) {
+	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"), tasks.named("jar"), tasks.named("baseDistZip")
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	archiveVersion.set("${project.version}-bin")
+
+	with tasks.named("baseDistZip").get()
+
+	from("$buildDir/libs") {
+		include 'lib/*.jar', "${project.name}-${project.version}.jar"
+		into 'lib'
+	}
+
+}
+
+tasks.register('distStandalone', Zip) {
+	dependsOn tasks.named("fatJar"), tasks.named("baseDistZip")
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	archiveVersion.set("${project.version}-standalone-bin")
+
+	with tasks.named("baseDistZip").get()
+
+	from("$buildDir/libs") {
+		include "${project.name}-standalone-${project.version}.jar"
+		into 'lib'
+	}
 }
