@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.daiitech.naftah.core.NaftahSystem;
 import org.daiitech.naftah.core.parser.DefaultNaftahParserVisitor;
 import org.daiitech.naftah.core.parser.NaftahLexer;
 import org.daiitech.naftah.core.parser.NaftahParser;
+import org.daiitech.naftah.core.utils.JulLoggerConfig;
 import picocli.CommandLine;
 
 /**
@@ -42,9 +44,10 @@ public final class Naftah {
   private Naftah() {}
 
   public static void main(String[] args) throws IOException {
+    initLogger();
     // TODO: update this logic to be more sophisticated and handle args and commands
     // Create an input stream from the Naftah code
-    CharStream input = CharStreams.fromPath(searchForNaftahScriptFile(args[0]).toPath());
+    CharStream input = CharStreams.fromPath(searchForNaftahScriptFile(args[0]).toPath(), StandardCharsets.UTF_8);
 
     // Create a lexer and token stream
     NaftahLexer lexer = new NaftahLexer(input);
@@ -59,6 +62,22 @@ public final class Naftah {
     // Create a visitor and visit the parse tree
     DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
     visitor.visit(tree);
+  }
+
+  private static void initLogger() {
+    try {
+      String loggingConfigFile = System.getProperty("java.util.logging.config.file");
+
+      // Initialize logging from external file
+      JulLoggerConfig.initialize(loggingConfigFile);
+    } catch (IOException e) {
+      try {
+        // fallback to default logging
+        JulLoggerConfig.initializeFromResources("logging.properties");
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      }
+    }
   }
 
   /**
