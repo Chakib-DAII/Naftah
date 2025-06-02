@@ -36,3 +36,4 @@ out/
 .vscode/
 /src/main/antlr/gen/
 /src/main/gen/
+/logs/
