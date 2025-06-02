@@ -391,4 +391,85 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     return super.visitQualifiedName(ctx);
   }
+
+  @Override
+  public Object visitBitwiseXorExpression(org.daiitech.naftah.core.parser.NaftahParser.BitwiseXorExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitBitwiseXorExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitBitwiseXorExpression(ctx);
+  }
+
+  @Override
+  public Object visitNotExpression(org.daiitech.naftah.core.parser.NaftahParser.NotExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitNotExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitNotExpression(ctx);
+  }
+
+  @Override
+  public Object visitPreDecrementExpression(org.daiitech.naftah.core.parser.NaftahParser.PreDecrementExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitPreDecrementExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitPreDecrementExpression(ctx);
+  }
+
+  @Override
+  public Object visitPostDecrementExpression(org.daiitech.naftah.core.parser.NaftahParser.PostDecrementExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitPostDecrementExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitPostDecrementExpression(ctx);
+  }
+
+  @Override
+  public Object visitBitwiseOrExpression(org.daiitech.naftah.core.parser.NaftahParser.BitwiseOrExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitBitwiseOrExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitBitwiseOrExpression(ctx);
+  }
+
+  @Override
+  public Object visitBitwiseNotExpression(org.daiitech.naftah.core.parser.NaftahParser.BitwiseNotExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitBitwiseNotExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitBitwiseNotExpression(ctx);
+  }
+
+  @Override
+  public Object visitBitwiseAndExpression(org.daiitech.naftah.core.parser.NaftahParser.BitwiseAndExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitBitwiseAndExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitBitwiseAndExpression(ctx);
+  }
+
+  @Override
+  public Object visitPreIncrementExpression(org.daiitech.naftah.core.parser.NaftahParser.PreIncrementExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitPreIncrementExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitPreIncrementExpression(ctx);
+  }
+
+  @Override
+  public Object visitPostIncrementExpression(org.daiitech.naftah.core.parser.NaftahParser.PostIncrementExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitPostIncrementExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    return super.visitPostIncrementExpression(ctx);
+  }
 }
