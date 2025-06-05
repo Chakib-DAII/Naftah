@@ -1,13 +1,12 @@
 package org.daiitech.naftah.core.parser;
 
-import org.daiitech.naftah.core.builtin.utils.NumberUtils;
-import org.daiitech.naftah.utils.DefaultContext;
-import org.daiitech.naftah.utils.StringInterpolator;
+import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
+import org.daiitech.naftah.core.builtin.utils.NumberUtils;
+import org.daiitech.naftah.utils.DefaultContext;
+import org.daiitech.naftah.utils.StringInterpolator;
 
 /**
  * @author Chakib Daii
@@ -217,8 +216,8 @@ public class DefaultNaftahParserVisitor
           "visitMinusExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.subtract(left, right);
   }
 
@@ -241,8 +240,8 @@ public class DefaultNaftahParserVisitor
           "visitModExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.modulo(left, right);
   }
 
@@ -254,8 +253,8 @@ public class DefaultNaftahParserVisitor
           "visitDivExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.divide(left, right);
   }
 
@@ -267,8 +266,8 @@ public class DefaultNaftahParserVisitor
           "visitGreaterThanExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.compare(left, right) > 0;
   }
 
@@ -280,8 +279,8 @@ public class DefaultNaftahParserVisitor
           "visitLessThanEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.compare(left, right) <= 0;
   }
 
@@ -293,9 +292,10 @@ public class DefaultNaftahParserVisitor
           "visitGreaterThanEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
-    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x > y}
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
+    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
+    // y}
     return NumberUtils.compare(left, right) >= 0;
   }
 
@@ -307,9 +307,10 @@ public class DefaultNaftahParserVisitor
           "visitNotEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
-    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x > y}
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
+    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
+    // y}
     return NumberUtils.compare(left, right) != 0;
   }
 
@@ -321,9 +322,10 @@ public class DefaultNaftahParserVisitor
           "visitEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
-    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x > y}
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
+    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
+    // y}
     return NumberUtils.equals(left, right);
   }
 
@@ -335,9 +337,10 @@ public class DefaultNaftahParserVisitor
           "visitLessThanExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
-    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x > y}
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
+    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
+    // y}
     return NumberUtils.compare(left, right) < 0;
   }
 
@@ -349,8 +352,8 @@ public class DefaultNaftahParserVisitor
           "visitPlusExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.add(left, right);
   }
 
@@ -362,8 +365,8 @@ public class DefaultNaftahParserVisitor
           "visitMulExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.multiply(left, right);
   }
 
@@ -467,115 +470,117 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitBitwiseXorExpression(org.daiitech.naftah.core.parser.NaftahParser.BitwiseXorExpressionContext ctx) {
+  public Object visitBitwiseXorExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.BitwiseXorExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitBitwiseXorExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitBitwiseXorExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.xor(left, right);
   }
 
   @Override
-  public Object visitNotExpression(org.daiitech.naftah.core.parser.NaftahParser.NotExpressionContext ctx) {
+  public Object visitNotExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.NotExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitNotExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitNotExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     /**
-     * maybe supporting it in this way can be interesting
-     * | Value       | `!value` (logical) | `-value` (arithmetic) |
-     * | ----------- | ------------------ | --------------------- |
-     * | `true`      | `false`            | `-1`                  |
-     * | `false`     | `true`             | `0`                   |
-     * | `"123"`     | `false`            | `-123`                |
-     * | `""`        | `true`             | `-0`                  |
-     * | `123`       | `false`            | `-123`                |
-     * | `null`      | `true`             | `0`                   |
-     * | `undefined` | `true`             | `NaN`                 |
-     * | `[]`        | `false`            | `-0`                  |
-     * | `{}`        | `false`            | `NaN`                 |
+     * maybe supporting it in this way can be interesting | Value | `!value` (logical) | `-value`
+     * (arithmetic) | | ----------- | ------------------ | --------------------- | | `true` |
+     * `false` | `-1` | | `false` | `true` | `0` | | `"123"` | `false` | `-123` | | `""` | `true` |
+     * `-0` | | `123` | `false` | `-123` | | `null` | `true` | `0` | | `undefined` | `true` | `NaN`
+     * | | `[]` | `false` | `-0` | | `{}` | `false` | `NaN` |
      */
     return super.visitNotExpression(ctx);
   }
 
   @Override
-  public Object visitPreDecrementExpression(org.daiitech.naftah.core.parser.NaftahParser.PreDecrementExpressionContext ctx) {
+  public Object visitPreDecrementExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.PreDecrementExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitPreDecrementExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitPreDecrementExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     Object value = visit(ctx.expression());
     return NumberUtils.PreDecrement(value);
   }
 
   @Override
-  public Object visitPostDecrementExpression(org.daiitech.naftah.core.parser.NaftahParser.PostDecrementExpressionContext ctx) {
+  public Object visitPostDecrementExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.PostDecrementExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitPostDecrementExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitPostDecrementExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     Object value = visit(ctx.expression());
     return NumberUtils.PreDecrement(value);
   }
 
   @Override
-  public Object visitBitwiseOrExpression(org.daiitech.naftah.core.parser.NaftahParser.BitwiseOrExpressionContext ctx) {
+  public Object visitBitwiseOrExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.BitwiseOrExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitBitwiseOrExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitBitwiseOrExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.or(left, right);
   }
 
   @Override
-  public Object visitBitwiseNotExpression(org.daiitech.naftah.core.parser.NaftahParser.BitwiseNotExpressionContext ctx) {
+  public Object visitBitwiseNotExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.BitwiseNotExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitBitwiseNotExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitBitwiseNotExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     Object value = visit(ctx.expression());
     return NumberUtils.not(value);
   }
 
   @Override
-  public Object visitBitwiseAndExpression(org.daiitech.naftah.core.parser.NaftahParser.BitwiseAndExpressionContext ctx) {
+  public Object visitBitwiseAndExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.BitwiseAndExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitBitwiseAndExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitBitwiseAndExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object left = visit(ctx.expression(0));  // Left operand
-    Object right = visit(ctx.expression(1));  // Right operand
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
     return NumberUtils.and(left, right);
   }
 
   @Override
-  public Object visitPreIncrementExpression(org.daiitech.naftah.core.parser.NaftahParser.PreIncrementExpressionContext ctx) {
+  public Object visitPreIncrementExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.PreIncrementExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitPreIncrementExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitPreIncrementExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     Object value = visit(ctx.expression());
     return NumberUtils.PreIncrement(value);
   }
 
   @Override
-  public Object visitPostIncrementExpression(org.daiitech.naftah.core.parser.NaftahParser.PostIncrementExpressionContext ctx) {
+  public Object visitPostIncrementExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.PostIncrementExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitPostIncrementExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitPostIncrementExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     Object value = visit(ctx.expression());
     return NumberUtils.PostIncrement(value);

@@ -25,7 +25,7 @@ public final class NumberUtils {
 
   public static Number parseDynamicNumber(Object object) {
     if (object instanceof Number number) {
-     return number;
+      return number;
     } else if (object instanceof String string) {
       return parseDynamicNumber(string);
     }
@@ -1119,14 +1119,18 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number  and(T x, T y) {
+  public static <T extends Number> Number and(T x, T y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
-    return and(dx, dy);}
+    return and(dx, dy);
+  }
+
   public static Number and(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
-    return and(dx, dy);}
+    return and(dx, dy);
+  }
+
   /**
    * Performs a bitwise AND operation on the given numbers {@link DynamicNumber}.
    *
@@ -1154,14 +1158,18 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number  or(T x, T y) {
+  public static <T extends Number> Number or(T x, T y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
-    return or(dx, dy);}
+    return or(dx, dy);
+  }
+
   public static Number or(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
-    return or(dx, dy);}
+    return or(dx, dy);
+  }
+
   /**
    * Performs a bitwise OR operation on the given numbers {@link DynamicNumber}.
    *
@@ -1189,15 +1197,18 @@ public final class NumberUtils {
     }
   }
 
-
-  public static <T extends Number> Number    xor(T x, T y) {
+  public static <T extends Number> Number xor(T x, T y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
-    return xor(dx, dy);}
+    return xor(dx, dy);
+  }
+
   public static Number xor(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
-    return xor(dx, dy);}
+    return xor(dx, dy);
+  }
+
   /**
    * Performs a bitwise XOR operation on the given numbers {@link DynamicNumber}.
    *
@@ -1225,12 +1236,16 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number    not(T x) {
+  public static <T extends Number> Number not(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return not(dx);}
+    return not(dx);
+  }
+
   public static Number not(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return not(dx);}
+    return not(dx);
+  }
+
   /**
    * Performs a bitwise NOT operation on the given number {@link DynamicNumber}.
    *
@@ -1257,13 +1272,16 @@ public final class NumberUtils {
     }
   }
 
-
-  public static <T extends Number> Number    shiftLeft(T x, int positions) {
+  public static <T extends Number> Number shiftLeft(T x, int positions) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return shiftLeft(dx, positions);}
+    return shiftLeft(dx, positions);
+  }
+
   public static Number shiftLeft(Object x, int positions) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return shiftLeft(dx, positions);}
+    return shiftLeft(dx, positions);
+  }
+
   /**
    * Shifts the given number {@link DynamicNumber} to the left (signed shift).
    *
@@ -1293,13 +1311,15 @@ public final class NumberUtils {
     }
   }
 
-
-  public static <T extends Number> Number    shiftRight(T x, int positions) {
+  public static <T extends Number> Number shiftRight(T x, int positions) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return shiftRight(dx, positions);}
+    return shiftRight(dx, positions);
+  }
+
   public static Number shiftRight(Object x, int positions) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return shiftRight(dx, positions);}
+    return shiftRight(dx, positions);
+  }
 
   /**
    * Shifts the given number {@link DynamicNumber} to the right (signed shift).
@@ -1330,13 +1350,15 @@ public final class NumberUtils {
     }
   }
 
-
-  public static <T extends Number> Number    unsignedShiftRight(T x, int positions) {
+  public static <T extends Number> Number unsignedShiftRight(T x, int positions) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return unsignedShiftRight(dx, positions);}
+    return unsignedShiftRight(dx, positions);
+  }
+
   public static Number unsignedShiftRight(Object x, int positions) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return unsignedShiftRight(dx, positions);}
+    return unsignedShiftRight(dx, positions);
+  }
 
   /**
    * Shifts the given number {@link DynamicNumber} to the right (unsigned shift).
@@ -1367,12 +1389,16 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number  PostIncrement(T x) {
+  public static <T extends Number> Number PostIncrement(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PostIncrement(dx);}
+    return PostIncrement(dx);
+  }
+
   public static Number PostIncrement(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PostIncrement(dx);}
+    return PostIncrement(dx);
+  }
+
   public static Number PostIncrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
       return dx.set(dx.asBigDecimal().add(BigDecimal.ONE)).asBigDecimal();
@@ -1380,7 +1406,7 @@ public final class NumberUtils {
       return dx.set(dx.asBigInteger().add(BigInteger.ONE)).asBigInteger();
     } else if (dx.isDouble()) {
       return dx.set(dx.asDouble() + 1).asDouble();
-    } else if(dx.isFloat()) {
+    } else if (dx.isFloat()) {
       return dx.set(dx.asFloat() + 1).asFloat();
     } else if (dx.isLong()) {
       return dx.set(dx.asLong() + 1).asLong();
@@ -1396,12 +1422,16 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number   PreIncrement(T x) {
+  public static <T extends Number> Number PreIncrement(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PreIncrement(dx);}
+    return PreIncrement(dx);
+  }
+
   public static Number PreIncrement(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PreIncrement(dx);}
+    return PreIncrement(dx);
+  }
+
   public static Number PreIncrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
       BigDecimal current = dx.asBigDecimal();
@@ -1415,7 +1445,7 @@ public final class NumberUtils {
       double current = dx.asDouble();
       dx.set(current + 1);
       return current;
-    } else if(dx.isFloat()) {
+    } else if (dx.isFloat()) {
       double current = dx.asFloat();
       dx.set(current + 1);
       return current;
@@ -1441,12 +1471,16 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number   PostDecrement(T x) {
+  public static <T extends Number> Number PostDecrement(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PostDecrement(dx);}
+    return PostDecrement(dx);
+  }
+
   public static Number PostDecrement(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PostDecrement(dx);}
+    return PostDecrement(dx);
+  }
+
   public static Number PostDecrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
       return dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE)).asBigDecimal();
@@ -1454,7 +1488,7 @@ public final class NumberUtils {
       return dx.set(dx.asBigInteger().subtract(BigInteger.ONE)).asBigInteger();
     } else if (dx.isDouble()) {
       return dx.set(dx.asDouble() - 1).asDouble();
-    } else if(dx.isFloat()) {
+    } else if (dx.isFloat()) {
       return dx.set(dx.asFloat() - 1).asFloat();
     } else if (dx.isLong()) {
       return dx.set(dx.asLong() - 1).asLong();
@@ -1469,15 +1503,18 @@ public final class NumberUtils {
       throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
     }
   }
-  public static <T extends Number> Number  PreDecrement(T x) {
+
+  public static <T extends Number> Number PreDecrement(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return PreDecrement(dx);
   }
-    public static Number PreDecrement(Object x) {
-      DynamicNumber dx = DynamicNumber.of(x);
-      return PreDecrement(dx);
-    }
-      public static Number PreDecrement(DynamicNumber dx) {
+
+  public static Number PreDecrement(Object x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return PreDecrement(dx);
+  }
+
+  public static Number PreDecrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
       BigDecimal current = dx.asBigDecimal();
       dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE));
@@ -1490,7 +1527,7 @@ public final class NumberUtils {
       double current = dx.asDouble();
       dx.set(current - 1);
       return current;
-    } else if(dx.isFloat()) {
+    } else if (dx.isFloat()) {
       double current = dx.asFloat();
       dx.set(current - 1);
       return current;
