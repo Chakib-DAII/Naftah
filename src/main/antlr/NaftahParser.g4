@@ -27,12 +27,12 @@ options {
 program: statement+;
 
 // Statement: Can be an assignment, function call, or control flow
-statement: assignment #assignmentStatement
+statement: block #blockStatement
+         | ifStatement #ifStatementStatement
+         | assignment #assignmentStatement
          | functionDeclaration #functionDeclarationStatement
          | functionCall #functionCallStatement
-         | ifStatement #ifStatementStatement
          | returnStatement #returnStatementStatement
-         | block #blockStatement
          ;
 
 // Assignment: variable or constant assignment
