@@ -40,18 +40,22 @@ gradlew idea
 
 ### Code Examples
 
-#### Variable declaration
+#### Variable declaration and assignment
 ````naftah 
-متغير ش تعيين ١
 ثابت ت تعيين 2
+متغير ش
+ش تعيين ١
 متغير ع تعيين 15
-ثابت ي تعيين ١
+ثابت ي
+تعيين ١
+إطبع("ت = ${ت}، ش = ${ش}، ع = ${ع}، ي = ${ي}")
 ````
 
 #### Function call
 ````naftah 
 إطبع("مرحباً أيها العالم!")
 ````
+
 #### Conditional
 ````naftah 
 متغير أ تعيين ١
@@ -65,6 +69,14 @@ gradlew idea
 إطبع("أ زائد ب يساوي 10")
 {
 أنهي
+````
+
+#### String interpolation
+````naftah 
+ثابت ت تعيين 2
+متغير ش
+ش تعيين ١
+إطبع("ت = ${}،ش = ${}")
 ````
 
 
