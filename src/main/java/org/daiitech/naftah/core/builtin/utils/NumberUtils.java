@@ -23,6 +23,15 @@ public final class NumberUtils {
     throw new IllegalStateException("Illegal usage.");
   }
 
+  public static Number parseDynamicNumber(Object object) {
+    if (object instanceof Number number) {
+     return number;
+    } else if (object instanceof String string) {
+      return parseDynamicNumber(string);
+    }
+    throw new RuntimeException("Invalid number: " + object);
+  }
+
   /**
    * Parses a string into the most appropriate {@link Number} type.
    *
@@ -235,7 +244,7 @@ public final class NumberUtils {
    * @param y right operand
    * @return the result of addition
    */
-  public static Number add(String x, String y) {
+  public static Number add(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return add(dx, dy);
@@ -299,7 +308,7 @@ public final class NumberUtils {
    * @param y right operand
    * @return the result of subtraction
    */
-  public static Number subtract(String x, String y) {
+  public static Number subtract(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return subtract(dx, dy);
@@ -363,7 +372,7 @@ public final class NumberUtils {
    * @param y right operand
    * @return the result of multiplication
    */
-  public static Number multiply(String x, String y) {
+  public static Number multiply(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return multiply(dx, dy);
@@ -427,7 +436,7 @@ public final class NumberUtils {
    * @param y the divisor
    * @return the result of division
    */
-  public static Number divide(String x, String y) {
+  public static Number divide(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return divide(dx, dy);
@@ -491,7 +500,7 @@ public final class NumberUtils {
    * @param y the divisor
    * @return the result of division
    */
-  public static Number modulo(String x, String y) {
+  public static Number modulo(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return modulo(dx, dy);
@@ -555,7 +564,7 @@ public final class NumberUtils {
    * @param y the second number
    * @return the greatest of {@code x} and {@code y}, as a {@code Number}
    */
-  public static Number max(String x, String y) {
+  public static Number max(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return max(dx, dy);
@@ -615,7 +624,7 @@ public final class NumberUtils {
    * @param y the second number
    * @return the least of {@code x} and {@code y}, as a {@code Number}
    */
-  public static Number min(String x, String y) {
+  public static Number min(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return min(dx, dy);
@@ -676,7 +685,7 @@ public final class NumberUtils {
    * @return the result of raising {@code base} to the power of {@code exponent}, as a {@code
    *     Number}
    */
-  public static Number pow(String base, int exponent) {
+  public static Number pow(Object base, int exponent) {
     DynamicNumber dx = DynamicNumber.of(base);
     return pow(dx, exponent);
   }
@@ -716,7 +725,7 @@ public final class NumberUtils {
    * @param x the number to round
    * @return the rounded number
    */
-  public static Number round(String x) {
+  public static Number round(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return round(dx);
   }
@@ -753,7 +762,7 @@ public final class NumberUtils {
    * @param x the number to round
    * @return the rounded number
    */
-  public static Number floor(String x) {
+  public static Number floor(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return floor(dx);
   }
@@ -806,7 +815,7 @@ public final class NumberUtils {
    * @param x the number to apply ceiling to
    * @return the ceiling value
    */
-  public static Number ceil(String x) {
+  public static Number ceil(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return ceil(dx);
   }
@@ -857,7 +866,7 @@ public final class NumberUtils {
    * @param x the number to negate
    * @return the negated number
    */
-  public static Number negate(String x) {
+  public static Number negate(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return negate(dx);
   }
@@ -903,7 +912,7 @@ public final class NumberUtils {
    * @param x the number to compute the square root of
    * @return the square root of the number
    */
-  public static Number sqrt(String x) {
+  public static Number sqrt(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return sqrt(dx);
   }
@@ -938,7 +947,7 @@ public final class NumberUtils {
    * @param x the number to compute the absolute value of
    * @return the absolute value of the number
    */
-  public static Number abs(String x) {
+  public static Number abs(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return abs(dx);
   }
@@ -973,7 +982,7 @@ public final class NumberUtils {
    * @param x the number to compute the signum of
    * @return -1 if the number is negative, 0 if zero, and 1 if positive
    */
-  public static int signum(String x) {
+  public static int signum(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return signum(dx);
   }
@@ -1008,7 +1017,7 @@ public final class NumberUtils {
    * @param x the number to check
    * @return {@code true} if the number is zero; {@code false} otherwise
    */
-  public static boolean isZero(String x) {
+  public static boolean isZero(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
     return isZero(dx);
   }
@@ -1044,7 +1053,7 @@ public final class NumberUtils {
    * @param y the second number
    * @return {@code true} if {@code x} and {@code y} are equal in value; {@code false} otherwise
    */
-  public static boolean equals(String x, String y) {
+  public static boolean equals(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return equals(dx, dy);
@@ -1084,7 +1093,7 @@ public final class NumberUtils {
    * @return a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if
    *     {@code x > y}
    */
-  public static int compare(String x, String y) {
+  public static int compare(Object x, Object y) {
     DynamicNumber dx = DynamicNumber.of(x);
     DynamicNumber dy = DynamicNumber.of(y);
     return compare(dx, dy);
@@ -1110,6 +1119,14 @@ public final class NumberUtils {
     }
   }
 
+  public static <T extends Number> Number  and(T x, T y) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    DynamicNumber dy = DynamicNumber.of(y);
+    return and(dx, dy);}
+  public static Number and(Object x, Object y) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    DynamicNumber dy = DynamicNumber.of(y);
+    return and(dx, dy);}
   /**
    * Performs a bitwise AND operation on the given numbers {@link DynamicNumber}.
    *
@@ -1137,6 +1154,14 @@ public final class NumberUtils {
     }
   }
 
+  public static <T extends Number> Number  or(T x, T y) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    DynamicNumber dy = DynamicNumber.of(y);
+    return or(dx, dy);}
+  public static Number or(Object x, Object y) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    DynamicNumber dy = DynamicNumber.of(y);
+    return or(dx, dy);}
   /**
    * Performs a bitwise OR operation on the given numbers {@link DynamicNumber}.
    *
@@ -1164,6 +1189,15 @@ public final class NumberUtils {
     }
   }
 
+
+  public static <T extends Number> Number    xor(T x, T y) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    DynamicNumber dy = DynamicNumber.of(y);
+    return xor(dx, dy);}
+  public static Number xor(Object x, Object y) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    DynamicNumber dy = DynamicNumber.of(y);
+    return xor(dx, dy);}
   /**
    * Performs a bitwise XOR operation on the given numbers {@link DynamicNumber}.
    *
@@ -1191,6 +1225,12 @@ public final class NumberUtils {
     }
   }
 
+  public static <T extends Number> Number    not(T x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return not(dx);}
+  public static Number not(Object x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return not(dx);}
   /**
    * Performs a bitwise NOT operation on the given number {@link DynamicNumber}.
    *
@@ -1217,6 +1257,13 @@ public final class NumberUtils {
     }
   }
 
+
+  public static <T extends Number> Number    shiftLeft(T x, int positions) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return shiftLeft(dx, positions);}
+  public static Number shiftLeft(Object x, int positions) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return shiftLeft(dx, positions);}
   /**
    * Shifts the given number {@link DynamicNumber} to the left (signed shift).
    *
@@ -1245,6 +1292,14 @@ public final class NumberUtils {
       throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
     }
   }
+
+
+  public static <T extends Number> Number    shiftRight(T x, int positions) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return shiftRight(dx, positions);}
+  public static Number shiftRight(Object x, int positions) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return shiftRight(dx, positions);}
 
   /**
    * Shifts the given number {@link DynamicNumber} to the right (signed shift).
@@ -1275,6 +1330,14 @@ public final class NumberUtils {
     }
   }
 
+
+  public static <T extends Number> Number    unsignedShiftRight(T x, int positions) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return unsignedShiftRight(dx, positions);}
+  public static Number unsignedShiftRight(Object x, int positions) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return unsignedShiftRight(dx, positions);}
+
   /**
    * Shifts the given number {@link DynamicNumber} to the right (unsigned shift).
    *
@@ -1298,6 +1361,155 @@ public final class NumberUtils {
       return dx.asShort() >>> positions;
     } else if (dx.isByte()) {
       return dx.asByte() >>> positions;
+    } else {
+      // Unknown or unsupported number types
+      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+    }
+  }
+
+  public static <T extends Number> Number  PostIncrement(T x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return PostIncrement(dx);}
+  public static Number PostIncrement(Object x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return PostIncrement(dx);}
+  public static Number PostIncrement(DynamicNumber dx) {
+    if (dx.isBigDecimal()) {
+      return dx.set(dx.asBigDecimal().add(BigDecimal.ONE)).asBigDecimal();
+    } else if (dx.isBigInteger()) {
+      return dx.set(dx.asBigInteger().add(BigInteger.ONE)).asBigInteger();
+    } else if (dx.isDouble()) {
+      return dx.set(dx.asDouble() + 1).asDouble();
+    } else if(dx.isFloat()) {
+      return dx.set(dx.asFloat() + 1).asFloat();
+    } else if (dx.isLong()) {
+      return dx.set(dx.asLong() + 1).asLong();
+    } else if (dx.isInt()) {
+      return dx.set(dx.asInt() + 1).asInt();
+    } else if (dx.isShort()) {
+      return dx.set(dx.asShort() + 1).asShort();
+    } else if (dx.isByte()) {
+      return dx.set(dx.asByte() + 1).asByte();
+    } else {
+      // Unknown or unsupported number types
+      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+    }
+  }
+
+  public static <T extends Number> Number   PreIncrement(T x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return PreIncrement(dx);}
+  public static Number PreIncrement(Object x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return PreIncrement(dx);}
+  public static Number PreIncrement(DynamicNumber dx) {
+    if (dx.isBigDecimal()) {
+      BigDecimal current = dx.asBigDecimal();
+      dx.set(dx.asBigDecimal().add(BigDecimal.ONE));
+      return current;
+    } else if (dx.isBigInteger()) {
+      BigInteger current = dx.asBigInteger();
+      dx.set(current.add(BigInteger.ONE));
+      return current;
+    } else if (dx.isDouble()) {
+      double current = dx.asDouble();
+      dx.set(current + 1);
+      return current;
+    } else if(dx.isFloat()) {
+      double current = dx.asFloat();
+      dx.set(current + 1);
+      return current;
+    } else if (dx.isLong()) {
+      double current = dx.asLong();
+      dx.set(current + 1);
+      return current;
+    } else if (dx.isInt()) {
+      double current = dx.asInt();
+      dx.set(current + 1);
+      return current;
+    } else if (dx.isShort()) {
+      double current = dx.asShort();
+      dx.set(current + 1);
+      return current;
+    } else if (dx.isByte()) {
+      double current = dx.asByte();
+      dx.set(current + 1);
+      return current;
+    } else {
+      // Unknown or unsupported number types
+      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+    }
+  }
+
+  public static <T extends Number> Number   PostDecrement(T x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return PostDecrement(dx);}
+  public static Number PostDecrement(Object x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return PostDecrement(dx);}
+  public static Number PostDecrement(DynamicNumber dx) {
+    if (dx.isBigDecimal()) {
+      return dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE)).asBigDecimal();
+    } else if (dx.isBigInteger()) {
+      return dx.set(dx.asBigInteger().subtract(BigInteger.ONE)).asBigInteger();
+    } else if (dx.isDouble()) {
+      return dx.set(dx.asDouble() - 1).asDouble();
+    } else if(dx.isFloat()) {
+      return dx.set(dx.asFloat() - 1).asFloat();
+    } else if (dx.isLong()) {
+      return dx.set(dx.asLong() - 1).asLong();
+    } else if (dx.isInt()) {
+      return dx.set(dx.asInt() - 1).asInt();
+    } else if (dx.isShort()) {
+      return dx.set(dx.asShort() - 1).asShort();
+    } else if (dx.isByte()) {
+      return dx.set(dx.asByte() - 1).asByte();
+    } else {
+      // Unknown or unsupported number types
+      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+    }
+  }
+  public static <T extends Number> Number  PreDecrement(T x) {
+    DynamicNumber dx = DynamicNumber.of(x);
+    return PreDecrement(dx);
+  }
+    public static Number PreDecrement(Object x) {
+      DynamicNumber dx = DynamicNumber.of(x);
+      return PreDecrement(dx);
+    }
+      public static Number PreDecrement(DynamicNumber dx) {
+    if (dx.isBigDecimal()) {
+      BigDecimal current = dx.asBigDecimal();
+      dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE));
+      return current;
+    } else if (dx.isBigInteger()) {
+      BigInteger current = dx.asBigInteger();
+      dx.set(current.subtract(BigInteger.ONE));
+      return current;
+    } else if (dx.isDouble()) {
+      double current = dx.asDouble();
+      dx.set(current - 1);
+      return current;
+    } else if(dx.isFloat()) {
+      double current = dx.asFloat();
+      dx.set(current - 1);
+      return current;
+    } else if (dx.isLong()) {
+      double current = dx.asLong();
+      dx.set(current - 1);
+      return current;
+    } else if (dx.isInt()) {
+      double current = dx.asInt();
+      dx.set(current - 1);
+      return current;
+    } else if (dx.isShort()) {
+      double current = dx.asShort();
+      dx.set(current - 1);
+      return current;
+    } else if (dx.isByte()) {
+      double current = dx.asByte();
+      dx.set(current - 1);
+      return current;
     } else {
       // Unknown or unsupported number types
       throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
