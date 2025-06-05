@@ -9,14 +9,14 @@ import org.daiitech.naftah.core.builtin.utils.NumberUtils;
  * @author Chakib Daii
  */
 public class DynamicNumber {
-  private final Number value;
+  private Number value;
 
   public DynamicNumber(Number value) {
     Objects.requireNonNull(value, "value must not be null");
     this.value = value;
   }
 
-  public DynamicNumber(String value) {
+  public DynamicNumber(Object value) {
     Objects.requireNonNull(value, "value must not be null");
     this.value = NumberUtils.parseDynamicNumber(value);
   }
@@ -100,6 +100,11 @@ public class DynamicNumber {
     return value;
   }
 
+  public DynamicNumber set(Number value) {
+    this.value = value;
+    return this;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -124,7 +129,7 @@ public class DynamicNumber {
     return new DynamicNumber(value);
   }
 
-  public static DynamicNumber of(String value) {
+  public static DynamicNumber of(Object value) {
     return new DynamicNumber(value);
   }
 }
