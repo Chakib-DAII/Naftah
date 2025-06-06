@@ -1,6 +1,7 @@
 package org.daiitech.naftah.core.parser;
 
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isTruthy;
+import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.not;
 import static org.daiitech.naftah.core.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
@@ -8,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -490,7 +492,7 @@ public class DefaultNaftahParserVisitor
           "visitIdValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitIdValue(ctx);
+    return ctx.ID().getText();
   }
 
   @Override
@@ -501,7 +503,7 @@ public class DefaultNaftahParserVisitor
           "visitVoidReturnType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitVoidReturnType(ctx);
+    return ctx.VOID().getText();
   }
 
   @Override
@@ -512,7 +514,7 @@ public class DefaultNaftahParserVisitor
           "visitTypeReturnType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitTypeReturnType(ctx);
+    return visit(ctx.type());
   }
 
   @Override
@@ -522,7 +524,7 @@ public class DefaultNaftahParserVisitor
           "visitVarType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitVarType(ctx);
+    return ctx.VAR().getText();
   }
 
   @Override
@@ -533,7 +535,7 @@ public class DefaultNaftahParserVisitor
           "visitBuiltInType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitBuiltInType(ctx);
+    return ctx.BuiltInType().getText();
   }
 
   @Override
@@ -544,7 +546,7 @@ public class DefaultNaftahParserVisitor
           "visitQualifiedNameType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitQualifiedNameType(ctx);
+    return visit(ctx.qualifiedName());
   }
 
   @Override
@@ -555,7 +557,14 @@ public class DefaultNaftahParserVisitor
           "visitQualifiedName(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitQualifiedName(ctx);
+    AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
+
+    for (int i= 0; i <ctx.ID().size(); i++) {
+      result.get().append(ctx.ID(i));
+      if (i != ctx.ID().size() -1) // if not the last
+        result.get().append(ctx.ID());
+    }
+    return result.get().toString();
   }
 
   @Override
@@ -579,14 +588,7 @@ public class DefaultNaftahParserVisitor
           "visitNotExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    /**
-     * maybe supporting it in this way can be interesting | Value | `!value` (logical) | `-value`
-     * (arithmetic) | | ----------- | ------------------ | --------------------- | | `true` |
-     * `false` | `-1` | | `false` | `true` | `0` | | `"123"` | `false` | `-123` | | `""` | `true` |
-     * `-0` | | `123` | `false` | `-123` | | `null` | `true` | `0` | | `undefined` | `true` | `NaN`
-     * | | `[]` | `false` | `-0` | | `{}` | `false` | `NaN` |
-     */
-    return super.visitNotExpression(ctx);
+    return not(visit(ctx.expression()));
   }
 
   @Override
