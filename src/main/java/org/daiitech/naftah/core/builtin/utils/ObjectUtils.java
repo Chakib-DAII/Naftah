@@ -36,4 +36,14 @@ public final class ObjectUtils {
         // Other objects (non-null) are truthy
         return true;
     }
+
+    public static Object not(Object value) {
+        try {
+            // arithmetic negation
+            return NumberUtils.negate(value);
+        } catch (Exception e) {
+            // logical negation
+            return !isTruthy(value);
+        }
+    }
 }
