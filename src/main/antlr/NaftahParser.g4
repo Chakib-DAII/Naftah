@@ -45,9 +45,10 @@ functionDeclaration: FUNCTION ID LPAREN argumentDeclarationList? RPAREN (COLON r
 argumentDeclarationList: argumentDeclaration (COMMA argumentDeclaration)*;
 
 // Argument declaration : argument id with optional type and assignment
-argumentDeclaration: ID (COLON type)? (ASSIGN value)?;
+argumentDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 
 // Function call: Can have arguments and return values
+// TODO: add support for all kind of functions using the qualifiedName
 functionCall: ID LPAREN argumentList? RPAREN;
 
 // Argument list: Expressions separated by commas
