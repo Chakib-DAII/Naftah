@@ -12,17 +12,12 @@ public class DeclaredFunction {
   private final NaftahParser.BlockContext body;
   private final NaftahParser.ReturnTypeContext returnType;
 
-  public DeclaredFunction(NaftahParser.FunctionDeclarationContext originalContext) {
+  private DeclaredFunction(NaftahParser.FunctionDeclarationContext originalContext) {
     this.originalContext = originalContext;
     this.name = originalContext.ID().getText();
     this.arguments = originalContext.argumentDeclarationList();
     this.body = originalContext.block();
     this.returnType = originalContext.returnType();
-  }
-
-  @Override
-  public String toString() {
-    return "<دالة s%>".formatted(name);
   }
 
   public NaftahParser.FunctionDeclarationContext getOriginalContext() {
@@ -43,5 +38,14 @@ public class DeclaredFunction {
 
   public NaftahParser.ReturnTypeContext getReturnType() {
     return returnType;
+  }
+
+  @Override
+  public String toString() {
+    return "<دالة s%>".formatted(name);
+  }
+
+  public static DeclaredFunction of(NaftahParser.FunctionDeclarationContext originalContext) {
+    return new DeclaredFunction(originalContext);
   }
 }
