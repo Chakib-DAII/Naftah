@@ -35,7 +35,7 @@ public final class StringInterpolator {
 
   public static synchronized String interpolate(String template, DefaultContext context) {
     Function<String, Object> replacementFunction =
-        varName -> Optional.ofNullable(context.get(varName, true)).orElse(NULL);
+        varName -> Optional.ofNullable(context.getVariable(varName, true)).orElse(NULL);
     return interpolate(template, replacementFunction);
   }
 
