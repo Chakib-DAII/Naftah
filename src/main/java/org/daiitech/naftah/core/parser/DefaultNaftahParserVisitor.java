@@ -1,9 +1,21 @@
 package org.daiitech.naftah.core.parser;
 
+import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isTruthy;
+import static org.daiitech.naftah.core.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.antlr.v4.runtime.misc.Pair;
+import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.core.builtin.lang.DeclaredArgument;
+import org.daiitech.naftah.core.builtin.lang.DeclaredFunction;
+import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.core.builtin.utils.NumberUtils;
 import org.daiitech.naftah.utils.DefaultContext;
 import org.daiitech.naftah.utils.StringInterpolator;
@@ -17,7 +29,8 @@ public class DefaultNaftahParserVisitor
   private static final Logger LOGGER = Logger.getLogger("DefaultNaftahParserVisitor");
   public static final String FORMATTER = "index: %s, text: %s, payload: %s";
 
-  public static final DefaultContext CONTEXT = new DefaultContext();
+  // TODO: add the functions
+  public static final DefaultContext CONTEXT = DefaultContext.newContext(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
 
   @Override
   public Object visitProgram(org.daiitech.naftah.core.parser.NaftahParser.ProgramContext ctx) {
@@ -41,7 +54,7 @@ public class DefaultNaftahParserVisitor
           "visitAssignmentStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitAssignmentStatement(ctx);
+    return visit(ctx.assignment());
   }
 
   @Override
@@ -52,7 +65,7 @@ public class DefaultNaftahParserVisitor
           "visitFunctionDeclarationStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitFunctionDeclarationStatement(ctx);
+    return visit(ctx.functionDeclaration());
   }
 
   @Override
@@ -63,7 +76,7 @@ public class DefaultNaftahParserVisitor
           "visitFunctionCallStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitFunctionCallStatement(ctx);
+    return visit(ctx.functionCall());
   }
 
   @Override
@@ -74,7 +87,7 @@ public class DefaultNaftahParserVisitor
           "visitIfStatementStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitIfStatementStatement(ctx);
+    return visit(ctx.ifStatement());
   }
 
   @Override
@@ -85,7 +98,7 @@ public class DefaultNaftahParserVisitor
           "visitReturnStatementStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitReturnStatementStatement(ctx);
+    return visit(ctx.returnStatement());
   }
 
   @Override
@@ -96,7 +109,7 @@ public class DefaultNaftahParserVisitor
           "visitBlockStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitBlockStatement(ctx);
+    return visit(ctx.block());
   }
 
   @Override
@@ -107,7 +120,17 @@ public class DefaultNaftahParserVisitor
           "visitAssignment(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitAssignment(ctx);
+    String variableName = ctx.ID().getText();
+    DeclaredVariable declaredVariable =
+            DeclaredVariable.of(
+                    ctx,
+                    variableName,
+                    hasChild(ctx.CONSTANT()),
+                    visit(ctx.type()),
+                    visit(ctx.expression())
+            );
+    CONTEXT.defineVariable(variableName, declaredVariable);
+    return null;
   }
 
   @Override
@@ -118,7 +141,11 @@ public class DefaultNaftahParserVisitor
           "visitFunctionDeclaration(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitFunctionDeclaration(ctx);
+    String functionName = ctx.ID().getText();
+    DeclaredFunction declaredFunction =
+            DeclaredFunction.of(ctx);
+    CONTEXT.defineFunction(functionName, declaredFunction);
+    return null;
   }
 
   @Override
@@ -129,7 +156,12 @@ public class DefaultNaftahParserVisitor
           "visitArgumentDeclarationList(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitArgumentDeclarationList(ctx);
+    // TODO: this logic will be used by fiunction declaration once accessed
+    for (org.daiitech.naftah.core.parser.NaftahParser.ArgumentDeclarationContext argumentDeclaration :
+            ctx.argumentDeclaration()) {
+      visit(argumentDeclaration);
+    }
+    return null;
   }
 
   @Override
@@ -140,7 +172,17 @@ public class DefaultNaftahParserVisitor
           "visitArgumentDeclaration(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitArgumentDeclaration(ctx);
+    // TODO: this logic will be used by function declaration once accessed
+    String argumentName = ctx.ID().getText();
+    DeclaredArgument declaredArgument =
+            DeclaredArgument.of(
+                    ctx,
+                    argumentName,
+                    hasChild(ctx.CONSTANT()),
+                    visit(ctx.type()),
+                    visit(ctx.value())
+            );
+    return null;
   }
 
   @Override
@@ -151,7 +193,23 @@ public class DefaultNaftahParserVisitor
           "visitFunctionCall(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitFunctionCall(ctx);
+    Object result = null;
+    String functionName = ctx.ID().getText();
+    List<Pair<String, Object>> args = null;
+    if (hasChild(ctx.argumentList()))
+       args = (List<Pair<String, Object>>) visit(ctx.argumentList());
+
+    Object function = CONTEXT.getFunction(functionName, false);
+    if (function instanceof DeclaredFunction declaredFunction) {
+
+    } else if (function instanceof BuiltinFunction declaredFunction) {
+
+    } else if (function instanceof Method declaredFunction) {
+
+    } else
+      throw new RuntimeException("Variable not found: " + functionName);
+    // TODO: add support for all kind of functions using the qualifiedName
+    return result;
   }
 
   @Override
@@ -162,7 +220,13 @@ public class DefaultNaftahParserVisitor
           "visitArgumentList(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitArgumentList(ctx);
+    List<Pair<String, Object>> args = new ArrayList<>();
+    for (int i= 0; i <ctx.expression().size(); i++) {
+      String name = hasChild(ctx.ID(i)) ? ctx.ID(i).getText() : null;
+      Object value = visit(ctx.expression(i));
+      args.add(new Pair<>(name, value));  // Evaluate each expression in the argument list
+    }
+    return args;
   }
 
   @Override
@@ -173,7 +237,25 @@ public class DefaultNaftahParserVisitor
           "visitIfStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitIfStatement(ctx);
+    Object condition = visit(ctx.expression(0));  // Evaluate the condition expression
+    if (isTruthy(condition)) {
+      visit(ctx.block(0));  // If the condition is true, execute the 'then' block
+    } else {
+      // Iterate through elseif blocks
+      for (int i = 0; i < ctx.ELSEIF().size(); i++) {
+        Object elseifCondition = visit(ctx.expression(i));  // Evaluate elseif condition
+        if (isTruthy(elseifCondition)) {
+          visit(ctx.block(i + 1));  // Execute the corresponding elseif block if condition is true
+          return null;
+        }
+      }
+
+      // If no elseif was true, execute the else block (if it exists)
+      if (hasChild(ctx.ELSE())) {
+        visit(ctx.block(ctx.ELSEIF().size() + 1));  // Execute the 'else' block if present
+      }
+    }
+    return null;
   }
 
   @Override
@@ -184,7 +266,11 @@ public class DefaultNaftahParserVisitor
           "visitReturnStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitReturnStatement(ctx);
+    // TODO: this logic will be used by function declaration once accessed
+    if (hasChild(ctx.expression())) {
+      return visit(ctx.expression());  // Evaluate and return the result
+    }
+    return null;  // No expression after 'return' means returning null
   }
 
   @Override
@@ -194,7 +280,10 @@ public class DefaultNaftahParserVisitor
           "visitBlock(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return super.visitBlock(ctx);
+    for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement : ctx.statement()) {
+      visit(statement);  // Visit each statement in the block
+    }
+    return null;
   }
 
   @Override
