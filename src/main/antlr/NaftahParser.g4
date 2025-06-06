@@ -52,7 +52,7 @@ argumentDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 functionCall: ID LPAREN argumentList? RPAREN;
 
 // Argument list: Expressions separated by commas
-argumentList: expression (COMMA expression)*;
+argumentList: (ID ASSIGN)? expression (COMMA (ID ASSIGN)? expression)*;
 
 // If statement: An 'if' block followed by an optional 'else' block
 ifStatement: IF expression THEN block (ELSEIF expression THEN block)* (ELSE block)? END;
