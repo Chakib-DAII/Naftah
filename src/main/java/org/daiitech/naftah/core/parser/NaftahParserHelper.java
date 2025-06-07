@@ -20,9 +20,13 @@ public class NaftahParserHelper {
         return child != null;
     }
 
+    public static  <T,T1 extends Tree> boolean hasChildOfType(T child, Class<T1> type) {
+        return child != null && type.isAssignableFrom(child.getClass());
+    }
+
     public static  <T,T1 extends Tree> boolean hasChildOfType(List<T> children, Class<T1> type) {
         return !ObjectUtils.isEmpty(children)
-                && children.stream().anyMatch(child -> type.isAssignableFrom(child.getClass()));
+                && children.stream().anyMatch(child -> hasChildOfType(child, type));
     }
 
     public static  Object visit(org.daiitech.naftah.core.parser.NaftahParserBaseVisitor naftahParserBaseVisitor, ParseTree tree) {
