@@ -47,6 +47,8 @@ public final class NumberUtils {
    */
   public static Number parseDynamicNumber(String text) {
     Objects.requireNonNull(text, "text must not be null");
+    // Replace all decimal-like characters with a dot
+    text = text.replaceAll("[,٫،٬]", ".");
     try {
       if (text.contains(".") || text.toLowerCase().contains("e")) {
         try {
