@@ -132,9 +132,10 @@ public class DefaultNaftahParserVisitor
                     ctx,
                     variableName,
                     hasChild(ctx.CONSTANT()),
-                    visit(ctx.type()),
+                    hasChild(ctx.type()) ? visit(ctx.type()) : null,
                     visit(ctx.expression())
             );
+    // TODO: check if inside function to check if it matches any argument / parameter or previously declared and update if possible
     currentContext.defineVariable(variableName, declaredVariable);
     return null;
   }
@@ -203,6 +204,7 @@ public class DefaultNaftahParserVisitor
     // TODO:  and using an Enum as key of predefined ids to get values
     String functionName = ctx.ID().getText();
     String functionCallId = DefaultContext.FUNCTION_CALL_ID_GENERATOR.apply(depth, functionName);
+    currentContext.setFunctionCallId(functionCallId);
     List<Pair<String, Object>> args = new ArrayList<>();
     // TODO: add support to global variables as argument
     if (hasChild(ctx.argumentList()))
@@ -215,13 +217,11 @@ public class DefaultNaftahParserVisitor
         var finalArgs = prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
 
         currentContext.defineFunctionParameters(declaredFunction.getParameters().stream()
-                .map(parameter -> Map.entry(
-                        DefaultContext.PARAMETER_NAME_GENERATOR.apply(functionName, parameter.getName()), parameter))
+                .map(parameter -> Map.entry(parameter.getName(), parameter))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)), true);
 
         currentContext.defineFunctionArguments(finalArgs.entrySet().stream()
-                .map(argument -> Map.entry(
-                        DefaultContext.ARGUMENT_NAME_GENERATOR.apply(functionCallId, argument.getKey()), argument.getValue()))
+                .map(argument -> Map.entry(argument.getKey(), argument.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
         result = visit(declaredFunction.getBody());
@@ -234,6 +234,7 @@ public class DefaultNaftahParserVisitor
       }
     } else
       throw new RuntimeException("Function not found: " + functionName);
+    currentContext.setFunctionCallId(null);
     // TODO: add support for all kind of functions using the qualifiedName
     return result;
   }
