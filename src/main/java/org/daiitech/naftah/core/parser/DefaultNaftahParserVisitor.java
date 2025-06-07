@@ -2,7 +2,7 @@ package org.daiitech.naftah.core.parser;
 
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.not;
-import static org.daiitech.naftah.core.parser.NaftahParserHelper.hasChild;
+import static org.daiitech.naftah.core.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
 import java.lang.reflect.Method;
@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
-import org.daiitech.naftah.core.builtin.lang.DeclaredArgument;
+import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.core.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.core.builtin.utils.NumberUtils;
@@ -151,40 +151,37 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitArgumentDeclarationList(
-      org.daiitech.naftah.core.parser.NaftahParser.ArgumentDeclarationListContext ctx) {
+  public Object visitParameterDeclarationList(
+      org.daiitech.naftah.core.parser.NaftahParser.ParameterDeclarationListContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitArgumentDeclarationList(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    // TODO: this logic will be used by fiunction declaration once accessed
-    for (org.daiitech.naftah.core.parser.NaftahParser.ArgumentDeclarationContext argumentDeclaration :
-            ctx.argumentDeclaration()) {
-      visit(argumentDeclaration);
+    List<DeclaredParameter> args = new ArrayList<>();
+    for (org.daiitech.naftah.core.parser.NaftahParser.ParameterDeclarationContext argumentDeclaration :
+            ctx.parameterDeclaration()) {
+      args.add((DeclaredParameter) visit(argumentDeclaration));
     }
-    return null;
+    return args;
   }
 
   @Override
-  public Object visitArgumentDeclaration(
-      org.daiitech.naftah.core.parser.NaftahParser.ArgumentDeclarationContext ctx) {
+  public Object visitParameterDeclaration(
+      org.daiitech.naftah.core.parser.NaftahParser.ParameterDeclarationContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitArgumentDeclaration(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    // TODO: this logic will be used by function declaration once accessed
     String argumentName = ctx.ID().getText();
-    DeclaredArgument declaredArgument =
-            DeclaredArgument.of(
-                    ctx,
-                    argumentName,
-                    hasChild(ctx.CONSTANT()),
-                    visit(ctx.type()),
-                    visit(ctx.value())
-            );
-    return null;
+    return DeclaredParameter.of(
+            ctx,
+            argumentName,
+            hasChild(ctx.CONSTANT()),
+            hasChild(ctx.type()) ? visit(ctx.type()) : Object.class,
+            hasChild(ctx.value()) ? visit(ctx.value()) : null
+    );
   }
 
   @Override
@@ -197,19 +194,24 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     Object result = null;
     String functionName = ctx.ID().getText();
-    List<Pair<String, Object>> args = null;
+    List<Pair<String, Object>> args = new ArrayList<>();
     if (hasChild(ctx.argumentList()))
        args = (List<Pair<String, Object>>) visit(ctx.argumentList());
 
     Object function = CONTEXT.getFunction(functionName, false);
     if (function instanceof DeclaredFunction declaredFunction) {
-
+      prepareDeclaredFunction(this, declaredFunction);
+      var finalArgs = prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
+      CONTEXT.defineFunctionArguments(finalArgs);
+      visit(declaredFunction.getBody());
     } else if (function instanceof BuiltinFunction declaredFunction) {
-
+      throw new UnsupportedOperationException("Function %s of type: %s"
+              .formatted(functionName, BuiltinFunction.class.getName()));
     } else if (function instanceof Method declaredFunction) {
-
+      throw new UnsupportedOperationException("Function %s of type: %s"
+              .formatted(functionName, Method.class.getName()));
     } else
-      throw new RuntimeException("Variable not found: " + functionName);
+      throw new RuntimeException("Function not found: " + functionName);
     // TODO: add support for all kind of functions using the qualifiedName
     return result;
   }
@@ -268,7 +270,6 @@ public class DefaultNaftahParserVisitor
           "visitReturnStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    // TODO: this logic will be used by function declaration once accessed
     if (hasChild(ctx.expression())) {
       return visit(ctx.expression());  // Evaluate and return the result
     }
@@ -535,6 +536,7 @@ public class DefaultNaftahParserVisitor
           "visitBuiltInType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    // TODO: map types to java types
     return ctx.BuiltInType().getText();
   }
 
