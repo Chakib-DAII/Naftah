@@ -38,14 +38,14 @@ statement: block #blockStatement
 // Assignment: variable or constant assignment
 assignment: (VARIABLE | CONSTANT) ID (COLON type)? ASSIGN expression;
 
-// Function declaration: Can have arguments and return values
-functionDeclaration: FUNCTION ID LPAREN argumentDeclarationList? RPAREN (COLON returnType)? block;
+// Function declaration: Can have parameters and return values
+functionDeclaration: FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
 
-// Function declaration argument list: argumentDeclarations separated by commas
-argumentDeclarationList: argumentDeclaration (COMMA argumentDeclaration)*;
+// Function declaration parameter list: parameterDeclarations separated by commas
+parameterDeclarationList: parameterDeclaration (COMMA parameterDeclaration)*;
 
-// Argument declaration : argument id with optional type and assignment
-argumentDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
+// Parameter declaration : parameter id with optional type and assignment
+parameterDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 
 // Function call: Can have arguments and return values
 // TODO: add support for all kind of functions using the qualifiedName
@@ -61,6 +61,7 @@ ifStatement: IF expression THEN block (ELSEIF expression THEN block)* (ELSE bloc
 returnStatement: RETURN expression?;
 
 // Block: A block of statements enclosed in curly braces
+// TODO: add support to empty blocks
 block: LBRACE statement+ RBRACE;
 
 // Expressions: Can be value, binary operations
