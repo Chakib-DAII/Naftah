@@ -2,7 +2,9 @@ package org.daiitech.naftah.utils;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.BiFunction;
 
+import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.core.builtin.lang.DeclaredFunction;
@@ -14,23 +16,33 @@ import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
  * TODO: and attach it to the function or variable used at current execution
  */
 public class DefaultContext {
+  public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (depth, functionName) -> "%s-%s-%s".formatted(depth, functionName, UUID.randomUUID());
+  public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR = (functionName, parameterName) -> "%s-%s".formatted(functionName, parameterName);
+  public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (functionCallId, argumentName) -> "%s-%s".formatted(functionCallId, argumentName);
   private static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
 
-  public static DefaultContext newContext(Map<String, BuiltinFunction> builtinFunctions, Map<String, Method> jvmFunctions) {
+  public static DefaultContext registerContext(Map<String, BuiltinFunction> builtinFunctions, Map<String, Method> jvmFunctions) {
     return new DefaultContext(builtinFunctions, jvmFunctions);
   }
-  public static DefaultContext newContext(DefaultContext parent, Map<String, BuiltinFunction> builtinFunctions, Map<String, Method> jvmFunctions) {
-    return new DefaultContext(parent, builtinFunctions, jvmFunctions, null, null);
+
+  public static DefaultContext registerContext(Map<String, BuiltinFunction> builtinFunctions, Map<String, Method> jvmFunctions,
+                                               Map<String, DeclaredParameter> parameters , Map<String, Object> arguments) {
+    return new DefaultContext(builtinFunctions, jvmFunctions,  parameters, arguments);
   }
-  public static DefaultContext newContext(DefaultContext parent, Map<String, BuiltinFunction> builtinFunctions, Map<String, Method> jvmFunctions,
-                                          Map<String, DeclaredParameter> parameters , Map<String, Object> arguments) {
-    return new DefaultContext(parent, builtinFunctions, jvmFunctions, parameters, arguments);
+  public static DefaultContext registerContext(DefaultContext parent) {
+    return new DefaultContext(parent, null, null, null, null);
+  }
+  public static DefaultContext registerContext(DefaultContext parent, Map<String, DeclaredParameter> parameters , Map<String, Object> arguments) {
+    return new DefaultContext(parent, null, null, parameters, arguments);
   }
 
   public static DefaultContext getContextByDepth(int depth) {
     return CONTEXTS.get(depth);
   }
 
+  public static DefaultContext deregisterContext(int depth) {
+    return CONTEXTS.remove(depth);
+  }
 
   private final DefaultContext parent;
   private final int depth;
@@ -40,7 +52,6 @@ public class DefaultContext {
   private final Map<String, DeclaredFunction> functions = new HashMap<>();
   // TODO: those will exist in parent only (think about it)
   private final Map<String, BuiltinFunction> builtinFunctions;
-
   // TODO: those will exist in parent only (think about it)
   private final Map<String, Method> jvmFunctions;
 
@@ -52,9 +63,14 @@ public class DefaultContext {
     this(null, builtinFunctions, jvmFunctions, null, null);
   }
 
+  private DefaultContext(Map<String, BuiltinFunction> builtinFunctions, Map<String, Method> jvmFunctions,
+                         Map<String, DeclaredParameter> parameters , Map<String, Object> arguments) {
+    this(null, builtinFunctions, jvmFunctions,  parameters, arguments);
+  }
+
   private DefaultContext(DefaultContext parent, Map<String, BuiltinFunction> builtinFunctions, Map<String, Method> jvmFunctions,
                          Map<String, DeclaredParameter> parameters , Map<String, Object> arguments) {
-    if (parent == null && (builtinFunctions == null || jvmFunctions == null)) throw new IllegalStateException("Illegal usage.");
+    if (parent == null && (CONTEXTS.size() != 0 || (builtinFunctions == null || jvmFunctions == null))) throw new IllegalStateException("Illegal usage.");
     this.parent = parent;
     this.depth = parent == null ? 0 : parent.getDepth() + 1;
     this.builtinFunctions = builtinFunctions;
@@ -70,9 +86,9 @@ public class DefaultContext {
             || (parent != null && parent.containsVariable(name));
   }
 
-  public DeclaredVariable getVariable(String name, boolean safe) {
+  public Pair<Integer, DeclaredVariable> getVariable(String name, boolean safe) {
     if (variables.containsKey(name)) {
-      return variables.get(name);
+      return new Pair<>(depth, variables.get(name));
     } else if (parent != null) {
       return parent.getVariable(name, safe);
     }
@@ -114,16 +130,16 @@ public class DefaultContext {
             || (parent != null && parent.containsFunction(name));
   }
 
-  public Object getFunction(String name, boolean safe) {
+  public Pair<Integer, Object> getFunction(String name, boolean safe) {
     if (functions.containsKey(name)) {
-      return functions.get(name);
+      return new Pair<>(depth, functions.get(name));
     } else if (parent != null) {
       return parent.getFunction(name, safe);
     } else { // root parent
       if (builtinFunctions.containsKey(name)) {
-        return builtinFunctions.get(name);
+        return new Pair<>(depth, builtinFunctions.get(name));
       } else if (jvmFunctions.containsKey(name)) {
-        return jvmFunctions.get(name);
+        return new Pair<>(depth, jvmFunctions.get(name));
       }
     }
 
@@ -157,9 +173,9 @@ public class DefaultContext {
             || (parent != null && parent.containsFunctionParameter(name));
   }
 
-  public DeclaredParameter getFunctionParameter(String name, boolean safe) {
+  public Pair<Integer, DeclaredParameter> getFunctionParameter(String name, boolean safe) {
     if (parameters.containsKey(name)) {
-      return parameters.get(name);
+      return new Pair<>(depth, parameters.get(name));
     } else if (parent != null) {
       return parent.getFunctionParameter(name, safe);
     }
@@ -180,18 +196,22 @@ public class DefaultContext {
     }
   }
 
-  public void defineFunctionParameter(String name, DeclaredParameter value) {
+  public void defineFunctionParameter(String name, DeclaredParameter value, boolean lenient) {
     if (parameters.containsKey(name)) {
+      if (lenient) return;
+
       throw new IllegalStateException("Function parameter exists in current context");
     }
     parameters.put(name, value); // force local
   }
 
-  public void defineFunctionParameters(Map<String, DeclaredParameter> variables) {
+  public void defineFunctionParameters(Map<String, DeclaredParameter> parameters, boolean lenient) {
     if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
+      if (lenient) return;
+
       throw new IllegalStateException("Function parameter exists in current context");
     }
-    this.parameters.putAll(variables); // force local
+    this.parameters.putAll(parameters); // force local
   }
 
   // functions arguments
@@ -201,9 +221,9 @@ public class DefaultContext {
             || (parent != null && parent.containsFunctionArgument(name));
   }
 
-  public Object getFunctionArgument(String name, boolean safe) {
+  public Pair<Integer, Object> getFunctionArgument(String name, boolean safe) {
     if (arguments.containsKey(name)) {
-      return arguments.get(name);
+      return new Pair<>(depth, arguments.get(name));
     } else if (parent != null) {
       return parent.getFunctionArgument(name, safe);
     }
@@ -231,11 +251,11 @@ public class DefaultContext {
     arguments.put(name, value); // force local
   }
 
-  public void defineFunctionArguments(Map<String, Object> variables) {
+  public void defineFunctionArguments(Map<String, Object> arguments) {
     if (arguments.keySet().stream().anyMatch(this.arguments::containsKey)) {
       throw new IllegalStateException("Function argument exists in current context");
     }
-    this.arguments.putAll(variables); // force local
+    this.arguments.putAll(arguments); // force local
   }
 
   public int getDepth() {
