@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.core.builtin.lang.DeclaredFunction;
+import org.daiitech.naftah.core.builtin.utils.ObjectUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,8 +16,13 @@ import java.util.stream.IntStream;
  **/
 public class NaftahParserHelper {
 
-    public static  <T extends Tree> boolean hasChild(T tree) {
-        return tree != null;
+    public static  <T extends Tree> boolean hasChild(T child) {
+        return child != null;
+    }
+
+    public static  <T,T1 extends Tree> boolean hasChildOfType(List<T> children, Class<T1> type) {
+        return !ObjectUtils.isEmpty(children)
+                && children.stream().anyMatch(child -> type.isAssignableFrom(child.getClass()));
     }
 
     public static  Object visit(org.daiitech.naftah.core.parser.NaftahParserBaseVisitor naftahParserBaseVisitor, ParseTree tree) {
