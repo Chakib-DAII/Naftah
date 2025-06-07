@@ -6,12 +6,11 @@ import static org.daiitech.naftah.core.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
@@ -30,9 +29,7 @@ public class DefaultNaftahParserVisitor
 
   private static final Logger LOGGER = Logger.getLogger("DefaultNaftahParserVisitor");
   public static final String FORMATTER = "index: %s, text: %s, payload: %s";
-
-  // TODO: add the functions
-  public static final DefaultContext CONTEXT = DefaultContext.newContext(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
+  private int depth = 0;
 
   @Override
   public Object visitProgram(org.daiitech.naftah.core.parser.NaftahParser.ProgramContext ctx) {
@@ -41,6 +38,12 @@ public class DefaultNaftahParserVisitor
           "visitProgram(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    // TODO: add the functions (processed from classpath and provider annotations)
+    var rootContext =
+            hasChildOfType(ctx.statement(), org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class) ?
+                    DefaultContext.registerContext(Collections.emptyMap(), Collections.emptyMap(), new HashMap<>(), new HashMap<>()):
+                    DefaultContext.registerContext(Collections.emptyMap(), Collections.emptyMap());
+    depth = rootContext.getDepth();
     for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement :
         ctx.statement()) {
       visit(statement); // Visit each statement in the program
@@ -122,6 +125,7 @@ public class DefaultNaftahParserVisitor
           "visitAssignment(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     String variableName = ctx.ID().getText();
     DeclaredVariable declaredVariable =
             DeclaredVariable.of(
@@ -131,7 +135,7 @@ public class DefaultNaftahParserVisitor
                     visit(ctx.type()),
                     visit(ctx.expression())
             );
-    CONTEXT.defineVariable(variableName, declaredVariable);
+    currentContext.defineVariable(variableName, declaredVariable);
     return null;
   }
 
@@ -143,10 +147,11 @@ public class DefaultNaftahParserVisitor
           "visitFunctionDeclaration(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     String functionName = ctx.ID().getText();
     DeclaredFunction declaredFunction =
             DeclaredFunction.of(ctx);
-    CONTEXT.defineFunction(functionName, declaredFunction);
+    currentContext.defineFunction(functionName, declaredFunction);
     return null;
   }
 
@@ -192,24 +197,41 @@ public class DefaultNaftahParserVisitor
           "visitFunctionCall(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object result = null;
+    // TODO: add extra vars to context to get the function called and so on, it can be a free map
+    // TODO:  and using an Enum as key of predefined ids to get values
     String functionName = ctx.ID().getText();
+    String functionCallId = DefaultContext.FUNCTION_CALL_ID_GENERATOR.apply(depth, functionName);
     List<Pair<String, Object>> args = new ArrayList<>();
+    // TODO: add support to global variables as argument
     if (hasChild(ctx.argumentList()))
        args = (List<Pair<String, Object>>) visit(ctx.argumentList());
 
-    Object function = CONTEXT.getFunction(functionName, false);
-    if (function instanceof DeclaredFunction declaredFunction) {
-      prepareDeclaredFunction(this, declaredFunction);
-      var finalArgs = prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
-      CONTEXT.defineFunctionArguments(finalArgs);
-      visit(declaredFunction.getBody());
-    } else if (function instanceof BuiltinFunction declaredFunction) {
-      throw new UnsupportedOperationException("Function %s of type: %s"
-              .formatted(functionName, BuiltinFunction.class.getName()));
-    } else if (function instanceof Method declaredFunction) {
-      throw new UnsupportedOperationException("Function %s of type: %s"
-              .formatted(functionName, Method.class.getName()));
+    if (currentContext.containsFunction(functionName)) {
+      Object function = currentContext.getFunction(functionName, false).b;
+      if (function instanceof DeclaredFunction declaredFunction) {
+        prepareDeclaredFunction(this, declaredFunction);
+        var finalArgs = prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
+
+        currentContext.defineFunctionParameters(declaredFunction.getParameters().stream()
+                .map(parameter -> Map.entry(
+                        DefaultContext.PARAMETER_NAME_GENERATOR.apply(functionName, parameter.getName()), parameter))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)), true);
+
+        currentContext.defineFunctionArguments(finalArgs.entrySet().stream()
+                .map(argument -> Map.entry(
+                        DefaultContext.ARGUMENT_NAME_GENERATOR.apply(functionCallId, argument.getKey()), argument.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+
+        result = visit(declaredFunction.getBody());
+      } else if (function instanceof BuiltinFunction declaredFunction) {
+        throw new UnsupportedOperationException("Function %s of type: %s"
+                .formatted(functionName, BuiltinFunction.class.getName()));
+      } else if (function instanceof Method methodFunction) {
+        throw new UnsupportedOperationException("Function %s of type: %s"
+                .formatted(functionName, Method.class.getName()));
+      }
     } else
       throw new RuntimeException("Function not found: " + functionName);
     // TODO: add support for all kind of functions using the qualifiedName
@@ -283,9 +305,17 @@ public class DefaultNaftahParserVisitor
           "visitBlock(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var nextContext =
+            hasChildOfType(ctx.statement(), org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class) ?
+                    DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>()) :
+                    DefaultContext.registerContext(currentContext);
+    depth = nextContext.getDepth();
     for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement : ctx.statement()) {
       visit(statement);  // Visit each statement in the block
     }
+    DefaultContext.deregisterContext(depth);
+    depth--;
     return null;
   }
 
@@ -482,8 +512,9 @@ public class DefaultNaftahParserVisitor
           "visitStringValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     String value = ctx.STRING().getText();
-    return StringInterpolator.process(value, CONTEXT);
+    return StringInterpolator.process(value, currentContext);
   }
 
   @Override
@@ -493,6 +524,7 @@ public class DefaultNaftahParserVisitor
           "visitIdValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    // TODO: think about using id to variable or necessary other elements
     return ctx.ID().getText();
   }
 
@@ -548,6 +580,7 @@ public class DefaultNaftahParserVisitor
           "visitQualifiedNameType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    // TODO: think about using id to variable or necessary other elements
     return visit(ctx.qualifiedName());
   }
 
