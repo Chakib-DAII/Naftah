@@ -77,17 +77,18 @@ RBRACK     : ']';
 SEMI       : '؛';
 COLON      : ':';
 DOT        : '.';
-COMMA      : '،';
+COMMA      : ',' | '٫' | '،' | '٬';
 
 // Literals
-ID         : [أ-ي٠-٩_0-9][أ-ي_]*;
-NUMBER     : [٠-٩0-9]+ ((',' | '٫') [٠-٩0-9]+)?;
-STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) (~["\r\n])* (DoubleQuotationMark | DoubleQuotationMarkRight);
+ID         : [أ-ي٠-٩_0-9]* [أ-ي_] [أ-ي٠-٩_0-9]*;
+NUMBER     : [٠-٩0-9]+ (COMMA [٠-٩0-9]+)?;
+STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) (~["«»\r\n])* (DoubleQuotationMark | DoubleQuotationMarkRight);
 
 // Types
 VAR              : 'أي_نوع' | 'أي_نمط';
 
 fragment BOOLEAN : 'بوليان' | 'منطقي';
+fragment STRING_TYPE : 'تسلسل_أحرف' | 'تسلسل_حروف' | 'تسلسل_رموز';
 fragment CHAR    : 'حرف' | 'رمز';
 fragment BYTE    : 'عدد_قصير_جدا' | 'قصير_جدا';
 fragment SHORT   : 'عدد_قصير' | 'قصير';
@@ -98,6 +99,7 @@ fragment DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
 
 BuiltInType
     :   BOOLEAN
+    |   STRING_TYPE
     |   CHAR
     |   BYTE
     |   SHORT
