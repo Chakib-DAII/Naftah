@@ -2,22 +2,26 @@ package org.daiitech.naftah.core.builtin.lang;
 
 import org.daiitech.naftah.core.parser.NaftahParser;
 
+import java.util.List;
+
 /**
  * @author Chakib Daii defintion of function declared in Naftah script
  */
 public class DeclaredFunction {
   private final NaftahParser.FunctionDeclarationContext originalContext;
   private final String name;
-  private final NaftahParser.ArgumentDeclarationListContext arguments;
+  private final NaftahParser.ParameterDeclarationListContext parametersContext;
+  private List<DeclaredParameter> parameters;
   private final NaftahParser.BlockContext body;
-  private final NaftahParser.ReturnTypeContext returnType;
+  private final NaftahParser.ReturnTypeContext returnTypeContext;
+  private Object returnType;
 
   private DeclaredFunction(NaftahParser.FunctionDeclarationContext originalContext) {
     this.originalContext = originalContext;
     this.name = originalContext.ID().getText();
-    this.arguments = originalContext.argumentDeclarationList();
+    this.parametersContext = originalContext.parameterDeclarationList();
     this.body = originalContext.block();
-    this.returnType = originalContext.returnType();
+    this.returnTypeContext = originalContext.returnType();
   }
 
   public NaftahParser.FunctionDeclarationContext getOriginalContext() {
@@ -28,16 +32,32 @@ public class DeclaredFunction {
     return name;
   }
 
-  public NaftahParser.ArgumentDeclarationListContext getArguments() {
-    return arguments;
+  public NaftahParser.ParameterDeclarationListContext getParametersContext() {
+    return parametersContext;
+  }
+
+  public List<DeclaredParameter> getParameters() {
+    return parameters;
+  }
+
+  public void setParameters(List<DeclaredParameter> parameters) {
+    this.parameters = parameters;
   }
 
   public NaftahParser.BlockContext getBody() {
     return body;
   }
 
-  public NaftahParser.ReturnTypeContext getReturnType() {
+  public NaftahParser.ReturnTypeContext getReturnTypeContext() {
+    return returnTypeContext;
+  }
+
+  public Object getReturnType() {
     return returnType;
+  }
+
+  public void setReturnType(Object returnType) {
+    this.returnType = returnType;
   }
 
   @Override
