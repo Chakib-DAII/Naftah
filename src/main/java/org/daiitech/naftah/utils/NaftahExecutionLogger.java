@@ -1,6 +1,7 @@
 package org.daiitech.naftah.utils;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -44,9 +45,9 @@ public final class NaftahExecutionLogger {
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.FunctionDeclarationContext context)
       result = logExecution(doLog, context);
-    else if (ctx instanceof NaftahParser.ArgumentDeclarationListContext context)
+    else if (ctx instanceof NaftahParser.ParameterDeclarationListContext context)
       result = logExecution(doLog, context);
-    else if (ctx instanceof NaftahParser.ArgumentDeclarationContext context)
+    else if (ctx instanceof NaftahParser.ParameterDeclarationContext context)
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.FunctionCallContext context)
       result = logExecution(doLog, context);
@@ -124,734 +125,968 @@ public final class NaftahExecutionLogger {
   }
 
   public static String logExecution(boolean doLog, NaftahParser.ProgramContext ctx) {
-    String result =
-        """
-            ProgramContext::statement -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          ProgramContext::statement -> {
+                              %s
+                          }
+                          """
+                              .formatted(join(context.statement()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(join(ctx.statement()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.AssignmentStatementContext ctx) {
-    String result =
-        """
-            AssignmentStatementContext::assignment -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          AssignmentStatementContext::assignment -> {
+                              %s
+                          }
+                          """
+                              .formatted(logExecution(false, context.assignment()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(logExecution(false, ctx.assignment()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(
       boolean doLog, NaftahParser.FunctionDeclarationStatementContext ctx) {
-    String result =
-        """
-            FunctionDeclarationStatementContext::functionDeclaration: -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          FunctionDeclarationStatementContext::functionDeclaration: -> {
+                              %s
+                          }
+                          """
+                              .formatted(logExecution(false, context.functionDeclaration()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(logExecution(false, ctx.functionDeclaration()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.FunctionCallStatementContext ctx) {
-    String result =
-        """
-            FunctionCallStatementContext::functionCall -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          FunctionCallStatementContext::functionCall -> {
+                              %s
+                          }
+                          """
+                              .formatted(logExecution(false, context.functionCall()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(logExecution(false, ctx.functionCall()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.IfStatementStatementContext ctx) {
-    String result =
-        """
-            IfStatementStatementContext::ifStatement -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          IfStatementStatementContext::ifStatement -> {
+                              %s
+                          }
+                          """
+                              .formatted(logExecution(false, context.ifStatement()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(logExecution(false, ctx.ifStatement()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(
       boolean doLog, NaftahParser.ReturnStatementStatementContext ctx) {
-    String result =
-        """
-            ReturnStatementStatementContext::returnStatement -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          ReturnStatementStatementContext::returnStatement -> {
+                              %s
+                          }
+                          """
+                              .formatted(logExecution(false, context.returnStatement()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(logExecution(false, ctx.returnStatement()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.BlockStatementContext ctx) {
-    String result =
-        """
-            BlockStatementContext::block -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          BlockStatementContext::block -> {
+                              %s
+                          }
+                          """
+                              .formatted(logExecution(false, context.block()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(logExecution(false, ctx.block()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.AssignmentContext ctx) {
-    String result =
-        """
-            AssignmentContext::VARIABLE -> %s
-            AssignmentContext::CONSTANT -> %s
-            AssignmentContext::ID -> %s
-            AssignmentContext::COLON -> %s
-            AssignmentContext::type -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          AssignmentContext::VARIABLE -> %s
+                          AssignmentContext::CONSTANT -> %s
+                          AssignmentContext::ID -> %s
+                          AssignmentContext::COLON -> %s
+                          AssignmentContext::type -> {
+                              %s
+                          }
+                          AssignmentContext::ASSIGN -> %s
+                          AssignmentContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(
+                                      context.VARIABLE(),
+                                      context.CONSTANT(),
+                                      context.ID(),
+                                      context.COLON(),
+                                      logExecution(false, context.type()),
+                                      context.ASSIGN(),
+                                      logExecution(false, context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            AssignmentContext::ASSIGN -> %s
-            AssignmentContext::expression -> {
-                %s
-            }
-            """
-            .formatted(
-                ctx.VARIABLE(),
-                ctx.CONSTANT(),
-                ctx.ID(),
-                ctx.COLON(),
-                logExecution(false, ctx.type()),
-                ctx.ASSIGN(),
-                logExecution(false, ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.FunctionDeclarationContext ctx) {
-    String result =
-        """
-            FunctionDeclarationContext::FUNCTION -> %s
-            FunctionDeclarationContext::ID -> %s
-            FunctionDeclarationContext::LPAREN -> %s
-            FunctionDeclarationContext::argumentDeclarationList -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          FunctionDeclarationContext::FUNCTION -> %s
+                          FunctionDeclarationContext::ID -> %s
+                          FunctionDeclarationContext::LPAREN -> %s
+                          FunctionDeclarationContext::parameterDeclarationList -> {
+                              %s
+                          }
+                          FunctionDeclarationContext::RPAREN -> %s
+                          FunctionDeclarationContext::COLON -> %s
+                          FunctionDeclarationContext::returnType -> {
+                              %s
+                          }
+                          FunctionDeclarationContext::block -> {
+                              %s
+                          }
+                          """
+                              .formatted(
+                                      context.FUNCTION(),
+                                      context.ID(),
+                                      context.LPAREN(),
+                                      logExecution(false, context.parameterDeclarationList()),
+                                      context.RPAREN(),
+                                      context.COLON(),
+                                      logExecution(false, context.returnType()),
+                                      logExecution(false, context.block()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            FunctionDeclarationContext::RPAREN -> %s
-            FunctionDeclarationContext::COLON -> %s
-            FunctionDeclarationContext::returnType -> {
-                %s
-            }
-            FunctionDeclarationContext::block -> {
-                %s
-            }
-            """
-            .formatted(
-                ctx.FUNCTION(),
-                ctx.ID(),
-                ctx.LPAREN(),
-                logExecution(false, ctx.argumentDeclarationList()),
-                ctx.RPAREN(),
-                ctx.COLON(),
-                logExecution(false, ctx.returnType()),
-                logExecution(false, ctx.block()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(
-      boolean doLog, NaftahParser.ArgumentDeclarationListContext ctx) {
-    String result =
-        """
-            ArgumentDeclarationListContext::COMMA -> %s
-            ArgumentDeclarationListContext::argumentDeclaration -> {
-                %s
+      boolean doLog, NaftahParser.ParameterDeclarationListContext ctx) {
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          ArgumentDeclarationListContext::COMMA -> %s
+                          ArgumentDeclarationListContext::parameterDeclaration -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.COMMA(), join(context.parameterDeclaration()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(ctx.COMMA(), join(ctx.argumentDeclaration()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
-  public static String logExecution(boolean doLog, NaftahParser.ArgumentDeclarationContext ctx) {
-    String result =
-        """
-            ArgumentDeclarationContext::ID -> %s
-            ArgumentDeclarationContext::COLON -> %s
-            ArgumentDeclarationContext::type -> {
-                %s
+  public static String logExecution(boolean doLog, NaftahParser.ParameterDeclarationContext ctx) {
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          ParameterDeclarationContext::ID -> %s
+                          ParameterDeclarationContext::COLON -> %s
+                          ParameterDeclarationContext::type -> {
+                              %s
+                          }
+                          ParameterDeclarationContext::ASSIGN -> %s
+                          ParameterDeclarationContext::value -> {
+                              %s
+                          }
+                          """
+                              .formatted(
+                                      context.ID(),
+                                      context.COLON(),
+                                      logExecution(false, context.type()),
+                                      context.ASSIGN(),
+                                      logExecution(false, context.value()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            ArgumentDeclarationContext::ASSIGN -> %s
-            ArgumentDeclarationContext::value -> {
-                %s
-            }
-            """
-            .formatted(
-                ctx.ID(),
-                ctx.COLON(),
-                logExecution(false, ctx.type()),
-                ctx.ASSIGN(),
-                logExecution(false, ctx.value()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.FunctionCallContext ctx) {
-    String result =
-        """
-            FunctionCallContext::ID -> %s
-            FunctionCallContext::LPAREN -> %s
-            FunctionCallContext::argumentList -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          FunctionCallContext::ID -> %s
+                          FunctionCallContext::LPAREN -> %s
+                          FunctionCallContext::argumentList -> {
+                              %s
+                          }
+                          FunctionCallContext::RPAREN -> %s
+                          """
+                              .formatted(
+                                      context.ID(), context.LPAREN(), logExecution(false, context.argumentList()), context.RPAREN());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            FunctionCallContext::RPAREN -> %s
-            """
-            .formatted(
-                ctx.ID(), ctx.LPAREN(), logExecution(false, ctx.argumentList()), ctx.RPAREN());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.ArgumentListContext ctx) {
-    String result =
-        """
-            ArgumentListContext::COMMA -> %s
-            ArgumentListContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          ArgumentListContext::COMMA -> %s
+                          ArgumentListContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.COMMA(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(ctx.COMMA(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.IfStatementContext ctx) {
-    String result =
-        """
-            IfStatementContext::IF -> %s
-            IfStatementContext::THEN -> %s
-            IfStatementContext::ELSEIF -> %s
-            IfStatementContext::ELSE -> %s
-            IfStatementContext::END -> %s
-            IfStatementContext::block -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          IfStatementContext::IF -> %s
+                          IfStatementContext::THEN -> %s
+                          IfStatementContext::ELSEIF -> %s
+                          IfStatementContext::ELSE -> %s
+                          IfStatementContext::END -> %s
+                          IfStatementContext::block -> {
+                              %s
+                          }
+                          IfStatementContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(
+                                      context.IF(),
+                                      context.THEN(),
+                                      context.ELSEIF(),
+                                      context.ELSE(),
+                                      context.END(),
+                                      join(context.block()),
+                                      join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            IfStatementContext::expression -> {
-                %s
-            }
-            """
-            .formatted(
-                ctx.IF(),
-                ctx.THEN(),
-                ctx.ELSEIF(),
-                ctx.ELSE(),
-                ctx.END(),
-                join(ctx.block()),
-                join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.ReturnStatementContext ctx) {
-    String result =
-        """
-            ReturnStatementContext::RETURN -> %s
-            ReturnStatementContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          ReturnStatementContext::RETURN -> %s
+                          ReturnStatementContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.RETURN(), context.expression());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.RETURN(), ctx.expression());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.BlockContext ctx) {
-    String result =
-        """
-            BlockContext::LBRACE -> %s
-            BlockContext::statement -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          BlockContext::LBRACE -> %s
+                          BlockContext::statement -> {
+                              %s
+                          }
+                          BlockContext::RBRACE -> %s
+                          """
+                              .formatted(context.LBRACE(), join(context.statement()), context.RBRACE());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            BlockContext::RBRACE -> %s
-            """
-            .formatted(ctx.LBRACE(), join(ctx.statement()), ctx.RBRACE());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.ValueExpressionContext ctx) {
-    String result =
-        """
-            ValueExpressionContext::value -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          ValueExpressionContext::value -> {
+                              %s
+                          }
+                          """
+                              .formatted(logExecution(false, context.value()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(logExecution(false, ctx.value()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.MinusExpressionContext ctx) {
-    String result =
-        """
-            MinusExpressionContext::MINUS -> %s
-            MinusExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          MinusExpressionContext::MINUS -> %s
+                          MinusExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.MINUS(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.MINUS(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.ParenthesisExpressionContext ctx) {
-    String result =
-        """
-                ParenthesisExpressionContext::MINUS -> %s
-                ParenthesisExpressionContext::expression -> {
-                    %s
-                }
-                ParenthesisExpressionContext::RPAREN -> %s
-                """
-            .formatted(ctx.LPAREN(), logExecution(false, ctx.expression()), ctx.RPAREN());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                              ParenthesisExpressionContext::MINUS -> %s
+                              ParenthesisExpressionContext::expression -> {
+                                  %s
+                              }
+                              ParenthesisExpressionContext::RPAREN -> %s
+                              """
+                              .formatted(context.LPAREN(), logExecution(false, context.expression()), context.RPAREN());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.ModExpressionContext ctx) {
-    String result =
-        """
-            ModExpressionContext::MOD -> %s
-            ModExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          ModExpressionContext::MOD -> %s
+                          ModExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.MOD(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.MOD(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.DivExpressionContext ctx) {
-    String result =
-        """
-            DivExpressionContext::DIV -> %s
-            DivExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          DivExpressionContext::DIV -> %s
+                          DivExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.DIV(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.DIV(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.GreaterThanExpressionContext ctx) {
-    String result =
-        """
-            GreaterThanExpressionContext::GT -> %s
-            GreaterThanExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          GreaterThanExpressionContext::GT -> %s
+                          GreaterThanExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.GT(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.GT(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(
       boolean doLog, NaftahParser.LessThanEqualsExpressionContext ctx) {
-    String result =
-        """
-            LessThanEqualsExpressionContext::LE -> %s
-            LessThanEqualsExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          LessThanEqualsExpressionContext::LE -> %s
+                          LessThanEqualsExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.LE(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.LE(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(
       boolean doLog, NaftahParser.GreaterThanEqualsExpressionContext ctx) {
-    String result =
-        """
-            GreaterThanEqualsExpressionContext::GE -> %s
-            GreaterThanEqualsExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          GreaterThanEqualsExpressionContext::GE -> %s
+                          GreaterThanEqualsExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.GE(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(ctx.GE(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.NotEqualsExpressionContext ctx) {
-    String result =
-        """
-            NotEqualsExpressionContext::NEQ -> %s
-            NotEqualsExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          NotEqualsExpressionContext::NEQ -> %s
+                          NotEqualsExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.NEQ(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(ctx.NEQ(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.EqualsExpressionContext ctx) {
-    String result =
-        """
-            EqualsExpressionContext::EQ -> %s
-            EqualsExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          EqualsExpressionContext::EQ -> %s
+                          EqualsExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.EQ(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(ctx.EQ(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.LessThanExpressionContext ctx) {
-    String result =
-        """
-            LessThanExpressionContext::LT -> %s
-            LessThanExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          LessThanExpressionContext::LT -> %s
+                          LessThanExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.LT(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(ctx.LT(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.PlusExpressionContext ctx) {
-    String result =
-        """
-            PlusExpressionContext::PLUS -> %s
-            PlusExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          PlusExpressionContext::PLUS -> %s
+                          PlusExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.PLUS(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(ctx.PLUS(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.MulExpressionContext ctx) {
-    String result =
-        """
-            MulExpressionContext::MUL -> %s
-            MulExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          MulExpressionContext::MUL -> %s
+                          MulExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.MUL(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
             }
-            """
-            .formatted(ctx.MUL(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.NumberValueContext ctx) {
-    String result =
-        """
-            NumberValueContext::NUMBER -> %s
-            """.formatted(ctx.NUMBER());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          NumberValueContext::NUMBER -> %s
+                          """.formatted(context.NUMBER());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.StringValueContext ctx) {
-    String result =
-        """
-            StringValueContext::STRING -> %s
-            """.formatted(ctx.STRING());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          StringValueContext::STRING -> %s
+                          """.formatted(context.STRING());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.IdValueContext ctx) {
-    String result = """
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result = """
             IdValueContext::ID -> %s
-            """.formatted(ctx.ID());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+            """.formatted(context.ID());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.VoidReturnTypeContext ctx) {
-    String result =
-        """
-            VoidReturnTypeContext::VOID -> %s
-            """.formatted(ctx.VOID());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          VoidReturnTypeContext::VOID -> %s
+                          """.formatted(context.VOID());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.TypeReturnTypeContext ctx) {
-    String result =
-        """
-            VoidReturnTypeContext::type -> %s
-            """
-            .formatted(logExecution(false, ctx.type()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          VoidReturnTypeContext::type -> %s
+                          """
+                              .formatted(logExecution(false, context.type()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.VarTypeContext ctx) {
-    String result = """
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result = """
             VarTypeContext::VAR -> %s
-            """.formatted(ctx.VAR());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+            """.formatted(context.VAR());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.BuiltInTypeContext ctx) {
-    String result =
-        """
-            BuiltInTypeContext::BuiltInType -> %s
-            """
-            .formatted(ctx.BuiltInType());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          BuiltInTypeContext::BuiltInType -> %s
+                          """
+                              .formatted(context.BuiltInType());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.QualifiedNameTypeContext ctx) {
-    String result =
-        """
-            QualifiedNameTypeContext::qualifiedName -> %s
-            """
-            .formatted(logExecution(false, ctx.qualifiedName()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                          QualifiedNameTypeContext::qualifiedName -> %s
+                          """
+                              .formatted(logExecution(false, context.qualifiedName()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.QualifiedNameContext ctx) {
-    String result =
-        """
-                QualifiedNameContext::ID -> %s
-                QualifiedNameContext::COLON -> %s
-                """
-            .formatted(ctx.ID(), ctx.COLON());
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    return Optional.ofNullable(ctx).map(
+            context -> {
+              String result =
+                      """
+                              QualifiedNameContext::ID -> %s
+                              QualifiedNameContext::COLON -> %s
+                              """
+                              .formatted(context.ID(), context.COLON());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+
+            }
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.BitwiseXorExpressionContext ctx) {
-    String result =
-        """
-            BitwiseXorExpressionContext::BITWISE_XOR -> %s
-            BitwiseXorExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          BitwiseXorExpressionContext::BITWISE_XOR -> %s
+                          BitwiseXorExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.BITWISE_XOR(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.BITWISE_XOR(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.NotExpressionContext ctx) {
-    String result =
-        """
-            NotExpressionContext::NOT -> %s
-            NotExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          NotExpressionContext::NOT -> %s
+                          NotExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.NOT(), logExecution(false, context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.NOT(), logExecution(false, ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.PreDecrementExpressionContext ctx) {
-    String result =
-        """
-            PreDecrementExpressionContext::DECREMENT -> %s
-            PreDecrementExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          PreDecrementExpressionContext::DECREMENT -> %s
+                          PreDecrementExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.DECREMENT(), logExecution(false, context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.DECREMENT(), logExecution(false, ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(
       boolean doLog, NaftahParser.PostDecrementExpressionContext ctx) {
-    String result =
-        """
-            PostDecrementExpressionContext::DECREMENT -> %s
-            PostDecrementExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          PostDecrementExpressionContext::DECREMENT -> %s
+                          PostDecrementExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.DECREMENT(), logExecution(false, context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.DECREMENT(), logExecution(false, ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.BitwiseOrExpressionContext ctx) {
-    String result =
-        """
-            BitwiseOrExpressionContext::BITWISE_OR -> %s
-            BitwiseOrExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          BitwiseOrExpressionContext::BITWISE_OR -> %s
+                          BitwiseOrExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.BITWISE_OR(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.BITWISE_OR(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.BitwiseNotExpressionContext ctx) {
-    String result =
-        """
-            BitwiseXorExpressionContext::BITWISE_NOT -> %s
-            BitwiseXorExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          BitwiseXorExpressionContext::BITWISE_NOT -> %s
+                          BitwiseXorExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.BITWISE_NOT(), logExecution(false, context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.BITWISE_NOT(), logExecution(false, ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.BitwiseAndExpressionContext ctx) {
-    String result =
-        """
-            BitwiseAndExpressionContext::BITWISE_AND -> %s
-            BitwiseAndExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          BitwiseAndExpressionContext::BITWISE_AND -> %s
+                          BitwiseAndExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.BITWISE_AND(), join(context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.BITWISE_AND(), join(ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(boolean doLog, NaftahParser.PreIncrementExpressionContext ctx) {
-    String result =
-        """
-            PreIncrementExpressionContext::INCREMENT -> %s
-            PreIncrementExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          PreIncrementExpressionContext::INCREMENT -> %s
+                          PreIncrementExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.INCREMENT(), logExecution(false, context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.INCREMENT(), logExecution(false, ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 
   public static String logExecution(
       boolean doLog, NaftahParser.PostIncrementExpressionContext ctx) {
-    String result =
-        """
-            PostIncrementExpressionContext::INCREMENT -> %s
-            PostIncrementExpressionContext::expression -> {
-                %s
+    return Optional.ofNullable(ctx).map(
+            context -> {
+
+              String result =
+                      """
+                          PostIncrementExpressionContext::INCREMENT -> %s
+                          PostIncrementExpressionContext::expression -> {
+                              %s
+                          }
+                          """
+                              .formatted(context.INCREMENT(), logExecution(false, context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
             }
-            """
-            .formatted(ctx.INCREMENT(), logExecution(false, ctx.expression()));
-    if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-      LOGGER.finest(result);
-    }
-    return result;
+    ).orElse("");
   }
 }
