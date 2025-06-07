@@ -34,6 +34,7 @@ public final class StringInterpolator {
   }
 
   public static synchronized String interpolate(String template, DefaultContext context) {
+    // TODO: add parameters default values
     Function<String, Object> replacementFunction =
         varName -> Optional.ofNullable(context.getFunctionArgument(varName, true))
                 .flatMap(functionArgument -> Optional.ofNullable(functionArgument.b)
