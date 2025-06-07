@@ -3,6 +3,7 @@ package org.daiitech.naftah.utils;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
@@ -46,6 +47,7 @@ public class DefaultContext {
 
   private final DefaultContext parent;
   private final int depth;
+  private String functionCallId; // current function in execution inside a context
   private final Map<String, DeclaredVariable> variables = new HashMap<>();
   private final Map<String, DeclaredParameter> parameters; // only use in function call context
   private final Map<String, Object> arguments; // only use in function call context
@@ -126,7 +128,9 @@ public class DefaultContext {
   // functions
 
   public boolean containsFunction(String name) {
-    return functions.containsKey(name) || builtinFunctions.containsKey(name) || jvmFunctions.containsKey(name)
+    return functions.containsKey(name)
+            || (builtinFunctions != null && builtinFunctions.containsKey(name))
+            || (jvmFunctions != null && jvmFunctions.containsKey(name))
             || (parent != null && parent.containsFunction(name));
   }
 
@@ -168,13 +172,26 @@ public class DefaultContext {
 
   // functions parameters
 
+  public String getFunctionParameterName(String name) {
+    if (functionCallId != null) {
+      String functionName = functionCallId.split("-")[1];
+      name = DefaultContext.PARAMETER_NAME_GENERATOR.apply(functionName, name);
+    }
+    return name;
+  }
+
   public boolean containsFunctionParameter(String name) {
-    return parameters != null && parameters.containsKey(name)
-            || (parent != null && parent.containsFunctionParameter(name));
+    if (parameters != null) {
+      name = getFunctionParameterName(name);
+      return parameters.containsKey(name)
+              || (parent != null && parent.containsFunctionParameter(name));
+    }
+    return false;
   }
 
   public Pair<Integer, DeclaredParameter> getFunctionParameter(String name, boolean safe) {
-    if (parameters.containsKey(name)) {
+    if (parameters != null && parameters.containsKey(name)) {
+      name = getFunctionParameterName(name);
       return new Pair<>(depth, parameters.get(name));
     } else if (parent != null) {
       return parent.getFunctionParameter(name, safe);
@@ -187,7 +204,8 @@ public class DefaultContext {
   }
 
   public void setFunctionParameter(String name, DeclaredParameter value) {
-    if (parameters.containsKey(name)) {
+    if (parameters != null && parameters.containsKey(name)) {
+      name = getFunctionParameterName(name);
       parameters.put(name, value);
     } else if (parent != null && parent.containsFunctionParameter(name)) {
       parent.setFunctionParameter(name, value);
@@ -197,32 +215,52 @@ public class DefaultContext {
   }
 
   public void defineFunctionParameter(String name, DeclaredParameter value, boolean lenient) {
-    if (parameters.containsKey(name)) {
-      if (lenient) return;
+    if (parameters != null) {
+      name = getFunctionParameterName(name);
+      if (parameters.containsKey(name)) {
+        if (lenient) return;
 
-      throw new IllegalStateException("Function parameter exists in current context");
+        throw new IllegalStateException("Function parameter exists in current context");
+      }
+      parameters.put(name, value); // force local
     }
-    parameters.put(name, value); // force local
   }
 
   public void defineFunctionParameters(Map<String, DeclaredParameter> parameters, boolean lenient) {
-    if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
-      if (lenient) return;
+    if (this.parameters != null) {
+      if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
+        if (lenient) return;
 
-      throw new IllegalStateException("Function parameter exists in current context");
+        throw new IllegalStateException("Function parameter exists in current context");
+      }
+      this.parameters.putAll(parameters.entrySet().stream()
+              .map(entry -> Map.entry(getFunctionParameterName(entry.getKey()), entry.getValue()))
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))); // force local
+      
     }
-    this.parameters.putAll(parameters); // force local
   }
 
   // functions arguments
 
+  public String getFunctionArgumentName(String name) {
+    if (functionCallId != null) {
+      name = DefaultContext.ARGUMENT_NAME_GENERATOR.apply(functionCallId, name);
+    }
+    return name;
+  }
+
   public boolean containsFunctionArgument(String name) {
-    return arguments != null && arguments.containsKey(name)
-            || (parent != null && parent.containsFunctionArgument(name));
+    if ( arguments != null) {
+      name = getFunctionArgumentName(name);
+      return arguments.containsKey(name)
+              || (parent != null && parent.containsFunctionArgument(name));
+    }
+    return false;
   }
 
   public Pair<Integer, Object> getFunctionArgument(String name, boolean safe) {
-    if (arguments.containsKey(name)) {
+    if (arguments != null && arguments.containsKey(name)) {
+      name = getFunctionArgumentName(name);
       return new Pair<>(depth, arguments.get(name));
     } else if (parent != null) {
       return parent.getFunctionArgument(name, safe);
@@ -235,30 +273,46 @@ public class DefaultContext {
   }
 
   public void setFunctionArgument(String name, Object value) {
-    if (arguments.containsKey(name)) {
+    if (arguments != null && arguments.containsKey(name)) {
+      name = getFunctionArgumentName(name);
       arguments.put(name, value);
     } else if (parent != null && parent.containsFunctionArgument(name)) {
       parent.setFunctionArgument(name, value);
-    } else {
+    } else if (arguments != null){
       arguments.put(name, value); // define new in current context
     }
   }
 
   public void defineFunctionArgument(String name, Object value) {
-    if (arguments.containsKey(name)) {
-      throw new IllegalStateException("Function argument exists in current context");
+    if (arguments != null) {
+      name = getFunctionArgumentName(name);
+      if (arguments.containsKey(name)) {
+        throw new IllegalStateException("Function argument exists in current context");
+      }
+      arguments.put(name, value); // force local
     }
-    arguments.put(name, value); // force local
   }
 
   public void defineFunctionArguments(Map<String, Object> arguments) {
-    if (arguments.keySet().stream().anyMatch(this.arguments::containsKey)) {
-      throw new IllegalStateException("Function argument exists in current context");
+    if (this.arguments != null) {
+      if (arguments.keySet().stream().anyMatch(this.arguments::containsKey)) {
+        throw new IllegalStateException("Function argument exists in current context");
+      }
+      this.arguments.putAll(arguments.entrySet().stream()
+              .map(entry -> Map.entry(getFunctionArgumentName(entry.getKey()), entry.getValue()))
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))); // force local
     }
-    this.arguments.putAll(arguments); // force local
   }
 
   public int getDepth() {
     return depth;
+  }
+
+  public String getFunctionCallId() {
+    return functionCallId;
+  }
+
+  public void setFunctionCallId(String functionCallId) {
+    this.functionCallId = functionCallId;
   }
 }
