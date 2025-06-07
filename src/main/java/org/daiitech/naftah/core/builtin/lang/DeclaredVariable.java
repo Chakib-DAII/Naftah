@@ -11,6 +11,8 @@ public class DeclaredVariable {
     private final boolean constant;
     private final Object type;
     private final Object defaultValue;
+    private Object currentValue;
+    private boolean updatedCurrentValue;
 
     private DeclaredVariable(NaftahParser.AssignmentContext originalContext, String name, boolean constant,
                             Object type, Object defaultValue) {
@@ -40,6 +42,17 @@ public class DeclaredVariable {
     public Object getDefaultValue() {
         return defaultValue;
     }
+    public Object getValue() {
+        return updatedCurrentValue ? currentValue : defaultValue;
+    }
+
+    public void setValue(Object currentValue) {
+        if (constant)
+            throw new IllegalStateException("setting a constant");
+        this.currentValue = currentValue;
+        if (!updatedCurrentValue) updatedCurrentValue = true;
+    }
+
 
     @Override
     public String toString() {
