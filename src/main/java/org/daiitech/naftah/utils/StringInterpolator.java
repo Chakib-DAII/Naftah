@@ -35,10 +35,15 @@ public final class StringInterpolator {
 
   public static synchronized String interpolate(String template, DefaultContext context) {
     Function<String, Object> replacementFunction =
-        varName -> Optional.ofNullable(context.getVariable(varName, true))
-                .flatMap(declaredVariable -> Optional.ofNullable(declaredVariable.getValue())
+        varName -> Optional.ofNullable(context.getFunctionArgument(varName, true))
+                .flatMap(functionArgument -> Optional.ofNullable(functionArgument.b)
                         .map(Object::toString))
-                .orElse(NULL);
+                .orElseGet(
+                        () -> Optional.ofNullable(context.getVariable(varName, true))
+                                .flatMap(declaredVariable -> Optional.ofNullable(declaredVariable.b.getValue())
+                                        .map(Object::toString))
+                                .orElse(NULL)
+                );
     return interpolate(template, replacementFunction);
   }
 
