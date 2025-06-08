@@ -40,18 +40,24 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     // TODO: add the functions (processed from classpath and provider annotations)
     var rootContext =
-        hasChildOfType(
-                ctx.statement(),
+        hasChildOrSubChildOfType(
+                ctx,
                 org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class)
             ? DefaultContext.registerContext(
                 Collections.emptyMap(), Collections.emptyMap(), new HashMap<>(), new HashMap<>())
             : DefaultContext.registerContext(Collections.emptyMap(), Collections.emptyMap());
     depth = rootContext.getDepth();
+    Object result = null;
     for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement :
         ctx.statement()) {
-      visit(statement); // Visit each statement in the program
+      result = visit(statement); // Visit each statement in the program
+      // break program after executing a return statemnt
+      if (rootContext.hasAnyExecutedChildOrSubChildOfType(statement,
+              org.daiitech.naftah.core.parser.NaftahParser.ReturnStatementStatementContext.class))
+        break;
     }
-    return null;
+    rootContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -62,7 +68,10 @@ public class DefaultNaftahParserVisitor
           "visitAssignmentStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.assignment());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result =   visit(ctx.assignment());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -73,7 +82,10 @@ public class DefaultNaftahParserVisitor
           "visitFunctionDeclarationStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.functionDeclaration());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result =   visit(ctx.functionDeclaration());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -84,7 +96,10 @@ public class DefaultNaftahParserVisitor
           "visitFunctionCallStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.functionCall());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result =  visit(ctx.functionCall());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -95,7 +110,10 @@ public class DefaultNaftahParserVisitor
           "visitIfStatementStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.ifStatement());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result = visit(ctx.ifStatement());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -106,7 +124,10 @@ public class DefaultNaftahParserVisitor
           "visitReturnStatementStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.returnStatement());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result =  visit(ctx.returnStatement());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -117,7 +138,10 @@ public class DefaultNaftahParserVisitor
           "visitBlockStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.block());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result =  visit(ctx.block());
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -140,7 +164,8 @@ public class DefaultNaftahParserVisitor
     // TODO: check if inside function to check if it matches any argument / parameter or previously
     // declared and update if possible
     currentContext.defineVariable(variableName, declaredVariable);
-    return null;
+        currentContext.markExecuted(ctx); // Mark as executed
+    return declaredVariable;
   }
 
   @Override
@@ -155,7 +180,8 @@ public class DefaultNaftahParserVisitor
     String functionName = ctx.ID().getText();
     DeclaredFunction declaredFunction = DeclaredFunction.of(ctx);
     currentContext.defineFunction(functionName, declaredFunction);
-    return null;
+        currentContext.markExecuted(ctx); // Mark as executed
+    return declaredFunction;
   }
 
   @Override
@@ -166,11 +192,13 @@ public class DefaultNaftahParserVisitor
           "visitArgumentDeclarationList(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     List<DeclaredParameter> args = new ArrayList<>();
     for (org.daiitech.naftah.core.parser.NaftahParser.ParameterDeclarationContext
         argumentDeclaration : ctx.parameterDeclaration()) {
       args.add((DeclaredParameter) visit(argumentDeclaration));
     }
+        currentContext.markExecuted(ctx); // Mark as executed
     return args;
   }
 
@@ -182,13 +210,16 @@ public class DefaultNaftahParserVisitor
           "visitArgumentDeclaration(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     String argumentName = ctx.ID().getText();
-    return DeclaredParameter.of(
+    var result =  DeclaredParameter.of(
         ctx,
         argumentName,
         hasChild(ctx.CONSTANT()),
         hasChild(ctx.type()) ? visit(ctx.type()) : Object.class,
         hasChild(ctx.value()) ? visit(ctx.value()) : null);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -239,6 +270,7 @@ public class DefaultNaftahParserVisitor
     } else throw new RuntimeException("Function not found: " + functionName);
     currentContext.setFunctionCallId(null);
     // TODO: add support for all kind of functions using the qualifiedName
+        currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
 
@@ -250,12 +282,14 @@ public class DefaultNaftahParserVisitor
           "visitArgumentList(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     List<Pair<String, Object>> args = new ArrayList<>();
     for (int i = 0; i < ctx.expression().size(); i++) {
       String name = hasChild(ctx.ID(i)) ? ctx.ID(i).getText() : null;
       Object value = visit(ctx.expression(i));
       args.add(new Pair<>(name, value)); // Evaluate each expression in the argument list
     }
+        currentContext.markExecuted(ctx); // Mark as executed
     return args;
   }
 
@@ -267,25 +301,28 @@ public class DefaultNaftahParserVisitor
           "visitIfStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    Object result = null;
     Object condition = visit(ctx.expression(0)); // Evaluate the condition expression
     if (isTruthy(condition)) {
-      visit(ctx.block(0)); // If the condition is true, execute the 'then' block
+      result = visit(ctx.block(0)); // If the condition is true, execute the 'then' block
     } else {
       // Iterate through elseif blocks
       for (int i = 0; i < ctx.ELSEIF().size(); i++) {
         Object elseifCondition = visit(ctx.expression(i)); // Evaluate elseif condition
         if (isTruthy(elseifCondition)) {
-          visit(ctx.block(i + 1)); // Execute the corresponding elseif block if condition is true
-          return null;
+          result = visit(ctx.block(i + 1)); // Execute the corresponding elseif block if condition is true
+          break;
         }
       }
 
       // If no elseif was true, execute the else block (if it exists)
       if (hasChild(ctx.ELSE())) {
-        visit(ctx.block(ctx.ELSEIF().size() + 1)); // Execute the 'else' block if present
+        result = visit(ctx.block(ctx.ELSEIF().size() + 1)); // Execute the 'else' block if present
       }
     }
-    return null;
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -296,10 +333,13 @@ public class DefaultNaftahParserVisitor
           "visitReturnStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    Object result = null;
     if (hasChild(ctx.expression())) {
-      return visit(ctx.expression()); // Evaluate and return the result
+      result = visit(ctx.expression()); // Evaluate and return the result
     }
-    return null; // No expression after 'return' means returning null
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result; // No expression after 'return' means returning null
   }
 
   @Override
@@ -311,23 +351,29 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     var nextContext =
-        hasChildOfType(
-                    ctx.statement(),
+        hasChildOrSubChildOfType(
+                    ctx,
                     org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class)
-                || hasChildOfType(
-                    ctx.statement(),
+                || hasChildOrSubChildOfType(
+                    ctx,
                     org.daiitech.naftah.core.parser.NaftahParser.FunctionCallExpressionContext
                         .class)
             ? DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
             : DefaultContext.registerContext(currentContext);
     depth = nextContext.getDepth();
+    Object result = null;
     for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement :
         ctx.statement()) {
-      visit(statement); // Visit each statement in the block
+      result = visit(statement); // Visit each statement in the block
+      // break program after executing a return statemnt
+      if (nextContext.hasAnyExecutedChildOrSubChildOfType(statement,
+              org.daiitech.naftah.core.parser.NaftahParser.ReturnStatementStatementContext.class))
+        break;
     }
     DefaultContext.deregisterContext(depth);
     depth--;
-    return null;
+    nextContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -338,7 +384,10 @@ public class DefaultNaftahParserVisitor
           "visitValueExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.value());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result =  visit(ctx.value());
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -349,9 +398,12 @@ public class DefaultNaftahParserVisitor
           "visitMinusExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.subtract(left, right);
+    var result =  NumberUtils.subtract(left, right);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -362,7 +414,10 @@ public class DefaultNaftahParserVisitor
           "visitParenthesisExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.expression());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result =  visit(ctx.expression());
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -373,9 +428,12 @@ public class DefaultNaftahParserVisitor
           "visitModExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.modulo(left, right);
+    var result =  NumberUtils.modulo(left, right);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -386,9 +444,12 @@ public class DefaultNaftahParserVisitor
           "visitDivExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.divide(left, right);
+    var result =   NumberUtils.divide(left, right);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -399,9 +460,12 @@ public class DefaultNaftahParserVisitor
           "visitGreaterThanExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.compare(left, right) > 0;
+    var result =   NumberUtils.compare(left, right) > 0;
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -412,9 +476,12 @@ public class DefaultNaftahParserVisitor
           "visitLessThanEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.compare(left, right) <= 0;
+    var result =  NumberUtils.compare(left, right) <= 0;
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -425,11 +492,14 @@ public class DefaultNaftahParserVisitor
           "visitGreaterThanEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
     // y}
-    return NumberUtils.compare(left, right) >= 0;
+    var result =  NumberUtils.compare(left, right) >= 0;
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -440,11 +510,14 @@ public class DefaultNaftahParserVisitor
           "visitNotEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
     // y}
-    return NumberUtils.compare(left, right) != 0;
+    var result =   NumberUtils.compare(left, right) != 0;
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -455,11 +528,14 @@ public class DefaultNaftahParserVisitor
           "visitEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
     // y}
-    return NumberUtils.equals(left, right);
+    var result =   NumberUtils.equals(left, right);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -470,11 +546,14 @@ public class DefaultNaftahParserVisitor
           "visitLessThanExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
     // y}
-    return NumberUtils.compare(left, right) < 0;
+    var result =  NumberUtils.compare(left, right) < 0;
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -485,7 +564,11 @@ public class DefaultNaftahParserVisitor
           "visitFunctionCallExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.functionCall());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    // TODO: callstack for possible recursive calls
+    var result =  visit(ctx.functionCall());
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -496,9 +579,12 @@ public class DefaultNaftahParserVisitor
           "visitPlusExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.add(left, right);
+    var result = NumberUtils.add(left, right);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -509,9 +595,12 @@ public class DefaultNaftahParserVisitor
           "visitMulExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.multiply(left, right);
+    var result =  NumberUtils.multiply(left, right);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -522,8 +611,11 @@ public class DefaultNaftahParserVisitor
           "visitNumberValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = ctx.NUMBER().getText();
-    return NumberUtils.parseDynamicNumber(value);
+    var result =  NumberUtils.parseDynamicNumber(value);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -536,7 +628,9 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     String value = ctx.STRING().getText();
-    return StringInterpolator.process(value, currentContext);
+    var result =StringInterpolator.process(value, currentContext);
+            currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -548,7 +642,9 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     String id = ctx.ID().getText();
-    return VARIABLE_GETTER.apply(id, currentContext);
+    var result = VARIABLE_GETTER.apply(id, currentContext);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -559,7 +655,11 @@ public class DefaultNaftahParserVisitor
           "visitVoidReturnType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return ctx.VOID().getText();
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    // TODO: map types to java types
+    var result = ctx.VOID().getText();
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -570,7 +670,10 @@ public class DefaultNaftahParserVisitor
           "visitTypeReturnType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return visit(ctx.type());
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result = visit(ctx.type());
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -580,7 +683,11 @@ public class DefaultNaftahParserVisitor
           "visitVarType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return ctx.VAR().getText();
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    // TODO: map types to java types
+    var result = ctx.VAR().getText();
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -591,8 +698,11 @@ public class DefaultNaftahParserVisitor
           "visitBuiltInType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     // TODO: map types to java types
-    return ctx.BuiltInType().getText();
+    var result = ctx.BuiltInType().getText();
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -603,8 +713,11 @@ public class DefaultNaftahParserVisitor
           "visitQualifiedNameType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     // TODO: think about using id to variable or necessary other elements
-    return visit(ctx.qualifiedName());
+    var result = visit(ctx.qualifiedName());
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -615,6 +728,7 @@ public class DefaultNaftahParserVisitor
           "visitQualifiedName(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
     for (int i = 0; i < ctx.ID().size(); i++) {
@@ -622,6 +736,7 @@ public class DefaultNaftahParserVisitor
       if (i != ctx.ID().size() - 1) // if not the last
       result.get().append(ctx.ID());
     }
+        currentContext.markExecuted(ctx); // Mark as executed
     return result.get().toString();
   }
 
@@ -633,9 +748,12 @@ public class DefaultNaftahParserVisitor
           "visitBitwiseXorExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.xor(left, right);
+    var result =  NumberUtils.xor(left, right);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -646,7 +764,10 @@ public class DefaultNaftahParserVisitor
           "visitNotExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    return not(visit(ctx.expression()));
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result =not(visit(ctx.expression()));
+            currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -657,8 +778,11 @@ public class DefaultNaftahParserVisitor
           "visitPreDecrementExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    return NumberUtils.PreDecrement(value);
+    var result = NumberUtils.PreDecrement(value);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -669,8 +793,11 @@ public class DefaultNaftahParserVisitor
           "visitPostDecrementExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    return NumberUtils.PreDecrement(value);
+    var result =NumberUtils.PreDecrement(value);
+            currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -681,9 +808,12 @@ public class DefaultNaftahParserVisitor
           "visitBitwiseOrExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.or(left, right);
+    var result = NumberUtils.or(left, right);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -694,8 +824,11 @@ public class DefaultNaftahParserVisitor
           "visitBitwiseNotExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    return NumberUtils.not(value);
+    var result = NumberUtils.not(value);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -706,9 +839,12 @@ public class DefaultNaftahParserVisitor
           "visitBitwiseAndExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    return NumberUtils.and(left, right);
+    var result = NumberUtils.and(left, right);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -719,8 +855,11 @@ public class DefaultNaftahParserVisitor
           "visitPreIncrementExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    return NumberUtils.PreIncrement(value);
+    var result = NumberUtils.PreIncrement(value);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 
   @Override
@@ -731,7 +870,10 @@ public class DefaultNaftahParserVisitor
           "visitPostIncrementExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    return NumberUtils.PostIncrement(value);
+    var result = NumberUtils.PostIncrement(value);
+        currentContext.markExecuted(ctx); // Mark as executed
+    return result;
   }
 }
