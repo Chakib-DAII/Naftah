@@ -19,7 +19,6 @@ public class NaftahParserHelper {
   // Cache to store computed subtrees per node
   private static final Map<ParseTree, List<ParseTree>> SUB_TREE_CACHE = new IdentityHashMap<>();
 
-
   public static <T extends Tree> boolean hasChild(T child) {
     return child != null;
   }
@@ -36,22 +35,25 @@ public class NaftahParserHelper {
   public static <T extends Tree> boolean hasChildOrSubChildOfType(ParseTree ctx, Class<T> type) {
     var children = getAllChildren(ctx);
     return !ObjectUtils.isEmpty(children)
-            && children.stream().anyMatch(child -> hasChildOfType(child, type));
+        && children.stream().anyMatch(child -> hasChildOfType(child, type));
   }
 
-  public static <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(ParseTree ctx, Class<T> type, ParseTreeProperty<Boolean> executedParseTreeProperty) {
-    return getAllChildrenOfType(ctx, type)
-            .stream()
-            .anyMatch(child -> Optional.ofNullable(executedParseTreeProperty)
+  public static <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(
+      ParseTree ctx, Class<T> type, ParseTreeProperty<Boolean> executedParseTreeProperty) {
+    return getAllChildrenOfType(ctx, type).stream()
+        .anyMatch(
+            child ->
+                Optional.ofNullable(executedParseTreeProperty)
                     .map(parseTreeProperty -> parseTreeProperty.get(child))
                     .orElse(false));
   }
 
-  public static <T extends Tree> List<ParseTree> getAllChildrenOfType(ParseTree ctx, Class<T> type){
+  public static <T extends Tree> List<ParseTree> getAllChildrenOfType(
+      ParseTree ctx, Class<T> type) {
     var children = getAllChildren(ctx);
     return !ObjectUtils.isEmpty(children)
-            ? children.stream().filter(child -> hasChildOfType(child, type))
-            .toList() : List.of();
+        ? children.stream().filter(child -> hasChildOfType(child, type)).toList()
+        : List.of();
   }
 
   // Collects all nodes in the subtree rooted at 'ctx'
@@ -68,15 +70,15 @@ public class NaftahParserHelper {
   }
 
   private static void collect(ParseTree node, List<ParseTree> out) {
-    out.add(node);  // Include the node itself
+    out.add(node); // Include the node itself
     for (int i = 0; i < node.getChildCount(); i++) {
       collect(node.getChild(i), out);
     }
   }
 
   public static Object visit(
-          org.daiitech.naftah.core.parser.NaftahParserBaseVisitor naftahParserBaseVisitor,
-          ParseTree tree) {
+      org.daiitech.naftah.core.parser.NaftahParserBaseVisitor naftahParserBaseVisitor,
+      ParseTree tree) {
     return naftahParserBaseVisitor.visit(tree);
   }
 

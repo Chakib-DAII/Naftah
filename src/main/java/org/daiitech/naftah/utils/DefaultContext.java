@@ -14,9 +14,9 @@ import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.core.parser.NaftahParserHelper;
 
 /**
- * @author Chakib Daii
- *  <br> TODO: think about a way to vreate child context everytime TODO: and attach it
- *     to the function or variable used at current execution
+ * @author Chakib Daii <br>
+ *     TODO: think about a way to vreate child context everytime TODO: and attach it to the function
+ *     or variable used at current execution
  */
 public class DefaultContext {
   public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR =
@@ -366,15 +366,18 @@ public class DefaultContext {
   }
 
   public boolean isExecuted(ParseTree node) {
-    return prepareParseTreeExecution() && Optional.ofNullable(parseTreeExecution.get(node))
-            .orElse(false);
+    return prepareParseTreeExecution()
+        && Optional.ofNullable(parseTreeExecution.get(node)).orElse(false);
   }
 
-  public <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(ParseTree node, Class<T> type) {
-    return prepareParseTreeExecution() && getChildren(true).stream()
-            .anyMatch( currentContext ->
-            NaftahParserHelper.hasAnyExecutedChildOrSubChildOfType(node, type, currentContext.parseTreeExecution)
-    );
+  public <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(
+      ParseTree node, Class<T> type) {
+    return prepareParseTreeExecution()
+        && getChildren(true).stream()
+            .anyMatch(
+                currentContext ->
+                    NaftahParserHelper.hasAnyExecutedChildOrSubChildOfType(
+                        node, type, currentContext.parseTreeExecution));
   }
 
   private boolean prepareParseTreeExecution() {
@@ -392,11 +395,12 @@ public class DefaultContext {
   public List<DefaultContext> getChildren() {
     return getChildren(false);
   }
+
   public List<DefaultContext> getChildren(boolean includeParent) {
     return CONTEXTS.entrySet().stream()
-            .filter(entry -> includeParent ? entry.getKey() >= depth : entry.getKey() > depth)
-            .map(Map.Entry::getValue)
-            .toList();
+        .filter(entry -> includeParent ? entry.getKey() >= depth : entry.getKey() > depth)
+        .map(Map.Entry::getValue)
+        .toList();
   }
 
   public String getFunctionCallId() {
