@@ -5,13 +5,17 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import org.antlr.v4.runtime.misc.Pair;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.core.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.core.parser.NaftahParserHelper;
 
 /**
- * @author Chakib Daii TODO: think about a way to vreate child context everytime TODO: and attach it
+ * @author Chakib Daii
+ *  <br> TODO: think about a way to vreate child context everytime TODO: and attach it
  *     to the function or variable used at current execution
  */
 public class DefaultContext {
@@ -42,6 +46,8 @@ public class DefaultContext {
                                               Optional.ofNullable(declaredVariable.b.getValue())
                                                   .map(Object::toString))
                                       .orElse(null)));
+
+  // CONTEXTS
   private static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
 
   public static DefaultContext registerContext(
@@ -73,12 +79,29 @@ public class DefaultContext {
   }
 
   public static DefaultContext deregisterContext(int depth) {
-    return CONTEXTS.remove(depth);
+    DefaultContext context = CONTEXTS.remove(depth);
+    if (context.parent != null && context.parseTreeExecution != null) {
+      context.parent.parseTreeExecution.copyFrom(context.parseTreeExecution);
+    }
+    return context;
   }
 
+  // CALL STACK
+  private static final Stack<Pair<? extends Tree, Object>> CALL_STACK = new Stack<>();
+
+  public static void pushCall(Pair<? extends Tree, Object> call) {
+    CALL_STACK.push(call);
+  }
+
+  public static Pair<? extends Tree, Object> popCall(Pair<? extends Tree, Object> call) {
+    return CALL_STACK.pop();
+  }
+
+  // instance
   private final DefaultContext parent;
   private final int depth;
   private String functionCallId; // current function in execution inside a context
+  private NaftahParseTreeProperty<Boolean> parseTreeExecution;
   private final Map<String, DeclaredVariable> variables = new HashMap<>();
   private Map<String, DeclaredParameter> parameters; // only use in function call context
   private Map<String, Object> arguments; // only use in function call context
@@ -335,8 +358,45 @@ public class DefaultContext {
     this.arguments.putAll(arguments); // force local
   }
 
+  // execution tree
+
+  public void markExecuted(ParseTree node) {
+    prepareParseTreeExecution();
+    parseTreeExecution.put(node, true);
+  }
+
+  public boolean isExecuted(ParseTree node) {
+    return prepareParseTreeExecution() && Optional.ofNullable(parseTreeExecution.get(node))
+            .orElse(false);
+  }
+
+  public <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(ParseTree node, Class<T> type) {
+    return prepareParseTreeExecution() && getChildren(true).stream()
+            .anyMatch( currentContext ->
+            NaftahParserHelper.hasAnyExecutedChildOrSubChildOfType(node, type, currentContext.parseTreeExecution)
+    );
+  }
+
+  private boolean prepareParseTreeExecution() {
+    if (parseTreeExecution == null) {
+      parseTreeExecution = new NaftahParseTreeProperty<>();
+      return false;
+    }
+    return true;
+  }
+
   public int getDepth() {
     return depth;
+  }
+
+  public List<DefaultContext> getChildren() {
+    return getChildren(false);
+  }
+  public List<DefaultContext> getChildren(boolean includeParent) {
+    return CONTEXTS.entrySet().stream()
+            .filter(entry -> includeParent ? entry.getKey() >= depth : entry.getKey() > depth)
+            .map(Map.Entry::getValue)
+            .toList();
   }
 
   public String getFunctionCallId() {
