@@ -1,8 +1,7 @@
 package org.daiitech.naftah.core.builtin.lang;
 
-import org.daiitech.naftah.core.parser.NaftahParser;
-
 import java.util.List;
+import org.daiitech.naftah.core.parser.NaftahParser;
 
 /**
  * @author Chakib Daii defintion of function declared in Naftah script

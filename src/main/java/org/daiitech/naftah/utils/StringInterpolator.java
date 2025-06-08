@@ -1,13 +1,13 @@
 package org.daiitech.naftah.utils;
 
+import static org.daiitech.naftah.utils.DefaultContext.VARIABLE_GETTER;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.daiitech.naftah.utils.DefaultContext.VARIABLE_GETTER;
 
 /**
  * @author Chakib Daii
@@ -36,9 +36,8 @@ public final class StringInterpolator {
   }
 
   public static synchronized String interpolate(String template, DefaultContext context) {
-    Function<String, Object> replacementFunction = varName ->
-            Optional.ofNullable(VARIABLE_GETTER.apply(varName, context))
-            .orElse(NULL);
+    Function<String, Object> replacementFunction =
+        varName -> Optional.ofNullable(VARIABLE_GETTER.apply(varName, context)).orElse(NULL);
     return interpolate(template, replacementFunction);
   }
 

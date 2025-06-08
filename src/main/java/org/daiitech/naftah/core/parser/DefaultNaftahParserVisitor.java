@@ -12,11 +12,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
-import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.core.builtin.lang.DeclaredFunction;
+import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.core.builtin.utils.NumberUtils;
 import org.daiitech.naftah.utils.DefaultContext;
@@ -41,9 +40,12 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     // TODO: add the functions (processed from classpath and provider annotations)
     var rootContext =
-            hasChildOfType(ctx.statement(), org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class) ?
-                    DefaultContext.registerContext(Collections.emptyMap(), Collections.emptyMap(), new HashMap<>(), new HashMap<>()):
-                    DefaultContext.registerContext(Collections.emptyMap(), Collections.emptyMap());
+        hasChildOfType(
+                ctx.statement(),
+                org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class)
+            ? DefaultContext.registerContext(
+                Collections.emptyMap(), Collections.emptyMap(), new HashMap<>(), new HashMap<>())
+            : DefaultContext.registerContext(Collections.emptyMap(), Collections.emptyMap());
     depth = rootContext.getDepth();
     for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement :
         ctx.statement()) {
@@ -129,14 +131,14 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     String variableName = ctx.ID().getText();
     DeclaredVariable declaredVariable =
-            DeclaredVariable.of(
-                    ctx,
-                    variableName,
-                    hasChild(ctx.CONSTANT()),
-                    hasChild(ctx.type()) ? visit(ctx.type()) : null,
-                    visit(ctx.expression())
-            );
-    // TODO: check if inside function to check if it matches any argument / parameter or previously declared and update if possible
+        DeclaredVariable.of(
+            ctx,
+            variableName,
+            hasChild(ctx.CONSTANT()),
+            hasChild(ctx.type()) ? visit(ctx.type()) : null,
+            visit(ctx.expression()));
+    // TODO: check if inside function to check if it matches any argument / parameter or previously
+    // declared and update if possible
     currentContext.defineVariable(variableName, declaredVariable);
     return null;
   }
@@ -151,8 +153,7 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     String functionName = ctx.ID().getText();
-    DeclaredFunction declaredFunction =
-            DeclaredFunction.of(ctx);
+    DeclaredFunction declaredFunction = DeclaredFunction.of(ctx);
     currentContext.defineFunction(functionName, declaredFunction);
     return null;
   }
@@ -166,8 +167,8 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     List<DeclaredParameter> args = new ArrayList<>();
-    for (org.daiitech.naftah.core.parser.NaftahParser.ParameterDeclarationContext argumentDeclaration :
-            ctx.parameterDeclaration()) {
+    for (org.daiitech.naftah.core.parser.NaftahParser.ParameterDeclarationContext
+        argumentDeclaration : ctx.parameterDeclaration()) {
       args.add((DeclaredParameter) visit(argumentDeclaration));
     }
     return args;
@@ -183,12 +184,11 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     String argumentName = ctx.ID().getText();
     return DeclaredParameter.of(
-            ctx,
-            argumentName,
-            hasChild(ctx.CONSTANT()),
-            hasChild(ctx.type()) ? visit(ctx.type()) : Object.class,
-            hasChild(ctx.value()) ? visit(ctx.value()) : null
-    );
+        ctx,
+        argumentName,
+        hasChild(ctx.CONSTANT()),
+        hasChild(ctx.type()) ? visit(ctx.type()) : Object.class,
+        hasChild(ctx.value()) ? visit(ctx.value()) : null);
   }
 
   @Override
@@ -208,33 +208,35 @@ public class DefaultNaftahParserVisitor
     currentContext.setFunctionCallId(functionCallId);
     List<Pair<String, Object>> args = new ArrayList<>();
     // TODO: add support to global variables as argument
-    if (hasChild(ctx.argumentList()))
-       args = (List<Pair<String, Object>>) visit(ctx.argumentList());
+    if (hasChild(ctx.argumentList())) args = (List<Pair<String, Object>>) visit(ctx.argumentList());
 
     if (currentContext.containsFunction(functionName)) {
       Object function = currentContext.getFunction(functionName, false).b;
       if (function instanceof DeclaredFunction declaredFunction) {
         prepareDeclaredFunction(this, declaredFunction);
-        var finalArgs = prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
+        var finalArgs =
+            prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
 
-        currentContext.defineFunctionParameters(declaredFunction.getParameters().stream()
+        currentContext.defineFunctionParameters(
+            declaredFunction.getParameters().stream()
                 .map(parameter -> Map.entry(parameter.getName(), parameter))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)), true);
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
+            true);
 
-        currentContext.defineFunctionArguments(finalArgs.entrySet().stream()
+        currentContext.defineFunctionArguments(
+            finalArgs.entrySet().stream()
                 .map(argument -> Map.entry(argument.getKey(), argument.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
         result = visit(declaredFunction.getBody());
       } else if (function instanceof BuiltinFunction declaredFunction) {
-        throw new UnsupportedOperationException("Function %s of type: %s"
-                .formatted(functionName, BuiltinFunction.class.getName()));
+        throw new UnsupportedOperationException(
+            "Function %s of type: %s".formatted(functionName, BuiltinFunction.class.getName()));
       } else if (function instanceof Method methodFunction) {
-        throw new UnsupportedOperationException("Function %s of type: %s"
-                .formatted(functionName, Method.class.getName()));
+        throw new UnsupportedOperationException(
+            "Function %s of type: %s".formatted(functionName, Method.class.getName()));
       }
-    } else
-      throw new RuntimeException("Function not found: " + functionName);
+    } else throw new RuntimeException("Function not found: " + functionName);
     currentContext.setFunctionCallId(null);
     // TODO: add support for all kind of functions using the qualifiedName
     return result;
@@ -249,10 +251,10 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     List<Pair<String, Object>> args = new ArrayList<>();
-    for (int i= 0; i <ctx.expression().size(); i++) {
+    for (int i = 0; i < ctx.expression().size(); i++) {
       String name = hasChild(ctx.ID(i)) ? ctx.ID(i).getText() : null;
       Object value = visit(ctx.expression(i));
-      args.add(new Pair<>(name, value));  // Evaluate each expression in the argument list
+      args.add(new Pair<>(name, value)); // Evaluate each expression in the argument list
     }
     return args;
   }
@@ -265,22 +267,22 @@ public class DefaultNaftahParserVisitor
           "visitIfStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    Object condition = visit(ctx.expression(0));  // Evaluate the condition expression
+    Object condition = visit(ctx.expression(0)); // Evaluate the condition expression
     if (isTruthy(condition)) {
-      visit(ctx.block(0));  // If the condition is true, execute the 'then' block
+      visit(ctx.block(0)); // If the condition is true, execute the 'then' block
     } else {
       // Iterate through elseif blocks
       for (int i = 0; i < ctx.ELSEIF().size(); i++) {
-        Object elseifCondition = visit(ctx.expression(i));  // Evaluate elseif condition
+        Object elseifCondition = visit(ctx.expression(i)); // Evaluate elseif condition
         if (isTruthy(elseifCondition)) {
-          visit(ctx.block(i + 1));  // Execute the corresponding elseif block if condition is true
+          visit(ctx.block(i + 1)); // Execute the corresponding elseif block if condition is true
           return null;
         }
       }
 
       // If no elseif was true, execute the else block (if it exists)
       if (hasChild(ctx.ELSE())) {
-        visit(ctx.block(ctx.ELSEIF().size() + 1));  // Execute the 'else' block if present
+        visit(ctx.block(ctx.ELSEIF().size() + 1)); // Execute the 'else' block if present
       }
     }
     return null;
@@ -295,9 +297,9 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     if (hasChild(ctx.expression())) {
-      return visit(ctx.expression());  // Evaluate and return the result
+      return visit(ctx.expression()); // Evaluate and return the result
     }
-    return null;  // No expression after 'return' means returning null
+    return null; // No expression after 'return' means returning null
   }
 
   @Override
@@ -309,13 +311,19 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     var nextContext =
-            hasChildOfType(ctx.statement(), org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class)
-                    || hasChildOfType(ctx.statement(), org.daiitech.naftah.core.parser.NaftahParser.FunctionCallExpressionContext.class) ?
-                    DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>()) :
-                    DefaultContext.registerContext(currentContext);
+        hasChildOfType(
+                    ctx.statement(),
+                    org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class)
+                || hasChildOfType(
+                    ctx.statement(),
+                    org.daiitech.naftah.core.parser.NaftahParser.FunctionCallExpressionContext
+                        .class)
+            ? DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
+            : DefaultContext.registerContext(currentContext);
     depth = nextContext.getDepth();
-    for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement : ctx.statement()) {
-      visit(statement);  // Visit each statement in the block
+    for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement :
+        ctx.statement()) {
+      visit(statement); // Visit each statement in the block
     }
     DefaultContext.deregisterContext(depth);
     depth--;
@@ -470,11 +478,12 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitFunctionCallExpression(org.daiitech.naftah.core.parser.NaftahParser.FunctionCallExpressionContext ctx) {
+  public Object visitFunctionCallExpression(
+      org.daiitech.naftah.core.parser.NaftahParser.FunctionCallExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitFunctionCallExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitFunctionCallExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     return visit(ctx.functionCall());
   }
@@ -608,10 +617,10 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
-    for (int i= 0; i <ctx.ID().size(); i++) {
+    for (int i = 0; i < ctx.ID().size(); i++) {
       result.get().append(ctx.ID(i));
-      if (i != ctx.ID().size() -1) // if not the last
-        result.get().append(ctx.ID());
+      if (i != ctx.ID().size() - 1) // if not the last
+      result.get().append(ctx.ID());
     }
     return result.get().toString();
   }
