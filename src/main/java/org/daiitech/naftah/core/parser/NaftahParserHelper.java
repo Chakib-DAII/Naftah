@@ -63,14 +63,12 @@ public class NaftahParserHelper {
         Map<String, Object> finalArguments = null;
         if (namedArguments.isEmpty()) {
             if (arguments.size() < requiredParams.size()) throw new RuntimeException("Too few arguments");
-            if (requiredParams.size() < arguments.size())
-                throw new RuntimeException("Too many unnamed arguments");
             // process non named args
             finalArguments =
                     IntStream.range(0, arguments.size())
                             .mapToObj(i -> {
                                 var argument = arguments.get(i);
-                                var param = requiredParams.get(i);
+                                var param = requiredParams.size() >= i ? parameters.get(i) : requiredParams.get(i);
                                 return Map.entry(param.getName(), argument.b);
                             })
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
