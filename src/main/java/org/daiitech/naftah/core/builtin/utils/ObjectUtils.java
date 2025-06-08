@@ -18,6 +18,7 @@ public final class ObjectUtils {
 
     // Number (includes Integer, Double, etc.)
     if (obj instanceof Number num) {
+      // TODO: enhance to support all kind of numbers (using DynamicNumber)
       double value = num.doubleValue();
       return value != 0.0 && !Double.isNaN(value);
     }
