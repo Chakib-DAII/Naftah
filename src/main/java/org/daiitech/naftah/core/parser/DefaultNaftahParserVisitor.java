@@ -3,7 +3,7 @@ package org.daiitech.naftah.core.parser;
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.not;
 import static org.daiitech.naftah.core.parser.NaftahParserHelper.*;
-import static org.daiitech.naftah.utils.DefaultContext.VARIABLE_GETTER;
+import static org.daiitech.naftah.utils.DefaultContext.*;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
 import java.lang.reflect.Method;
@@ -246,23 +246,24 @@ public class DefaultNaftahParserVisitor
     if (currentContext.containsFunction(functionName)) {
       Object function = currentContext.getFunction(functionName, false).b;
       if (function instanceof DeclaredFunction declaredFunction) {
-        prepareDeclaredFunction(this, declaredFunction);
-        var finalArgs =
-            prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
+        try {
+          prepareDeclaredFunction(this, declaredFunction);
+          var finalArgs =
+              prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
 
-        currentContext.defineFunctionParameters(
-            declaredFunction.getParameters().stream()
-                .map(parameter -> Map.entry(parameter.getName(), parameter))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
-            true);
+          currentContext.defineFunctionParameters(
+              declaredFunction.getParameters().stream()
+                  .map(parameter -> Map.entry(parameter.getName(), parameter))
+                  .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
+              true);
 
-        currentContext.defineFunctionArguments(
-            finalArgs.entrySet().stream()
-                .map(argument -> Map.entry(argument.getKey(), argument.getValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-
-        result = visit(declaredFunction.getBody());
-      } else if (function instanceof BuiltinFunction declaredFunction) {
+          currentContext.defineFunctionArguments(finalArgs);
+          pushCall(declaredFunction, finalArgs);
+          result = visit(declaredFunction.getBody());
+        } finally {
+          popCall();
+        }
+      } else if (function instanceof BuiltinFunction builtinFunction) {
         throw new UnsupportedOperationException(
             "Function %s of type: %s".formatted(functionName, BuiltinFunction.class.getName()));
       } else if (function instanceof Method methodFunction) {
