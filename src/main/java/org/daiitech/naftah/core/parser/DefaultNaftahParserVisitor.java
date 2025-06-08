@@ -3,6 +3,7 @@ package org.daiitech.naftah.core.parser;
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.not;
 import static org.daiitech.naftah.core.parser.NaftahParserHelper.*;
+import static org.daiitech.naftah.utils.DefaultContext.VARIABLE_GETTER;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
 import java.lang.reflect.Method;
@@ -308,7 +309,8 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     var nextContext =
-            hasChildOfType(ctx.statement(), org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class) ?
+            hasChildOfType(ctx.statement(), org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class)
+                    || hasChildOfType(ctx.statement(), org.daiitech.naftah.core.parser.NaftahParser.FunctionCallExpressionContext.class) ?
                     DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>()) :
                     DefaultContext.registerContext(currentContext);
     depth = nextContext.getDepth();
@@ -468,6 +470,16 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
+  public Object visitFunctionCallExpression(org.daiitech.naftah.core.parser.NaftahParser.FunctionCallExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitFunctionCallExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    return visit(ctx.functionCall());
+  }
+
+  @Override
   public Object visitPlusExpression(
       org.daiitech.naftah.core.parser.NaftahParser.PlusExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
@@ -525,8 +537,9 @@ public class DefaultNaftahParserVisitor
           "visitIdValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    // TODO: think about using id to variable or necessary other elements
-    return ctx.ID().getText();
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    String id = ctx.ID().getText();
+    return VARIABLE_GETTER.apply(id, currentContext);
   }
 
   @Override
