@@ -87,13 +87,21 @@ public class DefaultContext {
   }
 
   // CALL STACK
-  private static final Stack<Pair<? extends Tree, Object>> CALL_STACK = new Stack<>();
+  // function - arguments - returned value
+  private static final Stack<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>> CALL_STACK =
+      new Stack<>();
 
-  public static void pushCall(Pair<? extends Tree, Object> call) {
-    CALL_STACK.push(call);
+  public static void pushCall(DeclaredFunction function, Map<String, Object> arguments) {
+    CALL_STACK.push(new Pair<>(new Pair<>(function, arguments), null));
   }
 
-  public static Pair<? extends Tree, Object> popCall(Pair<? extends Tree, Object> call) {
+  public static void updateCall(
+      DeclaredFunction function, Map<String, Object> arguments, Object returnedValue) {
+    CALL_STACK.set(
+        CALL_STACK.size() - 1, new Pair<>(new Pair<>(function, arguments), returnedValue));
+  }
+
+  public static Pair<Pair<DeclaredFunction, Map<String, Object>>, Object> popCall() {
     return CALL_STACK.pop();
   }
 
