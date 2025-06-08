@@ -20,6 +20,20 @@ public class DefaultContext {
   public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (depth, functionName) -> "%s-%s-%s".formatted(depth, functionName, UUID.randomUUID());
   public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR = (functionName, parameterName) -> "%s-%s".formatted(functionName, parameterName);
   public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (functionCallId, argumentName) -> "%s-%s".formatted(functionCallId, argumentName);
+
+  public static final BiFunction<String, DefaultContext, Object> VARIABLE_GETTER = (varName, context) ->
+          Optional.ofNullable(context.getFunctionArgument(varName, true))
+          .flatMap(functionArgument -> Optional.ofNullable(functionArgument.b)
+                  .map(Object::toString))
+          .orElseGet(() ->
+                  Optional.ofNullable(context.getFunctionParameter(varName, true))
+                          .flatMap(functionParameter -> Optional.ofNullable(functionParameter.b.getValue())
+                                  .map(Object::toString))
+                          .orElseGet(
+                                  () -> Optional.ofNullable(context.getVariable(varName, true))
+                                          .flatMap(declaredVariable -> Optional.ofNullable(declaredVariable.b.getValue())
+                                                  .map(Object::toString))
+                                          .orElse(null)));
   private static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
 
   public static DefaultContext registerContext(Map<String, BuiltinFunction> builtinFunctions, Map<String, Method> jvmFunctions) {
@@ -49,8 +63,8 @@ public class DefaultContext {
   private final int depth;
   private String functionCallId; // current function in execution inside a context
   private final Map<String, DeclaredVariable> variables = new HashMap<>();
-  private final Map<String, DeclaredParameter> parameters; // only use in function call context
-  private final Map<String, Object> arguments; // only use in function call context
+  private Map<String, DeclaredParameter> parameters; // only use in function call context
+  private Map<String, Object> arguments; // only use in function call context
   private final Map<String, DeclaredFunction> functions = new HashMap<>();
   // TODO: those will exist in parent only (think about it)
   private final Map<String, BuiltinFunction> builtinFunctions;
@@ -173,6 +187,7 @@ public class DefaultContext {
   // functions parameters
 
   public String getFunctionParameterName(String name) {
+    if (parameters == null) parameters = new HashMap<>();
     if (functionCallId != null) {
       String functionName = functionCallId.split("-")[1];
       name = DefaultContext.PARAMETER_NAME_GENERATOR.apply(functionName, name);
@@ -181,18 +196,15 @@ public class DefaultContext {
   }
 
   public boolean containsFunctionParameter(String name) {
-    if (parameters != null) {
-      name = getFunctionParameterName(name);
-      return parameters.containsKey(name)
+    String functionParameterName = getFunctionParameterName(name);
+      return parameters.containsKey(functionParameterName)
               || (parent != null && parent.containsFunctionParameter(name));
-    }
-    return false;
   }
 
   public Pair<Integer, DeclaredParameter> getFunctionParameter(String name, boolean safe) {
-    if (parameters != null && parameters.containsKey(name)) {
-      name = getFunctionParameterName(name);
-      return new Pair<>(depth, parameters.get(name));
+    String functionParameterName = getFunctionParameterName(name);
+    if (parameters.containsKey(functionParameterName)) {
+      return new Pair<>(depth, parameters.get(functionParameterName));
     } else if (parent != null) {
       return parent.getFunctionParameter(name, safe);
     }
@@ -204,9 +216,9 @@ public class DefaultContext {
   }
 
   public void setFunctionParameter(String name, DeclaredParameter value) {
-    if (parameters != null && parameters.containsKey(name)) {
-      name = getFunctionParameterName(name);
-      parameters.put(name, value);
+    String functionParameterName = getFunctionParameterName(name);
+    if (parameters.containsKey(functionParameterName)) {
+      parameters.put(functionParameterName, value);
     } else if (parent != null && parent.containsFunctionParameter(name)) {
       parent.setFunctionParameter(name, value);
     } else {
@@ -215,7 +227,6 @@ public class DefaultContext {
   }
 
   public void defineFunctionParameter(String name, DeclaredParameter value, boolean lenient) {
-    if (parameters != null) {
       name = getFunctionParameterName(name);
       if (parameters.containsKey(name)) {
         if (lenient) return;
@@ -223,26 +234,24 @@ public class DefaultContext {
         throw new IllegalStateException("Function parameter exists in current context");
       }
       parameters.put(name, value); // force local
-    }
   }
 
   public void defineFunctionParameters(Map<String, DeclaredParameter> parameters, boolean lenient) {
-    if (this.parameters != null) {
-      if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
+    parameters = parameters.entrySet().stream()
+            .map(entry -> Map.entry(getFunctionParameterName(entry.getKey()), entry.getValue()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
         if (lenient) return;
 
         throw new IllegalStateException("Function parameter exists in current context");
       }
-      this.parameters.putAll(parameters.entrySet().stream()
-              .map(entry -> Map.entry(getFunctionParameterName(entry.getKey()), entry.getValue()))
-              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))); // force local
-      
-    }
+      this.parameters.putAll(parameters); // force local
   }
 
   // functions arguments
 
   public String getFunctionArgumentName(String name) {
+    if (arguments == null) arguments = new HashMap<>();
     if (functionCallId != null) {
       name = DefaultContext.ARGUMENT_NAME_GENERATOR.apply(functionCallId, name);
     }
@@ -250,18 +259,15 @@ public class DefaultContext {
   }
 
   public boolean containsFunctionArgument(String name) {
-    if ( arguments != null) {
-      name = getFunctionArgumentName(name);
-      return arguments.containsKey(name)
+    String functionArgumentName = getFunctionArgumentName(name);
+      return arguments.containsKey(functionArgumentName)
               || (parent != null && parent.containsFunctionArgument(name));
-    }
-    return false;
   }
 
   public Pair<Integer, Object> getFunctionArgument(String name, boolean safe) {
-    if (arguments != null && arguments.containsKey(name)) {
-      name = getFunctionArgumentName(name);
-      return new Pair<>(depth, arguments.get(name));
+    String functionArgumentName = getFunctionArgumentName(name);
+    if (arguments.containsKey(functionArgumentName)) {
+      return new Pair<>(depth, arguments.get(functionArgumentName));
     } else if (parent != null) {
       return parent.getFunctionArgument(name, safe);
     }
@@ -273,35 +279,32 @@ public class DefaultContext {
   }
 
   public void setFunctionArgument(String name, Object value) {
-    if (arguments != null && arguments.containsKey(name)) {
-      name = getFunctionArgumentName(name);
-      arguments.put(name, value);
+    String functionArgumentName = getFunctionArgumentName(name);
+    if (arguments.containsKey(functionArgumentName)) {
+      arguments.put(functionArgumentName, value);
     } else if (parent != null && parent.containsFunctionArgument(name)) {
       parent.setFunctionArgument(name, value);
-    } else if (arguments != null){
-      arguments.put(name, value); // define new in current context
+    } else {
+      arguments.put(functionArgumentName, value); // define new in current context
     }
   }
 
   public void defineFunctionArgument(String name, Object value) {
-    if (arguments != null) {
-      name = getFunctionArgumentName(name);
+    name = getFunctionArgumentName(name);
       if (arguments.containsKey(name)) {
         throw new IllegalStateException("Function argument exists in current context");
       }
       arguments.put(name, value); // force local
-    }
   }
 
   public void defineFunctionArguments(Map<String, Object> arguments) {
-    if (this.arguments != null) {
+    arguments = arguments.entrySet().stream()
+            .map(entry -> Map.entry(getFunctionArgumentName(entry.getKey()), entry.getValue()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       if (arguments.keySet().stream().anyMatch(this.arguments::containsKey)) {
         throw new IllegalStateException("Function argument exists in current context");
       }
-      this.arguments.putAll(arguments.entrySet().stream()
-              .map(entry -> Map.entry(getFunctionArgumentName(entry.getKey()), entry.getValue()))
-              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))); // force local
-    }
+      this.arguments.putAll(arguments); // force local
   }
 
   public int getDepth() {
