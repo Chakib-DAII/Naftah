@@ -65,7 +65,8 @@ returnStatement: RETURN expression?;
 block: LBRACE statement+ RBRACE;
 
 // Expressions: Can be value, binary operations
-expression: LPAREN expression RPAREN #parenthesisExpression
+expression: functionCall #functionCallExpression
+          | LPAREN expression RPAREN #parenthesisExpression
           | expression MUL expression #mulExpression
           | expression DIV expression #divExpression
           | expression MOD expression #modExpression
