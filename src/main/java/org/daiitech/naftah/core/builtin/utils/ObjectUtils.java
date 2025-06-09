@@ -1,9 +1,16 @@
 package org.daiitech.naftah.core.builtin.utils;
 
+import static org.daiitech.naftah.core.parser.NaftahParserHelper.getQualifiedName;
+import static org.daiitech.naftah.core.parser.NaftahParserHelper.hasChild;
+
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.daiitech.naftah.core.parser.NaftahParser;
 
 /**
  * @author Chakib Daii
@@ -90,6 +97,122 @@ public final class ObjectUtils {
     }
 
     // else
+    return false;
+  }
+
+  public static Class<?> getJavaType(ParserRuleContext naftahTypeContext) {
+    if (naftahTypeContext instanceof NaftahParser.ReturnTypeContext returnTypeContext) {
+      if (returnTypeContext instanceof NaftahParser.VoidReturnTypeContext) {
+        return Void.class;
+      } else if (returnTypeContext
+          instanceof NaftahParser.TypeReturnTypeContext typeReturnTypeContext) {
+        NaftahParser.TypeContext typeContext = typeReturnTypeContext.type();
+        if (typeContext instanceof NaftahParser.VarTypeContext) {
+          return Object.class;
+        } else if (typeContext instanceof NaftahParser.BuiltInTypeContext builtInTypeContext) {
+          return getJavaType(builtInTypeContext.builtIn());
+        } else if (typeContext
+            instanceof NaftahParser.QualifiedNameTypeContext qualifiedNameTypeContext) {
+          NaftahParser.QualifiedNameContext qualifiedNameContext =
+              qualifiedNameTypeContext.qualifiedName();
+          var qualifiedName = getQualifiedName(qualifiedNameContext);
+          //  TODO: match qualified name to java type
+        }
+      }
+    } else if (naftahTypeContext instanceof NaftahParser.VarTypeContext) {
+      return Object.class;
+    } else if (naftahTypeContext instanceof NaftahParser.BuiltInTypeContext builtInTypeContext) {
+      return getJavaType(builtInTypeContext.builtIn());
+    } else if (naftahTypeContext instanceof NaftahParser.BuiltInContext builtInContext) {
+      return getJavaType(builtInContext);
+    } else if (naftahTypeContext
+        instanceof NaftahParser.QualifiedNameTypeContext qualifiedNameTypeContext) {
+      NaftahParser.QualifiedNameContext qualifiedNameContext =
+          qualifiedNameTypeContext.qualifiedName();
+      var qualifiedName = getQualifiedName(qualifiedNameContext);
+      //  TODO: match qualified name to java type
+    } else if (naftahTypeContext
+        instanceof NaftahParser.QualifiedNameContext qualifiedNameContext) {
+      var qualifiedName = getQualifiedName(qualifiedNameContext);
+      //  TODO: match qualified name to java type
+    }
+    return Object.class;
+  }
+
+  public static Class<?> getJavaType(NaftahParser.BuiltInContext builtInContext) {
+    if(hasChild(builtInContext.BOOLEAN()))
+      return Boolean.class;
+    if(hasChild(builtInContext.CHAR()))
+      return Character.class;
+    if(hasChild(builtInContext.BYTE()))
+      return Byte.class;
+    if(hasChild(builtInContext.SHORT()))
+      return Short.class;
+    if(hasChild(builtInContext.INT()))
+      return Integer.class;
+    if(hasChild(builtInContext.LONG()))
+      return Long.class;
+    if(hasChild(builtInContext.FLOAT()))
+      return Float.class;
+    if(hasChild(builtInContext.DOUBLE()))
+      return Double.class;
+    if(hasChild(builtInContext.STRING_TYPE()))
+      return String.class;
+    return Object.class;
+  }
+
+  public static boolean isSimpleType(Object obj) {
+    if (obj == null) return false;
+    Class<?> cls = obj.getClass();
+
+    return cls.isPrimitive() ||
+            cls == String.class ||
+            cls == Integer.class ||
+            cls == Long.class ||
+            cls == Short.class ||
+            cls == Double.class ||
+            cls == Float.class ||
+            cls == Byte.class ||
+            cls == Boolean.class ||
+            cls == BigDecimal.class ||
+            cls == BigInteger.class ||
+            cls == Character.class;
+  }
+
+  public static boolean isSimpleOrCollectionOrMapOfSimpleType(Object obj) {
+    if (obj == null) return false;
+
+    // Simple value
+    if (isSimpleType(obj)) return true;
+
+    // Array of simple or recursive types
+    if (obj.getClass().isArray()) {
+      int len = Array.getLength(obj);
+      for (int i = 0; i < len; i++) {
+        Object element = Array.get(obj, i);
+        if (!isSimpleOrCollectionOrMapOfSimpleType(element)) return false;
+      }
+      return true;
+    }
+
+    // Collection of simple or recursive types
+    if (obj instanceof Collection<?>) {
+      for (Object item : (Collection<?>) obj) {
+        if (!isSimpleOrCollectionOrMapOfSimpleType(item)) return false;
+      }
+      return true;
+    }
+
+    // Map with simple keys and values
+    if (obj instanceof Map<?, ?> map) {
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
+        if (!isSimpleOrCollectionOrMapOfSimpleType(entry.getKey())) return false;
+        if (!isSimpleOrCollectionOrMapOfSimpleType(entry.getValue())) return false;
+      }
+      return true;
+    }
+
+    // Anything else is not allowed
     return false;
   }
 }
