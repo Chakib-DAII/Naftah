@@ -1,14 +1,12 @@
 package org.daiitech.naftah.core.parser;
 
-import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isTruthy;
-import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.not;
+import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.*;
 import static org.daiitech.naftah.core.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.DefaultContext.*;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -571,7 +569,6 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
-    // TODO: callstack for possible recursive calls
     var result = visit(ctx.functionCall());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -625,6 +622,19 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
+  public Object visitCharacterValue(org.daiitech.naftah.core.parser.NaftahParser.CharacterValueContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitStringValue(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    Character result = ctx.CHARACTER().getText().charAt(1);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
   public Object visitStringValue(
       org.daiitech.naftah.core.parser.NaftahParser.StringValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
@@ -637,6 +647,42 @@ public class DefaultNaftahParserVisitor
     var result = StringInterpolator.process(value, currentContext);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
+  }
+
+  @Override
+  public Object visitTrueValue(org.daiitech.naftah.core.parser.NaftahParser.TrueValueContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitTrueValue(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return Boolean.TRUE;
+  }
+
+  @Override
+  public Object visitFalseValue(org.daiitech.naftah.core.parser.NaftahParser.FalseValueContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitFalseValue(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return Boolean.FALSE;
+  }
+
+  @Override
+  public Object visitNullValue(org.daiitech.naftah.core.parser.NaftahParser.NullValueContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitNullValue(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return null;
   }
 
   @Override
@@ -662,8 +708,7 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
-    // TODO: map types to java types
-    var result = ctx.VOID().getText();
+    var result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -690,8 +735,7 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
-    // TODO: map types to java types
-    var result = ctx.VAR().getText();
+    var result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -705,8 +749,20 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
-    // TODO: map types to java types
-    var result = ctx.BuiltInType().getText();
+    var result = getJavaType(ctx);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitBuiltIn(org.daiitech.naftah.core.parser.NaftahParser.BuiltInContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitBuiltIn(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -735,15 +791,9 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
-    AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
-
-    for (int i = 0; i < ctx.ID().size(); i++) {
-      result.get().append(ctx.ID(i));
-      if (i != ctx.ID().size() - 1) // if not the last
-      result.get().append(ctx.ID());
-    }
+    var result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
-    return result.get().toString();
+    return result;
   }
 
   @Override
