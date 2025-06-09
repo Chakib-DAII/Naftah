@@ -2,6 +2,7 @@ package org.daiitech.naftah.utils;
 
 import static org.daiitech.naftah.utils.DefaultContext.VARIABLE_GETTER;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 public final class StringInterpolator {
 
   private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\$\\{([^}]+)}");
+  private static final Map<String, Matcher> MATCHER_CACHE = new HashMap<>();
   private static final String NULL = "<فارغ>";
 
   public StringInterpolator() {
@@ -22,6 +24,8 @@ public final class StringInterpolator {
   }
 
   public static String process(String input, Object context) {
+    // Replace all string delimiter characters from original parsed
+    input = input.replaceAll("[\"«»]", "");
     if (!hasInterpolation(input)) {
       return input; // Static string, return as-is
     }
@@ -48,7 +52,7 @@ public final class StringInterpolator {
 
   public static synchronized String interpolate(
       String template, Function<String, Object> replacementFunction) {
-    Matcher matcher = INTERPOLATION_PATTERN.matcher(template);
+    Matcher matcher = getMatcher(template).reset();
     AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
     while (matcher.find()) {
@@ -61,6 +65,14 @@ public final class StringInterpolator {
   }
 
   public static boolean hasInterpolation(String input) {
-    return INTERPOLATION_PATTERN.matcher(input).find();
+    return getMatcher(input).find();
+  }
+
+  private static Matcher getMatcher(String input) {
+    if (MATCHER_CACHE.containsKey(input)) return MATCHER_CACHE.get(input);
+
+    Matcher matcher = INTERPOLATION_PATTERN.matcher(input);
+    MATCHER_CACHE.put(input, matcher);
+    return matcher;
   }
 }
