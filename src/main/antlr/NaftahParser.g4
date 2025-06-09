@@ -92,6 +92,10 @@ expression: functionCall #functionCallExpression
 
 // Value: Can be numbers, strings, ID
 value: NUMBER #numberValue
+     | TRUE #trueValue
+     | FALSE #falseValue
+     | NULL #nullValue
+     | CHARACTER #characterValue
      | STRING #stringValue
      | ID #idValue
      ;
@@ -103,8 +107,19 @@ returnType: VOID #voidReturnType
 
 // Type: Can be any, builtinType or qualifiedName
 type: VAR #varType
-    | BuiltInType #builtInType
+    | builtIn #builtInType
     | qualifiedName #qualifiedNameType
+    ;
+
+builtIn: BOOLEAN
+    |   CHAR
+    |   BYTE
+    |   SHORT
+    |   INT
+    |   LONG
+    |   FLOAT
+    |   DOUBLE
+    |   STRING_TYPE
     ;
 
 // QualifiedName: ID separated by COLONs
