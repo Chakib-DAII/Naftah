@@ -1,6 +1,7 @@
 package org.daiitech.naftah.core.parser;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.antlr.v4.runtime.misc.Pair;
@@ -77,13 +78,13 @@ public class NaftahParserHelper {
   }
 
   public static Object visit(
-      org.daiitech.naftah.core.parser.NaftahParserBaseVisitor naftahParserBaseVisitor,
+      org.daiitech.naftah.core.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
       ParseTree tree) {
     return naftahParserBaseVisitor.visit(tree);
   }
 
   public static void prepareDeclaredFunction(
-      org.daiitech.naftah.core.parser.NaftahParserBaseVisitor naftahParserBaseVisitor,
+      org.daiitech.naftah.core.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
       DeclaredFunction function) {
     if (function.getParameters() == null && hasChild(function.getParametersContext()))
       function.setParameters(
@@ -94,7 +95,7 @@ public class NaftahParserHelper {
   }
 
   public static Map<String, Object> prepareDeclaredFunctionArguments(
-      org.daiitech.naftah.core.parser.NaftahParserBaseVisitor naftahParserBaseVisitor,
+      org.daiitech.naftah.core.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
       List<DeclaredParameter> parameters,
       List<Pair<String, Object>> arguments) {
     if (parameters.size() < arguments.size()) throw new RuntimeException("Too many arguments");
@@ -185,5 +186,19 @@ public class NaftahParserHelper {
     }
 
     return finalArguments;
+  }
+
+  public static String getQualifiedName(
+      org.daiitech.naftah.core.parser.NaftahParser.QualifiedNameContext ctx) {
+    AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
+
+    for (int i = 0; i < ctx.ID().size(); i++) {
+      result.get().append(ctx.ID(i));
+      if (i != ctx.ID().size() - 1) {
+        // if not the last
+        result.get().append(ctx.COLON(i));
+      }
+    }
+    return result.get().toString();
   }
 }
