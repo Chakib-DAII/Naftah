@@ -6,10 +6,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -20,6 +18,8 @@ import org.daiitech.naftah.core.parser.NaftahLexer;
 import org.daiitech.naftah.core.parser.NaftahParser;
 import org.daiitech.naftah.core.utils.JulLoggerConfig;
 import picocli.CommandLine;
+
+import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
 
 /**
  * @author Chakib Daii
@@ -62,7 +62,10 @@ public final class Naftah {
 
     // Create a visitor and visit the parse tree
     DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
-    visitor.visit(tree);
+    var result = visitor.visit(tree);
+
+    if (isSimpleOrCollectionOrMapOfSimpleType(result))
+      System.out.println(result);
   }
 
   private static void initLogger() {
@@ -70,7 +73,8 @@ public final class Naftah {
       String loggingConfigFile = System.getProperty("java.util.logging.config.file");
 
       // Initialize logging from external file
-      JulLoggerConfig.initialize(loggingConfigFile);
+      if (Objects.nonNull(loggingConfigFile)) JulLoggerConfig.initialize(loggingConfigFile);
+      else JulLoggerConfig.initializeFromResources("logging.properties");
     } catch (IOException e) {
       try {
         // fallback to default logging
