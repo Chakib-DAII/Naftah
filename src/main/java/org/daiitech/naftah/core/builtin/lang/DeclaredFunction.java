@@ -61,7 +61,7 @@ public class DeclaredFunction {
 
   @Override
   public String toString() {
-    return "<دالة s%>".formatted(name);
+    return "<%s %s>".formatted("دالة" , name);
   }
 
   public static DeclaredFunction of(NaftahParser.FunctionDeclarationContext originalContext) {

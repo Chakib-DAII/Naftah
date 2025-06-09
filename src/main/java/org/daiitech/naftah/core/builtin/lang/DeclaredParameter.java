@@ -59,7 +59,7 @@ public class DeclaredParameter {
 
   @Override
   public String toString() {
-    return "<%s %s>".formatted(name, constant ? "ثابت" : "متغير");
+    return "<%s %s>".formatted(constant ? "ثابت" : "متغير" ,name);
   }
 
   public static DeclaredParameter of(
