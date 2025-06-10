@@ -1,5 +1,7 @@
 package org.daiitech.naftah;
 
+import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -7,7 +9,6 @@ import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -18,8 +19,6 @@ import org.daiitech.naftah.core.parser.NaftahLexer;
 import org.daiitech.naftah.core.parser.NaftahParser;
 import org.daiitech.naftah.core.utils.JulLoggerConfig;
 import picocli.CommandLine;
-
-import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
 
 /**
  * @author Chakib Daii
@@ -64,8 +63,7 @@ public final class Naftah {
     DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
     var result = visitor.visit(tree);
 
-    if (isSimpleOrCollectionOrMapOfSimpleType(result))
-      System.out.println(result);
+    if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
   }
 
   private static void initLogger() {

@@ -140,24 +140,15 @@ public final class ObjectUtils {
   }
 
   public static Class<?> getJavaType(NaftahParser.BuiltInContext builtInContext) {
-    if(hasChild(builtInContext.BOOLEAN()))
-      return Boolean.class;
-    if(hasChild(builtInContext.CHAR()))
-      return Character.class;
-    if(hasChild(builtInContext.BYTE()))
-      return Byte.class;
-    if(hasChild(builtInContext.SHORT()))
-      return Short.class;
-    if(hasChild(builtInContext.INT()))
-      return Integer.class;
-    if(hasChild(builtInContext.LONG()))
-      return Long.class;
-    if(hasChild(builtInContext.FLOAT()))
-      return Float.class;
-    if(hasChild(builtInContext.DOUBLE()))
-      return Double.class;
-    if(hasChild(builtInContext.STRING_TYPE()))
-      return String.class;
+    if (hasChild(builtInContext.BOOLEAN())) return Boolean.class;
+    if (hasChild(builtInContext.CHAR())) return Character.class;
+    if (hasChild(builtInContext.BYTE())) return Byte.class;
+    if (hasChild(builtInContext.SHORT())) return Short.class;
+    if (hasChild(builtInContext.INT())) return Integer.class;
+    if (hasChild(builtInContext.LONG())) return Long.class;
+    if (hasChild(builtInContext.FLOAT())) return Float.class;
+    if (hasChild(builtInContext.DOUBLE())) return Double.class;
+    if (hasChild(builtInContext.STRING_TYPE())) return String.class;
     return Object.class;
   }
 
@@ -165,18 +156,18 @@ public final class ObjectUtils {
     if (obj == null) return false;
     Class<?> cls = obj.getClass();
 
-    return cls.isPrimitive() ||
-            cls == String.class ||
-            cls == Integer.class ||
-            cls == Long.class ||
-            cls == Short.class ||
-            cls == Double.class ||
-            cls == Float.class ||
-            cls == Byte.class ||
-            cls == Boolean.class ||
-            cls == BigDecimal.class ||
-            cls == BigInteger.class ||
-            cls == Character.class;
+    return cls.isPrimitive()
+        || cls == String.class
+        || cls == Integer.class
+        || cls == Long.class
+        || cls == Short.class
+        || cls == Double.class
+        || cls == Float.class
+        || cls == Byte.class
+        || cls == Boolean.class
+        || cls == BigDecimal.class
+        || cls == BigInteger.class
+        || cls == Character.class;
   }
 
   public static boolean isSimpleOrCollectionOrMapOfSimpleType(Object obj) {

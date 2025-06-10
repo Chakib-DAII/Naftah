@@ -622,11 +622,12 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitCharacterValue(org.daiitech.naftah.core.parser.NaftahParser.CharacterValueContext ctx) {
+  public Object visitCharacterValue(
+      org.daiitech.naftah.core.parser.NaftahParser.CharacterValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitStringValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitStringValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     Character result = ctx.CHARACTER().getText().charAt(1);
@@ -653,8 +654,8 @@ public class DefaultNaftahParserVisitor
   public Object visitTrueValue(org.daiitech.naftah.core.parser.NaftahParser.TrueValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitTrueValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitTrueValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     currentContext.markExecuted(ctx); // Mark as executed
@@ -662,11 +663,12 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitFalseValue(org.daiitech.naftah.core.parser.NaftahParser.FalseValueContext ctx) {
+  public Object visitFalseValue(
+      org.daiitech.naftah.core.parser.NaftahParser.FalseValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitFalseValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitFalseValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     currentContext.markExecuted(ctx); // Mark as executed
@@ -677,8 +679,8 @@ public class DefaultNaftahParserVisitor
   public Object visitNullValue(org.daiitech.naftah.core.parser.NaftahParser.NullValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitNullValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitNullValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     currentContext.markExecuted(ctx); // Mark as executed
@@ -758,8 +760,8 @@ public class DefaultNaftahParserVisitor
   public Object visitBuiltIn(org.daiitech.naftah.core.parser.NaftahParser.BuiltInContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitBuiltIn(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitBuiltIn(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     var result = getJavaType(ctx);
