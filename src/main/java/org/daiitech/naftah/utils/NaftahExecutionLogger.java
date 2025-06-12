@@ -113,6 +113,8 @@ public final class NaftahExecutionLogger {
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.QualifiedNameContext context)
       result = logExecution(doLog, context);
+    else if (ctx instanceof NaftahParser.QualifiedCallContext context)
+      result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.BitwiseXorExpressionContext context)
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.NotExpressionContext context)
@@ -392,7 +394,35 @@ public final class NaftahExecutionLogger {
         .orElse("");
   }
 
-  public static String logExecution(boolean doLog, NaftahParser.FunctionCallContext ctx) {
+    public static String logExecution(boolean doLog, NaftahParser.QualifiedCallContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(
+                        context -> {
+                            String result =
+                                    """
+                                            QualifiedCallContext::qualifiedName -> {
+                                                %s
+                                            }
+                                            QualifiedCallContext::COLON -> %s
+                                            QualifiedCallContext::COLON -> %s
+                                            QualifiedCallContext::ID -> %s
+                                            """
+                                            .formatted(
+                                                    logExecution(false, context.qualifiedName()),
+                                                    context.COLON(),
+                                                    context.COLON(),
+                                                    context.ID()
+                                            );
+                            if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                                LOGGER.finest(result);
+                            }
+                            return result;
+                        })
+                .orElse("");
+
+    }
+
+    public static String logExecution(boolean doLog, NaftahParser.FunctionCallContext ctx) {
     return Optional.ofNullable(ctx)
         .map(
             context -> {
@@ -953,9 +983,11 @@ public final class NaftahExecutionLogger {
             context -> {
               String result =
                   """
-                          BuiltInTypeContext::BuiltInType -> %s
+                          BuiltInTypeContext::builtIn -> {
+                                %s
+                          }
                           """
-                      .formatted(context.builtIn()); // TODO: update
+                      .formatted(logExecution(false, context.builtIn()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -970,9 +1002,27 @@ public final class NaftahExecutionLogger {
             context -> {
               String result =
                   """
-                                            BuiltInContext::BuiltInType -> %s
-                                            """
-                      .formatted(context); // TODO: update
+                    BuiltInContext::BOOLEAN -> %s
+                    BuiltInContext::CHAR -> %s
+                    BuiltInContext::BYTE -> %s
+                    BuiltInContext::SHORT -> %s
+                    BuiltInContext::INT -> %s
+                    BuiltInContext::LONG -> %s
+                    BuiltInContext::FLOAT -> %s
+                    BuiltInContext::DOUBLE -> %s
+                    BuiltInContext::STRING_TYPE -> %s
+                    """
+                      .formatted(
+                              context.BOOLEAN(),
+                              context.CHAR(),
+                              context.BYTE(),
+                              context.SHORT(),
+                              context.INT(),
+                              context.LONG(),
+                              context.FLOAT(),
+                              context.DOUBLE(),
+                              context.STRING_TYPE()
+                      );
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
