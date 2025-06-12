@@ -48,8 +48,7 @@ parameterDeclarationList: parameterDeclaration (COMMA parameterDeclaration)*;
 parameterDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 
 // Function call: Can have arguments and return values
-// TODO: add support for all kind of functions using the qualifiedName
-functionCall: ID LPAREN argumentList? RPAREN;
+functionCall: (ID | qualifiedCall) LPAREN argumentList? RPAREN;
 
 // Argument list: Expressions separated by commas
 argumentList: (ID ASSIGN)? expression (COMMA (ID ASSIGN)? expression)*;
@@ -61,8 +60,7 @@ ifStatement: IF expression THEN block (ELSEIF expression THEN block)* (ELSE bloc
 returnStatement: RETURN expression?;
 
 // Block: A block of statements enclosed in curly braces
-// TODO: add support to empty blocks
-block: LBRACE statement+ RBRACE;
+block: LBRACE statement* RBRACE;
 
 // Expressions: Can be value, binary operations
 expression: functionCall #functionCallExpression
@@ -124,3 +122,5 @@ builtIn: BOOLEAN
 
 // QualifiedName: ID separated by COLONs
 qualifiedName: ID (COLON ID)*;
+
+qualifiedCall: qualifiedName COLON COLON ID;
