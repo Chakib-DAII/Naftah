@@ -234,7 +234,9 @@ public class DefaultNaftahParserVisitor
     Object result = null;
     // TODO: add extra vars to context to get the function called and so on, it can be a free map
     // TODO:  and using an Enum as key of predefined ids to get values
-    String functionName = ctx.ID().getText();
+    String functionName = hasChild(ctx.ID()) ?
+            ctx.ID().getText()
+            : (String) visit(ctx.qualifiedCall());
     String functionCallId = DefaultContext.FUNCTION_CALL_ID_GENERATOR.apply(depth, functionName);
     currentContext.setFunctionCallId(functionCallId);
     List<Pair<String, Object>> args = new ArrayList<>();
@@ -274,6 +276,21 @@ public class DefaultNaftahParserVisitor
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
+
+  @Override
+  public Object visitQualifiedCall(org.daiitech.naftah.core.parser.NaftahParser.QualifiedCallContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitQualifiedCall(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result = visit(ctx.qualifiedName()) + ctx.COLON(0).getText() + ctx.COLON(1).getText() + ctx.ID();
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+
 
   @Override
   public Object visitArgumentList(
