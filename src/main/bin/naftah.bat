@@ -1,4 +1,5 @@
 @if "%DEBUG%" == "" @echo off
+chcp 65001 > nul
 
 @rem Set local scope for the variables with windows NT shell
 if "%OS%"=="Windows_NT" setlocal
