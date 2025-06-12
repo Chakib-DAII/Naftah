@@ -1,5 +1,6 @@
 package org.daiitech.naftah;
 
+import static org.daiitech.naftah.core.NaftahSystem.setupOutput;
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public final class Naftah {
 
   public static void main(String[] args) throws IOException {
     initLogger();
+    setupOutput();
     // TODO: update this logic to be more sophisticated and handle args and commands
     // Create an input stream from the Naftah code
     CharStream input =
