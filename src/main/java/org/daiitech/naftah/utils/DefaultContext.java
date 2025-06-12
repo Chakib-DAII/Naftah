@@ -13,6 +13,11 @@ import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.core.parser.NaftahParserHelper;
 
+import static org.daiitech.naftah.core.utils.ClassUtils.getArabicClassQualifiers;
+import static org.daiitech.naftah.core.utils.ClassUtils.getClassQualifiers;
+import static org.daiitech.naftah.core.utils.RuntimeClassScanner.loadCLasses;
+import static org.daiitech.naftah.core.utils.RuntimeClassScanner.scanCLasses;
+
 /**
  * @author Chakib Daii <br>
  *     TODO: think about a way to vreate child context everytime TODO: and attach it to the function
@@ -105,6 +110,22 @@ public class DefaultContext {
     return CALL_STACK.pop();
   }
 
+  // LOADED CLASSES
+  private static final Map<String, Optional<? extends ClassLoader>> CLASS_NAMES;
+  private static final Set<String> CLASS_QUALIFIERS;
+  private static final Set<String> ARABIC_CLASS_QUALIFIERS;
+  private static final Set<Class<?>> CLASSES;
+
+  static {
+    // TODO: loading should be activated based on a specific flag
+    CLASS_NAMES = scanCLasses();
+    CLASS_QUALIFIERS = getClassQualifiers(CLASS_NAMES.keySet());
+    ARABIC_CLASS_QUALIFIERS = getArabicClassQualifiers(CLASS_QUALIFIERS);
+    CLASSES = loadCLasses(CLASS_NAMES);
+    // TODO: function should be a map of qualifiedCall -> Method
+    // TODO: class (type) should be a map of qualifiedName -> CLass<?>
+  }
+
   // instance
   private final DefaultContext parent;
   private final int depth;
@@ -114,9 +135,9 @@ public class DefaultContext {
   private Map<String, DeclaredParameter> parameters; // only use in function call context
   private Map<String, Object> arguments; // only use in function call context
   private final Map<String, DeclaredFunction> functions = new HashMap<>();
-  // TODO: those will exist in parent only (think about it)
+  // TODO: those will exist in parent only (think about it); it should be part of the class
   private final Map<String, BuiltinFunction> builtinFunctions;
-  // TODO: those will exist in parent only (think about it)
+  // TODO: those will exist in parent only (think about it); it should be part of the class
   private final Map<String, Method> jvmFunctions;
 
   private DefaultContext() {
