@@ -1,0 +1,88 @@
+package org.daiitech.naftah.core.utils;
+
+import com.ibm.icu.text.ArabicShaping;
+import com.ibm.icu.text.ArabicShapingException;
+import com.ibm.icu.text.Bidi;
+import com.ibm.icu.text.Transliterator;
+
+import java.util.Objects;
+
+/**
+ * @author Chakib Daii
+ **/
+public class ArabicUtils {
+    // Escape code for setting RTL text direction in the terminal (for compatible terminals)
+    public static final String RTL_DIRECTION = "\u001B[?2004h";  // Set RTL
+    public static final String LTR_DIRECTION = "\u001B[?2004l";  // Set LTR
+    // Arabic diacritic marks in Unicode
+    public static final String ARABIC_DIACRITICS_REGEX = "[\u0610-\u061A\u064B-\u0652\u0670]";
+    public static final String ANSI_ESCAPE = "\033[H\033[2J";
+    public static final String LATIN_ARABIC_TRANSLITERATION_ID = "Any-Latin; Latin-Arabic";
+    public static final String ARABIC_LANGUAGE = "ar";
+    public static final String DEFAULT_ARABIC_LANGUAGE_COUNTRY = "AE";
+    public static final String CUSTOM_RULES =
+            """
+            com > كوم;
+            org > أورغ;
+            co > كو;
+            o > و;
+            aa > ع;
+            a > ا;
+            b > ب;
+            tech > تاك;
+            t > ت;
+            ii > عي;""";
+
+    public static String shape(String msg) throws ArabicShapingException {
+        ArabicShaping shaper = new ArabicShaping(
+                ArabicShaping.LETTERS_SHAPE | ArabicShaping.TEXT_DIRECTION_VISUAL_RTL);
+        String shaped = shaper.shape(msg);
+        Bidi bidi = new Bidi(shaped, Bidi.DIRECTION_RIGHT_TO_LEFT);
+        return bidi.writeReordered(Bidi.DO_MIRRORING);
+    }
+
+    /**
+     * Removes diacritic marks from Arabic text.
+     *
+     * @param text Arabic text with diacritics
+     * @return Arabic text without diacritics
+     */
+    public static String removeDiacritics(String text) {
+        // Remove all characters in the range of Arabic diacritic marks
+        return text.replaceAll(ARABIC_DIACRITICS_REGEX, "");
+    }
+
+    public static String transliterateScript(String transliteratorID, String text, boolean removeDiacritics, String customRules) {
+        Transliterator transliterator = null;
+
+        if (Objects.nonNull(customRules) && !customRules.isEmpty() && !customRules.isBlank()) {
+            String customTransliteratorID = "Custom";
+            // Create a transliterator to convert based on ID with the custom rules
+            Transliterator customTransliterator =Transliterator.createFromRules(customTransliteratorID, customRules, Transliterator.FORWARD);
+            Transliterator.registerInstance(customTransliterator);
+            // Create a transliterator to convert based on ID
+            transliterator = Transliterator.getInstance(customTransliteratorID + "; " + transliteratorID);
+        }
+        if (Objects.isNull(transliterator)) {
+            // Create a transliterator to convert based on ID
+            transliterator = Transliterator.getInstance(transliteratorID);
+        }
+
+        // Apply transliteration
+        text = transliterator.transliterate(text);
+
+        // Remove the diacritics from the Arabic text
+        if (removeDiacritics) text = removeDiacritics(text);
+
+        return text;
+    }
+
+    public static String transliterateToArabicScript(String text, boolean removeDiacritics) {
+        return transliterateScript(LATIN_ARABIC_TRANSLITERATION_ID, text, removeDiacritics, null);
+    }
+
+    public static String transliterateToArabicScript(String text) {
+        return transliterateToArabicScript(text, true);
+    }
+
+}
