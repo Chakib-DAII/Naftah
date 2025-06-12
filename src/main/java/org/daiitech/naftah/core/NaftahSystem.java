@@ -1,7 +1,12 @@
 package org.daiitech.naftah.core;
 
 import org.daiitech.naftah.core.errors.NaftahBugError;
+import org.daiitech.naftah.utils.ArabicOutputTransformer;
 import org.daiitech.naftah.utils.ReleaseInfo;
+
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Chakib Daii
@@ -29,5 +34,11 @@ public final class NaftahSystem {
       throw new NaftahBugError("Unexpected version found: " + full);
     }
     return full.substring(0, secondDot);
+  }
+
+  public static void setupOutput() {
+    OutputStream out = new ArabicOutputTransformer(System.out);
+    PrintStream ps = new PrintStream(out, true, StandardCharsets.UTF_8);
+    System.setOut(ps);
   }
 }
