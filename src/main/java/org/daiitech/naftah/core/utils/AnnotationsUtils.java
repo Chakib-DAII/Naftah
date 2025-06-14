@@ -20,15 +20,17 @@ public class AnnotationsUtils {
     /**
      * checks if an annotation is present on a class
      *
-     * @param aClass
+     * @param method
      * @param annotations
      * @return @{@link Boolean}
      */
+    @SafeVarargs
     public static boolean isAnnotationsPresent(
-            Class<?> aClass, List<Class<? extends Annotation>> annotations) {
+            Method method, Class<? extends Annotation>... annotations) {
         List<Boolean> annotationsPresence = new ArrayList<>();
-        annotations.forEach(
-                annotation -> annotationsPresence.add(aClass.isAnnotationPresent(annotation)));
+        for (var annotation: annotations) {
+            annotationsPresence.add(method.isAnnotationPresent(annotation));
+        }
         return !annotationsPresence.contains(false);
     }
 
@@ -47,13 +49,30 @@ public class AnnotationsUtils {
         return method.getAnnotation(annotationClass);
     }
 
-    public static NaftahFunction getNaftahFunctionAnnotation(Class<?> aClass) {
-        NaftahFn naftahFnProvider = getClassAnnotation(aClass, NaftahFn.class);
-        return NaftahFunction.of(naftahFnProvider.name(), naftahFnProvider.description(),
-                naftahFnProvider.usage(), naftahFnProvider.returnType(), naftahFnProvider.parameterTypes(),
-                naftahFnProvider.exceptionTypes());
+    public static NaftahFunction getNaftahFunctionAnnotation(Method method) {
+        NaftahFn naftahFn = getMethodAnnotation(method, NaftahFn.class);
+        return NaftahFunction.of(naftahFn.name(), naftahFn.description(),
+                naftahFn.usage(), naftahFn.returnType(), naftahFn.parameterTypes(),
+                naftahFn.exceptionTypes());
     }
 
+
+    /**
+     * checks if an annotation is present on a class
+     *
+     * @param aClass
+     * @param annotations
+     * @return @{@link Boolean}
+     */
+    @SafeVarargs
+    public static boolean isAnnotationsPresent(
+            Class<?> aClass, Class<? extends Annotation>... annotations) {
+        List<Boolean> annotationsPresence = new ArrayList<>();
+        for (var annotation: annotations) {
+            annotationsPresence.add(aClass.isAnnotationPresent(annotation));
+        }
+        return !annotationsPresence.contains(false);
+    }
 
     /**
      * get present annotations on a class
