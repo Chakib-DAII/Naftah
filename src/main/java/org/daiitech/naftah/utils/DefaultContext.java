@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.core.builtin.lang.*;
 import org.daiitech.naftah.core.parser.NaftahParserHelper;
 import org.daiitech.naftah.core.utils.ClassUtils;
+import org.daiitech.naftah.core.utils.RuntimeClassScanner1;
 
 import static org.daiitech.naftah.core.utils.ClassUtils.*;
 import static org.daiitech.naftah.core.utils.RuntimeClassScanner.*;
@@ -122,6 +123,7 @@ public class DefaultContext {
     // TODO: loading should be activated based on a specific flag
     System.out.println("Bootsrapping Runtime...");
     long startTime = System.nanoTime();
+
     CLASS_NAMES = scanCLasses();
     CLASS_QUALIFIERS = getClassQualifiers(CLASS_NAMES.keySet(), false);
     ARABIC_CLASS_QUALIFIERS = getArabicClassQualifiers(CLASS_QUALIFIERS);
@@ -134,6 +136,14 @@ public class DefaultContext {
     JVM_FUNCTIONS = getClassMethods(accessibleAndInstantiableClasses);
     BUILTIN_FUNCTIONS = getBuiltinMethods(accessibleAndInstantiableClasses);
     long end = System.nanoTime() - startTime;
+    System.out.println("took %s ns".formatted(end));
+
+    startTime = System.nanoTime();
+
+    var classes = RuntimeClassScanner1.scanCLasses();
+    System.out.println(classes);
+
+    end = System.nanoTime() - startTime;
     System.out.println("took %s ns".formatted(end));
   }
 
