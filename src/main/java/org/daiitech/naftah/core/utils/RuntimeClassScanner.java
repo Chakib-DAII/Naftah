@@ -11,6 +11,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import static org.daiitech.naftah.core.utils.ClassUtils.*;
+
 /**
  * @author Chakib Daii
  *     <p>TODO: create the implementation and make it run in parallel fashion and blocks the
@@ -45,6 +47,7 @@ public final class RuntimeClassScanner {
         return scanCLasses(PATHS);
     }
     public static Map<String, Optional<? extends ClassLoader>> scanCLasses(String[] paths) {
+        System.out.println(Arrays.toString(paths));
         Map<String, Optional<? extends ClassLoader>> classNames = new HashMap<>();
         for (String path : paths) {
             File file = new File(path);
@@ -64,16 +67,24 @@ public final class RuntimeClassScanner {
      * @param classNames map of classnames to load
      * @return a set of @{@link Class} objects
      */
-    public static Set<Class<?>> loadCLasses(Map<String, Optional<? extends ClassLoader>> classNames) {
+    public static Set<Class<?>> loadClassSet(Map<String, Optional<? extends ClassLoader>> classNames, boolean accessibleOnly) {
+        return new HashSet<>(loadClasses(classNames, accessibleOnly).values());
+    }
+
+    public static Map<String, Class<?>> loadClasses(Map<String, Optional<? extends ClassLoader>> classNames, boolean instantiableOnly) {
         // Try to load each class and store Class objects
-        Set<Class<?>> loadedClasses = new HashSet<>();
+        Map<String, Class<?>> loadedClasses = new HashMap<>();
         for (var nameEntry : classNames.entrySet()) {
             var loaders = Arrays.copyOf(CLASS_LOADERS, CLASS_LOADERS.length + (nameEntry.getValue().isEmpty() ? 0 : 1));
             nameEntry.getValue().ifPresent(classLoader -> loaders[CLASS_LOADERS.length + 1] = classLoader);
-                for (ClassLoader cl : loaders)
-                try {
+                for (ClassLoader cl : loaders) try {
                     if (Objects.isNull(cl)) continue;
-                    loadedClasses.add(Class.forName(nameEntry.getKey(), false, cl));
+                    String className = nameEntry.getKey();
+                    Class<?> currentClass = Class.forName(className, false, cl);
+                    if (!instantiableOnly || isInstantiableClass(currentClass)) {
+                        String qualifiedName = getQualifiedName(className);
+                        loadedClasses.put(qualifiedName, currentClass);
+                    }
                     break;
                 } catch (Throwable t) {
                     // Silently skip classes that can't be loaded
@@ -132,7 +143,7 @@ public final class RuntimeClassScanner {
                             new URL[]{ tempInnerJar.toURI().toURL() },
                             RuntimeClassScanner.class.getClassLoader()
                     )) {
-                        classNames.putAll(findClassesInJar(tempInnerJar).keySet().stream()
+                        classNames.putAll(findClassesInJar(tempInnerJar).keySet()/*.parallelStream()*/ .stream()
                                 .map(className -> Map.entry(className, Optional.of(loader)))
                                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
                     }
