@@ -36,12 +36,12 @@ public class NaftahParserHelper {
   public static <T extends Tree> boolean hasChildOrSubChildOfType(ParseTree ctx, Class<T> type) {
     var children = getAllChildren(ctx);
     return !ObjectUtils.isEmpty(children)
-        && children.stream().anyMatch(child -> hasChildOfType(child, type));
+        && children/*.parallelStream()*/ .stream().anyMatch(child -> hasChildOfType(child, type));
   }
 
   public static <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(
       ParseTree ctx, Class<T> type, ParseTreeProperty<Boolean> executedParseTreeProperty) {
-    return getAllChildrenOfType(ctx, type).stream()
+    return getAllChildrenOfType(ctx, type)/*.parallelStream()*/ .stream()
         .anyMatch(
             child ->
                 Optional.ofNullable(executedParseTreeProperty)
@@ -53,7 +53,7 @@ public class NaftahParserHelper {
       ParseTree ctx, Class<T> type) {
     var children = getAllChildren(ctx);
     return !ObjectUtils.isEmpty(children)
-        ? children.stream().filter(child -> hasChildOfType(child, type)).toList()
+        ? children/*.parallelStream()*/ .stream().filter(child -> hasChildOfType(child, type)).toList()
         : List.of();
   }
 
