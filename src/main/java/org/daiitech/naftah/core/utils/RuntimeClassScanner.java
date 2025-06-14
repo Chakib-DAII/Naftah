@@ -47,7 +47,6 @@ public final class RuntimeClassScanner {
         return scanCLasses(PATHS);
     }
     public static Map<String, Optional<? extends ClassLoader>> scanCLasses(String[] paths) {
-        System.out.println(Arrays.toString(paths));
         Map<String, Optional<? extends ClassLoader>> classNames = new HashMap<>();
         for (String path : paths) {
             File file = new File(path);
