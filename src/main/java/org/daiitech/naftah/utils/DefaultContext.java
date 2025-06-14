@@ -124,6 +124,13 @@ public class DefaultContext {
     System.out.println("Bootsrapping Runtime...");
     long startTime = System.nanoTime();
 
+    var classes = RuntimeClassScanner1.scanCLasses();
+
+    long end = System.nanoTime() - startTime;
+    System.out.println("took %s ns".formatted(end));
+
+    startTime = System.nanoTime();
+
     CLASS_NAMES = scanCLasses();
     CLASS_QUALIFIERS = getClassQualifiers(CLASS_NAMES.keySet(), false);
     ARABIC_CLASS_QUALIFIERS = getArabicClassQualifiers(CLASS_QUALIFIERS);
@@ -135,13 +142,6 @@ public class DefaultContext {
     }};
     JVM_FUNCTIONS = getClassMethods(accessibleAndInstantiableClasses);
     BUILTIN_FUNCTIONS = getBuiltinMethods(accessibleAndInstantiableClasses);
-    long end = System.nanoTime() - startTime;
-    System.out.println("took %s ns".formatted(end));
-
-    startTime = System.nanoTime();
-
-    var classes = RuntimeClassScanner1.scanCLasses();
-    System.out.println(classes);
 
     end = System.nanoTime() - startTime;
     System.out.println("took %s ns".formatted(end));

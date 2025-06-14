@@ -132,7 +132,7 @@ public final class RuntimeClassScanner1 {
                             new URL[]{ tempInnerJar.toURI().toURL() },
                             RuntimeClassScanner1.class.getClassLoader()
                     )) {
-                        classes.putAll(findClassesInJar(tempInnerJar).keySet().parallelStream()
+                        classes.putAll(findClassesInJar(tempInnerJar).keySet().stream()
                                 .map(className -> Optional.ofNullable(loadClass(className, loader))
                                         .map(clazz -> {
                                             var scannedClassOptional = ScannedClass.safeOf(clazz);
