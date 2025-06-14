@@ -7,16 +7,12 @@ import java.util.stream.Collectors;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
-import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
-import org.daiitech.naftah.core.builtin.lang.DeclaredFunction;
-import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
-import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.core.builtin.lang.*;
 import org.daiitech.naftah.core.parser.NaftahParserHelper;
+import org.daiitech.naftah.core.utils.ClassUtils;
 
-import static org.daiitech.naftah.core.utils.ClassUtils.getArabicClassQualifiers;
-import static org.daiitech.naftah.core.utils.ClassUtils.getClassQualifiers;
-import static org.daiitech.naftah.core.utils.RuntimeClassScanner.loadCLasses;
-import static org.daiitech.naftah.core.utils.RuntimeClassScanner.scanCLasses;
+import static org.daiitech.naftah.core.utils.ClassUtils.*;
+import static org.daiitech.naftah.core.utils.RuntimeClassScanner.*;
 
 /**
  * @author Chakib Daii <br>
@@ -114,16 +110,31 @@ public class DefaultContext {
   private static final Map<String, Optional<? extends ClassLoader>> CLASS_NAMES;
   private static final Set<String> CLASS_QUALIFIERS;
   private static final Set<String> ARABIC_CLASS_QUALIFIERS;
-  private static final Set<Class<?>> CLASSES;
+  // qualifiedName -> CLass<?>
+  private static final Map<String, Class<?>> CLASSES;
+  private static final Map<String, Class<?>> ACCESSIBLE_CLASSES;
+  private static final Map<String, Class<?>> INSTANTIABLE_CLASSES;
+  // qualifiedCall -> Method
+  private static final Map<String, List<JvmFunction>> JVM_FUNCTIONS;
+  private static final Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
 
   static {
     // TODO: loading should be activated based on a specific flag
+    System.out.println("Bootsrapping Runtime...");
+    long startTime = System.nanoTime();
     CLASS_NAMES = scanCLasses();
-    CLASS_QUALIFIERS = getClassQualifiers(CLASS_NAMES.keySet());
+    CLASS_QUALIFIERS = getClassQualifiers(CLASS_NAMES.keySet(), false);
     ARABIC_CLASS_QUALIFIERS = getArabicClassQualifiers(CLASS_QUALIFIERS);
-    CLASSES = loadCLasses(CLASS_NAMES);
-    // TODO: function should be a map of qualifiedCall -> Method
-    // TODO: class (type) should be a map of qualifiedName -> CLass<?>
+    CLASSES = loadClasses(CLASS_NAMES, false);
+    ACCESSIBLE_CLASSES = filterClasses(CLASSES, ClassUtils::isAccessibleClass);
+    INSTANTIABLE_CLASSES = filterClasses(CLASSES, ClassUtils::isInstantiableClass);
+    var accessibleAndInstantiableClasses = new HashMap<>(ACCESSIBLE_CLASSES) {{
+      putAll(INSTANTIABLE_CLASSES);
+    }};
+    JVM_FUNCTIONS = getClassMethods(accessibleAndInstantiableClasses);
+    BUILTIN_FUNCTIONS = getBuiltinMethods(accessibleAndInstantiableClasses);
+    long end = System.nanoTime() - startTime;
+    System.out.println("took %s ns".formatted(end));
   }
 
   // instance
