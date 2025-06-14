@@ -72,7 +72,7 @@ public final class ClassUtils {
      * @param methodPredicate methods filter
      * @return hashtable (Map) of classes and methods
      */
-    public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
+        public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
         return classes.entrySet()/*.parallelStream()*/ .stream()
                 .filter(Objects::nonNull)
                 .flatMap(classEntry -> {
@@ -97,6 +97,17 @@ public final class ClassUtils {
                 })
                 .collect(Collectors.groupingBy(Map.Entry::getKey,
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+    }
+
+
+    public static List<JvmFunction> getClassMethods(
+            String qualifiedName, Class<?> clazz) {
+        return Arrays.stream(clazz.getMethods())
+                .map(method ->  {
+                    String qualifiedCall = getQualifiedCall(qualifiedName, method);
+                    return JvmFunction.of(qualifiedCall, clazz, method);
+                })
+                .toList();
     }
 
     /**
@@ -213,4 +224,15 @@ public final class ClassUtils {
         return getBuiltinMethods(classes, (method) -> true);
     }
 
+    public static List<BuiltinFunction> getBuiltinMethods(Class<?> clazz) {
+        return isAnnotationsPresent(clazz, NaftahFnProvider.class) ?
+        Arrays.stream(clazz.getMethods())
+                .filter(method -> isAnnotationsPresent(method, NaftahFn.class))
+                .map(method ->  {
+                    var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
+                    var naftahFunction = getNaftahFunctionAnnotation(method);
+                    return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
+                })
+                .toList() : List.of();
+    }
 }
