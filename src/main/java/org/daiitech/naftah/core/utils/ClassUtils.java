@@ -1,27 +1,49 @@
 package org.daiitech.naftah.core.utils;
 
+import org.daiitech.naftah.core.builtin.NaftahFn;
+import org.daiitech.naftah.core.builtin.NaftahFnProvider;
+import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.core.builtin.lang.JvmFunction;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.lang.reflect.Modifier;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static org.daiitech.naftah.core.utils.AnnotationsUtils.*;
 
 
 /**
  * @author Chakib Daii
  */
 public final class ClassUtils {
+    public static final String CLASS_SEPARATORS_REGEX = "[.$]";
+    public static final String QUALIFIED_NAME_SEPARATOR = ":";
+    public static final String QUALIFIED_CALL_SEPARATOR = "::";
+
+    public static String getQualifiedName(String className) {
+        return ArabicUtils.transliterateToArabicScript(className).replaceAll(CLASS_SEPARATORS_REGEX, QUALIFIED_NAME_SEPARATOR);
+    }
+
+    public static String getQualifiedCall(String qualifiedName, Method method) {
+        return "%s::%s".formatted(qualifiedName, ArabicUtils.transliterateToArabicScript(method.getName()));
+    }
+
     /**
      * returns a set of class parts of the provided paths or classpath and jdk classnames if not
      *
      * @return set of qualified class names parts
      */
-    public static Set<String> getClassQualifiers(Set<String> classNames) {
-        return classNames.stream()
-                .flatMap(s -> Arrays.stream(s.split("\\.")))
-                // TODO: replace all $ with the right code
+    public static Set<String> getClassQualifiers(Set<String> classNames, boolean flattened) {
+        var baseStream = classNames/*.parallelStream()*/ .stream();
+
+        if (flattened)
+            baseStream = baseStream.flatMap(s -> Arrays.stream(s.split(CLASS_SEPARATORS_REGEX)));
+
+        return baseStream
+                .map(s -> s.replaceAll(CLASS_SEPARATORS_REGEX, QUALIFIED_NAME_SEPARATOR))
                 .collect(Collectors.toSet());
     }
 
@@ -31,7 +53,7 @@ public final class ClassUtils {
      * @return set of qualified class names parts transliterated to arabic
      */
     public static Set<String> getArabicClassQualifiers(Set<String> classQualifiers) {
-        return classQualifiers.stream()
+        return classQualifiers/*.parallelStream()*/ .stream()
                 .map(ArabicUtils::transliterateToArabicScript)
                 .collect(Collectors.toSet());
     }
@@ -50,20 +72,31 @@ public final class ClassUtils {
      * @param methodPredicate methods filter
      * @return hashtable (Map) of classes and methods
      */
-    public static Map<Class<?>, Method[]> getClassMethods(Set<Class<?>> classes, Predicate<Method> methodPredicate) {
-        return classes.stream()
+    public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
+        return classes.entrySet()/*.parallelStream()*/ .stream()
                 .filter(Objects::nonNull)
-                .map(aClass -> {
+                .flatMap(classEntry -> {
                     try {
-                        return Map.entry(aClass, Arrays.stream(aClass.getMethods()).filter(methodPredicate).toArray(Method[]::new));
+                        return Arrays.stream(classEntry.getValue().getMethods())
+                                .filter(methodPredicate)
+                                .map(method -> Map.entry(method, classEntry));
                     } catch (Throwable e) {
                         //skip
-//                        e.printStackTrace();
                         return null;
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(methodEntry ->  {
+                    Class<?> clazz = methodEntry.getValue().getValue();
+                    Method method = methodEntry.getKey();
+                    String qualifiedCall = getQualifiedCall(methodEntry.getValue().getKey(), method);
+                    return Map.entry(
+                            qualifiedCall,
+                            JvmFunction.of(qualifiedCall, clazz, method)
+                    );
+                })
+                .collect(Collectors.groupingBy(Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
     /**
@@ -76,41 +109,108 @@ public final class ClassUtils {
      * @param classes set of classes having methods as members
      * @return hashtable (Map) of classes and methods
      */
-    public static Map<Class<?>, Method[]> getClassMethods(Set<Class<?>> classes) {
+    public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes) {
         return getClassMethods(classes, (method) -> true);
     }
 
-    /**
-     * returns method names mapped to all classes in the classpath and jdk
-     * Usage:
-     * <pre>
-     *      Map<Class<?>, String[]> methods = ClassUtils.getClassMethodNames();
-     * </pre>
-     * @return hashtable (Map) of classes and method names
-     */
-    public static Map<Class<?>, String[]> getClassMethodNames(Set<Class<?>> classes) {
-        return getClassMethods(classes).entrySet().stream()
-                .map(entry -> Map.entry(entry.getKey(), Arrays.stream(entry.getValue())
-                        .map(Method::getName)
-                        .collect(Collectors.toSet())
-                        .toArray(String[]::new)))
+    public static boolean isAccessibleClass(Class<?> clazz) {
+        // Try to find a public static factory method returning the same type
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (
+                    Modifier.isStatic(method.getModifiers()) &&
+                            Modifier.isPublic(method.getModifiers())
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isInstantiableClass(Class<?> clazz) {
+        // Must be public
+        if (!Modifier.isPublic(clazz.getModifiers())) return false;
+
+        // Cannot be abstract or an interface
+        if (Modifier.isAbstract(clazz.getModifiers()) || clazz.isInterface()) return false;
+
+        // Try to find a public no-arg constructor
+        try {
+            Constructor<?> constructor = clazz.getConstructor();
+            if (Modifier.isPublic(constructor.getModifiers())) return true;
+        } catch (NoSuchMethodException ignored) {}
+
+        return false;
+    }
+
+    public static boolean isStatic(Method method) {
+        // If it's a static method, it's invocable directly
+        return Modifier.isStatic(method.getModifiers());
+    }
+
+    public static boolean isInvocable(Method method) {
+        // Must be public
+        if (!Modifier.isPublic(method.getModifiers())) return false;
+
+        // Ignore synthetic or bridge methods (compiler-generated)
+        if (method.isSynthetic() || method.isBridge()) return false;
+
+        Class<?> declaringClass = method.getDeclaringClass();
+
+        // If it's a static method, it's invocable directly
+        if (isStatic(method)) {
+            return true;
+        }
+
+        // For instance methods: check the declaring class is instantiable
+        return isInstantiableClass(declaringClass);
+    }
+
+    public static Map<String, Class<?>> filterClasses(Map<String, Class<?>> classes, Predicate<Class<?>> classPredicate) {
+        return classes.entrySet()/*.parallelStream()*/ .stream()
+                .filter(classEntry -> {
+        try {
+            return
+                    classPredicate.test(classEntry.getValue());
+        } catch (Throwable e) {
+            //skip
+            return false;
+        }
+        })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    /**
-     * returns method names mapped to all classes in the classpath and jdk
-     * Usage:
-     * <pre>
-     *      Map<Class<?>, String[]> methods = ClassUtils.getClassArabicMethodNames();
-     * </pre>
-     * @return hashtable (Map) of classes and method names transliterated to arabic
-     */
-    public static Map<Class<?>, String[]> getClassArabicMethodNames(Set<Class<?>> classes) {
-        return getClassMethodNames(classes).entrySet().stream()
-                .map(entry -> Map.entry(entry.getKey(), Arrays.stream(entry.getValue())
-                        .map(ArabicUtils::transliterateToArabicScript)
-                        .collect(Collectors.toSet())
-                        .toArray(String[]::new)))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    public static Map<String, List<BuiltinFunction>> getBuiltinMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
+        return classes.entrySet()/*.parallelStream()*/ .stream()
+                .filter(Objects::nonNull)
+                .filter(classEntry -> isAnnotationsPresent(classEntry.getValue(), NaftahFnProvider.class))
+                .flatMap(classEntry -> {
+                    try {
+                        return Arrays.stream(classEntry.getValue().getMethods())
+                                .filter(method -> isAnnotationsPresent(method, NaftahFn.class)
+                                        && methodPredicate.test((method)))
+                                .map(method -> Map.entry(method, classEntry));
+                    } catch (Throwable e) {
+                        //skip
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .map(methodEntry ->  {
+                    Class<?> clazz = methodEntry.getValue().getValue();
+                    Method method = methodEntry.getKey();
+                    var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
+                    var naftahFunction = getNaftahFunctionAnnotation(method);
+                    return Map.entry(
+                            naftahFunction.name(),
+                            BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction)
+                    );
+                })
+                .collect(Collectors.groupingBy(Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
+
+    public static Map<String, List<BuiltinFunction>> getBuiltinMethods(Map<String, Class<?>> classes) {
+        return getBuiltinMethods(classes, (method) -> true);
+    }
+
 }
