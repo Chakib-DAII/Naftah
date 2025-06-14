@@ -3,8 +3,9 @@ package org.daiitech.naftah.core.builtin.lang;
 import org.daiitech.naftah.core.utils.ClassUtils;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.daiitech.naftah.core.utils.ClassUtils.getQualifiedName;
+import static org.daiitech.naftah.core.utils.ClassUtils.*;
 
 /**
  * @author Chakib Daii
@@ -18,25 +19,33 @@ public record ScannedClass(Class<?> clazz,
                            ) {
 
     public static ScannedClass of(Class<?> clazz,
-                                  String qualifiedName,
-                                  List<JvmFunction> jvmFunctions,
-                                  List<BuiltinFunction> builtinFunctions
+                                  String qualifiedName
     ) {
         return new ScannedClass(clazz,
                 qualifiedName,
                 ClassUtils.isAccessibleClass(clazz),
                 ClassUtils.isInstantiableClass(clazz),
-                jvmFunctions,
-                builtinFunctions);
+                getClassMethods(qualifiedName, clazz),
+                getBuiltinMethods(clazz));
     }
 
-    public static ScannedClass of(Class<?> clazz,
-                                  List<JvmFunction> jvmFunctions,
-                                  List<BuiltinFunction> builtinFunctions
+    public static ScannedClass of(Class<?> clazz
     ) {
         return of(clazz,
-                getQualifiedName(clazz.getName()),
-                jvmFunctions,
-                builtinFunctions);
+                getQualifiedName(clazz.getName()));
+    }
+
+    public static Optional<ScannedClass> safeOf(Class<?> clazz) {
+        ScannedClass scannedClass = null;
+        try {
+            scannedClass = of(clazz,
+                    getQualifiedName(clazz.getName()));
+        } catch (Throwable ignored) {
+            // Silently skip classes that can't be loaded
+        }
+        return Optional.ofNullable(
+                scannedClass
+        );
+
     }
 }
