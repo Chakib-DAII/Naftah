@@ -2,7 +2,7 @@
   <configuration default="false" name="Naftah - assignment.nfth" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.daiitech.naftah.Naftah" />
     <module name="naftah.main" />
-    <option name="PROGRAM_PARAMETERS" value="C:\Users\User01\workspace\naftah\learn-by-example\assignment.nfth" />
+    <option name="PROGRAM_PARAMETERS" value=".\learn-by-example\assignment.nfth" />
     <option name="VM_PARAMETERS" value="-Dfile.encoding=UTF-8 -Djava.util.logging.config.file=logging.properties" />
     <extension name="coverage">
       <pattern>
