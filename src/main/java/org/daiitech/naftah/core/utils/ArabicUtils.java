@@ -77,12 +77,62 @@ public class ArabicUtils {
         return text;
     }
 
+
+    public static String transliterateScriptLetterByLetter(String transliteratorID, String textInput) {
+        Transliterator transliterator = Transliterator.getInstance(transliteratorID);
+        // Iterate over each character and apply transliteration
+        StringBuilder textOutput = new StringBuilder();
+
+        for (int i = 0; i < textInput.length(); i++) {
+            char latinChar = textInput.charAt(i);
+
+            // We transliterate one character at a time
+            String transliteratedChar = transliterator.transliterate(String.valueOf(latinChar));
+
+            // Append the transliterated character to the output
+            textOutput.append(transliteratedChar);
+        }
+
+        return textOutput.toString();
+    }
+
+
+    public static String transliterateScript(String transliteratorID, String text) {
+        return transliterateScript(transliteratorID, text, false, null);
+
+    }
+
+    public static String transliterateScript(String transliteratorID, String text, String customRules) {
+        return transliterateScript(transliteratorID, text, false, customRules);
+
+    }
+
     public static String transliterateToArabicScript(String text, boolean removeDiacritics) {
         return transliterateScript(LATIN_ARABIC_TRANSLITERATION_ID, text, removeDiacritics, null);
     }
 
+    public static String transliterateToArabicScriptDefaultCustom(String text, boolean removeDiacritics) {
+        return transliterateScript(LATIN_ARABIC_TRANSLITERATION_ID, text, removeDiacritics, CUSTOM_RULES);
+    }
+
+    public static String transliterateToArabicScript(String text, boolean removeDiacritics, String customRules) {
+        return transliterateScript(LATIN_ARABIC_TRANSLITERATION_ID, text, removeDiacritics, customRules);
+    }
+
     public static String transliterateToArabicScript(String text) {
         return transliterateToArabicScript(text, true);
+    }
+
+    public static String transliterateToArabicScriptDefaultCustom(String text) {
+        return transliterateToArabicScript(text, true, CUSTOM_RULES);
+    }
+
+    public static String transliterateToArabicScript(String text, String customRules) {
+        return transliterateToArabicScript(text, true, customRules);
+    }
+
+    public static String transliterateToArabicScriptLetterByLetter(String text) {
+        return transliterateScriptLetterByLetter(LATIN_ARABIC_TRANSLITERATION_ID, text);
     }
 
 }
