@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.core.parser.NaftahParser;
+import org.daiitech.naftah.utils.DefaultContext;
 
 /**
  * @author Chakib Daii
@@ -116,7 +117,7 @@ public final class ObjectUtils {
           NaftahParser.QualifiedNameContext qualifiedNameContext =
               qualifiedNameTypeContext.qualifiedName();
           var qualifiedName = getQualifiedName(qualifiedNameContext);
-          //  TODO: match qualified name to java type
+          return DefaultContext.getJavaType(qualifiedName);
         }
       }
     } else if (naftahTypeContext instanceof NaftahParser.VarTypeContext) {
@@ -130,11 +131,11 @@ public final class ObjectUtils {
       NaftahParser.QualifiedNameContext qualifiedNameContext =
           qualifiedNameTypeContext.qualifiedName();
       var qualifiedName = getQualifiedName(qualifiedNameContext);
-      //  TODO: match qualified name to java type
+      return DefaultContext.getJavaType(qualifiedName);
     } else if (naftahTypeContext
         instanceof NaftahParser.QualifiedNameContext qualifiedNameContext) {
       var qualifiedName = getQualifiedName(qualifiedNameContext);
-      //  TODO: match qualified name to java type
+      return DefaultContext.getJavaType(qualifiedName);
     }
     return Object.class;
   }
