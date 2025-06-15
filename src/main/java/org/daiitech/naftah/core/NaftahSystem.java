@@ -1,12 +1,11 @@
 package org.daiitech.naftah.core;
 
-import org.daiitech.naftah.core.errors.NaftahBugError;
-import org.daiitech.naftah.utils.ArabicOutputTransformer;
-import org.daiitech.naftah.utils.ReleaseInfo;
-
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import org.daiitech.naftah.core.errors.NaftahBugError;
+import org.daiitech.naftah.utils.ArabicOutputTransformer;
+import org.daiitech.naftah.utils.ReleaseInfo;
 
 /**
  * @author Chakib Daii

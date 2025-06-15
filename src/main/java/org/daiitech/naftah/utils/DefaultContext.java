@@ -1,5 +1,9 @@
 package org.daiitech.naftah.utils;
 
+import static org.daiitech.naftah.core.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
+import static org.daiitech.naftah.core.utils.ClassUtils.*;
+import static org.daiitech.naftah.core.utils.RuntimeClassScanner.*;
+
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
@@ -12,10 +16,6 @@ import org.daiitech.naftah.core.builtin.Builtin;
 import org.daiitech.naftah.core.builtin.lang.*;
 import org.daiitech.naftah.core.parser.NaftahParserHelper;
 import org.daiitech.naftah.core.utils.ClassUtils;
-
-import static org.daiitech.naftah.core.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
-import static org.daiitech.naftah.core.utils.ClassUtils.*;
-import static org.daiitech.naftah.core.utils.RuntimeClassScanner.*;
 
 /**
  * @author Chakib Daii <br>
@@ -59,8 +59,7 @@ public class DefaultContext {
   }
 
   public static DefaultContext registerContext(
-      Map<String, DeclaredParameter> parameters,
-      Map<String, Object> arguments) {
+      Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
     return new DefaultContext(parameters, arguments);
   }
 
@@ -121,78 +120,90 @@ public class DefaultContext {
   private static volatile boolean BOOT_STRAP_FAILED;
   private static volatile boolean BOOT_STRAPPED;
 
-  private static final Supplier<ClassScanningResult> LOADER_TASK = () -> {
-    ExecutorService internalExecutor = Executors.newFixedThreadPool(2);
-    ClassScanningResult result = new ClassScanningResult();
-    var classNames = scanCLasses();
-    result.setClassNames(classNames);
+  private static final Supplier<ClassScanningResult> LOADER_TASK =
+      () -> {
+        ExecutorService internalExecutor = Executors.newFixedThreadPool(2);
+        ClassScanningResult result = new ClassScanningResult();
+        var classNames = scanCLasses();
+        result.setClassNames(classNames);
 
-    try {
-      Callable<Pair<Set<String>, Set<String>>> qualifiersLoaderTask = () -> {
-        var classQualifiers = getClassQualifiers(classNames.keySet(), false);
-        var arabicClassQualifiers = getArabicClassQualifiers(classQualifiers);
-        return new Pair<>(classQualifiers, arabicClassQualifiers);
+        try {
+          Callable<Pair<Set<String>, Set<String>>> qualifiersLoaderTask =
+              () -> {
+                var classQualifiers = getClassQualifiers(classNames.keySet(), false);
+                var arabicClassQualifiers = getArabicClassQualifiers(classQualifiers);
+                return new Pair<>(classQualifiers, arabicClassQualifiers);
+              };
+          var qualifiersFuture = internalExecutor.submit(qualifiersLoaderTask);
+
+          Callable<Map<String, Class<?>>> classLoaderTask = () -> loadClasses(classNames, false);
+          var classFuture = internalExecutor.submit(classLoaderTask);
+
+          var qualifiersFutureResult = qualifiersFuture.get();
+          result.setClassQualifiers(qualifiersFutureResult.a);
+          result.setArabicClassQualifiers(qualifiersFutureResult.b);
+
+          result.setClasses(classFuture.get());
+
+          Callable<Map<String, Class<?>>> accessibleClassLoaderTask =
+              () -> filterClasses(result.getClasses(), ClassUtils::isAccessibleClass);
+          var accessibleClassFuture = internalExecutor.submit(accessibleClassLoaderTask);
+
+          Callable<Map<String, Class<?>>> instantiableClassLoaderTask =
+              () -> filterClasses(result.getClasses(), ClassUtils::isInstantiableClass);
+          var instantiableClassFuture = internalExecutor.submit(instantiableClassLoaderTask);
+
+          result.setAccessibleClasses(accessibleClassFuture.get());
+          result.setInstantiableClasses(instantiableClassFuture.get());
+
+          var accessibleAndInstantiable =
+              new HashMap<>(result.getAccessibleClasses()) {
+                {
+                  putAll(result.getInstantiableClasses());
+                }
+              };
+
+          Callable<Map<String, List<JvmFunction>>> jvmFunctionsLoaderTask =
+              () -> getClassMethods(accessibleAndInstantiable);
+          var jvmFunctionsFuture = internalExecutor.submit(jvmFunctionsLoaderTask);
+
+          Callable<Map<String, List<BuiltinFunction>>> builtinFunctionsLoaderTask =
+              () -> getBuiltinMethods(accessibleAndInstantiable);
+          var builtinFunctionsFuture = internalExecutor.submit(builtinFunctionsLoaderTask);
+
+          result.setJvmFunctions(jvmFunctionsFuture.get());
+          result.setBuiltinFunctions(builtinFunctionsFuture.get());
+
+          return result;
+        } catch (InterruptedException | ExecutionException e) {
+          throw new RuntimeException(e);
+        } finally {
+          internalExecutor.shutdown();
+        }
       };
-      var qualifiersFuture = internalExecutor.submit(qualifiersLoaderTask);
-
-      Callable<Map<String, Class<?>>> classLoaderTask = () -> loadClasses(classNames, false);
-      var classFuture = internalExecutor.submit(classLoaderTask);
-
-      var qualifiersFutureResult = qualifiersFuture.get();
-      result.setClassQualifiers(qualifiersFutureResult.a);
-      result.setArabicClassQualifiers(qualifiersFutureResult.b);
-
-      result.setClasses(classFuture.get());
-
-      Callable<Map<String, Class<?>>> accessibleClassLoaderTask = () -> filterClasses(result.getClasses(), ClassUtils::isAccessibleClass);
-      var accessibleClassFuture = internalExecutor.submit(accessibleClassLoaderTask);
-
-      Callable<Map<String, Class<?>>> instantiableClassLoaderTask = () -> filterClasses(result.getClasses(), ClassUtils::isInstantiableClass);
-      var instantiableClassFuture = internalExecutor.submit(instantiableClassLoaderTask);
-
-      result.setAccessibleClasses(accessibleClassFuture.get());
-      result.setInstantiableClasses(instantiableClassFuture.get());
-
-      var accessibleAndInstantiable = new HashMap<>(result.getAccessibleClasses()) {{
-        putAll(result.getInstantiableClasses());
-      }};
-
-      Callable<Map<String, List<JvmFunction>>> jvmFunctionsLoaderTask = () -> getClassMethods(accessibleAndInstantiable);
-      var jvmFunctionsFuture = internalExecutor.submit(jvmFunctionsLoaderTask);
-
-      Callable<Map<String, List<BuiltinFunction>>> builtinFunctionsLoaderTask = () -> getBuiltinMethods(accessibleAndInstantiable);
-      var builtinFunctionsFuture = internalExecutor.submit(builtinFunctionsLoaderTask);
-
-      result.setJvmFunctions(jvmFunctionsFuture.get());
-      result.setBuiltinFunctions(builtinFunctionsFuture.get());
-
-      return result;
-    } catch (InterruptedException | ExecutionException e) {
-    throw new RuntimeException(e);
-  } finally {
-      internalExecutor.shutdown();
-    }
-  };
 
   public static void defaultBootstrap() {
-    BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class).stream()
-            .map(builtinFunction -> Map.entry(
-                    builtinFunction.functionInfo().name(),
-                    builtinFunction
-            ))
-            .collect(Collectors.groupingBy(Map.Entry::getKey,
+    BUILTIN_FUNCTIONS =
+        getBuiltinMethods(Builtin.class).stream()
+            .map(
+                builtinFunction ->
+                    Map.entry(builtinFunction.functionInfo().name(), builtinFunction))
+            .collect(
+                Collectors.groupingBy(
+                    Map.Entry::getKey,
                     Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
   }
+
   public static void bootstrap() {
     SHOULD_BOOT_STRAP = Boolean.getBoolean("scanClassPath");
     if (SHOULD_BOOT_STRAP) {
       CompletableFuture.supplyAsync(LOADER_TASK)
-              .whenComplete((result, throwable) -> {
+          .whenComplete(
+              (result, throwable) -> {
                 if (Objects.nonNull(throwable)) {
                   defaultBootstrap();
                   BOOT_STRAP_FAILED = true;
-                }
-                else {
+                } else {
                   CLASS_NAMES = result.getClassNames();
                   CLASS_QUALIFIERS = result.getClassQualifiers();
                   ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
@@ -210,25 +221,22 @@ public class DefaultContext {
   }
 
   private static Class<?> doGetJavaType(String qualifiedName) {
-    if(INSTANTIABLE_CLASSES.containsKey(qualifiedName))
+    if (INSTANTIABLE_CLASSES.containsKey(qualifiedName))
       return INSTANTIABLE_CLASSES.get(qualifiedName);
-    if(ACCESSIBLE_CLASSES.containsKey(qualifiedName))
-      return ACCESSIBLE_CLASSES.get(qualifiedName);
-    if(CLASSES.containsKey(qualifiedName))
-      return CLASSES.get(qualifiedName);
+    if (ACCESSIBLE_CLASSES.containsKey(qualifiedName)) return ACCESSIBLE_CLASSES.get(qualifiedName);
+    if (CLASSES.containsKey(qualifiedName)) return CLASSES.get(qualifiedName);
     return Object.class;
   }
 
   public static Class<?> getJavaType(String qualifiedName) {
     if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
-      while (!BOOT_STRAPPED && (Objects.isNull(INSTANTIABLE_CLASSES)
+      while (!BOOT_STRAPPED
+          && (Objects.isNull(INSTANTIABLE_CLASSES)
               || Objects.isNull(ACCESSIBLE_CLASSES)
-              || Objects.isNull(CLASSES)
-              )) {
-          //  block the execution until bootstrapped
-        if (BOOT_STRAP_FAILED)
-          return Object.class;
-        }
+              || Objects.isNull(CLASSES))) {
+        //  block the execution until bootstrapped
+        if (BOOT_STRAP_FAILED) return Object.class;
+      }
       return doGetJavaType(qualifiedName);
     }
     return Object.class;
@@ -248,9 +256,8 @@ public class DefaultContext {
   private DefaultContext() {
     this(null, null, null);
   }
-  private DefaultContext(
-      Map<String, DeclaredParameter> parameters,
-      Map<String, Object> arguments) {
+
+  private DefaultContext(Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
     this(null, parameters, arguments);
   }
 
@@ -258,9 +265,7 @@ public class DefaultContext {
       DefaultContext parent,
       Map<String, DeclaredParameter> parameters,
       Map<String, Object> arguments) {
-    if (parent == null
-        && (CONTEXTS.size() != 0))
-      throw new IllegalStateException("Illegal usage.");
+    if (parent == null && (CONTEXTS.size() != 0)) throw new IllegalStateException("Illegal usage.");
     this.parent = parent;
     this.depth = parent == null ? 0 : parent.getDepth() + 1;
     this.arguments = arguments;
@@ -314,10 +319,11 @@ public class DefaultContext {
 
   public boolean containsFunction(String name) {
     return functions.containsKey(name)
-            || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name)
-            || (name.matches(QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP
+        || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name)
+        || (name.matches(QUALIFIED_CALL_REGEX)
+            && SHOULD_BOOT_STRAP
             && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS.containsKey(name)))
-            || parent != null && parent.containsFunction(name);
+        || parent != null && parent.containsFunction(name);
   }
 
   public Pair<Integer, Object> getFunction(String name, boolean safe) {
@@ -336,8 +342,7 @@ public class DefaultContext {
         } else if (name.matches(QUALIFIED_CALL_REGEX)) {
           while (!BOOT_STRAPPED && Objects.isNull(JVM_FUNCTIONS)) {
             //  block the execution until bootstrapped
-            if (BOOT_STRAP_FAILED)
-              return null;
+            if (BOOT_STRAP_FAILED) return null;
           }
           var functions = JVM_FUNCTIONS.get(name);
           return new Pair<>(depth, functions.size() == 1 ? functions.get(0) : functions);

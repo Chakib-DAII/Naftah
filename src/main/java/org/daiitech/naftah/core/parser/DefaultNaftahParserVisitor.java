@@ -230,9 +230,8 @@ public class DefaultNaftahParserVisitor
     // TODO: add extra vars to context to get the function called and so on, it can be a free map
     // TODO:  and using an Enum as key of predefined ids to get values
     currentContext.setParsingFunctionCallId(true);
-    String functionName = hasChild(ctx.ID()) ?
-            ctx.ID().getText()
-            : (String) visit(ctx.qualifiedCall());
+    String functionName =
+        hasChild(ctx.ID()) ? ctx.ID().getText() : (String) visit(ctx.qualifiedCall());
     // TODO: add support to variables as qualified call and match to the jvm function
     String functionCallId = DefaultContext.FUNCTION_CALL_ID_GENERATOR.apply(depth, functionName);
     currentContext.setFunctionCallId(functionCallId);
@@ -268,7 +267,8 @@ public class DefaultNaftahParserVisitor
             "Function %s of type: %s".formatted(functionName, JvmFunction.class.getName()));
       } else if (function instanceof Collection<?> functions) {
         throw new UnsupportedOperationException(
-                "Function %s : %s of type: %s".formatted(functionName, functions, List.class.getName()));
+            "Function %s : %s of type: %s"
+                .formatted(functionName, functions, List.class.getName()));
       }
     } else throw new RuntimeException("Function not found: " + functionName);
     currentContext.setFunctionCallId(null);
@@ -278,19 +278,19 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitQualifiedCall(org.daiitech.naftah.core.parser.NaftahParser.QualifiedCallContext ctx) {
+  public Object visitQualifiedCall(
+      org.daiitech.naftah.core.parser.NaftahParser.QualifiedCallContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitQualifiedCall(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitQualifiedCall(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
-    var result = visit(ctx.qualifiedName()) + ctx.COLON(0).getText() + ctx.COLON(1).getText() + ctx.ID();
+    var result =
+        visit(ctx.qualifiedName()) + ctx.COLON(0).getText() + ctx.COLON(1).getText() + ctx.ID();
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
-
-
 
   @Override
   public Object visitArgumentList(

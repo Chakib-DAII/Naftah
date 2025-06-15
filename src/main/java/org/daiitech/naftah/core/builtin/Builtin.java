@@ -34,7 +34,7 @@ public final class Builtin {
       usage = "طرح(ش ، ي)",
       parameterTypes = {Number.class, Number.class},
       returnType = Number.class)
-  public static  <T extends Number> Number subtract(T x, T y) {
+  public static <T extends Number> Number subtract(T x, T y) {
     return NumberUtils.subtract(x, y);
   }
 
@@ -45,7 +45,7 @@ public final class Builtin {
       usage = "ضرب(ش ، ي)",
       parameterTypes = {Number.class, Number.class},
       returnType = Number.class)
-  public static  <T extends Number> Number multiply(T x, T y) {
+  public static <T extends Number> Number multiply(T x, T y) {
     return NumberUtils.multiply(x, y);
   }
 
@@ -56,7 +56,7 @@ public final class Builtin {
       usage = "قسمة(ش ، ي)",
       parameterTypes = {Number.class, Number.class},
       returnType = Number.class)
-  public static  <T extends Number> Number divide(T x, T y) {
+  public static <T extends Number> Number divide(T x, T y) {
     return NumberUtils.divide(x, y);
   }
 
@@ -67,7 +67,7 @@ public final class Builtin {
       usage = "باقي_القسمة(ش ، ي)",
       parameterTypes = {Number.class, Number.class},
       returnType = Number.class)
-  public static  <T extends Number> Number modulo(T x, T y) {
+  public static <T extends Number> Number modulo(T x, T y) {
     return NumberUtils.modulo(x, y);
   }
 }

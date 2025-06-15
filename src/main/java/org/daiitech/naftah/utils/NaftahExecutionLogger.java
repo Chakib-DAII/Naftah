@@ -394,12 +394,12 @@ public final class NaftahExecutionLogger {
         .orElse("");
   }
 
-    public static String logExecution(boolean doLog, NaftahParser.QualifiedCallContext ctx) {
-        return Optional.ofNullable(ctx)
-                .map(
-                        context -> {
-                            String result =
-                                    """
+  public static String logExecution(boolean doLog, NaftahParser.QualifiedCallContext ctx) {
+    return Optional.ofNullable(ctx)
+        .map(
+            context -> {
+              String result =
+                  """
                                             QualifiedCallContext::qualifiedName -> {
                                                 %s
                                             }
@@ -407,22 +407,20 @@ public final class NaftahExecutionLogger {
                                             QualifiedCallContext::COLON -> %s
                                             QualifiedCallContext::ID -> %s
                                             """
-                                            .formatted(
-                                                    logExecution(false, context.qualifiedName()),
-                                                    context.COLON(),
-                                                    context.COLON(),
-                                                    context.ID()
-                                            );
-                            if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-                                LOGGER.finest(result);
-                            }
-                            return result;
-                        })
-                .orElse("");
+                      .formatted(
+                          logExecution(false, context.qualifiedName()),
+                          context.COLON(),
+                          context.COLON(),
+                          context.ID());
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+            })
+        .orElse("");
+  }
 
-    }
-
-    public static String logExecution(boolean doLog, NaftahParser.FunctionCallContext ctx) {
+  public static String logExecution(boolean doLog, NaftahParser.FunctionCallContext ctx) {
     return Optional.ofNullable(ctx)
         .map(
             context -> {
@@ -1013,16 +1011,15 @@ public final class NaftahExecutionLogger {
                     BuiltInContext::STRING_TYPE -> %s
                     """
                       .formatted(
-                              context.BOOLEAN(),
-                              context.CHAR(),
-                              context.BYTE(),
-                              context.SHORT(),
-                              context.INT(),
-                              context.LONG(),
-                              context.FLOAT(),
-                              context.DOUBLE(),
-                              context.STRING_TYPE()
-                      );
+                          context.BOOLEAN(),
+                          context.CHAR(),
+                          context.BYTE(),
+                          context.SHORT(),
+                          context.INT(),
+                          context.LONG(),
+                          context.FLOAT(),
+                          context.DOUBLE(),
+                          context.STRING_TYPE());
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
