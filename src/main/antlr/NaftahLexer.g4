@@ -93,7 +93,7 @@ FLOAT   : 'عدد_عائم' | 'عائم';
 DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
 
 // Literals
-ID         : [أ-ي٠-٩_0-9]* [أ-ي_] [أ-ي٠-٩_0-9]*;
+ID         : [أ-يڠ-ۿ٠-٩_0-9]* [أ-يڠ-ۿ_] [أ-يڠ-ۿ٠-٩_0-9]*;
 NUMBER     : [٠-٩0-9]+ (COMMA [٠-٩0-9]+)?;
 CHARACTER  : (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkLeft) Character (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkRight);
 STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) String (DoubleQuotationMark | DoubleQuotationMarkRight);
