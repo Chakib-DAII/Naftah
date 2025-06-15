@@ -41,9 +41,8 @@ public class DefaultNaftahParserVisitor
         hasChildOrSubChildOfType(
                 ctx,
                 org.daiitech.naftah.core.parser.NaftahParser.FunctionCallStatementContext.class)
-            ? DefaultContext.registerContext(
-                Collections.emptyMap(), Collections.emptyMap(), new HashMap<>(), new HashMap<>())
-            : DefaultContext.registerContext(Collections.emptyMap(), Collections.emptyMap());
+            ? DefaultContext.registerContext(new HashMap<>(), new HashMap<>())
+            : DefaultContext.registerContext();
     depth = rootContext.getDepth();
     Object result = null;
     for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement :
@@ -234,6 +233,7 @@ public class DefaultNaftahParserVisitor
     Object result = null;
     // TODO: add extra vars to context to get the function called and so on, it can be a free map
     // TODO:  and using an Enum as key of predefined ids to get values
+    currentContext.setParsingFunctionCallId(true);
     String functionName = hasChild(ctx.ID()) ?
             ctx.ID().getText()
             : (String) visit(ctx.qualifiedCall());
@@ -810,7 +810,11 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
-    var result = getJavaType(ctx);
+    Object result;
+    if (currentContext.isParsingFunctionCallId()) {
+      result = getQualifiedName(ctx);
+      currentContext.setParsingFunctionCallId(false);
+    } else result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
