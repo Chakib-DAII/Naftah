@@ -207,4 +207,98 @@ public final class ObjectUtils {
     // Anything else is not allowed
     return false;
   }
+
+  public static Object multiply(Number a, Object b, boolean safe) {
+      if(b instanceof Boolean aBoolean) {
+        int multiplier = aBoolean ? 1 : 0;
+        return NumberUtils.multiply(a, multiplier);
+      } else if(b instanceof Character character) {
+        return new String(new char[a.intValue()]).replace('\0', character);
+      } else if(b instanceof String string) {
+        return  string.repeat(a.intValue());
+      }
+
+    if (safe)
+      return null;
+
+    throw new UnsupportedOperationException("Multiplication not supported for types: " + a.getClass() + " and " + b.getClass());
+  }
+  public static Object multiply(Object a, Object b, boolean safe) {
+    // TODO: add more validations
+    if (a == null || b == null)
+      throw new IllegalArgumentException("Arguments cannot be null");
+
+    // Number * Number
+    if (a instanceof Number && b instanceof Number) {
+      return NumberUtils.multiply(a, b);
+    }
+
+    // Number * Boolean/Character/String
+    if(a instanceof Number number){
+      return multiply(number, b, true);
+    }
+
+    if(b instanceof Number number){
+      return multiply(number, a, true);
+    }
+
+    // Boolean * Boolean
+    if (a instanceof Boolean aBoolean && b instanceof Boolean aBoolean1) {
+      int multiplier = aBoolean ? 1 : 0;
+      int multiplier1 = aBoolean1 ? 1 : 0;
+      return NumberUtils.multiply(multiplier, multiplier1);
+    }
+
+    // Collection * Collection (element-wise)
+    if (a instanceof Collection<?> collection1 && b instanceof Collection<?> collection2) {
+      return CollectionUtils.multiply((Collection<Number>) collection1, (Collection<Number>) collection2);
+    }
+
+    // Array * Array (element-wise)
+    if (a.getClass().isArray() && b.getClass().isArray()) {
+      return CollectionUtils.multiply((Number[])a, (Number[])b);
+    }
+
+    // Collection * Number (scalar multiplication)
+    if (a instanceof Collection && b instanceof Number number) {
+      return CollectionUtils.multiply((Collection<Number>) a, number);
+    }
+
+    // Number * Collection (scalar multiplication)
+    if (a instanceof Number number && b instanceof Collection) {
+      return CollectionUtils.multiply((Collection<Number>) b, number);
+    }
+
+    // Array * Number (scalar multiplication)
+    if (a.getClass().isArray() && b instanceof Number number) {
+      return CollectionUtils.multiply((Number[]) a, number);
+    }
+
+    // Number * Array (scalar multiplication)
+    if (a instanceof Number number && b.getClass().isArray()) {
+      return CollectionUtils.multiply((Number[]) b, number);
+    }
+
+    // Map * Map (element-wise value multiplication)
+    if (a instanceof Map && b instanceof Map) {
+      return CollectionUtils.multiply((Map<Object, Number>) a, (Map<Object, Number>) b);
+    }
+
+    // Map * Number (multiply all values by scalar)
+    if (a instanceof Map && b instanceof Number number) {
+      return CollectionUtils.multiply((Map<Object, Number>) a, number);
+    }
+
+    // Number * Map (multiply all values by scalar)
+    if (a instanceof Number number && b instanceof Map) {
+      return CollectionUtils.multiply((Map<Object, Number>) b, number);
+    }
+
+    if (safe)
+      return null;
+
+    throw new UnsupportedOperationException("Multiplication not supported for types: " + a.getClass() + " and " + b.getClass());
+  }
+
+
 }
