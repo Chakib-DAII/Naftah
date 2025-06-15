@@ -246,7 +246,8 @@ public class DefaultContext {
   private final DefaultContext parent;
   private final int depth;
   private String functionCallId; // current function in execution inside a context
-  private boolean parsingFunctionCallId; // parsing current function in execution in execution
+  private boolean parsingFunctionCallId; // parsing current function in execution
+  private boolean parsingAssignment; // parsing an assignment is in execution
   private NaftahParseTreeProperty<Boolean> parseTreeExecution;
   private final Map<String, DeclaredVariable> variables = new HashMap<>();
   private Map<String, DeclaredParameter> parameters; // only use in function call context
@@ -557,5 +558,13 @@ public class DefaultContext {
 
   public void setParsingFunctionCallId(boolean parsingFunctionCallId) {
     this.parsingFunctionCallId = parsingFunctionCallId;
+  }
+
+  public boolean isParsingAssignment() {
+    return parsingAssignment;
+  }
+
+  public void setParsingAssignment(boolean parsingAssignment) {
+    this.parsingAssignment = parsingAssignment;
   }
 }
