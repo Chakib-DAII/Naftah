@@ -11,7 +11,6 @@ import java.util.Set;
 public class ClassScanningResult {
     private Map<String, Optional<? extends ClassLoader>> classNames;
     private Set<String> classQualifiers;
-    private Map<String, String> classQualifiersMapping;
     private Set<String> arabicClassQualifiers;
     // qualifiedName -> CLass<?>
     private Map<String, Class<?>> classes;
@@ -35,15 +34,6 @@ public class ClassScanningResult {
 
     public void setClassQualifiers(Set<String> classQualifiers) {
         this.classQualifiers = classQualifiers;
-    }
-
-    public Map<String, String> getClassQualifiersMapping() {
-        return classQualifiersMapping;
-    }
-
-    public void setClassQualifiersMapping(Map<String, String> classQualifiersMapping) {
-        this.classQualifiersMapping = classQualifiersMapping;
-        this.arabicClassQualifiers = classQualifiersMapping.keySet();
     }
 
     public Set<String> getArabicClassQualifiers() {
