@@ -68,6 +68,8 @@ public final class Naftah {
     var result = visitor.visit(tree);
 
     if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
+
+    System.exit(0);
   }
 
   private static void initLogger() {
