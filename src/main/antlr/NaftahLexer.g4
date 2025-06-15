@@ -93,15 +93,10 @@ FLOAT   : 'عدد_عائم' | 'عائم';
 DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
 
 // Literals
-ID         : [أ-يڠ-ۿ٠-٩_0-9]* [أ-يڠ-ۿ_] [أ-يڠ-ۿ٠-٩_0-9]*;
 NUMBER     : [٠-٩0-9]+ (COMMA [٠-٩0-9]+)?;
 CHARACTER  : (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkLeft) Character (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkRight);
 STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) String (DoubleQuotationMark | DoubleQuotationMarkRight);
-
-// Whitespace and comments
-WS         : [ \t\r\n]+ -> skip;
-LINE_COMMENT : '--' ~[\r\n]* -> skip;
-BLOCK_COMMENT : '--*' .*? '*--' -> skip;
+ID         : [أ-يڠ-ۿ٠-٩_0-9]* [ء-يڠ-ۿ_] [ء-يڠ-ۿ٠-٩_0-9]*;
 
 fragment QuotationMark : '\'';
 fragment DoubleQuotationMark : '"';
@@ -109,4 +104,19 @@ fragment DoubleQuotationMarkLeft : '«';
 fragment DoubleQuotationMarkRight : '»';
 
 fragment Character: (~["«»\r\n]);
-fragment String: Character*;
+fragment String: Character* ESC* EMOJI* PUNCTUATION* .*?;
+fragment ESC: '\\' ["\\n];
+
+fragment EMOJI
+  : '\uD83C' [\uDF00-\uDF5F]
+  | '\uD83D' [\uDE00-\uDE4F]
+  | '\u2600'..'\u26FF'
+  | '\u2700'..'\u27BF'
+  ;
+
+fragment PUNCTUATION : [،.؟:!-];
+
+// Whitespace and comments
+WS         : [ \t\r\n]+ -> skip;
+LINE_COMMENT : '--' ~[\r\n]* -> skip;
+BLOCK_COMMENT : '--*' .*? '*--' -> skip;
