@@ -109,7 +109,6 @@ public class DefaultContext {
   // LOADED CLASSES
   private static Map<String, Optional<? extends ClassLoader>> CLASS_NAMES;
   private static Set<String> CLASS_QUALIFIERS;
-  private static Map<String, String> CLASS_QUALIFIERS_MAPPING;
   private static Set<String> ARABIC_CLASS_QUALIFIERS;
   // qualifiedName -> CLass<?>
   private static Map<String, Class<?>> CLASSES;
@@ -118,8 +117,9 @@ public class DefaultContext {
   // qualifiedCall -> Method
   private static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
   private static Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
-  private static boolean SHOULD_BOOT_STRAP;
-  private static boolean BOOT_STRAPPED;
+  private static volatile boolean SHOULD_BOOT_STRAP;
+  private static volatile boolean BOOT_STRAP_FAILED;
+  private static volatile boolean BOOT_STRAPPED;
 
   private static final Supplier<ClassScanningResult> LOADER_TASK = () -> {
     ExecutorService internalExecutor = Executors.newFixedThreadPool(2);
@@ -128,7 +128,7 @@ public class DefaultContext {
     result.setClassNames(classNames);
 
     try {
-      Callable<Pair<Set<String>, Map<String, String>>> qualifiersLoaderTask = () -> {
+      Callable<Pair<Set<String>, Set<String>>> qualifiersLoaderTask = () -> {
         var classQualifiers = getClassQualifiers(classNames.keySet(), false);
         var arabicClassQualifiers = getArabicClassQualifiers(classQualifiers);
         return new Pair<>(classQualifiers, arabicClassQualifiers);
@@ -140,7 +140,7 @@ public class DefaultContext {
 
       var qualifiersFutureResult = qualifiersFuture.get();
       result.setClassQualifiers(qualifiersFutureResult.a);
-      result.setClassQualifiersMapping(qualifiersFutureResult.b);
+      result.setArabicClassQualifiers(qualifiersFutureResult.b);
 
       result.setClasses(classFuture.get());
 
@@ -174,57 +174,60 @@ public class DefaultContext {
     }
   };
 
+  public static void defaultBootstrap() {
+    BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class).stream()
+            .map(builtinFunction -> Map.entry(
+                    builtinFunction.functionInfo().name(),
+                    builtinFunction
+            ))
+            .collect(Collectors.groupingBy(Map.Entry::getKey,
+                    Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+  }
   public static void bootstrap() {
     SHOULD_BOOT_STRAP = Boolean.getBoolean("scanClassPath");
     if (SHOULD_BOOT_STRAP) {
-      CompletableFuture<ClassScanningResult> future = CompletableFuture.supplyAsync(LOADER_TASK);
-
-      future.thenAccept(result -> {
-        CLASS_NAMES = result.getClassNames();
-        CLASS_QUALIFIERS = result.getClassQualifiers();
-        CLASS_QUALIFIERS_MAPPING = result.getClassQualifiersMapping();
-        ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
-        CLASSES = result.getClasses();
-        ACCESSIBLE_CLASSES = result.getAccessibleClasses();
-        INSTANTIABLE_CLASSES = result.getInstantiableClasses();
-        JVM_FUNCTIONS = result.getJvmFunctions();
-        BUILTIN_FUNCTIONS = result.getBuiltinFunctions();
-        BOOT_STRAPPED = true;
-      });
+      CompletableFuture.supplyAsync(LOADER_TASK)
+              .whenComplete((result, throwable) -> {
+                if (Objects.nonNull(throwable)) {
+                  defaultBootstrap();
+                  BOOT_STRAP_FAILED = true;
+                }
+                else {
+                  CLASS_NAMES = result.getClassNames();
+                  CLASS_QUALIFIERS = result.getClassQualifiers();
+                  ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
+                  CLASSES = result.getClasses();
+                  ACCESSIBLE_CLASSES = result.getAccessibleClasses();
+                  INSTANTIABLE_CLASSES = result.getInstantiableClasses();
+                  JVM_FUNCTIONS = result.getJvmFunctions();
+                  BUILTIN_FUNCTIONS = result.getBuiltinFunctions();
+                  BOOT_STRAPPED = true;
+                }
+              });
     } else {
-      BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class).stream()
-              .map(builtinFunction -> Map.entry(
-                      builtinFunction.functionInfo().name(),
-                      builtinFunction
-              ))
-              .collect(Collectors.groupingBy(Map.Entry::getKey,
-                      Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+      defaultBootstrap();
     }
   }
 
   private static Class<?> doGetJavaType(String qualifiedName) {
-    return Optional.ofNullable(
-            CLASS_QUALIFIERS_MAPPING.get(qualifiedName))
-            .map(className -> {
-              if(INSTANTIABLE_CLASSES.containsKey(className))
-                return INSTANTIABLE_CLASSES.get(className);
-              if(ACCESSIBLE_CLASSES.containsKey(className))
-                return ACCESSIBLE_CLASSES.get(className);
-              if(CLASSES.containsKey(className))
-                return CLASSES.get(className);
-              return Object.class;
-            })
-            .orElse(Object.class);
+    if(INSTANTIABLE_CLASSES.containsKey(qualifiedName))
+      return INSTANTIABLE_CLASSES.get(qualifiedName);
+    if(ACCESSIBLE_CLASSES.containsKey(qualifiedName))
+      return ACCESSIBLE_CLASSES.get(qualifiedName);
+    if(CLASSES.containsKey(qualifiedName))
+      return CLASSES.get(qualifiedName);
+    return Object.class;
   }
 
   public static Class<?> getJavaType(String qualifiedName) {
-    if (SHOULD_BOOT_STRAP) {
-      while (!BOOT_STRAPPED && (Objects.isNull(CLASS_QUALIFIERS_MAPPING)
-              || Objects.isNull(INSTANTIABLE_CLASSES)
+    if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
+      while (!BOOT_STRAPPED && (Objects.isNull(INSTANTIABLE_CLASSES)
               || Objects.isNull(ACCESSIBLE_CLASSES)
               || Objects.isNull(CLASSES)
               )) {
           //  block the execution until bootstrapped
+        if (BOOT_STRAP_FAILED)
+          return Object.class;
         }
       return doGetJavaType(qualifiedName);
     }
@@ -324,15 +327,20 @@ public class DefaultContext {
       return parent.getFunction(name, safe);
     } else { // root parent
       if (BUILTIN_FUNCTIONS.containsKey(name)) {
-        return new Pair<>(depth, BUILTIN_FUNCTIONS.get(name));
-      } else if (SHOULD_BOOT_STRAP) {
-        if (BOOT_STRAPPED && JVM_FUNCTIONS.containsKey(name)) 
-          return new Pair<>(depth, JVM_FUNCTIONS.get(name));
-        else if (name.matches(QUALIFIED_CALL_REGEX)) {
+        var functions = BUILTIN_FUNCTIONS.get(name);
+        return new Pair<>(depth, functions.size() == 1 ? functions.get(0) : functions);
+      } else if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
+        if (BOOT_STRAPPED && JVM_FUNCTIONS.containsKey(name)) {
+          var functions = JVM_FUNCTIONS.get(name);
+          return new Pair<>(depth, functions.size() == 1 ? functions.get(0) : functions);
+        } else if (name.matches(QUALIFIED_CALL_REGEX)) {
           while (!BOOT_STRAPPED && Objects.isNull(JVM_FUNCTIONS)) {
             //  block the execution until bootstrapped
+            if (BOOT_STRAP_FAILED)
+              return null;
           }
-          return new Pair<>(depth, JVM_FUNCTIONS.get(name));
+          var functions = JVM_FUNCTIONS.get(name);
+          return new Pair<>(depth, functions.size() == 1 ? functions.get(0) : functions);
         }
       }
     }
