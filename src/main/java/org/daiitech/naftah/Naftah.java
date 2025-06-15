@@ -2,6 +2,7 @@ package org.daiitech.naftah;
 
 import static org.daiitech.naftah.core.NaftahSystem.setupOutput;
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
+import static org.daiitech.naftah.utils.DefaultContext.bootstrap;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -44,6 +46,7 @@ public final class Naftah {
   private Naftah() {}
 
   public static void main(String[] args) throws IOException {
+    bootstrap();
     initLogger();
     setupOutput();
     // TODO: update this logic to be more sophisticated and handle args and commands
