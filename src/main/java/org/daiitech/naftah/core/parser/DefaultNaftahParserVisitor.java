@@ -5,16 +5,12 @@ import static org.daiitech.naftah.core.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.DefaultContext.*;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.antlr.v4.runtime.misc.Pair;
-import org.daiitech.naftah.core.builtin.lang.BuiltinFunction;
-import org.daiitech.naftah.core.builtin.lang.DeclaredFunction;
-import org.daiitech.naftah.core.builtin.lang.DeclaredParameter;
-import org.daiitech.naftah.core.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.core.builtin.lang.*;
 import org.daiitech.naftah.core.builtin.utils.NumberUtils;
 import org.daiitech.naftah.utils.DefaultContext;
 import org.daiitech.naftah.utils.StringInterpolator;
@@ -237,6 +233,7 @@ public class DefaultNaftahParserVisitor
     String functionName = hasChild(ctx.ID()) ?
             ctx.ID().getText()
             : (String) visit(ctx.qualifiedCall());
+    // TODO: add support to variables as qualified call and match to the jvm function
     String functionCallId = DefaultContext.FUNCTION_CALL_ID_GENERATOR.apply(depth, functionName);
     currentContext.setFunctionCallId(functionCallId);
     List<Pair<String, Object>> args = new ArrayList<>();
@@ -266,9 +263,12 @@ public class DefaultNaftahParserVisitor
       } else if (function instanceof BuiltinFunction builtinFunction) {
         throw new UnsupportedOperationException(
             "Function %s of type: %s".formatted(functionName, BuiltinFunction.class.getName()));
-      } else if (function instanceof Method methodFunction) {
+      } else if (function instanceof JvmFunction jvmFunction) {
         throw new UnsupportedOperationException(
-            "Function %s of type: %s".formatted(functionName, Method.class.getName()));
+            "Function %s of type: %s".formatted(functionName, JvmFunction.class.getName()));
+      } else if (function instanceof Collection<?> functions) {
+        throw new UnsupportedOperationException(
+                "Function %s : %s of type: %s".formatted(functionName, functions, List.class.getName()));
       }
     } else throw new RuntimeException("Function not found: " + functionName);
     currentContext.setFunctionCallId(null);
