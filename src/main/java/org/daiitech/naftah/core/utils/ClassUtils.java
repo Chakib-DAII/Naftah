@@ -52,10 +52,18 @@ public final class ClassUtils {
      *
      * @return set of qualified class names parts transliterated to arabic
      */
-    public static Map<String, String> getArabicClassQualifiers(Set<String> classQualifiers) {
+    public static Set<String> getArabicClassQualifiers(Set<String> classQualifiers) {
+        return classQualifiers.stream()
+                .map(ArabicUtils::transliterateToArabicScript)
+                .collect(Collectors.toSet());
+    }
+
+    public static Map<String, String> getArabicClassQualifiersMapping(Set<String> classQualifiers) {
         return classQualifiers.stream()
                 .map(qualifier -> Map.entry(ArabicUtils.transliterateToArabicScript(qualifier), qualifier))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (existing, replacement) -> existing));
     }
 
     /**
