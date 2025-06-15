@@ -29,14 +29,17 @@ program: statement+;
 // Statement: Can be an assignment, function call, or control flow
 statement: block #blockStatement
          | ifStatement #ifStatementStatement
+         | declaration #declarationStatement
          | assignment #assignmentStatement
          | functionDeclaration #functionDeclarationStatement
          | functionCall #functionCallStatement
          | returnStatement #returnStatementStatement
          ;
 
+declaration: (VARIABLE | CONSTANT)? ID (COLON type)?;
+
 // Assignment: variable or constant assignment
-assignment: (VARIABLE | CONSTANT)? ID (COLON type)? ASSIGN expression;
+assignment: declaration ASSIGN expression;
 
 // Function declaration: Can have parameters and return values
 functionDeclaration: FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
