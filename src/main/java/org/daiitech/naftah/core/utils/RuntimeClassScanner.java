@@ -142,7 +142,7 @@ public final class RuntimeClassScanner {
                             new URL[]{ tempInnerJar.toURI().toURL() },
                             RuntimeClassScanner.class.getClassLoader()
                     )) {
-                        classNames.putAll(findClassesInJar(tempInnerJar).keySet()/*.parallelStream()*/ .stream()
+                        classNames.putAll(findClassesInJar(tempInnerJar).keySet() .stream()
                                 .map(className -> Map.entry(className, Optional.of(loader)))
                                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
                     }
