@@ -33,6 +33,8 @@ public final class NaftahExecutionLogger {
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.IfStatementStatementContext context)
       result = logExecution(doLog, context);
+    else if (ctx instanceof NaftahParser.DeclarationStatementContext context)
+        result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.AssignmentStatementContext context)
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.FunctionDeclarationStatementContext context)
@@ -41,6 +43,8 @@ public final class NaftahExecutionLogger {
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.ReturnStatementStatementContext context)
       result = logExecution(doLog, context);
+    else if (ctx instanceof NaftahParser.DeclarationContext context)
+        result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.AssignmentContext context)
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.FunctionDeclarationContext context)
@@ -154,6 +158,25 @@ public final class NaftahExecutionLogger {
             })
         .orElse("");
   }
+
+    public static String logExecution(boolean doLog, NaftahParser.DeclarationStatementContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(
+                        context -> {
+                            String result =
+                                    """
+                                            DeclarationStatementContext::declaration -> {
+                                                %s
+                                            }
+                                            """
+                                            .formatted(logExecution(false, context.declaration()));
+                            if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                                LOGGER.finest(result);
+                            }
+                            return result;
+                        })
+                .orElse("");
+    }
 
   public static String logExecution(boolean doLog, NaftahParser.AssignmentStatementContext ctx) {
     return Optional.ofNullable(ctx)
@@ -271,17 +294,41 @@ public final class NaftahExecutionLogger {
         .orElse("");
   }
 
+  public static String logExecution(boolean doLog, NaftahParser.DeclarationContext ctx) {
+      return Optional.ofNullable(ctx)
+              .map(
+                      context -> {
+                          String result =
+                                  """
+                                          DeclarationContext::VARIABLE -> %s
+                                          DeclarationContext::CONSTANT -> %s
+                                          DeclarationContext::ID -> %s
+                                          DeclarationContext::COLON -> %s
+                                          DeclarationContext::type -> {
+                                              %s
+                                          }
+                                          """
+                                          .formatted(
+                                                  context.VARIABLE(),
+                                                  context.CONSTANT(),
+                                                  context.ID(),
+                                                  context.COLON(),
+                                                  logExecution(false, context.type()));
+                          if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                              LOGGER.finest(result);
+                          }
+                          return result;
+                      })
+              .orElse("");
+  }
+
   public static String logExecution(boolean doLog, NaftahParser.AssignmentContext ctx) {
     return Optional.ofNullable(ctx)
         .map(
             context -> {
               String result =
                   """
-                          AssignmentContext::VARIABLE -> %s
-                          AssignmentContext::CONSTANT -> %s
-                          AssignmentContext::ID -> %s
-                          AssignmentContext::COLON -> %s
-                          AssignmentContext::type -> {
+                          AssignmentContext::declaration -> {
                               %s
                           }
                           AssignmentContext::ASSIGN -> %s
@@ -290,11 +337,7 @@ public final class NaftahExecutionLogger {
                           }
                           """
                       .formatted(
-                          context.VARIABLE(),
-                          context.CONSTANT(),
-                          context.ID(),
-                          context.COLON(),
-                          logExecution(false, context.type()),
+                            logExecution(false, context.declaration()),
                           context.ASSIGN(),
                           logExecution(false, context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
