@@ -37,7 +37,7 @@ public final class ClassUtils {
      * @return set of qualified class names parts
      */
     public static Set<String> getClassQualifiers(Set<String> classNames, boolean flattened) {
-        var baseStream = classNames/*.parallelStream()*/ .stream();
+        var baseStream = classNames .stream();
 
         if (flattened)
             baseStream = baseStream.flatMap(s -> Arrays.stream(s.split(CLASS_SEPARATORS_REGEX)));
@@ -53,7 +53,7 @@ public final class ClassUtils {
      * @return set of qualified class names parts transliterated to arabic
      */
     public static Set<String> getArabicClassQualifiers(Set<String> classQualifiers) {
-        return classQualifiers/*.parallelStream()*/ .stream()
+        return classQualifiers .stream()
                 .map(ArabicUtils::transliterateToArabicScript)
                 .collect(Collectors.toSet());
     }
@@ -73,7 +73,7 @@ public final class ClassUtils {
      * @return hashtable (Map) of classes and methods
      */
         public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
-        return classes.entrySet()/*.parallelStream()*/ .stream()
+        return classes.entrySet() .stream()
                 .filter(Objects::nonNull)
                 .flatMap(classEntry -> {
                     try {
@@ -177,7 +177,7 @@ public final class ClassUtils {
     }
 
     public static Map<String, Class<?>> filterClasses(Map<String, Class<?>> classes, Predicate<Class<?>> classPredicate) {
-        return classes.entrySet()/*.parallelStream()*/ .stream()
+        return classes.entrySet() .stream()
                 .filter(classEntry -> {
         try {
             return
@@ -191,7 +191,7 @@ public final class ClassUtils {
     }
 
     public static Map<String, List<BuiltinFunction>> getBuiltinMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
-        return classes.entrySet()/*.parallelStream()*/ .stream()
+        return classes.entrySet() .stream()
                 .filter(Objects::nonNull)
                 .filter(classEntry -> isAnnotationsPresent(classEntry.getValue(), NaftahFnProvider.class))
                 .flatMap(classEntry -> {
