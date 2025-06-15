@@ -109,6 +109,7 @@ public class DefaultContext {
   // LOADED CLASSES
   private static Map<String, Optional<? extends ClassLoader>> CLASS_NAMES;
   private static Set<String> CLASS_QUALIFIERS;
+  private static Map<String, String> CLASS_QUALIFIERS_MAPPING;
   private static Set<String> ARABIC_CLASS_QUALIFIERS;
   // qualifiedName -> CLass<?>
   private static Map<String, Class<?>> CLASSES;
@@ -127,9 +128,9 @@ public class DefaultContext {
     result.setClassNames(classNames);
 
     try {
-      Callable<Pair<Set<String>, Set<String>>> qualifiersLoaderTask = () -> {
+      Callable<Pair<Set<String>, Map<String, String>>> qualifiersLoaderTask = () -> {
         var classQualifiers = getClassQualifiers(classNames.keySet(), false);
-        var arabicClassQualifiers =getArabicClassQualifiers(classQualifiers);
+        var arabicClassQualifiers = getArabicClassQualifiers(classQualifiers);
         return new Pair<>(classQualifiers, arabicClassQualifiers);
       };
       var qualifiersFuture = internalExecutor.submit(qualifiersLoaderTask);
@@ -139,7 +140,7 @@ public class DefaultContext {
 
       var qualifiersFutureResult = qualifiersFuture.get();
       result.setClassQualifiers(qualifiersFutureResult.a);
-      result.setArabicClassQualifiers(qualifiersFutureResult.b);
+      result.setClassQualifiersMapping(qualifiersFutureResult.b);
 
       result.setClasses(classFuture.get());
 
@@ -181,6 +182,7 @@ public class DefaultContext {
       future.thenAccept(result -> {
         CLASS_NAMES = result.getClassNames();
         CLASS_QUALIFIERS = result.getClassQualifiers();
+        CLASS_QUALIFIERS_MAPPING = result.getClassQualifiersMapping();
         ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
         CLASSES = result.getClasses();
         ACCESSIBLE_CLASSES = result.getAccessibleClasses();
@@ -198,6 +200,35 @@ public class DefaultContext {
               .collect(Collectors.groupingBy(Map.Entry::getKey,
                       Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
+  }
+
+  private static Class<?> doGetJavaType(String qualifiedName) {
+    return Optional.ofNullable(
+            CLASS_QUALIFIERS_MAPPING.get(qualifiedName))
+            .map(className -> {
+              if(INSTANTIABLE_CLASSES.containsKey(className))
+                return INSTANTIABLE_CLASSES.get(className);
+              if(ACCESSIBLE_CLASSES.containsKey(className))
+                return ACCESSIBLE_CLASSES.get(className);
+              if(CLASSES.containsKey(className))
+                return CLASSES.get(className);
+              return Object.class;
+            })
+            .orElse(Object.class);
+  }
+
+  public static Class<?> getJavaType(String qualifiedName) {
+    if (SHOULD_BOOT_STRAP) {
+      while (!BOOT_STRAPPED && (Objects.isNull(CLASS_QUALIFIERS_MAPPING)
+              || Objects.isNull(INSTANTIABLE_CLASSES)
+              || Objects.isNull(ACCESSIBLE_CLASSES)
+              || Objects.isNull(CLASSES)
+              )) {
+          //  block the execution until bootstrapped
+        }
+      return doGetJavaType(qualifiedName);
+    }
+    return Object.class;
   }
 
   // instance
@@ -280,10 +311,10 @@ public class DefaultContext {
 
   public boolean containsFunction(String name) {
     return functions.containsKey(name)
-        || (BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name))
-        || (name.matches(QUALIFIED_CALL_REGEX) &&
-            (SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || (BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS.containsKey(name)))))
-        || (parent != null && parent.containsFunction(name));
+            || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name)
+            || (name.matches(QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP
+            && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS.containsKey(name)))
+            || parent != null && parent.containsFunction(name);
   }
 
   public Pair<Integer, Object> getFunction(String name, boolean safe) {
