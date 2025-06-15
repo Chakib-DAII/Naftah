@@ -1,12 +1,12 @@
 package org.daiitech.naftah.core.builtin.lang;
 
-import org.daiitech.naftah.core.parser.NaftahParser;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  * @author Chakib Daii
  */
 public class DeclaredVariable {
-  private final NaftahParser.AssignmentContext originalContext;
+  private ParserRuleContext originalContext;
   private final String name;
   private final boolean constant;
   private final Object type;
@@ -15,7 +15,7 @@ public class DeclaredVariable {
   private boolean updatedCurrentValue;
 
   private DeclaredVariable(
-      NaftahParser.AssignmentContext originalContext,
+      ParserRuleContext originalContext,
       String name,
       boolean constant,
       Object type,
@@ -27,8 +27,12 @@ public class DeclaredVariable {
     this.defaultValue = defaultValue;
   }
 
-  public NaftahParser.AssignmentContext getOriginalContext() {
+  public ParserRuleContext getOriginalContext() {
     return originalContext;
+  }
+
+  public void setOriginalContext(ParserRuleContext originalContext) {
+    this.originalContext = originalContext;
   }
 
   public String getName() {
@@ -63,7 +67,7 @@ public class DeclaredVariable {
   }
 
   public static DeclaredVariable of(
-      NaftahParser.AssignmentContext originalContext,
+      ParserRuleContext originalContext,
       String name,
       boolean constant,
       Object type,
