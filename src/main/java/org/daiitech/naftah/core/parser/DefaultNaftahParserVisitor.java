@@ -5,6 +5,7 @@ import static org.daiitech.naftah.core.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.DefaultContext.*;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,13 +45,26 @@ public class DefaultNaftahParserVisitor
     for (org.daiitech.naftah.core.parser.NaftahParser.StatementContext statement :
         ctx.statement()) {
       result = visit(statement); // Visit each statement in the program
-      // break program after executing a return statemnt
+      // break program after executing a return statement
       if (rootContext.hasAnyExecutedChildOrSubChildOfType(
           statement,
           org.daiitech.naftah.core.parser.NaftahParser.ReturnStatementStatementContext.class))
         break;
     }
     rootContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitDeclarationStatement(org.daiitech.naftah.core.parser.NaftahParser.DeclarationStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitDeclarationStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    var result = visit(ctx.declaration());
+    currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
 
@@ -139,6 +153,38 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
+  public Object visitDeclaration(org.daiitech.naftah.core.parser.NaftahParser.DeclarationContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitDeclaration(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    String variableName = ctx.ID().getText();
+    // variable -> new : flags if this is a new variable or not
+    Pair<DeclaredVariable, Boolean> declaredVariable;
+    boolean isConstant = hasChild(ctx.CONSTANT());
+    boolean isConstantOrVariable = isConstant || hasChild(ctx.VARIABLE());
+    boolean hasType = hasChild(ctx.type());
+    if (isConstantOrVariable || hasType) {
+      declaredVariable =new Pair<>(
+              DeclaredVariable.of(
+                      ctx,
+                      variableName,
+                      isConstant,
+                      hasType ? visit(ctx.type()) : null,
+                      null), true);
+      // TODO: check if inside function to check if it matches any argument / parameter or previously
+      // declared and update if possible
+      currentContext.defineVariable(variableName, declaredVariable.a);
+    } else {
+      declaredVariable = new Pair<>(currentContext.getVariable(variableName, false).b, false);
+    }
+    currentContext.markExecuted(ctx); // Mark as executed
+    return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.a;
+  }
+
+  @Override
   public Object visitAssignment(
       org.daiitech.naftah.core.parser.NaftahParser.AssignmentContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
@@ -147,17 +193,25 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
-    String variableName = ctx.ID().getText();
-    DeclaredVariable declaredVariable =
-        DeclaredVariable.of(
-            ctx,
-            variableName,
-            hasChild(ctx.CONSTANT()),
-            hasChild(ctx.type()) ? visit(ctx.type()) : null,
-            visit(ctx.expression()));
+    currentContext.setParsingAssignment(true);
+    Pair<DeclaredVariable, Boolean> declaredVariable = (Pair<DeclaredVariable, Boolean>) visit(ctx.declaration());
     // TODO: check if inside function to check if it matches any argument / parameter or previously
+    if (declaredVariable.b) {
+      declaredVariable= new Pair<>(
+              DeclaredVariable.of(
+                      ctx,
+                      declaredVariable.a.getName(),
+                      declaredVariable.a.isConstant(),
+                      declaredVariable.a.getType(),
+                      visit(ctx.expression())),
+              declaredVariable.b);
+    } else {
+      declaredVariable.a.setOriginalContext(ctx);
+      declaredVariable.a.setValue(visit(ctx.expression()));
+    }
     // declared and update if possible
-    currentContext.defineVariable(variableName, declaredVariable);
+    currentContext.setVariable(declaredVariable.a.getName(), declaredVariable.a);
+    currentContext.setParsingAssignment(false);
     currentContext.markExecuted(ctx); // Mark as executed
     return declaredVariable;
   }
@@ -260,8 +314,14 @@ public class DefaultNaftahParserVisitor
           popCall();
         }
       } else if (function instanceof BuiltinFunction builtinFunction) {
-        throw new UnsupportedOperationException(
-            "Function %s of type: %s".formatted(functionName, BuiltinFunction.class.getName()));
+        var methodArgs = args.stream().map(stringObjectPair -> stringObjectPair.b).toArray(Object[]::new);
+        try {
+          var possibleResult = builtinFunction.method().invoke(null, methodArgs);
+          if (builtinFunction.functionInfo().returnType() != Void.class && possibleResult != null)
+            result = possibleResult;
+        } catch (IllegalAccessException | InvocationTargetException e) {
+          throw new RuntimeException(e);
+        }
       } else if (function instanceof JvmFunction jvmFunction) {
         throw new UnsupportedOperationException(
             "Function %s of type: %s".formatted(functionName, JvmFunction.class.getName()));
