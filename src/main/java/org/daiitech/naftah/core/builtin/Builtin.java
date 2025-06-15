@@ -9,11 +9,21 @@ import org.daiitech.naftah.core.builtin.utils.NumberUtils;
     name = "مزوّد دوال مدمجة",
     description =
         "يحتوي هذا الموفر على دوال مدمجة تُستخدم ضمن لغة نفطه لأداء عمليات حسابية ومنطقية مختلفة بدقة وكفاءة.",
-    functionNames = {"جمع", "طرح", "ضرب", "قسمة", "باقي_القسمة"})
+    functionNames = {"جمع", "طرح", "ضرب", "قسمة", "باقي_القسمة", "إطبع"})
 public final class Builtin {
 
   private Builtin() {
     throw new IllegalStateException("Illegal usage.");
+  }
+
+  @NaftahFn(
+          name = "إطبع",
+          description =
+                  "تعليمة الطباعة (إطبع) هي التعليمة التي تُستخدم في البرمجة لإظهار نص معين على الشاشة، مثل إظهار رسالة ترحيبية للمستخدم.",
+          usage = "إطبع(ش)",
+          parameterTypes = {Object.class})
+  public static void print(Object o) {
+    System.out.println(o);
   }
 
   @NaftahFn(
