@@ -4,7 +4,6 @@ import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
 import com.ibm.icu.text.Transliterator;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -43,6 +42,7 @@ public class ArabicUtils {
   public static boolean isMultiline(String input) {
     return getShapeMatcher(input).find();
   }
+
   private static Matcher getShapeMatcher(String input) {
     if (SHAPE_MATCHER_CACHE.containsKey(input)) return SHAPE_MATCHER_CACHE.get(input);
 
@@ -50,6 +50,7 @@ public class ArabicUtils {
     SHAPE_MATCHER_CACHE.put(input, matcher);
     return matcher;
   }
+
   public static synchronized String shape(String input) throws ArabicShapingException {
     if (isMultiline(input)) {
       Matcher matcher = getShapeMatcher(input).reset();
@@ -64,7 +65,7 @@ public class ArabicUtils {
           shapedOutput.append(doShape(line));
         }
 
-        shapedOutput.append(newline);  // keep original newlines
+        shapedOutput.append(newline); // keep original newlines
       }
 
       return shapedOutput.toString();

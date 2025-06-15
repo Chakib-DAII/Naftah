@@ -56,11 +56,12 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitDeclarationStatement(org.daiitech.naftah.core.parser.NaftahParser.DeclarationStatementContext ctx) {
+  public Object visitDeclarationStatement(
+      org.daiitech.naftah.core.parser.NaftahParser.DeclarationStatementContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitDeclarationStatement(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitDeclarationStatement(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     var result = visit(ctx.declaration());
@@ -153,11 +154,12 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitDeclaration(org.daiitech.naftah.core.parser.NaftahParser.DeclarationContext ctx) {
+  public Object visitDeclaration(
+      org.daiitech.naftah.core.parser.NaftahParser.DeclarationContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitDeclaration(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitDeclaration(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     String variableName = ctx.ID().getText();
@@ -167,14 +169,13 @@ public class DefaultNaftahParserVisitor
     boolean isConstantOrVariable = isConstant || hasChild(ctx.VARIABLE());
     boolean hasType = hasChild(ctx.type());
     if (isConstantOrVariable || hasType) {
-      declaredVariable =new Pair<>(
+      declaredVariable =
+          new Pair<>(
               DeclaredVariable.of(
-                      ctx,
-                      variableName,
-                      isConstant,
-                      hasType ? visit(ctx.type()) : null,
-                      null), true);
-      // TODO: check if inside function to check if it matches any argument / parameter or previously
+                  ctx, variableName, isConstant, hasType ? visit(ctx.type()) : null, null),
+              true);
+      // TODO: check if inside function to check if it matches any argument / parameter or
+      // previously
       // declared and update if possible
       currentContext.defineVariable(variableName, declaredVariable.a);
     } else {
@@ -194,16 +195,18 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     currentContext.setParsingAssignment(true);
-    Pair<DeclaredVariable, Boolean> declaredVariable = (Pair<DeclaredVariable, Boolean>) visit(ctx.declaration());
+    Pair<DeclaredVariable, Boolean> declaredVariable =
+        (Pair<DeclaredVariable, Boolean>) visit(ctx.declaration());
     // TODO: check if inside function to check if it matches any argument / parameter or previously
     if (declaredVariable.b) {
-      declaredVariable= new Pair<>(
+      declaredVariable =
+          new Pair<>(
               DeclaredVariable.of(
-                      ctx,
-                      declaredVariable.a.getName(),
-                      declaredVariable.a.isConstant(),
-                      declaredVariable.a.getType(),
-                      visit(ctx.expression())),
+                  ctx,
+                  declaredVariable.a.getName(),
+                  declaredVariable.a.isConstant(),
+                  declaredVariable.a.getType(),
+                  visit(ctx.expression())),
               declaredVariable.b);
     } else {
       declaredVariable.a.setOriginalContext(ctx);
@@ -314,7 +317,8 @@ public class DefaultNaftahParserVisitor
           popCall();
         }
       } else if (function instanceof BuiltinFunction builtinFunction) {
-        var methodArgs = args.stream().map(stringObjectPair -> stringObjectPair.b).toArray(Object[]::new);
+        var methodArgs =
+            args.stream().map(stringObjectPair -> stringObjectPair.b).toArray(Object[]::new);
         try {
           var possibleResult = builtinFunction.method().invoke(null, methodArgs);
           if (builtinFunction.functionInfo().returnType() != Void.class && possibleResult != null)

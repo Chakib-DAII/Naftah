@@ -17,11 +17,11 @@ public final class Builtin {
   }
 
   @NaftahFn(
-          name = "إطبع",
-          description =
-                  "تعليمة الطباعة (إطبع) هي التعليمة التي تُستخدم في البرمجة لإظهار نص معين على الشاشة، مثل إظهار رسالة ترحيبية للمستخدم.",
-          usage = "إطبع(ش)",
-          parameterTypes = {Object.class})
+      name = "إطبع",
+      description =
+          "تعليمة الطباعة (إطبع) هي التعليمة التي تُستخدم في البرمجة لإظهار نص معين على الشاشة، مثل إظهار رسالة ترحيبية للمستخدم.",
+      usage = "إطبع(ش)",
+      parameterTypes = {Object.class})
   public static void print(Object o) {
     System.out.println(o);
   }
