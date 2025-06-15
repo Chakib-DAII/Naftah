@@ -16,6 +16,7 @@ import org.daiitech.naftah.core.builtin.utils.ObjectUtils;
  * @author Chakib Daii
  */
 public class NaftahParserHelper {
+  public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
 
   // Cache to store computed subtrees per node
   private static final Map<ParseTree, List<ParseTree>> SUB_TREE_CACHE = new IdentityHashMap<>();
@@ -36,12 +37,12 @@ public class NaftahParserHelper {
   public static <T extends Tree> boolean hasChildOrSubChildOfType(ParseTree ctx, Class<T> type) {
     var children = getAllChildren(ctx);
     return !ObjectUtils.isEmpty(children)
-        && children/*.parallelStream()*/ .stream().anyMatch(child -> hasChildOfType(child, type));
+        && children .stream().anyMatch(child -> hasChildOfType(child, type));
   }
 
   public static <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(
       ParseTree ctx, Class<T> type, ParseTreeProperty<Boolean> executedParseTreeProperty) {
-    return getAllChildrenOfType(ctx, type)/*.parallelStream()*/ .stream()
+    return getAllChildrenOfType(ctx, type) .stream()
         .anyMatch(
             child ->
                 Optional.ofNullable(executedParseTreeProperty)
@@ -53,7 +54,7 @@ public class NaftahParserHelper {
       ParseTree ctx, Class<T> type) {
     var children = getAllChildren(ctx);
     return !ObjectUtils.isEmpty(children)
-        ? children/*.parallelStream()*/ .stream().filter(child -> hasChildOfType(child, type)).toList()
+        ? children .stream().filter(child -> hasChildOfType(child, type)).toList()
         : List.of();
   }
 
