@@ -69,6 +69,7 @@ public final class Naftah {
 
     if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
 
+    System.out.println();
     System.exit(0);
   }
 
