@@ -73,6 +73,11 @@ expression: functionCall #functionCallExpression
           | expression MOD expression #modExpression
           | expression PLUS expression #plusExpression
           | expression MINUS expression #minusExpression
+          | expression ELEMENT_MUL expression #mulExpression
+          | expression ELEMENT_DIV expression #divExpression
+          | expression ELEMENT_MOD expression #modExpression
+          | expression ELEMENT_PLUS expression #plusExpression
+          | expression ELEMENT_MINUS expression #minusExpression
           | expression LT expression #lessThanExpression
           | expression GT expression #greaterThanExpression
           | expression LE expression #lessThanEqualsExpression
