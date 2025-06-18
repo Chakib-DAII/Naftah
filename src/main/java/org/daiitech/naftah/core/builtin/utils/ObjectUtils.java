@@ -6,10 +6,12 @@ import static org.daiitech.naftah.core.parser.NaftahParserHelper.hasChild;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.daiitech.naftah.core.builtin.utils.op.BinaryOperation;
+import org.daiitech.naftah.core.builtin.utils.op.Operation;
+import org.daiitech.naftah.core.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.core.parser.NaftahParser;
 import org.daiitech.naftah.utils.DefaultContext;
 
@@ -88,13 +90,13 @@ public final class ObjectUtils {
       return charSequence.isEmpty();
     }
     if (obj.getClass().isArray()) {
-      return Array.getLength(obj) == 0;
+      return Array.getLength(obj) == 0 || Arrays.stream((Object[])obj).allMatch(Objects::isNull);
     }
     if (obj instanceof Collection<?> collection) {
-      return collection.isEmpty();
+      return collection.isEmpty() || collection.stream().allMatch(Objects::isNull);
     }
     if (obj instanceof Map<?, ?> map) {
-      return map.isEmpty();
+      return map.isEmpty() || map.entrySet().stream().allMatch(entry -> Objects.isNull(entry.getKey()) || Objects.isNull(entry.getValue()));
     }
 
     // else
@@ -208,97 +210,134 @@ public final class ObjectUtils {
     return false;
   }
 
-  public static Object multiply(Number a, Object b, boolean safe) {
-      if(b instanceof Boolean aBoolean) {
-        int multiplier = aBoolean ? 1 : 0;
-        return NumberUtils.multiply(a, multiplier);
-      } else if(b instanceof Character character) {
-        return new String(new char[a.intValue()]).replace('\0', character);
-      } else if(b instanceof String string) {
-        return  string.repeat(a.intValue());
-      }
-
-    if (safe)
-      return null;
-
-    throw new UnsupportedOperationException("Multiplication not supported for types: " + a.getClass() + " and " + b.getClass());
-  }
-  public static Object multiply(Object a, Object b, boolean safe) {
-    // TODO: add more validations
+  public static Object applyOperation(Object a, Object b, BinaryOperation operation) {
     if (a == null || b == null)
       throw new IllegalArgumentException("Arguments cannot be null");
 
-    // Number * Number
-    if (a instanceof Number && b instanceof Number) {
-      return NumberUtils.multiply(a, b);
+    // Number vs Number
+    if (a instanceof Number number && b instanceof Number number1) {
+      return operation.apply(number, number1);
     }
 
-    // Number * Boolean/Character/String
+    // Number vs Boolean/Character/String
     if(a instanceof Number number){
-      return multiply(number, b, true);
+      return operation.apply(number, b);
     }
 
     if(b instanceof Number number){
-      return multiply(number, a, true);
+      return operation.apply(number, a);
     }
 
-    // Boolean * Boolean
+    // Boolean vs Boolean
     if (a instanceof Boolean aBoolean && b instanceof Boolean aBoolean1) {
-      int multiplier = aBoolean ? 1 : 0;
-      int multiplier1 = aBoolean1 ? 1 : 0;
-      return NumberUtils.multiply(multiplier, multiplier1);
+      return operation.apply(aBoolean, aBoolean1);
     }
 
-    // Collection * Collection (element-wise)
+    // Character vs Character
+    if (a instanceof Character character && b instanceof Character character1) {
+      return operation.apply(character, character1);
+    }
+
+    // String vs String
+    if (a instanceof String s && b instanceof String s1) {
+      return operation.apply(s, s1);
+    }
+
+    // Collection vs Collection (element-wise)
     if (a instanceof Collection<?> collection1 && b instanceof Collection<?> collection2) {
-      return CollectionUtils.multiply((Collection<Number>) collection1, (Collection<Number>) collection2);
+      return CollectionUtils. applyOperation(collection1, collection2, operation);
     }
 
-    // Array * Array (element-wise)
+    // Array vs Array (element-wise)
     if (a.getClass().isArray() && b.getClass().isArray()) {
-      return CollectionUtils.multiply((Number[])a, (Number[])b);
+      return CollectionUtils. applyOperation((Object[])a, (Object[])b, operation);
     }
 
-    // Collection * Number (scalar multiplication)
-    if (a instanceof Collection && b instanceof Number number) {
-      return CollectionUtils.multiply((Collection<Number>) a, number);
+    // Collection vs Number (scalar multiplication)
+    if (a instanceof Collection<?> collection && b instanceof Number number) {
+      return CollectionUtils. applyOperation(collection, number, operation);
     }
 
-    // Number * Collection (scalar multiplication)
-    if (a instanceof Number number && b instanceof Collection) {
-      return CollectionUtils.multiply((Collection<Number>) b, number);
+    // Number vs Collection (scalar multiplication)
+    if (a instanceof Number number && b instanceof Collection<?> collection) {
+      return CollectionUtils. applyOperation(collection, number, operation);
     }
 
-    // Array * Number (scalar multiplication)
+    // Array vs Number (scalar multiplication)
     if (a.getClass().isArray() && b instanceof Number number) {
-      return CollectionUtils.multiply((Number[]) a, number);
+      return CollectionUtils. applyOperation((Object[]) a, number, operation);
     }
 
-    // Number * Array (scalar multiplication)
+    // Number vs Array (scalar multiplication)
     if (a instanceof Number number && b.getClass().isArray()) {
-      return CollectionUtils.multiply((Number[]) b, number);
+      return CollectionUtils. applyOperation((Object[]) b, number, operation);
     }
 
-    // Map * Map (element-wise value multiplication)
-    if (a instanceof Map && b instanceof Map) {
-      return CollectionUtils.multiply((Map<Object, Number>) a, (Map<Object, Number>) b);
+    // Map vs Map (element-wise value multiplication)
+    if (a instanceof Map<?, ?> map && b instanceof Map<?, ?> map1) {
+      return CollectionUtils. applyOperation(map, map1, operation);
     }
 
-    // Map * Number (multiply all values by scalar)
-    if (a instanceof Map && b instanceof Number number) {
-      return CollectionUtils.multiply((Map<Object, Number>) a, number);
+    // Map vs Number (multiply all values by scalar)
+    if (a instanceof Map<?, ?> map  && b instanceof Number number) {
+      return CollectionUtils. applyOperation(map, number, operation);
     }
 
-    // Number * Map (multiply all values by scalar)
-    if (a instanceof Number number && b instanceof Map) {
-      return CollectionUtils.multiply((Map<Object, Number>) b, number);
+    // Number vs Map (multiply all values by scalar)
+    if (a instanceof Number number && b instanceof Map<?, ?> map) {
+      return CollectionUtils. applyOperation(map, number, operation);
     }
 
-    if (safe)
-      return null;
-
-    throw new UnsupportedOperationException("Multiplication not supported for types: " + a.getClass() + " and " + b.getClass());
+    throw new UnsupportedOperationException(operation + " not supported for types: " + a.getClass() + " and " + b.getClass());
   }
 
+  public static Object applyOperation(Object a, UnaryOperation operation) {
+    if (a == null)
+      throw new IllegalArgumentException("Arguments cannot be null");
+
+    // Number
+    if (a instanceof Number number) {
+      return operation.apply(number);
+    }
+
+    // Boolean
+    if (a instanceof Boolean aBoolean) {
+      return operation.apply(aBoolean);
+    }
+
+    // Character
+    if (a instanceof Character character) {
+      return operation.apply(character);
+    }
+
+    // String
+    if (a instanceof String s) {
+      return operation.apply(s);
+    }
+
+    // Collection
+    if (a instanceof Collection<?> collection) {
+      return CollectionUtils.applyOperation(collection, operation);
+    }
+
+    // Array
+    if (a.getClass().isArray()) {
+      return CollectionUtils. applyOperation((Object[])a, operation);
+    }
+
+    // Map
+    if (a instanceof Map<?, ?> map) {
+      return CollectionUtils. applyOperation(map, operation);
+    }
+
+    throw new UnsupportedOperationException(operation + " not supported for type: " + a.getClass());
+  }
+
+  public static int booleanToInt(boolean aBoolean) {
+    return aBoolean ? 1 : 0;
+  }
+  public static boolean intToBoolean(int i) {
+    return i > 0 && i % 2 == 0;
+  }
 
 }
