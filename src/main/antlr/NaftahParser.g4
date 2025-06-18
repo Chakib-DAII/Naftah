@@ -1,5 +1,5 @@
 /**
- * @author Chakib
+ * @author Chakib Daii
  *
  * The Naftah grammar is based on multiple programming languages tokens and syntaxes
  * that I learned during my programming journey.
