@@ -1391,17 +1391,17 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number PostIncrement(T x) {
+  public static <T extends Number> Number preIncrement(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PostIncrement(dx);
+    return preIncrement(dx);
   }
 
-  public static Number PostIncrement(Object x) {
+  public static Number preIncrement(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PostIncrement(dx);
+    return preIncrement(dx);
   }
 
-  public static Number PostIncrement(DynamicNumber dx) {
+  public static Number preIncrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
       return dx.set(dx.asBigDecimal().add(BigDecimal.ONE)).asBigDecimal();
     } else if (dx.isBigInteger()) {
@@ -1424,17 +1424,17 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number PreIncrement(T x) {
+  public static <T extends Number> Number postIncrement(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PreIncrement(dx);
+    return postIncrement(dx);
   }
 
-  public static Number PreIncrement(Object x) {
+  public static Number postIncrement(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PreIncrement(dx);
+    return postIncrement(dx);
   }
 
-  public static Number PreIncrement(DynamicNumber dx) {
+  public static Number postIncrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
       BigDecimal current = dx.asBigDecimal();
       dx.set(dx.asBigDecimal().add(BigDecimal.ONE));
@@ -1473,17 +1473,17 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number PostDecrement(T x) {
+  public static <T extends Number> Number preDecrement(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PostDecrement(dx);
+    return preDecrement(dx);
   }
 
-  public static Number PostDecrement(Object x) {
+  public static Number preDecrement(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PostDecrement(dx);
+    return preDecrement(dx);
   }
 
-  public static Number PostDecrement(DynamicNumber dx) {
+  public static Number preDecrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
       return dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE)).asBigDecimal();
     } else if (dx.isBigInteger()) {
@@ -1506,17 +1506,17 @@ public final class NumberUtils {
     }
   }
 
-  public static <T extends Number> Number PreDecrement(T x) {
+  public static <T extends Number> Number postDecrement(T x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PreDecrement(dx);
+    return postDecrement(dx);
   }
 
-  public static Number PreDecrement(Object x) {
+  public static Number postDecrement(Object x) {
     DynamicNumber dx = DynamicNumber.of(x);
-    return PreDecrement(dx);
+    return postDecrement(dx);
   }
 
-  public static Number PreDecrement(DynamicNumber dx) {
+  public static Number postDecrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
       BigDecimal current = dx.asBigDecimal();
       dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE));
