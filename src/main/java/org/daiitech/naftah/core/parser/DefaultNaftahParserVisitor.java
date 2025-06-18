@@ -490,11 +490,13 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
-      result = hasChild(ctx.MINUS()) ? ObjectUtils.applyOperation(left, right, SUBTRACT):
-              ObjectUtils.applyOperation(left, right, ELEMENTWISE_SUBTRACT);
+      result =
+          hasChild(ctx.MINUS())
+              ? ObjectUtils.applyOperation(left, right, SUBTRACT)
+              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_SUBTRACT);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -526,11 +528,13 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
-      result = hasChild(ctx.MOD()) ?  ObjectUtils.applyOperation(left, right, MODULO) :
-              ObjectUtils.applyOperation(left, right, ELEMENTWISE_MODULO);
+      result =
+          hasChild(ctx.MOD())
+              ? ObjectUtils.applyOperation(left, right, MODULO)
+              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_MODULO);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -548,10 +552,12 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
-      result = hasChild(ctx.DIV()) ? ObjectUtils.applyOperation(left, right, DIVIDE)
+      result =
+          hasChild(ctx.DIV())
+              ? ObjectUtils.applyOperation(left, right, DIVIDE)
               : ObjectUtils.applyOperation(left, right, ELEMENTWISE_DIVIDE);
     }
     currentContext.markExecuted(ctx); // Mark as executed
@@ -570,7 +576,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, GREATER_THAN);
@@ -591,7 +597,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, LESS_THAN_EQUALS);
@@ -612,7 +618,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, GREATER_THAN_EQUALS);
@@ -633,7 +639,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, NOT_EQUALS);
@@ -654,7 +660,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, EQUALS);
@@ -675,7 +681,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, LESS_THAN);
@@ -710,12 +716,13 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
-      result = hasChild(ctx.PLUS()) ?
-              ObjectUtils.applyOperation(left, right, ADD)
-              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_ADD) ;
+      result =
+          hasChild(ctx.PLUS())
+              ? ObjectUtils.applyOperation(left, right, ADD)
+              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_ADD);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -733,11 +740,13 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
-      result = hasChild(ctx.MUL()) ? ObjectUtils.applyOperation(left, right, MULTIPLY)
-              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_MULTIPLY) ;
+      result =
+          hasChild(ctx.MUL())
+              ? ObjectUtils.applyOperation(left, right, MULTIPLY)
+              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_MULTIPLY);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -951,7 +960,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, BITWISE_XOR);
@@ -985,7 +994,7 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
     Object result;
-    if(value == null){
+    if (value == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(value, PRE_DECREMENT);
@@ -1005,7 +1014,7 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
     Object result;
-    if(value == null){
+    if (value == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(value, POST_DECREMENT);
@@ -1026,7 +1035,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, BITWISE_OR);
@@ -1046,7 +1055,7 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
     Object result;
-    if(value == null){
+    if (value == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(value, BITWISE_NOT);
@@ -1067,7 +1076,7 @@ public class DefaultNaftahParserVisitor
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
-    if(left == null || right == null){
+    if (left == null || right == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(left, right, BITWISE_AND);
@@ -1087,7 +1096,7 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
     Object result;
-    if(value == null){
+    if (value == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(value, PRE_INCREMENT);
@@ -1107,7 +1116,7 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
     Object result;
-    if(value == null){
+    if (value == null) {
       result = null;
     } else {
       result = ObjectUtils.applyOperation(value, POST_INCREMENT);

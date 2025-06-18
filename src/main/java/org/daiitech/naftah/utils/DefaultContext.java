@@ -33,8 +33,7 @@ public class DefaultContext {
   public static final BiFunction<String, DefaultContext, Object> VARIABLE_GETTER =
       (varName, context) ->
           Optional.ofNullable(context.getFunctionArgument(varName, true))
-              .flatMap(
-                  functionArgument -> Optional.ofNullable(functionArgument.b))
+              .flatMap(functionArgument -> Optional.ofNullable(functionArgument.b))
               .orElseGet(
                   () ->
                       Optional.ofNullable(context.getFunctionParameter(varName, true))
