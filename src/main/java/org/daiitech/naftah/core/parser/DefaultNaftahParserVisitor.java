@@ -493,7 +493,8 @@ public class DefaultNaftahParserVisitor
     if(left == null || right == null){
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, SUBTRACT);
+      result = hasChild(ctx.MINUS()) ? ObjectUtils.applyOperation(left, right, SUBTRACT):
+              ObjectUtils.applyOperation(left, right, ELEMENTWISE_SUBTRACT);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -528,7 +529,8 @@ public class DefaultNaftahParserVisitor
     if(left == null || right == null){
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, MODULO);
+      result = hasChild(ctx.MOD()) ?  ObjectUtils.applyOperation(left, right, MODULO) :
+              ObjectUtils.applyOperation(left, right, ELEMENTWISE_MODULO);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -549,7 +551,8 @@ public class DefaultNaftahParserVisitor
     if(left == null || right == null){
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, DIVIDE);
+      result = hasChild(ctx.DIV()) ? ObjectUtils.applyOperation(left, right, DIVIDE)
+              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_DIVIDE);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -710,7 +713,9 @@ public class DefaultNaftahParserVisitor
     if(left == null || right == null){
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, ADD);
+      result = hasChild(ctx.PLUS()) ?
+              ObjectUtils.applyOperation(left, right, ADD)
+              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_ADD) ;
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -731,7 +736,8 @@ public class DefaultNaftahParserVisitor
     if(left == null || right == null){
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, MULTIPLY);
+      result = hasChild(ctx.MUL()) ? ObjectUtils.applyOperation(left, right, MULTIPLY)
+              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_MULTIPLY) ;
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
