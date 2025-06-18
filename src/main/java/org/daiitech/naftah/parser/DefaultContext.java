@@ -1,5 +1,6 @@
 package org.daiitech.naftah.parser;
 
+import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.*;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.*;
@@ -191,7 +192,7 @@ public class DefaultContext {
   }
 
   public static void bootstrap() {
-    SHOULD_BOOT_STRAP = Boolean.getBoolean("scanClassPath");
+    SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
     if (SHOULD_BOOT_STRAP) {
       CompletableFuture.supplyAsync(LOADER_TASK)
           .whenComplete(
