@@ -137,7 +137,7 @@ public final class Naftah {
   private static final class NaftahCommand {
 
     // IMPLEMENTATION NOTE:
-    // classpath must be the first argument, so that the `startNaftah(.bat)` script
+    // classpath must be the first argument, so that the `naftah(.bat)` script
     // can extract it and the JVM can be started with the classpath already correctly set.
     // This saves us from having to fork a new JVM process with the classpath set from the processed
     // arguments.
@@ -151,7 +151,7 @@ public final class Naftah {
         names = {"-D", "--define"},
         paramLabel = "<property=value>",
         description = "Define a system property")
-    private Map<String, String> systemProperties = new LinkedHashMap<String, String>();
+    private Map<String, String> systemProperties = new LinkedHashMap<>();
 
     @CommandLine.Option(
         names = "--disableopt",
