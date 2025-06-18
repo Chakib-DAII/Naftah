@@ -1,10 +1,10 @@
 package org.daiitech.naftah;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
+
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.utils.arabic.ArabicOutputTransformer;
+
+import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
 
 /**
  * @author Chakib Daii
@@ -34,9 +34,13 @@ public final class NaftahSystem {
     return full.substring(0, secondDot);
   }
 
-  public static void setupOutput() {
-    OutputStream out = new ArabicOutputTransformer(System.out);
-    PrintStream ps = new PrintStream(out, true, StandardCharsets.UTF_8);
+  public static void setupOutputStream() {
+    PrintStream ps = getPrintStream(System.out);
     System.setOut(ps);
+  }
+
+  public static void setupErrorStream() {
+    PrintStream ps = getPrintStream(System.err);
+    System.setErr(ps);
   }
 }
