@@ -5,6 +5,8 @@ import org.daiitech.naftah.core.builtin.utils.StringUtils;
 
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.booleanToInt;
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.intToBoolean;
+import static org.daiitech.naftah.core.builtin.utils.StringUtils.charWiseModulo;
+import static org.daiitech.naftah.core.builtin.utils.StringUtils.stringToInt;
 
 /**
  * @author Chakib Daii
@@ -24,7 +26,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (char)((Number)apply(left, (char)character)).intValue();
             } else if(right instanceof String string) {
-                return StringUtils.add(string, left.intValue());
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number)apply((boolean)aBoolean, right)).intValue());
+            } else if(left instanceof Character character) {
+                return (char)((Number)apply((char)character, right)).intValue();
+            } else if(left instanceof String string) {
+                return apply(string, right.toString());
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -47,7 +61,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (char)((Number)apply(left, (char)character)).intValue();
             } else if(right instanceof String string) {
-                return StringUtils.subtract(string, left);
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number)apply((boolean)aBoolean, right)).intValue());
+            } else if(left instanceof Character character) {
+                return (char)((Number)apply((char)character, right)).intValue();
+            } else if(left instanceof String string) {
+                return apply(string, right.toString());
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -68,16 +94,28 @@ public enum BinaryOperation implements Operation {
             if(right instanceof Boolean aBoolean) {
                 return intToBoolean(((Number)apply(left, (boolean)aBoolean)).intValue());
             } else if(right instanceof Character character) {
-                return new String(new char[left.intValue()]).replace('\0', character);
+                return (char)((Number)apply(left, (char)character)).intValue();
             } else if(right instanceof String string) {
-                return StringUtils.multiply(string, left.intValue());
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number)apply((boolean)aBoolean, right)).intValue());
+            } else if(left instanceof Character character) {
+                return new String(new char[right.intValue()]).replace('\0', character);
+            } else if(left instanceof String string) {
+                return StringUtils.multiply(string, right.intValue());
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
 
         @Override
         public String apply(String left, String right) {
-            return StringUtils.multiply(left, right);
+            return StringUtils.charWiseMultiply(left, right);
         }
     },
     DIVIDE{
@@ -93,7 +131,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (char)((Number)apply(left, (char)character)).intValue();
             } else if(right instanceof String string) {
-                return StringUtils.divide(string, left.intValue());
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number)apply((boolean)aBoolean, right)).intValue());
+            } else if(left instanceof Character character) {
+                return (char)((Number)apply((char)character, right)).intValue();
+            } else if(left instanceof String string) {
+                return StringUtils.divide(string, right.intValue());
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -115,8 +165,27 @@ public enum BinaryOperation implements Operation {
                 return intToBoolean(((Number)apply(left, (boolean)aBoolean)).intValue());
             } else if(right instanceof Character character) {
                 return (char)((Number)apply(left, (char)character)).intValue();
+            } else if(right instanceof String string) {
+                return apply(left, stringToInt(string));
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number)apply((boolean)aBoolean, right)).intValue());
+            } else if(left instanceof Character character) {
+                return (char)((Number)apply((char)character, right)).intValue();
+            } else if(left instanceof String string) {
+                return apply(string, right.toString());
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(String left, String right) {
+            return charWiseModulo(left, right);
         }
     },
 
@@ -134,7 +203,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (Boolean) apply(left, (char)character);
             } else if(right instanceof String string) {
-                return StringUtils.compare(string, left.toString()) > 0;
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Boolean apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return (Boolean) apply((boolean)aBoolean, right);
+            } else if(left instanceof Character character) {
+                return (Boolean) apply((char)character, right);
+            } else if(left instanceof String string) {
+                return apply(stringToInt(string), right);
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -157,7 +238,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (Boolean) apply(left, (char)character);
             } else if(right instanceof String string) {
-                return StringUtils.compare(string, left.toString()) >= 0;
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Boolean apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return (Boolean) apply((boolean)aBoolean, right);
+            } else if(left instanceof Character character) {
+                return (Boolean) apply((char)character, right);
+            } else if(left instanceof String string) {
+                return apply(stringToInt(string), right);
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -180,7 +273,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (Boolean) apply(left, (char)character);
             } else if(right instanceof String string) {
-                return StringUtils.compare(string, left.toString()) < 0;
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Boolean apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return (Boolean) apply((boolean)aBoolean, right);
+            } else if(left instanceof Character character) {
+                return (Boolean) apply((char)character, right);
+            } else if(left instanceof String string) {
+                return apply(stringToInt(string), right);
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -203,7 +308,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (Boolean) apply(left, (char)character);
             } else if(right instanceof String string) {
-                return StringUtils.compare(string, left.toString()) <= 0;
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Boolean apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return (Boolean) apply((boolean)aBoolean, right);
+            } else if(left instanceof Character character) {
+                return (Boolean) apply((char)character, right);
+            } else if(left instanceof String string) {
+                return apply(stringToInt(string), right);
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -226,7 +343,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (Boolean) apply(left, (char)character);
             } else if(right instanceof String string) {
-                return StringUtils.equals(string, left.toString());
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Boolean apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return (Boolean) apply((boolean)aBoolean, right);
+            } else if(left instanceof Character character) {
+                return (Boolean) apply((char)character, right);
+            } else if(left instanceof String string) {
+                return apply(stringToInt(string), right);
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -249,7 +378,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (Boolean) apply(left, (char)character);
             } else if(right instanceof String string) {
-                return !StringUtils.equals(string, left.toString());
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Boolean apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return (Boolean) apply((boolean)aBoolean, right);
+            } else if(left instanceof Character character) {
+                return (Boolean) apply((char)character, right);
+            } else if(left instanceof String string) {
+                return apply(stringToInt(string), right);
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -274,11 +415,22 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (char)((Number)apply(left, (char)character)).intValue();
             } else if(right instanceof String string) {
-                return StringUtils.and(string, left.toString());
+                return apply(left, stringToInt(string));
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
 
+        @Override
+        public Object apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number)apply((boolean)aBoolean, right)).intValue());
+            } else if(left instanceof Character character) {
+                return (char)((Number)apply((char)character, right)).intValue();
+            } else if(left instanceof String string) {
+                return apply(string, right.toString());
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
         @Override
         public String apply(String left, String right) {
             return StringUtils.and(left, right);
@@ -297,7 +449,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (char)((Number)apply(left, (char)character)).intValue();
             } else if(right instanceof String string) {
-                return StringUtils.or(string, left.toString());
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number)apply((boolean)aBoolean, right)).intValue());
+            } else if(left instanceof Character character) {
+                return (char)((Number)apply((char)character, right)).intValue();
+            } else if(left instanceof String string) {
+                return apply(string, right.toString());
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -320,7 +484,19 @@ public enum BinaryOperation implements Operation {
             } else if(right instanceof Character character) {
                 return (char)((Number)apply(left, (char)character)).intValue();
             } else if(right instanceof String string) {
-                return StringUtils.xor(string, left.toString());
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if(left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number)apply((boolean)aBoolean, right)).intValue());
+            } else if(left instanceof Character character) {
+                return (char)((Number)apply((char)character, right)).intValue();
+            } else if(left instanceof String string) {
+                return apply(string, right.toString());
             }
             throw BinaryOperation.newUnsupportedOperationException(this, left, right);
         }
@@ -335,13 +511,18 @@ public enum BinaryOperation implements Operation {
     public Object apply(Number left, char right) {
         return apply(left, (int)right);
     }
+    public Object apply(char left, Number right) {
+        return apply((int)left, right);
+    }
     public Object apply(Number left, boolean right) {
         return apply(left, booleanToInt(right));
     }
-
-    public Object apply(Number left, Object right) {
-        throw newUnsupportedOperationException(this, left, right);
+    public Object apply(boolean left, Number right) {
+        return apply(booleanToInt(left), right);
     }
+    public abstract Object apply(Number left, Object right);
+    public abstract Object apply(Object left, Number right);
+
     public Object apply(char left, char right) {
         var result = apply((int)left, (int)right);
         if (result instanceof Number number) {
@@ -360,9 +541,7 @@ public enum BinaryOperation implements Operation {
         }
         return result;
     }
-    public Object apply(String left, String right) {
-        throw newUnsupportedOperationException(this, left, right);
-    }
+    public abstract Object apply(String left, String right);
 
     public static UnsupportedOperationException newUnsupportedOperationException(Operation binaryOperation, Object left, Object right) {
         return new UnsupportedOperationException(binaryOperation + " not supported for types: " + left.getClass() + " and " + right.getClass());
