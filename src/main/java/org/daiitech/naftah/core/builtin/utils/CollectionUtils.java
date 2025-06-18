@@ -12,19 +12,19 @@ import java.util.stream.IntStream;
  */
 public class CollectionUtils {
 
-    public static Object[] applyOperation(Object[] arr1, Object[] arr2, BinaryOperation operation) {
-        if (arr1.length != arr2.length)
+    public static Object[] applyOperation(Object[] left, Object[] right, BinaryOperation operation) {
+        if (left.length != right.length)
             throw new IllegalArgumentException("arrays size must be equal.");
-        return IntStream.range(0, arr1.length)
-                .mapToObj(i -> ObjectUtils.applyOperation(arr1[i], arr2[i], operation))
+        return IntStream.range(0, left.length)
+                .mapToObj(i -> ObjectUtils.applyOperation(left[i], right[i], operation))
                 .toArray(Object[]::new);
     }
 
-    public static Collection<?> applyOperation(Collection<?> collection1, Collection<?> collection2, BinaryOperation operation) {
-            if (collection1.size() != collection2.size())
+    public static Collection<?> applyOperation(Collection<?> left, Collection<?> right, BinaryOperation operation) {
+            if (left.size() != right.size())
                 throw new IllegalArgumentException("Collections size must be equal.");
-            var arr1 = collection1.toArray(Object[]::new);
-            var arr2 = collection2.toArray(Object[]::new);
+            var arr1 = left.toArray(Object[]::new);
+            var arr2 = right.toArray(Object[]::new);
             return List.of(applyOperation(arr1, arr2, operation));
     }
     public static Object[] applyOperation(Object[] arr, Number scalar, BinaryOperation operation) {
@@ -36,13 +36,13 @@ public class CollectionUtils {
         return List.of(applyOperation(collection.toArray(Object[]::new), scalar, operation));
     }
 
-    public static Map<?, ?> applyOperation(Map<?, ?> map1, Map<?, ?> map2, BinaryOperation operation) {
+    public static Map<?, ?> applyOperation(Map<?, ?> left, Map<?, ?> right, BinaryOperation operation) {
         Map<Object, Object> result = new HashMap<>();
 
-        for (var key : map1.keySet()) {
-            if (map2.containsKey(key)) {
-                var val1 = map1.get(key);
-                var val2 = map2.get(key);
+        for (var key : left.keySet()) {
+            if (right.containsKey(key)) {
+                var val1 = left.get(key);
+                var val2 = right.get(key);
                 result.put(key, ObjectUtils.applyOperation(val1, val2, operation));  // Reuse from earlier
             } else {
                 throw new IllegalArgumentException("Key " + key + " not found in second map");
