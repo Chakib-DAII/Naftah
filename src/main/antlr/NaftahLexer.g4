@@ -65,11 +65,11 @@ BITWISE_NOT : '~' | 'بت_ليس';
 BITWISE_AND : '&' | 'بت_و' | 'بت_ايضا' | 'بت_أيضا';
 BITWISE_OR  : '|' | 'بت_أو' | 'بت_او' | 'بت_وإلا' | 'بت_والا' | 'بت_ولا';
 BITWISE_XOR : '^' | 'بت_أو_حصري' | 'بت_او_حصري' | 'بت_وإلا_حصري' | 'بت_والا_حصري' | 'بت_ولا_حصري';
-ELEMENT_PLUS : DOT PLUS DOT;
-ELEMENT_MINUS : DOT MINUS DOT;
-ELEMENT_MUL : DOT MUL DOT;
-ELEMENT_DIV : DOT DIV DOT;
-ELEMENT_MOD : DOT MOD DOT;
+ELEMENTWISE_PLUS : DOT PLUS DOT;
+ELEMENTWISE_MINUS : DOT MINUS DOT;
+ELEMENTWISE_MUL : DOT MUL DOT;
+ELEMENTWISE_DIV : DOT DIV DOT;
+ELEMENTWISE_MOD : DOT MOD DOT;
 
 
 // Special characters
