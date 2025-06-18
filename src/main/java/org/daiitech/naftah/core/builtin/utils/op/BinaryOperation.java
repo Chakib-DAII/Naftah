@@ -505,6 +505,181 @@ public enum BinaryOperation implements Operation {
         public String apply(String left, String right) {
             return StringUtils.xor(left, right);
         }
+    },
+    ELEMENTWISE_ADD {
+        @Override
+        public Number apply(Number left, Number right) {
+            return NumberUtils.xor(left, right);
+        }
+
+        @Override
+        public Object apply(Number left, Object right) {
+            if (right instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
+            } else if (right instanceof Character character) {
+                return (char) ((Number) apply(left, (char) character)).intValue();
+            } else if (right instanceof String string) {
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if (left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
+            } else if (left instanceof Character character) {
+                return (char) ((Number) apply((char) character, right)).intValue();
+            } else if (left instanceof String string) {
+                return apply(string, right.toString());
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public String apply(String left, String right) {
+            return StringUtils.charWiseAdd(left, right);
+        }
+    },
+    ELEMENTWISE_SUBTRACT {
+        @Override
+        public Number apply(Number left, Number right) {
+            return NumberUtils.xor(left, NumberUtils.not(right));
+        }
+
+        @Override
+        public Object apply(Number left, Object right) {
+            if (right instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
+            } else if (right instanceof Character character) {
+                return (char) ((Number) apply(left, (char) character)).intValue();
+            } else if (right instanceof String string) {
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if (left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
+            } else if (left instanceof Character character) {
+                return (char) ((Number) apply((char) character, right)).intValue();
+            } else if (left instanceof String string) {
+                return apply(string, right.toString());
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public String apply(String left, String right) {
+            return StringUtils.charWiseSubtract(left, right);
+        }
+    },
+    ELEMENTWISE_MULTIPLY {
+        @Override
+        public Number apply(Number left, Number right) {
+            return NumberUtils.and(left, right);
+        }
+
+        @Override
+        public Object apply(Number left, Object right) {
+            if (right instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
+            } else if (right instanceof Character character) {
+                return (char) ((Number) apply(left, (char) character)).intValue();
+            } else if (right instanceof String string) {
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if (left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
+            } else if (left instanceof Character character) {
+                return (char) ((Number) apply((char) character, right)).intValue();
+            } else if (left instanceof String string) {
+                return apply(string, right.toString());
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public String apply(String left, String right) {
+            return StringUtils.charWiseMultiply(left, right);
+        }
+    },
+    ELEMENTWISE_DIVIDE {
+        @Override
+        public Number apply(Number left, Number right) {
+            return NumberUtils.shiftRight(left, right.intValue());
+        }
+
+        @Override
+        public Object apply(Number left, Object right) {
+            if (right instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
+            } else if (right instanceof Character character) {
+                return (char) ((Number) apply(left, (char) character)).intValue();
+            } else if (right instanceof String string) {
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if (left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
+            } else if (left instanceof Character character) {
+                return (char) ((Number) apply((char) character, right)).intValue();
+            } else if (left instanceof String string) {
+                return apply(string, right.toString());
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public String apply(String left, String right) {
+            return StringUtils.charWiseDivide(left, right);
+        }
+    },
+    ELEMENTWISE_MODULO {
+        @Override
+        public Number apply(Number left, Number right) {
+            return NumberUtils.and(left, NumberUtils.subtract(right, 1));
+        }
+
+        @Override
+        public Object apply(Number left, Object right) {
+            if (right instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
+            } else if (right instanceof Character character) {
+                return (char) ((Number) apply(left, (char) character)).intValue();
+            } else if (right instanceof String string) {
+                return apply(left, stringToInt(string));
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public Object apply(Object left, Number right) {
+            if (left instanceof Boolean aBoolean) {
+                return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
+            } else if (left instanceof Character character) {
+                return (char) ((Number) apply((char) character, right)).intValue();
+            } else if (left instanceof String string) {
+                return apply(string, right.toString());
+            }
+            throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+        }
+
+        @Override
+        public String apply(String left, String right) {
+            return StringUtils.charWiseModulo(left, right);
+        }
     };
 
     public abstract Object apply(Number left, Number right);
