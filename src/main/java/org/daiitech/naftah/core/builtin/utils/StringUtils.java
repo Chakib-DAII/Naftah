@@ -108,7 +108,7 @@ public final class StringUtils {
         return applyOperation(a, b, MUL);
     }
     // Bitwise DIV (character-wise)
-    public static String charWiseDivision(String a, String b) {
+    public static String charWiseDivide(String a, String b) {
         return applyOperation(a, b, DIV);
     }
     // Bitwise MOD (character-wise)

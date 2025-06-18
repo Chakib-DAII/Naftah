@@ -10,7 +10,6 @@ import java.util.*;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.core.builtin.utils.op.BinaryOperation;
-import org.daiitech.naftah.core.builtin.utils.op.Operation;
 import org.daiitech.naftah.core.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.core.parser.NaftahParser;
 import org.daiitech.naftah.utils.DefaultContext;
