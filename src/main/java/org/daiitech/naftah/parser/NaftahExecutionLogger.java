@@ -610,11 +610,12 @@ public final class NaftahExecutionLogger {
               String result =
                   """
                           MinusExpressionContext::MINUS -> %s
+                          MinusExpressionContext::ELEMENTWISE_MINUS -> %s
                           MinusExpressionContext::expression -> {
                               %s
                           }
                           """
-                      .formatted(context.MINUS(), join(context.expression()));
+                      .formatted(context.MINUS(), context.ELEMENTWISE_MINUS(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -654,11 +655,12 @@ public final class NaftahExecutionLogger {
               String result =
                   """
                           ModExpressionContext::MOD -> %s
+                          ModExpressionContext::ELEMENTWISE_MOD -> %s
                           ModExpressionContext::expression -> {
                               %s
                           }
                           """
-                      .formatted(context.MOD(), join(context.expression()));
+                      .formatted(context.MOD(), context.ELEMENTWISE_MOD(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -674,11 +676,12 @@ public final class NaftahExecutionLogger {
               String result =
                   """
                           DivExpressionContext::DIV -> %s
+                          DivExpressionContext::ELEMENTWISE_DIV -> %s
                           DivExpressionContext::expression -> {
                               %s
                           }
                           """
-                      .formatted(context.DIV(), join(context.expression()));
+                      .formatted(context.DIV(), context.ELEMENTWISE_DIV(),join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -816,11 +819,12 @@ public final class NaftahExecutionLogger {
               String result =
                   """
                           PlusExpressionContext::PLUS -> %s
+                          PlusExpressionContext::ELEMENTWISE_PLUS -> %s
                           PlusExpressionContext::expression -> {
                               %s
                           }
                           """
-                      .formatted(context.PLUS(), join(context.expression()));
+                      .formatted(context.PLUS(), context.ELEMENTWISE_PLUS(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -836,11 +840,12 @@ public final class NaftahExecutionLogger {
               String result =
                   """
                           MulExpressionContext::MUL -> %s
+                          MulExpressionContext::ELEMENTWISE_MUL -> %s
                           MulExpressionContext::expression -> {
                               %s
                           }
                           """
-                      .formatted(context.MUL(), join(context.expression()));
+                      .formatted(context.MUL(), context.ELEMENTWISE_MUL(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
