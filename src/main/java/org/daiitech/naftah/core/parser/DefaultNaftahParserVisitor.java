@@ -1,6 +1,8 @@
 package org.daiitech.naftah.core.parser;
 
 import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.*;
+import static org.daiitech.naftah.core.builtin.utils.op.BinaryOperation.*;
+import static org.daiitech.naftah.core.builtin.utils.op.UnaryOperation.*;
 import static org.daiitech.naftah.core.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.DefaultContext.*;
 import static org.daiitech.naftah.utils.NaftahExecutionLogger.logExecution;
@@ -487,8 +489,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.subtract(left, right);
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, SUBTRACT);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -518,8 +524,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.modulo(left, right);
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, MODULO);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -535,8 +545,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.divide(left, right);
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, DIVIDE);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -552,8 +566,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.compare(left, right) > 0;
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, GREATER_THAN);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -569,8 +587,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.compare(left, right) <= 0;
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, LESS_THAN_EQUALS);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -586,10 +608,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
-    // y}
-    var result = NumberUtils.compare(left, right) >= 0;
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, GREATER_THAN_EQUALS);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -605,10 +629,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
-    // y}
-    var result = NumberUtils.compare(left, right) != 0;
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, NOT_EQUALS);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -624,10 +650,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
-    // y}
-    var result = NumberUtils.equals(left, right);
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, EQUALS);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -643,10 +671,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    // a negative integer if {@code x < y}; zero if {@code x == y}; a positive integer if {@code x >
-    // y}
-    var result = NumberUtils.compare(left, right) < 0;
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, LESS_THAN);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -676,8 +706,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.add(left, right);
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, ADD);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -697,9 +731,7 @@ public class DefaultNaftahParserVisitor
     if(left == null || right == null){
       result = null;
     } else {
-      result = ObjectUtils.multiply(left, right, true);
-      if (result == null)
-        throw new UnsupportedOperationException("Multiplication not supported for types: " + left.getClass() + " and " + right.getClass());
+      result = ObjectUtils.applyOperation(left, right, MULTIPLY);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -912,8 +944,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.xor(left, right);
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, BITWISE_XOR);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -942,8 +978,12 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.PreDecrement(value);
+    Object result;
+    if(value == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(value, PRE_DECREMENT);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -958,8 +998,12 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.PreDecrement(value);
+    Object result;
+    if(value == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(value, POST_DECREMENT);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -975,8 +1019,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.or(left, right);
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, BITWISE_OR);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -991,8 +1039,12 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.not(value);
+    Object result;
+    if(value == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(value, BITWISE_NOT);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -1008,8 +1060,12 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.and(left, right);
+    Object result;
+    if(left == null || right == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(left, right, BITWISE_AND);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -1024,8 +1080,12 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.PreIncrement(value);
+    Object result;
+    if(value == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(value, PRE_INCREMENT);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -1040,8 +1100,12 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     Object value = visit(ctx.expression());
-    // TODO: add support for possible other types other than numbers
-    var result = NumberUtils.PostIncrement(value);
+    Object result;
+    if(value == null){
+      result = null;
+    } else {
+      result = ObjectUtils.applyOperation(value, POST_INCREMENT);
+    }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
