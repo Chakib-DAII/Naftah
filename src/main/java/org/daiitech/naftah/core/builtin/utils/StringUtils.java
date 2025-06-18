@@ -3,16 +3,28 @@ package org.daiitech.naftah.core.builtin.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * @author Chakib Daii
  */
 public final class StringUtils {
+    // Bit wise
+    public static final BiFunction<Character, Character, Integer> XOR = (character, character2) -> character ^ character2;
+    public static final BiFunction<Character, Character, Integer> AND = (character, character2) -> character & character2;
+    public static final BiFunction<Character, Character, Integer> OR = (character, character2) -> character | character2;
+    public static final Function<Character, Number> NOT = (character) -> ~character;
+
+    // Char wise
     public static final BiFunction<Character, Character, Integer> ADD = Integer::sum;
     public static final BiFunction<Character, Character, Integer> SUBTRACT = Math::subtractExact;
     public static final BiFunction<Character, Character, Integer> MUL = Math::multiplyExact;
     public static final BiFunction<Character, Character, Integer> DIV = Math::floorDiv;
     public static final BiFunction<Character, Character, Integer> MOD = Math::floorMod;
+    public static final Function<Character, Number> PRE_INCREMENT = NumberUtils::preIncrement;
+    public static final Function<Character, Number> POST_INCREMENT = NumberUtils::postIncrement;
+    public static final Function<Character, Number> PRE_DECREMENT = NumberUtils::preDecrement;
+    public static final Function<Character, Number> POST_DECREMENT = NumberUtils::postDecrement;
 
     // Equality
     public static boolean equals(String a, String b) {
@@ -106,77 +118,46 @@ public final class StringUtils {
 
     // Bitwise XOR (character-wise)
     public static String xor(String a, String b) {
-        int minLen = Math.min(a.length(), b.length());
-        StringBuilder result = new StringBuilder();
-
-        for (int i = 0; i < minLen; i++) {
-            char c1 = a.charAt(i);
-            char c2 = b.charAt(i);
-            result.append((char)(c1 ^ c2));
-        }
-
-        return result.toString();
+        return applyOperation(a, b, XOR);
     }
 
     // Bitwise AND (character-wise AND)
     public static String and(String a, String b) {
-        int minLen = Math.min(a.length(), b.length());
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < minLen; i++) {
-            result.append((char)(a.charAt(i) & b.charAt(i)));
-        }
-        return result.toString();
+        return applyOperation(a, b, AND);
     }
 
     // Bitwise OR (character-wise OR)
     public static String or(String a, String b) {
-        int minLen = Math.min(a.length(), b.length());
+        return applyOperation(a, b, OR);
+    }
+
+    public static String applyOperation(String a, Function<Character, Number> operartion) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < minLen; i++) {
-            result.append((char)(a.charAt(i) | b.charAt(i)));
+        for (char c : a.toCharArray()) {
+            result.append((char) operartion.apply(c).intValue());
         }
         return result.toString();
     }
 
     // Bitwise NOT (character-wise NOT)
     public static String not(String a) {
-        StringBuilder result = new StringBuilder();
-        for (char c : a.toCharArray()) {
-            result.append((char) (~c));
-        }
-        return result.toString();
+        return applyOperation(a, NOT);
     }
 
     public static String preIncrement(String a) {
-        StringBuilder result = new StringBuilder();
-        for (char c : a.toCharArray()) {
-            result.append((char) (NumberUtils.preIncrement((int)c).intValue()));
-        }
-        return result.toString();
+        return applyOperation(a, PRE_INCREMENT);
     }
 
     public static String postIncrement(String a) {
-        StringBuilder result = new StringBuilder();
-        for (char c : a.toCharArray()) {
-            result.append((char) (NumberUtils.postIncrement((int)c).intValue()));
-        }
-        return result.toString();
+        return applyOperation(a, POST_INCREMENT);
     }
 
     public static String preDecrement(String a) {
-        StringBuilder result = new StringBuilder();
-        for (char c : a.toCharArray()) {
-            result.append((char) (NumberUtils.preDecrement((int)c).intValue()));
-        }
-        return result.toString();
+        return applyOperation(a, PRE_DECREMENT);
     }
 
     public static String postDecrement(String a) {
-        StringBuilder result = new StringBuilder();
-        for (char c : a.toCharArray()) {
-            result.append((char) (NumberUtils.postDecrement((int)c).intValue()));
-        }
-        return result.toString();
+        return applyOperation(a, POST_DECREMENT);
     }
 
     public static int stringToInt(String s) {
