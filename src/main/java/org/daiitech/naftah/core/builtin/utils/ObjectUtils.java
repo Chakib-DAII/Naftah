@@ -210,85 +210,85 @@ public final class ObjectUtils {
     return false;
   }
 
-  public static Object applyOperation(Object a, Object b, BinaryOperation operation) {
-    if (a == null || b == null)
+  public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
+    if (left == null || right == null)
       throw new IllegalArgumentException("Arguments cannot be null");
 
     // Number vs Number
-    if (a instanceof Number number && b instanceof Number number1) {
+    if (left instanceof Number number && right instanceof Number number1) {
       return operation.apply(number, number1);
     }
 
     // Number vs Boolean/Character/String
-    if(a instanceof Number number){
-      return operation.apply(number, b);
+    if(left instanceof Number number){
+      return operation.apply(number, right);
     }
 
-    if(b instanceof Number number){
-      return operation.apply(number, a);
+    if(right instanceof Number number){
+      return operation.apply(left, number);
     }
 
     // Boolean vs Boolean
-    if (a instanceof Boolean aBoolean && b instanceof Boolean aBoolean1) {
+    if (left instanceof Boolean aBoolean && right instanceof Boolean aBoolean1) {
       return operation.apply(aBoolean, aBoolean1);
     }
 
     // Character vs Character
-    if (a instanceof Character character && b instanceof Character character1) {
+    if (left instanceof Character character && right instanceof Character character1) {
       return operation.apply(character, character1);
     }
 
     // String vs String
-    if (a instanceof String s && b instanceof String s1) {
+    if (left instanceof String s && right instanceof String s1) {
       return operation.apply(s, s1);
     }
 
     // Collection vs Collection (element-wise)
-    if (a instanceof Collection<?> collection1 && b instanceof Collection<?> collection2) {
+    if (left instanceof Collection<?> collection1 && right instanceof Collection<?> collection2) {
       return CollectionUtils. applyOperation(collection1, collection2, operation);
     }
 
     // Array vs Array (element-wise)
-    if (a.getClass().isArray() && b.getClass().isArray()) {
-      return CollectionUtils. applyOperation((Object[])a, (Object[])b, operation);
+    if (left.getClass().isArray() && right.getClass().isArray()) {
+      return CollectionUtils. applyOperation((Object[])left, (Object[])right, operation);
     }
 
     // Collection vs Number (scalar multiplication)
-    if (a instanceof Collection<?> collection && b instanceof Number number) {
+    if (left instanceof Collection<?> collection && right instanceof Number number) {
       return CollectionUtils. applyOperation(collection, number, operation);
     }
 
     // Number vs Collection (scalar multiplication)
-    if (a instanceof Number number && b instanceof Collection<?> collection) {
+    if (left instanceof Number number && right instanceof Collection<?> collection) {
       return CollectionUtils. applyOperation(collection, number, operation);
     }
 
     // Array vs Number (scalar multiplication)
-    if (a.getClass().isArray() && b instanceof Number number) {
-      return CollectionUtils. applyOperation((Object[]) a, number, operation);
+    if (left.getClass().isArray() && right instanceof Number number) {
+      return CollectionUtils. applyOperation((Object[]) left, number, operation);
     }
 
     // Number vs Array (scalar multiplication)
-    if (a instanceof Number number && b.getClass().isArray()) {
-      return CollectionUtils. applyOperation((Object[]) b, number, operation);
+    if (left instanceof Number number && right.getClass().isArray()) {
+      return CollectionUtils. applyOperation((Object[]) right, number, operation);
     }
 
     // Map vs Map (element-wise value multiplication)
-    if (a instanceof Map<?, ?> map && b instanceof Map<?, ?> map1) {
+    if (left instanceof Map<?, ?> map && right instanceof Map<?, ?> map1) {
       return CollectionUtils. applyOperation(map, map1, operation);
     }
 
     // Map vs Number (multiply all values by scalar)
-    if (a instanceof Map<?, ?> map  && b instanceof Number number) {
+    if (left instanceof Map<?, ?> map  && right instanceof Number number) {
       return CollectionUtils. applyOperation(map, number, operation);
     }
 
     // Number vs Map (multiply all values by scalar)
-    if (a instanceof Number number && b instanceof Map<?, ?> map) {
+    if (left instanceof Number number && right instanceof Map<?, ?> map) {
       return CollectionUtils. applyOperation(map, number, operation);
     }
 
-    throw new UnsupportedOperationException(operation + " not supported for types: " + a.getClass() + " and " + b.getClass());
+    throw new UnsupportedOperationException(operation + " not supported for types: " + left.getClass() + " and " + right.getClass());
   }
 
   public static Object applyOperation(Object a, UnaryOperation operation) {
