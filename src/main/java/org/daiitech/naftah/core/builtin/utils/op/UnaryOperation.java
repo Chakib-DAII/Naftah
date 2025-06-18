@@ -77,11 +77,7 @@ public enum UnaryOperation implements Operation {
     public Boolean apply(boolean b) {
         return intToBoolean(apply(booleanToInt(b)).intValue());
     }
-
-    public String apply(String string) {
-        throw newUnsupportedOperationException(this, string);
-    }
-
+    public abstract String apply(String string);
     public static UnsupportedOperationException newUnsupportedOperationException(Operation unaryOperation, Object o) {
         return new UnsupportedOperationException(unaryOperation + " not supported for type: " + o.getClass());
     }
