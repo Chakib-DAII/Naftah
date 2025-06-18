@@ -1,8 +1,8 @@
 package org.daiitech.naftah;
 
-import static org.daiitech.naftah.core.NaftahSystem.setupOutput;
-import static org.daiitech.naftah.core.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
-import static org.daiitech.naftah.utils.DefaultContext.bootstrap;
+import static org.daiitech.naftah.NaftahSystem.setupOutput;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
+import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +15,10 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.daiitech.naftah.core.NaftahSystem;
-import org.daiitech.naftah.core.parser.DefaultNaftahParserVisitor;
-import org.daiitech.naftah.core.parser.NaftahLexer;
-import org.daiitech.naftah.core.parser.NaftahParser;
-import org.daiitech.naftah.core.utils.JulLoggerConfig;
+import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
+import org.daiitech.naftah.parser.NaftahLexer;
+import org.daiitech.naftah.parser.NaftahParser;
+import org.daiitech.naftah.utils.JulLoggerConfig;
 import picocli.CommandLine;
 
 /**
