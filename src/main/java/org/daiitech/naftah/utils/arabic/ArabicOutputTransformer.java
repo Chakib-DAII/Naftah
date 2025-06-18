@@ -5,6 +5,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import com.ibm.icu.text.ArabicShapingException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -32,5 +33,10 @@ public class ArabicOutputTransformer extends OutputStream {
     } catch (ArabicShapingException e) {
       original.write(b, off, len); // fallback
     }
+  }
+
+  public static PrintStream getPrintStream(OutputStream original) {
+    OutputStream out = new ArabicOutputTransformer(original);
+    return new PrintStream(out, true, StandardCharsets.UTF_8);
   }
 }
