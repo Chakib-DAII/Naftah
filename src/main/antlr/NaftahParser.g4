@@ -69,15 +69,15 @@ block: LBRACE statement* RBRACE;
 expression: functionCall #functionCallExpression
           | LPAREN expression RPAREN #parenthesisExpression
           | expression MUL expression #mulExpression
+          | expression ELEMENTWISE_MUL expression #mulExpression
           | expression DIV expression #divExpression
+          | expression ELEMENTWISE_DIV expression #divExpression
           | expression MOD expression #modExpression
+          | expression ELEMENTWISE_MOD expression #modExpression
           | expression PLUS expression #plusExpression
+          | expression ELEMENTWISE_PLUS expression #plusExpression
           | expression MINUS expression #minusExpression
-          | expression ELEMENT_MUL expression #mulExpression
-          | expression ELEMENT_DIV expression #divExpression
-          | expression ELEMENT_MOD expression #modExpression
-          | expression ELEMENT_PLUS expression #plusExpression
-          | expression ELEMENT_MINUS expression #minusExpression
+          | expression ELEMENTWISE_MINUS expression #minusExpression
           | expression LT expression #lessThanExpression
           | expression GT expression #greaterThanExpression
           | expression LE expression #lessThanEqualsExpression
