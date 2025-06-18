@@ -34,21 +34,19 @@ public class DefaultContext {
       (varName, context) ->
           Optional.ofNullable(context.getFunctionArgument(varName, true))
               .flatMap(
-                  functionArgument -> Optional.ofNullable(functionArgument.b).map(Object::toString))
+                  functionArgument -> Optional.ofNullable(functionArgument.b))
               .orElseGet(
                   () ->
                       Optional.ofNullable(context.getFunctionParameter(varName, true))
                           .flatMap(
                               functionParameter ->
-                                  Optional.ofNullable(functionParameter.b.getValue())
-                                      .map(Object::toString))
+                                  Optional.ofNullable(functionParameter.b.getValue()))
                           .orElseGet(
                               () ->
                                   Optional.ofNullable(context.getVariable(varName, true))
                                       .flatMap(
                                           declaredVariable ->
-                                              Optional.ofNullable(declaredVariable.b.getValue())
-                                                  .map(Object::toString))
+                                              Optional.ofNullable(declaredVariable.b.getValue()))
                                       .orElse(null)));
 
   // CONTEXTS
