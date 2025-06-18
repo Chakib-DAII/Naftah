@@ -2,11 +2,17 @@ package org.daiitech.naftah.core.builtin.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * @author Chakib Daii
  */
 public final class StringUtils {
+    public static final BiFunction<Character, Character, Integer> ADD = Integer::sum;
+    public static final BiFunction<Character, Character, Integer> SUBTRACT = Math::subtractExact;
+    public static final BiFunction<Character, Character, Integer> MUL = Math::multiplyExact;
+    public static final BiFunction<Character, Character, Integer> DIV = Math::floorDiv;
+    public static final BiFunction<Character, Character, Integer> MOD = Math::floorMod;
 
     // Equality
     public static boolean equals(String a, String b) {
@@ -20,13 +26,13 @@ public final class StringUtils {
     }
 
     // Concatenation
-    public static String add(String a, Object b) {
+    public static String add(String a, String b) {
         return a + b;
     }
 
     // Subtract (remove all occurrences of b from a)
-    public static String subtract(String a, Object b) {
-        return a.replace(b.toString(), "");
+    public static String subtract(String a, String b) {
+        return a.replace(b, "");
     }
 
     // Split (divide)
@@ -53,8 +59,13 @@ public final class StringUtils {
         return result.toArray(String[]::new);
     }
 
-    // char wise multiply
-    public static String multiply(String a, String b) {
+    // repeat (multiply)
+    public static String multiply(String a, int multiplier) {
+        return a.repeat(multiplier);
+    }
+
+    // char wise operation
+    public static String applyOperation(String a, String b, BiFunction<Character, Character, Integer> operartion) {
         int minLen = Math.min(a.length(), b.length());
         StringBuilder result = new StringBuilder(minLen);
 
@@ -62,19 +73,35 @@ public final class StringUtils {
             char c1 = a.charAt(i);
             char c2 = b.charAt(i);
 
-            int product = c1 * c2;
-            // Cast product to char (lower 16 bits)
-            char multipliedChar = (char) product;
+            int intResult = operartion.apply(c1, c2);
+            // Cast result to char (lower 16 bits)
+            char charResult = (char) intResult;
 
-            result.append(multipliedChar);
+            result.append(charResult);
         }
 
         return result.toString();
     }
 
-    // repeat (multiply)
-    public static String multiply(String a, int multiplier) {
-        return a.repeat(multiplier);
+    // Bitwise ADD (character-wise)
+    public static String charWiseAdd(String a, String b) {
+        return applyOperation(a, b, ADD);
+    }
+    // Bitwise SUBTRACT (character-wise)
+    public static String charWiseSubtract(String a, String b) {
+        return applyOperation(a, b, SUBTRACT);
+    }
+    // Bitwise MUL (character-wise)
+    public static String charWiseMultiply(String a, String b) {
+        return applyOperation(a, b, MUL);
+    }
+    // Bitwise DIV (character-wise)
+    public static String charWiseDivision(String a, String b) {
+        return applyOperation(a, b, DIV);
+    }
+    // Bitwise MOD (character-wise)
+    public static String charWiseModulo(String a, String b) {
+        return applyOperation(a, b, MOD);
     }
 
     // Bitwise XOR (character-wise)
@@ -150,5 +177,9 @@ public final class StringUtils {
             result.append((char) (NumberUtils.postDecrement((int)c).intValue()));
         }
         return result.toString();
+    }
+
+    public static int stringToInt(String s) {
+        return s.codePoints().sum();
     }
 }
