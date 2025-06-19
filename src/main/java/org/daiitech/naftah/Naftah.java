@@ -24,7 +24,14 @@ import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
 import org.daiitech.naftah.parser.NaftahLexer;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.utils.JulLoggerConfig;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import picocli.CommandLine;
+
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 /**
  * @author Chakib Daii
@@ -145,6 +152,27 @@ public final class Naftah {
   private static class NaftahCommand {
     private static final String NAME = "naftah";
 
+    protected void run(Naftah main) throws IOException {
+      bootstrap();
+    }
+
+    private static Object doRun(CharStream input) {
+
+      // Create a lexer and token stream
+      NaftahLexer lexer = new NaftahLexer(input);
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+      // Create a parser
+      NaftahParser parser = new NaftahParser(tokens);
+
+      // Parse the input and get the parse tree
+      ParseTree tree = parser.program();
+
+      // Create a visitor and visit the parse tree
+      DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
+      return visitor.visit(tree);
+    }
+
     // IMPLEMENTATION NOTE:
     // classpath must be the first argument, so that the `naftah(.bat)` script
     // can extract it and the JVM can be started with the classpath already correctly set.
@@ -158,6 +186,22 @@ public final class Naftah {
             sortOptions = false)
     private static final class RunCommand extends NaftahCommand {
       private static final String NAME = "run";
+
+      @Override
+      protected void run(Naftah main) throws IOException {
+        super.run(main);
+        initLogger(main.debug);
+
+        // Create an input stream from the Naftah code
+        CharStream input = getCharStream(main.isScriptFile, main.script);
+
+        var result =  NaftahCommand.doRun(input);
+
+        if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
+
+        System.out.println();
+        System.exit(0);
+      }
     }
 
     @Command(
@@ -168,6 +212,11 @@ public final class Naftah {
     private static final class InitCommand extends NaftahCommand {
       private static final String NAME = "init";
 
+      @Override
+      protected void run(Naftah main) throws IOException {
+        System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
+        super.run(main);
+      }
     }
 
     @Command(
@@ -178,6 +227,34 @@ public final class Naftah {
     private static final class ShellCommand extends NaftahCommand{
       private static final String NAME = "shell";
 
+      @Override
+      protected void run(Naftah main) throws IOException {
+        super.run(main);
+        Terminal terminal = TerminalBuilder.builder()
+              .encoding(StandardCharsets.UTF_8)
+              .jna(true)
+              .system(true)
+              .build();
+
+        LineReader reader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .build();
+
+        while (true) {
+          try {
+            String rtlPrompt = "\u200F> "; // Right-to-left mark before prompt
+            String line = reader.readLine(rtlPrompt);
+            if (line.trim().equals("exit")) break;
+
+            Object result = NaftahCommand.doRun(getCharStream(false, line));
+            System.out.println(result);
+
+          } catch (UserInterruptException | EndOfFileException e) {
+          System.out.println("\nتم الخروج من التطبيق.");
+          break;
+        }
+        }
+      }
     }
 
     @Option(
@@ -261,20 +338,22 @@ public final class Naftah {
 
       main.debug = matchedCommand.debug;
 
-      main.isScriptFile = matchedCommand.script == null;
-      if (main.isScriptFile) {
-        if (matchedCommand.arguments.isEmpty()) {
-          throw new ParameterException(
-                  parseResult.commandSpec().commandLine(), "error: neither -e or filename provided");
+      if (matchedCommand instanceof RunCommand) {
+        main.isScriptFile = matchedCommand.script == null;
+        if (main.isScriptFile) {
+          if (matchedCommand.arguments.isEmpty()) {
+            throw new ParameterException(
+                    parseResult.commandSpec().commandLine(), "error: neither -e or filename provided");
+          }
+          main.script = matchedCommand.arguments.remove(0);
+        } else {
+          main.script = matchedCommand.script;
         }
-        main.script = matchedCommand.arguments.remove(0);
-      } else {
-        main.script = matchedCommand.script;
       }
 
       main.args = matchedCommand.arguments;
 
-      return main.run();
+      return main.run(matchedCommand);
     }
   }
 
@@ -317,11 +396,11 @@ public final class Naftah {
     }
   }
 
-  private boolean run() {
+  private boolean run(NaftahCommand naftahCommand) {
     try {
       setupOutputStream();
       setupErrorStream();
-      runLang();
+      naftahCommand.run(this);
       return true;
     } catch (Throwable e) {
       System.err.println("Caught: " + e);
@@ -330,33 +409,5 @@ public final class Naftah {
       }
       return false;
     }
-  }
-
-  private void runLang() throws IOException {
-    bootstrap();
-    initLogger(debug);
-    // TODO: update this logic to be more sophisticated and handle args and commands
-    // Create an input stream from the Naftah code
-    CharStream input = getCharStream(isScriptFile, script);
-
-
-    // Create a lexer and token stream
-    NaftahLexer lexer = new NaftahLexer(input);
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-    // Create a parser
-    NaftahParser parser = new NaftahParser(tokens);
-
-    // Parse the input and get the parse tree
-    ParseTree tree = parser.program();
-
-    // Create a visitor and visit the parse tree
-    DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
-    var result = visitor.visit(tree);
-
-    if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
-
-    System.out.println();
-    System.exit(0);
   }
 }
