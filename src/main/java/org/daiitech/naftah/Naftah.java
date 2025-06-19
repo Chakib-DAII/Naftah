@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
 import org.daiitech.naftah.parser.NaftahLexer;
 import org.daiitech.naftah.parser.NaftahParser;
@@ -136,18 +137,49 @@ public final class Naftah {
   }
 
   @Command(
-      name = "naftah",
-      customSynopsis = "naftah [options] [filename] [args]",
+      name = NaftahCommand.NAME,
+      customSynopsis = "naftah [run/shell/init] [options] [filename] [args]",
       description = "The Naftah command line processor.",
       sortOptions = false,
       versionProvider = VersionProvider.class)
-  private static final class NaftahCommand {
+  private static class NaftahCommand {
+    private static final String NAME = "naftah";
 
     // IMPLEMENTATION NOTE:
     // classpath must be the first argument, so that the `naftah(.bat)` script
     // can extract it and the JVM can be started with the classpath already correctly set.
     // This saves us from having to fork a new JVM process with the classpath set from the processed
     // arguments.
+
+    @Command(
+            name = RunCommand.NAME,
+            customSynopsis = "run [options] [filename] [args]",
+            description = "The Naftah command line processor.",
+            sortOptions = false)
+    private static final class RunCommand extends NaftahCommand {
+      private static final String NAME = "run";
+    }
+
+    @Command(
+            name = InitCommand.NAME,
+            customSynopsis = "init [options] [filename] [args]",
+            description = "The Naftah command line processor.",
+            sortOptions = false)
+    private static final class InitCommand extends NaftahCommand {
+      private static final String NAME = "init";
+
+    }
+
+    @Command(
+            name = ShellCommand.NAME,
+            customSynopsis = "shell [options] [filename] [args]",
+            description = "The Naftah command line processor.",
+            sortOptions = false)
+    private static final class ShellCommand extends NaftahCommand{
+      private static final String NAME = "shell";
+
+    }
+
     @Option(
         names = {"-cp", "-classpath", "--classpath"},
         paramLabel = "<path>",
@@ -201,57 +233,60 @@ public final class Naftah {
     /**
      * Process the users request.
      *
-     * @param parser the parsed command line. Used when the user input was invalid.
+     * @param parseResult the parsed result command line.
      * @throws ParameterException if the user input was invalid
      */
-    boolean process(CommandLine parser) throws ParameterException, IOException {
+    boolean process(ParseResult parseResult) throws ParameterException, IOException {
+      var matchedCommand = (NaftahCommand)parseResult.commandSpec().userObject();
       // append to classpath
-      if (Objects.nonNull(classpath)) {
+      if (Objects.nonNull(matchedCommand.classpath)) {
         final String actualClasspath = System.getProperty(CLASS_PATH_PROPERTY);
-        System.setProperty(CLASS_PATH_PROPERTY, actualClasspath + File.pathSeparator + classpath);
+        System.setProperty(CLASS_PATH_PROPERTY, actualClasspath + File.pathSeparator + matchedCommand.classpath);
       }
 
       // append system properties
-      for (Map.Entry<String, String> entry : systemProperties.entrySet()) {
+      for (Map.Entry<String, String> entry : matchedCommand.systemProperties.entrySet()) {
         System.setProperty(entry.getKey(), entry.getValue());
       }
 
-      if(Objects.nonNull(encoding)) {
-      System.setProperty(FILE_ENCODING_PROPERTY, encoding);
+      if(Objects.nonNull(matchedCommand.encoding)) {
+      System.setProperty(FILE_ENCODING_PROPERTY, matchedCommand.encoding);
       }
 
-      if(scanClasspath) {
+      if(matchedCommand.scanClasspath) {
         System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
       }
 
       final Naftah main = new Naftah();
 
-      main.debug = debug;
+      main.debug = matchedCommand.debug;
 
-      main.isScriptFile = script == null;
+      main.isScriptFile = matchedCommand.script == null;
       if (main.isScriptFile) {
-        if (arguments.isEmpty()) {
+        if (matchedCommand.arguments.isEmpty()) {
           throw new ParameterException(
-              parser, "error: neither -e or filename provided");
+                  parseResult.commandSpec().commandLine(), "error: neither -e or filename provided");
         }
-        main.script = arguments.remove(0);
+        main.script = matchedCommand.arguments.remove(0);
       } else {
-        main.script = script;
+        main.script = matchedCommand.script;
       }
 
-      main.args = arguments;
+      main.args = matchedCommand.arguments;
 
       return main.run();
     }
   }
 
   static void processArgs(String[] args) {
-    setupOutputStream();
-    setupErrorStream();
     NaftahCommand naftahCommand = new NaftahCommand();
 
     CommandLine parser =
         new CommandLine(naftahCommand)
+            .addSubcommand(new NaftahCommand.RunCommand())
+            .addSubcommand(new NaftahCommand.InitCommand())
+            .addSubcommand(new NaftahCommand.ShellCommand())
+            .setSubcommandsCaseInsensitive(true)
             .setOut(new PrintWriter(System.out))
             .setErr(new PrintWriter(System.err))
             .setUnmatchedArgumentsAllowed(true)
@@ -264,7 +299,12 @@ public final class Naftah {
         return;
       }
 
-      if (!naftahCommand.process(parser)) {
+      if (ObjectUtils.isEmpty(result.subcommands()))
+        throw new InitializationException("error: no command provided: run/shell/init");
+
+      var matchedSubCommandResult = result.subcommands().get(result.subcommands().size() -1);
+
+      if (!naftahCommand.process(matchedSubCommandResult)) {
         // If we fail, then exit with an error so scripting frameworks can catch it.
         System.exit(1);
       }
@@ -279,6 +319,8 @@ public final class Naftah {
 
   private boolean run() {
     try {
+      setupOutputStream();
+      setupErrorStream();
       runLang();
       return true;
     } catch (Throwable e) {
