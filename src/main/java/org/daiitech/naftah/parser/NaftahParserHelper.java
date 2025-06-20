@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -213,9 +214,29 @@ public class NaftahParserHelper {
   }
 
 
+  public static org.daiitech.naftah.parser.NaftahParser getParser(CommonTokenStream commonTokenStream, ANTLRErrorListener errorListener) {
+    return getParser(commonTokenStream, List.of(errorListener));
+  }
+  public static org.daiitech.naftah.parser.NaftahParser getParser(CommonTokenStream commonTokenStream, List<ANTLRErrorListener> errorListeners) {
+    // Create a parser
+    org.daiitech.naftah.parser.NaftahParser parser = new org.daiitech.naftah.parser.NaftahParser(commonTokenStream);
+    parser.removeErrorListeners();
+    errorListeners.forEach(parser::addErrorListener);
+
+    return parser;
+  }
   public static CommonTokenStream getCommonTokenStream(CharStream charStream) {
+    return getCommonTokenStream(charStream, List.of());
+  }
+  public static CommonTokenStream getCommonTokenStream(CharStream charStream, ANTLRErrorListener errorListener) {
+    return getCommonTokenStream(charStream, List.of(errorListener));
+  }
+
+  public static CommonTokenStream getCommonTokenStream(CharStream charStream, List<ANTLRErrorListener> errorListeners) {
     // Create a lexer and token stream
     org.daiitech.naftah.parser.NaftahLexer lexer = new org.daiitech.naftah.parser.NaftahLexer(charStream);
+    lexer.removeErrorListeners();
+    errorListeners.forEach(lexer::addErrorListener);
     return new CommonTokenStream(lexer);
   }
 
