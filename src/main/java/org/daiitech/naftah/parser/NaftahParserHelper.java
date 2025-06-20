@@ -1,9 +1,16 @@
 package org.daiitech.naftah.parser;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
@@ -11,6 +18,8 @@ import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+
+import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 
 /**
  * @author Chakib Daii
@@ -201,5 +210,46 @@ public class NaftahParserHelper {
       }
     }
     return result.get().toString();
+  }
+
+
+  public static CommonTokenStream getCommonTokenStream(CharStream charStream) {
+    // Create a lexer and token stream
+    org.daiitech.naftah.parser.NaftahLexer lexer = new org.daiitech.naftah.parser.NaftahLexer(charStream);
+    return new CommonTokenStream(lexer);
+  }
+
+  public static CharStream getCharStream(boolean isScriptFile, String script) throws IOException {
+    CharStream charStream;
+    if (isScriptFile) {
+      charStream = CharStreams.fromPath(searchForNaftahScriptFile(script).toPath(), StandardCharsets.UTF_8);
+    } else {
+      charStream =  CharStreams.fromString(script);
+    }
+    return charStream;
+  }
+
+
+
+  /**
+   * Search for the script file, doesn't bother if it is named precisely.
+   *
+   * <p>Tries in this order: - actual supplied name - name.naftah - name.nfth - name.na - name.nsh
+   *
+   * @since 0.0.1
+   */
+  public static File searchForNaftahScriptFile(String input) {
+    String scriptFileName = input.trim();
+    File scriptFile = new File(scriptFileName);
+    int i = 0;
+    while (i < STANDARD_EXTENSIONS.length && !scriptFile.exists()) {
+      scriptFile = new File(scriptFileName + STANDARD_EXTENSIONS[i]);
+      i++;
+    }
+    // if we still haven't found the file, point back to the originally specified filename
+    if (!scriptFile.exists()) {
+      scriptFile = new File(scriptFileName);
+    }
+    return scriptFile;
   }
 }
