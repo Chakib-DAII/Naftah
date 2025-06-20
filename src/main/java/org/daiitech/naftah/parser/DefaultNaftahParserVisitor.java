@@ -411,6 +411,19 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
+  public Object visitExpressionStatement(org.daiitech.naftah.parser.NaftahParser.ExpressionStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+        LOGGER.fine(
+                "visitExpressionStatement(%s)"
+                        .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+      logExecution(ctx);
+      var currentContext = DefaultContext.getContextByDepth(depth);
+      Object result = visit(ctx.expression()); // Evaluate and return the result
+      currentContext.markExecuted(ctx); // Mark as executed
+      return result; // No expression after 'return' means returning null
+   }
+
+  @Override
   public Object visitReturnStatement(
       org.daiitech.naftah.parser.NaftahParser.ReturnStatementContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
