@@ -1,10 +1,11 @@
 package org.daiitech.naftah;
 
 import static java.util.logging.Logger.*;
-import static org.daiitech.naftah.NaftahSystem.setupErrorStream;
-import static org.daiitech.naftah.NaftahSystem.setupOutputStream;
+import static org.daiitech.naftah.NaftahSystem.*;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
+import static org.daiitech.naftah.parser.NaftahParserHelper.getCharStream;
+import static org.daiitech.naftah.parser.NaftahParserHelper.getCommonTokenStream;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static picocli.CommandLine.*;
 
@@ -23,16 +24,14 @@ import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
 import org.daiitech.naftah.parser.NaftahLexer;
 import org.daiitech.naftah.parser.NaftahParser;
+import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.daiitech.naftah.utils.JulLoggerConfig;
-import org.jline.reader.EndOfFileException;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.UserInterruptException;
+import org.daiitech.naftah.utils.arabic.ArabicHighlighter;
+import org.daiitech.naftah.utils.jline.CompositeHighlighter;
+import org.jline.reader.*;
 import picocli.CommandLine;
 
 import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-
 /**
  * @author Chakib Daii
  *     <p>main of Naftah programming language as an interpreted JVM language
@@ -42,9 +41,16 @@ public final class Naftah {
   public static final String SCAN_CLASSPATH_PROPERTY = "scanClassPath";
   public static final String INSIDE_SHELL_PROPERTY = "insideShell";
   public static final String FILE_ENCODING_PROPERTY = "file.encoding";
+  public static final String TERMINAL_WIDTH_PROPERTY = "terminal.width";
+  public static final String TERMINAL_HEIGHT_PROPERTY = "terminal.hight";
 
-  private static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
+  public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
 
+  static {
+    int[] terminalWidthAndHeight = getTerminalWidthAndHeight();
+    System.setProperty(TERMINAL_WIDTH_PROPERTY, Integer.toString(terminalWidthAndHeight[0]));
+    System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(terminalWidthAndHeight[1]));
+  }
   // arguments to the script
   private List<String> args;
 
@@ -96,38 +102,6 @@ public final class Naftah {
     }
   }
 
-  /**
-   * Search for the script file, doesn't bother if it is named precisely.
-   *
-   * <p>Tries in this order: - actual supplied name - name.naftah - name.nfth - name.na - name.nsh
-   *
-   * @since 0.0.1
-   */
-  public static File searchForNaftahScriptFile(String input) {
-    String scriptFileName = input.trim();
-    File scriptFile = new File(scriptFileName);
-    int i = 0;
-    while (i < STANDARD_EXTENSIONS.length && !scriptFile.exists()) {
-      scriptFile = new File(scriptFileName + STANDARD_EXTENSIONS[i]);
-      i++;
-    }
-    // if we still haven't found the file, point back to the originally specified filename
-    if (!scriptFile.exists()) {
-      scriptFile = new File(scriptFileName);
-    }
-    return scriptFile;
-  }
-
-  public static CharStream getCharStream(boolean isScriptFile, String script) throws IOException {
-    CharStream charStream;
-    if (isScriptFile) {
-      charStream = CharStreams.fromPath(searchForNaftahScriptFile(script).toPath(), StandardCharsets.UTF_8);
-    } else {
-      charStream =  CharStreams.fromString(script);
-    }
-    return charStream;
-  }
-
   public static class VersionProvider implements IVersionProvider {
     @Override
     public String[] getVersion() {
@@ -160,8 +134,7 @@ public final class Naftah {
     private static Object doRun(CharStream input) {
 
       // Create a lexer and token stream
-      NaftahLexer lexer = new NaftahLexer(input);
-      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      CommonTokenStream tokens = getCommonTokenStream(input);
 
       // Create a parser
       NaftahParser parser = new NaftahParser(tokens);
@@ -228,28 +201,44 @@ public final class Naftah {
     private static final class ShellCommand extends NaftahCommand{
       private static final String NAME = "shell";
 
+      private static LineReader getLineReader(Terminal terminal) {
+        LineReader baseReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .build();
+
+        Highlighter originalHighlighter = baseReader.getHighlighter();
+
+        return LineReaderBuilder.builder()
+                .terminal(terminal)
+                .highlighter(CompositeHighlighter.builder(originalHighlighter)
+                        .add(new SyntaxHighlighter(originalHighlighter))
+                        .add(new ArabicHighlighter(originalHighlighter))
+                        .build()
+                )
+                .build();
+      }
+
       @Override
       protected void run(Naftah main) throws IOException {
         System.setProperty(INSIDE_SHELL_PROPERTY, Boolean.toString(true));
         super.run(main);
-        Terminal terminal = TerminalBuilder.builder()
-              .encoding(StandardCharsets.UTF_8)
-              .jna(true)
-              .system(true)
-              .build();
+        Terminal terminal = getTerminal();
 
-        LineReader reader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .build();
+        LineReader reader = getLineReader(terminal);
 
         while (true) {
           try {
-            String rtlPrompt = "\u200F> "; // Right-to-left mark before prompt
+            String rtlPrompt = "<>"; // Right-to-left mark before prompt
             String line = reader.readLine(rtlPrompt);
+
+            if (line.isBlank()) continue;
+
             if (line.trim().equals("exit")) break;
 
             Object result = NaftahCommand.doRun(getCharStream(false, line));
-            System.out.println(result);
+
+            if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
+            System.out.println();
 
           } catch (UserInterruptException | EndOfFileException e) {
           System.out.println("\nتم الخروج من التطبيق.");
