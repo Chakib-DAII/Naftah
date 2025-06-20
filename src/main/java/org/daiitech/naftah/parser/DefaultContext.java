@@ -1,5 +1,6 @@
 package org.daiitech.naftah.parser;
 
+import static org.daiitech.naftah.Naftah.INSIDE_SHELL_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.*;
@@ -263,7 +264,8 @@ public class DefaultContext {
       DefaultContext parent,
       Map<String, DeclaredParameter> parameters,
       Map<String, Object> arguments) {
-    if (parent == null && (CONTEXTS.size() != 0)) throw new IllegalStateException("Illegal usage.");
+    if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_SHELL_PROPERTY))
+            && parent == null && (CONTEXTS.size() != 0)) throw new IllegalStateException("Illegal usage.");
     this.parent = parent;
     this.depth = parent == null ? 0 : parent.getDepth() + 1;
     this.arguments = arguments;
