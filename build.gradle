@@ -29,6 +29,7 @@ dependencies {
 	testImplementation('org.junit.jupiter:junit-jupiter')
 	checkstyle 'com.puppycrawl.tools:checkstyle:10.0'
 	implementation 'info.picocli:picocli:4.7.6'
+	implementation 'org.jline:jline:3.23.0'
 }
 
 tasks.withType(JavaCompile).configureEach  {
