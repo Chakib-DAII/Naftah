@@ -4,6 +4,8 @@ import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
 import com.ibm.icu.text.Transliterator;
+import org.daiitech.naftah.Naftah;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -77,7 +79,16 @@ public class ArabicUtils {
         new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.TEXT_DIRECTION_VISUAL_RTL);
     String shaped = shaper.shape(input);
     Bidi bidi = new Bidi(shaped, Bidi.DIRECTION_RIGHT_TO_LEFT);
-    return bidi.writeReordered(Bidi.DO_MIRRORING);
+    String reordered = bidi.writeReordered(Bidi.DO_MIRRORING);
+//    return fillRightWithSpaces(reordered);
+    return reordered;
+  }
+
+  public static synchronized String fillRightWithSpaces(String input) {
+    int padding = Integer.getInteger(Naftah.TERMINAL_WIDTH_PROPERTY) * 3 - input.length() - 10;
+    if (padding < 0) padding = 0;
+
+    return " ".repeat(padding) + input;
   }
 
   /**
@@ -177,5 +188,11 @@ public class ArabicUtils {
 
   public static String transliterateToArabicScriptLetterByLetter(String text) {
     return transliterateScriptLetterByLetter(LATIN_ARABIC_TRANSLITERATION_ID, text);
+  }
+
+  public static boolean containsArabic(String text) {
+    return text.codePoints().anyMatch(cp -> (cp >= 0x0600 && cp <= 0x06FF)
+            || (cp >= 0x0750 && cp <= 0x077F) // Arabic Supplement
+            || (cp >= 0x08A0 && cp <= 0x08FF)); // Arabic Extended
   }
 }
