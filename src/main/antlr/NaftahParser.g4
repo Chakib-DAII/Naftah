@@ -33,6 +33,7 @@ statement: block #blockStatement
          | assignment #assignmentStatement
          | functionDeclaration #functionDeclarationStatement
          | functionCall #functionCallStatement
+         | expression #expressionStatement
          | returnStatement #returnStatementStatement
          ;
 
