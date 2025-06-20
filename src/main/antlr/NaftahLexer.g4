@@ -103,10 +103,10 @@ CHARACTER  : (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkLeft) Cha
 STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) String (DoubleQuotationMark | DoubleQuotationMarkRight);
 ID         : [أ-يڠ-ۿ٠-٩_0-9]* [ء-يڠ-ۿ_] [ء-يڠ-ۿ٠-٩_0-9]*;
 
-fragment QuotationMark : '\'';
-fragment DoubleQuotationMark : '"';
-fragment DoubleQuotationMarkLeft : '«';
-fragment DoubleQuotationMarkRight : '»';
+QuotationMark : '\'';
+DoubleQuotationMark : '"';
+DoubleQuotationMarkLeft : '«';
+DoubleQuotationMarkRight : '»';
 
 fragment Character: (~["«»\r\n]);
 fragment String: Character* ESC* EMOJI* PUNCTUATION* .*?;
@@ -119,7 +119,7 @@ fragment EMOJI
   | '\u2700'..'\u27BF'
   ;
 
-fragment PUNCTUATION : [،.؟:!-];
+PUNCTUATION : [،.؟:!-];
 
 // Whitespace and comments
 WS         : [ \t\r\n]+ -> skip;
