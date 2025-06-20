@@ -5,6 +5,7 @@ import static org.daiitech.naftah.NaftahSystem.*;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static picocli.CommandLine.*;
 
@@ -13,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.logging.*;
 
 import org.antlr.v4.runtime.*;
@@ -33,6 +36,9 @@ import org.jline.terminal.Terminal;
  */
 public final class Naftah {
 
+  public static final String JAVA_VERSION = "java.version";
+  public static final String JAVA_VM_VENDOR = "java.vm.vendor";
+  public static final String OS_NAME = "os.name";
   public static final String SCAN_CLASSPATH_PROPERTY = "scanClassPath";
   public static final String INSIDE_SHELL_PROPERTY = "insideShell";
   public static final String FILE_ENCODING_PROPERTY = "file.encoding";
@@ -101,14 +107,15 @@ public final class Naftah {
     @Override
     public String[] getVersion() {
       return new String[] {
-        "Naftah Version: "
-            + NaftahSystem.getVersion()
-            + " JVM: "
-            + System.getProperty("java.version")
-            + " Vendor: "
-            + System.getProperty("java.vm.vendor")
-            + " OS: "
-            + System.getProperty("os.name")
+                """
+                  Naftah Version (إصدار نفطة): %s
+                  JVM (آلة جافا الافتراضية): %s
+                  Vendor (المُصنّع): %s
+                  OS (نظام التشغيل): %s
+                  """.formatted(NaftahSystem.getVersion(),
+                              System.getProperty(JAVA_VERSION),
+                              System.getProperty(JAVA_VM_VENDOR),
+                              System.getProperty(OS_NAME))
       };
     }
   }
@@ -116,7 +123,7 @@ public final class Naftah {
   @Command(
       name = NaftahCommand.NAME,
       customSynopsis = "naftah [run/shell/init] [options] [filename] [args]",
-      description = "The Naftah command line processor.",
+      description = {"The Naftah command line processor.", "معالج الأوامر الخاص بـلغة البرمجة نفطة"},
       sortOptions = false,
       versionProvider = VersionProvider.class)
   private static class NaftahCommand {
@@ -158,8 +165,9 @@ public final class Naftah {
 
     @Command(
             name = RunCommand.NAME,
-            customSynopsis = "run [options] [filename] [args]",
-            description = "The Naftah command line processor.",
+            customSynopsis = "naftah run [options] [filename] [args]",
+            description = {"The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
+                    "أمر تشغيل نفطة. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."},
             sortOptions = false)
     private static final class RunCommand extends NaftahCommand {
       private static final String NAME = "run";
@@ -184,8 +192,9 @@ public final class Naftah {
 
     @Command(
             name = InitCommand.NAME,
-            customSynopsis = "init [options] [filename] [args]",
-            description = "The Naftah command line processor.",
+            customSynopsis = "naftah init [options] [filename] [args]",
+            description = {"The Naftah init command. it prepares the classpath classes (java classpath) and process them to reuse inside naftah script.",
+                    "أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة."},
             sortOptions = false)
     private static final class InitCommand extends NaftahCommand {
       private static final String NAME = "init";
@@ -199,8 +208,9 @@ public final class Naftah {
 
     @Command(
             name = ShellCommand.NAME,
-            customSynopsis = "shell [options] [filename] [args]",
-            description = "The Naftah command line processor.",
+            customSynopsis = "naftah shell [options] [filename] [args]",
+            description = {"The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code",
+                    "يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."},
             sortOptions = false)
     private static final class ShellCommand extends NaftahCommand{
       private static final String NAME = "shell";
@@ -228,7 +238,7 @@ public final class Naftah {
 
         while (true) {
           try {
-            String rtlPrompt = "<>"; // Right-to-left mark before prompt
+            String rtlPrompt = shape("< نفطة >"); // Right-to-left mark before prompt
             String line = reader.readLine(rtlPrompt);
 
             if (line.isBlank()) continue;
@@ -256,49 +266,53 @@ public final class Naftah {
     @Option(
         names = {"-cp", "-classpath", "--classpath"},
         paramLabel = "<path>",
-        description = "Specify where to find the class files - must be first argument")
+        description = {"Specify where to find the class files - must be first argument",
+                "حدّد مكان ملفات الفئات (class files) — يجب أن يكون هو الوسيط الأول"
+        })
     private String classpath;
 
     @Option(
         names = {"-D", "--define"},
         paramLabel = "<property=value>",
-        description = "Define a system property")
+        description = {"Define a system property", "تعريف خاصية نظام"})
     private Map<String, String> systemProperties = new LinkedHashMap<>();
 
     @Option(
         names = {"-d", "--debug"},
-        description = "Debug mode will print out full stack traces")
+        description = {"Debug mode will print out full stack traces", "في وضع التصحيح، سيتم طباعة تتبع الأخطاء الكامل."})
     private boolean debug;
 
     @Option(
         names = {"-c", "--encoding"},
         paramLabel = "<charset>",
-        description = "Specify the encoding of the files")
+        description = {"Specify the encoding of the files", "تحديد ترميز الملفات"})
     private String encoding;
 
     @Option(
             names = {"-scp", "--scan-classpath"},
             paramLabel = "<charset>",
-            description = "Specify if the classpath classes should be reused as nafta types")
+            description = {"Specify if the classpath classes should be reused as nafta types",
+                    "حدد ما إذا كان يجب إعادة استخدام فئات المسار (classpath) كأنواع في نفطح."
+            })
     private boolean scanClasspath;
 
 
     @Option(
         names = {"-e"},
         paramLabel = "<script>",
-        description = "Specify a command line script")
+        description = {"Specify a command line script", "تحديد سكربت لسطر الأوامر"})
     private String script;
 
     @Option(
         names = {"-h", "--help"},
         usageHelp = true,
-        description = "Show this help message and exit")
+        description = {"Show this help message and exit", "عرض رسالة المساعدة هذه ثم الخروج"})
     private boolean helpRequested;
 
     @Option(
         names = {"-v", "--version"},
         versionHelp = true,
-        description = "Print version information and exit")
+        description = {"Print version information and exit", "طباعة معلومات الإصدار والخروج"})
     private boolean versionRequested;
 
     @Unmatched List<String> arguments = new ArrayList<>();
@@ -354,6 +368,9 @@ public final class Naftah {
   }
 
   static void processArgs(String[] args) {
+    setupOutputStream();
+    setupErrorStream();
+
     NaftahCommand naftahCommand = new NaftahCommand();
 
     CommandLine parser =
@@ -369,7 +386,6 @@ public final class Naftah {
 
     try {
       ParseResult result = parser.parseArgs(args);
-
       if (printHelpIfRequested(result)) {
         return;
       }
@@ -394,8 +410,6 @@ public final class Naftah {
 
   private boolean run(NaftahCommand naftahCommand) {
     try {
-      setupOutputStream();
-      setupErrorStream();
       naftahCommand.run(this);
       return true;
     } catch (Throwable e) {
