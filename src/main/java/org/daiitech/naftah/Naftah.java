@@ -4,8 +4,7 @@ import static java.util.logging.Logger.*;
 import static org.daiitech.naftah.NaftahSystem.*;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
-import static org.daiitech.naftah.parser.NaftahParserHelper.getCharStream;
-import static org.daiitech.naftah.parser.NaftahParserHelper.getCommonTokenStream;
+import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static picocli.CommandLine.*;
 
@@ -16,17 +15,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.*;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
-import org.daiitech.naftah.parser.NaftahLexer;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.daiitech.naftah.utils.JulLoggerConfig;
-import org.daiitech.naftah.utils.arabic.ArabicHighlighter;
 import org.daiitech.naftah.utils.jline.CompositeHighlighter;
 import org.jline.reader.*;
 import picocli.CommandLine;
@@ -131,13 +126,21 @@ public final class Naftah {
       bootstrap();
     }
 
-    private static Object doRun(CharStream input) {
+    private static NaftahParser prepareRun(CharStream input) {
+      return prepareRun(input, List.of());
+    }
 
+    private static NaftahParser prepareRun(CharStream input, ANTLRErrorListener errorListener) {
+      return prepareRun(input, List.of(errorListener));
+    }
+    private static NaftahParser prepareRun(CharStream input, List<ANTLRErrorListener> errorListeners) {
       // Create a lexer and token stream
-      CommonTokenStream tokens = getCommonTokenStream(input);
+      CommonTokenStream tokens = getCommonTokenStream(input, errorListeners);
 
       // Create a parser
-      NaftahParser parser = new NaftahParser(tokens);
+      return getParser(tokens, errorListeners);
+    }
+    private static Object doRun( NaftahParser parser) {
 
       // Parse the input and get the parse tree
       ParseTree tree = parser.program();
@@ -169,7 +172,8 @@ public final class Naftah {
         // Create an input stream from the Naftah code
         CharStream input = getCharStream(main.isScriptFile, main.script);
 
-        var result =  NaftahCommand.doRun(input);
+        var parser =  NaftahCommand.prepareRun(input, new ConsoleErrorListener());
+        var result =  NaftahCommand.doRun(parser);
 
         if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
 
@@ -210,11 +214,7 @@ public final class Naftah {
 
         return LineReaderBuilder.builder()
                 .terminal(terminal)
-                .highlighter(CompositeHighlighter.builder(originalHighlighter)
-                        .add(new SyntaxHighlighter(originalHighlighter))
-                        .add(new ArabicHighlighter(originalHighlighter))
-                        .build()
-                )
+                .highlighter(new SyntaxHighlighter(originalHighlighter))
                 .build();
       }
 
@@ -235,15 +235,20 @@ public final class Naftah {
 
             if (line.trim().equals("exit")) break;
 
-            Object result = NaftahCommand.doRun(getCharStream(false, line));
+            var input = getCharStream(false, line);
+
+            var parser =  NaftahCommand.prepareRun(input);
+
+            Object result = NaftahCommand.doRun(parser);
 
             if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
-            System.out.println();
 
           } catch (UserInterruptException | EndOfFileException e) {
           System.out.println("\nتم الخروج من التطبيق.");
           break;
-        }
+        } catch (Throwable ignored) {
+            // ignored
+          }
         }
       }
     }
