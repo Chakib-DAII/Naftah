@@ -1,5 +1,6 @@
 package org.daiitech.naftah.utils.arabic;
 
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 
 import com.ibm.icu.text.ArabicShapingException;
@@ -26,13 +27,16 @@ public class ArabicOutputTransformer extends OutputStream {
   @Override
   public void write(byte[] b, int off, int len) throws IOException {
     String raw = new String(b, off, len, StandardCharsets.UTF_8);
-    try {
-      String display = shape(raw);
+    if (containsArabic(raw)) {
+      try {
+        String display = shape(raw);
 
-      original.write(display.getBytes(StandardCharsets.UTF_8));
-    } catch (ArabicShapingException e) {
+        original.write(display.getBytes(StandardCharsets.UTF_8));
+      } catch (ArabicShapingException e) {
+        original.write(b, off, len); // fallback
+      }
+    } else
       original.write(b, off, len); // fallback
-    }
   }
 
   public static PrintStream getPrintStream(OutputStream original) {
