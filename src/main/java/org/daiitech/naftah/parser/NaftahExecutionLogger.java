@@ -40,6 +40,8 @@ public final class NaftahExecutionLogger {
     else if (ctx instanceof NaftahParser.FunctionDeclarationStatementContext context)
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.FunctionCallStatementContext context)
+        result = logExecution(doLog, context);
+    else if (ctx instanceof NaftahParser.ExpressionStatementContext context)
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.ReturnStatementStatementContext context)
       result = logExecution(doLog, context);
@@ -255,6 +257,25 @@ public final class NaftahExecutionLogger {
         .orElse("");
   }
 
+    public static String logExecution(
+            boolean doLog, NaftahParser.ExpressionStatementContext ctx) {
+        return Optional.ofNullable(ctx)
+                .map(
+                        context -> {
+                            String result =
+                                    """
+                                            ExpressionStatementContext::expression -> {
+                                                %s
+                                            }
+                                            """
+                                            .formatted(logExecution(false, context.expression()));
+                            if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                                LOGGER.finest(result);
+                            }
+                            return result;
+                        })
+                .orElse("");
+    }
   public static String logExecution(
       boolean doLog, NaftahParser.ReturnStatementStatementContext ctx) {
     return Optional.ofNullable(ctx)
