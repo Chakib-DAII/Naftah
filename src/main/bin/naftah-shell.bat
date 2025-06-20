@@ -60,7 +60,7 @@ set CMD_LINE_ARGS=%$
 @rem Setup the command line
 
 set CLASSPATH=%NAFTAH_HOME%\lib\*
-"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS%
+"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS%
 
 :end
 @rem End local scope for the variables with windows NT shell
