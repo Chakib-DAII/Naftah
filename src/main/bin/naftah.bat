@@ -1,3 +1,3 @@
 @if "%DEBUG%" == "" @echo off
 
-call naftah-shell.bat run %*
+call "%~dp0naftah-shell.bat" run %*
