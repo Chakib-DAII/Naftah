@@ -30,6 +30,7 @@ dependencies {
 	checkstyle 'com.puppycrawl.tools:checkstyle:10.0'
 	implementation 'info.picocli:picocli:4.7.6'
 	implementation 'org.jline:jline:3.23.0'
+	implementation 'org.jline:jline-terminal-jansi:3.28.0'
 }
 
 tasks.withType(JavaCompile).configureEach  {
