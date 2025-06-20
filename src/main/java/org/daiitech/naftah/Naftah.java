@@ -40,6 +40,7 @@ import org.jline.terminal.TerminalBuilder;
 public final class Naftah {
 
   public static final String SCAN_CLASSPATH_PROPERTY = "scanClassPath";
+  public static final String INSIDE_SHELL_PROPERTY = "insideShell";
   public static final String FILE_ENCODING_PROPERTY = "file.encoding";
 
   private static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
@@ -229,6 +230,7 @@ public final class Naftah {
 
       @Override
       protected void run(Naftah main) throws IOException {
+        System.setProperty(INSIDE_SHELL_PROPERTY, Boolean.toString(true));
         super.run(main);
         Terminal terminal = TerminalBuilder.builder()
               .encoding(StandardCharsets.UTF_8)
