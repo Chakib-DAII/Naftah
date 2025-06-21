@@ -1,5 +1,7 @@
 package org.daiitech.naftah;
 
+import org.daiitech.naftah.utils.ResourceUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -31,7 +33,7 @@ public class ReleaseInfo {
       url = cl.getResource(RELEASE_INFO_FILE);
     }
     if (url != null) {
-      try (InputStream is = Streams.openStream(url, false)) {
+      try (InputStream is = ResourceUtils.openStream(url, false)) {
         if (is != null) {
           RELEASE_INFO.load(is);
         }
