@@ -1,12 +1,12 @@
 package org.daiitech.naftah.utils.arabic;
 
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
+
 import com.ibm.icu.text.ArabicShapingException;
 import org.daiitech.naftah.utils.jline.BaseHighlighter;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedString;
-
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
 /**
  * @author Chakib Daii

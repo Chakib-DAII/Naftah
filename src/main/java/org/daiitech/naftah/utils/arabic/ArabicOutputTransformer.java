@@ -1,12 +1,12 @@
 package org.daiitech.naftah.utils.arabic;
 
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
+
 import com.ibm.icu.text.ArabicShapingException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
 /**
  * @author Chakib Daii

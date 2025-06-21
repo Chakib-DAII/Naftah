@@ -58,19 +58,17 @@ public class SyntaxHighlighter extends BaseHighlighter {
         AttributedStyle style = getStyleForTokenType(type);
         String reshaped;
         if (shouldReshape()) {
-            try {
-                reshaped = shape(text);
-                styles.add(new Pair<>(reshaped, style));
-            } catch (ArabicShapingException e) {
-                styles.add(new Pair<>(text, style));
-            }
-        }
-        else styles.add(new Pair<>(text, style));
+          try {
+            reshaped = shape(text);
+            styles.add(new Pair<>(reshaped, style));
+          } catch (ArabicShapingException e) {
+            styles.add(new Pair<>(text, style));
+          }
+        } else styles.add(new Pair<>(text, style));
 
         lastIndex = tokenStopIndex + 1;
       }
-        if (shouldReshape())
-            Collections.reverse(styles);
+      if (shouldReshape()) Collections.reverse(styles);
 
       for (var style : styles) asb.append(style.a, style.b);
 

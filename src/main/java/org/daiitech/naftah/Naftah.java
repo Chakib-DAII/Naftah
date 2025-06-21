@@ -277,14 +277,16 @@ public final class Naftah {
 
         while (true) {
           try {
-            String rtlPrompt = shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
+            String rtlPrompt =
+                shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
             String line = reader.readLine(rtlPrompt);
 
             if (line.isBlank()) continue;
 
             if (List.of("exit", "خروج").contains(line.trim())) break;
 
-            var input = getCharStream(false, shouldReshape() ? shape(line) : shapeOutsideQuotes(line));
+            var input =
+                getCharStream(false, shouldReshape() ? shape(line) : shapeOutsideQuotes(line));
 
             var parser = NaftahCommand.prepareRun(input);
 

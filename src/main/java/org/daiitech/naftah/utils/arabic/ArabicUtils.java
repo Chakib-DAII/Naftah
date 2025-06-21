@@ -1,5 +1,7 @@
 package org.daiitech.naftah.utils.arabic;
 
+import static org.daiitech.naftah.Naftah.OS_NAME;
+
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
@@ -10,8 +12,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.daiitech.naftah.Naftah;
-
-import static org.daiitech.naftah.Naftah.OS_NAME;
 
 /**
  * @author Chakib Daii
@@ -197,15 +197,13 @@ public class ArabicUtils {
   }
 
   public static boolean containsArabic(String text) {
-    return text.codePoints()
-        .anyMatch(
-                ArabicUtils::isArabicChar);
+    return text.codePoints().anyMatch(ArabicUtils::isArabicChar);
   }
 
   public static boolean isArabicChar(int cp) {
     return (cp >= 0x0600 && cp <= 0x06FF)
-            || (cp >= 0x0750 && cp <= 0x077F) // Arabic Supplement
-            || (cp >= 0x08A0 && cp <= 0x08FF); // Arabic Extended
+        || (cp >= 0x0750 && cp <= 0x077F) // Arabic Supplement
+        || (cp >= 0x08A0 && cp <= 0x08FF); // Arabic Extended
   }
 
   public static String shapeOutsideQuotes(String input) throws Exception {
@@ -250,5 +248,4 @@ public class ArabicUtils {
     buffer.setLength(0);
     return shaped;
   }
-
 }

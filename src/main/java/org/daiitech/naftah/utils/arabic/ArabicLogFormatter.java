@@ -1,9 +1,9 @@
 package org.daiitech.naftah.utils.arabic;
 
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
+
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
-
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
 /**
  * @author Chakib Daii
