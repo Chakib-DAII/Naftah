@@ -48,14 +48,13 @@ public final class RuntimeClassScanner {
     String[] tempPaths;
     try {
       var ignoredJars = readFileLines(getJarDirectory() + "/original-dependencies");
-      tempPaths = Arrays.stream((CLASS_PATH + File.pathSeparator + JAVA_HOME)
-              .split(File.pathSeparator))
-              .filter(path -> ignoredJars.stream()
-                      .noneMatch(path::contains))
+      tempPaths =
+          Arrays.stream((CLASS_PATH + File.pathSeparator + JAVA_HOME).split(File.pathSeparator))
+              .filter(path -> ignoredJars.stream().noneMatch(path::contains))
               .toArray(String[]::new);
-  } catch (IOException ignored) {
+    } catch (IOException ignored) {
       tempPaths = (CLASS_PATH + File.pathSeparator + JAVA_HOME).split(File.pathSeparator);
-  }
+    }
     PATHS = tempPaths;
   }
 
@@ -104,8 +103,7 @@ public final class RuntimeClassScanner {
       var loaders =
           Arrays.copyOf(
               CLASS_LOADERS, CLASS_LOADERS.length + (classLoaderOptional.isEmpty() ? 0 : 1));
-      classLoaderOptional
-          .ifPresent(classLoader -> loaders[CLASS_LOADERS.length + 1] = classLoader);
+      classLoaderOptional.ifPresent(classLoader -> loaders[CLASS_LOADERS.length + 1] = classLoader);
       for (ClassLoader cl : loaders)
         try {
           if (Objects.isNull(cl)) continue;
@@ -130,8 +128,7 @@ public final class RuntimeClassScanner {
    * @param dir current dir/file
    * @return map of class files and possible {@link URLClassLoader}
    */
-  public static Map<String, ClassLoader> findClassesInDirectory(
-      File root, File dir) {
+  public static Map<String, ClassLoader> findClassesInDirectory(File root, File dir) {
     Map<String, ClassLoader> classNames = new HashMap<>();
     for (File file : Objects.requireNonNull(dir.listFiles())) {
       if (file.isDirectory()) {

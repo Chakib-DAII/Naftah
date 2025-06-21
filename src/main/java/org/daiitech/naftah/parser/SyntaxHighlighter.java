@@ -1,7 +1,6 @@
 package org.daiitech.naftah.parser;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.jline.utils.AttributedString.EMPTY;
 
 import com.ibm.icu.text.ArabicShapingException;
 import java.util.ArrayList;
@@ -63,7 +62,6 @@ public class SyntaxHighlighter extends BaseHighlighter {
         } catch (ArabicShapingException e) {
           styles.add(new Pair<>(text, style));
         }
-
 
         lastIndex = tokenStopIndex + 1;
       }

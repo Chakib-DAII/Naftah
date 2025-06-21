@@ -232,7 +232,8 @@ public class DefaultContext {
       ClassScanningResult classScanningResult = null;
       Throwable thr = null;
       try {
-        startLoader("تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد يستغرق الأمر عدة دقائق حسب الإعدادات");
+        startLoader(
+            "تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد يستغرق الأمر عدة دقائق حسب الإعدادات");
         classScanningResult = LOADER_TASK.get();
         stopLoader();
       } catch (Throwable throwable) {
@@ -264,9 +265,9 @@ public class DefaultContext {
   public static List<String> getCompletions() {
     var runtimeCompletions = new ArrayList<>(BUILTIN_FUNCTIONS.keySet());
     Optional.ofNullable(JVM_FUNCTIONS)
-            .ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+        .ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
     Optional.ofNullable(INSTANTIABLE_CLASSES)
-            .ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+        .ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
     return runtimeCompletions;
   }
 
@@ -275,15 +276,15 @@ public class DefaultContext {
     SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
     ASYNC_BOOT_STRAP = async;
     if (SHOULD_BOOT_STRAP) {
-        try {
-            Files.createDirectories(CACHE_PATH.getParent());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+      try {
+        Files.createDirectories(CACHE_PATH.getParent());
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
 
-        FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
+      FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
 
-        if (FORCE_BOOT_STRAP || !Files.exists(CACHE_PATH)) {
+      if (FORCE_BOOT_STRAP || !Files.exists(CACHE_PATH)) {
         callLoader(ASYNC_BOOT_STRAP);
       } else {
         deserializeClassScanningResult();

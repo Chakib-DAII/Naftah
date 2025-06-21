@@ -2,12 +2,9 @@ package org.daiitech.naftah.utils.jline;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
 
 /**
  * @author Chakib Daii

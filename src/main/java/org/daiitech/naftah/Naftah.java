@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.logging.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
 import org.daiitech.naftah.parser.NaftahParser;
@@ -343,13 +342,14 @@ public final class Naftah {
           "حدد ما إذا كان يجب إعادة استخدام فئات المسار (classpath) كأنواع في نفطح."
         })
     private boolean scanClasspath;
+
     @Option(
-            names = {"-f", "--force-scan-classpath"},
-            paramLabel = "<charset>",
-            description = {
-                    "Force scanning the classpath when (-scp, --scan-classpath) is provided.",
-                    "فرض فحص مسار الأصناف (classpath) عند توفير الخيار (-scp, --scan-classpath)."
-            })
+        names = {"-f", "--force-scan-classpath"},
+        paramLabel = "<charset>",
+        description = {
+          "Force scanning the classpath when (-scp, --scan-classpath) is provided.",
+          "فرض فحص مسار الأصناف (classpath) عند توفير الخيار (-scp, --scan-classpath)."
+        })
     private boolean forceScanClasspath;
 
     @Option(

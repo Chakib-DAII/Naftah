@@ -12,7 +12,8 @@ public record NaftahFunction(
     String usage,
     Class<?> returnType,
     List<Class<?>> parameterTypes,
-    List<Class<?>> exceptionTypes) implements Serializable {
+    List<Class<?>> exceptionTypes)
+    implements Serializable {
 
   public static NaftahFunction of(
       String name,

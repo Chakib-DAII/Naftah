@@ -30,6 +30,5 @@ public class ArabicHighlighter extends BaseHighlighter {
       }
     }
     return attributedString;
-
   }
 }

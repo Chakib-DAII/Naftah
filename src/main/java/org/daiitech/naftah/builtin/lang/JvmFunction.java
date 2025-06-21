@@ -10,12 +10,13 @@ import org.daiitech.naftah.utils.reflect.ClassUtils;
 public class JvmFunction implements Serializable {
   private final String qualifiedCall;
   private final Class<?> clazz;
-  private  transient Method method;
+  private transient Method method;
   private final String methodName;
   private final boolean isStatic;
   private final boolean isInvocable;
 
-  public JvmFunction(String qualifiedCall, Class<?> clazz, Method method, boolean isStatic, boolean isInvocable) {
+  public JvmFunction(
+      String qualifiedCall, Class<?> clazz, Method method, boolean isStatic, boolean isInvocable) {
     this.qualifiedCall = qualifiedCall;
     this.clazz = clazz;
     this.method = method;

@@ -13,7 +13,8 @@ public class BuiltinFunction implements Serializable {
   private final NaftahFunctionProvider providerInfo;
   private final NaftahFunction functionInfo;
 
-  public BuiltinFunction(Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
+  public BuiltinFunction(
+      Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
     this.method = method;
     this.methodName = method.getName();
     this.className = method.getDeclaringClass().getName();
@@ -53,8 +54,9 @@ public class BuiltinFunction implements Serializable {
       e.printStackTrace();
     }
   }
+
   public static BuiltinFunction of(
-          Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
+      Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
     return new BuiltinFunction(method, providerInfo, functionInfo);
   }
 }
