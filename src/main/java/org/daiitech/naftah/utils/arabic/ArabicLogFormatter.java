@@ -1,10 +1,9 @@
 package org.daiitech.naftah.utils.arabic;
 
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
+
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
 /**
  * @author Chakib Daii
@@ -18,7 +17,7 @@ public class ArabicLogFormatter extends Formatter {
   public String format(LogRecord record) {
     String msg = record.getMessage();
 
-    if (containsArabic(msg)) {
+    if (shouldReshape() && containsArabic(msg)) {
       try {
         String visual = shape(msg);
         return LOG_MSG.formatted(record.getLevel(), visual);
