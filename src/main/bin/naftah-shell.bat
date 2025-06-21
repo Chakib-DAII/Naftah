@@ -1,4 +1,9 @@
-@if "%DEBUG%" == "" @echo off
+@echo off
+
+@if /I not "%DEBUG%" == "true" goto setUtf8
+@echo on
+
+:setUtf8
 chcp 65001 > nul
 
 @rem Set local scope for the variables with windows NT shell
@@ -60,7 +65,15 @@ set CMD_LINE_ARGS=%$
 @rem Setup the command line
 
 set CLASSPATH=%NAFTAH_HOME%\lib\*
+
+@if /I not "%DEBUG%" == "true" goto executeNoDebug
+
+:executeDebug
 "%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS%
+goto end
+
+:executeNoDebug
+"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS%
 
 :end
 @rem End local scope for the variables with windows NT shell
