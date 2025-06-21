@@ -37,21 +37,35 @@ public class SyntaxHighlighter extends BaseHighlighter {
 
       AttributedStringBuilder asb = new AttributedStringBuilder(tokens.size());
       List<Pair<CharSequence, AttributedStyle>> styles = new ArrayList<>();
+
+      int lastIndex = 0; // start of input string
+
       for (Token token : tokens.getTokens()) {
         int type = token.getType();
         String text = token.getText();
 
         if (type == -1 || text == null) continue;
 
-        AttributedStyle style = getStyleForTokenType(type);
+        int tokenStartIndex = token.getStartIndex();
+        int tokenStopIndex = token.getStopIndex();
 
-        try {
-          text = shape(text);
-        } catch (ArabicShapingException e) {
-          // do nothing
+        // Append unmatched text before this token
+        if (tokenStartIndex > lastIndex) {
+          String gapText = buffer.substring(lastIndex, tokenStartIndex);
+          styles.add(new Pair<>(gapText, AttributedStyle.DEFAULT));
         }
 
-        styles.add(new Pair<>(text, style));
+        AttributedStyle style = getStyleForTokenType(type);
+        String reshaped;
+        try {
+          reshaped = shape(text);
+          styles.add(new Pair<>(reshaped, style));
+        } catch (ArabicShapingException e) {
+          styles.add(new Pair<>(text, style));
+        }
+
+
+        lastIndex = tokenStopIndex + 1;
       }
 
       Collections.reverse(styles);
@@ -60,7 +74,7 @@ public class SyntaxHighlighter extends BaseHighlighter {
 
       return asb.toAttributedString();
     }
-    return EMPTY;
+    return new AttributedString(buffer);
   }
 
   private AttributedStyle getStyleForTokenType(int tokenType) {
