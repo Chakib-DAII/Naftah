@@ -96,6 +96,22 @@ tasks.register('extractLexerLiterals') {
 	}
 }
 
+tasks.register('writeResolvedJars') {
+	description = 'Writes resolved JAR file names to build/libs/original-dependencies'
+
+	doLast {
+		def outputFile = file("$buildDir/libs/original-dependencies")
+		outputFile.text = ""
+
+		configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+			def jarName = artifact.file.name
+			outputFile << jarName + "\n"
+		}
+
+		println "Dependencies written to: ${outputFile}"
+	}
+}
+
 test {
 	useJUnitPlatform()
 	testLogging {
@@ -249,7 +265,7 @@ tasks.register('baseDistZip', Zip) {
 	}
 
 	from("$buildDir/libs") {
-		include 'lexer-literals'
+		include 'lexer-literals', 'original-dependencies'
 		into 'lib'
 	}
 
@@ -258,7 +274,7 @@ tasks.register('baseDistZip', Zip) {
 }
 
 tasks.register('dist', Zip) {
-	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"), tasks.named("jar"), tasks.named("extractLexerLiterals"), tasks.named("baseDistZip")
+	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"), tasks.named("jar"), tasks.named("extractLexerLiterals"), tasks.named("writeResolvedJars"), tasks.named("baseDistZip")
 
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
