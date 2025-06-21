@@ -4,11 +4,11 @@ import static java.util.logging.Logger.*;
 import static org.daiitech.naftah.NaftahSystem.*;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
+import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinMethods;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static picocli.CommandLine.*;
 
@@ -41,6 +41,7 @@ public final class Naftah {
   public static final String JAVA_VM_VENDOR = "java.vm.vendor";
   public static final String OS_NAME = "os.name";
   public static final String SCAN_CLASSPATH_PROPERTY = "scanClassPath";
+  public static final String FORCE_CLASSPATH_PROPERTY = "forceClassPathScan";
   public static final String INSIDE_SHELL_PROPERTY = "insideShell";
   public static final String FILE_ENCODING_PROPERTY = "file.encoding";
   public static final String TERMINAL_WIDTH_PROPERTY = "terminal.width";
@@ -235,15 +236,12 @@ public final class Naftah {
                 .terminal(terminal)
                 .highlighter(new SyntaxHighlighter(originalHighlighter));
 
-        // Complete with fixed lexer strings
+        // Complete with fixed lexer strings and loaded builtins and Vm classes and functions
         try {
-          var lexerLiterals = readFileLines(getJarDirectory() + "/lexer-literals");
-          var builtin =
-              getBuiltinMethods(Builtin.class).stream()
-                  .map(builtinFunction -> builtinFunction.functionInfo().name())
-                  .toList();
-          lexerLiterals.addAll(builtin);
-          Completer stringsCompleter = new ArabicStringsCompleter(lexerLiterals);
+          var completions = readFileLines(getJarDirectory() + "/lexer-literals");
+          var runtimeCompletions = getCompletions();
+          completions.addAll(runtimeCompletions);
+          Completer stringsCompleter = new ArabicStringsCompleter(completions);
           lineReaderBuilder.completer(stringsCompleter);
         } catch (IOException ignored) {
         }
@@ -345,6 +343,14 @@ public final class Naftah {
           "حدد ما إذا كان يجب إعادة استخدام فئات المسار (classpath) كأنواع في نفطح."
         })
     private boolean scanClasspath;
+    @Option(
+            names = {"-f", "--force-scan-classpath"},
+            paramLabel = "<charset>",
+            description = {
+                    "Force scanning the classpath when (-scp, --scan-classpath) is provided.",
+                    "فرض فحص مسار الأصناف (classpath) عند توفير الخيار (-scp, --scan-classpath)."
+            })
+    private boolean forceScanClasspath;
 
     @Option(
         names = {"-e"},
@@ -392,6 +398,10 @@ public final class Naftah {
 
       if (matchedCommand.scanClasspath) {
         System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
+      }
+
+      if (matchedCommand.forceScanClasspath) {
+        System.setProperty(FORCE_CLASSPATH_PROPERTY, Boolean.toString(true));
       }
 
       final Naftah main = new Naftah();
