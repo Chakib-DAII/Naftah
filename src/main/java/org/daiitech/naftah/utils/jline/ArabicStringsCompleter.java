@@ -1,6 +1,7 @@
 package org.daiitech.naftah.utils.jline;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 import com.ibm.icu.text.ArabicShapingException;
 import java.util.ArrayList;
@@ -18,10 +19,12 @@ public class ArabicStringsCompleter extends StringsCompleter {
     this.candidates = new ArrayList<>();
     for (String string : strings) {
       String display = string;
-      try {
-        display = shape(display);
-      } catch (ArabicShapingException e) {
-        // do nothing
+      if (shouldReshape()) {
+        try {
+          display = shape(display);
+        } catch (ArabicShapingException e) {
+          // do nothing
+        }
       }
       candidates.add(
           new Candidate(AttributedString.stripAnsi(string), display, null, null, null, null, true));
