@@ -8,7 +8,7 @@ import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static picocli.CommandLine.*;
 
@@ -277,14 +277,14 @@ public final class Naftah {
 
         while (true) {
           try {
-            String rtlPrompt = shape("< نفطة >"); // Right-to-left mark before prompt
+            String rtlPrompt = shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
             String line = reader.readLine(rtlPrompt);
 
             if (line.isBlank()) continue;
 
             if (List.of("exit", "خروج").contains(line.trim())) break;
 
-            var input = getCharStream(false, shape(line));
+            var input = getCharStream(false, shouldReshape() ? shape(line) : shapeOutsideQuotes(line));
 
             var parser = NaftahCommand.prepareRun(input);
 
