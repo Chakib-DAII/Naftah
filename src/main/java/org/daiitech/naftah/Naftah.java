@@ -3,8 +3,8 @@ package org.daiitech.naftah;
 import static java.util.logging.Logger.*;
 import static org.daiitech.naftah.NaftahSystem.*;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
-import static org.daiitech.naftah.builtin.utils.ResourceUtils.getJarDirectory;
-import static org.daiitech.naftah.builtin.utils.ResourceUtils.readFileLines;
+import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
+import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
@@ -136,8 +136,8 @@ public final class Naftah {
   private static class NaftahCommand {
     private static final String NAME = "naftah";
 
-    protected void run(Naftah main) throws IOException {
-      bootstrap();
+    protected void run(Naftah main, boolean bootstrapAsync) throws IOException {
+      bootstrap(bootstrapAsync);
     }
 
     private static NaftahParser prepareRun(CharStream input) {
@@ -167,12 +167,6 @@ public final class Naftah {
       return visitor.visit(tree);
     }
 
-    // IMPLEMENTATION NOTE:
-    // classpath must be the first argument, so that the `naftah(.bat)` script
-    // can extract it and the JVM can be started with the classpath already correctly set.
-    // This saves us from having to fork a new JVM process with the classpath set from the processed
-    // arguments.
-
     @Command(
         name = RunCommand.NAME,
         customSynopsis = "naftah run [options] [filename] [args]",
@@ -185,8 +179,8 @@ public final class Naftah {
       private static final String NAME = "run";
 
       @Override
-      protected void run(Naftah main) throws IOException {
-        super.run(main);
+      protected void run(Naftah main, boolean bootstrapAsync) throws IOException {
+        super.run(main, bootstrapAsync);
         initLogger(main.debug);
 
         // Create an input stream from the Naftah code
@@ -214,9 +208,9 @@ public final class Naftah {
       private static final String NAME = "init";
 
       @Override
-      protected void run(Naftah main) throws IOException {
+      protected void run(Naftah main, boolean bootstrapAsync) throws IOException {
         System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
-        super.run(main);
+        super.run(main, bootstrapAsync);
       }
     }
 
@@ -243,7 +237,7 @@ public final class Naftah {
 
         // Complete with fixed lexer strings
         try {
-          var lexerLiterals = readFileLines(getJarDirectory() + "\\lexer-literals");
+          var lexerLiterals = readFileLines(getJarDirectory() + "/lexer-literals");
           var builtin =
               getBuiltinMethods(Builtin.class).stream()
                   .map(builtinFunction -> builtinFunction.functionInfo().name())
@@ -260,7 +254,7 @@ public final class Naftah {
       private static void setupHistoryConfig(LineReader reader) {
 
         // Set the history file
-        reader.setVariable(LineReader.HISTORY_FILE, Paths.get(".naftah_history"));
+        reader.setVariable(LineReader.HISTORY_FILE, Paths.get("bin/.naftah_history"));
         reader.setVariable(LineReader.HISTORY_SIZE, 1000); // Maximum entries in memory
         reader.setVariable(LineReader.HISTORY_FILE_SIZE, 2000); // Maximum entries in file
 
@@ -275,9 +269,9 @@ public final class Naftah {
       }
 
       @Override
-      protected void run(Naftah main) throws IOException {
+      protected void run(Naftah main, boolean bootstrapAsync) throws IOException {
         System.setProperty(INSIDE_SHELL_PROPERTY, Boolean.toString(true));
-        super.run(main);
+        super.run(main, bootstrapAsync);
         Terminal terminal = getTerminal();
 
         LineReader reader = getLineReader(terminal);
@@ -291,13 +285,13 @@ public final class Naftah {
 
             if (line.isBlank()) continue;
 
-            if (line.trim().equals("exit")) break;
+            if (List.of("exit", "خروج").contains(line.trim())) break;
 
             var input = getCharStream(false, shape(line));
 
             var parser = NaftahCommand.prepareRun(input);
 
-            Object result = NaftahCommand.doRun(parser);
+            var result = NaftahCommand.doRun(parser);
 
             if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
             System.out.println();
@@ -378,7 +372,7 @@ public final class Naftah {
      * @param parseResult the parsed result command line.
      * @throws ParameterException if the user input was invalid
      */
-    boolean process(ParseResult parseResult) throws ParameterException, IOException {
+    private boolean process(ParseResult parseResult) throws ParameterException, IOException {
       var matchedCommand = (NaftahCommand) parseResult.commandSpec().userObject();
       // append to classpath
       if (Objects.nonNull(matchedCommand.classpath)) {
@@ -423,7 +417,7 @@ public final class Naftah {
     }
   }
 
-  static void processArgs(String[] args) {
+  private static void processArgs(String[] args) {
     setupOutputStream();
     setupErrorStream();
 
@@ -466,7 +460,7 @@ public final class Naftah {
 
   private boolean run(NaftahCommand naftahCommand) {
     try {
-      naftahCommand.run(this);
+      naftahCommand.run(this, !(naftahCommand instanceof NaftahCommand.InitCommand));
       return true;
     } catch (Throwable e) {
       System.err.println("Caught: " + e);
