@@ -1,5 +1,6 @@
 package org.daiitech.naftah.builtin.lang;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public record NaftahFunction(
     String usage,
     Class<?> returnType,
     List<Class<?>> parameterTypes,
-    List<Class<?>> exceptionTypes) {
+    List<Class<?>> exceptionTypes) implements Serializable {
 
   public static NaftahFunction of(
       String name,
