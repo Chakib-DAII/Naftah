@@ -1,5 +1,7 @@
 package org.daiitech.naftah.utils.reflect;
 
+import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
+import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.*;
 
 import java.io.File;
@@ -34,14 +36,28 @@ public final class RuntimeClassScanner {
   public static final String[] BASE_PACKAGES = {
     "", "sun", "java", "javax", "com", "org", "edu", "net"
   };
-  // Get the classpath and java home files
-  public static final String[] PATHS =
-      (CLASS_PATH + File.pathSeparator + JAVA_HOME).split(File.pathSeparator);
+  public static final String[] PATHS;
   public static final ClassLoader[] CLASS_LOADERS = {
     ClassLoader.getSystemClassLoader(),
     ClassLoader.getPlatformClassLoader(),
     Object.class.getClassLoader()
   };
+
+  static {
+    // Get the classpath and java home files
+    String[] tempPaths;
+    try {
+      var ignoredJars = readFileLines(getJarDirectory() + "/original-dependencies");
+      tempPaths = Arrays.stream((CLASS_PATH + File.pathSeparator + JAVA_HOME)
+              .split(File.pathSeparator))
+              .filter(path -> ignoredJars.stream()
+                      .noneMatch(path::contains))
+              .toArray(String[]::new);
+  } catch (IOException ignored) {
+      tempPaths = (CLASS_PATH + File.pathSeparator + JAVA_HOME).split(File.pathSeparator);
+  }
+    PATHS = tempPaths;
+  }
 
   /**
    * scans classes from default paths
