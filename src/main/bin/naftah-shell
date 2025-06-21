@@ -25,6 +25,11 @@ fi
 # Attempt to find JAVA_HOME if not already set
 if [ -z "${JAVA_HOME}" ]; then
 	if ${darwin} ; then
+	  # Force UTF-8 locale for Linux systems
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    export LANGUAGE=en_US.UTF-8
+
 		if [[ -z "${JAVA_HOME}" && -f "/usr/libexec/java_home" ]]; then
 			JAVA_HOME=$(/usr/libexec/java_home)
 			export JAVA_HOME
