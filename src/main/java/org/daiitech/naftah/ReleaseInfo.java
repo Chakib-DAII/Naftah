@@ -1,12 +1,11 @@
 package org.daiitech.naftah;
 
-import org.daiitech.naftah.utils.ResourceUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Properties;
+import org.daiitech.naftah.utils.ResourceUtils;
 
 /**
  * @author Chakib Daii

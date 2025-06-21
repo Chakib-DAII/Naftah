@@ -188,7 +188,8 @@ public class DefaultContext {
           internalExecutor.shutdown();
         }
       };
-  private static void setContextFromClassScanningResult(ClassScanningResult result){
+
+  private static void setContextFromClassScanningResult(ClassScanningResult result) {
     CLASS_NAMES = result.getClassNames();
     CLASS_QUALIFIERS = result.getClassQualifiers();
     ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
@@ -200,15 +201,16 @@ public class DefaultContext {
     BOOT_STRAPPED = true;
   }
 
-  private static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (result, throwable) -> {
-    if (Objects.nonNull(throwable)) {
-      defaultBootstrap();
-      BOOT_STRAP_FAILED = true;
-    } else {
-      setContextFromClassScanningResult(result);
-      serializeClassScanningResult(result);
-    }
-  };
+  private static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER =
+      (result, throwable) -> {
+        if (Objects.nonNull(throwable)) {
+          defaultBootstrap();
+          BOOT_STRAP_FAILED = true;
+        } else {
+          setContextFromClassScanningResult(result);
+          serializeClassScanningResult(result);
+        }
+      };
 
   public static void defaultBootstrap() {
     BUILTIN_FUNCTIONS =
@@ -222,11 +224,8 @@ public class DefaultContext {
                     Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
   }
 
-
-  private static void callLoader(boolean async){
-    if(async)
-      CompletableFuture.supplyAsync(LOADER_TASK)
-              .whenComplete(LOADER_CONSUMER);
+  private static void callLoader(boolean async) {
+    if (async) CompletableFuture.supplyAsync(LOADER_TASK).whenComplete(LOADER_CONSUMER);
     else {
       ClassScanningResult classScanningResult = null;
       Throwable thr = null;
@@ -251,7 +250,7 @@ public class DefaultContext {
 
   private static void deserializeClassScanningResult() {
     try {
-      var result = (ClassScanningResult)Base64SerializationUtils.deserialize(CACHE_PATH);
+      var result = (ClassScanningResult) Base64SerializationUtils.deserialize(CACHE_PATH);
       serializeClassScanningResult(result);
     } catch (IOException | ClassNotFoundException e) {
       callLoader(ASYNC_BOOT_STRAP);
