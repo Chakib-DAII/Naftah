@@ -6,8 +6,13 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX
 import static org.daiitech.naftah.utils.reflect.ClassUtils.*;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -16,6 +21,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.*;
+import org.daiitech.naftah.utils.Base64SerializationUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 
 /**
@@ -24,6 +30,8 @@ import org.daiitech.naftah.utils.reflect.ClassUtils;
  *     or variable used at current execution
  */
 public class DefaultContext {
+  public static final Path CACHE_PATH = Paths.get("bin/.naftah_cache");
+
   public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR =
       (depth, functionName) -> "%s-%s-%s".formatted(depth, functionName, UUID.randomUUID());
   public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR =
@@ -115,6 +123,7 @@ public class DefaultContext {
   private static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
   private static Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
   private static volatile boolean SHOULD_BOOT_STRAP;
+  private static volatile boolean ASYNC_BOOT_STRAP;
   private static volatile boolean BOOT_STRAP_FAILED;
   private static volatile boolean BOOT_STRAPPED;
 
@@ -179,6 +188,27 @@ public class DefaultContext {
           internalExecutor.shutdown();
         }
       };
+  private static void setContextFromClassScanningResult(ClassScanningResult result){
+    CLASS_NAMES = result.getClassNames();
+    CLASS_QUALIFIERS = result.getClassQualifiers();
+    ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
+    CLASSES = result.getClasses();
+    ACCESSIBLE_CLASSES = result.getAccessibleClasses();
+    INSTANTIABLE_CLASSES = result.getInstantiableClasses();
+    JVM_FUNCTIONS = result.getJvmFunctions();
+    BUILTIN_FUNCTIONS = result.getBuiltinFunctions();
+    BOOT_STRAPPED = true;
+  }
+
+  private static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (result, throwable) -> {
+    if (Objects.nonNull(throwable)) {
+      defaultBootstrap();
+      BOOT_STRAP_FAILED = true;
+    } else {
+      setContextFromClassScanningResult(result);
+      serializeClassScanningResult(result);
+    }
+  };
 
   public static void defaultBootstrap() {
     BUILTIN_FUNCTIONS =
@@ -192,27 +222,52 @@ public class DefaultContext {
                     Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
   }
 
-  public static void bootstrap() {
-    SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
-    if (SHOULD_BOOT_STRAP) {
+
+  private static void callLoader(boolean async){
+    if(async)
       CompletableFuture.supplyAsync(LOADER_TASK)
-          .whenComplete(
-              (result, throwable) -> {
-                if (Objects.nonNull(throwable)) {
-                  defaultBootstrap();
-                  BOOT_STRAP_FAILED = true;
-                } else {
-                  CLASS_NAMES = result.getClassNames();
-                  CLASS_QUALIFIERS = result.getClassQualifiers();
-                  ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
-                  CLASSES = result.getClasses();
-                  ACCESSIBLE_CLASSES = result.getAccessibleClasses();
-                  INSTANTIABLE_CLASSES = result.getInstantiableClasses();
-                  JVM_FUNCTIONS = result.getJvmFunctions();
-                  BUILTIN_FUNCTIONS = result.getBuiltinFunctions();
-                  BOOT_STRAPPED = true;
-                }
-              });
+              .whenComplete(LOADER_CONSUMER);
+    else {
+      ClassScanningResult classScanningResult = null;
+      Throwable thr = null;
+      try {
+        classScanningResult = LOADER_TASK.get();
+      } catch (Throwable throwable) {
+        thr = throwable;
+      } finally {
+        LOADER_CONSUMER.accept(classScanningResult, thr);
+      }
+    }
+  }
+
+  private static void serializeClassScanningResult(ClassScanningResult result) {
+    try {
+      var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
+      System.out.println("cache saved to " + path);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static void deserializeClassScanningResult() {
+    try {
+      var result = (ClassScanningResult)Base64SerializationUtils.deserialize(CACHE_PATH);
+      serializeClassScanningResult(result);
+    } catch (IOException | ClassNotFoundException e) {
+      callLoader(ASYNC_BOOT_STRAP);
+    }
+  }
+
+  public static void bootstrap(boolean async) {
+    SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
+    ASYNC_BOOT_STRAP = async;
+    if (SHOULD_BOOT_STRAP) {
+
+      if (!Files.exists(CACHE_PATH)) {
+        callLoader(ASYNC_BOOT_STRAP);
+      } else {
+        deserializeClassScanningResult();
+      }
     } else {
       defaultBootstrap();
     }
