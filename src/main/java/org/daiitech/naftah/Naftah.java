@@ -3,9 +3,12 @@ package org.daiitech.naftah;
 import static java.util.logging.Logger.*;
 import static org.daiitech.naftah.NaftahSystem.*;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
+import static org.daiitech.naftah.builtin.utils.ResourceUtils.getJarDirectory;
+import static org.daiitech.naftah.builtin.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinMethods;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static picocli.CommandLine.*;
 
@@ -13,20 +16,27 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.logging.*;
+import java.util.stream.Collectors;
 
+import com.ibm.icu.text.ArabicShapingException;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.daiitech.naftah.utils.JulLoggerConfig;
+import org.daiitech.naftah.utils.jline.ArabicStringsCompleter;
 import org.daiitech.naftah.utils.jline.CompositeHighlighter;
 import org.jline.reader.*;
+import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.reader.impl.history.DefaultHistory;
 import picocli.CommandLine;
 
 import org.jline.terminal.Terminal;
@@ -222,12 +232,43 @@ public final class Naftah {
 
         Highlighter originalHighlighter = baseReader.getHighlighter();
 
-        return LineReaderBuilder.builder()
+        var lineReaderBuilder = LineReaderBuilder.builder()
                 .terminal(terminal)
-                .highlighter(new SyntaxHighlighter(originalHighlighter))
-                .build();
+                .highlighter(new SyntaxHighlighter(originalHighlighter));
+
+
+        // Complete with fixed lexer strings
+        try {
+          var lexerLiterals = readFileLines(getJarDirectory() + "\\lexer-literals");
+          var builtin = getBuiltinMethods(Builtin.class).stream()
+                  .map(builtinFunction -> builtinFunction.functionInfo().name())
+                  .toList();
+          lexerLiterals.addAll(builtin);
+          Completer stringsCompleter = new ArabicStringsCompleter(lexerLiterals);
+          lineReaderBuilder.completer(stringsCompleter);
+        } catch (IOException ignored) {}
+
+        return lineReaderBuilder.build();
+
       }
 
+      private static void setupHistoryConfig(LineReader reader) {
+
+        // Set the history file
+        reader.setVariable(LineReader.HISTORY_FILE, Paths.get(".naftah_history"));
+        reader.setVariable(LineReader.HISTORY_SIZE, 1000); // Maximum entries in memory
+        reader.setVariable(LineReader.HISTORY_FILE_SIZE, 2000); // Maximum entries in file
+
+        // Don't add duplicate entries
+        reader.setOpt(LineReader.Option.HISTORY_IGNORE_DUPS);
+        // Don't add entries that start with space
+        reader.setOpt(LineReader.Option.HISTORY_IGNORE_SPACE);
+        // Beep when trying to navigate past the end of history
+        reader.setOpt(LineReader.Option.HISTORY_BEEP);
+        // Verify history expansion (like !!, !$, etc.)
+        reader.setOpt(LineReader.Option.HISTORY_VERIFY);
+
+      }
       @Override
       protected void run(Naftah main) throws IOException {
         System.setProperty(INSIDE_SHELL_PROPERTY, Boolean.toString(true));
@@ -235,6 +276,8 @@ public final class Naftah {
         Terminal terminal = getTerminal();
 
         LineReader reader = getLineReader(terminal);
+
+        setupHistoryConfig(reader);
 
         while (true) {
           try {
@@ -245,19 +288,22 @@ public final class Naftah {
 
             if (line.trim().equals("exit")) break;
 
-            var input = getCharStream(false, line);
+            var input = getCharStream(false, shape(line));
 
             var parser =  NaftahCommand.prepareRun(input);
 
             Object result = NaftahCommand.doRun(parser);
 
             if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
-
+            System.out.println();
           } catch (UserInterruptException | EndOfFileException e) {
           System.out.println("\nتم الخروج من التطبيق.");
           break;
-        } catch (Throwable ignored) {
-            // ignored
+          } catch (Throwable ignored) {
+              // ignored
+          } finally {
+            // Save history explicitly (though it's usually done automatically)
+            reader.getHistory().save();
           }
         }
       }
