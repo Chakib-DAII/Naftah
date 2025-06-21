@@ -1,5 +1,7 @@
 package org.daiitech.naftah.parser;
 
+import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -7,7 +9,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -19,8 +20,6 @@ import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
-
-import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 
 /**
  * @author Chakib Daii
@@ -213,28 +212,36 @@ public class NaftahParserHelper {
     return result.get().toString();
   }
 
-
-  public static org.daiitech.naftah.parser.NaftahParser getParser(CommonTokenStream commonTokenStream, ANTLRErrorListener errorListener) {
+  public static org.daiitech.naftah.parser.NaftahParser getParser(
+      CommonTokenStream commonTokenStream, ANTLRErrorListener errorListener) {
     return getParser(commonTokenStream, List.of(errorListener));
   }
-  public static org.daiitech.naftah.parser.NaftahParser getParser(CommonTokenStream commonTokenStream, List<ANTLRErrorListener> errorListeners) {
+
+  public static org.daiitech.naftah.parser.NaftahParser getParser(
+      CommonTokenStream commonTokenStream, List<ANTLRErrorListener> errorListeners) {
     // Create a parser
-    org.daiitech.naftah.parser.NaftahParser parser = new org.daiitech.naftah.parser.NaftahParser(commonTokenStream);
+    org.daiitech.naftah.parser.NaftahParser parser =
+        new org.daiitech.naftah.parser.NaftahParser(commonTokenStream);
     parser.removeErrorListeners();
     errorListeners.forEach(parser::addErrorListener);
 
     return parser;
   }
+
   public static CommonTokenStream getCommonTokenStream(CharStream charStream) {
     return getCommonTokenStream(charStream, List.of());
   }
-  public static CommonTokenStream getCommonTokenStream(CharStream charStream, ANTLRErrorListener errorListener) {
+
+  public static CommonTokenStream getCommonTokenStream(
+      CharStream charStream, ANTLRErrorListener errorListener) {
     return getCommonTokenStream(charStream, List.of(errorListener));
   }
 
-  public static CommonTokenStream getCommonTokenStream(CharStream charStream, List<ANTLRErrorListener> errorListeners) {
+  public static CommonTokenStream getCommonTokenStream(
+      CharStream charStream, List<ANTLRErrorListener> errorListeners) {
     // Create a lexer and token stream
-    org.daiitech.naftah.parser.NaftahLexer lexer = new org.daiitech.naftah.parser.NaftahLexer(charStream);
+    org.daiitech.naftah.parser.NaftahLexer lexer =
+        new org.daiitech.naftah.parser.NaftahLexer(charStream);
     lexer.removeErrorListeners();
     errorListeners.forEach(lexer::addErrorListener);
     return new CommonTokenStream(lexer);
@@ -243,14 +250,13 @@ public class NaftahParserHelper {
   public static CharStream getCharStream(boolean isScriptFile, String script) throws IOException {
     CharStream charStream;
     if (isScriptFile) {
-      charStream = CharStreams.fromPath(searchForNaftahScriptFile(script).toPath(), StandardCharsets.UTF_8);
+      charStream =
+          CharStreams.fromPath(searchForNaftahScriptFile(script).toPath(), StandardCharsets.UTF_8);
     } else {
-      charStream =  CharStreams.fromString(script);
+      charStream = CharStreams.fromString(script);
     }
     return charStream;
   }
-
-
 
   /**
    * Search for the script file, doesn't bother if it is named precisely.

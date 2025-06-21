@@ -10,8 +10,8 @@ import java.util.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
-import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.DefaultContext;
+import org.daiitech.naftah.parser.NaftahParser;
 
 /**
  * @author Chakib Daii

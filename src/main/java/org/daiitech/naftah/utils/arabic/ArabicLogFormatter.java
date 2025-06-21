@@ -25,7 +25,6 @@ public class ArabicLogFormatter extends Formatter {
       } catch (Exception e) {
         return LOG_MSG.formatted(record.getLevel(), msg); // fallback
       }
-    } else
-      return LOG_MSG.formatted(record.getLevel(), msg); // fallback
+    } else return LOG_MSG.formatted(record.getLevel(), msg); // fallback
   }
 }

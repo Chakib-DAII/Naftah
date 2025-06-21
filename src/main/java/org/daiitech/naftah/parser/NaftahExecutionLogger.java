@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.daiitech.naftah.parser.NaftahParser;
 
 /**
  * @author Chakib Daii
@@ -40,7 +39,7 @@ public final class NaftahExecutionLogger {
     else if (ctx instanceof NaftahParser.FunctionDeclarationStatementContext context)
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.FunctionCallStatementContext context)
-        result = logExecution(doLog, context);
+      result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.ExpressionStatementContext context)
       result = logExecution(doLog, context);
     else if (ctx instanceof NaftahParser.ReturnStatementStatementContext context)
@@ -257,25 +256,25 @@ public final class NaftahExecutionLogger {
         .orElse("");
   }
 
-    public static String logExecution(
-            boolean doLog, NaftahParser.ExpressionStatementContext ctx) {
-        return Optional.ofNullable(ctx)
-                .map(
-                        context -> {
-                            String result =
-                                    """
+  public static String logExecution(boolean doLog, NaftahParser.ExpressionStatementContext ctx) {
+    return Optional.ofNullable(ctx)
+        .map(
+            context -> {
+              String result =
+                  """
                                             ExpressionStatementContext::expression -> {
                                                 %s
                                             }
                                             """
-                                            .formatted(logExecution(false, context.expression()));
-                            if (doLog && LOGGER.isLoggable(Level.FINEST)) {
-                                LOGGER.finest(result);
-                            }
-                            return result;
-                        })
-                .orElse("");
-    }
+                      .formatted(logExecution(false, context.expression()));
+              if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.finest(result);
+              }
+              return result;
+            })
+        .orElse("");
+  }
+
   public static String logExecution(
       boolean doLog, NaftahParser.ReturnStatementStatementContext ctx) {
     return Optional.ofNullable(ctx)
@@ -636,7 +635,8 @@ public final class NaftahExecutionLogger {
                               %s
                           }
                           """
-                      .formatted(context.MINUS(), context.ELEMENTWISE_MINUS(), join(context.expression()));
+                      .formatted(
+                          context.MINUS(), context.ELEMENTWISE_MINUS(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -681,7 +681,8 @@ public final class NaftahExecutionLogger {
                               %s
                           }
                           """
-                      .formatted(context.MOD(), context.ELEMENTWISE_MOD(), join(context.expression()));
+                      .formatted(
+                          context.MOD(), context.ELEMENTWISE_MOD(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -702,7 +703,8 @@ public final class NaftahExecutionLogger {
                               %s
                           }
                           """
-                      .formatted(context.DIV(), context.ELEMENTWISE_DIV(),join(context.expression()));
+                      .formatted(
+                          context.DIV(), context.ELEMENTWISE_DIV(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -845,7 +847,8 @@ public final class NaftahExecutionLogger {
                               %s
                           }
                           """
-                      .formatted(context.PLUS(), context.ELEMENTWISE_PLUS(), join(context.expression()));
+                      .formatted(
+                          context.PLUS(), context.ELEMENTWISE_PLUS(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }
@@ -866,7 +869,8 @@ public final class NaftahExecutionLogger {
                               %s
                           }
                           """
-                      .formatted(context.MUL(), context.ELEMENTWISE_MUL(), join(context.expression()));
+                      .formatted(
+                          context.MUL(), context.ELEMENTWISE_MUL(), join(context.expression()));
               if (doLog && LOGGER.isLoggable(Level.FINEST)) {
                 LOGGER.finest(result);
               }

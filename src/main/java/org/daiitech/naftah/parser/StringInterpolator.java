@@ -15,7 +15,8 @@ import java.util.regex.Pattern;
  */
 public final class StringInterpolator {
 
-  private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("(?:\\$\\{([^}]+)}|\\{([^}]+)}\\$)");
+  private static final Pattern INTERPOLATION_PATTERN =
+      Pattern.compile("(?:\\$\\{([^}]+)}|\\{([^}]+)}\\$)");
   private static final Map<String, Matcher> MATCHER_CACHE = new HashMap<>();
   private static final String NULL = "<فارغ>";
 

@@ -35,8 +35,7 @@ public class ArabicOutputTransformer extends OutputStream {
       } catch (ArabicShapingException e) {
         original.write(b, off, len); // fallback
       }
-    } else
-      original.write(b, off, len); // fallback
+    } else original.write(b, off, len); // fallback
   }
 
   public static PrintStream getPrintStream(OutputStream original) {

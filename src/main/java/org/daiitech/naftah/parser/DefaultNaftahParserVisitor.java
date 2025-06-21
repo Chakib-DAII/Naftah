@@ -3,9 +3,9 @@ package org.daiitech.naftah.parser;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.*;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.*;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.*;
-import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.parser.DefaultContext.*;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
+import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -37,19 +37,16 @@ public class DefaultNaftahParserVisitor
     // TODO: add the functions (processed from classpath and provider annotations)
     var rootContext =
         hasChildOrSubChildOfType(
-                ctx,
-                org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+                ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
             ? DefaultContext.registerContext(new HashMap<>(), new HashMap<>())
             : DefaultContext.registerContext();
     depth = rootContext.getDepth();
     Object result = null;
-    for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement :
-        ctx.statement()) {
+    for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : ctx.statement()) {
       result = visit(statement); // Visit each statement in the program
       // break program after executing a return statement
       if (rootContext.hasAnyExecutedChildOrSubChildOfType(
-          statement,
-          org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class))
+          statement, org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class))
         break;
     }
     rootContext.markExecuted(ctx); // Mark as executed
@@ -155,8 +152,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitDeclaration(
-      org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx) {
+  public Object visitDeclaration(org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitDeclaration(%s)"
@@ -187,8 +183,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitAssignment(
-      org.daiitech.naftah.parser.NaftahParser.AssignmentContext ctx) {
+  public Object visitAssignment(org.daiitech.naftah.parser.NaftahParser.AssignmentContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitAssignment(%s)"
@@ -246,8 +241,8 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = DefaultContext.getContextByDepth(depth);
     List<DeclaredParameter> args = new ArrayList<>();
-    for (org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext
-        argumentDeclaration : ctx.parameterDeclaration()) {
+    for (org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext argumentDeclaration :
+        ctx.parameterDeclaration()) {
       args.add((DeclaredParameter) visit(argumentDeclaration));
     }
     currentContext.markExecuted(ctx); // Mark as executed
@@ -276,8 +271,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitFunctionCall(
-      org.daiitech.naftah.parser.NaftahParser.FunctionCallContext ctx) {
+  public Object visitFunctionCall(org.daiitech.naftah.parser.NaftahParser.FunctionCallContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitFunctionCall(%s)"
@@ -358,8 +352,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitArgumentList(
-      org.daiitech.naftah.parser.NaftahParser.ArgumentListContext ctx) {
+  public Object visitArgumentList(org.daiitech.naftah.parser.NaftahParser.ArgumentListContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitArgumentList(%s)"
@@ -377,8 +370,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitIfStatement(
-      org.daiitech.naftah.parser.NaftahParser.IfStatementContext ctx) {
+  public Object visitIfStatement(org.daiitech.naftah.parser.NaftahParser.IfStatementContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitIfStatement(%s)"
@@ -411,17 +403,18 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitExpressionStatement(org.daiitech.naftah.parser.NaftahParser.ExpressionStatementContext ctx) {
+  public Object visitExpressionStatement(
+      org.daiitech.naftah.parser.NaftahParser.ExpressionStatementContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
-        LOGGER.fine(
-                "visitExpressionStatement(%s)"
-                        .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
-      logExecution(ctx);
-      var currentContext = DefaultContext.getContextByDepth(depth);
-      Object result = visit(ctx.expression()); // Evaluate and return the result
-      currentContext.markExecuted(ctx); // Mark as executed
-      return result; // No expression after 'return' means returning null
-   }
+      LOGGER.fine(
+          "visitExpressionStatement(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = DefaultContext.getContextByDepth(depth);
+    Object result = visit(ctx.expression()); // Evaluate and return the result
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result; // No expression after 'return' means returning null
+  }
 
   @Override
   public Object visitReturnStatement(
@@ -450,23 +443,19 @@ public class DefaultNaftahParserVisitor
     var currentContext = DefaultContext.getContextByDepth(depth);
     var nextContext =
         hasChildOrSubChildOfType(
-                    ctx,
-                    org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+                    ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
                 || hasChildOrSubChildOfType(
                     ctx,
-                    org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext
-                        .class)
+                    org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class)
             ? DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
             : DefaultContext.registerContext(currentContext);
     depth = nextContext.getDepth();
     Object result = null;
-    for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement :
-        ctx.statement()) {
+    for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : ctx.statement()) {
       result = visit(statement); // Visit each statement in the block
       // break program after executing a return statemnt
       if (nextContext.hasAnyExecutedChildOrSubChildOfType(
-          statement,
-          org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class))
+          statement, org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class))
         break;
     }
     DefaultContext.deregisterContext(depth);
@@ -764,8 +753,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitNumberValue(
-      org.daiitech.naftah.parser.NaftahParser.NumberValueContext ctx) {
+  public Object visitNumberValue(org.daiitech.naftah.parser.NaftahParser.NumberValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitNumberValue(%s)"
@@ -793,8 +781,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitStringValue(
-      org.daiitech.naftah.parser.NaftahParser.StringValueContext ctx) {
+  public Object visitStringValue(org.daiitech.naftah.parser.NaftahParser.StringValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitStringValue(%s)"
@@ -820,8 +807,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitFalseValue(
-      org.daiitech.naftah.parser.NaftahParser.FalseValueContext ctx) {
+  public Object visitFalseValue(org.daiitech.naftah.parser.NaftahParser.FalseValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitFalseValue(%s)"
@@ -900,8 +886,7 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitBuiltInType(
-      org.daiitech.naftah.parser.NaftahParser.BuiltInTypeContext ctx) {
+  public Object visitBuiltInType(org.daiitech.naftah.parser.NaftahParser.BuiltInTypeContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitBuiltInType(%s)"

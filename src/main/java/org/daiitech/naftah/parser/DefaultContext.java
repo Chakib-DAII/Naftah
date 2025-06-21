@@ -265,7 +265,8 @@ public class DefaultContext {
       Map<String, DeclaredParameter> parameters,
       Map<String, Object> arguments) {
     if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_SHELL_PROPERTY))
-            && parent == null && (CONTEXTS.size() != 0)) throw new IllegalStateException("Illegal usage.");
+        && parent == null
+        && (CONTEXTS.size() != 0)) throw new IllegalStateException("Illegal usage.");
     this.parent = parent;
     this.depth = parent == null ? 0 : parent.getDepth() + 1;
     this.arguments = arguments;
