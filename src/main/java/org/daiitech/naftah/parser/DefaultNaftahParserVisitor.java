@@ -315,8 +315,8 @@ public class DefaultNaftahParserVisitor
         var methodArgs =
             args.stream().map(stringObjectPair -> stringObjectPair.b).toArray(Object[]::new);
         try {
-          var possibleResult = builtinFunction.method().invoke(null, methodArgs);
-          if (builtinFunction.functionInfo().returnType() != Void.class && possibleResult != null)
+          var possibleResult = builtinFunction.getMethod().invoke(null, methodArgs);
+          if (builtinFunction.getFunctionInfo().returnType() != Void.class && possibleResult != null)
             result = possibleResult;
         } catch (IllegalAccessException | InvocationTargetException e) {
           throw new RuntimeException(e);
