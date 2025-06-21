@@ -66,6 +66,36 @@ idea {
 	}
 }
 
+tasks.register('extractLexerLiterals') {
+	description = 'Extracts all literal strings from lexer grammar rules.'
+
+	def lexerFile = file('src/main/antlr/NaftahLexer.g4')
+	def outputFile = file("$buildDir/libs/lexer-literals")
+
+
+	doLast {
+		def pattern = ~/'([^']+)'/
+		def literals = []
+
+		lexerFile.withReader('UTF-8') { reader ->
+			reader.eachLine { line ->
+				if (line.contains(":")) {
+					pattern.matcher(line).each { match ->
+						literals << match[1]
+					}
+				}
+			}
+		}
+
+		outputFile.parentFile.mkdirs()
+		outputFile.withWriter('UTF-8') { writer ->
+			literals.each { writer.writeLine(it) }
+		}
+
+		println "Extracted ${literals.size()} literals to ${outputFile}"
+	}
+}
+
 test {
 	useJUnitPlatform()
 	testLogging {
@@ -218,12 +248,17 @@ tasks.register('baseDistZip', Zip) {
 		into 'learn-by-example'
 	}
 
+	from("$buildDir/libs") {
+		include 'lexer-literals'
+		into 'lib'
+	}
+
 	// Avoid execution by itself
 	enabled = false
 }
 
 tasks.register('dist', Zip) {
-	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"), tasks.named("jar"), tasks.named("baseDistZip")
+	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"), tasks.named("jar"), tasks.named("extractLexerLiterals"), tasks.named("baseDistZip")
 
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
