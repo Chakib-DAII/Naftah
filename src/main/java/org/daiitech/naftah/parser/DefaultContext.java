@@ -1,8 +1,9 @@
 package org.daiitech.naftah.parser;
 
-import static org.daiitech.naftah.Naftah.INSIDE_SHELL_PROPERTY;
-import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.Naftah.*;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
+import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
+import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.*;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.*;
 
@@ -112,7 +113,7 @@ public class DefaultContext {
   }
 
   // LOADED CLASSES
-  private static Map<String, Optional<? extends ClassLoader>> CLASS_NAMES;
+  private static Map<String, ClassLoader> CLASS_NAMES;
   private static Set<String> CLASS_QUALIFIERS;
   private static Set<String> ARABIC_CLASS_QUALIFIERS;
   // qualifiedName -> CLass<?>
@@ -123,6 +124,7 @@ public class DefaultContext {
   private static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
   private static Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
   private static volatile boolean SHOULD_BOOT_STRAP;
+  private static volatile boolean FORCE_BOOT_STRAP;
   private static volatile boolean ASYNC_BOOT_STRAP;
   private static volatile boolean BOOT_STRAP_FAILED;
   private static volatile boolean BOOT_STRAPPED;
@@ -217,7 +219,7 @@ public class DefaultContext {
         getBuiltinMethods(Builtin.class).stream()
             .map(
                 builtinFunction ->
-                    Map.entry(builtinFunction.functionInfo().name(), builtinFunction))
+                    Map.entry(builtinFunction.getFunctionInfo().name(), builtinFunction))
             .collect(
                 Collectors.groupingBy(
                     Map.Entry::getKey,
@@ -230,7 +232,9 @@ public class DefaultContext {
       ClassScanningResult classScanningResult = null;
       Throwable thr = null;
       try {
+        startLoader("تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد يستغرق الأمر عدة دقائق حسب الإعدادات");
         classScanningResult = LOADER_TASK.get();
+        stopLoader();
       } catch (Throwable throwable) {
         thr = throwable;
       } finally {
@@ -242,7 +246,7 @@ public class DefaultContext {
   private static void serializeClassScanningResult(ClassScanningResult result) {
     try {
       var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
-      System.out.println("cache saved to " + path);
+      System.out.println("تم حفظ البيانات في: " + path);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -251,18 +255,35 @@ public class DefaultContext {
   private static void deserializeClassScanningResult() {
     try {
       var result = (ClassScanningResult) Base64SerializationUtils.deserialize(CACHE_PATH);
-      serializeClassScanningResult(result);
+      setContextFromClassScanningResult(result);
     } catch (IOException | ClassNotFoundException e) {
       callLoader(ASYNC_BOOT_STRAP);
     }
   }
 
+  public static List<String> getCompletions() {
+    var runtimeCompletions = new ArrayList<>(BUILTIN_FUNCTIONS.keySet());
+    Optional.ofNullable(JVM_FUNCTIONS)
+            .ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+    Optional.ofNullable(INSTANTIABLE_CLASSES)
+            .ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+    return runtimeCompletions;
+  }
+
   public static void bootstrap(boolean async) {
+    System.out.println("تحضير فئات مسار فئات جافا (Java classpath)...");
     SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
     ASYNC_BOOT_STRAP = async;
     if (SHOULD_BOOT_STRAP) {
+        try {
+            Files.createDirectories(CACHE_PATH.getParent());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-      if (!Files.exists(CACHE_PATH)) {
+        FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
+
+        if (FORCE_BOOT_STRAP || !Files.exists(CACHE_PATH)) {
         callLoader(ASYNC_BOOT_STRAP);
       } else {
         deserializeClassScanningResult();
