@@ -48,12 +48,12 @@ public final class RuntimeClassScanner {
    *
    * @return map of class files and possible {@link URLClassLoader}
    */
-  public static Map<String, Optional<? extends ClassLoader>> scanCLasses() {
+  public static Map<String, ClassLoader> scanCLasses() {
     return scanCLasses(PATHS);
   }
 
-  public static Map<String, Optional<? extends ClassLoader>> scanCLasses(String[] paths) {
-    Map<String, Optional<? extends ClassLoader>> classNames = new HashMap<>();
+  public static Map<String, ClassLoader> scanCLasses(String[] paths) {
+    Map<String, ClassLoader> classNames = new HashMap<>();
     for (String path : paths) {
       File file = new File(path);
       if (file.exists()) {
@@ -75,20 +75,20 @@ public final class RuntimeClassScanner {
    * @return a set of @{@link Class} objects
    */
   public static Set<Class<?>> loadClassSet(
-      Map<String, Optional<? extends ClassLoader>> classNames, boolean accessibleOnly) {
+      Map<String, ClassLoader> classNames, boolean accessibleOnly) {
     return new HashSet<>(loadClasses(classNames, accessibleOnly).values());
   }
 
   public static Map<String, Class<?>> loadClasses(
-      Map<String, Optional<? extends ClassLoader>> classNames, boolean instantiableOnly) {
+      Map<String, ClassLoader> classNames, boolean instantiableOnly) {
     // Try to load each class and store Class objects
     Map<String, Class<?>> loadedClasses = new HashMap<>();
     for (var nameEntry : classNames.entrySet()) {
+      var classLoaderOptional = Optional.ofNullable(nameEntry.getValue());
       var loaders =
           Arrays.copyOf(
-              CLASS_LOADERS, CLASS_LOADERS.length + (nameEntry.getValue().isEmpty() ? 0 : 1));
-      nameEntry
-          .getValue()
+              CLASS_LOADERS, CLASS_LOADERS.length + (classLoaderOptional.isEmpty() ? 0 : 1));
+      classLoaderOptional
           .ifPresent(classLoader -> loaders[CLASS_LOADERS.length + 1] = classLoader);
       for (ClassLoader cl : loaders)
         try {
@@ -114,9 +114,9 @@ public final class RuntimeClassScanner {
    * @param dir current dir/file
    * @return map of class files and possible {@link URLClassLoader}
    */
-  public static Map<String, Optional<? extends ClassLoader>> findClassesInDirectory(
+  public static Map<String, ClassLoader> findClassesInDirectory(
       File root, File dir) {
-    Map<String, Optional<? extends ClassLoader>> classNames = new HashMap<>();
+    Map<String, ClassLoader> classNames = new HashMap<>();
     for (File file : Objects.requireNonNull(dir.listFiles())) {
       if (file.isDirectory()) {
         classNames.putAll(findClassesInDirectory(root, file));
@@ -128,7 +128,7 @@ public final class RuntimeClassScanner {
                 .replace("/", ".")
                 .replace(File.separatorChar, '.')
                 .replaceAll(CLASS_EXTENSION_REGEX, "");
-        classNames.put(className, Optional.empty());
+        classNames.put(className, null);
       } else if (file.getName().endsWith(JAR_EXTENSION)
           || file.getName().endsWith(JMOD_EXTENSION)) {
         classNames.putAll(findClassesInJar(file));
@@ -143,8 +143,8 @@ public final class RuntimeClassScanner {
    * @param jarFile jar file
    * @return map of class files and possible {@link URLClassLoader}
    */
-  public static Map<String, Optional<? extends ClassLoader>> findClassesInJar(File jarFile) {
-    Map<String, Optional<? extends ClassLoader>> classNames = new HashMap<>();
+  public static Map<String, ClassLoader> findClassesInJar(File jarFile) {
+    Map<String, ClassLoader> classNames = new HashMap<>();
     try (JarFile jar = new JarFile(jarFile)) {
       Enumeration<JarEntry> entries = jar.entries();
       while (entries.hasMoreElements()) {
@@ -158,7 +158,7 @@ public final class RuntimeClassScanner {
                   .replace("/", ".")
                   .replace(File.separatorChar, '.')
                   .replaceAll(CLASS_EXTENSION_REGEX, "");
-          classNames.put(className, Optional.empty());
+          classNames.put(className, null);
         } else if (entry.getName().endsWith(JAR_EXTENSION)
             || entry.getName().endsWith(JMOD_EXTENSION)) {
           File tempInnerJar = jarEntryToTempFile(jar, entry);
@@ -169,7 +169,7 @@ public final class RuntimeClassScanner {
                   RuntimeClassScanner.class.getClassLoader())) {
             classNames.putAll(
                 findClassesInJar(tempInnerJar).keySet().stream()
-                    .map(className -> Map.entry(className, Optional.of(loader)))
+                    .map(className -> Map.entry(className, loader))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
           }
         }
