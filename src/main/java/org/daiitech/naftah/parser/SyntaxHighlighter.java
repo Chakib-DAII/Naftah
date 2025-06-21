@@ -1,6 +1,7 @@
 package org.daiitech.naftah.parser;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 import com.ibm.icu.text.ArabicShapingException;
 import java.util.ArrayList;
@@ -56,17 +57,20 @@ public class SyntaxHighlighter extends BaseHighlighter {
 
         AttributedStyle style = getStyleForTokenType(type);
         String reshaped;
-        try {
-          reshaped = shape(text);
-          styles.add(new Pair<>(reshaped, style));
-        } catch (ArabicShapingException e) {
-          styles.add(new Pair<>(text, style));
+        if (shouldReshape()) {
+            try {
+                reshaped = shape(text);
+                styles.add(new Pair<>(reshaped, style));
+            } catch (ArabicShapingException e) {
+                styles.add(new Pair<>(text, style));
+            }
         }
+        else styles.add(new Pair<>(text, style));
 
         lastIndex = tokenStopIndex + 1;
       }
-
-      Collections.reverse(styles);
+        if (shouldReshape())
+            Collections.reverse(styles);
 
       for (var style : styles) asb.append(style.a, style.b);
 
