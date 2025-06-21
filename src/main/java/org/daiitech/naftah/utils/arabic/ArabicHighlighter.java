@@ -20,13 +20,16 @@ public class ArabicHighlighter extends BaseHighlighter {
 
   @Override
   public AttributedString highlight(LineReader reader, String buffer) {
+    AttributedString attributedString = super.highlight(reader, buffer);
     if (containsArabic(buffer)) {
       try {
-        buffer = shape(buffer);
+        String reshaped = shape(buffer); // display only
+        attributedString = merge(attributedString, new AttributedString(reshaped));
       } catch (ArabicShapingException e) {
         // do nothing
       }
     }
-    return super.highlight(reader, buffer);
+    return attributedString;
+
   }
 }
