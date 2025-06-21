@@ -10,7 +10,7 @@ import java.util.Set;
  * @author Chakib Daii
  */
 public class ClassScanningResult implements Serializable {
-  private Map<String, Optional<? extends ClassLoader>> classNames;
+  private Map<String, ClassLoader> classNames;
   private Set<String> classQualifiers;
   private Set<String> arabicClassQualifiers;
   // qualifiedName -> CLass<?>
@@ -21,11 +21,11 @@ public class ClassScanningResult implements Serializable {
   private Map<String, List<JvmFunction>> jvmFunctions;
   private Map<String, List<BuiltinFunction>> builtinFunctions;
 
-  public Map<String, Optional<? extends ClassLoader>> getClassNames() {
+  public Map<String, ClassLoader> getClassNames() {
     return classNames;
   }
 
-  public void setClassNames(Map<String, Optional<? extends ClassLoader>> classNames) {
+  public void setClassNames(Map<String, ClassLoader> classNames) {
     this.classNames = classNames;
   }
 
