@@ -11,6 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.daiitech.naftah.Naftah;
 
+import static org.daiitech.naftah.Naftah.OS_NAME;
+
 /**
  * @author Chakib Daii
  */
@@ -189,12 +191,64 @@ public class ArabicUtils {
     return transliterateScriptLetterByLetter(LATIN_ARABIC_TRANSLITERATION_ID, text);
   }
 
+  public static boolean shouldReshape() {
+    String os = System.getProperty(OS_NAME).toLowerCase();
+    return (os.contains("win"));
+  }
+
   public static boolean containsArabic(String text) {
     return text.codePoints()
         .anyMatch(
-            cp ->
-                (cp >= 0x0600 && cp <= 0x06FF)
-                    || (cp >= 0x0750 && cp <= 0x077F) // Arabic Supplement
-                    || (cp >= 0x08A0 && cp <= 0x08FF)); // Arabic Extended
+                ArabicUtils::isArabicChar);
   }
+
+  public static boolean isArabicChar(int cp) {
+    return (cp >= 0x0600 && cp <= 0x06FF)
+            || (cp >= 0x0750 && cp <= 0x077F) // Arabic Supplement
+            || (cp >= 0x08A0 && cp <= 0x08FF); // Arabic Extended
+  }
+
+  public static String shapeOutsideQuotes(String input) throws Exception {
+    StringBuilder output = new StringBuilder();
+    boolean inQuote = false;
+    char quoteChar = '\0';
+    StringBuilder buffer = new StringBuilder();
+
+    for (int i = 0; i < input.length(); i++) {
+      char c = input.charAt(i);
+
+      // Toggle quote block
+      if ((c == '"' || c == '\'') && (i == 0 || input.charAt(i - 1) != '\\')) {
+        // Flush and shape any Arabic text before the quote
+        output.append(flushAndShape(buffer));
+        output.append(c);
+        inQuote = !inQuote;
+        quoteChar = inQuote ? c : '\0';
+        continue;
+      }
+
+      if (inQuote) {
+        output.append(c);
+      } else {
+        if (isArabicChar(c)) {
+          buffer.append(c);
+        } else {
+          output.append(flushAndShape(buffer));
+          output.append(c);
+        }
+      }
+    }
+
+    // Final flush
+    output.append(flushAndShape(buffer));
+    return output.toString();
+  }
+
+  private static String flushAndShape(StringBuilder buffer) throws Exception {
+    if (buffer.isEmpty()) return "";
+    String shaped = doShape(buffer.toString());
+    buffer.setLength(0);
+    return shaped;
+  }
+
 }
