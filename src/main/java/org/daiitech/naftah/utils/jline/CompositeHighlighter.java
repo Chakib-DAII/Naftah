@@ -36,36 +36,6 @@ public class CompositeHighlighter extends BaseHighlighter {
     return attributedString;
   }
 
-  private AttributedString merge(AttributedString base, AttributedString overlay) {
-    if (Objects.isNull(base)) return overlay;
-
-    int length = Math.min(base.length(), overlay.length());
-    AttributedStringBuilder builder = new AttributedStringBuilder();
-
-    for (int i = 0; i < length; i++) {
-      char c = base.charAt(i);
-      AttributedStyle baseStyle = base.styleAt(i);
-      AttributedStyle overlayStyle = overlay.styleAt(i);
-
-      AttributedStyle style =
-          new AttributedStyle(
-              baseStyle.getStyle() | overlayStyle.getStyle(),
-              baseStyle.getMask() | overlayStyle.getMask());
-
-      builder.append(String.valueOf(c), style);
-    }
-
-    // Handle any extra content in base
-    if (base.length() > length) {
-      builder.append(base.subSequence(length, base.length()));
-    }
-    if (overlay.length() > length) {
-      builder.append(overlay.subSequence(length, overlay.length()));
-    }
-
-    return builder.toAttributedString();
-  }
-
   // Builder static inner class
   public static class Builder {
     private final Highlighter originalHighlighter;
