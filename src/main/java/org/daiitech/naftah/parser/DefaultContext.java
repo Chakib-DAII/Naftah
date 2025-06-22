@@ -247,7 +247,9 @@ public class DefaultContext {
   private static void serializeClassScanningResult(ClassScanningResult result) {
     try {
       var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
-      System.out.println("تم حفظ البيانات في: " + path);
+      if (Boolean.getBoolean(DEBUG_PROPERTY)
+              || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
+        System.out.println("تم حفظ البيانات في: " + path);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -272,7 +274,9 @@ public class DefaultContext {
   }
 
   public static void bootstrap(boolean async) {
-    System.out.println("تحضير فئات مسار فئات جافا (Java classpath)...");
+    if (Boolean.getBoolean(DEBUG_PROPERTY)
+            || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
+      System.out.println("تحضير فئات مسار فئات جافا (Java classpath)...");
     SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
     ASYNC_BOOT_STRAP = async;
     if (SHOULD_BOOT_STRAP) {
@@ -340,7 +344,7 @@ public class DefaultContext {
       DefaultContext parent,
       Map<String, DeclaredParameter> parameters,
       Map<String, Object> arguments) {
-    if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_SHELL_PROPERTY))
+    if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY))
         && parent == null
         && (CONTEXTS.size() != 0)) throw new IllegalStateException("Illegal usage.");
     this.parent = parent;
