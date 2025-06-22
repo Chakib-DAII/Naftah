@@ -259,10 +259,16 @@ public class NaftahParserHelper {
       // Search for path
       Path filePath = searchForNaftahScriptFile(script).toPath();
       //  Read file into a String
-      String content = Files.readString(filePath, StandardCharsets.UTF_8);
-      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(content));
+      // TODO: this is not needed in windows after rechecking.
+//      String content = Files.readString(filePath, StandardCharsets.UTF_8);
+//      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(content));
+      // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like above)
+      charStream = CharStreams.fromPath(filePath, StandardCharsets.UTF_8);
     } else {
-      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(script));
+      // TODO: this is not needed in windows after rechecking.
+//      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(script));
+      // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like above)
+      charStream = CharStreams.fromString(script);
     }
     return charStream;
   }
