@@ -63,6 +63,7 @@ public final class NaftahSystem {
           500,
           TimeUnit.MILLISECONDS);
     } else {
+      // TODO: check support for Linux systems (didn't work for a ubuntu Virtual machine)
       terminal.handle(
           Terminal.Signal.WINCH,
           signal -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)));
