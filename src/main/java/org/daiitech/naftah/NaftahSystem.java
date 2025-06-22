@@ -1,11 +1,20 @@
 package org.daiitech.naftah;
 
+import static org.daiitech.naftah.Naftah.TERMINAL_HEIGHT_PROPERTY;
+import static org.daiitech.naftah.Naftah.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.OS;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -47,9 +56,33 @@ public final class NaftahSystem {
     System.setErr(ps);
   }
 
+  public static void setupRefreshTerminalWidthAndHeight(Terminal terminal) {
+    if (OS.isFamilyWindows()) {
+      ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+      executor.scheduleAtFixedRate(
+              () -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
+              0, 500,
+              TimeUnit.MILLISECONDS);
+    } else {
+      terminal.handle(Terminal.Signal.WINCH,
+              signal -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)));
+    }
+  }
+
+  public static void setupTerminalWidthAndHeight(Supplier<int[]> terminalWidthAndHeightSupplier) {
+    int[] terminalWidthAndHeight = terminalWidthAndHeightSupplier.get();
+    System.out.println(Arrays.toString(terminalWidthAndHeight));
+    System.setProperty(TERMINAL_WIDTH_PROPERTY, Integer.toString(terminalWidthAndHeight[0]));
+    System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(terminalWidthAndHeight[1]));
+  }
+
+  public static int[] getTerminalWidthAndHeight(Terminal terminal) {
+    return new int[] {terminal.getWidth(), terminal.getHeight()};
+  }
+
   public static int[] getTerminalWidthAndHeight() {
     try (Terminal terminal = getTerminal()) {
-      return new int[] {terminal.getWidth(), terminal.getHeight()};
+      return getTerminalWidthAndHeight(terminal);
     } catch (Exception ignored) {
       return new int[] {80, 24}; // fallback width
     }
