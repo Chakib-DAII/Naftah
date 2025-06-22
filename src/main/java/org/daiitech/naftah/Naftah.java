@@ -192,7 +192,6 @@ public final class Naftah {
         if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
 
         System.out.println();
-        System.exit(0);
       }
     }
 
@@ -286,7 +285,8 @@ public final class Naftah {
 
             if (line.isBlank()) continue;
 
-            if (List.of("exit", "خروج").contains(line.trim())) break;
+            if (List.of("exit", "خروج").contains(line.trim()))
+              throw new UserInterruptException(line);
 
             var input = getCharStream(false, line);
 
@@ -469,7 +469,7 @@ public final class Naftah {
       if (!naftahCommand.process(matchedSubCommandResult)) {
         // If we fail, then exit with an error so scripting frameworks can catch it.
         System.exit(1);
-      }
+      } else System.exit(0);
 
     } catch (ParameterException ex) { // command line arguments could not be parsed
       System.err.println(ex.getMessage());
