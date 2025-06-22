@@ -95,8 +95,8 @@ public class DefaultContext {
 
   // CALL STACK
   // function - arguments - returned value
-  protected static final Stack<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>> CALL_STACK =
-      new Stack<>();
+  protected static final Stack<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>>
+      CALL_STACK = new Stack<>();
 
   public static void pushCall(DeclaredFunction function, Map<String, Object> arguments) {
     CALL_STACK.push(new Pair<>(new Pair<>(function, arguments), null));
@@ -203,16 +203,17 @@ public class DefaultContext {
     BOOT_STRAPPED = true;
   }
 
-  protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER =
-      (result, throwable) -> {
-        if (Objects.nonNull(throwable)) {
-          defaultBootstrap();
-          BOOT_STRAP_FAILED = true;
-        } else {
-          setContextFromClassScanningResult(result);
-          serializeClassScanningResult(result);
-        }
-      };
+  protected static final BiConsumer<? super ClassScanningResult, ? super Throwable>
+      LOADER_CONSUMER =
+          (result, throwable) -> {
+            if (Objects.nonNull(throwable)) {
+              defaultBootstrap();
+              BOOT_STRAP_FAILED = true;
+            } else {
+              setContextFromClassScanningResult(result);
+              serializeClassScanningResult(result);
+            }
+          };
 
   public static void defaultBootstrap() {
     BUILTIN_FUNCTIONS =
@@ -334,7 +335,8 @@ public class DefaultContext {
     this(null, null, null);
   }
 
-  protected DefaultContext(Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
+  protected DefaultContext(
+      Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
     this(null, parameters, arguments);
   }
 

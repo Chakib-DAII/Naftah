@@ -12,12 +12,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.*;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
@@ -32,48 +29,57 @@ public class DefaultNaftahParserVisitor
   private static final Logger LOGGER = Logger.getLogger("DefaultNaftahParserVisitor");
   public static final String FORMATTER = "index: %s, text: %s, payload: %s";
 
-  private static final Function<org.daiitech.naftah.parser.NaftahParser.ProgramContext, DefaultContext> ROOT_CONTEXT_SUPPLIER = (ctx) -> {
-    if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)){
-      return hasChildOrSubChildOfType(
-              ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-              ? REPLContext.registerContext(new HashMap<>(), new HashMap<>())
-              : REPLContext.registerContext();
-    }
-    else {
-      return hasChildOrSubChildOfType(
-              ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-              ? DefaultContext.registerContext(new HashMap<>(), new HashMap<>())
-              : DefaultContext.registerContext();
-    }
-  };
-  private static final BiFunction<org.daiitech.naftah.parser.NaftahParser.BlockContext, DefaultContext, DefaultContext> BLOCK_CONTEXT_SUPPLIER = (ctx, currentContext) -> {
-    if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)){
-      return hasChildOrSubChildOfType(
-              ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-              ? REPLContext.registerContext(new HashMap<>(), new HashMap<>())
-              : REPLContext.registerContext();
-    }
-    else {
-      return
-              hasChildOrSubChildOfType(
-                      ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-                      || hasChildOrSubChildOfType(
+  private static final Function<
+          org.daiitech.naftah.parser.NaftahParser.ProgramContext, DefaultContext>
+      ROOT_CONTEXT_SUPPLIER =
+          (ctx) -> {
+            if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+              return hasChildOrSubChildOfType(
                       ctx,
-                      org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class)
-                      ? DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
-                      : DefaultContext.registerContext(currentContext);
-    }
-  };
-  private static final Function<Integer, DefaultContext> CONTEXT_BY_DEPTH_SUPPLIER = (depth) -> {
-    if (Boolean.getBoolean(INSIDE_REPL_PROPERTY))
-      return REPLContext.getContextByDepth(depth);
-    else return DefaultContext.getContextByDepth(depth);
-  };
-  private static final Function<Integer, DefaultContext> DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER = (depth) -> {
-    if (Boolean.getBoolean(INSIDE_REPL_PROPERTY))
-      return REPLContext.deregisterContext(depth);
-    else return DefaultContext.deregisterContext(depth);
-  };
+                      org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+                  ? REPLContext.registerContext(new HashMap<>(), new HashMap<>())
+                  : REPLContext.registerContext();
+            } else {
+              return hasChildOrSubChildOfType(
+                      ctx,
+                      org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+                  ? DefaultContext.registerContext(new HashMap<>(), new HashMap<>())
+                  : DefaultContext.registerContext();
+            }
+          };
+  private static final BiFunction<
+          org.daiitech.naftah.parser.NaftahParser.BlockContext, DefaultContext, DefaultContext>
+      BLOCK_CONTEXT_SUPPLIER =
+          (ctx, currentContext) -> {
+            if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+              return hasChildOrSubChildOfType(
+                      ctx,
+                      org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+                  ? REPLContext.registerContext(new HashMap<>(), new HashMap<>())
+                  : REPLContext.registerContext();
+            } else {
+              return hasChildOrSubChildOfType(
+                          ctx,
+                          org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext
+                              .class)
+                      || hasChildOrSubChildOfType(
+                          ctx,
+                          org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext
+                              .class)
+                  ? DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
+                  : DefaultContext.registerContext(currentContext);
+            }
+          };
+  private static final Function<Integer, DefaultContext> CONTEXT_BY_DEPTH_SUPPLIER =
+      (depth) -> {
+        if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) return REPLContext.getContextByDepth(depth);
+        else return DefaultContext.getContextByDepth(depth);
+      };
+  private static final Function<Integer, DefaultContext> DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER =
+      (depth) -> {
+        if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) return REPLContext.deregisterContext(depth);
+        else return DefaultContext.deregisterContext(depth);
+      };
 
   private int depth = 0;
 

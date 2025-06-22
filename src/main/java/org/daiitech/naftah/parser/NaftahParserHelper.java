@@ -5,7 +5,6 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -260,14 +259,16 @@ public class NaftahParserHelper {
       Path filePath = searchForNaftahScriptFile(script).toPath();
       //  Read file into a String
       // TODO: this is not needed in windows after rechecking.
-//      String content = Files.readString(filePath, StandardCharsets.UTF_8);
-//      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(content));
-      // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like above)
+      //      String content = Files.readString(filePath, StandardCharsets.UTF_8);
+      //      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(content));
+      // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like
+      // above)
       charStream = CharStreams.fromPath(filePath, StandardCharsets.UTF_8);
     } else {
       // TODO: this is not needed in windows after rechecking.
-//      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(script));
-      // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like above)
+      //      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(script));
+      // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like
+      // above)
       charStream = CharStreams.fromString(script);
     }
     return charStream;
