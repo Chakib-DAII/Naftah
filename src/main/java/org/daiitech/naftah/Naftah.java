@@ -39,12 +39,13 @@ public final class Naftah {
 
   public static final String JAVA_VERSION_PROPERTY = "java.version";
   public static final String JAVA_VM_VENDOR_PROPERTY = "java.vm.vendor";
-  public static final String SCAN_CLASSPATH_PROPERTY = "scanClassPath";
-  public static final String FORCE_CLASSPATH_PROPERTY = "forceClassPathScan";
-  public static final String INSIDE_SHELL_PROPERTY = "insideShell";
+  public static final String SCAN_CLASSPATH_PROPERTY = "naftah.scanClassPath";
+  public static final String FORCE_CLASSPATH_PROPERTY = "naftah.forceClassPathScan";
+  public static final String DEBUG_PROPERTY = "naftah.debug";
+  public static final String INSIDE_REPL_PROPERTY = "naftah.repl";
+  public static final String INSIDE_INIT_PROPERTY = "naftah.init";
+  public static final String INSIDE_RUN_PROPERTY = "naftah.run";
   public static final String FILE_ENCODING_PROPERTY = "file.encoding";
-  public static final String TERMINAL_WIDTH_PROPERTY = "terminal.width";
-  public static final String TERMINAL_HEIGHT_PROPERTY = "terminal.hight";
 
   public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
 
@@ -66,8 +67,8 @@ public final class Naftah {
 
   private Naftah() {}
 
-  public static void main(String[] args) throws IOException {
-    processArgs(args);
+  public static void main(String[] args) {
+      processArgs(args);
   }
 
   private static void initLogger(boolean debug) {
@@ -134,7 +135,7 @@ public final class Naftah {
   private static class NaftahCommand {
     private static final String NAME = "naftah";
 
-    protected void run(Naftah main, boolean bootstrapAsync) throws IOException {
+    protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
       bootstrap(bootstrapAsync);
     }
 
@@ -177,14 +178,15 @@ public final class Naftah {
       private static final String NAME = "run";
 
       @Override
-      protected void run(Naftah main, boolean bootstrapAsync) throws IOException {
+      protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
+        System.setProperty(INSIDE_RUN_PROPERTY, Boolean.toString(true));
         super.run(main, bootstrapAsync);
         initLogger(main.debug);
 
         // Create an input stream from the Naftah code
         CharStream input = getCharStream(main.isScriptFile, main.script);
 
-        var parser = NaftahCommand.prepareRun(input, new ConsoleErrorListener());
+        var parser = NaftahCommand.prepareRun(input);
         var result = NaftahCommand.doRun(parser);
 
         if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
@@ -206,7 +208,8 @@ public final class Naftah {
       private static final String NAME = "init";
 
       @Override
-      protected void run(Naftah main, boolean bootstrapAsync) throws IOException {
+      protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
+        System.setProperty(INSIDE_INIT_PROPERTY, Boolean.toString(true));
         System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
         super.run(main, bootstrapAsync);
       }
@@ -264,8 +267,8 @@ public final class Naftah {
       }
 
       @Override
-      protected void run(Naftah main, boolean bootstrapAsync) throws IOException {
-        System.setProperty(INSIDE_SHELL_PROPERTY, Boolean.toString(true));
+      protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
+        System.setProperty(INSIDE_REPL_PROPERTY, Boolean.toString(true));
         super.run(main, bootstrapAsync);
         Terminal terminal = getTerminal();
 
@@ -286,7 +289,7 @@ public final class Naftah {
             if (List.of("exit", "خروج").contains(line.trim())) break;
 
             var input =
-                getCharStream(false, shouldReshape() ? shape(line) : shapeOutsideQuotes(line));
+                getCharStream(false, line);
 
             var parser = NaftahCommand.prepareRun(input);
 
@@ -410,7 +413,10 @@ public final class Naftah {
 
       final Naftah main = new Naftah();
 
-      main.debug = matchedCommand.debug;
+      if (matchedCommand.debug) {
+        main.debug = true;
+        System.setProperty(DEBUG_PROPERTY, Boolean.toString(true));
+      }
 
       if (matchedCommand instanceof RunCommand) {
         main.isScriptFile = matchedCommand.script == null;
