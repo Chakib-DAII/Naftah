@@ -2,7 +2,6 @@ package org.daiitech.naftah.utils.arabic;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
-import com.ibm.icu.text.ArabicShapingException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -31,7 +30,7 @@ public class ArabicOutputTransformer extends OutputStream {
         String display = shape(raw);
 
         original.write(display.getBytes(StandardCharsets.UTF_8));
-      } catch (ArabicShapingException e) {
+      } catch (Exception e) {
         original.write(b, off, len); // fallback
       }
     } else original.write(b, off, len); // fallback

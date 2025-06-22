@@ -2,7 +2,6 @@ package org.daiitech.naftah.utils.arabic;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
-import com.ibm.icu.text.ArabicShapingException;
 import org.daiitech.naftah.utils.jline.BaseHighlighter;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
@@ -24,7 +23,7 @@ public class ArabicHighlighter extends BaseHighlighter {
       try {
         String reshaped = shape(buffer); // display only
         attributedString = merge(attributedString, new AttributedString(reshaped));
-      } catch (ArabicShapingException e) {
+      } catch (Exception e) {
         // do nothing
       }
     }

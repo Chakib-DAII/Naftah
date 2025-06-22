@@ -3,7 +3,6 @@ package org.daiitech.naftah.utils.jline;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
-import com.ibm.icu.text.ArabicShapingException;
 import java.util.ArrayList;
 import org.jline.reader.Candidate;
 import org.jline.reader.impl.completer.StringsCompleter;
@@ -22,7 +21,7 @@ public class ArabicStringsCompleter extends StringsCompleter {
       if (shouldReshape()) {
         try {
           display = shape(display);
-        } catch (ArabicShapingException e) {
+        } catch (Exception e) {
           // do nothing
         }
       }

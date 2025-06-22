@@ -61,7 +61,7 @@ public class SyntaxHighlighter extends BaseHighlighter {
           try {
             reshaped = shape(text);
             styles.add(new Pair<>(reshaped, style));
-          } catch (ArabicShapingException e) {
+          } catch (Exception e) {
             styles.add(new Pair<>(text, style));
           }
         } else styles.add(new Pair<>(text, style));
