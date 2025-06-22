@@ -59,7 +59,7 @@ public class DefaultContext {
                                       .orElse(null)));
 
   // CONTEXTS
-  private static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
+  protected static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
 
   public static DefaultContext registerContext() {
     return new DefaultContext();
@@ -95,7 +95,7 @@ public class DefaultContext {
 
   // CALL STACK
   // function - arguments - returned value
-  private static final Stack<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>> CALL_STACK =
+  protected static final Stack<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>> CALL_STACK =
       new Stack<>();
 
   public static void pushCall(DeclaredFunction function, Map<String, Object> arguments) {
@@ -113,23 +113,23 @@ public class DefaultContext {
   }
 
   // LOADED CLASSES
-  private static Map<String, ClassLoader> CLASS_NAMES;
-  private static Set<String> CLASS_QUALIFIERS;
-  private static Set<String> ARABIC_CLASS_QUALIFIERS;
+  protected static Map<String, ClassLoader> CLASS_NAMES;
+  protected static Set<String> CLASS_QUALIFIERS;
+  protected static Set<String> ARABIC_CLASS_QUALIFIERS;
   // qualifiedName -> CLass<?>
-  private static Map<String, Class<?>> CLASSES;
-  private static Map<String, Class<?>> ACCESSIBLE_CLASSES;
-  private static Map<String, Class<?>> INSTANTIABLE_CLASSES;
+  protected static Map<String, Class<?>> CLASSES;
+  protected static Map<String, Class<?>> ACCESSIBLE_CLASSES;
+  protected static Map<String, Class<?>> INSTANTIABLE_CLASSES;
   // qualifiedCall -> Method
-  private static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
-  private static Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
-  private static volatile boolean SHOULD_BOOT_STRAP;
-  private static volatile boolean FORCE_BOOT_STRAP;
-  private static volatile boolean ASYNC_BOOT_STRAP;
-  private static volatile boolean BOOT_STRAP_FAILED;
-  private static volatile boolean BOOT_STRAPPED;
+  protected static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
+  protected static Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
+  protected static volatile boolean SHOULD_BOOT_STRAP;
+  protected static volatile boolean FORCE_BOOT_STRAP;
+  protected static volatile boolean ASYNC_BOOT_STRAP;
+  protected static volatile boolean BOOT_STRAP_FAILED;
+  protected static volatile boolean BOOT_STRAPPED;
 
-  private static final Supplier<ClassScanningResult> LOADER_TASK =
+  protected static final Supplier<ClassScanningResult> LOADER_TASK =
       () -> {
         ExecutorService internalExecutor = Executors.newFixedThreadPool(2);
         ClassScanningResult result = new ClassScanningResult();
@@ -191,7 +191,7 @@ public class DefaultContext {
         }
       };
 
-  private static void setContextFromClassScanningResult(ClassScanningResult result) {
+  protected static void setContextFromClassScanningResult(ClassScanningResult result) {
     CLASS_NAMES = result.getClassNames();
     CLASS_QUALIFIERS = result.getClassQualifiers();
     ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
@@ -203,7 +203,7 @@ public class DefaultContext {
     BOOT_STRAPPED = true;
   }
 
-  private static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER =
+  protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER =
       (result, throwable) -> {
         if (Objects.nonNull(throwable)) {
           defaultBootstrap();
@@ -226,7 +226,7 @@ public class DefaultContext {
                     Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
   }
 
-  private static void callLoader(boolean async) {
+  protected static void callLoader(boolean async) {
     if (async) CompletableFuture.supplyAsync(LOADER_TASK).whenComplete(LOADER_CONSUMER);
     else {
       ClassScanningResult classScanningResult = null;
@@ -244,7 +244,7 @@ public class DefaultContext {
     }
   }
 
-  private static void serializeClassScanningResult(ClassScanningResult result) {
+  protected static void serializeClassScanningResult(ClassScanningResult result) {
     try {
       var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
       if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
@@ -254,7 +254,7 @@ public class DefaultContext {
     }
   }
 
-  private static void deserializeClassScanningResult() {
+  protected static void deserializeClassScanningResult() {
     try {
       var result = (ClassScanningResult) Base64SerializationUtils.deserialize(CACHE_PATH);
       setContextFromClassScanningResult(result);
@@ -296,7 +296,7 @@ public class DefaultContext {
     }
   }
 
-  private static Class<?> doGetJavaType(String qualifiedName) {
+  protected static Class<?> doGetJavaType(String qualifiedName) {
     if (INSTANTIABLE_CLASSES.containsKey(qualifiedName))
       return INSTANTIABLE_CLASSES.get(qualifiedName);
     if (ACCESSIBLE_CLASSES.containsKey(qualifiedName)) return ACCESSIBLE_CLASSES.get(qualifiedName);
@@ -319,26 +319,26 @@ public class DefaultContext {
   }
 
   // instance
-  private final DefaultContext parent;
-  private final int depth;
-  private String functionCallId; // current function in execution inside a context
-  private boolean parsingFunctionCallId; // parsing current function in execution
-  private boolean parsingAssignment; // parsing an assignment is in execution
-  private NaftahParseTreeProperty<Boolean> parseTreeExecution;
-  private final Map<String, DeclaredVariable> variables = new HashMap<>();
-  private Map<String, DeclaredParameter> parameters; // only use in function call context
-  private Map<String, Object> arguments; // only use in function call context
-  private final Map<String, DeclaredFunction> functions = new HashMap<>();
+  protected final DefaultContext parent;
+  protected final int depth;
+  protected String functionCallId; // current function in execution inside a context
+  protected boolean parsingFunctionCallId; // parsing current function in execution
+  protected boolean parsingAssignment; // parsing an assignment is in execution
+  protected NaftahParseTreeProperty<Boolean> parseTreeExecution;
+  protected final Map<String, DeclaredVariable> variables = new HashMap<>();
+  protected Map<String, DeclaredParameter> parameters; // only use in function call context
+  protected Map<String, Object> arguments; // only use in function call context
+  protected final Map<String, DeclaredFunction> functions = new HashMap<>();
 
-  private DefaultContext() {
+  protected DefaultContext() {
     this(null, null, null);
   }
 
-  private DefaultContext(Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
+  protected DefaultContext(Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
     this(null, parameters, arguments);
   }
 
-  private DefaultContext(
+  protected DefaultContext(
       DefaultContext parent,
       Map<String, DeclaredParameter> parameters,
       Map<String, Object> arguments) {
@@ -599,7 +599,7 @@ public class DefaultContext {
                         node, type, currentContext.parseTreeExecution));
   }
 
-  private boolean prepareParseTreeExecution() {
+  protected boolean prepareParseTreeExecution() {
     if (parseTreeExecution == null) {
       parseTreeExecution = new NaftahParseTreeProperty<>();
       return false;
