@@ -304,6 +304,7 @@ public final class Naftah {
             break;
           } catch (Throwable ignored) {
             // ignored
+            // TODO: improve logging (in arabic)
           } finally {
             // Save history explicitly (though it's usually done automatically)
             reader.getHistory().save();
