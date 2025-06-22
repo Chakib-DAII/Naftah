@@ -49,7 +49,7 @@ public final class NaftahSystem {
 
   public static int[] getTerminalWidthAndHeight() {
     try (Terminal terminal = getTerminal()) {
-      return new int[] {terminal.getHeight(), terminal.getHeight()};
+      return new int[] {terminal.getWidth(), terminal.getHeight()};
     } catch (Exception ignored) {
       return new int[] {80, 24}; // fallback width
     }
