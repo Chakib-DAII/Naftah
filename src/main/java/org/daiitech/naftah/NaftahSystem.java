@@ -1,7 +1,5 @@
 package org.daiitech.naftah;
 
-import static org.daiitech.naftah.Naftah.TERMINAL_HEIGHT_PROPERTY;
-import static org.daiitech.naftah.Naftah.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
 
 import java.io.IOException;
@@ -22,6 +20,8 @@ import org.jline.terminal.TerminalBuilder;
  * @author Chakib Daii
  */
 public final class NaftahSystem {
+  public static final String TERMINAL_WIDTH_PROPERTY = "naftah.terminal.width";
+  public static final String TERMINAL_HEIGHT_PROPERTY = "naftah.terminal.hight";
 
   private NaftahSystem() {}
 
