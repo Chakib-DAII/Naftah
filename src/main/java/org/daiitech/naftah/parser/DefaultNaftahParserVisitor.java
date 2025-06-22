@@ -229,6 +229,7 @@ public class DefaultNaftahParserVisitor
       // declared and update if possible
       currentContext.defineVariable(variableName, declaredVariable.a);
     } else {
+      // TODO: get varaible safely; if null define it as variable (to verify)
       declaredVariable = new Pair<>(currentContext.getVariable(variableName, false).b, false);
     }
     currentContext.markExecuted(ctx); // Mark as executed
