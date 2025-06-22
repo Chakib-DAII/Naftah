@@ -71,7 +71,6 @@ public final class NaftahSystem {
 
   public static void setupTerminalWidthAndHeight(Supplier<int[]> terminalWidthAndHeightSupplier) {
     int[] terminalWidthAndHeight = terminalWidthAndHeightSupplier.get();
-    System.out.println(Arrays.toString(terminalWidthAndHeight));
     System.setProperty(TERMINAL_WIDTH_PROPERTY, Integer.toString(terminalWidthAndHeight[0]));
     System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(terminalWidthAndHeight[1]));
   }
