@@ -68,7 +68,7 @@ public final class Naftah {
   private Naftah() {}
 
   public static void main(String[] args) {
-      processArgs(args);
+    processArgs(args);
   }
 
   private static void initLogger(boolean debug) {
@@ -288,8 +288,7 @@ public final class Naftah {
 
             if (List.of("exit", "خروج").contains(line.trim())) break;
 
-            var input =
-                getCharStream(false, line);
+            var input = getCharStream(false, line);
 
             var parser = NaftahCommand.prepareRun(input);
 
@@ -300,7 +299,8 @@ public final class Naftah {
             System.out.println();
           } catch (UserInterruptException | EndOfFileException e) {
             String closingMsg = "تم الخروج من التطبيق.";
-            System.out.println(fillRightWithSpaces(shouldReshape() ? shape(closingMsg) : closingMsg));
+            System.out.println(
+                fillRightWithSpaces(shouldReshape() ? shape(closingMsg) : closingMsg));
             break;
           } catch (Throwable ignored) {
             // ignored

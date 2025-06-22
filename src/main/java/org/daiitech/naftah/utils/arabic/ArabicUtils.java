@@ -1,5 +1,7 @@
 package org.daiitech.naftah.utils.arabic;
 
+import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
+
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
@@ -9,11 +11,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.daiitech.naftah.Naftah;
 import org.daiitech.naftah.utils.OS;
 import org.daiitech.naftah.utils.function.ThrowingFunction;
-
-import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 
 /**
  * @author Chakib Daii
@@ -56,7 +55,8 @@ public class ArabicUtils {
     return matcher;
   }
 
-  public static synchronized String applyFunction(String input, ThrowingFunction<String, String> function) {
+  public static synchronized String applyFunction(
+      String input, ThrowingFunction<String, String> function) {
     if (isMultiline(input)) {
       Matcher matcher = getTextMatcher(input).reset();
 

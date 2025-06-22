@@ -247,8 +247,7 @@ public class DefaultContext {
   private static void serializeClassScanningResult(ClassScanningResult result) {
     try {
       var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
-      if (Boolean.getBoolean(DEBUG_PROPERTY)
-              || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
+      if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
         System.out.println("تم حفظ البيانات في: " + path);
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -274,8 +273,7 @@ public class DefaultContext {
   }
 
   public static void bootstrap(boolean async) {
-    if (Boolean.getBoolean(DEBUG_PROPERTY)
-            || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
+    if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
       System.out.println("تحضير فئات مسار فئات جافا (Java classpath)...");
     SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
     ASYNC_BOOT_STRAP = async;

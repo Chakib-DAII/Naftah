@@ -5,12 +5,10 @@ import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintS
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.OS;
 import org.jline.terminal.Terminal;
@@ -60,12 +58,14 @@ public final class NaftahSystem {
     if (OS.isFamilyWindows()) {
       ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
       executor.scheduleAtFixedRate(
-              () -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
-              0, 500,
-              TimeUnit.MILLISECONDS);
+          () -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
+          0,
+          500,
+          TimeUnit.MILLISECONDS);
     } else {
-      terminal.handle(Terminal.Signal.WINCH,
-              signal -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)));
+      terminal.handle(
+          Terminal.Signal.WINCH,
+          signal -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)));
     }
   }
 

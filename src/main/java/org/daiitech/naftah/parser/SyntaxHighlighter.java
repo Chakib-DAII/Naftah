@@ -3,7 +3,6 @@ package org.daiitech.naftah.parser;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
-import com.ibm.icu.text.ArabicShapingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
