@@ -4,6 +4,7 @@ import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -258,7 +259,7 @@ public class NaftahParserHelper {
       // Search for path
       Path filePath = searchForNaftahScriptFile(script).toPath();
       //  Read file into a String
-      String content = Files.readString(filePath);
+      String content = Files.readString(filePath, StandardCharsets.UTF_8);
       charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(content));
     } else {
       charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(script));
