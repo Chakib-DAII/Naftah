@@ -6,6 +6,7 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollection
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
+import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
@@ -36,9 +37,8 @@ import picocli.CommandLine;
  */
 public final class Naftah {
 
-  public static final String JAVA_VERSION = "java.version";
-  public static final String JAVA_VM_VENDOR = "java.vm.vendor";
-  public static final String OS_NAME = "os.name";
+  public static final String JAVA_VERSION_PROPERTY = "java.version";
+  public static final String JAVA_VM_VENDOR_PROPERTY = "java.vm.vendor";
   public static final String SCAN_CLASSPATH_PROPERTY = "scanClassPath";
   public static final String FORCE_CLASSPATH_PROPERTY = "forceClassPathScan";
   public static final String INSIDE_SHELL_PROPERTY = "insideShell";
@@ -49,9 +49,7 @@ public final class Naftah {
   public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
 
   static {
-    int[] terminalWidthAndHeight = getTerminalWidthAndHeight();
-    System.setProperty(TERMINAL_WIDTH_PROPERTY, Integer.toString(terminalWidthAndHeight[0]));
-    System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(terminalWidthAndHeight[1]));
+    setupTerminalWidthAndHeight(NaftahSystem::getTerminalWidthAndHeight);
   }
 
   // arguments to the script
@@ -117,9 +115,9 @@ public final class Naftah {
                   """
             .formatted(
                 NaftahSystem.getVersion(),
-                System.getProperty(JAVA_VERSION),
-                System.getProperty(JAVA_VM_VENDOR),
-                System.getProperty(OS_NAME))
+                System.getProperty(JAVA_VERSION_PROPERTY),
+                System.getProperty(JAVA_VM_VENDOR_PROPERTY),
+                System.getProperty(OS_NAME_PROPERTY))
       };
     }
   }
@@ -271,6 +269,8 @@ public final class Naftah {
         super.run(main, bootstrapAsync);
         Terminal terminal = getTerminal();
 
+        setupRefreshTerminalWidthAndHeight(terminal);
+
         LineReader reader = getLineReader(terminal);
 
         setupHistoryConfig(reader);
@@ -292,10 +292,12 @@ public final class Naftah {
 
             var result = NaftahCommand.doRun(parser);
 
-            if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
+            if (isSimpleOrCollectionOrMapOfSimpleType(result))
+              System.out.println(fillRightWithSpaces(result.toString()));
             System.out.println();
           } catch (UserInterruptException | EndOfFileException e) {
-            System.out.println("\nتم الخروج من التطبيق.");
+            String closingMsg = "تم الخروج من التطبيق.";
+            System.out.println(fillRightWithSpaces(shouldReshape() ? shape(closingMsg) : closingMsg));
             break;
           } catch (Throwable ignored) {
             // ignored
