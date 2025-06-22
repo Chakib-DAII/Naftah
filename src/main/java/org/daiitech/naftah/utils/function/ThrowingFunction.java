@@ -1,4 +1,4 @@
-package org.daiitech.naftah.utils;
+package org.daiitech.naftah.utils.function;
 
 
 import java.util.function.BiFunction;
