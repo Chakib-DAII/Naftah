@@ -54,7 +54,8 @@ public final class StringInterpolator {
 
   public static synchronized String interpolate(
       String template, Function<String, Object> replacementFunction) {
-    template = POSSIBLE_SHAPING_FUNCTION.apply(template);
+    // TODO: this is not needed in windows after rechecking.
+//    template = POSSIBLE_SHAPING_FUNCTION.apply(template);
 
     Matcher matcher = getMatcher(template).reset();
     AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
