@@ -1,5 +1,6 @@
 package org.daiitech.naftah.parser;
 
+import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.*;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.*;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.*;
@@ -9,9 +10,14 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.*;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
@@ -25,6 +31,50 @@ public class DefaultNaftahParserVisitor
 
   private static final Logger LOGGER = Logger.getLogger("DefaultNaftahParserVisitor");
   public static final String FORMATTER = "index: %s, text: %s, payload: %s";
+
+  private static final Function<org.daiitech.naftah.parser.NaftahParser.ProgramContext, DefaultContext> ROOT_CONTEXT_SUPPLIER = (ctx) -> {
+    if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)){
+      return hasChildOrSubChildOfType(
+              ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+              ? REPLContext.registerContext(new HashMap<>(), new HashMap<>())
+              : REPLContext.registerContext();
+    }
+    else {
+      return hasChildOrSubChildOfType(
+              ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+              ? DefaultContext.registerContext(new HashMap<>(), new HashMap<>())
+              : DefaultContext.registerContext();
+    }
+  };
+  private static final BiFunction<org.daiitech.naftah.parser.NaftahParser.BlockContext, DefaultContext, DefaultContext> BLOCK_CONTEXT_SUPPLIER = (ctx, currentContext) -> {
+    if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)){
+      return hasChildOrSubChildOfType(
+              ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+              ? REPLContext.registerContext(new HashMap<>(), new HashMap<>())
+              : REPLContext.registerContext();
+    }
+    else {
+      return
+              hasChildOrSubChildOfType(
+                      ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
+                      || hasChildOrSubChildOfType(
+                      ctx,
+                      org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class)
+                      ? DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
+                      : DefaultContext.registerContext(currentContext);
+    }
+  };
+  private static final Function<Integer, DefaultContext> CONTEXT_BY_DEPTH_SUPPLIER = (depth) -> {
+    if (Boolean.getBoolean(INSIDE_REPL_PROPERTY))
+      return REPLContext.getContextByDepth(depth);
+    else return DefaultContext.getContextByDepth(depth);
+  };
+  private static final Function<Integer, DefaultContext> DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER = (depth) -> {
+    if (Boolean.getBoolean(INSIDE_REPL_PROPERTY))
+      return REPLContext.deregisterContext(depth);
+    else return DefaultContext.deregisterContext(depth);
+  };
+
   private int depth = 0;
 
   @Override
@@ -35,11 +85,7 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     // TODO: add the functions (processed from classpath and provider annotations)
-    var rootContext =
-        hasChildOrSubChildOfType(
-                ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-            ? DefaultContext.registerContext(new HashMap<>(), new HashMap<>())
-            : DefaultContext.registerContext();
+    var rootContext = ROOT_CONTEXT_SUPPLIER.apply(ctx);
     depth = rootContext.getDepth();
     Object result = null;
     for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : ctx.statement()) {
@@ -49,6 +95,7 @@ public class DefaultNaftahParserVisitor
           statement, org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class))
         break;
     }
+    DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     rootContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -61,7 +108,7 @@ public class DefaultNaftahParserVisitor
           "visitDeclarationStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.declaration());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -75,7 +122,7 @@ public class DefaultNaftahParserVisitor
           "visitAssignmentStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.assignment());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -89,7 +136,7 @@ public class DefaultNaftahParserVisitor
           "visitFunctionDeclarationStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.functionDeclaration());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -103,7 +150,7 @@ public class DefaultNaftahParserVisitor
           "visitFunctionCallStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.functionCall());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -117,7 +164,7 @@ public class DefaultNaftahParserVisitor
           "visitIfStatementStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.ifStatement());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -131,7 +178,7 @@ public class DefaultNaftahParserVisitor
           "visitReturnStatementStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.returnStatement());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -145,7 +192,7 @@ public class DefaultNaftahParserVisitor
           "visitBlockStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.block());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -158,7 +205,7 @@ public class DefaultNaftahParserVisitor
           "visitDeclaration(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     String variableName = ctx.ID().getText();
     // variable -> new : flags if this is a new variable or not
     Pair<DeclaredVariable, Boolean> declaredVariable;
@@ -189,7 +236,7 @@ public class DefaultNaftahParserVisitor
           "visitAssignment(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     currentContext.setParsingAssignment(true);
     Pair<DeclaredVariable, Boolean> declaredVariable =
         (Pair<DeclaredVariable, Boolean>) visit(ctx.declaration());
@@ -223,7 +270,7 @@ public class DefaultNaftahParserVisitor
           "visitFunctionDeclaration(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     String functionName = ctx.ID().getText();
     DeclaredFunction declaredFunction = DeclaredFunction.of(ctx);
     currentContext.defineFunction(functionName, declaredFunction);
@@ -239,7 +286,7 @@ public class DefaultNaftahParserVisitor
           "visitArgumentDeclarationList(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     List<DeclaredParameter> args = new ArrayList<>();
     for (org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext argumentDeclaration :
         ctx.parameterDeclaration()) {
@@ -257,7 +304,7 @@ public class DefaultNaftahParserVisitor
           "visitArgumentDeclaration(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     String argumentName = ctx.ID().getText();
     var result =
         DeclaredParameter.of(
@@ -277,7 +324,7 @@ public class DefaultNaftahParserVisitor
           "visitFunctionCall(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object result = null;
     // TODO: add extra vars to context to get the function called and so on, it can be a free map
     // TODO:  and using an Enum as key of predefined ids to get values
@@ -344,7 +391,7 @@ public class DefaultNaftahParserVisitor
           "visitQualifiedCall(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result =
         visit(ctx.qualifiedName()) + ctx.COLON(0).getText() + ctx.COLON(1).getText() + ctx.ID();
     currentContext.markExecuted(ctx); // Mark as executed
@@ -358,7 +405,7 @@ public class DefaultNaftahParserVisitor
           "visitArgumentList(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     List<Pair<String, Object>> args = new ArrayList<>();
     for (int i = 0; i < ctx.expression().size(); i++) {
       String name = hasChild(ctx.ID(i)) ? ctx.ID(i).getText() : null;
@@ -376,7 +423,7 @@ public class DefaultNaftahParserVisitor
           "visitIfStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object result = null;
     Object condition = visit(ctx.expression(0)); // Evaluate the condition expression
     if (isTruthy(condition)) {
@@ -410,7 +457,7 @@ public class DefaultNaftahParserVisitor
           "visitExpressionStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object result = visit(ctx.expression()); // Evaluate and return the result
     currentContext.markExecuted(ctx); // Mark as executed
     return result; // No expression after 'return' means returning null
@@ -424,7 +471,7 @@ public class DefaultNaftahParserVisitor
           "visitReturnStatement(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object result = null;
     if (hasChild(ctx.expression())) {
       result = visit(ctx.expression()); // Evaluate and return the result
@@ -440,15 +487,8 @@ public class DefaultNaftahParserVisitor
           "visitBlock(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
-    var nextContext =
-        hasChildOrSubChildOfType(
-                    ctx, org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-                || hasChildOrSubChildOfType(
-                    ctx,
-                    org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class)
-            ? DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
-            : DefaultContext.registerContext(currentContext);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var nextContext = BLOCK_CONTEXT_SUPPLIER.apply(ctx, currentContext);
     depth = nextContext.getDepth();
     Object result = null;
     for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : ctx.statement()) {
@@ -458,7 +498,7 @@ public class DefaultNaftahParserVisitor
           statement, org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class))
         break;
     }
-    DefaultContext.deregisterContext(depth);
+    DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     depth--;
     nextContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -472,7 +512,7 @@ public class DefaultNaftahParserVisitor
           "visitValueExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.value());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -486,7 +526,7 @@ public class DefaultNaftahParserVisitor
           "visitMinusExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -510,7 +550,7 @@ public class DefaultNaftahParserVisitor
           "visitParenthesisExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.expression());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -524,7 +564,7 @@ public class DefaultNaftahParserVisitor
           "visitModExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -548,7 +588,7 @@ public class DefaultNaftahParserVisitor
           "visitDivExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -572,7 +612,7 @@ public class DefaultNaftahParserVisitor
           "visitGreaterThanExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -593,7 +633,7 @@ public class DefaultNaftahParserVisitor
           "visitLessThanEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -614,7 +654,7 @@ public class DefaultNaftahParserVisitor
           "visitGreaterThanEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -635,7 +675,7 @@ public class DefaultNaftahParserVisitor
           "visitNotEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -656,7 +696,7 @@ public class DefaultNaftahParserVisitor
           "visitEqualsExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -677,7 +717,7 @@ public class DefaultNaftahParserVisitor
           "visitLessThanExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -698,7 +738,7 @@ public class DefaultNaftahParserVisitor
           "visitFunctionCallExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.functionCall());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -712,7 +752,7 @@ public class DefaultNaftahParserVisitor
           "visitPlusExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -736,7 +776,7 @@ public class DefaultNaftahParserVisitor
           "visitMulExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -759,7 +799,7 @@ public class DefaultNaftahParserVisitor
           "visitNumberValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object value = ctx.NUMBER().getText();
     var result = NumberUtils.parseDynamicNumber(value);
     currentContext.markExecuted(ctx); // Mark as executed
@@ -774,7 +814,7 @@ public class DefaultNaftahParserVisitor
           "visitStringValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Character result = ctx.CHARACTER().getText().charAt(1);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -787,7 +827,7 @@ public class DefaultNaftahParserVisitor
           "visitStringValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     String value = ctx.STRING().getText();
     var result = StringInterpolator.process(value, currentContext);
     currentContext.markExecuted(ctx); // Mark as executed
@@ -801,7 +841,7 @@ public class DefaultNaftahParserVisitor
           "visitTrueValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     currentContext.markExecuted(ctx); // Mark as executed
     return Boolean.TRUE;
   }
@@ -813,7 +853,7 @@ public class DefaultNaftahParserVisitor
           "visitFalseValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     currentContext.markExecuted(ctx); // Mark as executed
     return Boolean.FALSE;
   }
@@ -825,7 +865,7 @@ public class DefaultNaftahParserVisitor
           "visitNullValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     currentContext.markExecuted(ctx); // Mark as executed
     return null;
   }
@@ -837,7 +877,7 @@ public class DefaultNaftahParserVisitor
           "visitIdValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     String id = ctx.ID().getText();
     var result = VARIABLE_GETTER.apply(id, currentContext);
     currentContext.markExecuted(ctx); // Mark as executed
@@ -852,7 +892,7 @@ public class DefaultNaftahParserVisitor
           "visitVoidReturnType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -866,7 +906,7 @@ public class DefaultNaftahParserVisitor
           "visitTypeReturnType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.type());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -879,7 +919,7 @@ public class DefaultNaftahParserVisitor
           "visitVarType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -892,7 +932,7 @@ public class DefaultNaftahParserVisitor
           "visitBuiltInType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -905,7 +945,7 @@ public class DefaultNaftahParserVisitor
           "visitBuiltIn(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -919,7 +959,7 @@ public class DefaultNaftahParserVisitor
           "visitQualifiedNameType(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     // TODO: think about using id to variable or necessary other elements
     var result = visit(ctx.qualifiedName());
     currentContext.markExecuted(ctx); // Mark as executed
@@ -934,7 +974,7 @@ public class DefaultNaftahParserVisitor
           "visitQualifiedName(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object result;
     if (currentContext.isParsingFunctionCallId()) {
       result = getQualifiedName(ctx);
@@ -952,7 +992,7 @@ public class DefaultNaftahParserVisitor
           "visitBitwiseXorExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -973,7 +1013,7 @@ public class DefaultNaftahParserVisitor
           "visitNotExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = not(visit(ctx.expression()));
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -987,7 +1027,7 @@ public class DefaultNaftahParserVisitor
           "visitPreDecrementExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object value = visit(ctx.expression());
     Object result;
     if (value == null) {
@@ -1007,7 +1047,7 @@ public class DefaultNaftahParserVisitor
           "visitPostDecrementExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object value = visit(ctx.expression());
     Object result;
     if (value == null) {
@@ -1027,7 +1067,7 @@ public class DefaultNaftahParserVisitor
           "visitBitwiseOrExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -1048,7 +1088,7 @@ public class DefaultNaftahParserVisitor
           "visitBitwiseNotExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object value = visit(ctx.expression());
     Object result;
     if (value == null) {
@@ -1068,7 +1108,7 @@ public class DefaultNaftahParserVisitor
           "visitBitwiseAndExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
     Object right = visit(ctx.expression(1)); // Right operand
     Object result;
@@ -1089,7 +1129,7 @@ public class DefaultNaftahParserVisitor
           "visitPreIncrementExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object value = visit(ctx.expression());
     Object result;
     if (value == null) {
@@ -1109,7 +1149,7 @@ public class DefaultNaftahParserVisitor
           "visitPostIncrementExpression(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
-    var currentContext = DefaultContext.getContextByDepth(depth);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object value = visit(ctx.expression());
     Object result;
     if (value == null) {
