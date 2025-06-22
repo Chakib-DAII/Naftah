@@ -11,7 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.daiitech.naftah.Naftah;
 import org.daiitech.naftah.utils.OS;
-import org.daiitech.naftah.utils.ThrowingFunction;
+import org.daiitech.naftah.utils.function.ThrowingFunction;
+
+import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 
 /**
  * @author Chakib Daii
@@ -92,7 +94,7 @@ public class ArabicUtils {
   }
 
   public static synchronized String doFillRightWithSpaces(String input) {
-    int padding = Integer.getInteger(Naftah.TERMINAL_WIDTH_PROPERTY) - input.length();
+    int padding = Integer.getInteger(TERMINAL_WIDTH_PROPERTY) - input.length();
     if (padding < 0) padding = 0;
 
     return " ".repeat(padding) + input;
