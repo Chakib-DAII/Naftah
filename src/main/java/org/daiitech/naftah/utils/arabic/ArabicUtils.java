@@ -1,7 +1,5 @@
 package org.daiitech.naftah.utils.arabic;
 
-import static org.daiitech.naftah.Naftah.OS_NAME;
-
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
@@ -12,6 +10,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.daiitech.naftah.Naftah;
+import org.daiitech.naftah.utils.OS;
+import org.daiitech.naftah.utils.ThrowingFunction;
 
 /**
  * @author Chakib Daii
@@ -39,40 +39,44 @@ public class ArabicUtils {
             t > ت;
             ii > عي;""";
 
-  public static final Pattern SHAPE_MULTILINE_PATTERN = Pattern.compile("(.+?)(\\r\\n|\\n|\\r|$)");
-  private static final Map<String, Matcher> SHAPE_MATCHER_CACHE = new HashMap<>();
+  public static final Pattern TEXT_MULTILINE_PATTERN = Pattern.compile("(.+?)(\\r\\n|\\n|\\r|$)");
+  private static final Map<String, Matcher> TEXT_MATCHER_CACHE = new HashMap<>();
 
   public static boolean isMultiline(String input) {
-    return getShapeMatcher(input).find();
+    return getTextMatcher(input).find();
   }
 
-  private static Matcher getShapeMatcher(String input) {
-    if (SHAPE_MATCHER_CACHE.containsKey(input)) return SHAPE_MATCHER_CACHE.get(input);
+  private static Matcher getTextMatcher(String input) {
+    if (TEXT_MATCHER_CACHE.containsKey(input)) return TEXT_MATCHER_CACHE.get(input);
 
-    Matcher matcher = SHAPE_MULTILINE_PATTERN.matcher(input);
-    SHAPE_MATCHER_CACHE.put(input, matcher);
+    Matcher matcher = TEXT_MULTILINE_PATTERN.matcher(input);
+    TEXT_MATCHER_CACHE.put(input, matcher);
     return matcher;
   }
 
-  public static synchronized String shape(String input) throws ArabicShapingException {
+  public static synchronized String applyFunction(String input, ThrowingFunction<String, String> function) {
     if (isMultiline(input)) {
-      Matcher matcher = getShapeMatcher(input).reset();
+      Matcher matcher = getTextMatcher(input).reset();
 
-      StringBuilder shapedOutput = new StringBuilder();
+      StringBuilder output = new StringBuilder();
 
       while (matcher.find()) {
         String line = matcher.group(1);
         String newline = matcher.group(2); // might be "" on last line
 
         if (!line.trim().isEmpty()) {
-          shapedOutput.append(doShape(line));
+          output.append(function.apply(line));
         }
 
-        shapedOutput.append(newline); // keep original newlines
+        output.append(newline); // keep original newlines
       }
 
-      return shapedOutput.toString();
-    } else return doShape(input);
+      return output.toString();
+    } else return function.apply(input);
+  }
+
+  public static synchronized String shape(String input) {
+    return applyFunction(input, ArabicUtils::doShape);
   }
 
   public static synchronized String doShape(String input) throws ArabicShapingException {
@@ -80,13 +84,15 @@ public class ArabicUtils {
         new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.TEXT_DIRECTION_VISUAL_RTL);
     String shaped = shaper.shape(input);
     Bidi bidi = new Bidi(shaped, Bidi.DIRECTION_RIGHT_TO_LEFT);
-    String reordered = bidi.writeReordered(Bidi.DO_MIRRORING);
-    //    return fillRightWithSpaces(reordered);
-    return reordered;
+    return bidi.writeReordered(Bidi.DO_MIRRORING);
   }
 
   public static synchronized String fillRightWithSpaces(String input) {
-    int padding = Integer.getInteger(Naftah.TERMINAL_WIDTH_PROPERTY) * 3 - input.length() - 10;
+    return applyFunction(input, ArabicUtils::doFillRightWithSpaces);
+  }
+
+  public static synchronized String doFillRightWithSpaces(String input) {
+    int padding = Integer.getInteger(Naftah.TERMINAL_WIDTH_PROPERTY) - input.length();
     if (padding < 0) padding = 0;
 
     return " ".repeat(padding) + input;
@@ -192,8 +198,7 @@ public class ArabicUtils {
   }
 
   public static boolean shouldReshape() {
-    String os = System.getProperty(OS_NAME).toLowerCase();
-    return (os.contains("win"));
+    return OS.isFamilyWindows();
   }
 
   public static boolean containsArabic(String text) {
