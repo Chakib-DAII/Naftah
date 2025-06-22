@@ -1,12 +1,17 @@
 package org.daiitech.naftah.parser;
 
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.antlr.v4.runtime.ANTLRErrorListener;
@@ -20,11 +25,15 @@ import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.utils.function.ThrowingFunction;
 
 /**
  * @author Chakib Daii
  */
 public class NaftahParserHelper {
+  public static final ThrowingFunction<String, String> POSSIBLE_SHAPING_FUNCTION =
+          (script) -> shouldReshape() ? shape(script) : shapeOutsideQuotes(script);
+
   public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
 
   // Cache to store computed subtrees per node
@@ -247,13 +256,17 @@ public class NaftahParserHelper {
     return new CommonTokenStream(lexer);
   }
 
-  public static CharStream getCharStream(boolean isScriptFile, String script) throws IOException {
+  public static CharStream getCharStream(boolean isScriptFile, String script) throws Exception {
     CharStream charStream;
     if (isScriptFile) {
+      // Search for path
+      Path filePath = searchForNaftahScriptFile(script).toPath();
+      //  Read file into a String
+      String content = Files.readString(filePath);
       charStream =
-          CharStreams.fromPath(searchForNaftahScriptFile(script).toPath(), StandardCharsets.UTF_8);
+              CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(content));
     } else {
-      charStream = CharStreams.fromString(script);
+      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(script));
     }
     return charStream;
   }
