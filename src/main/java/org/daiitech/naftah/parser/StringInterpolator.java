@@ -1,6 +1,7 @@
 package org.daiitech.naftah.parser;
 
 import static org.daiitech.naftah.parser.DefaultContext.VARIABLE_GETTER;
+import static org.daiitech.naftah.parser.NaftahParserHelper.POSSIBLE_SHAPING_FUNCTION;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +54,8 @@ public final class StringInterpolator {
 
   public static synchronized String interpolate(
       String template, Function<String, Object> replacementFunction) {
+    template = POSSIBLE_SHAPING_FUNCTION.apply(template);
+
     Matcher matcher = getMatcher(template).reset();
     AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
