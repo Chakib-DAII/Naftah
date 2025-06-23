@@ -346,9 +346,10 @@ public class ArabicUtils {
   public static String shapeArabicOutsideQuotedArgs(String input) throws Exception {
     if (!containsAnyArgument(input))
       return input;
-    ArabicShapingParser parser = new ArabicShapingParser(input);
-    ArabicShapingParser.Node root = parser.parse();
-    return root.build();
+//    ArabicShapingParser parser = new ArabicShapingParser(input);
+//    ArabicShapingParser.Node root = parser.parse();
+//    return root.build();
+    return reshapeFunctions(input);
   }
 
   private static String flushAndShape(StringBuilder buffer) throws Exception {
@@ -356,5 +357,57 @@ public class ArabicUtils {
     String shaped = doShape(buffer.toString());
     buffer.setLength(0);
     return shaped;
+  }
+
+  // Support any Unicode letter plus digits/underscore/hyphen, optionally separated from '(' by whitespace
+  private static final Pattern FUNC_PATTERN = Pattern.compile("([\\p{L}_][\\p{L}\\p{N}_-]*)\\s*\\(");
+
+  public static String reshapeFunctions(String input) throws Exception {
+    StringBuilder output = new StringBuilder();
+    int pos = 0;
+    Matcher matcher = FUNC_PATTERN.matcher(input);
+
+    while (pos < input.length()) {
+      if (matcher.find(pos)) {
+        int start = matcher.start(1);      // func name start
+        int nameEnd = matcher.end(1);     // end of function name
+        int parenPos = matcher.end() - 1; // position of '('
+
+        // Append text before function name
+        output.append(input, pos, start);
+
+        // Shape the function name + '(' together
+        String func = input.substring(start, parenPos + 1);
+        output.append(shape(func));
+
+        // Find the matching closing ')'
+        int closePos = findMatchingParen(input, parenPos);
+        if (closePos == -1) {
+          throw new Exception("Unmatched '(' at pos " + parenPos);
+        }
+
+        // Append inner content + the ')'
+        output.append(input, parenPos + 1, closePos + 1);
+
+        pos = closePos + 1;
+      } else {
+        output.append(input.substring(pos));
+        break;
+      }
+    }
+
+    return output.toString();
+  }
+
+  private static int findMatchingParen(String input, int openPos) {
+    int depth = 0;
+    for (int i = openPos; i < input.length(); i++) {
+      char c = input.charAt(i);
+      if (c == '(') depth++;
+      else if (c == ')') {
+        if (--depth == 0) return i;
+      }
+    }
+    return -1;
   }
 }
