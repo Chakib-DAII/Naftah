@@ -69,6 +69,11 @@ public class JvmFunction implements Serializable {
     }
   }
 
+  @Override
+  public String toString() {
+    return "<%s %s>".formatted("دالة", this.qualifiedCall);
+  }
+
   public static JvmFunction of(String qualifiedCall, Class<?> clazz, Method method) {
     return new JvmFunction(
         qualifiedCall, clazz, method, ClassUtils.isStatic(method), ClassUtils.isInvocable(method));
