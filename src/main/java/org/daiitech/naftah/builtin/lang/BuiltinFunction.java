@@ -54,6 +54,10 @@ public class BuiltinFunction implements Serializable {
       e.printStackTrace();
     }
   }
+  @Override
+  public String toString() {
+    return "<%s %s>".formatted("دالة", this.getFunctionInfo().name());
+  }
 
   public static BuiltinFunction of(
       Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
