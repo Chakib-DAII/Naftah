@@ -2,7 +2,7 @@ package org.daiitech.naftah;
 
 import static java.util.logging.Logger.*;
 import static org.daiitech.naftah.NaftahSystem.*;
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrCollectionOrMapOfSimpleType;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrBuiltinOrCollectionOrMapOfSimpleType;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
@@ -27,8 +27,11 @@ import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.daiitech.naftah.utils.JulLoggerConfig;
 import org.daiitech.naftah.utils.jline.ArabicStringsCompleter;
+import org.daiitech.naftah.utils.jline.CompositeHighlighter;
 import org.jline.reader.*;
+import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
+import org.jline.widget.AutopairWidgets;
 import picocli.CommandLine;
 
 /**
@@ -189,7 +192,7 @@ public final class Naftah {
         var parser = NaftahCommand.prepareRun(input);
         var result = NaftahCommand.doRun(parser);
 
-        if (isSimpleOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
+        if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
 
         System.out.println();
       }
@@ -226,7 +229,14 @@ public final class Naftah {
       private static final String NAME = "shell";
 
       private static LineReader getLineReader(Terminal terminal) {
-        LineReader baseReader = LineReaderBuilder.builder().terminal(terminal).build();
+        DefaultParser parser = new DefaultParser()
+                .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
+                .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*");
+
+        LineReader baseReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .parser(parser)
+                .build();
 
         Highlighter originalHighlighter = baseReader.getHighlighter();
 
@@ -281,6 +291,7 @@ public final class Naftah {
           try {
             String rtlPrompt =
                 shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
+//            String line = reader.readLine(null, rtlPrompt, (MaskingCallback)null, null);
             String line = reader.readLine(rtlPrompt);
 
             if (line.isBlank()) continue;
@@ -294,13 +305,14 @@ public final class Naftah {
 
             var result = NaftahCommand.doRun(parser);
 
-            if (isSimpleOrCollectionOrMapOfSimpleType(result))
+            if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
               System.out.println(fillRightWithSpaces(result.toString()));
             System.out.println();
           } catch (UserInterruptException | EndOfFileException e) {
             String closingMsg = "تم الخروج من التطبيق.";
             System.out.println(
-                fillRightWithSpaces(shouldReshape() ? shape(closingMsg) : closingMsg));
+//                fillRightWithSpaces(shouldReshape() ? shape(closingMsg) : closingMsg));
+                fillRightWithSpaces(closingMsg));
             break;
           } catch (Throwable ignored) {
             // ignored

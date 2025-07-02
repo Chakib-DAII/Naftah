@@ -10,6 +10,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import com.ibm.icu.text.Normalizer;
+import com.ibm.icu.text.Normalizer2;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -27,10 +30,13 @@ import org.daiitech.naftah.utils.function.ThrowingFunction;
  * @author Chakib Daii
  */
 public class NaftahParserHelper {
+  public static final String NULL = "<فارغ>";
   public static final ThrowingFunction<String, String> POSSIBLE_SHAPING_FUNCTION =
-      (script) -> shouldReshape() ? shape(script) : shapeOutsideQuotes(script);
+      (script) -> shouldReshape() ? shape(script) : shapeArabicOutsideQuotedArgs(script);
 
   public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
+  public static final
+  Normalizer2 NORMALIZER = Normalizer2.getNFKCInstance();
 
   // Cache to store computed subtrees per node
   private static final Map<ParseTree, List<ParseTree>> SUB_TREE_CACHE = new IdentityHashMap<>();
@@ -269,6 +275,8 @@ public class NaftahParserHelper {
       //      charStream = CharStreams.fromString(POSSIBLE_SHAPING_FUNCTION.apply(script));
       // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like
       // above)
+      script = NORMALIZER.normalize(script);
+      script = shapeArabicOutsideQuotedArgs(script);
       charStream = CharStreams.fromString(script);
     }
     return charStream;

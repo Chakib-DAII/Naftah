@@ -96,8 +96,11 @@ public class ArabicUtils {
   public static synchronized String doFillRightWithSpaces(String input) {
     int padding = Integer.getInteger(TERMINAL_WIDTH_PROPERTY) - input.length();
     if (padding < 0) padding = 0;
-
-    return " ".repeat(padding) + input;
+    // TODO: this is not needed in windows after rechecking.
+    // return " ".repeat(padding) + input;
+    // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like
+    // above)
+    return containsArabic(input) ? input + " ".repeat(padding) : " ".repeat(padding) + input;
   }
 
   /**
@@ -213,28 +216,86 @@ public class ArabicUtils {
         || (cp >= 0x08A0 && cp <= 0x08FF); // Arabic Extended
   }
 
-  public static String shapeOutsideQuotes(String input) throws Exception {
-    StringBuilder output = new StringBuilder();
+  private static boolean isQuotedStringAnArgument(String input, int quoteStart) {
+    // Look backwards from the quote to see if we’re inside a function/declaration context
+    for (int i = quoteStart - 1; i >= 0; i--) {
+      char c = input.charAt(i);
+      if (Character.isWhitespace(c)) continue;
+
+      if (c == ',' || c == '(' || c == '=' || c == ':') {
+        return true;
+      } else {
+        break;
+      }
+    }
+    return false;
+  }
+
+  private static boolean containsQuotedArgument(String input) {
     boolean inQuote = false;
     char quoteChar = '\0';
-    StringBuilder buffer = new StringBuilder();
+    char expectedClose = '\0';
+    int parenDepth = 0;
 
     for (int i = 0; i < input.length(); i++) {
       char c = input.charAt(i);
 
-      // Toggle quote block
-      if ((c == '"' || c == '\'') && (i == 0 || input.charAt(i - 1) != '\\')) {
-        // Flush and shape any Arabic text before the quote
+      if (!inQuote && (c == '"' || c == '\'' || c == '«')) {
+        if (parenDepth > 0) {
+          return true; // Quote found inside (...): it's an argument
+        }
+        inQuote = true;
+        quoteChar = c;
+        expectedClose = (c == '«') ? '»' : c;
+      } else if (inQuote && c == expectedClose) {
+        inQuote = false;
+      } else if (!inQuote) {
+        if (c == '(') {
+          parenDepth++;
+        } else if (c == ')') {
+          if (parenDepth > 0) parenDepth--;
+        }
+      }
+    }
+
+    return false;
+  }
+
+
+  public static String shapeArabicOutsideQuotedArgsOld(String input) throws Exception {
+    if (!containsQuotedArgument(input)) {
+      return input; // No quoted param/arg: shape all
+    }
+
+    StringBuilder output = new StringBuilder();
+    StringBuilder buffer = new StringBuilder();
+
+    boolean inQuote = false;
+    char quoteChar = '\0';
+    char expectedClose = '\0';
+    boolean skipShaping = false;
+
+    for (int i = 0; i < input.length(); i++) {
+      char c = input.charAt(i);
+
+      // Start of quote
+      if (!inQuote && (c == '"' || c == '\'' || c == '«')) {
+        inQuote = true;
+        quoteChar = c;
+        expectedClose = (c == '«') ? '»' : c;
+        skipShaping = isQuotedStringAnArgument(input, i); // Key logic
         output.append(flushAndShape(buffer));
         output.append(c);
-        inQuote = !inQuote;
-        quoteChar = inQuote ? c : '\0';
-        continue;
       }
-
-      if (inQuote) {
+      else if (inQuote) {
         output.append(c);
-      } else {
+        if (c == expectedClose) {
+          inQuote = false;
+          skipShaping = false;
+        }
+      }
+      else {
+        // Normal character outside quote
         if (isArabicChar(c)) {
           buffer.append(c);
         } else {
@@ -244,9 +305,51 @@ public class ArabicUtils {
       }
     }
 
-    // Final flush
     output.append(flushAndShape(buffer));
     return output.toString();
+  }
+  private static boolean containsAnyArgument(String input) {
+    boolean inQuote = false;
+    char quoteChar = '\0';
+    char expectedClose = '\0';
+    int parenDepth = 0;
+    boolean argumentStarted = false;
+
+    for (int i = 0; i < input.length(); i++) {
+      char c = input.charAt(i);
+
+      // Handle quotes
+      if (!inQuote && (c == '"' || c == '\'' || c == '«')) {
+        inQuote = true;
+        quoteChar = c;
+        expectedClose = (c == '«') ? '»' : c;
+        if (parenDepth > 0) argumentStarted = true;
+      } else if (inQuote && c == expectedClose) {
+        inQuote = false;
+      } else if (!inQuote) {
+        if (c == '(' || c == '{' || c == '[') {
+          parenDepth++;
+        } else if (c == ')' || c == '}' || c == ']') {
+          if (parenDepth > 0) parenDepth--;
+        } else if (parenDepth > 0) {
+          // We're inside a function call
+          if (!Character.isWhitespace(c)) {
+            argumentStarted = true;
+          }
+        }
+      }
+    }
+
+    return argumentStarted;
+  }
+
+  public static String shapeArabicOutsideQuotedArgs(String input) throws Exception {
+    if (!containsAnyArgument(input))
+      return input;
+//    ArabicShapingParser parser = new ArabicShapingParser(input);
+//    ArabicShapingParser.Node root = parser.parse();
+//    return root.build();
+    return reshapeFunctions(input);
   }
 
   private static String flushAndShape(StringBuilder buffer) throws Exception {
@@ -254,5 +357,57 @@ public class ArabicUtils {
     String shaped = doShape(buffer.toString());
     buffer.setLength(0);
     return shaped;
+  }
+
+  // Support any Unicode letter plus digits/underscore/hyphen, optionally separated from '(' by whitespace
+  private static final Pattern FUNC_PATTERN = Pattern.compile("([\\p{L}_][\\p{L}\\p{N}_-]*)\\s*\\(");
+
+  public static String reshapeFunctions(String input) throws Exception {
+    StringBuilder output = new StringBuilder();
+    int pos = 0;
+    Matcher matcher = FUNC_PATTERN.matcher(input);
+
+    while (pos < input.length()) {
+      if (matcher.find(pos)) {
+        int start = matcher.start(1);      // func name start
+        int nameEnd = matcher.end(1);     // end of function name
+        int parenPos = matcher.end() - 1; // position of '('
+
+        // Append text before function name
+        output.append(input, pos, start);
+
+        // Shape the function name + '(' together
+        String func = input.substring(start, parenPos + 1);
+        output.append(shape(func));
+
+        // Find the matching closing ')'
+        int closePos = findMatchingParen(input, parenPos);
+        if (closePos == -1) {
+          throw new Exception("Unmatched '(' at pos " + parenPos);
+        }
+
+        // Append inner content + the ')'
+        output.append(input, parenPos + 1, closePos + 1);
+
+        pos = closePos + 1;
+      } else {
+        output.append(input.substring(pos));
+        break;
+      }
+    }
+
+    return output.toString();
+  }
+
+  private static int findMatchingParen(String input, int openPos) {
+    int depth = 0;
+    for (int i = openPos; i < input.length(); i++) {
+      char c = input.charAt(i);
+      if (c == '(') depth++;
+      else if (c == ')') {
+        if (--depth == 0) return i;
+      }
+    }
+    return -1;
   }
 }

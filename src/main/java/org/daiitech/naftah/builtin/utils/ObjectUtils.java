@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.daiitech.naftah.builtin.lang.*;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.parser.DefaultContext;
@@ -156,6 +157,17 @@ public final class ObjectUtils {
     return Object.class;
   }
 
+  public static boolean isBuiltinType(Object obj) {
+    if (obj == null) return false;
+    Class<?> cls = obj.getClass();
+    return cls == BuiltinFunction.class
+    || cls == JvmFunction.class
+    || cls == DeclaredFunction.class
+    || cls == DeclaredParameter.class
+    || cls == DeclaredVariable.class
+    || cls == DynamicNumber.class;
+  }
+
   public static boolean isSimpleType(Object obj) {
     if (obj == null) return false;
     Class<?> cls = obj.getClass();
@@ -174,18 +186,21 @@ public final class ObjectUtils {
         || cls == Character.class;
   }
 
-  public static boolean isSimpleOrCollectionOrMapOfSimpleType(Object obj) {
+  public static boolean isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(Object obj) {
     if (obj == null) return false;
 
     // Simple value
     if (isSimpleType(obj)) return true;
+
+    // Builtin value
+    if (isBuiltinType(obj)) return true;
 
     // Array of simple or recursive types
     if (obj.getClass().isArray()) {
       int len = Array.getLength(obj);
       for (int i = 0; i < len; i++) {
         Object element = Array.get(obj, i);
-        if (!isSimpleOrCollectionOrMapOfSimpleType(element)) return false;
+        if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(element)) return false;
       }
       return true;
     }
@@ -193,7 +208,7 @@ public final class ObjectUtils {
     // Collection of simple or recursive types
     if (obj instanceof Collection<?>) {
       for (Object item : (Collection<?>) obj) {
-        if (!isSimpleOrCollectionOrMapOfSimpleType(item)) return false;
+        if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(item)) return false;
       }
       return true;
     }
@@ -201,8 +216,8 @@ public final class ObjectUtils {
     // Map with simple keys and values
     if (obj instanceof Map<?, ?> map) {
       for (Map.Entry<?, ?> entry : map.entrySet()) {
-        if (!isSimpleOrCollectionOrMapOfSimpleType(entry.getKey())) return false;
-        if (!isSimpleOrCollectionOrMapOfSimpleType(entry.getValue())) return false;
+        if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(entry.getKey())) return false;
+        if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(entry.getValue())) return false;
       }
       return true;
     }
