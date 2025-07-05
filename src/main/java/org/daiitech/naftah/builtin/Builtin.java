@@ -2,6 +2,8 @@ package org.daiitech.naftah.builtin;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.fillRightWithSpaces;
+
 /**
  * @author Chakib Daii
  */
@@ -23,7 +25,7 @@ public final class Builtin {
       usage = "إطبع(ش)",
       parameterTypes = {Object.class})
   public static void print(Object o) {
-    System.out.println(o);
+    System.out.println(fillRightWithSpaces(o.toString()));
   }
 
   @NaftahFn(
