@@ -350,16 +350,18 @@ public class DefaultNaftahParserVisitor
       if (function instanceof DeclaredFunction declaredFunction) {
         try {
           prepareDeclaredFunction(this, declaredFunction);
-          var finalArgs =
-              prepareDeclaredFunctionArguments(this, declaredFunction.getParameters(), args);
+          Map<String, Object> finalArgs = ObjectUtils.isEmpty(declaredFunction.getParameters()) ? Map.of()
+                  : prepareDeclaredFunctionArguments(declaredFunction.getParameters(), args);
 
-          currentContext.defineFunctionParameters(
+          if (!ObjectUtils.isEmpty(declaredFunction.getParameters())) currentContext.defineFunctionParameters(
               declaredFunction.getParameters().stream()
                   .map(parameter -> Map.entry(parameter.getName(), parameter))
                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
               true);
 
-          currentContext.defineFunctionArguments(finalArgs);
+          if (!ObjectUtils.isEmpty(declaredFunction.getParameters()))
+            currentContext.defineFunctionArguments(finalArgs);
+
           pushCall(declaredFunction, finalArgs);
           result = visit(declaredFunction.getBody());
         } finally {
