@@ -29,12 +29,12 @@ program: statement+;
 // Statement: Can be an assignment, function call, or control flow
 statement: block #blockStatement
          | ifStatement #ifStatementStatement
-         | declaration #declarationStatement
-         | assignment #assignmentStatement
          | functionDeclaration #functionDeclarationStatement
          | functionCall #functionCallStatement
-         | expression #expressionStatement
+         | declaration #declarationStatement
+         | assignment #assignmentStatement
          | returnStatement #returnStatementStatement
+         | expression #expressionStatement
          ;
 
 declaration: (VARIABLE | CONSTANT)? ID (COLON type)?;
