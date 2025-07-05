@@ -18,6 +18,7 @@ import org.daiitech.naftah.builtin.lang.ScannedClass;
  *     interpreation only in case of need of any of these classes and the loading did't finish yet
  *     <p>
  */
+@Deprecated(forRemoval = true)
 public final class RuntimeClassScanner1 {
   public static final String CLASS_PATH_PROPERTY = "java.class.path";
   public static final String CLASS_PATH = System.getProperty(CLASS_PATH_PROPERTY);

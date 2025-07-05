@@ -9,6 +9,7 @@ import org.daiitech.naftah.utils.reflect.ClassUtils;
 /**
  * @author Chakib Daii
  */
+@Deprecated
 public record ScannedClass(
     Class<?> clazz,
     String qualifiedName,
