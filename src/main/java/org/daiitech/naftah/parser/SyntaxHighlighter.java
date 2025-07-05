@@ -1,5 +1,6 @@
 package org.daiitech.naftah.parser;
 
+import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
@@ -25,55 +26,90 @@ public class SyntaxHighlighter extends BaseHighlighter {
 
   @Override
   public AttributedString highlight(LineReader reader, String buffer) {
-    if (!buffer.isBlank()) {
-
-      // Create input stream from buffer
-      CharStream input = CharStreams.fromString(buffer);
-
-      // Get all tokens from lexer
-      CommonTokenStream tokens = NaftahParserHelper.getCommonTokenStream(input);
-      tokens.fill();
-
-      AttributedStringBuilder asb = new AttributedStringBuilder(tokens.size());
-      List<Pair<CharSequence, AttributedStyle>> styles = new ArrayList<>();
-
-      int lastIndex = 0; // start of input string
-
-      for (Token token : tokens.getTokens()) {
-        int type = token.getType();
-        String text = token.getText();
-
-        if (type == -1 || text == null) continue;
-
-        int tokenStartIndex = token.getStartIndex();
-        int tokenStopIndex = token.getStopIndex();
-
-        // Append unmatched text before this token
-        if (tokenStartIndex > lastIndex) {
-          String gapText = buffer.substring(lastIndex, tokenStartIndex);
-          styles.add(new Pair<>(gapText, AttributedStyle.DEFAULT));
-        }
-
-        AttributedStyle style = getStyleForTokenType(type);
-        String reshaped;
-        if (shouldReshape()) {
-          try {
-            reshaped = shape(text);
-            styles.add(new Pair<>(reshaped, style));
-          } catch (Exception e) {
-            styles.add(new Pair<>(text, style));
-          }
-        } else styles.add(new Pair<>(text, style));
-
-        lastIndex = tokenStopIndex + 1;
-      }
-      if (shouldReshape()) Collections.reverse(styles);
-
-      for (var style : styles) asb.append(style.a, style.b);
-
-      return asb.toAttributedString();
+    if (buffer.isBlank()) {
+      return new AttributedString(buffer);
     }
-    return new AttributedString(buffer);
+
+    // Create input stream from buffer
+    CharStream input = CharStreams.fromString(buffer);
+
+    // Get all tokens from lexer
+    CommonTokenStream tokens = NaftahParserHelper.getCommonTokenStream(input);
+    tokens.fill();
+
+    int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
+
+    List<AttributedString> lines = new ArrayList<>();
+    AttributedStringBuilder currentLine = new AttributedStringBuilder();
+    int currentLineWidth = 0;
+
+    int lastIndex = 0;
+
+    List<Pair<CharSequence, AttributedStyle>> styledSegments = new ArrayList<>();
+
+    for (Token token : tokens.getTokens()) {
+      int type = token.getType();
+      String text = token.getText();
+
+      if (type == -1 || text == null) continue;
+
+      int tokenStartIndex = token.getStartIndex();
+      int tokenStopIndex = token.getStopIndex();
+
+      // Add gap text (unmatched text between tokens)
+      if (tokenStartIndex > lastIndex) {
+        String gapText = buffer.substring(lastIndex, tokenStartIndex);
+        styledSegments.add(new Pair<>(gapText, AttributedStyle.DEFAULT));
+      }
+
+      AttributedStyle style = getStyleForTokenType(type);
+      String shaped = text;
+
+      if (shouldReshape()) {
+        try {
+          shaped = shape(text);
+        } catch (Exception e) {
+          // fallback: use original
+        }
+      }
+
+      styledSegments.add(new Pair<>(shaped, style));
+      lastIndex = tokenStopIndex + 1;
+    }
+
+    if (shouldReshape()) {
+      // Reverse for RTL visual order (not buffer)
+      Collections.reverse(styledSegments);
+    }
+
+    // Build lines with wrapping and right-alignment
+    for (Pair<CharSequence, AttributedStyle> part : styledSegments) {
+      AttributedString fragment = new AttributedString(part.a.toString(), part.b);
+      int fragWidth = fragment.columnLength();
+
+      // If it doesn't fit in the current line, wrap to next
+      if (currentLineWidth + fragWidth > terminalWidth) {
+        // Right-align current line
+        AttributedString rightAligned = rightAlign(currentLine.toAttributedString(), terminalWidth);
+        lines.add(rightAligned);
+
+        // Start new line
+        currentLine = new AttributedStringBuilder();
+        currentLineWidth = 0;
+      }
+
+      currentLine.append(fragment);
+      currentLineWidth += fragWidth;
+    }
+
+    // Add last line (right-aligned)
+    if (!currentLine.isEmpty()) {
+      lines.add(rightAlign(currentLine.toAttributedString(), terminalWidth));
+    }
+
+    // Join lines with newline separator
+    Collections.reverse(lines);
+    return AttributedString.join(AttributedString.NEWLINE, lines);
   }
 
   private AttributedStyle getStyleForTokenType(int tokenType) {
@@ -160,5 +196,12 @@ public class SyntaxHighlighter extends BaseHighlighter {
           AttributedStyle.CYAN);
       default -> AttributedStyle.BOLD.foreground(AttributedStyle.WHITE);
     };
+  }
+
+  private AttributedString rightAlign(AttributedString str, int width) {
+    int contentWidth = str.columnLength() + 8; // text + prompt length
+    int padding = Math.max(0, width - contentWidth);
+    AttributedString spacePad = new AttributedString(" ".repeat(padding));
+    return AttributedString.join(new AttributedString(""), spacePad, str);
   }
 }
