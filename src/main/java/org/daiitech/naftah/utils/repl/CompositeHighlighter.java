@@ -1,4 +1,4 @@
-package org.daiitech.naftah.utils.jline;
+package org.daiitech.naftah.utils.repl;
 
 import java.util.ArrayList;
 import java.util.List;

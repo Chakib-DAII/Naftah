@@ -1,4 +1,4 @@
-package org.daiitech.naftah.utils.jline;
+package org.daiitech.naftah.utils.repl;
 
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
@@ -18,9 +18,9 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
-public final class JLineHelper {
+public final class REPLHelper {
 
-  public JLineHelper() {
+  public REPLHelper() {
     throw new IllegalStateException("Illegal usage.");
   }
 

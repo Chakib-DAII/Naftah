@@ -1,4 +1,4 @@
-package org.daiitech.naftah.utils.jline;
+package org.daiitech.naftah.utils.repl;
 
 import java.util.Objects;
 import java.util.regex.Pattern;

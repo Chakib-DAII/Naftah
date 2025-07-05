@@ -1,4 +1,4 @@
-package org.daiitech.naftah.utils.jline;
+package org.daiitech.naftah.utils.repl;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;

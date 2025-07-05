@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Pair;
-import org.daiitech.naftah.utils.jline.BaseHighlighter;
+import org.daiitech.naftah.utils.repl.BaseHighlighter;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedString;

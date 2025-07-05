@@ -2,7 +2,7 @@ package org.daiitech.naftah.utils.arabic;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
-import org.daiitech.naftah.utils.jline.BaseHighlighter;
+import org.daiitech.naftah.utils.repl.BaseHighlighter;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedString;

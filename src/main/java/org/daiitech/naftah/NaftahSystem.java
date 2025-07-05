@@ -1,7 +1,7 @@
 package org.daiitech.naftah;
 
 import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
-import static org.daiitech.naftah.utils.jline.JLineHelper.getTerminal;
+import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
 
 import java.io.PrintStream;
 import java.util.concurrent.Executors;
