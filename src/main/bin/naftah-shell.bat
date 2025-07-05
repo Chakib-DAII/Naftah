@@ -69,7 +69,7 @@ set CLASSPATH=%NAFTAH_HOME%\lib\*
 @if /I not "%DEBUG%" == "true" goto executeNoDebug
 
 :executeDebug
-"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS%
+"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS% -d
 goto end
 
 :executeNoDebug
