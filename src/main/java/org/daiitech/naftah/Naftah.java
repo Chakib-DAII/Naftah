@@ -152,7 +152,7 @@ public final class Naftah {
 
       if (Boolean.getBoolean(DEBUG_PROPERTY)) {
         tokens.fill();
-        System.out.println("Token:");
+        System.out.println("Tokens:");
         for (Token token : tokens.getTokens()) {
           System.out.printf(
               "Token: %-20s Text: %s%n",

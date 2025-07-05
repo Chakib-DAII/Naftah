@@ -217,7 +217,7 @@ public class ArabicUtils {
 
   public static List<Pair<String, String>> getRawHexBytes(char[] charArray) {
     var hexAndCharPairArrayList = new ArrayList<Pair<String, String>>();
-    System.out.println("char stream:");
+    System.out.println("Character stream:");
     for (char c : charArray) {
       var hexAndCharPair = Pair.of("U+%04X".formatted((int) c), "%c".formatted(c));
       hexAndCharPairArrayList.add(hexAndCharPair);
