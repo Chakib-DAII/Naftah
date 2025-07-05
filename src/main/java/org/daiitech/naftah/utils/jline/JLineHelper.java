@@ -1,14 +1,76 @@
 package org.daiitech.naftah.utils.jline;
 
+import org.daiitech.naftah.parser.SyntaxHighlighter;
+import org.jline.reader.Completer;
+import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.utils.InfoCmp;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+
+import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
+import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
+import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 
 public final class JLineHelper {
 
   public JLineHelper() {
     throw new IllegalStateException("Illegal usage.");
+  }
+
+  public static LineReader getLineReader(Terminal terminal) {
+    LineReader baseReader = LineReaderBuilder.builder().terminal(terminal).build();
+
+    Highlighter originalHighlighter = baseReader.getHighlighter();
+
+    DefaultParser parser =
+            new DefaultParser()
+                    .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
+                    .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*")
+                    .eofOnEscapedNewLine(true)
+                    .eofOnUnclosedQuote(true)
+                    .quoteChars(new char[] {'\'', '"', '«', '»'})
+                    .escapeChars(new char[] {'/', '\\'});
+
+    var lineReaderBuilder =
+            LineReaderBuilder.builder()
+                    .terminal(terminal)
+                    .parser(parser)
+                    .highlighter(new SyntaxHighlighter(originalHighlighter));
+
+    // Complete with fixed lexer strings and loaded builtins and Vm classes and functions
+    try {
+      var completions = readFileLines(getJarDirectory() + "/lexer-literals");
+      var runtimeCompletions = getCompletions();
+      completions.addAll(runtimeCompletions);
+      Completer stringsCompleter = new ArabicStringsCompleter(completions);
+      lineReaderBuilder.completer(stringsCompleter);
+    } catch (IOException ignored) {
+    }
+
+    return lineReaderBuilder.build();
+  }
+
+  public static void setupHistoryConfig(LineReader reader) {
+
+    // Set the history file
+    reader.setVariable(LineReader.HISTORY_FILE, Paths.get("bin/.naftah_history"));
+    reader.setVariable(LineReader.HISTORY_SIZE, 1000); // Maximum entries in memory
+    reader.setVariable(LineReader.HISTORY_FILE_SIZE, 2000); // Maximum entries in file
+
+    // Don't add duplicate entries
+    reader.setOpt(LineReader.Option.HISTORY_IGNORE_DUPS);
+    // Don't add entries that start with space
+    reader.setOpt(LineReader.Option.HISTORY_IGNORE_SPACE);
+    // Beep when trying to navigate past the end of history
+    reader.setOpt(LineReader.Option.HISTORY_BEEP);
+    // Verify history expansion (like !!, !$, etc.)
+    reader.setOpt(LineReader.Option.HISTORY_VERIFY);
   }
 
   public static void print(Terminal terminal, String str) {
