@@ -10,7 +10,7 @@ import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
-import static org.daiitech.naftah.utils.jline.JLineHelper.println;
+import static org.daiitech.naftah.utils.jline.JLineHelper.*;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static picocli.CommandLine.*;
 
@@ -240,56 +240,6 @@ public final class Naftah {
         sortOptions = false)
     private static final class ShellCommand extends NaftahCommand {
       private static final String NAME = "shell";
-
-      private static LineReader getLineReader(Terminal terminal) {
-        LineReader baseReader = LineReaderBuilder.builder().terminal(terminal).build();
-
-        Highlighter originalHighlighter = baseReader.getHighlighter();
-
-        DefaultParser parser =
-            new DefaultParser()
-                .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
-                .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*")
-                .eofOnEscapedNewLine(true)
-                .eofOnUnclosedQuote(true)
-                .quoteChars(new char[] {'\'', '"', '«', '»'})
-                .escapeChars(new char[] {'/', '\\'});
-
-        var lineReaderBuilder =
-            LineReaderBuilder.builder()
-                .terminal(terminal)
-                .parser(parser)
-                .highlighter(new SyntaxHighlighter(originalHighlighter));
-
-        // Complete with fixed lexer strings and loaded builtins and Vm classes and functions
-        try {
-          var completions = readFileLines(getJarDirectory() + "/lexer-literals");
-          var runtimeCompletions = getCompletions();
-          completions.addAll(runtimeCompletions);
-          Completer stringsCompleter = new ArabicStringsCompleter(completions);
-          lineReaderBuilder.completer(stringsCompleter);
-        } catch (IOException ignored) {
-        }
-
-        return lineReaderBuilder.build();
-      }
-
-      private static void setupHistoryConfig(LineReader reader) {
-
-        // Set the history file
-        reader.setVariable(LineReader.HISTORY_FILE, Paths.get("bin/.naftah_history"));
-        reader.setVariable(LineReader.HISTORY_SIZE, 1000); // Maximum entries in memory
-        reader.setVariable(LineReader.HISTORY_FILE_SIZE, 2000); // Maximum entries in file
-
-        // Don't add duplicate entries
-        reader.setOpt(LineReader.Option.HISTORY_IGNORE_DUPS);
-        // Don't add entries that start with space
-        reader.setOpt(LineReader.Option.HISTORY_IGNORE_SPACE);
-        // Beep when trying to navigate past the end of history
-        reader.setOpt(LineReader.Option.HISTORY_BEEP);
-        // Verify history expansion (like !!, !$, etc.)
-        reader.setOpt(LineReader.Option.HISTORY_VERIFY);
-      }
 
       @Override
       protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
