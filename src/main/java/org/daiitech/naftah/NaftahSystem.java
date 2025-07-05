@@ -1,10 +1,9 @@
 package org.daiitech.naftah;
 
 import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
+import static org.daiitech.naftah.utils.jline.JLineHelper.getTerminal;
 
-import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +11,6 @@ import java.util.function.Supplier;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.OS;
 import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 
 /**
  * @author Chakib Daii
@@ -86,18 +84,5 @@ public final class NaftahSystem {
     } catch (Exception ignored) {
       return new int[] {80, 24}; // fallback width
     }
-  }
-
-  public static Terminal getTerminal() throws IOException {
-    return TerminalBuilder.builder()
-        .encoding(StandardCharsets.UTF_8)
-        .streams(System.in, System.out)
-        .jna(true)
-        .jansi(true)
-        .color(true)
-        .nativeSignals(true)
-        .system(true)
-        .exec(true)
-        .build();
   }
 }
