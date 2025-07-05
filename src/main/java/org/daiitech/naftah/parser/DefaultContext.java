@@ -259,7 +259,7 @@ public class DefaultContext {
     try {
       var result = (ClassScanningResult) Base64SerializationUtils.deserialize(CACHE_PATH);
       setContextFromClassScanningResult(result);
-    } catch (IOException | ClassNotFoundException e) {
+    } catch (Exception e) {
       callLoader(ASYNC_BOOT_STRAP);
     }
   }
@@ -278,6 +278,7 @@ public class DefaultContext {
       System.out.println("تحضير فئات مسار فئات جافا (Java classpath)...");
     SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
     ASYNC_BOOT_STRAP = async;
+    long start = System.nanoTime();
     if (SHOULD_BOOT_STRAP) {
       try {
         Files.createDirectories(CACHE_PATH.getParent());
@@ -294,6 +295,12 @@ public class DefaultContext {
       }
     } else {
       defaultBootstrap();
+    }
+    if (Boolean.getBoolean(DEBUG_PROPERTY)) {
+      long end = System.nanoTime();
+      long elapsedMillis = (end - start) / 1_000_000; // convert to milliseconds
+
+      System.out.println("الزمن المستغرق للتمهيد: " + elapsedMillis + " مللي ثانية.");
     }
   }
 
