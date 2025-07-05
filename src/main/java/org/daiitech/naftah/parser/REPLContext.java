@@ -26,13 +26,16 @@ public class REPLContext extends DefaultContext {
   }
 
   public static DefaultContext deregisterContext(int depth) {
-    DefaultContext context = CONTEXTS.remove(depth);
-    if (context.parent != null) {
-      context.parent.variables.putAll(context.variables);
-      context.parent.functions.putAll(context.functions);
-      if (context.parseTreeExecution != null)
-        context.parent.parseTreeExecution.copyFrom(context.parseTreeExecution);
+    if (depth > 0) {
+      DefaultContext context = CONTEXTS.remove(depth);
+      if (context.parent != null) {
+        context.parent.variables.putAll(context.variables);
+        context.parent.functions.putAll(context.functions);
+        if (context.parseTreeExecution != null)
+          context.parent.parseTreeExecution.copyFrom(context.parseTreeExecution);
+      }
+      return context;
     }
-    return context;
+    return CONTEXTS.get(0);
   }
 }
