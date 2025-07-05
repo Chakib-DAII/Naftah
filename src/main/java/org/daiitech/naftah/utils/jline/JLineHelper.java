@@ -1,5 +1,11 @@
 package org.daiitech.naftah.utils.jline;
 
+import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
+import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
+import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
+
+import java.io.IOException;
+import java.nio.file.Paths;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.jline.reader.Completer;
 import org.jline.reader.Highlighter;
@@ -9,13 +15,6 @@ import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.utils.InfoCmp;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-
-import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
-import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
-import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 
 public final class JLineHelper {
 
@@ -29,19 +28,19 @@ public final class JLineHelper {
     Highlighter originalHighlighter = baseReader.getHighlighter();
 
     DefaultParser parser =
-            new DefaultParser()
-                    .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
-                    .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*")
-                    .eofOnEscapedNewLine(true)
-                    .eofOnUnclosedQuote(true)
-                    .quoteChars(new char[] {'\'', '"', '«', '»'})
-                    .escapeChars(new char[] {'/', '\\'});
+        new DefaultParser()
+            .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
+            .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*")
+            .eofOnEscapedNewLine(true)
+            .eofOnUnclosedQuote(true)
+            .quoteChars(new char[] {'\'', '"', '«', '»'})
+            .escapeChars(new char[] {'/', '\\'});
 
     var lineReaderBuilder =
-            LineReaderBuilder.builder()
-                    .terminal(terminal)
-                    .parser(parser)
-                    .highlighter(new SyntaxHighlighter(originalHighlighter));
+        LineReaderBuilder.builder()
+            .terminal(terminal)
+            .parser(parser)
+            .highlighter(new SyntaxHighlighter(originalHighlighter));
 
     // Complete with fixed lexer strings and loaded builtins and Vm classes and functions
     try {
