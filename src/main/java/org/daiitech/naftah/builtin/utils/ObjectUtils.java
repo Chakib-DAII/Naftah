@@ -356,4 +356,13 @@ public final class ObjectUtils {
   public static boolean intToBoolean(int i) {
     return i > 0 && i % 2 == 0;
   }
+
+  public static String booleanToString(boolean b) {
+    return b ? "صحيح" : "خطأ";
+  }
+
+  public static Object getNaftahValue(Object o) {
+    if (o instanceof Boolean aBoolean) return booleanToString(aBoolean);
+    return o;
+  }
 }
