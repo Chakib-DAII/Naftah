@@ -1,5 +1,6 @@
 package org.daiitech.naftah.parser;
 
+import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
@@ -11,12 +12,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.ibm.icu.text.Normalizer;
 import com.ibm.icu.text.Normalizer2;
-import org.antlr.v4.runtime.ANTLRErrorListener;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
@@ -24,15 +21,12 @@ import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
-import org.daiitech.naftah.utils.function.ThrowingFunction;
 
 /**
  * @author Chakib Daii
  */
 public class NaftahParserHelper {
   public static final String NULL = "<فارغ>";
-  public static final ThrowingFunction<String, String> POSSIBLE_SHAPING_FUNCTION =
-      (script) -> shouldReshape() ? shape(script) : shapeArabicOutsideQuotedArgs(script);
 
   public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
   public static final
@@ -116,7 +110,6 @@ public class NaftahParserHelper {
   }
 
   public static Map<String, Object> prepareDeclaredFunctionArguments(
-      org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
       List<DeclaredParameter> parameters,
       List<Pair<String, Object>> arguments) {
     if (parameters.size() < arguments.size()) throw new RuntimeException("Too many arguments");
@@ -240,22 +233,22 @@ public class NaftahParserHelper {
   }
 
   public static CommonTokenStream getCommonTokenStream(CharStream charStream) {
-    return getCommonTokenStream(charStream, List.of());
+    return getCommonTokenStream(charStream, List.of()).b;
   }
 
   public static CommonTokenStream getCommonTokenStream(
       CharStream charStream, ANTLRErrorListener errorListener) {
-    return getCommonTokenStream(charStream, List.of(errorListener));
+    return getCommonTokenStream(charStream, List.of(errorListener)).b;
   }
 
-  public static CommonTokenStream getCommonTokenStream(
+  public static Pair<org.daiitech.naftah.parser.NaftahLexer, CommonTokenStream> getCommonTokenStream(
       CharStream charStream, List<ANTLRErrorListener> errorListeners) {
     // Create a lexer and token stream
     org.daiitech.naftah.parser.NaftahLexer lexer =
         new org.daiitech.naftah.parser.NaftahLexer(charStream);
     lexer.removeErrorListeners();
     errorListeners.forEach(lexer::addErrorListener);
-    return new CommonTokenStream(lexer);
+    return new Pair<>(lexer, new CommonTokenStream(lexer));
   }
 
   public static CharStream getCharStream(boolean isScriptFile, String script) throws Exception {
@@ -276,7 +269,7 @@ public class NaftahParserHelper {
       // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like
       // above)
       script = NORMALIZER.normalize(script);
-      script = shapeArabicOutsideQuotedArgs(script);
+      if (Boolean.getBoolean(DEBUG_PROPERTY)) getRawHexBytes(script);
       charStream = CharStreams.fromString(script);
     }
     return charStream;
