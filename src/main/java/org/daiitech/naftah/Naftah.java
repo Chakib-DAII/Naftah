@@ -10,6 +10,7 @@ import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
+import static org.daiitech.naftah.utils.jline.JLineHelper.println;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static picocli.CommandLine.*;
 
@@ -27,11 +28,9 @@ import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.daiitech.naftah.utils.JulLoggerConfig;
 import org.daiitech.naftah.utils.jline.ArabicStringsCompleter;
-import org.daiitech.naftah.utils.jline.CompositeHighlighter;
 import org.jline.reader.*;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
-import org.jline.widget.AutopairWidgets;
 import picocli.CommandLine;
 
 /**
@@ -139,6 +138,7 @@ public final class Naftah {
     private static final String NAME = "naftah";
 
     protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
+      if (Boolean.getBoolean(DEBUG_PROPERTY)) Thread.sleep(5000);
       bootstrap(bootstrapAsync);
     }
 
@@ -153,7 +153,17 @@ public final class Naftah {
     private static NaftahParser prepareRun(
         CharStream input, List<ANTLRErrorListener> errorListeners) {
       // Create a lexer and token stream
-      CommonTokenStream tokens = getCommonTokenStream(input, errorListeners);
+      var lexerCommonTokenStreamPair = getCommonTokenStream(input, errorListeners);
+
+      CommonTokenStream tokens = lexerCommonTokenStreamPair.b;
+
+      if (Boolean.getBoolean(DEBUG_PROPERTY)) {
+        tokens.fill();
+        System.out.println("Token:");
+        for (Token token : tokens.getTokens()) {
+          System.out.printf("Token: %-20s Text: %s%n", lexerCommonTokenStreamPair.a.getVocabulary().getSymbolicName(token.getType()), token.getText());
+        }
+      }
 
       // Create a parser
       return getParser(tokens, errorListeners);
@@ -229,20 +239,24 @@ public final class Naftah {
       private static final String NAME = "shell";
 
       private static LineReader getLineReader(Terminal terminal) {
-        DefaultParser parser = new DefaultParser()
-                .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
-                .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*");
-
         LineReader baseReader = LineReaderBuilder.builder()
                 .terminal(terminal)
-                .parser(parser)
                 .build();
 
         Highlighter originalHighlighter = baseReader.getHighlighter();
 
+        DefaultParser parser = new DefaultParser()
+                .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
+                .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*")
+                .eofOnEscapedNewLine(true)
+                .eofOnUnclosedQuote(true)
+                .quoteChars(new char[]{'\'', '"', '«', '»'})
+                .escapeChars(new char[]{'/', '\\'});
+
         var lineReaderBuilder =
             LineReaderBuilder.builder()
                 .terminal(terminal)
+                .parser(parser)
                 .highlighter(new SyntaxHighlighter(originalHighlighter));
 
         // Complete with fixed lexer strings and loaded builtins and Vm classes and functions
@@ -287,11 +301,14 @@ public final class Naftah {
 
         setupHistoryConfig(reader);
 
+        String rtlPrompt =
+                shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
+
+        StringBuilder fullLine = new StringBuilder();
+        boolean multiline = false;
+
         while (true) {
           try {
-            String rtlPrompt =
-                shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
-//            String line = reader.readLine(null, rtlPrompt, (MaskingCallback)null, null);
             String line = reader.readLine(rtlPrompt);
 
             if (line.isBlank()) continue;
@@ -299,7 +316,16 @@ public final class Naftah {
             if (List.of("exit", "خروج").contains(line.trim()))
               throw new UserInterruptException(line);
 
-            var input = getCharStream(false, line);
+            fullLine.append(line);
+
+            var input = getCharStream(false, fullLine.toString());
+
+            if (multiline) {
+              reader.getHistory().add(fullLine.toString());
+              multiline = false;
+            }
+
+            fullLine.delete(0, fullLine.length());
 
             var parser = NaftahCommand.prepareRun(input);
 
@@ -308,15 +334,24 @@ public final class Naftah {
             if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
               System.out.println(fillRightWithSpaces(result.toString()));
             System.out.println();
+
           } catch (UserInterruptException | EndOfFileException e) {
             String closingMsg = "تم الخروج من التطبيق.";
             System.out.println(
 //                fillRightWithSpaces(shouldReshape() ? shape(closingMsg) : closingMsg));
                 fillRightWithSpaces(closingMsg));
             break;
-          } catch (Throwable ignored) {
+          } catch (IndexOutOfBoundsException ignored) {
+            String currentLine = reader.getBuffer().atChar(reader.getBuffer().length() -1)  == '\n' ?
+            reader.getBuffer().substring(0, reader.getBuffer().length() -2) : reader.getBuffer().substring(0, reader.getBuffer().length() -1);
+            fullLine.append(currentLine);
+            multiline = true;
+            println(reader);
+          } catch (Throwable e) {
             // ignored
             // TODO: improve logging (in arabic)
+            System.err.println("Caught: " + e);
+            System.out.println();
           } finally {
             // Save history explicitly (though it's usually done automatically)
             reader.getHistory().save();
