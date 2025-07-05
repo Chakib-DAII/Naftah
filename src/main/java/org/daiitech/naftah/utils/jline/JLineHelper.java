@@ -5,6 +5,7 @@ import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.jline.reader.Completer;
@@ -14,12 +15,26 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
 public final class JLineHelper {
 
   public JLineHelper() {
     throw new IllegalStateException("Illegal usage.");
+  }
+
+  public static Terminal getTerminal() throws IOException {
+    return TerminalBuilder.builder()
+        .encoding(StandardCharsets.UTF_8)
+        .streams(System.in, System.out)
+        .jna(true)
+        .jansi(true)
+        .color(true)
+        .nativeSignals(true)
+        .system(true)
+        .exec(true)
+        .build();
   }
 
   public static LineReader getLineReader(Terminal terminal) {
