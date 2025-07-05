@@ -97,7 +97,7 @@ public final class NaftahSystem {
         .color(true)
         .nativeSignals(true)
         .system(true)
-            .exec(true)
+        .exec(true)
         .build();
   }
 }
