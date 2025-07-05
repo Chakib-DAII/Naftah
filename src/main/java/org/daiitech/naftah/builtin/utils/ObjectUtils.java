@@ -161,11 +161,11 @@ public final class ObjectUtils {
     if (obj == null) return false;
     Class<?> cls = obj.getClass();
     return cls == BuiltinFunction.class
-    || cls == JvmFunction.class
-    || cls == DeclaredFunction.class
-    || cls == DeclaredParameter.class
-    || cls == DeclaredVariable.class
-    || cls == DynamicNumber.class;
+        || cls == JvmFunction.class
+        || cls == DeclaredFunction.class
+        || cls == DeclaredParameter.class
+        || cls == DeclaredVariable.class
+        || cls == DynamicNumber.class;
   }
 
   public static boolean isSimpleType(Object obj) {

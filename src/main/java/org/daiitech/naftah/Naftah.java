@@ -161,7 +161,10 @@ public final class Naftah {
         tokens.fill();
         System.out.println("Token:");
         for (Token token : tokens.getTokens()) {
-          System.out.printf("Token: %-20s Text: %s%n", lexerCommonTokenStreamPair.a.getVocabulary().getSymbolicName(token.getType()), token.getText());
+          System.out.printf(
+              "Token: %-20s Text: %s%n",
+              lexerCommonTokenStreamPair.a.getVocabulary().getSymbolicName(token.getType()),
+              token.getText());
         }
       }
 
@@ -239,19 +242,18 @@ public final class Naftah {
       private static final String NAME = "shell";
 
       private static LineReader getLineReader(Terminal terminal) {
-        LineReader baseReader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .build();
+        LineReader baseReader = LineReaderBuilder.builder().terminal(terminal).build();
 
         Highlighter originalHighlighter = baseReader.getHighlighter();
 
-        DefaultParser parser = new DefaultParser()
+        DefaultParser parser =
+            new DefaultParser()
                 .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
                 .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*")
                 .eofOnEscapedNewLine(true)
                 .eofOnUnclosedQuote(true)
-                .quoteChars(new char[]{'\'', '"', '«', '»'})
-                .escapeChars(new char[]{'/', '\\'});
+                .quoteChars(new char[] {'\'', '"', '«', '»'})
+                .escapeChars(new char[] {'/', '\\'});
 
         var lineReaderBuilder =
             LineReaderBuilder.builder()
@@ -302,7 +304,7 @@ public final class Naftah {
         setupHistoryConfig(reader);
 
         String rtlPrompt =
-                shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
+            shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
 
         StringBuilder fullLine = new StringBuilder();
         boolean multiline = false;
@@ -338,12 +340,15 @@ public final class Naftah {
           } catch (UserInterruptException | EndOfFileException e) {
             String closingMsg = "تم الخروج من التطبيق.";
             System.out.println(
-//                fillRightWithSpaces(shouldReshape() ? shape(closingMsg) : closingMsg));
+                //                fillRightWithSpaces(shouldReshape() ? shape(closingMsg) :
+                // closingMsg));
                 fillRightWithSpaces(closingMsg));
             break;
           } catch (IndexOutOfBoundsException ignored) {
-            String currentLine = reader.getBuffer().atChar(reader.getBuffer().length() -1)  == '\n' ?
-            reader.getBuffer().substring(0, reader.getBuffer().length() -2) : reader.getBuffer().substring(0, reader.getBuffer().length() -1);
+            String currentLine =
+                reader.getBuffer().atChar(reader.getBuffer().length() - 1) == '\n'
+                    ? reader.getBuffer().substring(0, reader.getBuffer().length() - 2)
+                    : reader.getBuffer().substring(0, reader.getBuffer().length() - 1);
             fullLine.append(currentLine);
             multiline = true;
             println(reader);

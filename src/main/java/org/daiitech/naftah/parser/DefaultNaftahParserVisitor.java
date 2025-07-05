@@ -350,14 +350,17 @@ public class DefaultNaftahParserVisitor
       if (function instanceof DeclaredFunction declaredFunction) {
         try {
           prepareDeclaredFunction(this, declaredFunction);
-          Map<String, Object> finalArgs = ObjectUtils.isEmpty(declaredFunction.getParameters()) ? Map.of()
+          Map<String, Object> finalArgs =
+              ObjectUtils.isEmpty(declaredFunction.getParameters())
+                  ? Map.of()
                   : prepareDeclaredFunctionArguments(declaredFunction.getParameters(), args);
 
-          if (!ObjectUtils.isEmpty(declaredFunction.getParameters())) currentContext.defineFunctionParameters(
-              declaredFunction.getParameters().stream()
-                  .map(parameter -> Map.entry(parameter.getName(), parameter))
-                  .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
-              true);
+          if (!ObjectUtils.isEmpty(declaredFunction.getParameters()))
+            currentContext.defineFunctionParameters(
+                declaredFunction.getParameters().stream()
+                    .map(parameter -> Map.entry(parameter.getName(), parameter))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
+                true);
 
           if (!ObjectUtils.isEmpty(declaredFunction.getParameters()))
             currentContext.defineFunctionArguments(finalArgs);

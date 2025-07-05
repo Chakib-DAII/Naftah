@@ -1,10 +1,8 @@
 package org.daiitech.naftah.builtin.lang;
 
+import java.util.Optional;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.NaftahParserHelper;
-
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author Chakib Daii
@@ -63,7 +61,10 @@ public class DeclaredParameter {
 
   @Override
   public String toString() {
-    return "<%s %s = %s>".formatted(constant ? "ثابت" : "متغير", name,
+    return "<%s %s = %s>"
+        .formatted(
+            constant ? "ثابت" : "متغير",
+            name,
             Optional.ofNullable(getValue()).orElse(NaftahParserHelper.NULL));
   }
 

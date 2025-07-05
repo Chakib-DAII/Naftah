@@ -4,6 +4,7 @@ import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
+import com.ibm.icu.text.Normalizer2;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -11,8 +12,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import com.ibm.icu.text.Normalizer2;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -29,8 +28,7 @@ public class NaftahParserHelper {
   public static final String NULL = "<فارغ>";
 
   public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
-  public static final
-  Normalizer2 NORMALIZER = Normalizer2.getNFKCInstance();
+  public static final Normalizer2 NORMALIZER = Normalizer2.getNFKCInstance();
 
   // Cache to store computed subtrees per node
   private static final Map<ParseTree, List<ParseTree>> SUB_TREE_CACHE = new IdentityHashMap<>();
@@ -110,8 +108,7 @@ public class NaftahParserHelper {
   }
 
   public static Map<String, Object> prepareDeclaredFunctionArguments(
-      List<DeclaredParameter> parameters,
-      List<Pair<String, Object>> arguments) {
+      List<DeclaredParameter> parameters, List<Pair<String, Object>> arguments) {
     if (parameters.size() < arguments.size()) throw new RuntimeException("Too many arguments");
 
     // how many params don't have defaults
@@ -241,8 +238,8 @@ public class NaftahParserHelper {
     return getCommonTokenStream(charStream, List.of(errorListener)).b;
   }
 
-  public static Pair<org.daiitech.naftah.parser.NaftahLexer, CommonTokenStream> getCommonTokenStream(
-      CharStream charStream, List<ANTLRErrorListener> errorListeners) {
+  public static Pair<org.daiitech.naftah.parser.NaftahLexer, CommonTokenStream>
+      getCommonTokenStream(CharStream charStream, List<ANTLRErrorListener> errorListeners) {
     // Create a lexer and token stream
     org.daiitech.naftah.parser.NaftahLexer lexer =
         new org.daiitech.naftah.parser.NaftahLexer(charStream);

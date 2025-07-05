@@ -1,8 +1,8 @@
 package org.daiitech.naftah.builtin;
 
-import org.daiitech.naftah.builtin.utils.NumberUtils;
-
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.fillRightWithSpaces;
+
+import org.daiitech.naftah.builtin.utils.NumberUtils;
 
 /**
  * @author Chakib Daii
