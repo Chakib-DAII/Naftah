@@ -7,8 +7,8 @@ import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
-import static org.daiitech.naftah.utils.repl.REPLHelper.*;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.daiitech.naftah.utils.repl.REPLHelper.*;
 import static picocli.CommandLine.*;
 
 import java.io.File;
