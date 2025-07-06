@@ -129,21 +129,6 @@ public class NaftahParserHelper {
     Map<String, Object> finalArguments = new HashMap<>();
     if (namedArguments.isEmpty()) {
       if (arguments.size() < requiredParams.size()) throw new RuntimeException("Too few arguments");
-      if (arguments.isEmpty() && parameters.isEmpty()) {
-        return finalArguments;
-      } else {
-        if (arguments.isEmpty()) {
-          // Assign default values
-          for (DeclaredParameter param : parameters) {
-            if (!finalArguments.containsKey(param.getName())) {
-              if (param.getDefaultValue() != null) {
-                finalArguments.put(param.getName(), param.getDefaultValue());
-              } else {
-                throw new RuntimeException("Missing required argument: " + param.getName());
-              }
-            }
-          }
-        } else {
           // process non named args
           finalArguments =
               IntStream.range(0, arguments.size())
@@ -155,8 +140,6 @@ public class NaftahParserHelper {
                         return Map.entry(param.getName(), argument.b);
                       })
                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }
-      }
     } else {
       Set<String> usedNames = new HashSet<>();
       // arguments that have no names
