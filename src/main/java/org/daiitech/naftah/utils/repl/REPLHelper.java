@@ -81,6 +81,11 @@ public final class REPLHelper {
     return lineReaderBuilder.build();
   }
 
+  public static void setupTerminalCapabilities(Terminal terminal) {
+    terminal.puts(InfoCmp.Capability.cursor_invisible);
+    terminal.flush();
+  }
+
   public static void setupHistoryConfig(LineReader reader) {
 
     // Set the history file
