@@ -17,9 +17,6 @@ import java.util.stream.Collectors;
 
 /**
  * @author Chakib Daii
- *     <p>TODO: create the implementation and make it run in parallel fashion and blocks the
- *     interpreation only in case of need of any of these classes and the loading did't finish yet
- *     <p>
  */
 public final class RuntimeClassScanner {
   public static final String CLASS_PATH_PROPERTY = "java.class.path";

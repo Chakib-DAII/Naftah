@@ -14,9 +14,6 @@ import org.daiitech.naftah.builtin.lang.ScannedClass;
 
 /**
  * @author Chakib Daii
- *     <p>TODO: create the implementation and make it run in parallel fashion and blocks the
- *     interpreation only in case of need of any of these classes and the loading did't finish yet
- *     <p>
  */
 @Deprecated(forRemoval = true)
 public final class RuntimeClassScanner1 {
