@@ -55,8 +55,8 @@ public class DefaultNaftahParserVisitor
               return hasChildOrSubChildOfType(
                       ctx,
                       org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-                  ? REPLContext.registerContext(new HashMap<>(), new HashMap<>())
-                  : REPLContext.registerContext();
+                  ? REPLContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
+                  : REPLContext.registerContext(currentContext);
             } else {
               return hasChildOrSubChildOfType(
                           ctx,
