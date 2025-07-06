@@ -246,15 +246,12 @@ public final class Naftah {
 
         setupHistoryConfig(reader);
 
-        String rtlPrompt =
-            shouldReshape() ? shape("< نفطة >") : ">"; // Right-to-left mark before prompt
-
         StringBuilder fullLine = new StringBuilder();
-        boolean multiline = false;
 
         while (true) {
           try {
-            String line = reader.readLine(rtlPrompt);
+            String line = MULTILINE_IS_ACTIVE ? reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback)null, null) :
+                    reader.readLine(null, RTL_PROMPT, (MaskingCallback)null, null);
 
             if (line.isBlank()) continue;
 
@@ -265,9 +262,9 @@ public final class Naftah {
 
             var input = getCharStream(false, fullLine.toString());
 
-            if (multiline) {
+            if (MULTILINE_IS_ACTIVE) {
               reader.getHistory().add(fullLine.toString());
-              multiline = false;
+              MULTILINE_IS_ACTIVE = false;
             }
 
             fullLine.delete(0, fullLine.length());
@@ -293,7 +290,7 @@ public final class Naftah {
                     ? reader.getBuffer().substring(0, reader.getBuffer().length() - 2)
                     : reader.getBuffer().substring(0, reader.getBuffer().length() - 1);
             fullLine.append(currentLine);
-            multiline = true;
+            MULTILINE_IS_ACTIVE = true;
             println(reader);
           } catch (Throwable e) {
             // ignored
