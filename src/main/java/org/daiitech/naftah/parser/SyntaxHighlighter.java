@@ -3,6 +3,7 @@ package org.daiitech.naftah.parser;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
+import static org.daiitech.naftah.utils.repl.REPLHelper.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -199,9 +200,11 @@ public class SyntaxHighlighter extends BaseHighlighter {
   }
 
   private AttributedString rightAlign(AttributedString str, int width) {
-    int contentWidth = str.columnLength() + 8; // text + prompt length
+    int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
     int padding = Math.max(0, width - contentWidth);
     AttributedString spacePad = new AttributedString(" ".repeat(padding));
-    return AttributedString.join(new AttributedString(""), spacePad, str);
+    AttributedString prompt = MULTILINE_IS_ACTIVE ?
+            new AttributedString(RTL_MULTILINE_PROMPT) : new AttributedString(RTL_PROMPT);
+    return AttributedString.join(new AttributedString(""), spacePad, str, prompt);
   }
 }
