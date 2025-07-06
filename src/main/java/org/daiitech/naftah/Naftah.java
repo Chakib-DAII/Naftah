@@ -24,6 +24,7 @@ import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.utils.JulLoggerConfig;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
+import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 
 /**
@@ -239,6 +240,8 @@ public final class Naftah {
         System.setProperty(INSIDE_REPL_PROPERTY, Boolean.toString(true));
         super.run(main, bootstrapAsync);
         Terminal terminal = getTerminal();
+
+        setupTerminalCapabilities(terminal);
 
         setupRefreshTerminalWidthAndHeight(terminal);
 
