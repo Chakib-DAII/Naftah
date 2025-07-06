@@ -126,23 +126,39 @@ public class NaftahParserHelper {
             .filter(Objects::nonNull)
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-    Map<String, Object> finalArguments = null;
+    Map<String, Object> finalArguments = new HashMap<>();
     if (namedArguments.isEmpty()) {
       if (arguments.size() < requiredParams.size()) throw new RuntimeException("Too few arguments");
-      // process non named args
-      finalArguments =
-          IntStream.range(0, arguments.size())
-              .mapToObj(
-                  i -> {
-                    var argument = arguments.get(i);
-                    var param =
-                        requiredParams.size() >= i ? parameters.get(i) : requiredParams.get(i);
-                    return Map.entry(param.getName(), argument.b);
-                  })
-              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      if (arguments.isEmpty() && parameters.isEmpty()) {
+        return finalArguments;
+      } else {
+        if (arguments.isEmpty()) {
+          // Assign default values
+          for (DeclaredParameter param : parameters) {
+            if (!finalArguments.containsKey(param.getName())) {
+              if (param.getDefaultValue() != null) {
+                finalArguments.put(param.getName(), param.getDefaultValue());
+              } else {
+                throw new RuntimeException("Missing required argument: " + param.getName());
+              }
+            }
+          }
+        } else {
+          // process non named args
+          finalArguments =
+                  IntStream.range(0, arguments.size())
+                          .mapToObj(
+                                  i -> {
+                                    var argument = arguments.get(i);
+                                    var param =
+                                            requiredParams.size() >= i ? parameters.get(i) : requiredParams.get(i);
+                                    return Map.entry(param.getName(), argument.b);
+                                  })
+                          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+      }
     } else {
       Set<String> usedNames = new HashSet<>();
-      finalArguments = new HashMap<>();
       // arguments that have no names
       Map<Integer, Pair<String, Object>> positionalArguments =
           IntStream.range(0, arguments.size())
