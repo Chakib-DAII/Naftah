@@ -13,16 +13,22 @@ public class REPLContext extends DefaultContext {
   }
 
   public static DefaultContext registerContext() {
-    return registerContext(ETERNAL_CONTEXT);
+    DefaultContext context = registerContext(ETERNAL_CONTEXT);
+    context.prepareParseTreeExecution();
+    return context;
   }
 
   public static DefaultContext registerContext(
       Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
-    return new DefaultContext(ETERNAL_CONTEXT, parameters, arguments);
+    DefaultContext context = new DefaultContext(ETERNAL_CONTEXT, parameters, arguments);
+    context.prepareParseTreeExecution();
+    return context;
   }
 
   public static DefaultContext registerContext(DefaultContext parent) {
-    return new DefaultContext(parent, null, null);
+    DefaultContext context = new DefaultContext(parent, null, null);
+    context.prepareParseTreeExecution();
+    return context;
   }
 
   public static DefaultContext deregisterContext(int depth) {
