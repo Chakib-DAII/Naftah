@@ -26,10 +26,14 @@ public final class REPLHelper {
   private static final String RTL_PROMPT_VALUE = "< نفطة >";
   private static final String RTL_MULTILINE_PROMPT_VALUE = "    < .... >";
 
-  public static final String RTL_PROMPT  =
-          shouldReshape() ? shape(RTL_PROMPT_VALUE) : RTL_PROMPT_VALUE; // Right-to-left mark before prompt
+  public static final String RTL_PROMPT =
+      shouldReshape()
+          ? shape(RTL_PROMPT_VALUE)
+          : RTL_PROMPT_VALUE; // Right-to-left mark before prompt
   public static final String RTL_MULTILINE_PROMPT =
-          shouldReshape() ? shape(RTL_MULTILINE_PROMPT_VALUE) : RTL_MULTILINE_PROMPT_VALUE; // Right-to-left  multiline mark before prompt
+      shouldReshape()
+          ? shape(RTL_MULTILINE_PROMPT_VALUE)
+          : RTL_MULTILINE_PROMPT_VALUE; // Right-to-left  multiline mark before prompt
 
   public REPLHelper() {
     throw new IllegalStateException("Illegal usage.");

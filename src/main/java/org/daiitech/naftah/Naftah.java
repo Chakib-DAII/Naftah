@@ -24,7 +24,6 @@ import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.utils.JulLoggerConfig;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
-import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 
 /**
@@ -253,8 +252,10 @@ public final class Naftah {
 
         while (true) {
           try {
-            String line = MULTILINE_IS_ACTIVE ? reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback)null, null) :
-                    reader.readLine(null, RTL_PROMPT, (MaskingCallback)null, null);
+            String line =
+                MULTILINE_IS_ACTIVE
+                    ? reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null)
+                    : reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
 
             if (line.isBlank()) continue;
 

@@ -146,15 +146,15 @@ public class NaftahParserHelper {
         } else {
           // process non named args
           finalArguments =
-                  IntStream.range(0, arguments.size())
-                          .mapToObj(
-                                  i -> {
-                                    var argument = arguments.get(i);
-                                    var param =
-                                            requiredParams.size() >= i ? parameters.get(i) : requiredParams.get(i);
-                                    return Map.entry(param.getName(), argument.b);
-                                  })
-                          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+              IntStream.range(0, arguments.size())
+                  .mapToObj(
+                      i -> {
+                        var argument = arguments.get(i);
+                        var param =
+                            requiredParams.size() >= i ? parameters.get(i) : requiredParams.get(i);
+                        return Map.entry(param.getName(), argument.b);
+                      })
+                  .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
       }
     } else {
