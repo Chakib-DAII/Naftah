@@ -3,6 +3,8 @@ package org.daiitech.naftah.utils.repl;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +21,15 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
 public final class REPLHelper {
+  public static boolean MULTILINE_IS_ACTIVE = false;
+
+  private static final String RTL_PROMPT_VALUE = "< نفطة >";
+  private static final String RTL_MULTILINE_PROMPT_VALUE = "    < .... >";
+
+  public static final String RTL_PROMPT  =
+          shouldReshape() ? shape(RTL_PROMPT_VALUE) : RTL_PROMPT_VALUE; // Right-to-left mark before prompt
+  public static final String RTL_MULTILINE_PROMPT =
+          shouldReshape() ? shape(RTL_MULTILINE_PROMPT_VALUE) : RTL_MULTILINE_PROMPT_VALUE; // Right-to-left  multiline mark before prompt
 
   public REPLHelper() {
     throw new IllegalStateException("Illegal usage.");
