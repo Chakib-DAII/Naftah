@@ -1,5 +1,7 @@
 package org.daiitech.naftah.utils;
 
+import static org.daiitech.naftah.parser.NaftahParserHelper.resolvePlaceholders;
+
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -9,13 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.daiitech.naftah.Naftah;
-
-import static org.daiitech.naftah.parser.NaftahParserHelper.PLACEHOLDER_PATTERN;
-import static org.daiitech.naftah.parser.NaftahParserHelper.resolvePlaceholders;
 
 /**
  * @author Chakib Daii
@@ -59,7 +55,7 @@ public final class ResourceUtils {
       props.load(input);
       resolvePlaceholders(props);
     } catch (IOException e) {
-        throw new RuntimeException(e);
+      throw new RuntimeException(e);
     }
     return props;
   }

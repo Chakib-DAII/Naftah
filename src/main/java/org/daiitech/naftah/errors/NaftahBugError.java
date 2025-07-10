@@ -26,8 +26,7 @@ import java.io.Serial;
  *     fulfilled.
  */
 public class NaftahBugError extends AssertionError {
-  @Serial
-  private static final long serialVersionUID = -9165076784700059275L;
+  @Serial private static final long serialVersionUID = -9165076784700059275L;
   // message string
   private String message;
   // optional exception

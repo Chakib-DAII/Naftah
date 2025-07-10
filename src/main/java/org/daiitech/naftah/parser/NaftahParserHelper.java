@@ -30,7 +30,8 @@ import org.daiitech.naftah.builtin.utils.ObjectUtils;
  */
 public class NaftahParserHelper {
   public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("PLACEHOLDER\\((.*?)\\)");
-  public static final Properties TOKENS_SYMBOLS = getProperties(getJarDirectory() + "/tokens-symbols.properties");
+  public static final Properties TOKENS_SYMBOLS =
+      getProperties(getJarDirectory() + "/tokens-symbols.properties");
 
   public static final String NULL = "<فارغ>";
 
@@ -318,16 +319,12 @@ public class NaftahParserHelper {
     while (matcher.find()) {
       found = true;
       String placeholderKey = matcher.group(1);
-      String replacement = props.getProperty(placeholderKey, "")
-              .split(",")[0]
-              .replaceAll("'", "");
+      String replacement = props.getProperty(placeholderKey, "").split(",")[0].replaceAll("'", "");
       matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
     }
 
     matcher.appendTail(result);
     var resultValue = result.toString();
-    return found ?
-            "'" + resultValue.replaceAll(" ", "") + "'"
-            : resultValue;
+    return found ? "'" + resultValue.replaceAll(" ", "") + "'" : resultValue;
   }
 }

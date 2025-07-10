@@ -168,12 +168,12 @@ public final class Naftah {
     }
 
     private static Object doRun(NaftahParser parser) {
-        // Parse the input and get the parse tree
-        ParseTree tree = parser.program();
+      // Parse the input and get the parse tree
+      ParseTree tree = parser.program();
 
-        // Create a visitor and visit the parse tree
-        DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
-        return visitor.visit(tree);
+      // Create a visitor and visit the parse tree
+      DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
+      return visitor.visit(tree);
     }
 
     @Command(
@@ -481,8 +481,8 @@ public final class Naftah {
       naftahCommand.run(this, !(naftahCommand instanceof NaftahCommand.InitCommand));
       return true;
     } catch (ParseCancellationException e) {
-    System.exit(1);  // stop program
-  } catch (Throwable e) {
+      System.exit(1); // stop program
+    } catch (Throwable e) {
       System.err.println("Caught: " + e);
       if (debug) {
         e.printStackTrace();
