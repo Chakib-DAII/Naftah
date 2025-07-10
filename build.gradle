@@ -72,16 +72,103 @@ tasks.register('extractLexerLiterals') {
 	def lexerFile = file('src/main/antlr/NaftahLexer.g4')
 	def outputFile = file("$buildDir/libs/lexer-literals")
 
+	def tokensFile =  file("$buildDir/libs/tokens-symbols.properties")
 
 	doLast {
-		def pattern = ~/'([^']+)'/
+		// literals processing
+		def literalsPattern = ~/'([^']+)'/
 		def literals = []
+		// tokens list processing
+		def tokensPattern = ~/^(\w+)\s*:\s*((?:'[^']+'\s*\|\s*)*'[^']+')\s*;$/
+		def skipPatterns = [
+				~/^\s*fragment\s*.*/,
+				~/.*\s*skip\s*.*/,
+				~/^\s*WS\s*:\s*.*/,
+				~/^\s*LINE_COMMENT\s*:\s*.*/,
+				~/^\s*BLOCK_COMMENT\s*:\s*.*/,
+				~/^\s*QuotationMark\s*:\s*.*/,
+				~/^\s*DoubleQuotationMark\s*:\s*.*/,
+				~/^\s*DoubleQuotationMarkLeft\s*:\s*.*/,
+				~/^\s*DoubleQuotationMarkRight\s*:\s*.*/,
+				~/^\s*\/\/.*$/,      // skip comment lines starting with //
+				~/^\s*$/,            // skip empty lines
+		]
+
+		def literalPatterns = [
+				~/^\s*NUMBER\s*:\s*.*/,
+				~/^\s*CHARACTER\s*:\s*.*/,
+				~/^\s*STRING\s*:\s*.*/,
+				~/^\s*ID\s*:\s*.*/,
+				~/^\s*PUNCTUATION\s*:\s*.*/
+		]
+
+		def literalTranslations = [
+				"NUMBER"      : "رقم",
+				"CHARACTER"   : "حرف",
+				"STRING"      : "سلسلة",
+				"ID"          : "معرف",
+				"PUNCTUATION" : "ترقيم"
+		]
+		def tokens = new Properties()
 
 		lexerFile.withReader('UTF-8') { reader ->
 			reader.eachLine { line ->
+				// processing literals
 				if (line.contains(":")) {
-					pattern.matcher(line).each { match ->
+					literalsPattern.matcher(line).each { match ->
 						literals << match[1]
+					}
+				}
+				// processing tokens list
+				// Skip lines matching any skip pattern
+				boolean toSkip = skipPatterns.any { skipPattern -> line ==~ skipPattern }
+				if (toSkip) {
+					return
+				}
+				// Check for matching literal patterns and print Arabic translation
+				boolean isLiteral = literalPatterns.any { literalPattern ->
+					if (line ==~ literalPattern) {
+						// Extract the key (e.g., NUMBER) from the line using regex
+						def matcher = (line =~ /^\s*(\w+)\s*:/)
+						if (matcher.find()) {
+							def token = matcher.group(1)
+							def symbol = literalTranslations[token]
+							tokens.setProperty(token, "'${symbol}'")
+						}
+						return true
+					}
+					return false
+				}
+
+				if (!isLiteral) {
+
+					def matcher = line =~ tokensPattern
+
+					if (matcher.matches()) {
+						def token = matcher[0][1]
+						def tokensGroup = matcher[0][2]
+
+						// Extract all quoted tokens
+						def symbols = []
+						(tokensGroup =~ literalsPattern).each { match ->
+							symbols << match[0]
+						}
+						tokens.setProperty(token, symbols.join(", "))
+					} else {
+						def placeholderPattern = /^(\w+)\s*:\s*(.+);$/
+						def placeholderMatcher = line =~ placeholderPattern
+						if (placeholderMatcher.matches()) {
+							def token = placeholderMatcher[0][1]
+							def symbolsStr = placeholderMatcher[0][2].trim()
+
+							// Split tokens by whitespace (since no pipes here)
+							def symbolsList = symbolsStr.split(/\s+/).collect { "PLACEHOLDER(${it.trim()})" }
+
+							// Remove single quotes if any (none here but safe)
+							symbolsList = symbolsList.collect { it.replaceAll(/^'(.*)'$/, '$1') }
+
+							tokens.setProperty(token, symbolsList.join(" "))
+						}
 					}
 				}
 			}
@@ -90,6 +177,10 @@ tasks.register('extractLexerLiterals') {
 		outputFile.parentFile.mkdirs()
 		outputFile.withWriter('UTF-8') { writer ->
 			literals.each { writer.writeLine(it) }
+		}
+
+		tokensFile.withOutputStream { stream ->
+			tokens.store(stream, "tokens symbols list extracted from lexer.")
 		}
 
 		println "Extracted ${literals.size()} literals to ${outputFile}"
@@ -265,7 +356,7 @@ tasks.register('baseDistZip', Zip) {
 	}
 
 	from("$buildDir/libs") {
-		include 'lexer-literals', 'original-dependencies'
+		include 'lexer-literals', 'original-dependencies', 'tokens-symbols.properties'
 		into 'lib'
 	}
 

@@ -112,12 +112,7 @@ fragment Character: (~["«»\r\n]);
 fragment String: Character* ESC* EMOJI* PUNCTUATION* .*?;
 fragment ESC: '\\' ["\\n];
 
-fragment EMOJI
-  : '\uD83C' [\uDF00-\uDF5F]
-  | '\uD83D' [\uDE00-\uDE4F]
-  | '\u2600'..'\u26FF'
-  | '\u2700'..'\u27BF'
-  ;
+fragment EMOJI : '\uD83C' [\uDF00-\uDF5F] | '\uD83D' [\uDE00-\uDE4F] | '\u2600'..'\u26FF' | '\u2700'..'\u27BF';
 
 PUNCTUATION : [،.؟:!-];
 
