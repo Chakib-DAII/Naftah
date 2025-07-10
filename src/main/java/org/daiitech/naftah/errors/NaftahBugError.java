@@ -18,13 +18,15 @@
  */
 package org.daiitech.naftah.errors;
 
+import java.io.Serial;
+
 /**
  * @author Chakib Daii This class represents an error that is thrown when a bug is recognized inside
  *     the runtime. Basically it is thrown when a constraint is not fulfilled that should be
  *     fulfilled.
  */
 public class NaftahBugError extends AssertionError {
-
+  @Serial
   private static final long serialVersionUID = -9165076784700059275L;
   // message string
   private String message;
