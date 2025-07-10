@@ -17,9 +17,11 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.logging.*;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
+import org.daiitech.naftah.parser.NaftahErrorListener;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.utils.JulLoggerConfig;
 import org.jline.reader.*;
@@ -166,13 +168,12 @@ public final class Naftah {
     }
 
     private static Object doRun(NaftahParser parser) {
+        // Parse the input and get the parse tree
+        ParseTree tree = parser.program();
 
-      // Parse the input and get the parse tree
-      ParseTree tree = parser.program();
-
-      // Create a visitor and visit the parse tree
-      DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
-      return visitor.visit(tree);
+        // Create a visitor and visit the parse tree
+        DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
+        return visitor.visit(tree);
     }
 
     @Command(
@@ -195,7 +196,7 @@ public final class Naftah {
         // Create an input stream from the Naftah code
         CharStream input = getCharStream(main.isScriptFile, main.script);
 
-        var parser = NaftahCommand.prepareRun(input);
+        var parser = NaftahCommand.prepareRun(input, new NaftahErrorListener());
         var result = NaftahCommand.doRun(parser);
 
         if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
@@ -273,7 +274,7 @@ public final class Naftah {
 
             fullLine.delete(0, fullLine.length());
 
-            var parser = NaftahCommand.prepareRun(input);
+            var parser = NaftahCommand.prepareRun(input, new NaftahErrorListener());
 
             var result = NaftahCommand.doRun(parser);
 
@@ -479,12 +480,14 @@ public final class Naftah {
     try {
       naftahCommand.run(this, !(naftahCommand instanceof NaftahCommand.InitCommand));
       return true;
-    } catch (Throwable e) {
+    } catch (ParseCancellationException e) {
+    System.exit(1);  // stop program
+  } catch (Throwable e) {
       System.err.println("Caught: " + e);
       if (debug) {
         e.printStackTrace();
       }
-      return false;
     }
+    return false;
   }
 }
