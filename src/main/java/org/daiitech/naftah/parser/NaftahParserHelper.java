@@ -2,6 +2,8 @@ package org.daiitech.naftah.parser;
 
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
+import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
+import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
 
 import com.ibm.icu.text.Normalizer2;
@@ -10,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.antlr.v4.runtime.*;
@@ -25,6 +29,9 @@ import org.daiitech.naftah.builtin.utils.ObjectUtils;
  * @author Chakib Daii
  */
 public class NaftahParserHelper {
+  public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("PLACEHOLDER\\((.*?)\\)");
+  public static final Properties TOKENS_SYMBOLS = getProperties(getJarDirectory() + "/tokens-symbols.properties");
+
   public static final String NULL = "<فارغ>";
 
   public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
@@ -225,6 +232,9 @@ public class NaftahParserHelper {
     parser.removeErrorListeners();
     errorListeners.forEach(parser::addErrorListener);
 
+    // Use the BailErrorStrategy
+    parser.setErrorHandler(new BailErrorStrategy());
+
     return parser;
   }
 
@@ -291,5 +301,33 @@ public class NaftahParserHelper {
       scriptFile = new File(scriptFileName);
     }
     return scriptFile;
+  }
+
+  public static void resolvePlaceholders(Properties props) {
+    for (String key : props.stringPropertyNames()) {
+      String value = props.getProperty(key);
+      String resolved = resolveValue(value, props);
+      props.setProperty(key, resolved);
+    }
+  }
+
+  private static String resolveValue(String value, Properties props) {
+    Matcher matcher = PLACEHOLDER_PATTERN.matcher(value);
+    StringBuilder result = new StringBuilder();
+    boolean found = false;
+    while (matcher.find()) {
+      found = true;
+      String placeholderKey = matcher.group(1);
+      String replacement = props.getProperty(placeholderKey, "")
+              .split(",")[0]
+              .replaceAll("'", "");
+      matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+    }
+
+    matcher.appendTail(result);
+    var resultValue = result.toString();
+    return found ?
+            "'" + resultValue.replaceAll(" ", "") + "'"
+            : resultValue;
   }
 }
