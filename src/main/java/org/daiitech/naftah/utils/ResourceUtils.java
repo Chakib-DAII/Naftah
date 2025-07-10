@@ -1,8 +1,6 @@
 package org.daiitech.naftah.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -10,7 +8,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.daiitech.naftah.Naftah;
+
+import static org.daiitech.naftah.parser.NaftahParserHelper.PLACEHOLDER_PATTERN;
+import static org.daiitech.naftah.parser.NaftahParserHelper.resolvePlaceholders;
 
 /**
  * @author Chakib Daii
@@ -46,5 +51,16 @@ public final class ResourceUtils {
     URLConnection urlConnection = url.openConnection();
     urlConnection.setUseCaches(useCaches);
     return urlConnection.getInputStream();
+  }
+
+  public static Properties getProperties(String filePath) {
+    Properties props = new Properties();
+    try (FileInputStream input = new FileInputStream(filePath)) {
+      props.load(input);
+      resolvePlaceholders(props);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+    return props;
   }
 }
