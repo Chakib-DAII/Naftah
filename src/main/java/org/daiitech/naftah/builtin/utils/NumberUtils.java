@@ -6,6 +6,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Objects;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * Utility class for dynamically parsing and performing arithmetic operations on various numeric
@@ -20,7 +21,7 @@ public final class NumberUtils {
   private static final BigInteger LONG_MAX = BigInteger.valueOf(Long.MAX_VALUE);
 
   public NumberUtils() {
-    throw new IllegalStateException("Illegal usage.");
+    throw new NaftahBugError("استخدام غير مسموح به.");
   }
 
   public static Number parseDynamicNumber(Object object) {
@@ -29,7 +30,7 @@ public final class NumberUtils {
     } else if (object instanceof String string) {
       return parseDynamicNumber(string);
     }
-    throw new RuntimeException("Invalid number: " + object);
+    throw new NaftahBugError("قيمة رقمية غير صالحة: '%s'".formatted(object));
   }
 
   /**
@@ -56,10 +57,10 @@ public final class NumberUtils {
           float f = Float.parseFloat(text);
           if (Float.isInfinite(f)) {
             throw new NumberFormatException(
-                "Floating-point overflow: value is infinite for input " + text);
+                    "تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'.".formatted(text));
           }
           if (Float.isNaN(f)) {
-            throw new RuntimeException(new NumberFormatException("Value is NaN: " + text));
+            throw new NaftahBugError(new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'" .formatted(text)));
           }
           return f;
         } catch (NumberFormatException e1) {
@@ -68,10 +69,10 @@ public final class NumberUtils {
             double d = Double.parseDouble(text);
             if (Double.isInfinite(d)) {
               throw new NumberFormatException(
-                  "Floating-point overflow: value is infinite/ for input " + text);
+                      "تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'.".formatted(text));
             }
             if (Double.isNaN(d)) {
-              throw new RuntimeException(new NumberFormatException("Value is NaN: " + text));
+              throw new NaftahBugError(new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'" .formatted(text)));
             }
             return d;
           } catch (NumberFormatException e2) {
@@ -102,7 +103,7 @@ public final class NumberUtils {
         }
       }
     } catch (NumberFormatException ex) {
-      throw new RuntimeException("Invalid number format: " + text, ex);
+      throw new NaftahBugError("قيمة رقمية غير صالحة: '%s'".formatted(text));
     }
   }
 
@@ -168,14 +169,10 @@ public final class NumberUtils {
       // (see BigDecimal javadoc for details)
       return (T) new BigDecimal(number.toString());
     } else {
-      throw new IllegalArgumentException(
-          "Could not convert number ["
-              + number
-              + "] of type ["
-              + number.getClass().getName()
-              + "] to unsupported target class ["
-              + targetClass.getName()
-              + "]");
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s'."
+                      .formatted(number, number.getClass().getName(), targetClass.getName()));
     }
   }
 
@@ -211,14 +208,10 @@ public final class NumberUtils {
    * @throws IllegalArgumentException if there is an overflow
    */
   private static void raiseOverflowException(Number number, Class<?> targetClass) {
-    throw new IllegalArgumentException(
-        "Could not convert number ["
-            + number
-            + "] of type ["
-            + number.getClass().getName()
-            + "] to target class ["
-            + targetClass.getName()
-            + "]: overflow");
+    // TODO: classNames should be in arabic or transliterated or in naftah language types
+    throw new NaftahBugError(
+            "تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' بسبب: تجاوز السعة."
+                    .formatted(number, number.getClass().getName(), targetClass.getName()));
   }
 
   // ==============================
@@ -283,8 +276,9 @@ public final class NumberUtils {
       }
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException(
-          "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
     }
     return result;
   }
@@ -347,8 +341,9 @@ public final class NumberUtils {
       }
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException(
-          "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
     }
     return result;
   }
@@ -411,8 +406,9 @@ public final class NumberUtils {
       }
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException(
-          "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
     }
     return result;
   }
@@ -475,8 +471,9 @@ public final class NumberUtils {
       }
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException(
-          "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
     }
     return result;
   }
@@ -539,8 +536,9 @@ public final class NumberUtils {
       }
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException(
-          "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
     }
     return result;
   }
@@ -599,8 +597,9 @@ public final class NumberUtils {
       }
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException(
-          "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
     }
     return result;
   }
@@ -659,8 +658,9 @@ public final class NumberUtils {
       }
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException(
-          "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
     }
     return result;
   }
@@ -793,7 +793,10 @@ public final class NumberUtils {
       return dx.asByte();
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -846,7 +849,10 @@ public final class NumberUtils {
       return dx.asByte();
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -891,7 +897,10 @@ public final class NumberUtils {
     else if (dx.isByte()) result = -dx.asByte();
     else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
     return result;
   }
@@ -1116,8 +1125,9 @@ public final class NumberUtils {
       return dx.asBigInteger().compareTo(dy.asBigInteger());
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException(
-          "Unsupported number types: " + dx.get().getClass() + ", " + dy.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
     }
   }
 
@@ -1142,8 +1152,8 @@ public final class NumberUtils {
    */
   public static Number and(DynamicNumber dx, DynamicNumber dy) {
     if (dx.isDecimal() || dy.isDecimal()) {
-      throw new UnsupportedOperationException(
-          "Bitwise operations are not supported on floating-point numbers.");
+      throw new NaftahBugError(
+              "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'".formatted(dx, dy));
     } else if (dx.isBigInteger()) {
       return dx.asBigInteger().and(dy.asBigInteger());
     } else if (dx.isLong()) {
@@ -1156,7 +1166,10 @@ public final class NumberUtils {
       return dx.asByte() & dy.asByte();
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1181,8 +1194,8 @@ public final class NumberUtils {
    */
   public static Number or(DynamicNumber dx, DynamicNumber dy) {
     if (dx.isDecimal() || dy.isDecimal()) {
-      throw new UnsupportedOperationException(
-          "Bitwise operations are not supported on floating-point numbers.");
+      throw new NaftahBugError(
+              "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'".formatted(dx, dy));
     } else if (dx.isBigInteger()) {
       return dx.asBigInteger().or(dy.asBigInteger());
     } else if (dx.isLong()) {
@@ -1195,7 +1208,10 @@ public final class NumberUtils {
       return dx.asByte() | dy.asByte();
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1220,8 +1236,8 @@ public final class NumberUtils {
    */
   public static Number xor(DynamicNumber dx, DynamicNumber dy) {
     if (dx.isDecimal() || dy.isDecimal()) {
-      throw new UnsupportedOperationException(
-          "Bitwise operations are not supported on floating-point numbers.");
+      throw new NaftahBugError(
+              "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'".formatted(dx, dy));
     } else if (dx.isBigInteger()) {
       return dx.asBigInteger().xor(dy.asBigInteger());
     } else if (dx.isLong()) {
@@ -1234,7 +1250,10 @@ public final class NumberUtils {
       return dx.asByte() ^ dy.asByte();
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1256,8 +1275,8 @@ public final class NumberUtils {
    */
   public static Number not(DynamicNumber dx) {
     if (dx.isDecimal()) {
-      throw new UnsupportedOperationException(
-          "Bitwise operations are not supported on floating-point numbers.");
+      throw new NaftahBugError(
+              "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،".formatted(dx));
     } else if (dx.isBigInteger()) {
       return dx.asBigInteger().not();
     } else if (dx.isLong()) {
@@ -1270,7 +1289,10 @@ public final class NumberUtils {
       return ~dx.asByte();
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1295,8 +1317,8 @@ public final class NumberUtils {
    */
   public static Number shiftLeft(DynamicNumber dx, int positions) {
     if (dx.isDecimal()) {
-      throw new UnsupportedOperationException(
-          "Bitwise operations are not supported on floating-point numbers.");
+      throw new NaftahBugError(
+              "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،".formatted(dx));
     } else if (dx.isBigInteger()) {
       return dx.asBigInteger().shiftLeft(positions);
     } else if (dx.isLong()) {
@@ -1309,7 +1331,10 @@ public final class NumberUtils {
       return dx.asByte() << positions;
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1334,8 +1359,8 @@ public final class NumberUtils {
    */
   public static Number shiftRight(DynamicNumber dx, int positions) {
     if (dx.isDecimal()) {
-      throw new UnsupportedOperationException(
-          "Bitwise operations are not supported on floating-point numbers.");
+      throw new NaftahBugError(
+              "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،".formatted(dx));
     } else if (dx.isBigInteger()) {
       return dx.asBigInteger().shiftRight(positions);
     } else if (dx.isLong()) {
@@ -1348,7 +1373,10 @@ public final class NumberUtils {
       return dx.asByte() >> positions;
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1373,8 +1401,8 @@ public final class NumberUtils {
    */
   public static Number unsignedShiftRight(DynamicNumber dx, int positions) {
     if (dx.isDecimal()) {
-      throw new UnsupportedOperationException(
-          "Bitwise operations are not supported on floating-point numbers.");
+      throw new NaftahBugError(
+              "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،".formatted(dx));
     } else if (dx.isBigInteger()) {
       return unsignedShiftRight(dx.asBigInteger(), positions);
     } else if (dx.isLong()) {
@@ -1387,7 +1415,10 @@ public final class NumberUtils {
       return dx.asByte() >>> positions;
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1420,7 +1451,10 @@ public final class NumberUtils {
       return dx.set(dx.asByte() + 1).asByte();
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1469,7 +1503,10 @@ public final class NumberUtils {
       return current;
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1502,7 +1539,10 @@ public final class NumberUtils {
       return dx.set(dx.asByte() - 1).asByte();
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
@@ -1551,7 +1591,9 @@ public final class NumberUtils {
       return current;
     } else {
       // Unknown or unsupported number types
-      throw new UnsupportedOperationException("Unsupported number type: " + dx.get().getClass());
+      // TODO: classNames should be in arabic or transliterated or in naftah language types
+      throw new NaftahBugError(
+              "نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
   }
 
