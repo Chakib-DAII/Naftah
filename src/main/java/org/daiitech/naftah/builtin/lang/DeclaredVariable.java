@@ -1,6 +1,5 @@
 package org.daiitech.naftah.builtin.lang;
 
-import java.util.Optional;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahParserHelper;
@@ -69,11 +68,7 @@ public class DeclaredVariable {
 
   @Override
   public String toString() {
-    return "<%s %s = %s>"
-        .formatted(
-            constant ? "ثابت" : "متغير",
-            name,
-            Optional.ofNullable(getValue()).orElse(NaftahParserHelper.NULL));
+    return NaftahParserHelper.declaredValueToString(constant, name, getValue());
   }
 
   public static DeclaredVariable of(
