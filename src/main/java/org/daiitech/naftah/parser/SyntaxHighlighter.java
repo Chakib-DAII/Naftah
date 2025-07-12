@@ -57,8 +57,8 @@ public class SyntaxHighlighter extends BaseHighlighter {
       int tokenStartIndex = token.getStartIndex();
       int tokenStopIndex = token.getStopIndex();
 
-      // Add gap text (unmatched text between tokens)
-      if (tokenStartIndex > lastIndex) {
+      // Add unmatched text before this token
+      if (tokenStartIndex > lastIndex && lastIndex >= 0 && tokenStartIndex <= buffer.length()) {
         String gapText = buffer.substring(lastIndex, tokenStartIndex);
         styledSegments.add(new Pair<>(gapText, AttributedStyle.DEFAULT));
       }
@@ -78,6 +78,12 @@ public class SyntaxHighlighter extends BaseHighlighter {
       lastIndex = tokenStopIndex + 1;
     }
 
+    // Add any unmatched trailing text after the last token
+    if (lastIndex < buffer.length()) {
+      String trailingText = buffer.substring(lastIndex);
+      styledSegments.add(new Pair<>(trailingText, AttributedStyle.DEFAULT));
+    }
+
     if (shouldReshape()) {
       // Reverse for RTL visual order (not buffer)
       Collections.reverse(styledSegments);
@@ -88,13 +94,11 @@ public class SyntaxHighlighter extends BaseHighlighter {
       AttributedString fragment = new AttributedString(part.a.toString(), part.b);
       int fragWidth = fragment.columnLength();
 
-      // If it doesn't fit in the current line, wrap to next
       if (currentLineWidth + fragWidth > terminalWidth) {
-        // Right-align current line
+        // Right-align and add current line
         AttributedString rightAligned = rightAlign(currentLine.toAttributedString(), terminalWidth);
         lines.add(rightAligned);
 
-        // Start new line
         currentLine = new AttributedStringBuilder();
         currentLineWidth = 0;
       }
