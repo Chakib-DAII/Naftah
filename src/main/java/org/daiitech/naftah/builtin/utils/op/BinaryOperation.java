@@ -7,6 +7,7 @@ import static org.daiitech.naftah.builtin.utils.StringUtils.stringToInt;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii
@@ -28,7 +29,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -40,7 +41,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -63,7 +64,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -75,7 +76,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -98,7 +99,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -110,7 +111,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return StringUtils.multiply(string, right.intValue());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -133,7 +134,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -145,7 +146,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return StringUtils.divide(string, right.intValue());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -168,7 +169,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -180,7 +181,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -205,7 +206,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -217,7 +218,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(stringToInt(string), right);
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -240,7 +241,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -252,7 +253,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(stringToInt(string), right);
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -275,7 +276,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -287,7 +288,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(stringToInt(string), right);
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -310,7 +311,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -322,7 +323,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(stringToInt(string), right);
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -345,7 +346,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -357,7 +358,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(stringToInt(string), right);
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -380,7 +381,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -392,7 +393,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(stringToInt(string), right);
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -417,7 +418,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -429,7 +430,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -452,7 +453,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -464,7 +465,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -487,7 +488,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -499,7 +500,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -522,7 +523,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -534,7 +535,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -557,7 +558,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -569,7 +570,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -592,7 +593,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -604,7 +605,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -627,7 +628,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -639,7 +640,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -662,7 +663,7 @@ public enum BinaryOperation implements Operation {
       } else if (right instanceof String string) {
         return apply(left, stringToInt(string));
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -674,7 +675,7 @@ public enum BinaryOperation implements Operation {
       } else if (left instanceof String string) {
         return apply(string, right.toString());
       }
-      throw BinaryOperation.newUnsupportedOperationException(this, left, right);
+      throw BinaryOperation.newNaftahBugError(this, left, right);
     }
 
     @Override
@@ -727,13 +728,9 @@ public enum BinaryOperation implements Operation {
 
   public abstract Object apply(String left, String right);
 
-  public static UnsupportedOperationException newUnsupportedOperationException(
+  public static NaftahBugError newNaftahBugError(
       Operation binaryOperation, Object left, Object right) {
-    return new UnsupportedOperationException(
-        binaryOperation
-            + " not supported for types: "
-            + left.getClass()
-            + " and "
-            + right.getClass());
+    return new NaftahBugError(
+            "العملية '%s' غير مدعومة للنوعين: '%s' و'%s'.".formatted(binaryOperation, left.getClass(), right.getClass()));
   }
 }
