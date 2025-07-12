@@ -59,7 +59,10 @@ public class DeclaredVariable {
   }
 
   public void setValue(Object currentValue) {
-    if (constant) throw new NaftahBugError("حدث خطأ أثناء إعادة تعيين القيمة الثابتة: '%s'. لا يمكن إعادة تعيين ثابت.".formatted(name));
+    if (constant)
+      throw new NaftahBugError(
+          "حدث خطأ أثناء إعادة تعيين القيمة الثابتة: '%s'. لا يمكن إعادة تعيين ثابت."
+              .formatted(name));
     this.currentValue = currentValue;
     if (!updatedCurrentValue) updatedCurrentValue = true;
   }

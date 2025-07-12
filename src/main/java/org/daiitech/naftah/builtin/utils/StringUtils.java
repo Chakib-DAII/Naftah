@@ -1,11 +1,10 @@
 package org.daiitech.naftah.builtin.utils;
 
-import org.daiitech.naftah.errors.NaftahBugError;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii

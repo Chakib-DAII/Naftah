@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.function.Function;
 import java.util.logging.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -422,7 +421,8 @@ public final class Naftah {
         if (main.isScriptFile) {
           if (matchedCommand.arguments.isEmpty()) {
             throw new ParameterException(
-                parseResult.commandSpec().commandLine(), "خطأ: لم يتم تقديم الخيار -e ولا اسم الملف.");
+                parseResult.commandSpec().commandLine(),
+                "خطأ: لم يتم تقديم الخيار -e ولا اسم الملف.");
           }
           main.script = matchedCommand.arguments.remove(0);
         } else {
@@ -492,8 +492,8 @@ public final class Naftah {
     return false;
   }
 
-
-  private static String getFormattedErrorMessage(Throwable t){
-    return fillRightWithSpaces(String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL)));
+  private static String getFormattedErrorMessage(Throwable t) {
+    return fillRightWithSpaces(
+        String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL)));
   }
 }

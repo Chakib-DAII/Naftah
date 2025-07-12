@@ -1,9 +1,8 @@
 package org.daiitech.naftah.utils;
 
-import org.daiitech.naftah.errors.NaftahBugError;
-
 import java.io.File;
 import java.util.Locale;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 public final class OS {
   public static final String OS_NAME_PROPERTY = "os.name";
@@ -126,7 +125,8 @@ public final class OS {
           } else {
             if (!family.equals("openvms")) {
               throw new NaftahBugError(
-                  "لا يمكن تحديد عائلة نظام التشغيل \"%s\" بسبب عدم توفر المعلومات الكافية.".formatted(family));
+                  "لا يمكن تحديد عائلة نظام التشغيل \"%s\" بسبب عدم توفر المعلومات الكافية."
+                      .formatted(family));
             }
 
             isFamily = OS_NAME.contains("openvms");

@@ -119,7 +119,9 @@ public class NaftahParserHelper {
   public static Map<String, Object> prepareDeclaredFunctionArguments(
       List<DeclaredParameter> parameters, List<Pair<String, Object>> arguments) {
     if (parameters.size() < arguments.size())
-      throw new NaftahBugError("عدد الوسائط الممررة '%s' يتجاوز عدد المعاملات '%s' المحددة.".formatted(arguments, parameters));
+      throw new NaftahBugError(
+          "عدد الوسائط الممررة '%s' يتجاوز عدد المعاملات '%s' المحددة."
+              .formatted(arguments, parameters));
 
     // how many params don't have defaults
     List<DeclaredParameter> requiredParams =
@@ -139,7 +141,9 @@ public class NaftahParserHelper {
     Map<String, Object> finalArguments = new HashMap<>();
     if (namedArguments.isEmpty()) {
       if (arguments.size() < requiredParams.size())
-        throw new NaftahBugError("عدد الوسائط الممررة '%s' أقل من عدد المعاملات '%s' المحددة.".formatted(arguments, parameters));
+        throw new NaftahBugError(
+            "عدد الوسائط الممررة '%s' أقل من عدد المعاملات '%s' المحددة."
+                .formatted(arguments, parameters));
       // process non named args
       finalArguments =
           IntStream.range(0, arguments.size())
@@ -168,7 +172,8 @@ public class NaftahParserHelper {
       for (var entry : positionalArguments.entrySet()) {
         String paramName = parameters.get(entry.getKey()).getName();
         if (namedArguments.containsKey(entry.getKey())) {
-          throw new NaftahBugError("تم تحديد الوسيط '%s' موقعياً وبالاسم في آنٍ واحد.".formatted(paramName));
+          throw new NaftahBugError(
+              "تم تحديد الوسيط '%s' موقعياً وبالاسم في آنٍ واحد.".formatted(paramName));
         }
         finalArguments.put(paramName, entry.getValue().b);
         usedNames.add(paramName);
@@ -189,7 +194,8 @@ public class NaftahParserHelper {
           usedNames.add(paramName);
 
         } else {
-          throw new NaftahBugError("الوسيط '%s' لا يتوافق مع أي من المعاملات المحددة." + entry.getValue().a);
+          throw new NaftahBugError(
+              "الوسيط '%s' لا يتوافق مع أي من المعاملات المحددة." + entry.getValue().a);
         }
       }
 
@@ -199,7 +205,8 @@ public class NaftahParserHelper {
           if (param.getDefaultValue() != null) {
             finalArguments.put(param.getName(), param.getDefaultValue());
           } else {
-            throw new NaftahBugError("الوسيط '%s' لم يتم مطابقته مع أي من المعاملات.".formatted(param.getName()));
+            throw new NaftahBugError(
+                "الوسيط '%s' لم يتم مطابقته مع أي من المعاملات.".formatted(param.getName()));
           }
         }
       }

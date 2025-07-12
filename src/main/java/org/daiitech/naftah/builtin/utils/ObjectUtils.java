@@ -228,8 +228,7 @@ public final class ObjectUtils {
   }
 
   public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
-    if (left == null || right == null)
-      throw new NaftahBugError("لا يمكن أن تكون الوسائط فارغة.");
+    if (left == null || right == null) throw new NaftahBugError("لا يمكن أن تكون الوسائط فارغة.");
 
     // Number vs Number
     if (left instanceof Number number && right instanceof Number number1) {

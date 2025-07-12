@@ -731,6 +731,7 @@ public enum BinaryOperation implements Operation {
   public static NaftahBugError newNaftahBugError(
       Operation binaryOperation, Object left, Object right) {
     return new NaftahBugError(
-            "العملية '%s' غير مدعومة للنوعين: '%s' و'%s'.".formatted(binaryOperation, left.getClass(), right.getClass()));
+        "العملية '%s' غير مدعومة للنوعين: '%s' و'%s'."
+            .formatted(binaryOperation, left.getClass(), right.getClass()));
   }
 }

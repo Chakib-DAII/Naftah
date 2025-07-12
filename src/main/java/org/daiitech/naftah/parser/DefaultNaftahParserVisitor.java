@@ -385,13 +385,15 @@ public class DefaultNaftahParserVisitor
         }
       } else if (function instanceof JvmFunction jvmFunction) {
         throw new NaftahBugError(
-            "الدالة '%s' من النوع: '%s' غير مدعومة حالياً".formatted(functionName, JvmFunction.class.getName()));
+            "الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
+                .formatted(functionName, JvmFunction.class.getName()));
       } else if (function instanceof Collection<?> functions) {
         throw new NaftahBugError(
             "الدالة '%s' : '%s' من النوع: '%s' غير مدعومة حالياً"
                 .formatted(functionName, functions, List.class.getName()));
       }
-    } else throw new NaftahBugError("الدالة '%s' غير موجودة في السياق الحالي.".formatted(functionName));
+    } else
+      throw new NaftahBugError("الدالة '%s' غير موجودة في السياق الحالي.".formatted(functionName));
     currentContext.setFunctionCallId(null);
     // TODO: add support for all kind of functions using the qualifiedName
     currentContext.markExecuted(ctx); // Mark as executed

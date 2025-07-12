@@ -9,7 +9,6 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.jline.reader.Completer;

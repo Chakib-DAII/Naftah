@@ -110,7 +110,8 @@ public class DefaultContext {
 
   public static Pair<Pair<DeclaredFunction, Map<String, Object>>, Object> popCall() {
     if (CALL_STACK.empty())
-      throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
+      throw new NaftahBugError(
+          "حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
     return CALL_STACK.pop();
   }
 
@@ -393,7 +394,8 @@ public class DefaultContext {
 
   public void defineVariable(String name, DeclaredVariable value) {
     if (variables.containsKey(name)) {
-      throw new NaftahBugError("المتغير '%s' موجود في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
+      throw new NaftahBugError(
+          "المتغير '%s' موجود في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
     }
     variables.put(name, value); // force local
   }
@@ -458,7 +460,8 @@ public class DefaultContext {
 
   public void defineFunction(String name, DeclaredFunction value) {
     if (functions.containsKey(name)) {
-      throw new NaftahBugError("الدالة '%s' موجودة في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
+      throw new NaftahBugError(
+          "الدالة '%s' موجودة في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
     }
     functions.put(name, value); // force local
   }
@@ -510,7 +513,8 @@ public class DefaultContext {
     if (parameters.containsKey(name)) {
       if (lenient) return;
 
-      throw new NaftahBugError("المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
+      throw new NaftahBugError(
+          "المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
     }
     parameters.put(name, value); // force local
   }
@@ -572,7 +576,8 @@ public class DefaultContext {
   public void defineFunctionArgument(String name, Object value) {
     name = getFunctionArgumentName(name);
     if (arguments.containsKey(name)) {
-      throw new NaftahBugError("الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
+      throw new NaftahBugError(
+          "الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
     }
     arguments.put(name, value); // force local
   }

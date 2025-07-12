@@ -87,10 +87,12 @@ public class CollectionUtils {
   }
 
   public static NaftahBugError newNaftahSizeBugError(Object[] left, Object[] right) {
-    return new NaftahBugError("""
+    return new NaftahBugError(
+        """
               يجب أن تكون أحجام المصفوفات متساوية.
               '%s'
               '%s'
-              """.formatted(Arrays.toString(left), Arrays.toString(right)));
+              """
+            .formatted(Arrays.toString(left), Arrays.toString(right)));
   }
 }
