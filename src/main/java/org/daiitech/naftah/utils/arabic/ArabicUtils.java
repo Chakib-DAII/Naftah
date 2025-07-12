@@ -47,11 +47,11 @@ public class ArabicUtils {
   }
 
   private static Matcher getTextMatcher(String input) {
-    if (TEXT_MATCHER_CACHE.containsKey(input)) return TEXT_MATCHER_CACHE.get(input);
+    if (TEXT_MATCHER_CACHE.containsKey(input)) return TEXT_MATCHER_CACHE.get(input).reset();
 
     Matcher matcher = TEXT_MULTILINE_PATTERN.matcher(input);
     TEXT_MATCHER_CACHE.put(input, matcher);
-    return matcher;
+    return matcher.reset();
   }
 
   public static synchronized String applyFunction(
