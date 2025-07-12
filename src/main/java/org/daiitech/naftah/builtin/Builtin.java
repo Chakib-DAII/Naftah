@@ -3,6 +3,7 @@ package org.daiitech.naftah.builtin;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.fillRightWithSpaces;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii
@@ -15,7 +16,7 @@ import org.daiitech.naftah.builtin.utils.NumberUtils;
 public final class Builtin {
 
   private Builtin() {
-    throw new IllegalStateException("Illegal usage.");
+    throw new NaftahBugError("استخدام غير مسموح به.");
   }
 
   @NaftahFn(
