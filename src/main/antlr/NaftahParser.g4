@@ -68,6 +68,7 @@ block: LBRACE statement* RBRACE;
 
 // Expressions: Can be value, binary operations
 expression: functionCall #functionCallExpression
+          | collection #collectionExpression
           | LPAREN expression RPAREN #parenthesisExpression
           | expression MUL expression #mulExpression
           | expression ELEMENTWISE_MUL expression #mulExpression
@@ -96,6 +97,19 @@ expression: functionCall #functionCallExpression
           | expression DECREMENT #postDecrementExpression
           | value #valueExpression
           ;
+
+// Collections:  can be a list, tuple, set, map
+collection: LBRACK elements? RBRACK #listValue
+          | LPAREN elements? RPAREN #tupleValue
+          | LBRACE elements? RBRACE #setValue
+          | LBRACE keyValuePairs? RBRACE #mapValue;
+
+// single value elements
+elements: expression ( COMMA expression )*;
+
+// key=value value elements
+keyValuePairs: keyValue ( COMMA keyValue )*;
+keyValue: expression COLON expression;
 
 // Value: Can be numbers, strings, ID
 value: NUMBER #numberValue
