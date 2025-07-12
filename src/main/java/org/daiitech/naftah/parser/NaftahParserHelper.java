@@ -2,6 +2,7 @@ package org.daiitech.naftah.parser;
 
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
+import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.*;
@@ -243,7 +244,7 @@ public class NaftahParserHelper {
     errorListeners.forEach(parser::addErrorListener);
 
     // Use the BailErrorStrategy
-    parser.setErrorHandler(new BailErrorStrategy());
+    parser.setErrorHandler(ERROR_HANDLER_INSTANCE);
 
     return parser;
   }
@@ -335,5 +336,19 @@ public class NaftahParserHelper {
     matcher.appendTail(result);
     var resultValue = result.toString();
     return found ? "'" + resultValue.replaceAll(" ", "") + "'" : resultValue;
+  }
+
+  public static String declaredValueToString(boolean constant, String name, Object value) {
+    return "<%s %s = %s>"
+            .formatted(
+                    constant ? "ثابت" : "متغير",
+                    name,
+                    Optional.ofNullable(value)
+                            .map(o -> {
+                              if (o instanceof Boolean aBoolean)
+                                return ObjectUtils.booleanToString(aBoolean);
+                              return o;
+                            })
+                            .orElse(NaftahParserHelper.NULL));
   }
 }
