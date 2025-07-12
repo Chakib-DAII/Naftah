@@ -9,6 +9,8 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.jline.reader.Completer;
 import org.jline.reader.Highlighter;
@@ -36,7 +38,7 @@ public final class REPLHelper {
           : RTL_MULTILINE_PROMPT_VALUE; // Right-to-left  multiline mark before prompt
 
   public REPLHelper() {
-    throw new IllegalStateException("Illegal usage.");
+    throw new NaftahBugError("استخدام غير مسموح به.");
   }
 
   public static Terminal getTerminal() throws IOException {
