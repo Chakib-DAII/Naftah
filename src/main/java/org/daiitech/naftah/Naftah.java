@@ -15,11 +15,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
 import org.daiitech.naftah.parser.NaftahErrorListener;
 import org.daiitech.naftah.parser.NaftahParser;
@@ -80,7 +82,7 @@ public final class Naftah {
         // fallback to default logging
         JulLoggerConfig.initializeFromResources("logging.properties");
       } catch (IOException ex) {
-        throw new RuntimeException(ex);
+        throw new NaftahBugError(ex);
       }
     } finally {
       if (debug) {
@@ -297,11 +299,10 @@ public final class Naftah {
             fullLine.append(currentLine);
             MULTILINE_IS_ACTIVE = true;
             println(reader);
-          } catch (Throwable e) {
+          } catch (Throwable t) {
             // ignored
             // TODO: improve logging (in arabic)
-            System.err.println("Caught: " + e);
-            System.out.println();
+            System.err.println(getFormattedErrorMessage(t));
           } finally {
             // Save history explicitly (though it's usually done automatically)
             reader.getHistory().save();
@@ -421,7 +422,7 @@ public final class Naftah {
         if (main.isScriptFile) {
           if (matchedCommand.arguments.isEmpty()) {
             throw new ParameterException(
-                parseResult.commandSpec().commandLine(), "error: neither -e or filename provided");
+                parseResult.commandSpec().commandLine(), "خطأ: لم يتم تقديم الخيار -e ولا اسم الملف.");
           }
           main.script = matchedCommand.arguments.remove(0);
         } else {
@@ -459,7 +460,7 @@ public final class Naftah {
       }
 
       if (ObjectUtils.isEmpty(result.subcommands()))
-        throw new InitializationException("error: no command provided: run/shell/init");
+        throw new InitializationException("خطأ: لم يتم تقديم أمر (run/shell/init)");
 
       var matchedSubCommandResult = result.subcommands().get(result.subcommands().size() - 1);
 
@@ -482,12 +483,17 @@ public final class Naftah {
       return true;
     } catch (ParseCancellationException e) {
       System.exit(1); // stop program
-    } catch (Throwable e) {
-      System.err.println("Caught: " + e);
+    } catch (Throwable t) {
+      System.err.println(getFormattedErrorMessage(t));
       if (debug) {
-        e.printStackTrace();
+        t.printStackTrace();
       }
     }
     return false;
+  }
+
+
+  private static String getFormattedErrorMessage(Throwable t){
+    return fillRightWithSpaces(String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL)));
   }
 }
