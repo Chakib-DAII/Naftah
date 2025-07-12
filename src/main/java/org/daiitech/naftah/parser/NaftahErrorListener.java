@@ -11,6 +11,8 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
  * @author Chakib Daii
  */
 public class NaftahErrorListener extends BaseErrorListener {
+  public static final ANTLRErrorStrategy ERROR_HANDLER_INSTANCE = new BailErrorStrategy();
+  public static final NaftahErrorListener INSTANCE = new NaftahErrorListener();
 
   @Override
   public void syntaxError(
