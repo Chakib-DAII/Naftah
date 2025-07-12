@@ -22,6 +22,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.*;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 
@@ -108,6 +109,8 @@ public class DefaultContext {
   }
 
   public static Pair<Pair<DeclaredFunction, Map<String, Object>>, Object> popCall() {
+    if (CALL_STACK.empty())
+      throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
     return CALL_STACK.pop();
   }
 
@@ -184,7 +187,7 @@ public class DefaultContext {
 
           return result;
         } catch (InterruptedException | ExecutionException e) {
-          throw new RuntimeException(e);
+          throw new NaftahBugError(e);
         } finally {
           internalExecutor.shutdown();
         }
@@ -250,7 +253,7 @@ public class DefaultContext {
       if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
         System.out.println("تم حفظ البيانات في: " + path);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new NaftahBugError(e);
     }
   }
 
@@ -282,7 +285,7 @@ public class DefaultContext {
       try {
         Files.createDirectories(CACHE_PATH.getParent());
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw new NaftahBugError(e);
       }
 
       FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
@@ -352,7 +355,7 @@ public class DefaultContext {
       Map<String, Object> arguments) {
     if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY))
         && parent == null
-        && (CONTEXTS.size() != 0)) throw new IllegalStateException("Illegal usage.");
+        && (CONTEXTS.size() != 0)) throw new NaftahBugError("استخدام غير مسموح به.");
     this.parent = parent;
     this.depth = parent == null ? 0 : parent.getDepth() + 1;
     this.arguments = arguments;
@@ -373,7 +376,7 @@ public class DefaultContext {
     }
 
     if (!safe) {
-      throw new RuntimeException("Variable not found: " + name);
+      throw new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
     }
     return null;
   }
@@ -390,14 +393,14 @@ public class DefaultContext {
 
   public void defineVariable(String name, DeclaredVariable value) {
     if (variables.containsKey(name)) {
-      throw new IllegalStateException("Variable exists in current context");
+      throw new NaftahBugError("المتغير '%s' موجود في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
     }
     variables.put(name, value); // force local
   }
 
   public void defineVariables(Map<String, DeclaredVariable> variables) {
     if (variables.keySet().stream().anyMatch(this.variables::containsKey)) {
-      throw new IllegalStateException("Variable exists in current context");
+      throw new NaftahBugError("المتغير موجود في السياق الحالي. لا يمكن إعادة إعلانه.");
     }
     this.variables.putAll(variables); // force local
   }
@@ -438,7 +441,7 @@ public class DefaultContext {
     }
 
     if (!safe) {
-      throw new RuntimeException("Function not found: " + name);
+      throw new NaftahBugError("الدالة '%s' غير موجودة في السياق الحالي.".formatted(name));
     }
     return null;
   }
@@ -455,7 +458,7 @@ public class DefaultContext {
 
   public void defineFunction(String name, DeclaredFunction value) {
     if (functions.containsKey(name)) {
-      throw new IllegalStateException("Function exists in current context");
+      throw new NaftahBugError("الدالة '%s' موجودة في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
     }
     functions.put(name, value); // force local
   }
@@ -486,7 +489,7 @@ public class DefaultContext {
     }
 
     if (!safe) {
-      throw new RuntimeException("Function parameter not found: " + name);
+      throw new NaftahBugError("المعامل '%s' غير موجود في السياق الحالي للدالة.".formatted(name));
     }
     return null;
   }
@@ -507,7 +510,7 @@ public class DefaultContext {
     if (parameters.containsKey(name)) {
       if (lenient) return;
 
-      throw new IllegalStateException("Function parameter exists in current context");
+      throw new NaftahBugError("المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
     }
     parameters.put(name, value); // force local
   }
@@ -520,7 +523,7 @@ public class DefaultContext {
     if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
       if (lenient) return;
 
-      throw new IllegalStateException("Function parameter exists in current context");
+      throw new NaftahBugError("المعامل موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
     }
     this.parameters.putAll(parameters); // force local
   }
@@ -550,7 +553,7 @@ public class DefaultContext {
     }
 
     if (!safe) {
-      throw new RuntimeException("Function argument not found: " + name);
+      throw new NaftahBugError("الوسيط '%s' غير موجود في السياق الحالي للدالة.".formatted(name));
     }
     return null;
   }
@@ -569,7 +572,7 @@ public class DefaultContext {
   public void defineFunctionArgument(String name, Object value) {
     name = getFunctionArgumentName(name);
     if (arguments.containsKey(name)) {
-      throw new IllegalStateException("Function argument exists in current context");
+      throw new NaftahBugError("الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
     }
     arguments.put(name, value); // force local
   }
@@ -580,7 +583,7 @@ public class DefaultContext {
             .map(entry -> Map.entry(getFunctionArgumentName(entry.getKey()), entry.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     if (arguments.keySet().stream().anyMatch(this.arguments::containsKey)) {
-      throw new IllegalStateException("Function argument exists in current context");
+      throw new NaftahBugError("الوسيط موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
     }
     this.arguments.putAll(arguments); // force local
   }
