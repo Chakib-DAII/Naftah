@@ -524,11 +524,12 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitCollectionExpression(org.daiitech.naftah.parser.NaftahParser.CollectionExpressionContext ctx) {
+  public Object visitCollectionExpression(
+      org.daiitech.naftah.parser.NaftahParser.CollectionExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitCollectionExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitCollectionExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.collection());
@@ -540,12 +541,12 @@ public class DefaultNaftahParserVisitor
   public List<Object> visitListValue(org.daiitech.naftah.parser.NaftahParser.ListValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitListValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitListValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     // TODO: add validation that all elements of the same type
-    var result = (List<Object>)visit(ctx.elements());
+    var result = (List<Object>) visit(ctx.elements());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -554,11 +555,11 @@ public class DefaultNaftahParserVisitor
   public Tuple visitTupleValue(org.daiitech.naftah.parser.NaftahParser.TupleValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitTupleValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitTupleValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    var result = Tuple.of((List<Object>)visit(ctx.elements()));
+    var result = Tuple.of((List<Object>) visit(ctx.elements()));
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -567,25 +568,28 @@ public class DefaultNaftahParserVisitor
   public Set<Object> visitSetValue(org.daiitech.naftah.parser.NaftahParser.SetValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitSetValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitSetValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    // TODO: add validation that all elements of the same type and no duplications coming from naftah script
-    var result = new HashSet<>((List<Object>)visit(ctx.elements()));
+    // TODO: add validation that all elements of the same type and no duplications coming from
+    // naftah script
+    var result = new HashSet<>((List<Object>) visit(ctx.elements()));
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
 
   @Override
-  public Map<Object, Object> visitMapValue(org.daiitech.naftah.parser.NaftahParser.MapValueContext ctx) {
+  public Map<Object, Object> visitMapValue(
+      org.daiitech.naftah.parser.NaftahParser.MapValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitMapValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitMapValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    // TODO: add validation that all elements of the same type and no duplications coming from naftah script
+    // TODO: add validation that all elements of the same type and no duplications coming from
+    // naftah script
     var result = (Map<Object, Object>) visit(ctx.keyValuePairs());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -595,8 +599,8 @@ public class DefaultNaftahParserVisitor
   public List<Object> visitElements(org.daiitech.naftah.parser.NaftahParser.ElementsContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-            "visitElements(%s)"
-                    .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitElements(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     List<Object> elements = new ArrayList<>();
@@ -608,16 +612,17 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Map<Object, Object> visitKeyValuePairs(org.daiitech.naftah.parser.NaftahParser.KeyValuePairsContext ctx) {
+  public Map<Object, Object> visitKeyValuePairs(
+      org.daiitech.naftah.parser.NaftahParser.KeyValuePairsContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitKeyValuePairs(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitKeyValuePairs(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Map<Object, Object> map = new HashMap<>();
     for (int i = 0; i < ctx.keyValue().size(); i++) {
-      var entry = (Map.Entry<?, ?>)visit(ctx.keyValue(i));
+      var entry = (Map.Entry<?, ?>) visit(ctx.keyValue(i));
       map.put(entry.getKey(), entry.getValue());
     }
     currentContext.markExecuted(ctx); // Mark as executed
@@ -625,18 +630,18 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Map.Entry<Object, Object> visitKeyValue(org.daiitech.naftah.parser.NaftahParser.KeyValueContext ctx) {
+  public Map.Entry<Object, Object> visitKeyValue(
+      org.daiitech.naftah.parser.NaftahParser.KeyValueContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitKeyValue(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitKeyValue(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     // TODO: think about a wrapper for a better hashing if needed
     var key = visit(ctx.expression(0));
     var value = visit(ctx.expression(1));
-    if (Objects.isNull(key) || Objects.isNull(value))
-      throw newNaftahBugNullError();
+    if (Objects.isNull(key) || Objects.isNull(value)) throw newNaftahBugNullError();
     var result = Map.entry(key, value);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;

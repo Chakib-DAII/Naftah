@@ -340,15 +340,16 @@ public class NaftahParserHelper {
 
   public static String declaredValueToString(boolean constant, String name, Object value) {
     return "<%s %s = %s>"
-            .formatted(
-                    constant ? "ثابت" : "متغير",
-                    name,
-                    Optional.ofNullable(value)
-                            .map(o -> {
-                              if (o instanceof Boolean aBoolean)
-                                return ObjectUtils.booleanToString(aBoolean);
-                              return o;
-                            })
-                            .orElse(NaftahParserHelper.NULL));
+        .formatted(
+            constant ? "ثابت" : "متغير",
+            name,
+            Optional.ofNullable(value)
+                .map(
+                    o -> {
+                      if (o instanceof Boolean aBoolean)
+                        return ObjectUtils.booleanToString(aBoolean);
+                      return o;
+                    })
+                .orElse(NaftahParserHelper.NULL));
   }
 }

@@ -494,14 +494,13 @@ public final class Naftah {
   }
 
   private static String getFormattedToString(Object o) {
-    return fillRightWithSpaces(Objects.nonNull(o) ?
-            o.toString().replaceAll("null", NULL)
-            : NULL);
+    return fillRightWithSpaces(Objects.nonNull(o) ? o.toString().replaceAll("null", NULL) : NULL);
   }
 
   private static String getFormattedErrorMessage(Throwable t) {
-    return fillRightWithSpaces(Objects.nonNull(t.getMessage()) ?
-            String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL))
+    return fillRightWithSpaces(
+        Objects.nonNull(t.getMessage())
+            ? String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL))
             : t.toString());
   }
 }

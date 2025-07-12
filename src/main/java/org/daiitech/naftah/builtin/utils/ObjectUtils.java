@@ -45,7 +45,8 @@ public final class ObjectUtils {
     // Map (e.g., HashMap)
     if (obj instanceof Map<?, ?> map) return !map.isEmpty();
 
-    if (obj instanceof Map.Entry<?, ?> entry) return isTruthy(entry.getKey()) && isTruthy(entry.getValue());
+    if (obj instanceof Map.Entry<?, ?> entry)
+      return isTruthy(entry.getKey()) && isTruthy(entry.getValue());
 
     // Other objects (non-null) are truthy
     return true;

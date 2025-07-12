@@ -1,6 +1,5 @@
 package org.daiitech.naftah.builtin.lang;
 
-import java.util.Optional;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.NaftahParserHelper;
