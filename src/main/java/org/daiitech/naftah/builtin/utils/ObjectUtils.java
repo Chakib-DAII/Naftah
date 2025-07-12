@@ -45,6 +45,8 @@ public final class ObjectUtils {
     // Map (e.g., HashMap)
     if (obj instanceof Map<?, ?> map) return !map.isEmpty();
 
+    if (obj instanceof Map.Entry<?, ?> entry) return isTruthy(entry.getKey()) && isTruthy(entry.getValue());
+
     // Other objects (non-null) are truthy
     return true;
   }
@@ -201,14 +203,16 @@ public final class ObjectUtils {
       int len = Array.getLength(obj);
       for (int i = 0; i < len; i++) {
         Object element = Array.get(obj, i);
+        if (!isTruthy(element)) continue;
         if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(element)) return false;
       }
       return true;
     }
 
     // Collection of simple or recursive types
-    if (obj instanceof Collection<?>) {
-      for (Object item : (Collection<?>) obj) {
+    if (obj instanceof Collection<?> collection) {
+      for (Object item : collection) {
+        if (!isTruthy(item)) continue;
         if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(item)) return false;
       }
       return true;
@@ -217,6 +221,7 @@ public final class ObjectUtils {
     // Map with simple keys and values
     if (obj instanceof Map<?, ?> map) {
       for (Map.Entry<?, ?> entry : map.entrySet()) {
+        if (!isTruthy(entry)) continue;
         if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(entry.getKey())) return false;
         if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(entry.getValue())) return false;
       }
