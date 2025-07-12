@@ -5,6 +5,7 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.intToBoolean;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii
@@ -82,9 +83,8 @@ public enum UnaryOperation implements Operation {
 
   public abstract String apply(String string);
 
-  public static UnsupportedOperationException newUnsupportedOperationException(
+  public static NaftahBugError newNaftahBugError(
       Operation unaryOperation, Object o) {
-    return new UnsupportedOperationException(
-        unaryOperation + " not supported for type: " + o.getClass());
+    return new NaftahBugError("العملية '%s' غير مدعومة للنوع: '%s'".formatted(unaryOperation , o.getClass()));
   }
 }
