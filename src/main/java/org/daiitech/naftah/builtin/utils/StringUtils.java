@@ -1,5 +1,7 @@
 package org.daiitech.naftah.builtin.utils;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -56,7 +58,7 @@ public final class StringUtils {
   }
 
   public static String[] divide(String s, int parts) {
-    if (parts <= 0) throw new IllegalArgumentException("Parts must be > 0");
+    if (parts <= 0) throw new NaftahBugError("يجب أن يكون عدد الأجزاء أكبر من 0.");
 
     int length = s.length();
     int partSize = length / parts;
