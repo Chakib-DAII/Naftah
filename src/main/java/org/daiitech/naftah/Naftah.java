@@ -197,10 +197,11 @@ public final class Naftah {
         // Create an input stream from the Naftah code
         CharStream input = getCharStream(main.isScriptFile, main.script);
 
-        var parser = NaftahCommand.prepareRun(input, new NaftahErrorListener());
+        var parser = NaftahCommand.prepareRun(input, NaftahErrorListener.INSTANCE);
         var result = NaftahCommand.doRun(parser);
 
-        if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) System.out.println(result);
+        if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
+          System.out.println(getFormattedToString(result));
 
         System.out.println();
       }
@@ -275,12 +276,12 @@ public final class Naftah {
 
             fullLine.delete(0, fullLine.length());
 
-            var parser = NaftahCommand.prepareRun(input, new NaftahErrorListener());
+            var parser = NaftahCommand.prepareRun(input, NaftahErrorListener.INSTANCE);
 
             var result = NaftahCommand.doRun(parser);
 
             if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
-              System.out.println(fillRightWithSpaces(result.toString()));
+              System.out.println(getFormattedToString(result));
             System.out.println();
 
           } catch (UserInterruptException | EndOfFileException e) {
@@ -492,8 +493,15 @@ public final class Naftah {
     return false;
   }
 
+  private static String getFormattedToString(Object o) {
+    return fillRightWithSpaces(Objects.nonNull(o) ?
+            o.toString().replaceAll("null", NULL)
+            : NULL);
+  }
+
   private static String getFormattedErrorMessage(Throwable t) {
-    return fillRightWithSpaces(
-        String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL)));
+    return fillRightWithSpaces(Objects.nonNull(t.getMessage()) ?
+            String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL))
+            : t.toString());
   }
 }
