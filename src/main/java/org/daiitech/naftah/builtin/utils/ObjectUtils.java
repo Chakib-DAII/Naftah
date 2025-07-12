@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.builtin.lang.*;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahParser;
 
@@ -228,7 +229,7 @@ public final class ObjectUtils {
 
   public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
     if (left == null || right == null)
-      throw new IllegalArgumentException("Arguments cannot be null");
+      throw new NaftahBugError("لا يمكن أن تكون الوسائط فارغة.");
 
     // Number vs Number
     if (left instanceof Number number && right instanceof Number number1) {
@@ -304,12 +305,11 @@ public final class ObjectUtils {
       return CollectionUtils.applyOperation(map, number, operation);
     }
 
-    throw new UnsupportedOperationException(
-        operation + " not supported for types: " + left.getClass() + " and " + right.getClass());
+    throw BinaryOperation.newNaftahBugError(operation, left.getClass(), right.getClass());
   }
 
   public static Object applyOperation(Object a, UnaryOperation operation) {
-    if (a == null) throw new IllegalArgumentException("Arguments cannot be null");
+    if (a == null) throw new NaftahBugError("لا يمكن أن يكون الوسيط فارغًا.");
 
     // Number
     if (a instanceof Number number) {
@@ -346,7 +346,7 @@ public final class ObjectUtils {
       return CollectionUtils.applyOperation(map, operation);
     }
 
-    throw new UnsupportedOperationException(operation + " not supported for type: " + a.getClass());
+    throw UnaryOperation.newNaftahBugError(operation, a);
   }
 
   public static int booleanToInt(boolean aBoolean) {
