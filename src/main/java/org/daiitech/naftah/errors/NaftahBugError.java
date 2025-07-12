@@ -83,9 +83,9 @@ public class NaftahBugError extends AssertionError {
   @Override
   public String getMessage() {
     if (message != null) {
-      return "BUG! " + message;
+      return "خطأ برمجي! " + message;
     } else {
-      return "BUG! UNCAUGHT EXCEPTION: " + exception.getMessage();
+      return "خطأ برمجي! استثناء غير ملتقط: " + exception.getMessage();
     }
   }
 
