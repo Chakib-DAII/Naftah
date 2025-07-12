@@ -1,5 +1,7 @@
 package org.daiitech.naftah.utils;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
 import java.io.File;
 import java.util.Locale;
 
@@ -123,8 +125,8 @@ public final class OS {
             isFamily = OS_NAME.contains("os/400");
           } else {
             if (!family.equals("openvms")) {
-              throw new IllegalArgumentException(
-                  "Don't know how to detect os family \"" + family + "\"");
+              throw new NaftahBugError(
+                  "لا يمكن تحديد عائلة نظام التشغيل \"%s\" بسبب عدم توفر المعلومات الكافية.".formatted(family));
             }
 
             isFamily = OS_NAME.contains("openvms");
