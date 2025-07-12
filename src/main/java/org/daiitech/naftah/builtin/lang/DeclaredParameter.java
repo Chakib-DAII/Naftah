@@ -65,11 +65,7 @@ public class DeclaredParameter {
 
   @Override
   public String toString() {
-    return "<%s %s = %s>"
-        .formatted(
-            constant ? "ثابت" : "متغير",
-            name,
-            Optional.ofNullable(getValue()).orElse(NaftahParserHelper.NULL));
+    return NaftahParserHelper.declaredValueToString(constant, name, getValue());
   }
 
   public static DeclaredParameter of(
