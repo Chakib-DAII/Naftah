@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii
@@ -12,8 +13,7 @@ import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 public class CollectionUtils {
 
   public static Object[] applyOperation(Object[] left, Object[] right, BinaryOperation operation) {
-    if (left.length != right.length)
-      throw new IllegalArgumentException("arrays size must be equal.");
+    if (left.length != right.length) throw newNaftahSizeBugError(left, right);
     return IntStream.range(0, left.length)
         .mapToObj(i -> ObjectUtils.applyOperation(left[i], right[i], operation))
         .toArray(Object[]::new);
@@ -21,8 +21,7 @@ public class CollectionUtils {
 
   public static Collection<?> applyOperation(
       Collection<?> left, Collection<?> right, BinaryOperation operation) {
-    if (left.size() != right.size())
-      throw new IllegalArgumentException("Collections size must be equal.");
+    if (left.size() != right.size()) throw newNaftahSizeBugError(left.toArray(), right.toArray());
     var arr1 = left.toArray(Object[]::new);
     var arr2 = right.toArray(Object[]::new);
     return List.of(applyOperation(arr1, arr2, operation));
@@ -49,7 +48,7 @@ public class CollectionUtils {
         var val2 = right.get(key);
         result.put(key, ObjectUtils.applyOperation(val1, val2, operation)); // Reuse from earlier
       } else {
-        throw new IllegalArgumentException("Key " + key + " not found in second map");
+        throw new NaftahBugError("المفتاح '%s' غير موجود في المصفوفة الترابطية الثانية.");
       }
     }
 
@@ -85,5 +84,13 @@ public class CollectionUtils {
             entry ->
                 Map.entry(entry.getKey(), ObjectUtils.applyOperation(entry.getValue(), operation)))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
+
+  public static NaftahBugError newNaftahSizeBugError(Object[] left, Object[] right) {
+    return new NaftahBugError("""
+              يجب أن تكون أحجام المصفوفات متساوية.
+              '%s'
+              '%s'
+              """.formatted(Arrays.toString(left), Arrays.toString(right)));
   }
 }
