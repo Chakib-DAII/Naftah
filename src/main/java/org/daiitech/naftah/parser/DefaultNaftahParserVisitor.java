@@ -559,6 +559,8 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    // TODO: add validation that elements cannot be of a specific type (in case setting type in
+    // declaration)
     var result = Tuple.of((List<Object>) visit(ctx.elements()));
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
