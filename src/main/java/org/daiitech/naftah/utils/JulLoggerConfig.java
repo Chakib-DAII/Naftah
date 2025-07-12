@@ -27,7 +27,7 @@ public class JulLoggerConfig {
     try (InputStream configStream =
         JulLoggerConfig.class.getClassLoader().getResourceAsStream(propertiesPath)) {
       if (configStream == null) {
-        throw new FileNotFoundException("Resource not found: " + propertiesPath);
+        throw new FileNotFoundException("تعذر العثور على الملف: " + propertiesPath);
       }
 
       // Step 2: Read properties (not yet loading into LogManager)
@@ -48,7 +48,7 @@ public class JulLoggerConfig {
       try (InputStream configStream1 =
           Thread.currentThread().getContextClassLoader().getResourceAsStream(propertiesPath)) {
         if (configStream1 == null) {
-          throw new IOException("Cannot re-read resource: " + propertiesPath);
+          throw new IOException("تعذر إعادة قراءة الملف: " + propertiesPath);
         }
         initialize(configStream1);
       }
