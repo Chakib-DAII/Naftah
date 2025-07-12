@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii
@@ -14,7 +15,7 @@ public final class NaftahExecutionLogger {
   private static final Logger LOGGER = Logger.getLogger("DefaultNaftahParserVisitor");
 
   public NaftahExecutionLogger() {
-    throw new IllegalStateException("Illegal usage.");
+    throw new NaftahBugError("استخدام غير مسموح به.");
   }
 
   private static <T extends ParserRuleContext> String join(Collection<T> collection) {
