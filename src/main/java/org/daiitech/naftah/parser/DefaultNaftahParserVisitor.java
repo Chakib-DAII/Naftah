@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.*;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii
@@ -348,6 +349,7 @@ public class DefaultNaftahParserVisitor
     if (currentContext.containsFunction(functionName)) {
       Object function = currentContext.getFunction(functionName, false).b;
       if (function instanceof DeclaredFunction declaredFunction) {
+        boolean functionInStack = false;
         try {
           prepareDeclaredFunction(this, declaredFunction);
           Map<String, Object> finalArgs =
@@ -366,9 +368,10 @@ public class DefaultNaftahParserVisitor
             currentContext.defineFunctionArguments(finalArgs);
 
           pushCall(declaredFunction, finalArgs);
+          functionInStack = true;
           result = visit(declaredFunction.getBody());
         } finally {
-          popCall();
+          if (functionInStack) popCall();
         }
       } else if (function instanceof BuiltinFunction builtinFunction) {
         var methodArgs =
@@ -378,17 +381,17 @@ public class DefaultNaftahParserVisitor
           if (builtinFunction.getFunctionInfo().returnType() != Void.class
               && possibleResult != null) result = possibleResult;
         } catch (IllegalAccessException | InvocationTargetException e) {
-          throw new RuntimeException(e);
+          throw new NaftahBugError(e);
         }
       } else if (function instanceof JvmFunction jvmFunction) {
-        throw new UnsupportedOperationException(
-            "Function %s of type: %s".formatted(functionName, JvmFunction.class.getName()));
+        throw new NaftahBugError(
+            "الدالة '%s' من النوع: '%s' غير مدعومة حالياً".formatted(functionName, JvmFunction.class.getName()));
       } else if (function instanceof Collection<?> functions) {
-        throw new UnsupportedOperationException(
-            "Function %s : %s of type: %s"
+        throw new NaftahBugError(
+            "الدالة '%s' : '%s' من النوع: '%s' غير مدعومة حالياً"
                 .formatted(functionName, functions, List.class.getName()));
       }
-    } else throw new RuntimeException("Function not found: " + functionName);
+    } else throw new NaftahBugError("الدالة '%s' غير موجودة في السياق الحالي.".formatted(functionName));
     currentContext.setFunctionCallId(null);
     // TODO: add support for all kind of functions using the qualifiedName
     currentContext.markExecuted(ctx); // Mark as executed
