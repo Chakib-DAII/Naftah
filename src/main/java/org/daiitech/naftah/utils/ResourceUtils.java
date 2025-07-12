@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 import org.daiitech.naftah.Naftah;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii
@@ -32,7 +33,7 @@ public final class ResourceUtils {
       // If it's a file (JAR), return its parent directory
       return jarFile.isFile() ? jarFile.getParentFile().toPath() : jarFile.toPath();
     } catch (URISyntaxException e) {
-      throw new RuntimeException("Could not determine JAR directory", e);
+      throw new NaftahBugError("تعذر تحديد مجلد الـ JAR.", e);
     }
   }
 
@@ -55,7 +56,7 @@ public final class ResourceUtils {
       props.load(input);
       resolvePlaceholders(props);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new NaftahBugError(e);
     }
     return props;
   }
