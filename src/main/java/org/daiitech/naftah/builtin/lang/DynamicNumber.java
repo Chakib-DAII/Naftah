@@ -12,12 +12,12 @@ public class DynamicNumber {
   private Number value;
 
   public DynamicNumber(Number value) {
-    Objects.requireNonNull(value, "value must not be null");
+    Objects.requireNonNull(value, "القيمة غير صالحة (null)");
     this.value = value;
   }
 
   public DynamicNumber(Object value) {
-    Objects.requireNonNull(value, "value must not be null");
+    Objects.requireNonNull(value, "القيمة غير صالحة (null)");
     this.value = NumberUtils.parseDynamicNumber(value);
   }
 
