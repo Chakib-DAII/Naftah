@@ -24,6 +24,7 @@ import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii
@@ -117,7 +118,8 @@ public class NaftahParserHelper {
 
   public static Map<String, Object> prepareDeclaredFunctionArguments(
       List<DeclaredParameter> parameters, List<Pair<String, Object>> arguments) {
-    if (parameters.size() < arguments.size()) throw new RuntimeException("Too many arguments");
+    if (parameters.size() < arguments.size())
+      throw new NaftahBugError("عدد الوسائط الممررة '%s' يتجاوز عدد المعاملات '%s' المحددة.".formatted(arguments, parameters));
 
     // how many params don't have defaults
     List<DeclaredParameter> requiredParams =
@@ -136,7 +138,8 @@ public class NaftahParserHelper {
 
     Map<String, Object> finalArguments = new HashMap<>();
     if (namedArguments.isEmpty()) {
-      if (arguments.size() < requiredParams.size()) throw new RuntimeException("Too few arguments");
+      if (arguments.size() < requiredParams.size())
+        throw new NaftahBugError("عدد الوسائط الممررة '%s' أقل من عدد المعاملات '%s' المحددة.".formatted(arguments, parameters));
       // process non named args
       finalArguments =
           IntStream.range(0, arguments.size())
@@ -165,8 +168,7 @@ public class NaftahParserHelper {
       for (var entry : positionalArguments.entrySet()) {
         String paramName = parameters.get(entry.getKey()).getName();
         if (namedArguments.containsKey(entry.getKey())) {
-          throw new RuntimeException(
-              "Argument '" + paramName + "' specified both positionally and by name");
+          throw new NaftahBugError("تم تحديد الوسيط '%s' موقعياً وبالاسم في آنٍ واحد.".formatted(paramName));
         }
         finalArguments.put(paramName, entry.getValue().b);
         usedNames.add(paramName);
@@ -180,14 +182,14 @@ public class NaftahParserHelper {
           String paramName = param.getName();
 
           if (usedNames.contains(paramName)) {
-            throw new RuntimeException("Duplicate argument: " + paramName);
+            throw new NaftahBugError("تم تمرير الوسيط '%s' أكثر من مرة.".formatted(paramName));
           }
 
           finalArguments.put(paramName, entry.getValue().b);
           usedNames.add(paramName);
 
         } else {
-          throw new RuntimeException("Unknown parameter name: " + entry.getValue().a);
+          throw new NaftahBugError("الوسيط '%s' لا يتوافق مع أي من المعاملات المحددة." + entry.getValue().a);
         }
       }
 
@@ -197,7 +199,7 @@ public class NaftahParserHelper {
           if (param.getDefaultValue() != null) {
             finalArguments.put(param.getName(), param.getDefaultValue());
           } else {
-            throw new RuntimeException("Missing required argument: " + param.getName());
+            throw new NaftahBugError("الوسيط '%s' لم يتم مطابقته مع أي من المعاملات.".formatted(param.getName()));
           }
         }
       }
