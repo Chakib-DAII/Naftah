@@ -1,5 +1,7 @@
 package org.daiitech.naftah.parser;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValue;
 import static org.daiitech.naftah.parser.DefaultContext.VARIABLE_GETTER;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
@@ -22,7 +24,7 @@ public final class StringInterpolator {
   private static final Map<String, Matcher> MATCHER_CACHE = new HashMap<>();
 
   public StringInterpolator() {
-    throw new IllegalStateException("Illegal usage.");
+    throw new NaftahBugError("استخدام غير مسموح به.");
   }
 
   public static String process(String input, Object context) {
@@ -37,7 +39,7 @@ public final class StringInterpolator {
     } else if (context instanceof Map<?, ?> map) {
       return interpolate(input, (Map<String, Object>) map);
     } else {
-      throw new UnsupportedOperationException("unsupported context");
+      throw new NaftahBugError("السياق غير مدعوم.");
     }
   }
 
