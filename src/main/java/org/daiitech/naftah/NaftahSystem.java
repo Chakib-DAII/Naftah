@@ -37,7 +37,7 @@ public final class NaftahSystem {
     int firstDot = full.indexOf('.');
     int secondDot = full.indexOf('.', firstDot + 1);
     if (secondDot < 0) {
-      throw new NaftahBugError("Unexpected version found: " + full);
+      throw new NaftahBugError("تم العثور على إصدار غير متوقع: " + full);
     }
     return full.substring(0, secondDot);
   }
