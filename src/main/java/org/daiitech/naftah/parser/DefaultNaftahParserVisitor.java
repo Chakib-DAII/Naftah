@@ -647,15 +647,18 @@ public class DefaultNaftahParserVisitor
     Set<Class<?>> elementTypes = new HashSet<>();
     for (int i = 0; i < ctx.expression().size(); i++) {
       var elementValue = visit(ctx.expression(i));
-      var elementType = elementValue.getClass();
+      var elementType = Objects.nonNull(elementValue) ? elementValue.getClass() : Object.class;
       if (!creatingTuple) {
         // validating list has all the same type
-        if (elementTypes.stream()
-            .anyMatch(
+        if (parsingAssignment && (Objects.nonNull(elementValue)
+                && ((elementType.isAssignableFrom(Number.class)
+                && !currentDeclarationType.isAssignableFrom(Number.class))
+                || !elementType.isAssignableFrom(currentDeclarationType))
+                || elementTypes.stream().anyMatch(
                 aClass ->
                     (aClass.isAssignableFrom(Number.class)
                             && !elementType.isAssignableFrom(Number.class))
-                        || !aClass.isAssignableFrom(elementType)))
+                        || !aClass.isAssignableFrom(elementType))))
           throw new NaftahBugError(
               "لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s."
                   .formatted(
@@ -672,7 +675,7 @@ public class DefaultNaftahParserVisitor
         }
       }
       elements.add(elementValue);
-      elementTypes.add(elementType);
+      if (Objects.nonNull(elementValue)) elementTypes.add(elementType);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return elements;
@@ -701,12 +704,26 @@ public class DefaultNaftahParserVisitor
     // process entries
     Map<Object, Object> map = new HashMap<>();
     Set<Class<?>> keyTypes = new HashSet<>();
+    Set<Class<?>> valueTypes = new HashSet<>();
     for (int i = 0; i < ctx.keyValue().size(); i++) {
       var entry = (Map.Entry<?, ?>) visit(ctx.keyValue(i));
-      var keyType = entry.getKey().getClass();
+      var key = entry.getKey();
+      var keyType = Objects.nonNull( key) ?  key.getClass() : Object.class;
+      var value = entry.getValue();
+      var valueType = Objects.nonNull(value) ? value.getClass() : Object.class;
       if (creatingMap) {
         // validating keys has all the same type
-        if (keyTypes.stream()
+        // validating null keys
+        if (Objects.isNull(key))
+          throw new NaftahBugError(
+                  "لا يمكن أن يكون أحد المفاتيح في المصفوفة الترابطية (Map) %s فارغًا (null). يجب أن تكون جميع المفاتيح معرّفة بشكل صحيح."
+                          .formatted(parsingAssignment ? "'%s'".formatted(currentDeclarationName) : ""));
+
+        if (parsingAssignment && (Objects.nonNull(value)
+                && ((valueType.isAssignableFrom(Number.class)
+                && !currentDeclarationType.isAssignableFrom(Number.class))
+                || !valueType.isAssignableFrom(currentDeclarationType)))
+                || keyTypes.stream()
             .anyMatch(
                 aClass ->
                     (aClass.isAssignableFrom(Number.class)
@@ -719,13 +736,16 @@ public class DefaultNaftahParserVisitor
                           parsingAssignment ? "(%s)".formatted(getNaftahType(parser, currentDeclarationType)) : ""));
 
         // validating keySet has no duplicates
-        if (map.containsKey(entry.getKey()))
+        if (map.containsKey(key))
           throw new NaftahBugError(
               "تحتوي مجموعة المفاتيح للمصفوفة الترابطية %s على مفاتيح مكرّرة، وهذا غير مسموح في المصفوفة الترابطية (Map) التي يجب أن تحتوي على مفاتيح فريدة فقط."
                   .formatted(parsingAssignment ? "'%s'".formatted(currentDeclarationName) : ""));
       }
-      map.put(entry.getKey(), entry.getValue());
-      keyTypes.add(keyType);
+      map.put(key, value);
+
+      if (Objects.nonNull(key)) keyTypes.add(keyType);
+
+      if (Objects.nonNull(value)) valueTypes.add(valueType);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return map;
@@ -742,8 +762,11 @@ public class DefaultNaftahParserVisitor
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var key = visit(ctx.expression(0));
     var value = visit(ctx.expression(1));
-    if (Objects.isNull(key) || Objects.isNull(value)) throw newNaftahBugNullError();
-    var result = Map.entry(key, value);
+    // prepare validations
+    boolean creatingMap =
+            hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.MapValueContext.class);
+    if (!creatingMap && Objects.isNull(key)) throw newNaftahBugNullError();
+    var result = new AbstractMap.SimpleEntry<>(key, value);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -757,8 +780,28 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    // TODO: add Type Declaration
+    // prepare validations
+    boolean creatingCollection =
+            hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.CollectionContext.class);
+    boolean parsingAssignment = currentContext.isParsingAssignment();
+
+    // process value
     var result = visit(ctx.value());
+
+    if (!creatingCollection && parsingAssignment) {
+      var currentDeclaration = currentContext.getDeclarationOfAssignment();
+      Class<?> currentDeclarationType = currentDeclaration.a.getType();
+      Class<?> resultType = Objects.nonNull(result) ? result.getClass() : Object.class;
+      String currentDeclarationName = currentDeclaration.a.getName();
+      if (Objects.nonNull(result)
+              && ((resultType.isAssignableFrom(Number.class)
+              && !currentDeclarationType.isAssignableFrom(Number.class))
+              || !resultType.isAssignableFrom(currentDeclarationType)))
+        throw new NaftahBugError(
+              "القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
+                      .formatted(currentDeclarationName, getNaftahType(parser, currentDeclarationType)));
+    }
+
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
