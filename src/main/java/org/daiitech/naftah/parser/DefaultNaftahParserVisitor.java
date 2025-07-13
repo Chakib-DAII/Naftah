@@ -562,7 +562,6 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    // TODO: add validation that all elements of the same type
     var result = (List<Object>) visit(ctx.elements());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -576,16 +575,18 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    var currentDeclaration = currentContext.getDeclarationOfAssignment();
-    Class<?> currentDeclarationType = currentDeclaration.a.getType();
-    String currentDeclarationName = currentDeclaration.a.getName();
-    if (Objects.nonNull(currentDeclarationType) && !Object.class.equals(currentDeclarationType))
-      throw new NaftahBugError(
-          "لا يُسمح بأن تحتوي التركيبة (tuple) '%s' على عناصر من النوع %s. التركيبة يجب أن تكون عامة لجميع الأنواع (%s)."
-              .formatted(
-                  currentDeclarationName,
-                  getNaftahType(parser, currentDeclarationType),
-                  getNaftahType(parser, Object.class)));
+    if (currentContext.isParsingAssignment()) {
+      var currentDeclaration = currentContext.getDeclarationOfAssignment();
+      Class<?> currentDeclarationType = currentDeclaration.a.getType();
+      String currentDeclarationName = currentDeclaration.a.getName();
+      if (Objects.nonNull(currentDeclarationType) && !Object.class.equals(currentDeclarationType))
+        throw new NaftahBugError(
+                "لا يُسمح بأن تحتوي التركيبة (tuple) '%s' على عناصر من النوع %s. التركيبة يجب أن تكون عامة لجميع الأنواع (%s)."
+                        .formatted(
+                                currentDeclarationName,
+                                getNaftahType(parser, currentDeclarationType),
+                                getNaftahType(parser, Object.class)));
+    }
     var result = Tuple.of((List<Object>) visit(ctx.elements()));
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -599,8 +600,6 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    // TODO: add validation that all elements of the same type and no duplications coming from
-    // naftah script
     var result = new HashSet<>((List<Object>) visit(ctx.elements()));
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -615,8 +614,6 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    // TODO: add validation that all elements of the same type and no duplications coming from
-    // naftah script
     var result = (Map<Object, Object>) visit(ctx.keyValuePairs());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -637,9 +634,14 @@ public class DefaultNaftahParserVisitor
         hasParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.SetValueContext.class);
     boolean creatingTuple =
         hasParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.TupleValueContext.class);
-    var currentDeclaration = currentContext.getDeclarationOfAssignment();
-    Class<?> currentDeclarationType = currentDeclaration.a.getType();
-    String currentDeclarationName = currentDeclaration.a.getName();
+    boolean parsingAssignment = currentContext.isParsingAssignment();
+    Class<?> currentDeclarationType = null;
+    String currentDeclarationName = null;
+    if (parsingAssignment) {
+      var currentDeclaration = currentContext.getDeclarationOfAssignment();
+      currentDeclarationType = currentDeclaration.a.getType();
+      currentDeclarationName = currentDeclaration.a.getName();
+    }
     // process elements
     List<Object> elements = new ArrayList<>();
     Set<Class<?>> elementTypes = new HashSet<>();
@@ -655,18 +657,18 @@ public class DefaultNaftahParserVisitor
                             && !elementType.isAssignableFrom(Number.class))
                         || !aClass.isAssignableFrom(elementType)))
           throw new NaftahBugError(
-              "لا يمكن أن تحتوي %s '%s' على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع (%s)."
+              "لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s."
                   .formatted(
                       creatingList ? "القائمة (List)" : "المجموعة (Set)",
-                      currentDeclarationName,
-                      getNaftahType(parser, currentDeclarationType)));
+                      parsingAssignment ? "'%s'".formatted(currentDeclarationName) : "",
+                          parsingAssignment ? "(%s)".formatted(getNaftahType(parser, currentDeclarationType)) : ""));
 
         if (creatingSet) {
           // validating set has no duplicates
           if (elements.contains(elementValue))
             throw new NaftahBugError(
-                "تحتوي المجموعة '%s' على عناصر مكرّرة، وهذا غير مسموح في المجموعات (Set) التي يجب أن تحتوي على عناصر فريدة فقط."
-                    .formatted(currentDeclarationName));
+                "تحتوي المجموعة %s على عناصر مكرّرة، وهذا غير مسموح في المجموعات (Set) التي يجب أن تحتوي على عناصر فريدة فقط."
+                    .formatted(parsingAssignment ? "'%s'".formatted(currentDeclarationName) : ""));
         }
       }
       elements.add(elementValue);
@@ -688,9 +690,14 @@ public class DefaultNaftahParserVisitor
     // prepare validations
     boolean creatingMap =
         hasParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.MapValueContext.class);
-    var currentDeclaration = currentContext.getDeclarationOfAssignment();
-    Class<?> currentDeclarationType = currentDeclaration.a.getType();
-    String currentDeclarationName = currentDeclaration.a.getName();
+    boolean parsingAssignment = currentContext.isParsingAssignment();
+    Class<?> currentDeclarationType = null;
+    String currentDeclarationName = null;
+    if (parsingAssignment) {
+      var currentDeclaration = currentContext.getDeclarationOfAssignment();
+      currentDeclarationType = currentDeclaration.a.getType();
+      currentDeclarationName = currentDeclaration.a.getName();
+    }
     // process entries
     Map<Object, Object> map = new HashMap<>();
     Set<Class<?>> keyTypes = new HashSet<>();
@@ -706,15 +713,16 @@ public class DefaultNaftahParserVisitor
                             && !keyType.isAssignableFrom(Number.class))
                         || !aClass.isAssignableFrom(keyType)))
           throw new NaftahBugError(
-              "لا يمكن أن تحتوي المصفوفة الترابطية (Map) '%s' على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع (%s)."
+              "لا يمكن أن تحتوي المصفوفة الترابطية (Map) %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s."
                   .formatted(
-                      currentDeclarationName, getNaftahType(parser, currentDeclarationType)));
+                          parsingAssignment ? "'%s'".formatted(currentDeclarationName) : "",
+                          parsingAssignment ? "(%s)".formatted(getNaftahType(parser, currentDeclarationType)) : ""));
 
         // validating keySet has no duplicates
         if (map.containsKey(entry.getKey()))
           throw new NaftahBugError(
-              "تحتوي مجموعة المفاتيح للمصفوفة الترابطية '%s' على مفاتيح مكرّرة، وهذا غير مسموح في المصفوفة الترابطية (Map) التي يجب أن تحتوي على مفاتيح فريدة فقط."
-                  .formatted(currentDeclarationName));
+              "تحتوي مجموعة المفاتيح للمصفوفة الترابطية %s على مفاتيح مكرّرة، وهذا غير مسموح في المصفوفة الترابطية (Map) التي يجب أن تحتوي على مفاتيح فريدة فقط."
+                  .formatted(parsingAssignment ? "'%s'".formatted(currentDeclarationName) : ""));
       }
       map.put(entry.getKey(), entry.getValue());
       keyTypes.add(keyType);
@@ -732,7 +740,6 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    // TODO: think about a wrapper for a better hashing if needed
     var key = visit(ctx.expression(0));
     var value = visit(ctx.expression(1));
     if (Objects.isNull(key) || Objects.isNull(value)) throw newNaftahBugNullError();
