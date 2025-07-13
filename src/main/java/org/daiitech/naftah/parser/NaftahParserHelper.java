@@ -48,8 +48,8 @@ public class NaftahParserHelper {
   }
 
   public static <T extends Tree> boolean hasAnyParentOfType(ParseTree ctx, Class<T> type) {
-    boolean hasParent =  hasParentOfType(ctx, type);
-    while  (ctx.getParent() != null && !hasParent) {
+    boolean hasParent = hasParentOfType(ctx, type);
+    while (ctx.getParent() != null && !hasParent) {
       ctx = ctx.getParent();
       hasParent = hasParentOfType(ctx, type);
     }
