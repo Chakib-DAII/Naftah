@@ -1,6 +1,6 @@
 package org.daiitech.naftah.parser;
 
-import static org.daiitech.naftah.parser.NaftahParserHelper.TOKENS_SYMBOLS;
+import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.fillRightWithSpaces;
 
 import org.antlr.v4.runtime.*;
@@ -39,14 +39,8 @@ public class NaftahErrorListener extends BaseErrorListener {
         Vocabulary vocabulary = parser.getVocabulary();
         StringBuilder expected = new StringBuilder();
         for (int tokenType : expectedTokens.toArray()) {
-          String tokenName = vocabulary.getDisplayName(tokenType);
-          String tokenSymbols = TOKENS_SYMBOLS.getProperty(tokenName);
-          if (tokenSymbols == null) continue;
-          String formattedTokenSymbols =
-              """
-                            - %s
-                            """
-                  .formatted(tokenSymbols.replaceAll(",", " أو"));
+          String formattedTokenSymbols = getFormattedTokenSymbols(vocabulary, tokenType, true);
+          if (formattedTokenSymbols == null) continue;
           expected.append(formattedTokenSymbols);
         }
 
