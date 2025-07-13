@@ -169,12 +169,10 @@ public final class Naftah {
     }
 
     private static Object doRun(NaftahParser parser) {
-      // Parse the input and get the parse tree
-      ParseTree tree = parser.program();
-
       // Create a visitor and visit the parse tree
-      DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor();
-      return visitor.visit(tree);
+      DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor(parser);
+      // Parse the input and get the parse tree
+      return visitor.visit();
     }
 
     @Command(
