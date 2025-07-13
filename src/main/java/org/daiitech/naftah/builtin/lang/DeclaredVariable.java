@@ -11,7 +11,7 @@ public class DeclaredVariable {
   private ParserRuleContext originalContext;
   private final String name;
   private final boolean constant;
-  private final Object type;
+  private final Class<?> type;
   private final Object defaultValue;
   private Object currentValue;
   private boolean updatedCurrentValue;
@@ -20,7 +20,7 @@ public class DeclaredVariable {
       ParserRuleContext originalContext,
       String name,
       boolean constant,
-      Object type,
+      Class<?> type,
       Object defaultValue) {
     this.originalContext = originalContext;
     this.name = name;
@@ -45,7 +45,7 @@ public class DeclaredVariable {
     return constant;
   }
 
-  public Object getType() {
+  public Class<?> getType() {
     return type;
   }
 
@@ -75,7 +75,7 @@ public class DeclaredVariable {
       ParserRuleContext originalContext,
       String name,
       boolean constant,
-      Object type,
+      Class<?> type,
       Object defaultValue) {
     return new DeclaredVariable(originalContext, name, constant, type, defaultValue);
   }
