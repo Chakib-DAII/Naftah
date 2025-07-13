@@ -43,6 +43,10 @@ public class NaftahParserHelper {
   // Cache to store computed subtrees per node
   private static final Map<ParseTree, List<ParseTree>> SUB_TREE_CACHE = new IdentityHashMap<>();
 
+  public static <T extends Tree> boolean hasParentOfType(ParseTree ctx, Class<T> type) {
+    return ctx != null && type.isAssignableFrom(ctx.getParent().getClass());
+  }
+
   public static <T extends Tree> boolean hasChild(T child) {
     return child != null;
   }
@@ -351,5 +355,16 @@ public class NaftahParserHelper {
                       return o;
                     })
                 .orElse(NaftahParserHelper.NULL));
+  }
+
+  public static String getFormattedTokenSymbols(Vocabulary vocabulary, int tokenType, boolean ln) {
+    String tokenName = vocabulary.getDisplayName(tokenType);
+    String tokenSymbols = TOKENS_SYMBOLS.getProperty(tokenName);
+    return tokenSymbols == null
+        ? null
+        : (ln ? """
+                          - %s
+                          """ : "%s")
+            .formatted(tokenSymbols.replaceAll(",", " أو"));
   }
 }
