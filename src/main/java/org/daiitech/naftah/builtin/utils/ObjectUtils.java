@@ -1,13 +1,14 @@
 package org.daiitech.naftah.builtin.utils;
 
-import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
-import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
+import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Vocabulary;
 import org.daiitech.naftah.builtin.lang.*;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
@@ -159,6 +160,30 @@ public final class ObjectUtils {
     if (hasChild(builtInContext.DOUBLE())) return Double.class;
     if (hasChild(builtInContext.STRING_TYPE())) return String.class;
     return Object.class;
+  }
+
+  public static String getNaftahType(Parser parser, Class<?> javaType) {
+    Vocabulary vocabulary = parser.getVocabulary();
+    if (Boolean.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN, false);
+    if (Character.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.CHAR, false);
+    if (Byte.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.BYTE, false);
+    if (Short.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.SHORT, false);
+    if (Integer.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.INT, false);
+    if (Long.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.LONG, false);
+    if (Float.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.FLOAT, false);
+    if (Double.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.DOUBLE, false);
+    if (String.class.isAssignableFrom(javaType))
+      return getFormattedTokenSymbols(
+          vocabulary, org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, false);
+    return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
   }
 
   public static boolean isBuiltinType(Object obj) {
