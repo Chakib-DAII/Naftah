@@ -335,6 +335,8 @@ public class DefaultContext {
   protected String functionCallId; // current function in execution inside a context
   protected boolean parsingFunctionCallId; // parsing current function in execution
   protected boolean parsingAssignment; // parsing an assignment is in execution
+  protected Pair<DeclaredVariable, Boolean>
+      declarationOfAssignment; // the declaration of variable being assigned
   protected NaftahParseTreeProperty<Boolean> parseTreeExecution;
   protected final Map<String, DeclaredVariable> variables = new HashMap<>();
   protected Map<String, DeclaredParameter> parameters; // only use in function call context
@@ -660,5 +662,14 @@ public class DefaultContext {
 
   public void setParsingAssignment(boolean parsingAssignment) {
     this.parsingAssignment = parsingAssignment;
+    if (!this.parsingAssignment) setDeclarationOfAssignment(null);
+  }
+
+  public Pair<DeclaredVariable, Boolean> getDeclarationOfAssignment() {
+    return declarationOfAssignment;
+  }
+
+  public void setDeclarationOfAssignment(Pair<DeclaredVariable, Boolean> declarationOfAssignment) {
+    this.declarationOfAssignment = declarationOfAssignment;
   }
 }
