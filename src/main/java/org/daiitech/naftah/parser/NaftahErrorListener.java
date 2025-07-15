@@ -1,7 +1,7 @@
 package org.daiitech.naftah.parser;
 
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.fillRightWithSpaces;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.IntervalSet;
@@ -72,7 +72,7 @@ public class NaftahErrorListener extends BaseErrorListener {
                 : String.format("🔴 الرمز غير الصحيح: '%s'\n", offendingText),
             translatedMessage);
 
-    System.err.println(fillRightWithSpaces(fullMessage));
+    System.err.println(padText(fullMessage));
 
     // Stop execution
     throw new ParseCancellationException("خطأ في بناء الجملة. تم إيقاف التنفيذ.");

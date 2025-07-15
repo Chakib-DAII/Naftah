@@ -286,7 +286,7 @@ public final class Naftah {
             System.out.println(
                 //                fillRightWithSpaces(shouldReshape() ? shape(closingMsg) :
                 // closingMsg));
-                fillRightWithSpaces(closingMsg));
+                padText(closingMsg));
             break;
           } catch (IndexOutOfBoundsException ignored) {
             String currentLine =
@@ -491,11 +491,11 @@ public final class Naftah {
   }
 
   private static String getFormattedToString(Object o) {
-    return fillRightWithSpaces(Objects.nonNull(o) ? o.toString().replaceAll("null", NULL) : NULL);
+    return padText(Objects.nonNull(o) ? o.toString().replaceAll("null", NULL) : NULL);
   }
 
   private static String getFormattedErrorMessage(Throwable t) {
-    return fillRightWithSpaces(
+    return padText(
         Objects.nonNull(t.getMessage())
             ? String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL))
             : t.toString());

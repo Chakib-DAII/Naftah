@@ -1,6 +1,6 @@
 package org.daiitech.naftah.builtin;
 
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.fillRightWithSpaces;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -26,7 +26,7 @@ public final class Builtin {
       usage = "إطبع(ش)",
       parameterTypes = {Object.class})
   public static void print(Object o) {
-    System.out.println(fillRightWithSpaces(o.toString()));
+    System.out.println(padText(o.toString()));
   }
 
   @NaftahFn(

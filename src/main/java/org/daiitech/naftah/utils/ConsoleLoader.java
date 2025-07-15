@@ -1,5 +1,7 @@
 package org.daiitech.naftah.utils;
 
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
+
 public class ConsoleLoader {
   private static final char[] SPINNER = {'|', '/', '-', '\\'};
   private static Thread LOADER_THREAD;
@@ -12,8 +14,7 @@ public class ConsoleLoader {
               int j = 0;
               while (!Thread.currentThread().isInterrupted()) {
                 clearScreen();
-                System.out.printf(
-                    "%c %s %c", SPINNER[i++ % SPINNER.length], text, SPINNER[j++ % SPINNER.length]);
+                System.out.print(padText(String.format("%c %s %c", SPINNER[i++ % SPINNER.length], text, SPINNER[j++ % SPINNER.length])));
                 try {
                   Thread.sleep(150); // control speed
                 } catch (InterruptedException e) {

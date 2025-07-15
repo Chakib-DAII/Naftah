@@ -4,6 +4,7 @@ import static org.daiitech.naftah.Naftah.*;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
 import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.*;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.*;
 
@@ -252,7 +253,7 @@ public class DefaultContext {
     try {
       var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
       if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
-        System.out.println("تم حفظ البيانات في: " + path);
+        System.out.println(padText("تم حفظ البيانات في: " + path));
     } catch (IOException e) {
       throw new NaftahBugError(e);
     }
@@ -278,7 +279,7 @@ public class DefaultContext {
 
   public static void bootstrap(boolean async) {
     if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
-      System.out.println("تحضير فئات مسار فئات جافا (Java classpath)...");
+      System.out.println(padText("تحضير فئات مسار فئات جافا (Java classpath)..."));
     SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
     ASYNC_BOOT_STRAP = async;
     long start = System.nanoTime();
@@ -303,7 +304,7 @@ public class DefaultContext {
       long end = System.nanoTime();
       long elapsedMillis = (end - start) / 1_000_000; // convert to milliseconds
 
-      System.out.println("الزمن المستغرق للتمهيد: " + elapsedMillis + " مللي ثانية.");
+      System.out.println(padText("الزمن المستغرق للتمهيد: " + elapsedMillis + " مللي ثانية."));
     }
   }
 
