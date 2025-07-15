@@ -651,7 +651,7 @@ public class DefaultNaftahParserVisitor
       if (!creatingTuple) {
         // validating list has all the same type
         if (parsingAssignment
-            && (Objects.nonNull(elementValue)
+            && (Objects.nonNull(elementValue) && Objects.nonNull(currentDeclarationType)
                     && ((elementType.isAssignableFrom(Number.class)
                             && !currentDeclarationType.isAssignableFrom(Number.class))
                         || !elementType.isAssignableFrom(currentDeclarationType))
@@ -672,7 +672,7 @@ public class DefaultNaftahParserVisitor
 
         if (creatingSet) {
           // validating set has no duplicates
-          if (elements.contains(elementValue))
+          if (elements.stream().filter(Objects::nonNull).anyMatch(o -> o.equals(elementValue)))
             throw new NaftahBugError(
                 "تحتوي المجموعة %s على عناصر مكرّرة، وهذا غير مسموح في المجموعات (Set) التي يجب أن تحتوي على عناصر فريدة فقط."
                     .formatted(parsingAssignment ? "'%s'".formatted(currentDeclarationName) : ""));
@@ -724,7 +724,7 @@ public class DefaultNaftahParserVisitor
                   .formatted(parsingAssignment ? "'%s'".formatted(currentDeclarationName) : ""));
 
         if (parsingAssignment
-                && (Objects.nonNull(value)
+                && (Objects.nonNull(value) && Objects.nonNull(currentDeclarationType)
                     && ((valueType.isAssignableFrom(Number.class)
                             && !currentDeclarationType.isAssignableFrom(Number.class))
                         || !valueType.isAssignableFrom(currentDeclarationType)))
@@ -800,7 +800,7 @@ public class DefaultNaftahParserVisitor
       Class<?> currentDeclarationType = currentDeclaration.a.getType();
       Class<?> resultType = Objects.nonNull(result) ? result.getClass() : Object.class;
       String currentDeclarationName = currentDeclaration.a.getName();
-      if (Objects.nonNull(result)
+      if (Objects.nonNull(result) && Objects.nonNull(currentDeclarationType)
           && ((resultType.isAssignableFrom(Number.class)
                   && !currentDeclarationType.isAssignableFrom(Number.class))
               || !resultType.isAssignableFrom(currentDeclarationType)))
