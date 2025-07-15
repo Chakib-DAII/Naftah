@@ -103,7 +103,6 @@ public class ArabicUtils {
     return addPadding(input, padding);
   }
 
-
   public static synchronized String doPadText(String input, int terminalWidth) {
     String[] words = input.split("\\s+");
     StringBuilder currentLine = new StringBuilder();
@@ -131,6 +130,7 @@ public class ArabicUtils {
     // add padding to align text
     return addPadding(inputSb.toString(), padding);
   }
+
   public static synchronized String addPadding(String input, int padding) {
     // TODO: this is not needed in windows after rechecking.
     // return " ".repeat(padding) + input;

@@ -44,7 +44,9 @@ public class NaftahParserHelper {
   private static final Map<ParseTree, List<ParseTree>> SUB_TREE_CACHE = new IdentityHashMap<>();
 
   public static <T extends Tree> boolean hasParentOfType(ParseTree ctx, Class<T> type) {
-    return ctx != null && ctx.getParent() != null && type.isAssignableFrom(ctx.getParent().getClass());
+    return ctx != null
+        && ctx.getParent() != null
+        && type.isAssignableFrom(ctx.getParent().getClass());
   }
 
   public static <T extends Tree> boolean hasAnyParentOfType(ParseTree ctx, Class<T> type) {
