@@ -88,13 +88,50 @@ public class ArabicUtils {
     return bidi.writeReordered(Bidi.DO_MIRRORING);
   }
 
-  public static synchronized String fillRightWithSpaces(String input) {
-    return applyFunction(input, ArabicUtils::doFillRightWithSpaces);
+  public static synchronized String padText(String input) {
+    return applyFunction(input, ArabicUtils::doPadText);
   }
 
-  public static synchronized String doFillRightWithSpaces(String input) {
-    int padding = Integer.getInteger(TERMINAL_WIDTH_PROPERTY) - input.length();
-    if (padding < 0) padding = 0;
+  public static synchronized String doPadText(String input) {
+    int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
+    int padding = terminalWidth - input.length();
+    if (padding < 0) {
+      // correct text in case of terminal overflow
+      return doPadText(input, terminalWidth);
+    }
+    // add padding to align text
+    return addPadding(input, padding);
+  }
+
+
+  public static synchronized String doPadText(String input, int terminalWidth) {
+    String[] words = input.split("\\s+");
+    StringBuilder currentLine = new StringBuilder();
+    List<String> lines = new ArrayList<>();
+
+    for (String word : words) {
+      if (currentLine.length() + word.length() + (!currentLine.isEmpty() ? 1 : 0) > terminalWidth) {
+        // Line is full, store it and start a new one
+        lines.add(addPadding(currentLine, terminalWidth));
+        currentLine = new StringBuilder(word);
+      } else {
+        if (!currentLine.isEmpty()) currentLine.append(" ");
+        currentLine.append(word);
+      }
+    }
+    // Add the last line if it has content
+    if (!currentLine.isEmpty()) {
+      lines.add(addPadding(currentLine, terminalWidth));
+    }
+    return String.join("\n", lines);
+  }
+
+  public static synchronized String addPadding(StringBuilder inputSb, int terminalWidth) {
+    int padding = terminalWidth - inputSb.length();
+    // add padding to align text
+    return addPadding(inputSb.toString(), padding);
+  }
+  public static synchronized String addPadding(String input, int padding) {
     // TODO: this is not needed in windows after rechecking.
     // return " ".repeat(padding) + input;
     // TODO: it works like this in windows (maybe Posix systems still need extra fixes, like
