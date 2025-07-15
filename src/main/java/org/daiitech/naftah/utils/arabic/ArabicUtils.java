@@ -126,9 +126,13 @@ public class ArabicUtils {
   }
 
   public static synchronized String addPadding(StringBuilder inputSb, int terminalWidth) {
-    int padding = terminalWidth - inputSb.length();
-    // add padding to align text
-    return addPadding(inputSb.toString(), padding);
+    try {
+      int padding = terminalWidth - inputSb.length();
+      // add padding to align text
+      return addPadding(inputSb.toString(), padding);
+    } catch (Exception ignored) {
+      return inputSb.toString();
+    }
   }
 
   public static synchronized String addPadding(String input, int padding) {
