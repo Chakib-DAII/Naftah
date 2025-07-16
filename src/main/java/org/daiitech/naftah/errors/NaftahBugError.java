@@ -30,7 +30,7 @@ public class NaftahBugError extends AssertionError {
   // message string
   private String message;
   // optional exception
-  private final Exception exception;
+  private final Throwable exception;
 
   /**
    * constructs a bug error using the given text
@@ -46,7 +46,7 @@ public class NaftahBugError extends AssertionError {
    *
    * @param exception cause of this error
    */
-  public NaftahBugError(Exception exception) {
+  public NaftahBugError(Throwable exception) {
     this(null, exception);
   }
 
@@ -57,7 +57,7 @@ public class NaftahBugError extends AssertionError {
    * @param msg additional information about this error
    * @param exception cause of this error
    */
-  public NaftahBugError(String msg, Exception exception) {
+  public NaftahBugError(String msg, Throwable exception) {
     this.exception = exception;
     this.message = msg;
   }
@@ -85,7 +85,7 @@ public class NaftahBugError extends AssertionError {
     if (message != null) {
       return "خطأ برمجي! " + message;
     } else {
-      return "خطأ برمجي! استثناء غير ملتقط: " + exception.getMessage();
+      return "خطأ برمجي! استثناء غير ملتقط: " + ExceptionLocalizer.localizeException(exception);
     }
   }
 
