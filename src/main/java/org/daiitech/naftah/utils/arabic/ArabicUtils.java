@@ -56,7 +56,7 @@ public class ArabicUtils {
   }
 
   public static synchronized String applyBiFunction(
-          String input, boolean print, ThrowingBiFunction<String, Boolean, String> function) {
+      String input, boolean print, ThrowingBiFunction<String, Boolean, String> function) {
     if (isMultiline(input)) {
       Matcher matcher = getTextMatcher(input).reset();
 
@@ -163,7 +163,7 @@ public class ArabicUtils {
         System.out.println(result);
       } else lines.add(result);
     }
-    return print? null : String.join("\n", lines);
+    return print ? null : String.join("\n", lines);
   }
 
   public static synchronized String addPadding(StringBuilder inputSb, int terminalWidth) {

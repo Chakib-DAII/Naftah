@@ -4,10 +4,9 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValue;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
+import java.util.Objects;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
-
-import java.util.Objects;
 
 /**
  * @author Chakib Daii

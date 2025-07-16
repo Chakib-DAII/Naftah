@@ -197,8 +197,7 @@ public final class Naftah {
         var parser = NaftahCommand.prepareRun(input, NaftahErrorListener.INSTANCE);
         var result = NaftahCommand.doRun(parser);
 
-        if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
-          printFormattedToString(result);
+        if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) printFormattedToString(result);
 
         System.out.println();
       }
@@ -497,7 +496,9 @@ public final class Naftah {
     }
     padText(
         Objects.nonNull(throwable.getMessage())
-            ? String.format("تم التقاط الخطأ: '%s'", throwable.getMessage().replaceAll("null", NULL))
-            : throwable.toString(), true);
+            ? String.format(
+                "تم التقاط الخطأ: '%s'", throwable.getMessage().replaceAll("null", NULL))
+            : throwable.toString(),
+        true);
   }
 }
