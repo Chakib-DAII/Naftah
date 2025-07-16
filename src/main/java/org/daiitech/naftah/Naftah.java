@@ -2,7 +2,7 @@ package org.daiitech.naftah;
 
 import static java.util.logging.Logger.*;
 import static org.daiitech.naftah.NaftahSystem.*;
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrBuiltinOrCollectionOrMapOfSimpleType;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.*;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
@@ -197,7 +197,7 @@ public final class Naftah {
         var parser = NaftahCommand.prepareRun(input, NaftahErrorListener.INSTANCE);
         var result = NaftahCommand.doRun(parser);
 
-        if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) printFormattedToString(result);
+        if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) printPaddedToString(result);
 
         System.out.println();
       }
@@ -276,8 +276,7 @@ public final class Naftah {
 
             var result = NaftahCommand.doRun(parser);
 
-            if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
-              printFormattedToString(result);
+            if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) printPaddedToString(result);
             System.out.println();
 
           } catch (UserInterruptException | EndOfFileException e) {
@@ -293,7 +292,7 @@ public final class Naftah {
             MULTILINE_IS_ACTIVE = true;
             println(reader);
           } catch (Throwable t) {
-            printFormattedErrorMessage(t);
+            printPaddedErrorMessageToString(t);
           } finally {
             // Save history explicitly (though it's usually done automatically)
             reader.getHistory().save();
@@ -463,10 +462,10 @@ public final class Naftah {
       } else System.exit(0);
 
     } catch (ParameterException ex) { // command line arguments could not be parsed
-      printFormattedErrorMessage(ex);
+      printPaddedErrorMessageToString(ex);
       ex.getCommandLine().usage(System.err);
     } catch (IOException ioe) {
-      printFormattedErrorMessage(ioe);
+      printPaddedErrorMessageToString(ioe);
     }
   }
 
@@ -477,7 +476,7 @@ public final class Naftah {
     } catch (ParseCancellationException e) {
       System.exit(1); // stop program
     } catch (Throwable t) {
-      printFormattedErrorMessage(t);
+      printPaddedErrorMessageToString(t);
       if (debug) {
         t.printStackTrace();
       }
@@ -485,19 +484,18 @@ public final class Naftah {
     return false;
   }
 
-  private static void printFormattedToString(Object o) {
-    padText(Objects.nonNull(o) ? o.toString().replaceAll("null", NULL) : NULL, true);
+  private static void printPaddedToString(Object o) {
+    padText(getNaftahValueToString(o), true);
   }
 
-  private static void printFormattedErrorMessage(Throwable t) {
+  private static void printPaddedErrorMessageToString(Throwable t) {
     Throwable throwable = t;
     if (!(throwable instanceof NaftahBugError)) {
       throwable = new NaftahBugError(throwable);
     }
     padText(
         Objects.nonNull(throwable.getMessage())
-            ? String.format(
-                "تم التقاط الخطأ: '%s'", throwable.getMessage().replaceAll("null", NULL))
+            ? String.format("تم التقاط الخطأ: '%s'", replaceAllNulls(throwable.getMessage()))
             : throwable.toString(),
         true);
   }
