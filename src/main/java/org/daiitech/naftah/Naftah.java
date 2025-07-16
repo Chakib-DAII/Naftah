@@ -297,8 +297,6 @@ public final class Naftah {
             MULTILINE_IS_ACTIVE = true;
             println(reader);
           } catch (Throwable t) {
-            // ignored
-            // TODO: improve logging (in arabic)
             System.err.println(getFormattedErrorMessage(t));
           } finally {
             // Save history explicitly (though it's usually done automatically)
@@ -437,6 +435,7 @@ public final class Naftah {
   private static void processArgs(String[] args) {
     setupOutputStream();
     setupErrorStream();
+    setupLocale();
 
     NaftahCommand naftahCommand = new NaftahCommand();
 
@@ -468,10 +467,10 @@ public final class Naftah {
       } else System.exit(0);
 
     } catch (ParameterException ex) { // command line arguments could not be parsed
-      System.err.println(ex.getMessage());
+      System.err.println(getFormattedErrorMessage(ex));
       ex.getCommandLine().usage(System.err);
     } catch (IOException ioe) {
-      System.err.println("error: " + ioe.getMessage());
+      System.err.println(getFormattedErrorMessage(ioe));
     }
   }
 
@@ -495,9 +494,13 @@ public final class Naftah {
   }
 
   private static String getFormattedErrorMessage(Throwable t) {
+    Throwable throwable = t;
+    if (!(throwable instanceof NaftahBugError)) {
+      throwable = new NaftahBugError(throwable);
+    }
     return padText(
-        Objects.nonNull(t.getMessage())
-            ? String.format("تم التقاط الخطأ: '%s'", t.getMessage().replaceAll("null", NULL))
-            : t.toString());
+        Objects.nonNull(throwable.getMessage())
+            ? String.format("تم التقاط الخطأ: '%s'", throwable.getMessage().replaceAll("null", NULL))
+            : throwable.toString());
   }
 }
