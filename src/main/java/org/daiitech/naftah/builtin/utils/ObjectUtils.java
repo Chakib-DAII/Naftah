@@ -298,6 +298,11 @@ public final class ObjectUtils {
       return operation.apply(s, s1);
     }
 
+    // String vs Character
+    if (left instanceof String s && right instanceof Character character) {
+      return operation.apply(s, String.valueOf(character));
+    }
+
     // Collection vs Collection (element-wise)
     if (left instanceof Collection<?> collection1 && right instanceof Collection<?> collection2) {
       return CollectionUtils.applyOperation(collection1, collection2, operation);
@@ -343,7 +348,7 @@ public final class ObjectUtils {
       return CollectionUtils.applyOperation(map, number, operation);
     }
 
-    throw BinaryOperation.newNaftahBugError(operation, left.getClass(), right.getClass());
+    throw BinaryOperation.newNaftahBugError(operation, left, right);
   }
 
   public static Object applyOperation(Object a, UnaryOperation operation) {
@@ -399,8 +404,45 @@ public final class ObjectUtils {
     return b ? "صحيح" : "خطأ";
   }
 
+  public static String arrayToString(Object obj) {
+    if (obj == null) {
+      return NULL;
+    }
+
+    Class<?> objClass = obj.getClass();
+
+    if (!objClass.isArray()) {
+      return obj.toString(); // not an array
+    }
+
+    // Handle primitive arrays
+    if (obj instanceof int[]) return Arrays.toString((int[]) obj);
+    if (obj instanceof long[]) return Arrays.toString((long[]) obj);
+    if (obj instanceof double[]) return Arrays.toString((double[]) obj);
+    if (obj instanceof float[]) return Arrays.toString((float[]) obj);
+    if (obj instanceof boolean[]) return Arrays.toString((boolean[]) obj);
+    if (obj instanceof char[]) return Arrays.toString((char[]) obj);
+    if (obj instanceof byte[]) return Arrays.toString((byte[]) obj);
+    if (obj instanceof short[]) return Arrays.toString((short[]) obj);
+
+    // Handle object arrays
+    return replaceAllNulls(Arrays.toString((Object[]) obj));
+  }
+
+  public static String getNaftahValueToString(Object o) {
+    if (o == null) return NULL;
+    if (o instanceof Boolean aBoolean) return booleanToString(aBoolean);
+    if (o.getClass().isArray()) return arrayToString(o);
+    return replaceAllNulls(o.toString());
+  }
+
   public static Object getNaftahValue(Object o) {
+    if (o == null) return NULL;
     if (o instanceof Boolean aBoolean) return booleanToString(aBoolean);
     return o;
+  }
+
+  public static String replaceAllNulls(String s) {
+    return s.replaceAll("null", NULL);
   }
 }
