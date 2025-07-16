@@ -1,6 +1,6 @@
 package org.daiitech.naftah.builtin;
 
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValue;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
@@ -30,8 +30,7 @@ public final class Builtin {
       parameterTypes = {Object.class})
   public static void print(Object o) {
     if (Objects.nonNull(o)) {
-      o = getNaftahValue(o);
-      padText(o.toString(), true);
+      padText(getNaftahValueToString(o), true);
     } else System.out.println(padText(NULL, false));
   }
 
