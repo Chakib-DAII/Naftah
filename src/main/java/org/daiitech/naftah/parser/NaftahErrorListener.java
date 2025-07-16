@@ -72,7 +72,7 @@ public class NaftahErrorListener extends BaseErrorListener {
                 : String.format("🔴 الرمز غير الصحيح: '%s'\n", offendingText),
             translatedMessage);
 
-    System.err.println(padText(fullMessage));
+    padText(fullMessage, true);
 
     // Stop execution
     throw new ParseCancellationException("خطأ في بناء الجملة. تم إيقاف التنفيذ.");

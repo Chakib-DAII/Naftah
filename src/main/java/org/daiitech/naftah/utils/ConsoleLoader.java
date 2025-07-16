@@ -18,7 +18,7 @@ public class ConsoleLoader {
                     padText(
                         String.format(
                             "%c %s %c",
-                            SPINNER[i++ % SPINNER.length], text, SPINNER[j++ % SPINNER.length])));
+                            SPINNER[i++ % SPINNER.length], text, SPINNER[j++ % SPINNER.length]), false));
                 try {
                   Thread.sleep(150); // control speed
                 } catch (InterruptedException e) {

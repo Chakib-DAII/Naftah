@@ -1,9 +1,13 @@
 package org.daiitech.naftah.builtin;
 
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValue;
+import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
+
+import java.util.Objects;
 
 /**
  * @author Chakib Daii
@@ -26,7 +30,10 @@ public final class Builtin {
       usage = "إطبع(ش)",
       parameterTypes = {Object.class})
   public static void print(Object o) {
-    System.out.println(padText(o.toString()));
+    if (Objects.nonNull(o)) {
+      o = getNaftahValue(o);
+      padText(o.toString(), true);
+    } else System.out.println(padText(NULL, false));
   }
 
   @NaftahFn(

@@ -253,7 +253,7 @@ public class DefaultContext {
     try {
       var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
       if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
-        System.out.println(padText("تم حفظ البيانات في: " + path));
+        padText("تم حفظ البيانات في: " + path, true);
     } catch (IOException e) {
       throw new NaftahBugError(e);
     }
@@ -279,7 +279,7 @@ public class DefaultContext {
 
   public static void bootstrap(boolean async) {
     if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
-      System.out.println(padText("تحضير فئات مسار فئات جافا (Java classpath)..."));
+      padText("تحضير فئات مسار فئات جافا (Java classpath)...", true);
     SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
     ASYNC_BOOT_STRAP = async;
     long start = System.nanoTime();
@@ -304,7 +304,7 @@ public class DefaultContext {
       long end = System.nanoTime();
       long elapsedMillis = (end - start) / 1_000_000; // convert to milliseconds
 
-      System.out.println(padText("الزمن المستغرق للتمهيد: " + elapsedMillis + " مللي ثانية."));
+      padText("الزمن المستغرق للتمهيد: " + elapsedMillis + " مللي ثانية.", true);
     }
   }
 

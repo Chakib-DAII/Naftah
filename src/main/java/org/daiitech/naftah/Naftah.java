@@ -198,7 +198,7 @@ public final class Naftah {
         var result = NaftahCommand.doRun(parser);
 
         if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
-          System.out.println(getFormattedToString(result));
+          printFormattedToString(result);
 
         System.out.println();
       }
@@ -278,15 +278,12 @@ public final class Naftah {
             var result = NaftahCommand.doRun(parser);
 
             if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
-              System.out.println(getFormattedToString(result));
+              printFormattedToString(result);
             System.out.println();
 
           } catch (UserInterruptException | EndOfFileException e) {
             String closingMsg = "تم الخروج من التطبيق.";
-            System.out.println(
-                //                fillRightWithSpaces(shouldReshape() ? shape(closingMsg) :
-                // closingMsg));
-                padText(closingMsg));
+            padText(closingMsg, true);
             break;
           } catch (IndexOutOfBoundsException ignored) {
             String currentLine =
@@ -297,7 +294,7 @@ public final class Naftah {
             MULTILINE_IS_ACTIVE = true;
             println(reader);
           } catch (Throwable t) {
-            System.err.println(getFormattedErrorMessage(t));
+            printFormattedErrorMessage(t);
           } finally {
             // Save history explicitly (though it's usually done automatically)
             reader.getHistory().save();
@@ -467,10 +464,10 @@ public final class Naftah {
       } else System.exit(0);
 
     } catch (ParameterException ex) { // command line arguments could not be parsed
-      System.err.println(getFormattedErrorMessage(ex));
+      printFormattedErrorMessage(ex);
       ex.getCommandLine().usage(System.err);
     } catch (IOException ioe) {
-      System.err.println(getFormattedErrorMessage(ioe));
+      printFormattedErrorMessage(ioe);
     }
   }
 
@@ -481,7 +478,7 @@ public final class Naftah {
     } catch (ParseCancellationException e) {
       System.exit(1); // stop program
     } catch (Throwable t) {
-      System.err.println(getFormattedErrorMessage(t));
+      printFormattedErrorMessage(t);
       if (debug) {
         t.printStackTrace();
       }
@@ -489,18 +486,18 @@ public final class Naftah {
     return false;
   }
 
-  private static String getFormattedToString(Object o) {
-    return padText(Objects.nonNull(o) ? o.toString().replaceAll("null", NULL) : NULL);
+  private static void printFormattedToString(Object o) {
+    padText(Objects.nonNull(o) ? o.toString().replaceAll("null", NULL) : NULL, true);
   }
 
-  private static String getFormattedErrorMessage(Throwable t) {
+  private static void printFormattedErrorMessage(Throwable t) {
     Throwable throwable = t;
     if (!(throwable instanceof NaftahBugError)) {
       throwable = new NaftahBugError(throwable);
     }
-    return padText(
+    padText(
         Objects.nonNull(throwable.getMessage())
             ? String.format("تم التقاط الخطأ: '%s'", throwable.getMessage().replaceAll("null", NULL))
-            : throwable.toString());
+            : throwable.toString(), true);
   }
 }
