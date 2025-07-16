@@ -378,4 +378,20 @@ public class NaftahParserHelper {
                           """ : "%s")
             .formatted(tokenSymbols.replaceAll(",", " أو"));
   }
+
+  public static boolean typeMismatch(Object value, Class<?> valueType, Class<?> declarationType) {
+    return Objects.nonNull(value) && typeMismatch(valueType, declarationType);
+  }
+
+  public static boolean typeMismatch(Class<?> valueType, Class<?> declarationType) {
+    return Objects.nonNull(declarationType)
+        && !Object.class.equals(declarationType)
+        && (((Number.class.isAssignableFrom(valueType)
+                    && !Number.class.isAssignableFrom(declarationType))
+                || (!Number.class.isAssignableFrom(valueType)
+                    && Number.class.isAssignableFrom(declarationType)))
+            || (!Number.class.isAssignableFrom(declarationType)
+                && !Number.class.isAssignableFrom(valueType)
+                && !valueType.isAssignableFrom(declarationType)));
+  }
 }
