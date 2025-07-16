@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.daiitech.naftah.utils.OS;
+import org.daiitech.naftah.utils.function.ThrowingBiFunction;
 import org.daiitech.naftah.utils.function.ThrowingFunction;
 
 /**
@@ -54,6 +55,32 @@ public class ArabicUtils {
     return matcher.reset();
   }
 
+  public static synchronized String applyBiFunction(
+          String input, boolean print, ThrowingBiFunction<String, Boolean, String> function) {
+    if (isMultiline(input)) {
+      Matcher matcher = getTextMatcher(input).reset();
+
+      StringBuilder output = print ? null : new StringBuilder();
+
+      while (matcher.find()) {
+        String line = matcher.group(1);
+        String newline = matcher.group(2); // might be "" on last line
+
+        if (!line.trim().isEmpty()) {
+          String result = function.apply(line, print);
+          if (!print) output.append(result);
+        }
+
+        if (!print) output.append(newline); // keep original newlines
+      }
+      return print ? null : output.toString();
+
+    } else {
+      String result = function.apply(input, print);
+      return print ? null : result;
+    }
+  }
+
   public static synchronized String applyFunction(
       String input, ThrowingFunction<String, String> function) {
     if (isMultiline(input)) {
@@ -88,30 +115,40 @@ public class ArabicUtils {
     return bidi.writeReordered(Bidi.DO_MIRRORING);
   }
 
-  public static synchronized String padText(String input) {
-    return applyFunction(input, ArabicUtils::doPadText);
+  public static synchronized String padText(String input, boolean print) {
+    return applyBiFunction(input, print, ArabicUtils::doPadText);
   }
 
-  public static synchronized String doPadText(String input) {
+  public static synchronized String doPadText(String input, boolean print) {
     int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
     int padding = terminalWidth - input.length();
     if (padding < 0) {
       // correct text in case of terminal overflow
-      return doPadText(input, terminalWidth);
+      String result = doPadText(input, terminalWidth, print);
+      return print ? null : result;
     }
     // add padding to align text
-    return addPadding(input, padding);
+    String result = addPadding(input, padding);
+    if (print) {
+      System.out.println(result);
+      return null;
+    } else return result;
   }
 
-  public static synchronized String doPadText(String input, int terminalWidth) {
+  public static synchronized String doPadText(String input, int terminalWidth, boolean print) {
     String[] words = input.split("\\s+");
     StringBuilder currentLine = new StringBuilder();
-    List<String> lines = new ArrayList<>();
+    List<String> lines = print ? null : new ArrayList<>();
 
     for (String word : words) {
       if (currentLine.length() + word.length() + (!currentLine.isEmpty() ? 1 : 0) > terminalWidth) {
         // Line is full, store it and start a new one
-        lines.add(addPadding(currentLine, terminalWidth));
+        String result = addPadding(currentLine, terminalWidth);
+
+        if (print) {
+          System.out.println(result);
+        } else lines.add(result);
+
         currentLine = new StringBuilder(word);
       } else {
         if (!currentLine.isEmpty()) currentLine.append(" ");
@@ -120,9 +157,13 @@ public class ArabicUtils {
     }
     // Add the last line if it has content
     if (!currentLine.isEmpty()) {
-      lines.add(addPadding(currentLine, terminalWidth));
+      String result = addPadding(currentLine, terminalWidth);
+
+      if (print) {
+        System.out.println(result);
+      } else lines.add(result);
     }
-    return String.join("\n", lines);
+    return print? null : String.join("\n", lines);
   }
 
   public static synchronized String addPadding(StringBuilder inputSb, int terminalWidth) {
