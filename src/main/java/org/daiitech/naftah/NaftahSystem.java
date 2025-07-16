@@ -4,6 +4,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintS
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
 
 import java.io.PrintStream;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +41,11 @@ public final class NaftahSystem {
       throw new NaftahBugError("تم العثور على إصدار غير متوقع: " + full);
     }
     return full.substring(0, secondDot);
+  }
+
+  public static void setupLocale() {
+    Locale arabic = new Locale("ar", "TN");
+    Locale.setDefault(arabic);
   }
 
   public static void setupOutputStream() {
