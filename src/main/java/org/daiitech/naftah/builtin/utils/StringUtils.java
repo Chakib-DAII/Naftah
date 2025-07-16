@@ -57,7 +57,9 @@ public final class StringUtils {
   }
 
   public static String[] divide(String s, int parts) {
+    if (s == null || s.isEmpty()) throw new NaftahBugError("النص لا يمكن أن يكون فارغًا.");
     if (parts <= 0) throw new NaftahBugError("يجب أن يكون عدد الأجزاء أكبر من 0.");
+    if (parts > s.length()) throw new NaftahBugError("عدد الأجزاء لا يمكن أن يتجاوز طول السلسلة.");
 
     int length = s.length();
     int partSize = length / parts;
