@@ -164,33 +164,38 @@ public final class ObjectUtils {
 
   public static String getNaftahType(Parser parser, Class<?> javaType) {
     Vocabulary vocabulary = parser.getVocabulary();
-    if (Boolean.class.isAssignableFrom(javaType))
+    if (Objects.isNull(javaType))
       return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN, false);
-    if (Character.class.isAssignableFrom(javaType))
-      return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.CHAR, false);
-    if (Byte.class.isAssignableFrom(javaType))
-      return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.BYTE, false);
-    if (Short.class.isAssignableFrom(javaType))
-      return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.SHORT, false);
-    if (Integer.class.isAssignableFrom(javaType))
-      return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.INT, false);
-    if (Long.class.isAssignableFrom(javaType))
-      return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.LONG, false);
-    if (Float.class.isAssignableFrom(javaType))
-      return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.FLOAT, false);
-    if (Double.class.isAssignableFrom(javaType))
-      return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.DOUBLE, false);
-    if (String.class.isAssignableFrom(javaType))
-      return getFormattedTokenSymbols(
-          vocabulary, org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, false);
+          vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
+    else {
+      if (Boolean.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN, false);
+      if (Character.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.CHAR, false);
+      if (Byte.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.BYTE, false);
+      if (Short.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.SHORT, false);
+      if (Integer.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.INT, false);
+      if (Long.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.LONG, false);
+      if (Float.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.FLOAT, false);
+      if (Double.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.DOUBLE, false);
+      if (String.class.isAssignableFrom(javaType))
+        return getFormattedTokenSymbols(
+            vocabulary, org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, false);
+    }
     return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
   }
 
