@@ -396,6 +396,6 @@ public class NaftahParserHelper {
                 && !Number.class.isAssignableFrom(valueType)
                 && !valueType.isAssignableFrom(declarationType))
             || Collection.class.isAssignableFrom(valueType)
-    || Map.class.isAssignableFrom(valueType));
+            || Map.class.isAssignableFrom(valueType));
   }
 }
