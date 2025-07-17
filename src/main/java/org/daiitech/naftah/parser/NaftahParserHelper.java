@@ -386,12 +386,16 @@ public class NaftahParserHelper {
   public static boolean typeMismatch(Class<?> valueType, Class<?> declarationType) {
     return Objects.nonNull(declarationType)
         && !Object.class.equals(declarationType)
+        && !Collection.class.isAssignableFrom(declarationType)
+        && !Map.class.isAssignableFrom(declarationType)
         && (((Number.class.isAssignableFrom(valueType)
                     && !Number.class.isAssignableFrom(declarationType))
                 || (!Number.class.isAssignableFrom(valueType)
                     && Number.class.isAssignableFrom(declarationType)))
             || (!Number.class.isAssignableFrom(declarationType)
                 && !Number.class.isAssignableFrom(valueType)
-                && !valueType.isAssignableFrom(declarationType)));
+                && !valueType.isAssignableFrom(declarationType))
+            || Collection.class.isAssignableFrom(valueType)
+    || Map.class.isAssignableFrom(valueType));
   }
 }
