@@ -670,7 +670,10 @@ public class DefaultNaftahParserVisitor
         }
       }
       elements.add(elementValue);
-      if (Objects.nonNull(elementValue)) elementTypes.add(elementType);
+      if (Objects.nonNull(elementValue)
+              && !Collection.class.isAssignableFrom(elementType)
+              && !Map.class.isAssignableFrom(elementType))
+        elementTypes.add(elementType);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return elements;
