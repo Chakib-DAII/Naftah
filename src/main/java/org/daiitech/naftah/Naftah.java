@@ -301,19 +301,18 @@ public final class Naftah {
 
       private void checkManagementCommands(String line) {
         /*
-        * TODO: add support for
-        * /reset : reset repl
-        * /list : list all valid code snippets
-        * /drop : drops a variable
-        * /vars : list variables
-        * /functions : list created functions
-        * /save : save the valid codes snippets into a file
-        * /history : shows full history
-        * /help : shows help of commands
-        * */
+         * TODO: add support for
+         * /reset : reset repl
+         * /list : list all valid code snippets
+         * /drop : drops a variable
+         * /vars : list variables
+         * /functions : list created functions
+         * /save : save the valid codes snippets into a file
+         * /history : shows full history
+         * /help : shows help of commands
+         * */
 
-        if (List.of("/exit", "/خروج").contains(line.trim()))
-          throw new UserInterruptException(line);
+        if (List.of("/exit", "/خروج").contains(line.trim())) throw new UserInterruptException(line);
       }
     }
 
