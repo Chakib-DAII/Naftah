@@ -416,8 +416,6 @@ public class DefaultNaftahParserVisitor
   @Override
   public Object visitQualifiedCall(
       org.daiitech.naftah.parser.NaftahParser.QualifiedCallContext ctx) {
-    // todo check if inside collection or map (so key doesnt have to be "key" but just key)
-    // todo key value can create objects ( js based)
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitQualifiedCall(%s)"
@@ -1144,14 +1142,18 @@ public class DefaultNaftahParserVisitor
 
   @Override
   public Object visitIdValue(org.daiitech.naftah.parser.NaftahParser.IdValueContext ctx) {
+    // TODO: key value can create objects ( js based)
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitIdValue(%s)"
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    // prepare validations
+    boolean creatingMap =
+        hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.MapValueContext.class);
     String id = ctx.ID().getText();
-    var result = VARIABLE_GETTER.apply(id, currentContext);
+    var result = creatingMap ? id : VARIABLE_GETTER.apply(id, currentContext);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
