@@ -9,6 +9,8 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.jline.reader.Completer;
@@ -23,6 +25,17 @@ import org.jline.utils.InfoCmp;
 
 public final class REPLHelper {
   public static boolean MULTILINE_IS_ACTIVE = false;
+  public static String REGEX_VARIABLE = "[\\p{L}_][\\p{L}0-9_-]*";
+  public static String REGEX_COMMAND = "[:]?[\\p{L}]+[\\p{L}0-9_-]*";
+  public static char[] ESCAPE_CHARS = new char[] {'#', '\\'};
+  public static Set<Character> ESCAPE_CHAR_SET = Set.of('#', '\\');
+  public static String ESCAPE_CHARS_REGEX =
+      String.join(
+          "|",
+          ESCAPE_CHAR_SET.stream()
+              .flatMap(character -> Stream.of(String.valueOf(character), character + "\n"))
+              .toArray(String[]::new));
+  public static char[] QUOTE_CHARS = new char[] {'\'', '"', '«', '»'};
 
   private static final String RTL_PROMPT_VALUE = "< نفطة >";
   private static final String RTL_MULTILINE_PROMPT_VALUE = "    < .... >";
@@ -60,12 +73,12 @@ public final class REPLHelper {
 
     DefaultParser parser =
         new DefaultParser()
-            .regexVariable("[\\p{L}_][\\p{L}0-9_-]*")
-            .regexCommand("[:]?[\\p{L}]+[\\p{L}0-9_-]*")
+            .regexVariable(REGEX_VARIABLE)
+            .regexCommand(REGEX_COMMAND)
             .eofOnEscapedNewLine(true)
             .eofOnUnclosedQuote(true)
-            .quoteChars(new char[] {'\'', '"', '«', '»'})
-            .escapeChars(new char[] {'/', '\\'});
+            .quoteChars(QUOTE_CHARS)
+            .escapeChars(ESCAPE_CHARS);
 
     var lineReaderBuilder =
         LineReaderBuilder.builder()
