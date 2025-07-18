@@ -234,22 +234,16 @@ public class DefaultNaftahParserVisitor
     boolean isConstantOrVariable = isConstant || hasChild(ctx.VARIABLE());
     boolean hasType = hasChild(ctx.type());
     if (isConstantOrVariable || hasType) {
-      declaredVariable =
-          new Pair<>(
-              DeclaredVariable.of(
-                  ctx,
-                  variableName,
-                  isConstant,
-                  hasType ? (Class<?>) visit(ctx.type()) : null,
-                  null),
-              true);
+      declaredVariable = createDeclaredVariable(this, ctx, variableName, isConstant, hasType);
       // TODO: check if inside function to check if it matches any argument / parameter or
       // previously
       // declared and update if possible
       currentContext.defineVariable(variableName, declaredVariable.a);
     } else {
-      // TODO: get varaible safely; if null define it as variable (to verify)
-      declaredVariable = new Pair<>(currentContext.getVariable(variableName, false).b, false);
+      declaredVariable =
+          Optional.ofNullable(currentContext.getVariable(variableName, true))
+              .map(alreadyDeclaredVariable -> new Pair<>(alreadyDeclaredVariable.b, true))
+              .orElse(createDeclaredVariable(this, ctx, variableName, false, false));
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.a;
@@ -422,6 +416,8 @@ public class DefaultNaftahParserVisitor
   @Override
   public Object visitQualifiedCall(
       org.daiitech.naftah.parser.NaftahParser.QualifiedCallContext ctx) {
+    // todo check if inside collection or map (so key doesnt have to be "key" but just key)
+    // todo key value can create objects ( js based)
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitQualifiedCall(%s)"
