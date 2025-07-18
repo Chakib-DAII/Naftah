@@ -256,12 +256,11 @@ public final class Naftah {
                     ? reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null)
                     : reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
 
-            if (line.isBlank()) continue;
+            if (!MULTILINE_IS_ACTIVE && line.isBlank()) continue;
 
-            if (List.of("exit", "خروج").contains(line.trim()))
-              throw new UserInterruptException(line);
+            checkManagementCommands(line);
 
-            fullLine.append(line);
+            if (!line.isBlank()) fullLine.append(line);
 
             var input = getCharStream(false, fullLine.toString());
 
@@ -283,7 +282,7 @@ public final class Naftah {
             String closingMsg = "تم الخروج من التطبيق.";
             padText(closingMsg, true);
             break;
-          } catch (IndexOutOfBoundsException ignored) {
+          } catch (IndexOutOfBoundsException | EOFError ignored) {
             String currentLine =
                 reader.getBuffer().atChar(reader.getBuffer().length() - 1) == '\n'
                     ? reader.getBuffer().substring(0, reader.getBuffer().length() - 2)
@@ -298,6 +297,23 @@ public final class Naftah {
             reader.getHistory().save();
           }
         }
+      }
+
+      private void checkManagementCommands(String line) {
+        /*
+        * TODO: add support for
+        * /reset : reset repl
+        * /list : list all valid code snippets
+        * /drop : drops a variable
+        * /vars : list variables
+        * /functions : list created functions
+        * /save : save the valid codes snippets into a file
+        * /history : shows full history
+        * /help : shows help of commands
+        * */
+
+        if (List.of("/exit", "/خروج").contains(line.trim()))
+          throw new UserInterruptException(line);
       }
     }
 
