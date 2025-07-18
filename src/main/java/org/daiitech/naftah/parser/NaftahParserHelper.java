@@ -24,6 +24,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
+import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 
@@ -397,5 +398,22 @@ public class NaftahParserHelper {
                 && !valueType.isAssignableFrom(declarationType))
             || Collection.class.isAssignableFrom(valueType)
             || Map.class.isAssignableFrom(valueType));
+  }
+
+  public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(
+      org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
+      org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx,
+      String variableName,
+      boolean isConstant,
+      boolean hasType) {
+
+    return new Pair<>(
+        DeclaredVariable.of(
+            ctx,
+            variableName,
+            isConstant,
+            hasType ? (Class<?>) visit(naftahParserBaseVisitor, ctx.type()) : null,
+            null),
+        true);
   }
 }
