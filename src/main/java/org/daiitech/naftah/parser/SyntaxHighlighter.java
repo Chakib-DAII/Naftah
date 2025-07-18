@@ -11,6 +11,7 @@ import java.util.List;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.utils.repl.BaseHighlighter;
+import org.jline.reader.EOFError;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedString;
@@ -30,6 +31,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
     if (buffer.isBlank()) {
       return new AttributedString(buffer);
     }
+
+    if (buffer.split(ESCAPE_CHARS_REGEX).length > 1)
+      throw new EOFError(-1, -1, "Escaped new line", "newline");
 
     // Create input stream from buffer
     CharStream input = CharStreams.fromString(buffer);
