@@ -336,6 +336,7 @@ public class DefaultContext {
   protected String functionCallId; // current function in execution inside a context
   protected boolean parsingFunctionCallId; // parsing current function in execution
   protected boolean parsingAssignment; // parsing an assignment is in execution
+  protected boolean creatingObject; // object creation is in execution
   protected Pair<DeclaredVariable, Boolean>
       declarationOfAssignment; // the declaration of variable being assigned
   protected NaftahParseTreeProperty<Boolean> parseTreeExecution;
@@ -672,5 +673,13 @@ public class DefaultContext {
 
   public void setDeclarationOfAssignment(Pair<DeclaredVariable, Boolean> declarationOfAssignment) {
     this.declarationOfAssignment = declarationOfAssignment;
+  }
+
+  public boolean isCreatingObject() {
+    return creatingObject;
+  }
+
+  public void setCreatingObject(boolean creatingObject) {
+    this.creatingObject = creatingObject;
   }
 }
