@@ -383,11 +383,11 @@ public final class Naftah {
     private boolean versionRequested;
 
     @Option(
-            names = {"-vec", "--vector"},
-            description = {
-                    "Enable Vector API optimizations for performance",
-                    "تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"
-            })
+        names = {"-vec", "--vector"},
+        description = {
+          "Enable Vector API optimizations for performance",
+          "تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"
+        })
     private boolean useVectorApi;
 
     @Unmatched List<String> arguments = new ArrayList<>();

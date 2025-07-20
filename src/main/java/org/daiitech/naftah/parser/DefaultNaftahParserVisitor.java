@@ -245,7 +245,7 @@ public class DefaultNaftahParserVisitor
         Class<?> type = (Class<?>) visit(ctx.type());
         if (Objects.nonNull(type) && !Object.class.equals(type))
           throw new NaftahBugError(
-                  "لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع الأنواع (%s)."
+              "لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع الأنواع (%s)."
                   .formatted(
                       variableName,
                       getNaftahType(parser, type),

@@ -1,5 +1,7 @@
 package org.daiitech.naftah.builtin.utils;
 
+import static org.daiitech.naftah.Naftah.VECTOR_API_PROPERTY;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +12,6 @@ import jdk.incubator.vector.ShortVector;
 import jdk.incubator.vector.VectorOperators;
 import jdk.incubator.vector.VectorSpecies;
 import org.daiitech.naftah.errors.NaftahBugError;
-
-import static org.daiitech.naftah.Naftah.VECTOR_API_PROPERTY;
 
 /**
  * @author Chakib Daii
@@ -139,7 +139,8 @@ public final class StringUtils {
   public static String applyOperation(
       String a, String b, BiFunction<Character, Character, Integer> operation) {
     BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation;
-    if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD
+    if (!USE_VECTOR_API
+        || a.length() < VECTOR_THRESHOLD
         || Objects.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
       return applyOperationScalar(a, b, operation);
     } else {
@@ -260,7 +261,8 @@ public final class StringUtils {
 
   public static String applyOperation(String a, Function<Character, Number> operation) {
     Function<ShortVector, ShortVector> vectorOperation;
-    if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD
+    if (!USE_VECTOR_API
+        || a.length() < VECTOR_THRESHOLD
         || Objects.isNull(vectorOperation = UNARY_OP_MAP.get(operation))) {
       return applyOperationScalar(a, operation);
     } else {
