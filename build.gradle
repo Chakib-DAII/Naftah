@@ -18,6 +18,20 @@ java {
 	}
 }
 
+tasks.withType(JavaCompile).configureEach {
+	options.compilerArgs += [
+			'--enable-preview',
+			'--add-modules', 'jdk.incubator.vector'
+	]
+}
+
+tasks.withType(JavaExec).configureEach {
+	jvmArgs += [
+			'--enable-preview',
+			'--add-modules', 'jdk.incubator.vector'
+	]
+}
+
 repositories {
 	mavenCentral()
 }
@@ -31,6 +45,8 @@ dependencies {
 	implementation 'info.picocli:picocli:4.7.6'
 	implementation 'org.jline:jline:3.23.0'
 	implementation 'org.jline:jline-terminal-jansi:3.28.0'
+	implementation 'org.openjdk.jmh:jmh-core:1.37'
+	annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 }
 
 tasks.withType(JavaCompile).configureEach  {
@@ -51,6 +67,13 @@ compileJava.dependsOn generateGrammarSource
 sourceSets {
 	generated {
 		java.srcDir 'generated-src/antlr/main/'
+	}
+
+	benchmark {
+		java.srcDir 'benchmark/java'
+		resources.srcDir 'benchmark/resources'
+		compileClasspath += sourceSets.main.output + configurations.annotationProcessor
+		runtimeClasspath += output + compileClasspath
 	}
 }
 
@@ -393,4 +416,22 @@ tasks.register('distStandalone', Zip) {
 		include "${project.name}-standalone-${project.version}.jar"
 		into 'lib'
 	}
+}
+
+tasks.register('compileJmh', JavaCompile) {
+	dependsOn tasks.named('generateBenchmarkGrammarSource')
+	source = sourceSets.benchmark.java
+	classpath = sourceSets.benchmark.compileClasspath
+	destinationDirectory = file("$buildDir/classes/benchmark")
+	options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+tasks.register('runJmh', JavaExec) {
+	dependsOn tasks.named("compileJmh")
+	mainClass = 'org.openjdk.jmh.Main'
+	classpath = files(
+			compileJmh.destinationDirectory,
+			sourceSets.benchmark.runtimeClasspath,
+			sourceSets.main.runtimeClasspath
+	)
 }
