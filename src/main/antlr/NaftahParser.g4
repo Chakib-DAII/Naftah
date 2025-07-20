@@ -31,12 +31,14 @@ statement: block #blockStatement
          | ifStatement #ifStatementStatement
          | functionDeclaration #functionDeclarationStatement
          | functionCall #functionCallStatement
+         | qualifiedName #objectAccessStatement
          | declaration #declarationStatement
          | assignment #assignmentStatement
          | returnStatement #returnStatementStatement
          | expression #expressionStatement
          ;
 
+// Declaration: variable or constant declaration
 declaration: (VARIABLE | CONSTANT)? ID (COLON type)?;
 
 // Assignment: variable or constant assignment
@@ -69,6 +71,7 @@ block: LBRACE statement* RBRACE;
 // Expressions: Can be value, binary operations
 expression: functionCall #functionCallExpression
           | object #objectExpression
+          | qualifiedName #objectAccessExpression
           | collection #collectionExpression
           | LPAREN expression RPAREN #parenthesisExpression
           | expression MUL expression #mulExpression
