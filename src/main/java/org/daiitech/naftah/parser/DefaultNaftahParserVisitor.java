@@ -144,6 +144,10 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    boolean creatingObject =
+        NaftahParserHelper.hasChildOrSubChildOfType(
+            ctx, org.daiitech.naftah.parser.NaftahParser.ObjectExpressionContext.class);
+    currentContext.setCreatingObject(creatingObject);
     var result = visit(ctx.assignment());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -233,12 +237,25 @@ public class DefaultNaftahParserVisitor
     boolean isConstant = hasChild(ctx.CONSTANT());
     boolean isConstantOrVariable = isConstant || hasChild(ctx.VARIABLE());
     boolean hasType = hasChild(ctx.type());
-    if (isConstantOrVariable || hasType) {
+    boolean creatingObject = currentContext.isCreatingObject();
+    boolean creatingObjectField =
+        hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
+    if (isConstantOrVariable || hasType || creatingObjectField) {
+      if (creatingObject && hasType) {
+        Class<?> type = (Class<?>) visit(ctx.type());
+        if (Objects.nonNull(type) && !Object.class.equals(type))
+          throw new NaftahBugError(
+                  "لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع الأنواع (%s)."
+                  .formatted(
+                      variableName,
+                      getNaftahType(parser, type),
+                      getNaftahType(parser, Object.class)));
+      }
       declaredVariable = createDeclaredVariable(this, ctx, variableName, isConstant, hasType);
       // TODO: check if inside function to check if it matches any argument / parameter or
       // previously
       // declared and update if possible
-      currentContext.defineVariable(variableName, declaredVariable.a);
+      if (!creatingObjectField) currentContext.defineVariable(variableName, declaredVariable.a);
     } else {
       declaredVariable =
           Optional.ofNullable(currentContext.getVariable(variableName, true))
@@ -258,6 +275,8 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     currentContext.setParsingAssignment(true);
+    boolean creatingObjectField =
+        hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
     Pair<DeclaredVariable, Boolean> declaredVariable =
         (Pair<DeclaredVariable, Boolean>) visit(ctx.declaration());
     currentContext.setDeclarationOfAssignment(declaredVariable);
@@ -277,7 +296,8 @@ public class DefaultNaftahParserVisitor
       declaredVariable.a.setValue(visit(ctx.expression()));
     }
     // declared and update if possible
-    currentContext.setVariable(declaredVariable.a.getName(), declaredVariable.a);
+    if (!creatingObjectField)
+      currentContext.setVariable(declaredVariable.a.getName(), declaredVariable.a);
     currentContext.setParsingAssignment(false);
     currentContext.markExecuted(ctx); // Mark as executed
     return declaredVariable;
@@ -531,6 +551,53 @@ public class DefaultNaftahParserVisitor
     DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     depth--;
     nextContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitObjectExpression(
+      org.daiitech.naftah.parser.NaftahParser.ObjectExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+          "visitObjectExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.object());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitObject(org.daiitech.naftah.parser.NaftahParser.ObjectContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+          "visitObject(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.objectFields());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitObjectFields(org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+          "visitObjectFields(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = new HashMap<>();
+
+    for (int i = 0; i < ctx.assignment().size(); i++) {
+      var field = (Pair<DeclaredVariable, Boolean>) visit(ctx.assignment(i));
+      var fieldName = field.a.getName();
+      result.put(fieldName, field.a);
+    }
+    currentContext.setCreatingObject(false);
+    currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
 
@@ -1142,7 +1209,6 @@ public class DefaultNaftahParserVisitor
 
   @Override
   public Object visitIdValue(org.daiitech.naftah.parser.NaftahParser.IdValueContext ctx) {
-    // TODO: key value can create objects ( js based)
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
           "visitIdValue(%s)"
@@ -1152,8 +1218,10 @@ public class DefaultNaftahParserVisitor
     // prepare validations
     boolean creatingMap =
         hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.MapValueContext.class);
+    boolean creatingObject =
+        hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
     String id = ctx.ID().getText();
-    var result = creatingMap ? id : VARIABLE_GETTER.apply(id, currentContext);
+    var result = creatingMap || creatingObject ? id : VARIABLE_GETTER.apply(id, currentContext);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
