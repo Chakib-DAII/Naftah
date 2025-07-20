@@ -11,6 +11,8 @@ import jdk.incubator.vector.VectorOperators;
 import jdk.incubator.vector.VectorSpecies;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.Naftah.VECTOR_API_PROPERTY;
+
 /**
  * @author Chakib Daii
  */
@@ -36,6 +38,8 @@ public final class StringUtils {
   public static final Function<Character, Number> POST_DECREMENT = NumberUtils::postDecrement;
 
   // Vector
+
+  public static final Boolean USE_VECTOR_API = Boolean.getBoolean(VECTOR_API_PROPERTY);
   public static final int VECTOR_THRESHOLD = 128; // TODO: tune the threshold
   private static final VectorSpecies<Short> SPECIES = ShortVector.SPECIES_PREFERRED;
   // Bit wise
@@ -135,7 +139,7 @@ public final class StringUtils {
   public static String applyOperation(
       String a, String b, BiFunction<Character, Character, Integer> operation) {
     BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation;
-    if (a.length() < VECTOR_THRESHOLD
+    if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD
         || Objects.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
       return applyOperationScalar(a, b, operation);
     } else {
@@ -256,7 +260,7 @@ public final class StringUtils {
 
   public static String applyOperation(String a, Function<Character, Number> operation) {
     Function<ShortVector, ShortVector> vectorOperation;
-    if (a.length() < VECTOR_THRESHOLD
+    if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD
         || Objects.isNull(vectorOperation = UNARY_OP_MAP.get(operation))) {
       return applyOperationScalar(a, operation);
     } else {

@@ -43,6 +43,7 @@ public final class Naftah {
   public static final String INSIDE_INIT_PROPERTY = "naftah.init";
   public static final String INSIDE_RUN_PROPERTY = "naftah.run";
   public static final String FILE_ENCODING_PROPERTY = "file.encoding";
+  public static final String VECTOR_API_PROPERTY = "naftah.vector.api.active";
 
   public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
 
@@ -381,6 +382,14 @@ public final class Naftah {
         description = {"Print version information and exit", "طباعة معلومات الإصدار والخروج"})
     private boolean versionRequested;
 
+    @Option(
+            names = {"-vec", "--vector"},
+            description = {
+                    "Enable Vector API optimizations for performance",
+                    "تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"
+            })
+    private boolean useVectorApi;
+
     @Unmatched List<String> arguments = new ArrayList<>();
 
     /**
@@ -434,6 +443,10 @@ public final class Naftah {
         } else {
           main.script = matchedCommand.script;
         }
+      }
+
+      if (matchedCommand.useVectorApi) {
+        System.setProperty(VECTOR_API_PROPERTY, Boolean.toString(true));
       }
 
       main.args = matchedCommand.arguments;
