@@ -20,7 +20,6 @@ import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.lang.*;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
-import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
@@ -47,8 +46,8 @@ public class DefaultNaftahParserVisitor
               return hasChildOrSubChildOfType(
                       ctx,
                       org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-                  ? DefaultContext.registerContext(new HashMap<>(), new HashMap<>())
-                  : DefaultContext.registerContext();
+                  ? registerContext(new HashMap<>(), new HashMap<>())
+                  : registerContext();
             }
           };
   private static final BiFunction<
@@ -59,7 +58,7 @@ public class DefaultNaftahParserVisitor
               return hasChildOrSubChildOfType(
                       ctx,
                       org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class)
-                  ? REPLContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
+                  ? registerContext(currentContext, new HashMap<>(), new HashMap<>())
                   : REPLContext.registerContext(currentContext);
             } else {
               return hasChildOrSubChildOfType(
@@ -70,19 +69,19 @@ public class DefaultNaftahParserVisitor
                           ctx,
                           org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext
                               .class)
-                  ? DefaultContext.registerContext(currentContext, new HashMap<>(), new HashMap<>())
-                  : DefaultContext.registerContext(currentContext);
+                  ? registerContext(currentContext, new HashMap<>(), new HashMap<>())
+                  : registerContext(currentContext);
             }
           };
   private static final Function<Integer, DefaultContext> CONTEXT_BY_DEPTH_SUPPLIER =
       (depth) -> {
-        if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) return REPLContext.getContextByDepth(depth);
-        else return DefaultContext.getContextByDepth(depth);
+        if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) return getContextByDepth(depth);
+        else return getContextByDepth(depth);
       };
   private static final Function<Integer, DefaultContext> DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER =
       (depth) -> {
         if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) return REPLContext.deregisterContext(depth);
-        else return DefaultContext.deregisterContext(depth);
+        else return deregisterContext(depth);
       };
 
   private final org.daiitech.naftah.parser.NaftahParser parser;
@@ -122,6 +121,20 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
+  public Object visitObjectAccessStatement(
+      org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+          "visitObjectAccessStatement(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.qualifiedName());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
   public Object visitDeclarationStatement(
       org.daiitech.naftah.parser.NaftahParser.DeclarationStatementContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
@@ -145,7 +158,7 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     boolean creatingObject =
-        NaftahParserHelper.hasChildOrSubChildOfType(
+        hasChildOrSubChildOfType(
             ctx, org.daiitech.naftah.parser.NaftahParser.ObjectExpressionContext.class);
     currentContext.setCreatingObject(creatingObject);
     var result = visit(ctx.assignment());
@@ -373,7 +386,7 @@ public class DefaultNaftahParserVisitor
     String functionName =
         hasChild(ctx.ID()) ? ctx.ID().getText() : (String) visit(ctx.qualifiedCall());
     // TODO: add support to variables as qualified call and match to the jvm function
-    String functionCallId = DefaultContext.FUNCTION_CALL_ID_GENERATOR.apply(depth, functionName);
+    String functionCallId = FUNCTION_CALL_ID_GENERATOR.apply(depth, functionName);
     currentContext.setFunctionCallId(functionCallId);
     List<Pair<String, Object>> args = new ArrayList<>();
     // TODO: add support to global variables as argument
@@ -386,18 +399,18 @@ public class DefaultNaftahParserVisitor
         try {
           prepareDeclaredFunction(this, declaredFunction);
           Map<String, Object> finalArgs =
-              ObjectUtils.isEmpty(declaredFunction.getParameters())
+              isEmpty(declaredFunction.getParameters())
                   ? Map.of()
                   : prepareDeclaredFunctionArguments(declaredFunction.getParameters(), args);
 
-          if (!ObjectUtils.isEmpty(declaredFunction.getParameters()))
+          if (!isEmpty(declaredFunction.getParameters()))
             currentContext.defineFunctionParameters(
                 declaredFunction.getParameters().stream()
                     .map(parameter -> Map.entry(parameter.getName(), parameter))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
                 true);
 
-          if (!ObjectUtils.isEmpty(declaredFunction.getParameters()))
+          if (!isEmpty(declaredFunction.getParameters()))
             currentContext.defineFunctionArguments(finalArgs);
 
           pushCall(declaredFunction, finalArgs);
@@ -589,7 +602,7 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    var result = new HashMap<>();
+    var result = new HashMap<String, DeclaredVariable>();
 
     for (int i = 0; i < ctx.assignment().size(); i++) {
       var field = (Pair<DeclaredVariable, Boolean>) visit(ctx.assignment(i));
@@ -597,6 +610,20 @@ public class DefaultNaftahParserVisitor
       result.put(fieldName, field.a);
     }
     currentContext.setCreatingObject(false);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitObjectAccessExpression(
+      org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+          "visitObjectAccessExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.qualifiedName());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -872,8 +899,8 @@ public class DefaultNaftahParserVisitor
     } else {
       result =
           hasChild(ctx.MINUS())
-              ? ObjectUtils.applyOperation(left, right, SUBTRACT)
-              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_SUBTRACT);
+              ? applyOperation(left, right, SUBTRACT)
+              : applyOperation(left, right, ELEMENTWISE_SUBTRACT);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -910,8 +937,8 @@ public class DefaultNaftahParserVisitor
     } else {
       result =
           hasChild(ctx.MOD())
-              ? ObjectUtils.applyOperation(left, right, MODULO)
-              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_MODULO);
+              ? applyOperation(left, right, MODULO)
+              : applyOperation(left, right, ELEMENTWISE_MODULO);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -934,8 +961,8 @@ public class DefaultNaftahParserVisitor
     } else {
       result =
           hasChild(ctx.DIV())
-              ? ObjectUtils.applyOperation(left, right, DIVIDE)
-              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_DIVIDE);
+              ? applyOperation(left, right, DIVIDE)
+              : applyOperation(left, right, ELEMENTWISE_DIVIDE);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -956,7 +983,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, GREATER_THAN);
+      result = applyOperation(left, right, GREATER_THAN);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -977,7 +1004,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, LESS_THAN_EQUALS);
+      result = applyOperation(left, right, LESS_THAN_EQUALS);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -998,7 +1025,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, GREATER_THAN_EQUALS);
+      result = applyOperation(left, right, GREATER_THAN_EQUALS);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1019,7 +1046,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, NOT_EQUALS);
+      result = applyOperation(left, right, NOT_EQUALS);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1040,7 +1067,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, EQUALS);
+      result = applyOperation(left, right, EQUALS);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1061,7 +1088,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, LESS_THAN);
+      result = applyOperation(left, right, LESS_THAN);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1098,8 +1125,8 @@ public class DefaultNaftahParserVisitor
     } else {
       result =
           hasChild(ctx.PLUS())
-              ? ObjectUtils.applyOperation(left, right, ADD)
-              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_ADD);
+              ? applyOperation(left, right, ADD)
+              : applyOperation(left, right, ELEMENTWISE_ADD);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1122,8 +1149,8 @@ public class DefaultNaftahParserVisitor
     } else {
       result =
           hasChild(ctx.MUL())
-              ? ObjectUtils.applyOperation(left, right, MULTIPLY)
-              : ObjectUtils.applyOperation(left, right, ELEMENTWISE_MULTIPLY);
+              ? applyOperation(left, right, MULTIPLY)
+              : applyOperation(left, right, ELEMENTWISE_MULTIPLY);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1317,10 +1344,28 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    Object result;
+    Object result = null;
+    boolean accessingObjectField =
+        hasAnyParentOfType(
+                ctx, org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext.class)
+            || hasAnyParentOfType(
+                ctx, org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
     if (currentContext.isParsingFunctionCallId()) {
       result = getQualifiedName(ctx);
       currentContext.setParsingFunctionCallId(false);
+    } else if (accessingObjectField) {
+      var qualifiedName = getQualifiedName(ctx);
+      var accessArray = qualifiedName.split(":");
+      var object =
+          (Map<String, DeclaredVariable>)
+              currentContext.getVariable(accessArray[0], false).b.getValue();
+      for (int i = 1; i < accessArray.length; i++) {
+        if (i < accessArray.length - 1) {
+          object = (Map<String, DeclaredVariable>) object.get(accessArray[i]).getValue();
+        } else {
+          result = object.get(accessArray[i]);
+        }
+      }
     } else result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1341,7 +1386,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, BITWISE_XOR);
+      result = applyOperation(left, right, BITWISE_XOR);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1375,7 +1420,7 @@ public class DefaultNaftahParserVisitor
     if (value == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(value, PRE_DECREMENT);
+      result = applyOperation(value, PRE_DECREMENT);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1395,7 +1440,7 @@ public class DefaultNaftahParserVisitor
     if (value == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(value, POST_DECREMENT);
+      result = applyOperation(value, POST_DECREMENT);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1416,7 +1461,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, BITWISE_OR);
+      result = applyOperation(left, right, BITWISE_OR);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1436,7 +1481,7 @@ public class DefaultNaftahParserVisitor
     if (value == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(value, BITWISE_NOT);
+      result = applyOperation(value, BITWISE_NOT);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1457,7 +1502,7 @@ public class DefaultNaftahParserVisitor
     if (left == null || right == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(left, right, BITWISE_AND);
+      result = applyOperation(left, right, BITWISE_AND);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1477,7 +1522,7 @@ public class DefaultNaftahParserVisitor
     if (value == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(value, PRE_INCREMENT);
+      result = applyOperation(value, PRE_INCREMENT);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
@@ -1497,7 +1542,7 @@ public class DefaultNaftahParserVisitor
     if (value == null) {
       result = null;
     } else {
-      result = ObjectUtils.applyOperation(value, POST_INCREMENT);
+      result = applyOperation(value, POST_INCREMENT);
     }
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
