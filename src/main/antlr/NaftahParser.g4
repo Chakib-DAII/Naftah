@@ -68,6 +68,7 @@ block: LBRACE statement* RBRACE;
 
 // Expressions: Can be value, binary operations
 expression: functionCall #functionCallExpression
+          | object #objectExpression
           | collection #collectionExpression
           | LPAREN expression RPAREN #parenthesisExpression
           | expression MUL expression #mulExpression
@@ -97,6 +98,10 @@ expression: functionCall #functionCallExpression
           | expression DECREMENT #postDecrementExpression
           | value #valueExpression
           ;
+
+// Object
+object: LBRACE objectFields? RBRACE;
+objectFields: assignment ( COMMA assignment )*;
 
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
