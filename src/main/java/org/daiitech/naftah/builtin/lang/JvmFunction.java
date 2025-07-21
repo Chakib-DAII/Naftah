@@ -56,16 +56,15 @@ public class JvmFunction implements Serializable {
 
   @Serial
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    ois.defaultReadObject();
     try {
+      ois.defaultReadObject();
       for (Method m : clazz.getDeclaredMethods()) {
         if (m.getName().equals(methodName)) {
           this.method = m;
           break;
         }
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Throwable ignored) {
     }
   }
 

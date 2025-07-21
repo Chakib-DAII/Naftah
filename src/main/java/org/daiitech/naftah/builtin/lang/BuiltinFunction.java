@@ -41,8 +41,8 @@ public class BuiltinFunction implements Serializable {
 
   @Serial
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    ois.defaultReadObject();
     try {
+      ois.defaultReadObject();
       Class<?> clazz = Class.forName(className);
       for (Method m : clazz.getDeclaredMethods()) {
         if (m.getName().equals(methodName)) {
@@ -50,8 +50,7 @@ public class BuiltinFunction implements Serializable {
           break;
         }
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Throwable ignored) {
     }
   }
 
