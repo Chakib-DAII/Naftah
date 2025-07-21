@@ -4,7 +4,9 @@ import java.io.*;
 import java.lang.reflect.Method;
 
 /**
- * @author Chakib Daii represention of a builtin function
+ * representation of a builtin function
+ *
+ * @author Chakib Daii
  */
 public class BuiltinFunction implements Serializable {
   private transient Method method;

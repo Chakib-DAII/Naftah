@@ -4,7 +4,9 @@ import java.util.List;
 import org.daiitech.naftah.parser.NaftahParser;
 
 /**
- * @author Chakib Daii defintion of function declared in Naftah script
+ * definition of function declared in Naftah script
+ *
+ * @author Chakib Daii
  */
 public class DeclaredFunction {
   private final NaftahParser.FunctionDeclarationContext originalContext;
