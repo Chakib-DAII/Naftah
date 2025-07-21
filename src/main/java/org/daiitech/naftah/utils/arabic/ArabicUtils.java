@@ -10,6 +10,8 @@ import com.ibm.icu.text.Transliterator;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.daiitech.naftah.utils.OS;
 import org.daiitech.naftah.utils.function.ThrowingBiFunction;
 import org.daiitech.naftah.utils.function.ThrowingFunction;
@@ -26,8 +28,15 @@ public class ArabicUtils {
   public static final String ANSI_ESCAPE = "\033[H\033[2J";
   public static final String LATIN_ARABIC_TRANSLITERATION_ID = "Any-Latin; Latin-Arabic";
   public static final String ARABIC_LANGUAGE = "ar";
-  public static final String DEFAULT_ARABIC_LANGUAGE_COUNTRY = "AE";
-  public static final String CUSTOM_RULES =
+  public static final String DEFAULT_ARABIC_LANGUAGE_COUNTRY = "TN";
+  public static final Locale ARABIC = new Locale(ARABIC_LANGUAGE);
+  private static final String IDENTIFIER_SPLIT_REGEX =
+          "(?<=[A-Z])(?=[A-Z][a-z])" +  // JSONTo → JSON, To
+                  "|(?<=[^A-Z])(?=[A-Z])" +     // userAccount → user, Account
+                  "|(?<=[A-Za-z])(?=\\d)" +     // IPv6 → IPv, 6
+                  "|(?<=\\d)(?=[A-Za-z])";       // 6Parser → 6, Parser
+  public static final ResourceBundle CUSTOM_RULES_BUNDLE = ResourceBundle.getBundle("transliteration", ARABIC);
+  public static String CUSTOM_RULES =
       """
             com > كوم;
             org > أورغ;
@@ -38,10 +47,35 @@ public class ArabicUtils {
             b > ب;
             tech > تاك;
             t > ت;
-            ii > عي;""";
+            ii > عي;
+            """;
 
   public static final Pattern TEXT_MULTILINE_PATTERN = Pattern.compile("(.+?)(\\r\\n|\\n|\\r|$)");
   private static final Map<String, Matcher> TEXT_MATCHER_CACHE = new HashMap<>();
+
+  static {
+    Set<String> keys = CUSTOM_RULES_BUNDLE.keySet();
+
+    // Convert to List
+    List<String> keylist = new ArrayList<>(keys);
+
+    // Sort by length descending
+    keylist.sort((s1, s2) -> Integer.compare(s2.length(), s1.length()));
+
+    StringBuilder stringBuilder = new StringBuilder();
+    for (String key : keylist) {
+      String value = CUSTOM_RULES_BUNDLE.getString(key);
+      // If s contains underscore or spaces or any special char, quote it
+      if (value.matches(".*[ _\\t\\r\\n].*")) {  // underscore or space or whitespace
+        value = "'" + value + "'";
+      }
+
+      stringBuilder.append("""
+              %s > %s;
+              """.formatted(key, value));
+    }
+    CUSTOM_RULES = stringBuilder + CUSTOM_RULES;
+  }
 
   public static boolean isMultiline(String input) {
     return getTextMatcher(input).find();
@@ -195,8 +229,8 @@ public class ArabicUtils {
     return text.replaceAll(ARABIC_DIACRITICS_REGEX, "");
   }
 
-  public static String transliterateScript(
-      String transliteratorID, String text, boolean removeDiacritics, String customRules) {
+  public static String[] transliterateScript(
+      String transliteratorID, boolean removeDiacritics, String customRules, String... text) {
     Transliterator transliterator = null;
 
     if (Objects.nonNull(customRules) && !customRules.isEmpty() && !customRules.isBlank()) {
@@ -214,13 +248,23 @@ public class ArabicUtils {
       transliterator = Transliterator.getInstance(transliteratorID);
     }
 
-    // Apply transliteration
-    text = transliterator.transliterate(text);
-
-    // Remove the diacritics from the Arabic text
-    if (removeDiacritics) text = removeDiacritics(text);
+    for (int i = 0; i < text.length; i++) {
+      text[i] = transliterateScript(transliterator, removeDiacritics, text[i]);
+    }
 
     return text;
+  }
+
+  public static String transliterateScript(Transliterator transliterator,  boolean removeDiacritics, String word) {
+    // Apply transliteration
+    word = splitIdentifier(word).stream()
+            .map(transliterator::transliterate)
+            .collect(Collectors.joining());
+
+    // Remove the diacritics from the Arabic text
+    if (removeDiacritics) word = removeDiacritics(word);
+
+    return word;
   }
 
   public static String transliterateScriptLetterByLetter(
@@ -242,41 +286,41 @@ public class ArabicUtils {
     return textOutput.toString();
   }
 
-  public static String transliterateScript(String transliteratorID, String text) {
-    return transliterateScript(transliteratorID, text, false, null);
+  public static String[] transliterateScript(String transliteratorID, String... text) {
+    return transliterateScript(transliteratorID, false, null, text);
   }
 
-  public static String transliterateScript(
-      String transliteratorID, String text, String customRules) {
-    return transliterateScript(transliteratorID, text, false, customRules);
+  public static String[] transliterateScript(
+      String transliteratorID, String customRules, String... text) {
+    return transliterateScript(transliteratorID, false, customRules, text);
   }
 
-  public static String transliterateToArabicScript(String text, boolean removeDiacritics) {
-    return transliterateScript(LATIN_ARABIC_TRANSLITERATION_ID, text, removeDiacritics, null);
+  public static String[] transliterateToArabicScript(boolean removeDiacritics, String... text) {
+    return transliterateScript(LATIN_ARABIC_TRANSLITERATION_ID, removeDiacritics, null, text);
   }
 
-  public static String transliterateToArabicScriptDefaultCustom(
-      String text, boolean removeDiacritics) {
+  public static String[] transliterateToArabicScriptDefaultCustom(
+       boolean removeDiacritics, String... text) {
     return transliterateScript(
-        LATIN_ARABIC_TRANSLITERATION_ID, text, removeDiacritics, CUSTOM_RULES);
+        LATIN_ARABIC_TRANSLITERATION_ID, removeDiacritics, CUSTOM_RULES, text);
   }
 
-  public static String transliterateToArabicScript(
-      String text, boolean removeDiacritics, String customRules) {
+  public static String[] transliterateToArabicScript(
+           boolean removeDiacritics, String customRules, String... text) {
     return transliterateScript(
-        LATIN_ARABIC_TRANSLITERATION_ID, text, removeDiacritics, customRules);
+        LATIN_ARABIC_TRANSLITERATION_ID, removeDiacritics, customRules, text);
   }
 
-  public static String transliterateToArabicScript(String text) {
-    return transliterateToArabicScript(text, true);
+  public static String[] transliterateToArabicScript(String... text) {
+    return transliterateToArabicScript(true, text);
   }
 
-  public static String transliterateToArabicScriptDefaultCustom(String text) {
-    return transliterateToArabicScript(text, true, CUSTOM_RULES);
+  public static String[] transliterateToArabicScriptDefaultCustom(String... text) {
+    return transliterateToArabicScript(true, CUSTOM_RULES, text);
   }
 
-  public static String transliterateToArabicScript(String text, String customRules) {
-    return transliterateToArabicScript(text, true, customRules);
+  public static String[] transliterateToArabicScript(String customRules, String... text) {
+    return transliterateToArabicScript(true, customRules, text);
   }
 
   public static String transliterateToArabicScriptLetterByLetter(String text) {
@@ -310,5 +354,22 @@ public class ArabicUtils {
 
   public static List<Pair<String, String>> getRawHexBytes(String text) {
     return getRawHexBytes(text.toCharArray());
+  }
+
+
+  public static List<String> splitIdentifier(String input) {
+    // Normalize underscores and dashes to spaces
+    String normalized = input.replaceAll("[-_]", " ");
+
+    // Split into segments by whitespace first (e.g., snake_case and kebab-case)
+    String[] initialParts = normalized.split("\\s+");
+
+    List<String> result = new ArrayList<>();
+    for (String part : initialParts) {
+      // Split camelCase, PascalCase, acronyms, numbers
+      result.addAll(Arrays.asList(part.split(IDENTIFIER_SPLIT_REGEX)));
+    }
+
+    return result;
   }
 }
