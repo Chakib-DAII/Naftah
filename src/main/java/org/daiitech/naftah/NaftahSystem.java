@@ -1,6 +1,8 @@
 package org.daiitech.naftah;
 
 import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_LANGUAGE;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.DEFAULT_ARABIC_LANGUAGE_COUNTRY;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
 
 import java.io.PrintStream;
@@ -44,7 +46,7 @@ public final class NaftahSystem {
   }
 
   public static void setupLocale() {
-    Locale arabic = new Locale("ar", "TN");
+    Locale arabic = new Locale(ARABIC_LANGUAGE, DEFAULT_ARABIC_LANGUAGE_COUNTRY);
     Locale.setDefault(arabic);
   }
 
