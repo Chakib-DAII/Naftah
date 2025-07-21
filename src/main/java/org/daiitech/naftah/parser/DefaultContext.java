@@ -143,8 +143,9 @@ public class DefaultContext {
         try {
           Callable<Pair<Set<String>, Set<String>>> qualifiersLoaderTask =
               () -> {
-                var classQualifiers = getClassQualifiers(classNames.keySet(), false);
-                var arabicClassQualifiers = getArabicClassQualifiers(classQualifiers);
+                var classQualifiersMap = getClassQualifiers(classNames.keySet(), false);
+                var classQualifiers = new HashSet<>(classQualifiersMap.keySet());
+                var arabicClassQualifiers = getArabicClassQualifiers(classQualifiersMap.values());
                 return new Pair<>(classQualifiers, arabicClassQualifiers);
               };
           var qualifiersFuture = internalExecutor.submit(qualifiersLoaderTask);
