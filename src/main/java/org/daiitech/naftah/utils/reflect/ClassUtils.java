@@ -8,7 +8,6 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
@@ -24,14 +23,16 @@ public final class ClassUtils {
   public static final String QUALIFIED_CALL_SEPARATOR = "::";
 
   public static String getQualifiedName(String className) {
-    return String.join(QUALIFIED_NAME_SEPARATOR,
-                    ArabicUtils.transliterateToArabicScriptDefaultCustom(className.split(CLASS_SEPARATORS_REGEX))
-            );
+    return String.join(
+        QUALIFIED_NAME_SEPARATOR,
+        ArabicUtils.transliterateToArabicScriptDefaultCustom(
+            className.split(CLASS_SEPARATORS_REGEX)));
   }
 
   public static String getQualifiedCall(String qualifiedName, Method method) {
     return "%s::%s"
-        .formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefaultCustom(method.getName()));
+        .formatted(
+            qualifiedName, ArabicUtils.transliterateToArabicScriptDefaultCustom(method.getName()));
   }
 
   /**
@@ -39,18 +40,19 @@ public final class ClassUtils {
    *
    * @return set of qualified class names parts
    */
-  public static Map<String, String[]> getClassQualifiers(Set<String> classNames, boolean flattened) {
+  public static Map<String, String[]> getClassQualifiers(
+      Set<String> classNames, boolean flattened) {
     var baseStream = classNames.stream().map(s -> s.split(CLASS_SEPARATORS_REGEX));
 
     if (flattened)
       return baseStream
-              .flatMap(strings -> Arrays.stream(strings)
-                      .map(element -> Map.entry(element, strings)))
-              .collect(Collectors.toMap(
-                      Map.Entry::getKey,
-                      Map.Entry::getValue,
-                      (existing, replacement) -> existing  // in case of duplicate keys
-              ));
+          .flatMap(strings -> Arrays.stream(strings).map(element -> Map.entry(element, strings)))
+          .collect(
+              Collectors.toMap(
+                  Map.Entry::getKey,
+                  Map.Entry::getValue,
+                  (existing, replacement) -> existing // in case of duplicate keys
+                  ));
 
     return baseStream
         .map(strings -> Map.entry(String.join(QUALIFIED_NAME_SEPARATOR, strings), strings))
@@ -64,17 +66,24 @@ public final class ClassUtils {
    */
   public static Set<String> getArabicClassQualifiers(Collection<String[]> classQualifiers) {
     return classQualifiers.stream()
-        .map(strings -> String.join(QUALIFIED_NAME_SEPARATOR,
-                ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)
-        ))
+        .map(
+            strings ->
+                String.join(
+                    QUALIFIED_NAME_SEPARATOR,
+                    ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)))
         .collect(Collectors.toSet());
   }
 
-  public static Map<String, String> getArabicClassQualifiersMapping(Collection<String[]>  classQualifiers) {
+  public static Map<String, String> getArabicClassQualifiersMapping(
+      Collection<String[]> classQualifiers) {
     return classQualifiers.stream()
-        .map(strings -> Map.entry(String.join(QUALIFIED_NAME_SEPARATOR,
-                ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)
-        ), String.join(QUALIFIED_NAME_SEPARATOR, strings)))
+        .map(
+            strings ->
+                Map.entry(
+                    String.join(
+                        QUALIFIED_NAME_SEPARATOR,
+                        ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)),
+                    String.join(QUALIFIED_NAME_SEPARATOR, strings)))
         .collect(
             Collectors.toMap(
                 Map.Entry::getKey, Map.Entry::getValue, (existing, replacement) -> existing));

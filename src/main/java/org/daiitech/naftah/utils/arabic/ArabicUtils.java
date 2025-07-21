@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import org.daiitech.naftah.utils.OS;
 import org.daiitech.naftah.utils.function.ThrowingBiFunction;
 import org.daiitech.naftah.utils.function.ThrowingFunction;
@@ -31,11 +30,16 @@ public class ArabicUtils {
   public static final String DEFAULT_ARABIC_LANGUAGE_COUNTRY = "TN";
   public static final Locale ARABIC = new Locale(ARABIC_LANGUAGE);
   private static final String IDENTIFIER_SPLIT_REGEX =
-          "(?<=[A-Z])(?=[A-Z][a-z])" +  // JSONTo → JSON, To
-                  "|(?<=[^A-Z])(?=[A-Z])" +     // userAccount → user, Account
-                  "|(?<=[A-Za-z])(?=\\d)" +     // IPv6 → IPv, 6
-                  "|(?<=\\d)(?=[A-Za-z])";       // 6Parser → 6, Parser
-  public static final ResourceBundle CUSTOM_RULES_BUNDLE = ResourceBundle.getBundle("transliteration", ARABIC);
+      // JSONTo → JSON, To
+      "(?<=[A-Z])(?=[A-Z][a-z])"
+          + // userAccount → user, Account
+          "|(?<=[^A-Z])(?=[A-Z])"
+          + // IPv6 → IPv, 6
+          "|(?<=[A-Za-z])(?=\\d)"
+          + // 6Parser → 6, Parser
+          "|(?<=\\d)(?=[A-Za-z])";
+  public static final ResourceBundle CUSTOM_RULES_BUNDLE =
+      ResourceBundle.getBundle("transliteration", ARABIC);
   public static String CUSTOM_RULES =
       """
             com > كوم;
@@ -66,7 +70,7 @@ public class ArabicUtils {
     for (String key : keylist) {
       String value = CUSTOM_RULES_BUNDLE.getString(key);
       // If s contains underscore or spaces or any special char, quote it
-      if (value.matches(".*[ _\\t\\r\\n].*")) {  // underscore or space or whitespace
+      if (value.matches(".*[ _\\t\\r\\n].*")) { // underscore or space or whitespace
         value = "'" + value + "'";
       }
 
@@ -255,9 +259,11 @@ public class ArabicUtils {
     return text;
   }
 
-  public static String transliterateScript(Transliterator transliterator,  boolean removeDiacritics, String word) {
+  public static String transliterateScript(
+      Transliterator transliterator, boolean removeDiacritics, String word) {
     // Apply transliteration
-    word = splitIdentifier(word).stream()
+    word =
+        splitIdentifier(word).stream()
             .map(transliterator::transliterate)
             .collect(Collectors.joining());
 
@@ -300,13 +306,13 @@ public class ArabicUtils {
   }
 
   public static String[] transliterateToArabicScriptDefaultCustom(
-       boolean removeDiacritics, String... text) {
+      boolean removeDiacritics, String... text) {
     return transliterateScript(
         LATIN_ARABIC_TRANSLITERATION_ID, removeDiacritics, CUSTOM_RULES, text);
   }
 
   public static String[] transliterateToArabicScript(
-           boolean removeDiacritics, String customRules, String... text) {
+      boolean removeDiacritics, String customRules, String... text) {
     return transliterateScript(
         LATIN_ARABIC_TRANSLITERATION_ID, removeDiacritics, customRules, text);
   }
@@ -355,7 +361,6 @@ public class ArabicUtils {
   public static List<Pair<String, String>> getRawHexBytes(String text) {
     return getRawHexBytes(text.toCharArray());
   }
-
 
   public static List<String> splitIdentifier(String input) {
     // Normalize underscores and dashes to spaces
