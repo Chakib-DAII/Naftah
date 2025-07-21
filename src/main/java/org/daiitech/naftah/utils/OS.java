@@ -32,47 +32,47 @@ public final class OS {
   }
 
   public static boolean isFamilyDOS() {
-    return isFamily("dos");
+    return isFamily(FAMILY_DOS);
   }
 
   public static boolean isFamilyMac() {
-    return isFamily("mac");
+    return isFamily(FAMILY_MAC);
   }
 
   public static boolean isFamilyNetware() {
-    return isFamily("netware");
+    return isFamily(FAMILY_NETWARE);
   }
 
   public static boolean isFamilyOS2() {
-    return isFamily("os/2");
+    return isFamily(FAMILY_OS_2);
   }
 
   public static boolean isFamilyTandem() {
-    return isFamily("tandem");
+    return isFamily(FAMILY_TANDEM);
   }
 
   public static boolean isFamilyUnix() {
-    return isFamily("unix");
+    return isFamily(FAMILY_UNIX);
   }
 
   public static boolean isFamilyWindows() {
-    return isFamily("windows");
+    return isFamily(FAMILY_WINDOWS);
   }
 
   public static boolean isFamilyWin9x() {
-    return isFamily("win9x");
+    return isFamily(FAMILY_WIN9X);
   }
 
   public static boolean isFamilyZOS() {
-    return isFamily("z/os");
+    return isFamily(FAMILY_Z_OS);
   }
 
   public static boolean isFamilyOS400() {
-    return isFamily("os/400");
+    return isFamily(FAMILY_OS_400);
   }
 
   public static boolean isFamilyOpenVms() {
-    return isFamily("openvms");
+    return isFamily(FAMILY_OPENVMS);
   }
 
   public static boolean isName(String name) {
@@ -95,44 +95,44 @@ public final class OS {
       boolean isArch = true;
       boolean isVersion = true;
       if (family != null) {
-        if (family.equals("windows")) {
-          isFamily = OS_NAME.contains("windows");
-        } else if (family.equals("os/2")) {
-          isFamily = OS_NAME.contains("os/2");
-        } else if (family.equals("netware")) {
-          isFamily = OS_NAME.contains("netware");
-        } else if (family.equals("dos")) {
-          isFamily = PATH_SEP.equals(";") && !isFamily("netware");
-        } else if (family.equals("mac")) {
-          isFamily = OS_NAME.contains("mac");
-        } else if (family.equals("tandem")) {
+        if (family.equals(FAMILY_WINDOWS)) {
+          isFamily = OS_NAME.contains(FAMILY_WINDOWS);
+        } else if (family.equals(FAMILY_OS_2)) {
+          isFamily = OS_NAME.contains(FAMILY_OS_2);
+        } else if (family.equals(FAMILY_NETWARE)) {
+          isFamily = OS_NAME.contains(FAMILY_NETWARE);
+        } else if (family.equals(FAMILY_DOS)) {
+          isFamily = PATH_SEP.equals(";") && !isFamily(FAMILY_NETWARE);
+        } else if (family.equals(FAMILY_MAC)) {
+          isFamily = OS_NAME.contains(FAMILY_MAC);
+        } else if (family.equals(FAMILY_TANDEM)) {
           isFamily = OS_NAME.contains("nonstop_kernel");
-        } else if (family.equals("unix")) {
+        } else if (family.equals(FAMILY_UNIX)) {
           isFamily =
               PATH_SEP.equals(":")
-                  && !isFamily("openvms")
-                  && (!isFamily("mac") || OS_NAME.endsWith("x"));
-        } else if (family.equals("win9x")) {
+                  && !isFamily(FAMILY_OPENVMS)
+                  && (!isFamily(FAMILY_MAC) || OS_NAME.endsWith("x"));
+        } else if (family.equals(FAMILY_WIN9X)) {
           isFamily =
-              isFamily("windows")
+              isFamily(FAMILY_WINDOWS)
                   && (OS_NAME.contains("95")
                       || OS_NAME.contains("98")
                       || OS_NAME.contains("me")
                       || OS_NAME.contains("ce"));
-        } else if (!family.equals("z/os")) {
-          if (family.equals("os/400")) {
-            isFamily = OS_NAME.contains("os/400");
+        } else if (!family.equals(FAMILY_Z_OS)) {
+          if (family.equals(FAMILY_OS_400)) {
+            isFamily = OS_NAME.contains(FAMILY_OS_400);
           } else {
-            if (!family.equals("openvms")) {
+            if (!family.equals(FAMILY_OPENVMS)) {
               throw new NaftahBugError(
                   "لا يمكن تحديد عائلة نظام التشغيل \"%s\" بسبب عدم توفر المعلومات الكافية."
                       .formatted(family));
             }
 
-            isFamily = OS_NAME.contains("openvms");
+            isFamily = OS_NAME.contains(FAMILY_OPENVMS);
           }
         } else {
-          isFamily = OS_NAME.contains("z/os") || OS_NAME.contains("os/390");
+          isFamily = OS_NAME.contains(FAMILY_Z_OS) || OS_NAME.contains("os/390");
         }
       }
 
