@@ -35,7 +35,7 @@ public final class ObjectUtils {
     }
 
     // String
-    if (obj instanceof String str) return !str.isEmpty();
+    if (obj instanceof String str) return !str.isBlank();
 
     // Array
     if (obj.getClass().isArray()) return Array.getLength(obj) > 0;
