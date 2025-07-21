@@ -475,6 +475,7 @@ public final class Naftah {
 
     try {
       ParseResult result = parser.parseArgs(args);
+      // TODO: pad output
       if (printHelpIfRequested(result)) {
         return;
       }
@@ -491,6 +492,7 @@ public final class Naftah {
 
     } catch (ParameterException ex) { // command line arguments could not be parsed
       printPaddedErrorMessageToString(ex);
+      // TODO: pad output
       ex.getCommandLine().usage(System.err);
     } catch (IOException ioe) {
       printPaddedErrorMessageToString(ioe);
