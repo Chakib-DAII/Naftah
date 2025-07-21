@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-./naftah-shell init "$@"
