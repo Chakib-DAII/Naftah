@@ -1350,10 +1350,7 @@ public class DefaultNaftahParserVisitor
                 ctx, org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext.class)
             || hasAnyParentOfType(
                 ctx, org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
-    if (currentContext.isParsingFunctionCallId()) {
-      result = getQualifiedName(ctx);
-      currentContext.setParsingFunctionCallId(false);
-    } else if (accessingObjectField) {
+    if (accessingObjectField) {
       var qualifiedName = getQualifiedName(ctx);
       var accessArray = qualifiedName.split(":");
       var object =
@@ -1366,6 +1363,9 @@ public class DefaultNaftahParserVisitor
           result = object.get(accessArray[i]);
         }
       }
+    } else if (currentContext.isParsingFunctionCallId()) {
+      result = getQualifiedName(ctx);
+      currentContext.setParsingFunctionCallId(false);
     } else result = getJavaType(ctx);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
