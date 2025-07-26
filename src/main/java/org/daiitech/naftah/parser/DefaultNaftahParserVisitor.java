@@ -6,6 +6,7 @@ import static org.daiitech.naftah.builtin.utils.Tuple.newNaftahBugNullError;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.*;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.*;
 import static org.daiitech.naftah.parser.DefaultContext.*;
+import static org.daiitech.naftah.parser.LoopSignal.*;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 
@@ -204,6 +205,84 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = visit(ctx.ifStatement());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitForStatementStatement(org.daiitech.naftah.parser.NaftahParser.ForStatementStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitForStatementStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.forStatement());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitWhileStatementStatement(org.daiitech.naftah.parser.NaftahParser.WhileStatementStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitWhileStatementStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.whileStatement());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitRepeatStatementStatement(org.daiitech.naftah.parser.NaftahParser.RepeatStatementStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitRepeatStatementStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.repeatStatement());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitCaseStatementStatement(org.daiitech.naftah.parser.NaftahParser.CaseStatementStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitCaseStatementStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.caseStatement());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitBreakStatementStatement(org.daiitech.naftah.parser.NaftahParser.BreakStatementStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitBreakStatementStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.breakStatement());
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitContinueStatementStatement(org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitContinueStatementStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = visit(ctx.continueStatement());
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
@@ -513,6 +592,143 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
+  public Object visitForStatement(org.daiitech.naftah.parser.NaftahParser.ForStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitForStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    Object result = null;
+    boolean loopInStack = false;
+    String label = currentLoopLabel(ctx.label(), depth);
+    // Initialization: ID := expression
+    String loopVar = ctx.ID().getText();
+    Object initValue = visit(ctx.expression(0));
+    if (Objects.isNull(initValue))
+      throw new NaftahBugError(String.format(
+              "القيمة الابتدائية للمتغير '%s' لا يمكن أن تكون فارغة.",
+              loopVar
+      ));
+    // End value
+    Object endValue = visit(ctx.expression(1));
+    if (Objects.isNull(endValue))
+      throw new NaftahBugError(String.format(
+              "القيمة النهائية للمتغير '%s' لا يمكن أن تكون فارغة.",
+              loopVar
+      ));
+
+    if (Number.class.isAssignableFrom(initValue.getClass()) || Number.class.isAssignableFrom(endValue.getClass()))
+      throw new NaftahBugError(String.format(
+              "يجب أن تكون القيمتين الابتدائية والنهائية للمتغير '%s' من النوع الرقمي.",
+              loopVar
+      ));
+
+    // Direction (TO or DOWNTO)
+    boolean isAscending = ctx.TO() != null;
+    // Loop block
+    org.daiitech.naftah.parser.NaftahParser.BlockContext loopBlock = ctx.block(0);
+    // Optional ELSE block
+    org.daiitech.naftah.parser.NaftahParser.BlockContext elseBlock = null;
+    if (ctx.block().size() > 1) {
+      elseBlock = ctx.block(1);
+    }
+
+    boolean brokeEarly = false;
+
+    try {
+      pushLoop(label, ctx);
+      loopInStack = true;
+      if (isAscending) {
+        if (Boolean.TRUE.equals(applyOperation(endValue, initValue, LESS_THAN)))
+          throw new NaftahBugError("القيمة النهائية يجب أن تكون أكبر أو تساوي القيمة الابتدائية في الحلقات التصاعدية");
+
+        for (;
+               Boolean.TRUE.equals(applyOperation(initValue, endValue, LESS_THAN_EQUALS));
+               applyOperation(initValue, PRE_INCREMENT)) {
+          result = visit(loopBlock);
+
+          if (checkLoopSignal(result).equals(CONTINUE)) {
+            String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
+            if (Objects.isNull(targetLabel) || targetLabel.equals(label)) continue;
+            else break;
+          }
+
+          if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+            String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
+            brokeEarly = true;
+            if (Objects.isNull(targetLabel)) break;
+            else if (targetLabel.equals(label))
+              throw new NaftahBugError(
+                      String.format(
+                              "لا يمكن استخدام تسمية الحلقة نفسها '%s' في جملة '%s'.",label,
+                              getFormattedTokenSymbols(parser.getVocabulary(),
+                                      org.daiitech.naftah.parser.NaftahLexer.BREAK, false )));
+            else break;
+          }
+
+          if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+            brokeEarly = true;
+            break;
+          }
+        }
+      } else {
+        if (Boolean.TRUE.equals(applyOperation(initValue, endValue, LESS_THAN)))
+          throw new NaftahBugError("القيمة الابتدائية يجب أن تكون أكبر أو تساوي القيمة النهائية في الحلقات التنازلية");
+
+        for (;
+             Boolean.TRUE.equals(applyOperation(initValue, endValue, GREATER_THAN_EQUALS));
+             applyOperation(initValue, PRE_DECREMENT)) {
+          result = visit(loopBlock);
+
+          if (checkLoopSignal(result).equals(CONTINUE)) {
+            continue;
+          }
+
+          if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+            brokeEarly = true;
+            break;
+          }
+        }
+      }
+
+      // Run ELSE block only if loop did not break early
+      if (!brokeEarly && elseBlock != null) {
+        result = visit(elseBlock);
+      }
+    } finally {
+    if (loopInStack) popLoop();
+  }
+
+    currentContext.markExecuted(ctx); // Mark as executed
+    return LOOP_STACK.isEmpty() ?
+            Optional.ofNullable((LoopSignal.LoopSignalDetails) result)
+                    .map(LoopSignal.LoopSignalDetails::result)
+                    .orElse(null)
+            : result;
+  }
+
+  @Override
+  public Object visitWhileStatement(org.daiitech.naftah.parser.NaftahParser.WhileStatementContext ctx) {
+    return super.visitWhileStatement(ctx);
+  }
+
+  @Override
+  public Object visitRepeatStatement(org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext ctx) {
+    return super.visitRepeatStatement(ctx);
+  }
+
+  @Override
+  public Object visitCaseStatement(org.daiitech.naftah.parser.NaftahParser.CaseStatementContext ctx) {
+    return super.visitCaseStatement(ctx);
+  }
+
+  @Override
+  public Object visitCaseLabelList(org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext ctx) {
+    return super.visitCaseLabelList(ctx);
+  }
+
+  @Override
   public Object visitExpressionStatement(
       org.daiitech.naftah.parser.NaftahParser.ExpressionStatementContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
@@ -527,6 +743,54 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
+  public Object visitBreakStatement(org.daiitech.naftah.parser.NaftahParser.BreakStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitBreakStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    if (LOOP_STACK.isEmpty() || checkInsideLoop(ctx)) {
+      throw new NaftahBugError("لا يمكن استخدام '%s' خارج نطاق الحلقة.");
+    }
+    String currentLoopLabel = currentContext.getLoopLabel();
+    String targetLabel = null;
+    if (hasChild(ctx.ID())) {
+      targetLabel = ctx.ID().getText();;
+    }
+    if (targetLabel != null && !loopContainsLabel(targetLabel)) {
+      throw new NaftahBugError(String.format("لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.", targetLabel,
+              getFormattedTokenSymbols(parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.BREAK, false )));
+    }
+    currentContext.markExecuted(ctx);
+    return LoopSignal.LoopSignalDetails.of(BREAK, currentLoopLabel, targetLabel);
+  }
+
+  @Override
+  public Object visitContinueStatement(org.daiitech.naftah.parser.NaftahParser.ContinueStatementContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitContinueStatement(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    if (LOOP_STACK.isEmpty() || checkInsideLoop(ctx)) {
+      throw new NaftahBugError("لا يمكن استخدام '%s' خارج نطاق الحلقة.");
+    }
+    String currentLoopLabel = currentContext.getLoopLabel();
+    String targetLabel = null;
+    if (hasChild(ctx.ID())) {
+      targetLabel = ctx.ID().getText();;
+    }
+    if (targetLabel != null && !loopContainsLabel(targetLabel)) {
+      throw new NaftahBugError(String.format("لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.", targetLabel,
+              getFormattedTokenSymbols(parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.CONTINUE, false )));
+    }
+    currentContext.markExecuted(ctx);
+    return LoopSignal.LoopSignalDetails.of(CONTINUE, currentLoopLabel, targetLabel);
+  }
+
+  @Override
   public Object visitReturnStatement(
       org.daiitech.naftah.parser.NaftahParser.ReturnStatementContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
@@ -535,12 +799,13 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    boolean insideLoop = !LOOP_STACK.isEmpty() || checkInsideLoop(ctx);
     Object result = null;
     if (hasChild(ctx.expression())) {
       result = visit(ctx.expression()); // Evaluate and return the result
     }
     currentContext.markExecuted(ctx); // Mark as executed
-    return result; // No expression after 'return' means returning null
+    return insideLoop ? LoopSignal.LoopSignalDetails.of(RETURN, result) : result; // No expression after 'return' means returning null
   }
 
   @Override
@@ -1367,6 +1632,19 @@ public class DefaultNaftahParserVisitor
       result = getQualifiedName(ctx);
       currentContext.setParsingFunctionCallId(false);
     } else result = getJavaType(ctx);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitLabel(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = ctx.ID().getText();
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
