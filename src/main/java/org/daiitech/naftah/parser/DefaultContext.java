@@ -19,7 +19,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -119,15 +118,17 @@ public class DefaultContext {
     return CALL_STACK.pop();
   }
 
-
   // LOOP STACK
   // loop labels
-  protected static final Deque<Pair<String, ? extends ParserRuleContext>> LOOP_STACK = new ArrayDeque<>();
+  protected static final Deque<Pair<String, ? extends ParserRuleContext>> LOOP_STACK =
+      new ArrayDeque<>();
 
   // Helper to generate unique labels for unlabeled loops
   public static final Function<Integer, String> LOOP_ID_GENERATOR =
-          (depth) -> "%s-loop-%s".formatted(depth, UUID.randomUUID());
-  public static String currentLoopLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext labelCtx, int depth) {
+      (depth) -> "%s-loop-%s".formatted(depth, UUID.randomUUID());
+
+  public static String currentLoopLabel(
+      org.daiitech.naftah.parser.NaftahParser.LabelContext labelCtx, int depth) {
     if (labelCtx != null) {
       return labelCtx.ID().getText();
     } else {
@@ -145,8 +146,7 @@ public class DefaultContext {
 
   public static Pair<String, ? extends ParserRuleContext> popLoop() {
     if (LOOP_STACK.isEmpty())
-      throw new NaftahBugError(
-              "حالة غير قانونية: لا يمكن إزالة عنصر من مكدس الحلقات الفارغ.");
+      throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس الحلقات الفارغ.");
     return LOOP_STACK.pop();
   }
 
