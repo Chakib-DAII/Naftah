@@ -37,6 +37,12 @@ Then we can also run:
 ```bash
 gradlew idea
 ```
+### 🤝 Contributing
+
+We welcome contributions of all kinds!  
+Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+By participating, you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ### Code Examples
 
