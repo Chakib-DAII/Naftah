@@ -16,8 +16,11 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
@@ -114,6 +117,37 @@ public class DefaultContext {
       throw new NaftahBugError(
           "حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
     return CALL_STACK.pop();
+  }
+
+
+  // LOOP STACK
+  // loop labels
+  protected static final Deque<Pair<String, ? extends ParserRuleContext>> LOOP_STACK = new ArrayDeque<>();
+
+  // Helper to generate unique labels for unlabeled loops
+  public static final Function<Integer, String> LOOP_ID_GENERATOR =
+          (depth) -> "%s-loop-%s".formatted(depth, UUID.randomUUID());
+  public static String currentLoopLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext labelCtx, int depth) {
+    if (labelCtx != null) {
+      return labelCtx.ID().getText();
+    } else {
+      return LOOP_ID_GENERATOR.apply(depth);
+    }
+  }
+
+  public static <T extends ParserRuleContext> void pushLoop(String label, T loopCtx) {
+    LOOP_STACK.push(new Pair<>(label, loopCtx));
+  }
+
+  public static boolean loopContainsLabel(String label) {
+    return LOOP_STACK.stream().anyMatch(stringPair -> stringPair.a.equals(label));
+  }
+
+  public static Pair<String, ? extends ParserRuleContext> popLoop() {
+    if (LOOP_STACK.isEmpty())
+      throw new NaftahBugError(
+              "حالة غير قانونية: لا يمكن إزالة عنصر من مكدس الحلقات الفارغ.");
+    return LOOP_STACK.pop();
   }
 
   // LOADED CLASSES
@@ -340,6 +374,7 @@ public class DefaultContext {
   protected boolean creatingObject; // object creation is in execution
   protected Pair<DeclaredVariable, Boolean>
       declarationOfAssignment; // the declaration of variable being assigned
+  protected String loopLabel; // current loop label in execution inside a context
   protected NaftahParseTreeProperty<Boolean> parseTreeExecution;
   protected final Map<String, DeclaredVariable> variables = new HashMap<>();
   protected Map<String, DeclaredParameter> parameters; // only use in function call context
@@ -682,5 +717,13 @@ public class DefaultContext {
 
   public void setCreatingObject(boolean creatingObject) {
     this.creatingObject = creatingObject;
+  }
+
+  public String getLoopLabel() {
+    return loopLabel;
+  }
+
+  public void setLoopLabel(String loopLabel) {
+    this.loopLabel = loopLabel;
   }
 }
