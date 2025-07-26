@@ -14,6 +14,7 @@ import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
+import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
 
 /**
@@ -207,7 +208,8 @@ public final class ObjectUtils {
         || cls == DeclaredFunction.class
         || cls == DeclaredParameter.class
         || cls == DeclaredVariable.class
-        || cls == DynamicNumber.class;
+        || cls == DynamicNumber.class
+        || cls == LoopSignal.LoopSignalDetails.class;
   }
 
   public static boolean isSimpleType(Object obj) {
@@ -437,6 +439,8 @@ public final class ObjectUtils {
   public static String getNaftahValueToString(Object o) {
     if (o == null) return NULL;
     if (o instanceof Boolean aBoolean) return booleanToString(aBoolean);
+    if (o instanceof LoopSignal.LoopSignalDetails loopSignalDetails)
+      return getNaftahValueToString(loopSignalDetails.result());
     if (o.getClass().isArray()) return arrayToString(o);
     return replaceAllNulls(o.toString());
   }
