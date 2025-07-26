@@ -50,6 +50,10 @@ public class NaftahParserHelper {
         && type.isAssignableFrom(ctx.getParent().getClass());
   }
 
+  public static boolean hasAnyParentOfType(ParseTree ctx, List< Class<? extends Tree>> types) {
+    return !ObjectUtils.isEmpty(types)
+            && types.stream().anyMatch(type -> hasAnyParentOfType(ctx, type));
+  }
   public static <T extends Tree> boolean hasAnyParentOfType(ParseTree ctx, Class<T> type) {
     boolean hasParent = hasParentOfType(ctx, type);
     while (ctx.getParent() != null && !hasParent) {
@@ -415,5 +419,20 @@ public class NaftahParserHelper {
             hasType ? (Class<?>) visit(naftahParserBaseVisitor, ctx.type()) : null,
             null),
         true);
+  }
+
+  public static LoopSignal checkLoopSignal(Object result) {
+    if (result instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
+      return loopSignalDetails.signal();
+    } else return LoopSignal.NONE;
+  }
+
+  public static boolean checkInsideLoop(ParseTree ctx) {
+    return hasAnyParentOfType(ctx, List.of(
+            org.daiitech.naftah.parser.NaftahParser.ForStatementContext.class,
+            org.daiitech.naftah.parser.NaftahParser.WhileStatementContext.class,
+            org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext.class,
+            org.daiitech.naftah.parser.NaftahParser.CaseStatementContext.class
+    ));
   }
 }
