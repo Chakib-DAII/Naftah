@@ -29,12 +29,18 @@ program: statement+;
 // Statement: Can be an assignment, function call, or control flow
 statement: block #blockStatement
          | ifStatement #ifStatementStatement
+         | forStatement #forStatementStatement
+         | whileStatement #whileStatementStatement
+         | repeatStatement #repeatStatementStatement
+         | caseStatement #caseStatementStatement
          | functionDeclaration #functionDeclarationStatement
          | functionCall #functionCallStatement
          | qualifiedName #objectAccessStatement
          | declaration #declarationStatement
          | assignment #assignmentStatement
          | returnStatement #returnStatementStatement
+         | breakStatement #breakStatementStatement
+         | continueStatement #continueStatementStatement
          | expression #expressionStatement
          ;
 
@@ -61,6 +67,44 @@ argumentList: (ID ASSIGN)? expression (COMMA (ID ASSIGN)? expression)*;
 
 // If statement: An 'if' block followed by an optional 'else' block
 ifStatement: IF expression THEN block (ELSEIF expression THEN block)* (ELSE block)? END;
+
+// A 'for' loop: iterates from a starting value to an end value (ascending or descending)
+forStatement:
+    label?
+    FOR ID ASSIGN expression                      // Initialization (e.g., i := 1)
+    (TO | DOWNTO) expression                      // Direction of loop (e.g., TO 10 or DOWNTO 1)
+    DO block                                      // Loop body
+    (ELSE block)?                                 // Optional 'else' block if no break occurred
+    END;                                          // Explicit loop end (if required in your syntax)
+
+// A 'while' loop: repeats as long as the condition is true
+whileStatement:
+    label?
+    WHILE expression                               // Loop condition
+    DO block;                                      // Loop body
+
+// A 'repeat-until' loop: executes the block at least once, then repeats until the condition is true
+repeatStatement:
+    label?
+    REPEAT block                                   // Loop body (executed at least once)
+    UNTIL expression;                              // Exit condition (loop stops when true)
+
+// A 'case'/'match' statement: selects one of many possible blocks to execute based on the expression
+caseStatement:
+    CASE expression                                // The controlling expression
+    OF
+        (caseLabelList COLON block)+          // One or more labeled cases (e.g., 1: ..., 2,3: ...)
+        (ELSE block)?                         // Optional default case if no labels match
+    END;
+
+// A list of labels for a 'case' option (e.g., 1, 2, 3)
+caseLabelList: expression (COMMA expression)*;                // One or more comma-separated expressions
+
+// Break statement: used in loops to break the loop with optional label
+breakStatement: BREAK ID?;
+
+// Continue statement: used in loops to skip the current iteration with optional label
+continueStatement: CONTINUE ID?;
 
 // Return statement: 'return' followed by an optional expression
 returnStatement: RETURN expression?;
@@ -155,3 +199,6 @@ builtIn: BOOLEAN
 qualifiedName: ID (COLON ID)*;
 
 qualifiedCall: qualifiedName COLON COLON ID;
+
+// A label is an identifier followed by a colon for loops
+label: ID COLON;
