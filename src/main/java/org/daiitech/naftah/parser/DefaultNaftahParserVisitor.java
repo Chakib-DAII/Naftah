@@ -5,6 +5,7 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.*;
 import static org.daiitech.naftah.builtin.utils.Tuple.newNaftahBugNullError;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.*;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.*;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidLoopLabelError;
 import static org.daiitech.naftah.parser.DefaultContext.*;
 import static org.daiitech.naftah.parser.LoopSignal.*;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
@@ -637,6 +638,7 @@ public class DefaultNaftahParserVisitor
     }
 
     boolean brokeEarly = false;
+    boolean loopSignal = false;
 
     try {
       pushLoop(label, ctx);
@@ -652,28 +654,24 @@ public class DefaultNaftahParserVisitor
           result = visit(loopBlock);
 
           if (checkLoopSignal(result).equals(CONTINUE)) {
+            loopSignal = true;
             String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
             if (Objects.isNull(targetLabel) || targetLabel.equals(label)) continue;
             else break;
           }
 
           if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+            loopSignal = true;
             String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
             brokeEarly = true;
             if (Objects.isNull(targetLabel)) break;
             else if (targetLabel.equals(label))
-              throw new NaftahBugError(
-                  String.format(
-                      "لا يمكن استخدام تسمية الحلقة نفسها '%s' في جملة '%s'.",
-                      label,
-                      getFormattedTokenSymbols(
-                          parser.getVocabulary(),
-                          org.daiitech.naftah.parser.NaftahLexer.BREAK,
-                          false)));
+              throw newNaftahBugInvalidLoopLabelError(label, parser);
             else break;
           }
 
           if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+            loopSignal = true;
             brokeEarly = true;
             break;
           }
@@ -688,11 +686,26 @@ public class DefaultNaftahParserVisitor
             applyOperation(initValue, PRE_DECREMENT)) {
           result = visit(loopBlock);
 
+
           if (checkLoopSignal(result).equals(CONTINUE)) {
-            continue;
+            loopSignal = true;
+            String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
+            if (Objects.isNull(targetLabel) || targetLabel.equals(label)) continue;
+            else break;
           }
 
           if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+            loopSignal = true;
+            String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
+            brokeEarly = true;
+            if (Objects.isNull(targetLabel)) break;
+            else if (targetLabel.equals(label))
+              throw newNaftahBugInvalidLoopLabelError(label, parser);
+            else break;
+          }
+
+          if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+            loopSignal = true;
             brokeEarly = true;
             break;
           }
@@ -708,7 +721,7 @@ public class DefaultNaftahParserVisitor
     }
 
     currentContext.markExecuted(ctx); // Mark as executed
-    return LOOP_STACK.isEmpty()
+    return LOOP_STACK.isEmpty() && loopSignal
         ? Optional.ofNullable((LoopSignal.LoopSignalDetails) result)
             .map(LoopSignal.LoopSignalDetails::result)
             .orElse(null)
