@@ -437,4 +437,19 @@ public class NaftahParserHelper {
             org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext.class,
             org.daiitech.naftah.parser.NaftahParser.CaseStatementContext.class));
   }
+
+  public static boolean shouldBreakStatementsLoop(
+      DefaultContext currentContext, ParseTree currentStatement, Object result) {
+    return currentContext.hasAnyExecutedChildOrSubChildOfType(
+            currentStatement,
+            org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class)
+        || (result instanceof LoopSignal.LoopSignalDetails
+            && (currentContext.hasAnyExecutedChildOrSubChildOfType(
+                    currentStatement,
+                    org.daiitech.naftah.parser.NaftahParser.BreakStatementStatementContext.class)
+                || currentContext.hasAnyExecutedChildOrSubChildOfType(
+                    currentStatement,
+                    org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext
+                        .class)));
+  }
 }
