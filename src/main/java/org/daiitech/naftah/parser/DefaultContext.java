@@ -813,7 +813,12 @@ public class DefaultContext {
   }
 
   public String getLoopLabel() {
-    return loopLabel;
+    if (Objects.nonNull(loopLabel)) {
+      return loopLabel;
+    } else if (Objects.nonNull(parent)) {
+      return parent.getLoopLabel();
+    }
+    return null;
   }
 
   public void setLoopLabel(String loopLabel) {
