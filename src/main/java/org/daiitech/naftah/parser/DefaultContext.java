@@ -45,21 +45,27 @@ public class DefaultContext {
 
   public static final BiFunction<String, DefaultContext, Object> VARIABLE_GETTER =
       (varName, context) ->
-          Optional.ofNullable(context.getFunctionArgument(varName, true))
+          Optional.ofNullable(context.getLoopVariable(varName, true))
               .flatMap(functionArgument -> Optional.ofNullable(functionArgument.b))
               .orElseGet(
                   () ->
-                      Optional.ofNullable(context.getFunctionParameter(varName, true))
-                          .flatMap(
-                              functionParameter ->
-                                  Optional.ofNullable(functionParameter.b.getValue()))
+                      Optional.ofNullable(context.getFunctionArgument(varName, true))
+                          .flatMap(functionArgument -> Optional.ofNullable(functionArgument.b))
                           .orElseGet(
                               () ->
-                                  Optional.ofNullable(context.getVariable(varName, true))
+                                  Optional.ofNullable(context.getFunctionParameter(varName, true))
                                       .flatMap(
-                                          declaredVariable ->
-                                              Optional.ofNullable(declaredVariable.b.getValue()))
-                                      .orElse(null)));
+                                          functionParameter ->
+                                              Optional.ofNullable(functionParameter.b.getValue()))
+                                      .orElseGet(
+                                          () ->
+                                              Optional.ofNullable(
+                                                      context.getVariable(varName, true))
+                                                  .flatMap(
+                                                      declaredVariable ->
+                                                          Optional.ofNullable(
+                                                              declaredVariable.b.getValue()))
+                                                  .orElse(null))));
 
   // CONTEXTS
   protected static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
@@ -138,6 +144,10 @@ public class DefaultContext {
 
   public static <T extends ParserRuleContext> void pushLoop(String label, T loopCtx) {
     LOOP_STACK.push(new Pair<>(label, loopCtx));
+  }
+
+  public static List<String> getLoopLabels() {
+    return LOOP_STACK.stream().map(stringPair -> stringPair.a).toList();
   }
 
   public static boolean loopContainsLabel(String label) {
@@ -375,6 +385,7 @@ public class DefaultContext {
   protected Pair<DeclaredVariable, Boolean>
       declarationOfAssignment; // the declaration of variable being assigned
   protected String loopLabel; // current loop label in execution inside a context
+  protected Map<String, Object> loopVariables; // only use in loop execution context
   protected NaftahParseTreeProperty<Boolean> parseTreeExecution;
   protected final Map<String, DeclaredVariable> variables = new HashMap<>();
   protected Map<String, DeclaredParameter> parameters; // only use in function call context
@@ -631,6 +642,88 @@ public class DefaultContext {
       throw new NaftahBugError("الوسيط موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
     }
     this.arguments.putAll(arguments); // force local
+  }
+
+  // loop variables
+
+  public String getLoopVariableName(String name) {
+    if (loopVariables == null) loopVariables = new HashMap<>();
+    if (loopLabel != null) {
+      name = loopLabel + "-" + name;
+    }
+    return name;
+  }
+
+  public List<String> getLoopVariableNames(String name) {
+    if (loopVariables == null) loopVariables = new HashMap<>();
+    return getLoopLabels().stream().map(label -> label + "-" + name).toList();
+  }
+
+  public boolean containsLoopVariable(String name) {
+    var loopVariableNames = getLoopVariableNames(name);
+    return loopVariableNames.stream()
+            .anyMatch(loopVariableName -> loopVariables.containsKey(loopVariableName))
+        || (parent != null && parent.containsLoopVariable(name));
+  }
+
+  public Pair<Integer, Object> getLoopVariable(String name, boolean safe) {
+    var loopVariableNames = getLoopVariableNames(name);
+    var firstMatchedLoopVariableName =
+        loopVariableNames.stream()
+            .filter(loopVariableName -> loopVariables.containsKey(loopVariableName))
+            .findFirst()
+            .orElse(null);
+    if (Objects.nonNull(firstMatchedLoopVariableName)) {
+      return new Pair<>(depth, loopVariables.get(firstMatchedLoopVariableName));
+    } else if (parent != null) {
+      return parent.getLoopVariable(name, safe);
+    }
+
+    if (!safe) {
+      throw new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي للحلقة.".formatted(name));
+    }
+    return null;
+  }
+
+  public Object setLoopVariable(String name, Object value) {
+    var loopVariableNames = getLoopVariableNames(name);
+    var firstMatchedLoopVariableName =
+        loopVariableNames.stream()
+            .filter(loopVariableName -> loopVariables.containsKey(loopVariableName))
+            .findFirst()
+            .orElse(null);
+    if (Objects.nonNull(firstMatchedLoopVariableName)) {
+      loopVariables.put(firstMatchedLoopVariableName, value);
+      return value;
+    } else if (parent != null && parent.containsLoopVariable(name)) {
+      parent.setLoopVariable(name, value);
+      return value;
+    } else {
+      loopVariables.put(getLoopVariableName(name), value); // define new in current context
+      return value;
+    }
+  }
+
+  public void defineLoopVariable(String name, Object value, boolean lenient) {
+    name = getLoopVariableName(name);
+    if (loopVariables.containsKey(name)) {
+      if (lenient) return;
+
+      throw new NaftahBugError(
+          "المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه.".formatted(name));
+    }
+    loopVariables.put(name, value); // force local
+  }
+
+  public void removeLoopVariable(String name, boolean lenient) {
+    name = getLoopVariableName(name);
+    if (loopVariables.containsKey(name)) {
+      if (lenient) return;
+
+      throw new NaftahBugError(
+          "المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إزالته.".formatted(name));
+    }
+    loopVariables.remove(name); // force local
   }
 
   // execution tree
