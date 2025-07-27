@@ -20,9 +20,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.parser.DefaultNaftahParserVisitor;
 import org.daiitech.naftah.parser.NaftahErrorListener;
-import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.utils.JulLoggerConfig;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
@@ -138,43 +136,6 @@ public final class Naftah {
       bootstrap(bootstrapAsync);
     }
 
-    private static NaftahParser prepareRun(CharStream input) {
-      return prepareRun(input, List.of());
-    }
-
-    private static NaftahParser prepareRun(CharStream input, ANTLRErrorListener errorListener) {
-      return prepareRun(input, List.of(errorListener));
-    }
-
-    private static NaftahParser prepareRun(
-        CharStream input, List<ANTLRErrorListener> errorListeners) {
-      // Create a lexer and token stream
-      var lexerCommonTokenStreamPair = getCommonTokenStream(input, errorListeners);
-
-      CommonTokenStream tokens = lexerCommonTokenStreamPair.b;
-
-      if (Boolean.getBoolean(DEBUG_PROPERTY)) {
-        tokens.fill();
-        System.out.println("Tokens:");
-        for (Token token : tokens.getTokens()) {
-          System.out.printf(
-              "Token: %-20s Text: %s%n",
-              lexerCommonTokenStreamPair.a.getVocabulary().getSymbolicName(token.getType()),
-              token.getText());
-        }
-      }
-
-      // Create a parser
-      return getParser(tokens, errorListeners);
-    }
-
-    private static Object doRun(NaftahParser parser) {
-      // Create a visitor and visit the parse tree
-      DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor(parser);
-      // Parse the input and get the parse tree
-      return visitor.visit();
-    }
-
     @Command(
         name = RunCommand.NAME,
         customSynopsis = "naftah run [options] [filename] [args]",
@@ -195,8 +156,8 @@ public final class Naftah {
         // Create an input stream from the Naftah code
         CharStream input = getCharStream(main.isScriptFile, main.script);
 
-        var parser = NaftahCommand.prepareRun(input, NaftahErrorListener.INSTANCE);
-        var result = NaftahCommand.doRun(parser);
+        var parser = prepareRun(input, NaftahErrorListener.INSTANCE);
+        var result = doRun(parser);
 
         if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) printPaddedToString(result);
 
@@ -272,9 +233,9 @@ public final class Naftah {
 
             fullLine.delete(0, fullLine.length());
 
-            var parser = NaftahCommand.prepareRun(input, NaftahErrorListener.INSTANCE);
+            var parser = prepareRun(input, NaftahErrorListener.INSTANCE);
 
-            var result = NaftahCommand.doRun(parser);
+            var result = doRun(parser);
 
             if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) printPaddedToString(result);
             System.out.println();
