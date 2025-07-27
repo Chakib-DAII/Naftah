@@ -610,6 +610,7 @@ public class DefaultNaftahParserVisitor
     Object result = null;
     boolean loopInStack = false;
     String label = currentLoopLabel(ctx.label(), depth);
+    currentContext.setLoopLabel(label);
     // Initialization: ID := expression
     String loopVar = ctx.ID().getText();
     Object initValue = visit(ctx.expression(0));
@@ -622,8 +623,8 @@ public class DefaultNaftahParserVisitor
       throw new NaftahBugError(
           String.format("القيمة النهائية للمتغير '%s' لا يمكن أن تكون فارغة.", loopVar));
 
-    if (Number.class.isAssignableFrom(initValue.getClass())
-        || Number.class.isAssignableFrom(endValue.getClass()))
+    if (!Number.class.isAssignableFrom(initValue.getClass())
+        || !Number.class.isAssignableFrom(endValue.getClass()))
       throw new NaftahBugError(
           String.format(
               "يجب أن تكون القيمتين الابتدائية والنهائية للمتغير '%s' من النوع الرقمي.", loopVar));
@@ -644,6 +645,7 @@ public class DefaultNaftahParserVisitor
     try {
       pushLoop(label, ctx);
       loopInStack = true;
+      currentContext.defineLoopVariable(loopVar, initValue, false);
       if (isAscending) {
         if (Boolean.TRUE.equals(applyOperation(endValue, initValue, LESS_THAN)))
           throw new NaftahBugError(
@@ -651,7 +653,8 @@ public class DefaultNaftahParserVisitor
 
         for (;
             Boolean.TRUE.equals(applyOperation(initValue, endValue, LESS_THAN_EQUALS));
-            applyOperation(initValue, PRE_INCREMENT)) {
+            initValue =
+                currentContext.setLoopVariable(loopVar, applyOperation(initValue, PRE_INCREMENT))) {
           result = visit(loopBlock);
 
           if (checkLoopSignal(result).equals(CONTINUE)) {
@@ -676,6 +679,9 @@ public class DefaultNaftahParserVisitor
             brokeEarly = true;
             break;
           }
+
+          // force current loop label
+          currentContext.setLoopLabel(label);
         }
       } else {
         if (Boolean.TRUE.equals(applyOperation(initValue, endValue, LESS_THAN)))
@@ -684,9 +690,9 @@ public class DefaultNaftahParserVisitor
 
         for (;
             Boolean.TRUE.equals(applyOperation(initValue, endValue, GREATER_THAN_EQUALS));
-            applyOperation(initValue, PRE_DECREMENT)) {
+            initValue =
+                currentContext.setLoopVariable(loopVar, applyOperation(initValue, PRE_DECREMENT))) {
           result = visit(loopBlock);
-
 
           if (checkLoopSignal(result).equals(CONTINUE)) {
             loopSignal = true;
@@ -710,6 +716,9 @@ public class DefaultNaftahParserVisitor
             brokeEarly = true;
             break;
           }
+
+          // force current loop label
+          currentContext.setLoopLabel(label);
         }
       }
 
@@ -718,6 +727,8 @@ public class DefaultNaftahParserVisitor
         result = visit(elseBlock);
       }
     } finally {
+      currentContext.removeLoopVariable(loopVar, true);
+      currentContext.setLoopLabel(null);
       if (loopInStack) popLoop();
     }
 
@@ -776,14 +787,16 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    if (LOOP_STACK.isEmpty() || checkInsideLoop(ctx)) {
-      throw new NaftahBugError("لا يمكن استخدام '%s' خارج نطاق الحلقة.");
+    if (LOOP_STACK.isEmpty() || !checkInsideLoop(ctx)) {
+      throw new NaftahBugError(String.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
+              getFormattedTokenSymbols(
+                      parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.BREAK, false)));
     }
     String currentLoopLabel = currentContext.getLoopLabel();
     String targetLabel = null;
     if (hasChild(ctx.ID())) {
       targetLabel = ctx.ID().getText();
-      ;
+
     }
     if (targetLabel != null && !loopContainsLabel(targetLabel)) {
       throw new NaftahBugError(
@@ -806,8 +819,10 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    if (LOOP_STACK.isEmpty() || checkInsideLoop(ctx)) {
-      throw new NaftahBugError("لا يمكن استخدام '%s' خارج نطاق الحلقة.");
+    if (LOOP_STACK.isEmpty() || !checkInsideLoop(ctx)) {
+      throw new NaftahBugError(String.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
+              getFormattedTokenSymbols(
+                      parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.CONTINUE, false)));
     }
     String currentLoopLabel = currentContext.getLoopLabel();
     String targetLabel = null;
@@ -1724,11 +1739,12 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
-  public Object visitAndExpression(org.daiitech.naftah.parser.NaftahParser.AndExpressionContext ctx) {
+  public Object visitAndExpression(
+      org.daiitech.naftah.parser.NaftahParser.AndExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitAndExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitAndExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
@@ -1742,8 +1758,8 @@ public class DefaultNaftahParserVisitor
   public Object visitOrExpression(org.daiitech.naftah.parser.NaftahParser.OrExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
       LOGGER.fine(
-              "visitOrExpression(%s)"
-                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+          "visitOrExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     Object left = visit(ctx.expression(0)); // Left operand
