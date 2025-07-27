@@ -2,6 +2,7 @@ package org.daiitech.naftah.parser;
 
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.*;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.builtin.utils.Tuple.newNaftahBugNullError;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.*;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.*;
@@ -1718,6 +1719,36 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     var result = not(visit(ctx.expression()));
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitAndExpression(org.daiitech.naftah.parser.NaftahParser.AndExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitAndExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
+    boolean result = isTruthy(left) && isTruthy(right);
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
+  public Object visitOrExpression(org.daiitech.naftah.parser.NaftahParser.OrExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+              "visitOrExpression(%s)"
+                      .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    Object left = visit(ctx.expression(0)); // Left operand
+    Object right = visit(ctx.expression(1)); // Right operand
+    boolean result = isTruthy(left) || isTruthy(right);
     currentContext.markExecuted(ctx); // Mark as executed
     return result;
   }
