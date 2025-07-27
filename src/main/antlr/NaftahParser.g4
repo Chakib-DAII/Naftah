@@ -115,8 +115,8 @@ block: LBRACE statement* RBRACE;
 // Expressions: Can be value, binary operations
 expression: functionCall #functionCallExpression
           | object #objectExpression
-          | collection #collectionExpression
           | LPAREN expression RPAREN #parenthesisExpression
+          | collection #collectionExpression
           | expression MUL expression #mulExpression
           | expression ELEMENTWISE_MUL expression #mulExpression
           | expression DIV expression #divExpression
@@ -133,7 +133,9 @@ expression: functionCall #functionCallExpression
           | expression GE expression #greaterThanEqualsExpression
           | expression EQ expression #equalsExpression
           | expression NEQ expression #notEqualsExpression
+          | expression AND expression #andExpression
           | expression BITWISE_AND expression #bitwiseAndExpression
+          | expression OR expression #orExpression
           | expression BITWISE_OR expression #bitwiseOrExpression
           | expression BITWISE_XOR expression #bitwiseXorExpression
           | NOT expression #notExpression
