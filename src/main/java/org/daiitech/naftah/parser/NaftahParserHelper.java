@@ -33,8 +33,15 @@ import org.daiitech.naftah.errors.NaftahBugError;
  */
 public class NaftahParserHelper {
   public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("PLACEHOLDER\\((.*?)\\)");
-  public static final Properties TOKENS_SYMBOLS =
-      getProperties(getJarDirectory() + "/tokens-symbols.properties");
+  public static Properties TOKENS_SYMBOLS;
+
+  static {
+    try {
+      TOKENS_SYMBOLS = getProperties(getJarDirectory() + "/tokens-symbols.properties");
+    } catch (Throwable ignored) {
+
+    }
+  }
 
   public static final String NULL = "<فارغ>";
 
@@ -251,6 +258,44 @@ public class NaftahParserHelper {
     return result.get().toString();
   }
 
+  public static org.daiitech.naftah.parser.NaftahParser prepareRun(CharStream input) {
+    return prepareRun(input, List.of());
+  }
+
+  public static org.daiitech.naftah.parser.NaftahParser prepareRun(
+      CharStream input, ANTLRErrorListener errorListener) {
+    return prepareRun(input, List.of(errorListener));
+  }
+
+  public static org.daiitech.naftah.parser.NaftahParser prepareRun(
+      CharStream input, List<ANTLRErrorListener> errorListeners) {
+    // Create a lexer and token stream
+    var lexerCommonTokenStreamPair = getCommonTokenStream(input, errorListeners);
+
+    CommonTokenStream tokens = lexerCommonTokenStreamPair.b;
+
+    if (Boolean.getBoolean(DEBUG_PROPERTY)) {
+      tokens.fill();
+      System.out.println("Tokens:");
+      for (Token token : tokens.getTokens()) {
+        System.out.printf(
+            "Token: %-20s Text: %s%n",
+            lexerCommonTokenStreamPair.a.getVocabulary().getSymbolicName(token.getType()),
+            token.getText());
+      }
+    }
+
+    // Create a parser
+    return getParser(tokens, errorListeners);
+  }
+
+  public static Object doRun(org.daiitech.naftah.parser.NaftahParser parser) {
+    // Create a visitor and visit the parse tree
+    DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor(parser);
+    // Parse the input and get the parse tree
+    return visitor.visit();
+  }
+
   public static org.daiitech.naftah.parser.NaftahParser getParser(
       CommonTokenStream commonTokenStream, ANTLRErrorListener errorListener) {
     return getParser(commonTokenStream, List.of(errorListener));
@@ -376,7 +421,8 @@ public class NaftahParserHelper {
 
   public static String getFormattedTokenSymbols(Vocabulary vocabulary, int tokenType, boolean ln) {
     String tokenName = vocabulary.getDisplayName(tokenType);
-    String tokenSymbols = TOKENS_SYMBOLS.getProperty(tokenName);
+    String tokenSymbols =
+        Objects.isNull(TOKENS_SYMBOLS) ? tokenName : TOKENS_SYMBOLS.getProperty(tokenName);
     return tokenSymbols == null
         ? null
         : (ln ? """
