@@ -114,9 +114,7 @@ public class DefaultNaftahParserVisitor
     for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : ctx.statement()) {
       result = visit(statement); // Visit each statement in the program
       // break program after executing a return statement
-      if (rootContext.hasAnyExecutedChildOrSubChildOfType(
-          statement, org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class))
-        break;
+      if (shouldBreakStatementsLoop(rootContext, statement, result)) break;
     }
     DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     rootContext.markExecuted(ctx); // Mark as executed
@@ -641,6 +639,7 @@ public class DefaultNaftahParserVisitor
 
     boolean brokeEarly = false;
     boolean loopSignal = false;
+    boolean propagateLoopSignal = false;
 
     try {
       pushLoop(label, ctx);
@@ -661,17 +660,21 @@ public class DefaultNaftahParserVisitor
             loopSignal = true;
             String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
             if (Objects.isNull(targetLabel) || targetLabel.equals(label)) continue;
-            else break;
+            else {
+              propagateLoopSignal = true;
+              break;
+            }
           }
 
           if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
             loopSignal = true;
             String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
             brokeEarly = true;
-            if (Objects.isNull(targetLabel)) break;
-            else if (targetLabel.equals(label))
-              throw newNaftahBugInvalidLoopLabelError(label, parser);
-            else break;
+            if (Objects.isNull(targetLabel) || targetLabel.equals(label)) break;
+            else {
+              propagateLoopSignal = true;
+              break;
+            }
           }
 
           if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
@@ -698,17 +701,21 @@ public class DefaultNaftahParserVisitor
             loopSignal = true;
             String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
             if (Objects.isNull(targetLabel) || targetLabel.equals(label)) continue;
-            else break;
+            else {
+              propagateLoopSignal = true;
+              break;
+            }
           }
 
           if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
             loopSignal = true;
             String targetLabel = ((LoopSignal.LoopSignalDetails) result).targetLabel();
             brokeEarly = true;
-            if (Objects.isNull(targetLabel)) break;
-            else if (targetLabel.equals(label))
-              throw newNaftahBugInvalidLoopLabelError(label, parser);
-            else break;
+            if (Objects.isNull(targetLabel) || targetLabel.equals(label)) break;
+            else {
+              propagateLoopSignal = true;
+              break;
+            }
           }
 
           if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
@@ -733,7 +740,7 @@ public class DefaultNaftahParserVisitor
     }
 
     currentContext.markExecuted(ctx); // Mark as executed
-    return LOOP_STACK.isEmpty() && loopSignal
+    return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal)
         ? Optional.ofNullable((LoopSignal.LoopSignalDetails) result)
             .map(LoopSignal.LoopSignalDetails::result)
             .orElse(null)
@@ -788,23 +795,27 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     if (LOOP_STACK.isEmpty() || !checkInsideLoop(ctx)) {
-      throw new NaftahBugError(String.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
+      throw new NaftahBugError(
+          String.format(
+              "لا يمكن استخدام '%s' خارج نطاق الحلقة.",
               getFormattedTokenSymbols(
-                      parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.BREAK, false)));
+                  parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.BREAK, false)));
     }
     String currentLoopLabel = currentContext.getLoopLabel();
     String targetLabel = null;
     if (hasChild(ctx.ID())) {
       targetLabel = ctx.ID().getText();
-
     }
-    if (targetLabel != null && !loopContainsLabel(targetLabel)) {
-      throw new NaftahBugError(
-          String.format(
-              "لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.",
-              targetLabel,
-              getFormattedTokenSymbols(
-                  parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.BREAK, false)));
+    if (targetLabel != null) {
+      if (!loopContainsLabel(targetLabel)) {
+        throw new NaftahBugError(
+            String.format(
+                "لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.",
+                targetLabel,
+                getFormattedTokenSymbols(
+                    parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.BREAK, false)));
+      } else if (targetLabel.equals(currentLoopLabel))
+        throw newNaftahBugInvalidLoopLabelError(currentLoopLabel, parser);
     }
     currentContext.markExecuted(ctx);
     return LoopSignal.LoopSignalDetails.of(BREAK, currentLoopLabel, targetLabel);
@@ -820,23 +831,30 @@ public class DefaultNaftahParserVisitor
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     if (LOOP_STACK.isEmpty() || !checkInsideLoop(ctx)) {
-      throw new NaftahBugError(String.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
+      throw new NaftahBugError(
+          String.format(
+              "لا يمكن استخدام '%s' خارج نطاق الحلقة.",
               getFormattedTokenSymbols(
-                      parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.CONTINUE, false)));
+                  parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.CONTINUE, false)));
     }
     String currentLoopLabel = currentContext.getLoopLabel();
     String targetLabel = null;
     if (hasChild(ctx.ID())) {
       targetLabel = ctx.ID().getText();
-      ;
     }
-    if (targetLabel != null && !loopContainsLabel(targetLabel)) {
-      throw new NaftahBugError(
-          String.format(
-              "لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.",
-              targetLabel,
-              getFormattedTokenSymbols(
-                  parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.CONTINUE, false)));
+
+    if (targetLabel != null) {
+      if (!loopContainsLabel(targetLabel)) {
+        throw new NaftahBugError(
+            String.format(
+                "لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.",
+                targetLabel,
+                getFormattedTokenSymbols(
+                    parser.getVocabulary(),
+                    org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
+                    false)));
+      } else if (targetLabel.equals(currentLoopLabel))
+        throw newNaftahBugInvalidLoopLabelError(currentLoopLabel, parser);
     }
     currentContext.markExecuted(ctx);
     return LoopSignal.LoopSignalDetails.of(CONTINUE, currentLoopLabel, targetLabel);
@@ -876,9 +894,7 @@ public class DefaultNaftahParserVisitor
     for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : ctx.statement()) {
       result = visit(statement); // Visit each statement in the block
       // break program after executing a return statemnt
-      if (nextContext.hasAnyExecutedChildOrSubChildOfType(
-          statement, org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class))
-        break;
+      if (shouldBreakStatementsLoop(nextContext, statement, result)) break;
     }
     DEREGISTER_CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
     depth--;
