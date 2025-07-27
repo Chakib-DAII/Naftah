@@ -58,7 +58,7 @@ public final class ObjectUtils {
     try {
       // arithmetic negation
       return NumberUtils.negate(value);
-    } catch (Exception e) {
+    } catch (Throwable ignored) {
       // logical negation
       return !isTruthy(value);
     }
