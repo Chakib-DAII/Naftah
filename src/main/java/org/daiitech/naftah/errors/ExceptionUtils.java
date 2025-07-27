@@ -1,8 +1,8 @@
 package org.daiitech.naftah.errors;
 
-import org.antlr.v4.runtime.Parser;
-
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
+
+import org.antlr.v4.runtime.Parser;
 
 public class ExceptionUtils {
   public static Throwable getRootCause(Throwable original) {
@@ -28,13 +28,10 @@ public class ExceptionUtils {
 
   public static NaftahBugError newNaftahBugInvalidLoopLabelError(String label, Parser parser) {
     return new NaftahBugError(
-            String.format(
-                    "لا يمكن استخدام تسمية الحلقة نفسها '%s' في جملة '%s'.",
-                    label,
-                    getFormattedTokenSymbols(
-                            parser.getVocabulary(),
-                            org.daiitech.naftah.parser.NaftahLexer.BREAK,
-                            false)));
+        String.format(
+            "لا يمكن استخدام تسمية الحلقة نفسها '%s' في جملة '%s'.",
+            label,
+            getFormattedTokenSymbols(
+                parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.BREAK, false)));
   }
-
 }
