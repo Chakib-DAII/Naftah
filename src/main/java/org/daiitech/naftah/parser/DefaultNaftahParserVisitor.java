@@ -1679,7 +1679,7 @@ public class DefaultNaftahParserVisitor
               .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
     logExecution(ctx);
     var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-    Object result = null;
+    Object result;
     boolean accessingObjectField =
         hasAnyParentOfType(
                 ctx, org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext.class)
@@ -1691,6 +1691,7 @@ public class DefaultNaftahParserVisitor
       var object =
           (Map<String, DeclaredVariable>)
               currentContext.getVariable(accessArray[0], false).b.getValue();
+      result = object;
       for (int i = 1; i < accessArray.length; i++) {
         if (i < accessArray.length - 1) {
           object = (Map<String, DeclaredVariable>) object.get(accessArray[i]).getValue();
