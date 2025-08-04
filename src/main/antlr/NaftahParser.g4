@@ -123,8 +123,13 @@ expression: functionCall #functionCallExpression
           | expression ELEMENTWISE_DIV expression #divExpression
           | expression MOD expression #modExpression
           | expression ELEMENTWISE_MOD expression #modExpression
+          | INCREMENT expression #preIncrementExpression
+          | expression INCREMENT #postIncrementExpression
           | expression PLUS expression #plusExpression
           | expression ELEMENTWISE_PLUS expression #plusExpression
+          | expression MINUS #negateExpression
+          | DECREMENT expression #preDecrementExpression
+          | expression DECREMENT #postDecrementExpression
           | expression MINUS expression #minusExpression
           | expression ELEMENTWISE_MINUS expression #minusExpression
           | expression LT expression #lessThanExpression
@@ -140,10 +145,6 @@ expression: functionCall #functionCallExpression
           | expression BITWISE_XOR expression #bitwiseXorExpression
           | NOT expression #notExpression
           | BITWISE_NOT expression #bitwiseNotExpression
-          | INCREMENT expression #preIncrementExpression
-          | expression INCREMENT #postIncrementExpression
-          | DECREMENT expression #preDecrementExpression
-          | expression DECREMENT #postDecrementExpression
           | value #valueExpression
           | qualifiedName #objectAccessExpression
           ;
