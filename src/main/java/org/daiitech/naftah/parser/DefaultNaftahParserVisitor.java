@@ -1787,6 +1787,20 @@ public class DefaultNaftahParserVisitor
   }
 
   @Override
+  public Object visitNegateExpression(
+      org.daiitech.naftah.parser.NaftahParser.NegateExpressionContext ctx) {
+    if (LOGGER.isLoggable(Level.FINE))
+      LOGGER.fine(
+          "visitNegateExpression(%s)"
+              .formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+    logExecution(ctx);
+    var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+    var result = not(visit(ctx.expression()));
+    currentContext.markExecuted(ctx); // Mark as executed
+    return result;
+  }
+
+  @Override
   public Object visitPreDecrementExpression(
       org.daiitech.naftah.parser.NaftahParser.PreDecrementExpressionContext ctx) {
     if (LOGGER.isLoggable(Level.FINE))
