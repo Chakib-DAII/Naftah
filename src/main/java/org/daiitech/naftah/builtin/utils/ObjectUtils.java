@@ -404,7 +404,7 @@ public final class ObjectUtils {
   }
 
   public static boolean intToBoolean(int i) {
-    return i > 0 && i % 2 == 0;
+    return Math.abs(i) % 2 != 0;
   }
 
   public static String booleanToString(boolean b) {
