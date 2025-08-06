@@ -1688,17 +1688,19 @@ public class DefaultNaftahParserVisitor
     if (accessingObjectField) {
       var qualifiedName = getQualifiedName(ctx);
       var accessArray = qualifiedName.split(":");
-      var object =
-          (Map<String, DeclaredVariable>)
-              currentContext.getVariable(accessArray[0], false).b.getValue();
-      result = object;
-      for (int i = 1; i < accessArray.length; i++) {
-        if (i < accessArray.length - 1) {
-          object = (Map<String, DeclaredVariable>) object.get(accessArray[i]).getValue();
-        } else {
-          result = object.get(accessArray[i]);
+      if (accessArray.length > 1
+          && currentContext.getVariable(accessArray[0], false).b.getValue()
+              instanceof Map<?, ?> map) {
+        var object = (Map<String, DeclaredVariable>) map;
+        result = object;
+        for (int i = 1; i < accessArray.length; i++) {
+          if (i < accessArray.length - 1) {
+            object = (Map<String, DeclaredVariable>) object.get(accessArray[i]).getValue();
+          } else {
+            result = object.get(accessArray[i]);
+          }
         }
-      }
+      } else result = currentContext.getVariable(accessArray[0], false).b.getValue();
     } else if (currentContext.isParsingFunctionCallId()) {
       result = getQualifiedName(ctx);
       currentContext.setParsingFunctionCallId(false);
