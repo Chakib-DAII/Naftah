@@ -1,13 +1,9 @@
 package org.daiitech.naftah.parser;
 
-import static org.daiitech.naftah.parser.NaftahParserHelper.*;
+import static org.daiitech.naftah.TestUtils.*;
 
-import java.util.Map;
-import org.daiitech.naftah.builtin.lang.DeclaredVariable;
-import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.provider.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -107,40 +103,5 @@ public class DefaultNaftahParserVisitorTests {
     } else {
       doAssertBugEquals(script, expectedNaftahBugError);
     }
-  }
-
-  private Object runScript(String script) throws Exception {
-    var input = getCharStream(false, script);
-
-    var parser = prepareRun(input, NaftahErrorListener.INSTANCE);
-
-    return doRun(parser);
-  }
-
-  private void assertEquals(Object result, Object expectedValue) {
-    if (result instanceof Map<?, ?> map) {
-      var expectedValueMap = (Map<?, ?>) expectedValue;
-      map.forEach(
-          (key, value) -> {
-            var expectedValueFromMap = expectedValueMap.get(key);
-            if (value instanceof DeclaredVariable declaredVariable) {
-              doAssertEquals(expectedValueFromMap, declaredVariable.getValue());
-            } else doAssertEquals(expectedValueFromMap, value);
-          });
-    } else if (result instanceof DeclaredVariable declaredVariable) {
-      doAssertEquals(expectedValue, declaredVariable.getValue());
-    } else doAssertEquals(result, expectedValue);
-  }
-
-  private void doAssertEquals(Object result, Object expectedValue) {
-    if (result instanceof Number) Assertions.assertTrue(NumberUtils.equals(expectedValue, result));
-    else Assertions.assertEquals(expectedValue, result);
-  }
-
-  private void doAssertBugEquals(String script, NaftahBugError expectedNaftahBugError) {
-    NaftahBugError naftahBugError =
-        Assertions.assertThrows(NaftahBugError.class, () -> runScript(script));
-    Assertions.assertEquals(expectedNaftahBugError.getCause(), naftahBugError.getCause());
-    Assertions.assertEquals(expectedNaftahBugError.getBugText(), naftahBugError.getBugText());
   }
 }
