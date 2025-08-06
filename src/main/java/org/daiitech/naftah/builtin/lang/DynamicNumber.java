@@ -105,6 +105,73 @@ public class DynamicNumber {
     return this;
   }
 
+  public DynamicNumber promote() {
+    if (isByte()) {
+      return new DynamicNumber(asShort()); // Byte -> Short
+    } else if (isShort()) {
+      return new DynamicNumber(asInt()); // Short -> Int
+    } else if (isInt()) {
+      return new DynamicNumber(asLong()); // Int -> Long
+    } else if (isLong()) {
+      return new DynamicNumber(asBigInteger()); // Long -> BigInteger
+    } else if (isFloat()) {
+      return new DynamicNumber(asDouble()); // Float -> Double
+    } else if (isDouble()) {
+      return new DynamicNumber(asBigDecimal()); // Double -> BigDecimal
+    } else {
+      // BigInteger, BigDecimal or unknown: no promotion possible
+      return this;
+    }
+  }
+
+  public DynamicNumber normalize() {
+    Number val = this.value;
+
+    if (val instanceof BigDecimal bd) {
+      try {
+        // Try to convert BigDecimal to BigInteger if no decimal part
+        if (bd.stripTrailingZeros().scale() <= 0) {
+          BigInteger bi = bd.toBigIntegerExact();
+          return new DynamicNumber(bi).normalize();
+        }
+      } catch (ArithmeticException e) {
+        // Can't convert exactly to BigInteger, keep as BigDecimal
+        return this;
+      }
+      return this; // keep BigDecimal as is if decimal part exists
+    }
+
+    if (val instanceof BigInteger) {
+      BigInteger bi = (BigInteger) val;
+      // Try to downcast BigInteger to Long if fits
+      if (bi.bitLength() <= 63) {
+        long l = bi.longValue();
+        return new DynamicNumber(l).normalize();
+      }
+      return this; // keep BigInteger if too big
+    }
+
+    long longVal = val.longValue();
+
+    // Check fits in int?
+    if (longVal >= Integer.MIN_VALUE && longVal <= Integer.MAX_VALUE) {
+      int intVal = (int) longVal;
+
+      // Check fits in short?
+      if (intVal >= Short.MIN_VALUE && intVal <= Short.MAX_VALUE) {
+        short shortVal = (short) intVal;
+
+        // Check fits in byte?
+        if (shortVal >= Byte.MIN_VALUE && shortVal <= Byte.MAX_VALUE) {
+          return new DynamicNumber((byte) shortVal);
+        }
+        return new DynamicNumber(shortVal);
+      }
+      return new DynamicNumber(intVal);
+    }
+    return new DynamicNumber(longVal); // keep as long
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
