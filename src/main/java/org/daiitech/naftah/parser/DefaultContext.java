@@ -96,7 +96,9 @@ public class DefaultContext {
 
   public static DefaultContext deregisterContext(int depth) {
     DefaultContext context = CONTEXTS.remove(depth);
-    if (context.parent != null && context.parseTreeExecution != null) {
+    if (context.parent != null
+        && context.parseTreeExecution != null
+        && context.parent.parseTreeExecution != null) {
       context.parent.parseTreeExecution.copyFrom(context.parseTreeExecution);
     }
     return context;
