@@ -1,5 +1,6 @@
 package org.daiitech.naftah.parser.provider;
 
+import java.math.BigInteger;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -54,6 +55,22 @@ public class ArithmeticExpressionsProvider implements ArgumentsProvider {
         Arguments.of(true, "2--", 2, null),
         Arguments.of(true, "نقص 2", 1, null),
         Arguments.of(true, "٢--", 2, null),
-        Arguments.of(true, "نقص ٢", 1, null));
+        Arguments.of(true, "نقص ٢", 1, null),
+        Arguments.of(true, "نقص 127", 126, null),
+        Arguments.of(true, "نقص 32767", 32766, null),
+        Arguments.of(true, "نقص 2147483647", 2147483646, null),
+        Arguments.of(true, "نقص 9223372036854775807", 9223372036854775806L, null),
+        Arguments.of(true, "127 نقص", 127, null),
+        Arguments.of(true, "32767 نقص", 32767, null),
+        Arguments.of(true, "2147483647 نقص", 2147483647, null),
+        Arguments.of(true, "9223372036854775807 نقص", 9223372036854775807L, null),
+        Arguments.of(true, "زد 127", 128, null),
+        Arguments.of(true, "زد 32767", 32768, null),
+        Arguments.of(true, "زد 2147483647", 2147483648L, null),
+        Arguments.of(true, "زد 9223372036854775807", new BigInteger("9223372036854775808"), null),
+        Arguments.of(true, "127 زد", 127, null),
+        Arguments.of(true, "32767 زد", 32767, null),
+        Arguments.of(true, "2147483647 زد", 2147483647, null),
+        Arguments.of(true, "9223372036854775807 زد", 9223372036854775807L, null));
   }
 }
