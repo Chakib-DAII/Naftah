@@ -31,22 +31,22 @@ class BuiltinTests {
     System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(24));
   }
 
-    @BeforeEach
-    void setup() {
-        // Redirect System.out
-        out = new ByteArrayOutputStream();
-        PrintStream printStream = ArabicOutputTransformer.getPrintStream(out);
-        System.setOut(printStream);
-    }
+  @BeforeEach
+  void setup() {
+    // Redirect System.out
+    out = new ByteArrayOutputStream();
+    PrintStream printStream = ArabicOutputTransformer.getPrintStream(out);
+    System.setOut(printStream);
+  }
 
   @ParameterizedTest
   @MethodSource("printProvider")
   void printTest(Object input, Object expectedOutput) {
     Builtin.print(input);
-      String output = out.toString(StandardCharsets.UTF_8).trim();
-      if (shouldReshape() && containsArabic(output)) {
-          output = NaftahParserHelper.NORMALIZER.normalize(shape(output));
-      }
+    String output = out.toString(StandardCharsets.UTF_8).trim();
+    if (shouldReshape() && containsArabic(output)) {
+      output = NaftahParserHelper.NORMALIZER.normalize(shape(output));
+    }
     assertEquals(output, expectedOutput);
   }
 
