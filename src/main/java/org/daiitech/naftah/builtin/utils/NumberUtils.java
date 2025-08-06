@@ -1440,28 +1440,63 @@ public final class NumberUtils {
   }
 
   public static Number preIncrement(DynamicNumber dx) {
-    if (dx.isBigDecimal()) {
-      return dx.set(dx.asBigDecimal().add(BigDecimal.ONE)).asBigDecimal();
-    } else if (dx.isBigInteger()) {
-      return dx.set(dx.asBigInteger().add(BigInteger.ONE)).asBigInteger();
-    } else if (dx.isDouble()) {
-      return dx.set(dx.asDouble() + 1).asDouble();
-    } else if (dx.isFloat()) {
-      return dx.set(dx.asFloat() + 1).asFloat();
-    } else if (dx.isLong()) {
-      return dx.set(dx.asLong() + 1).asLong();
-    } else if (dx.isInt()) {
-      return dx.set(dx.asInt() + 1).asInt();
-    } else if (dx.isShort()) {
-      return dx.set(dx.asShort() + 1).asShort();
-    } else if (dx.isByte()) {
-      return dx.set(dx.asByte() + 1).asByte();
-    } else {
-      // Unknown or unsupported number types
+    Number val = dx.get();
 
-      // TODO: classNames should be in arabic or transliterated or in naftah language types
-      throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+    if (dx.isByte() && val.byteValue() == Byte.MAX_VALUE) {
+      return dx.promote().set(dx.promote().get().intValue() + 1).get();
     }
+    if (dx.isShort() && val.shortValue() == Short.MAX_VALUE) {
+      return dx.promote().set(dx.promote().get().intValue() + 1).get();
+    }
+    if (dx.isInt() && val.intValue() == Integer.MAX_VALUE) {
+      return dx.promote().set(dx.promote().get().longValue() + 1L).get();
+    }
+    if (dx.isLong() && val.longValue() == Long.MAX_VALUE) {
+      return dx.promote().set(((BigInteger) dx.promote().get()).add(BigInteger.ONE)).get();
+    }
+    if (dx.isFloat()
+        && (val.floatValue() == Float.MAX_VALUE
+            || Float.isNaN(val.floatValue())
+            || Float.isInfinite(val.floatValue()))) {
+      return dx.promote().set(dx.promote().get().doubleValue() + 1d).get();
+    }
+    if (dx.isDouble()
+        && (val.doubleValue() == Double.MAX_VALUE
+            || Double.isNaN(val.doubleValue())
+            || Double.isInfinite(val.doubleValue()))) {
+      return dx.promote().set(((BigDecimal) dx.promote().get()).add(BigDecimal.ONE)).get();
+    }
+
+    // For BigInteger, BigDecimal or normal increment
+    if (dx.isBigInteger()) {
+      return dx.set(dx.asBigInteger().add(BigInteger.ONE)).get();
+    }
+    if (dx.isBigDecimal()) {
+      return dx.set(dx.asBigDecimal().add(BigDecimal.ONE)).get();
+    }
+
+    // Normal increment for smaller types without overflow
+    if (dx.isByte()) {
+      return dx.set(val.byteValue() + 1).get();
+    }
+    if (dx.isShort()) {
+      return dx.set(val.shortValue() + 1).get();
+    }
+    if (dx.isInt()) {
+      return dx.set(val.intValue() + 1).get();
+    }
+    if (dx.isLong()) {
+      return dx.set(val.longValue() + 1L).get();
+    }
+    if (dx.isFloat()) {
+      return dx.set(val.floatValue() + 1f).get();
+    }
+    if (dx.isDouble()) {
+      return dx.set(val.doubleValue() + 1d).get();
+    }
+    // Unknown or unsupported number types
+    // TODO: classNames should be in arabic or transliterated or in naftah language types
+    throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(val.getClass()));
   }
 
   public static <T extends Number> Number postIncrement(T x) {
@@ -1475,44 +1510,105 @@ public final class NumberUtils {
   }
 
   public static Number postIncrement(DynamicNumber dx) {
-    if (dx.isBigDecimal()) {
-      BigDecimal current = dx.asBigDecimal();
-      dx.set(dx.asBigDecimal().add(BigDecimal.ONE));
-      return current;
-    } else if (dx.isBigInteger()) {
-      BigInteger current = dx.asBigInteger();
-      dx.set(current.add(BigInteger.ONE));
-      return current;
-    } else if (dx.isDouble()) {
-      double current = dx.asDouble();
-      dx.set(current + 1);
-      return current;
-    } else if (dx.isFloat()) {
-      double current = dx.asFloat();
-      dx.set(current + 1);
-      return current;
-    } else if (dx.isLong()) {
-      double current = dx.asLong();
-      dx.set(current + 1);
-      return current;
-    } else if (dx.isInt()) {
-      double current = dx.asInt();
-      dx.set(current + 1);
-      return current;
-    } else if (dx.isShort()) {
-      double current = dx.asShort();
-      dx.set(current + 1);
-      return current;
-    } else if (dx.isByte()) {
-      double current = dx.asByte();
-      dx.set(current + 1);
-      return current;
-    } else {
-      // Unknown or unsupported number types
+    Number val = dx.get();
 
-      // TODO: classNames should be in arabic or transliterated or in naftah language types
-      throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+    // Helper to update and return old value
+    Number oldValue;
+
+    // Handle overflow and promotion for integer types
+    if (dx.isByte()) {
+      oldValue = val.byteValue();
+      if (val.byteValue() == Byte.MAX_VALUE) {
+        DynamicNumber promoted = dx.promote();
+        promoted.set(promoted.get().intValue() + 1);
+        dx.set(promoted.get());
+      } else {
+        dx.set(val.byteValue() + 1);
+      }
+      return oldValue;
     }
+
+    if (dx.isShort()) {
+      oldValue = val.shortValue();
+      if (val.shortValue() == Short.MAX_VALUE) {
+        DynamicNumber promoted = dx.promote();
+        promoted.set(promoted.get().intValue() + 1);
+        dx.set(promoted.get());
+      } else {
+        dx.set(val.shortValue() + 1);
+      }
+      return oldValue;
+    }
+
+    if (dx.isInt()) {
+      oldValue = val.intValue();
+      if (val.intValue() == Integer.MAX_VALUE) {
+        DynamicNumber promoted = dx.promote();
+        promoted.set(promoted.get().longValue() + 1L);
+        dx.set(promoted.get());
+      } else {
+        dx.set(val.intValue() + 1);
+      }
+      return oldValue;
+    }
+
+    if (dx.isLong()) {
+      oldValue = val.longValue();
+      if (val.longValue() == Long.MAX_VALUE) {
+        DynamicNumber promoted = dx.promote();
+        promoted.set(((BigInteger) promoted.get()).add(BigInteger.ONE));
+        dx.set(promoted.get());
+      } else {
+        dx.set(val.longValue() + 1L);
+      }
+      return oldValue;
+    }
+
+    // Handle overflow and promotion for floating types
+    if (dx.isFloat()) {
+      oldValue = val.floatValue();
+      if (oldValue.equals(Float.MAX_VALUE)
+          || Float.isNaN(oldValue.floatValue())
+          || Float.isInfinite(oldValue.floatValue())) {
+        DynamicNumber promoted = dx.promote();
+        promoted.set(promoted.get().doubleValue() + 1d);
+        dx.set(promoted.get());
+      } else {
+        dx.set(val.floatValue() + 1f);
+      }
+      return oldValue;
+    }
+
+    if (dx.isDouble()) {
+      oldValue = val.doubleValue();
+      if (oldValue.equals(Double.MAX_VALUE)
+          || Double.isNaN(oldValue.doubleValue())
+          || Double.isInfinite(oldValue.doubleValue())) {
+        DynamicNumber promoted = dx.promote();
+        promoted.set(((BigDecimal) promoted.get()).add(BigDecimal.ONE));
+        dx.set(promoted.get());
+      } else {
+        dx.set(val.doubleValue() + 1d);
+      }
+      return oldValue;
+    }
+
+    // For BigInteger and BigDecimal, no overflow, just increment
+    if (dx.isBigInteger()) {
+      oldValue = dx.asBigInteger();
+      dx.set(dx.asBigInteger().add(BigInteger.ONE));
+      return oldValue;
+    }
+
+    if (dx.isBigDecimal()) {
+      oldValue = dx.asBigDecimal();
+      dx.set(dx.asBigDecimal().add(BigDecimal.ONE));
+      return oldValue;
+    }
+
+    // Unknown or unsupported number types
+    // TODO: classNames should be in arabic or transliterated or in naftah language types
+    throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(val.getClass()));
   }
 
   public static <T extends Number> Number preDecrement(T x) {
@@ -1527,24 +1623,31 @@ public final class NumberUtils {
 
   public static Number preDecrement(DynamicNumber dx) {
     if (dx.isBigDecimal()) {
-      return dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE)).asBigDecimal();
+      dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE));
+      return dx.normalize().get();
     } else if (dx.isBigInteger()) {
-      return dx.set(dx.asBigInteger().subtract(BigInteger.ONE)).asBigInteger();
+      dx.set(dx.asBigInteger().subtract(BigInteger.ONE));
+      return dx.normalize().get();
     } else if (dx.isDouble()) {
-      return dx.set(dx.asDouble() - 1).asDouble();
+      dx.set(dx.asDouble() - 1);
+      return dx.get();
     } else if (dx.isFloat()) {
-      return dx.set(dx.asFloat() - 1).asFloat();
+      dx.set(dx.asFloat() - 1);
+      return dx.get();
     } else if (dx.isLong()) {
-      return dx.set(dx.asLong() - 1).asLong();
+      dx.set(dx.asLong() - 1);
+      return dx.normalize().get();
     } else if (dx.isInt()) {
-      return dx.set(dx.asInt() - 1).asInt();
+      dx.set(dx.asInt() - 1);
+      return dx.normalize().get();
     } else if (dx.isShort()) {
-      return dx.set(dx.asShort() - 1).asShort();
+      dx.set(dx.asShort() - 1);
+      return dx.normalize().get();
     } else if (dx.isByte()) {
-      return dx.set(dx.asByte() - 1).asByte();
+      dx.set(dx.asByte() - 1);
+      return dx.get();
     } else {
       // Unknown or unsupported number types
-
       // TODO: classNames should be in arabic or transliterated or in naftah language types
       throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
@@ -1561,43 +1664,43 @@ public final class NumberUtils {
   }
 
   public static Number postDecrement(DynamicNumber dx) {
+    Number current;
+
     if (dx.isBigDecimal()) {
-      BigDecimal current = dx.asBigDecimal();
+      current = dx.asBigDecimal();
       dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE));
-      return current;
     } else if (dx.isBigInteger()) {
-      BigInteger current = dx.asBigInteger();
-      dx.set(current.subtract(BigInteger.ONE));
-      return current;
+      current = dx.asBigInteger();
+      dx.set(dx.asBigInteger().subtract(BigInteger.ONE));
     } else if (dx.isDouble()) {
-      double current = dx.asDouble();
-      dx.set(current - 1);
-      return current;
+      current = dx.asDouble();
+      dx.set(dx.asDouble() - 1);
     } else if (dx.isFloat()) {
-      double current = dx.asFloat();
-      dx.set(current - 1);
-      return current;
+      current = dx.asFloat();
+      dx.set(dx.asFloat() - 1);
     } else if (dx.isLong()) {
-      double current = dx.asLong();
-      dx.set(current - 1);
-      return current;
+      current = dx.asLong();
+      dx.set(dx.asLong() - 1);
     } else if (dx.isInt()) {
-      double current = dx.asInt();
-      dx.set(current - 1);
-      return current;
+      current = dx.asInt();
+      dx.set(dx.asInt() - 1);
     } else if (dx.isShort()) {
-      double current = dx.asShort();
-      dx.set(current - 1);
-      return current;
+      current = dx.asShort();
+      dx.set(dx.asShort() - 1);
     } else if (dx.isByte()) {
-      double current = dx.asByte();
-      dx.set(current - 1);
-      return current;
+      current = dx.asByte();
+      dx.set(dx.asByte() - 1);
     } else {
       // Unknown or unsupported number types
       // TODO: classNames should be in arabic or transliterated or in naftah language types
       throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
     }
+
+    // Normalize the updated value inside dx after decrement
+    dx.set(dx.normalize().get());
+
+    // Return the old value, no normalization
+    return current;
   }
 
   /**
