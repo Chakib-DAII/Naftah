@@ -341,10 +341,14 @@ public class ArabicUtils {
     return text.codePoints().anyMatch(ArabicUtils::isArabicChar);
   }
 
-  public static boolean isArabicChar(int cp) {
+  public static boolean isArabicCharCp(int cp) {
     return (cp >= 0x0600 && cp <= 0x06FF)
         || (cp >= 0x0750 && cp <= 0x077F) // Arabic Supplement
         || (cp >= 0x08A0 && cp <= 0x08FF); // Arabic Extended
+  }
+
+  public static boolean isArabicChar(int cp) {
+    return Character.UnicodeScript.of(cp) == Character.UnicodeScript.ARABIC;
   }
 
   public static List<Pair<String, String>> getRawHexBytes(char[] charArray) {
