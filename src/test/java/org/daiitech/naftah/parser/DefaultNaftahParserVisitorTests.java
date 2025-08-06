@@ -6,9 +6,7 @@ import java.util.Map;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.parser.provider.ArithmeticExpressionsProvider;
-import org.daiitech.naftah.parser.provider.LogicalExpressionsProvider;
-import org.daiitech.naftah.parser.provider.ValueExpressionsProvider;
+import org.daiitech.naftah.parser.provider.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -50,6 +48,54 @@ public class DefaultNaftahParserVisitorTests {
   @ParameterizedTest
   @ArgumentsSource(ArithmeticExpressionsProvider.class)
   void arithmeticExpressionTests(
+      boolean validScript,
+      String script,
+      Object expectedValue,
+      NaftahBugError expectedNaftahBugError)
+      throws Exception {
+    if (validScript) {
+      var result = runScript(script);
+      assertEquals(result, expectedValue);
+    } else {
+      doAssertBugEquals(script, expectedNaftahBugError);
+    }
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(BlockProvider.class)
+  void blockTests(
+      boolean validScript,
+      String script,
+      Object expectedValue,
+      NaftahBugError expectedNaftahBugError)
+      throws Exception {
+    if (validScript) {
+      var result = runScript(script);
+      assertEquals(result, expectedValue);
+    } else {
+      doAssertBugEquals(script, expectedNaftahBugError);
+    }
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(AssignmentProvider.class)
+  void assignmentTests(
+      boolean validScript,
+      String script,
+      Object expectedValue,
+      NaftahBugError expectedNaftahBugError)
+      throws Exception {
+    if (validScript) {
+      var result = runScript(script);
+      assertEquals(result, expectedValue);
+    } else {
+      doAssertBugEquals(script, expectedNaftahBugError);
+    }
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(DeclarationProvider.class)
+  void declarationTests(
       boolean validScript,
       String script,
       Object expectedValue,
