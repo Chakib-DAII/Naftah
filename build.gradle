@@ -438,6 +438,23 @@ tasks.register('runJmh', JavaExec) {
 			sourceSets.benchmark.runtimeClasspath,
 			sourceSets.main.runtimeClasspath
 	)
+
+	// Output directory for benchmark results
+	def outputDir = file("$buildDir/reports/benchmarks")
+	def resultFileJson = file("$outputDir/jmh-results.json")
+
+	doFirst {
+		outputDir.mkdirs()
+	}
+
+	// Arguments for JMH
+	args = [
+			'-rf', 'json',               // result format
+			'-rff', resultFileJson.path, // result file for JSON
+			'-i', '5',                   // 5 iterations
+			'-wi', '3',                  // 3 warmup iterations
+			'-f', '1'                    // single fork
+	]
 }
 
 tasks.withType(Javadoc).configureEach {
