@@ -2,6 +2,7 @@ package org.daiitech.naftah.utils.repl;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
+
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedString;

@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+
 import org.daiitech.naftah.errors.NaftahBugError;
 
 public final class Tuple implements List<Object>, Serializable {

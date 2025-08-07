@@ -47,8 +47,8 @@ All project maintainers are obligated to respect the privacy and security of the
 
 ## Attribution
 
-This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1, available at  
+This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1, available at
 [https://www.contributor-covenant.org/version/2/1/code_of_conduct/](https://www.contributor-covenant.org/version/2/1/code_of_conduct/)
 
-For answers to common questions about this code of conduct, see  
+For answers to common questions about this code of conduct, see
 [https://www.contributor-covenant.org/faq](https://www.contributor-covenant.org/faq)

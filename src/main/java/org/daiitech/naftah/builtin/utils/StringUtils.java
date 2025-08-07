@@ -8,10 +8,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import org.daiitech.naftah.errors.NaftahBugError;
+
 import jdk.incubator.vector.ShortVector;
 import jdk.incubator.vector.VectorOperators;
 import jdk.incubator.vector.VectorSpecies;
-import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * @author Chakib Daii

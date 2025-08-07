@@ -1,6 +1,6 @@
 # Naftah Programming Language : Let's write programs in Arabic, like living in Naftah
 
-#  نفطه: لغة برمجة، لنكتب برامج باللغة العربية وكأننا نعيش في نفطه 
+#  نفطه: لغة برمجة، لنكتب برامج باللغة العربية وكأننا نعيش في نفطه
 
 ### Motivations
 
@@ -39,7 +39,7 @@ gradlew idea
 ```
 ### 🤝 Contributing
 
-We welcome contributions of all kinds!  
+We welcome contributions of all kinds!
 Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 By participating, you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
@@ -47,7 +47,7 @@ By participating, you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 ### Code Examples
 
 #### Variable declaration and assignment
-````naftah 
+````naftah
 ثابت ت تعيين 2
 متغير ش
 ش تعيين ١
@@ -58,7 +58,7 @@ By participating, you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 ````
 
 #### Function declaration
-````naftah 
+````naftah
 دالة دالة_وهمية(ثابت معلمة_وهمية_1 :أي_نوع تعيين 1، ثابت معلمة_وهمية_2 : تسلسل_أحرف = «أي نص وهمي مع ش = ${ش}»، معلمة_وهمية_3 ، معلمة_وهمية_4 : عدد_عائم_طويل ، معلمة_وهمية_5 : عدد_عائم_طويل =١٣٤٤٥٦،٦٦٦ ) {
 ارجع
 }
@@ -73,27 +73,27 @@ By participating, you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 ````
 
 #### Function call
-````naftah 
+````naftah
 إطبع("مرحباً أيها العالم!")
 ````
 
 #### Conditional
-````naftah 
+````naftah
 متغير أ تعيين ١
 متغير ب تعيين 4
 
-إذا أ زائد ب أكبر_من ١٠ إذن { 
+إذا أ زائد ب أكبر_من ١٠ إذن {
 إطبع("أ زائد ب أكبر من 10")
-} غير_ذلك_إذا أ زائد ب أصغر_من ١٠ إذن { 
+} غير_ذلك_إذا أ زائد ب أصغر_من ١٠ إذن {
 إطبع("أ زائد ب أصغر مين 10")
-} غير_ذلك { 
+} غير_ذلك {
 إطبع("أ زائد ب يساوي 10")
 {
 أنهي
 ````
 
 #### String interpolation
-````naftah 
+````naftah
 ثابت ت تعيين 2
 متغير ش
 ش تعيين ١

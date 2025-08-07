@@ -3,6 +3,7 @@ package org.daiitech.naftah.benchmarks.parser;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import org.daiitech.naftah.parser.StringInterpolator;
 import org.openjdk.jmh.annotations.*;
 

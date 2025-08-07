@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Objects;
+
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.errors.NaftahBugError;
 

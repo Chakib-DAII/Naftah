@@ -3,6 +3,7 @@ package org.daiitech.naftah;
 import static org.daiitech.naftah.parser.NaftahParserHelper.*;
 
 import java.util.Map;
+
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;

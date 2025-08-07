@@ -4,6 +4,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 import java.util.ArrayList;
+
 import org.jline.reader.Candidate;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.utils.AttributedString;

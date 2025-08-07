@@ -2,18 +2,20 @@ package org.daiitech.naftah.utils.arabic;
 
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.daiitech.naftah.utils.OS;
+import org.daiitech.naftah.utils.function.ThrowingBiFunction;
+import org.daiitech.naftah.utils.function.ThrowingFunction;
+
 import com.ibm.icu.impl.Pair;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
 import com.ibm.icu.text.Transliterator;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import org.daiitech.naftah.utils.OS;
-import org.daiitech.naftah.utils.function.ThrowingBiFunction;
-import org.daiitech.naftah.utils.function.ThrowingFunction;
 
 /**
  * @author Chakib Daii
