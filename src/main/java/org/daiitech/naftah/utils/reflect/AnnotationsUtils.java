@@ -3,6 +3,7 @@ package org.daiitech.naftah.utils.reflect;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,13 +26,13 @@ public class AnnotationsUtils {
      * @return {@code true} if all specified annotations are present on the method, otherwise {@code false}.
      */
     @SafeVarargs
-    public static boolean isAnnotationsPresent(Method method, Class<? extends Annotation>... annotations) {
+    public static boolean isAnnotationsPresent(
+        Method method, Class<? extends Annotation>... annotations) {
+        List<Boolean> annotationsPresence = new ArrayList<>();
         for (var annotation : annotations) {
-            if (!method.isAnnotationPresent(annotation)) {
-                return false;
-            }
+            annotationsPresence.add(method.isAnnotationPresent(annotation));
         }
-        return true;
+        return !annotationsPresence.contains(false);
     }
 
     /**
