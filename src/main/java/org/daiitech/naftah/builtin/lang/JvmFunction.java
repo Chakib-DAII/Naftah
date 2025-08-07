@@ -1,6 +1,10 @@
 package org.daiitech.naftah.builtin.lang;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import org.daiitech.naftah.utils.reflect.ClassUtils;
@@ -9,73 +13,72 @@ import org.daiitech.naftah.utils.reflect.ClassUtils;
  * @author Chakib Daii
  */
 public class JvmFunction implements Serializable {
-  private final String qualifiedCall;
-  private final Class<?> clazz;
-  private transient Method method;
-  private final String methodName;
-  private final boolean isStatic;
-  private final boolean isInvocable;
+	private final String qualifiedCall;
+	private final Class<?> clazz;
+	private final String methodName;
+	private final boolean isStatic;
+	private final boolean isInvocable;
+	private transient Method method;
 
-  public JvmFunction(
-      String qualifiedCall, Class<?> clazz, Method method, boolean isStatic, boolean isInvocable) {
-    this.qualifiedCall = qualifiedCall;
-    this.clazz = clazz;
-    this.method = method;
-    this.methodName = method.getName();
-    this.isStatic = isStatic;
-    this.isInvocable = isInvocable;
-  }
+	public JvmFunction(String qualifiedCall, Class<?> clazz, Method method, boolean isStatic, boolean isInvocable) {
+		this.qualifiedCall = qualifiedCall;
+		this.clazz = clazz;
+		this.method = method;
+		this.methodName = method.getName();
+		this.isStatic = isStatic;
+		this.isInvocable = isInvocable;
+	}
 
-  public String getQualifiedCall() {
-    return qualifiedCall;
-  }
+	public static JvmFunction of(String qualifiedCall, Class<?> clazz, Method method) {
+		return new JvmFunction(qualifiedCall, clazz, method, ClassUtils.isStatic(method), ClassUtils.isInvocable(method));
+	}
 
-  public Class<?> getClazz() {
-    return clazz;
-  }
+	public String getQualifiedCall() {
+		return qualifiedCall;
+	}
 
-  public Method getMethod() {
-    return method;
-  }
+	public Class<?> getClazz() {
+		return clazz;
+	}
 
-  public String getMethodName() {
-    return methodName;
-  }
+	public Method getMethod() {
+		return method;
+	}
 
-  public boolean isStatic() {
-    return isStatic;
-  }
+	public String getMethodName() {
+		return methodName;
+	}
 
-  public boolean isInvocable() {
-    return isInvocable;
-  }
+	public boolean isStatic() {
+		return isStatic;
+	}
 
-  @Serial
-  private void writeObject(ObjectOutputStream oos) throws IOException {
-    oos.defaultWriteObject();
-  }
+	public boolean isInvocable() {
+		return isInvocable;
+	}
 
-  @Serial
-  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    try {
-      ois.defaultReadObject();
-      for (Method m : clazz.getDeclaredMethods()) {
-        if (m.getName().equals(methodName)) {
-          this.method = m;
-          break;
-        }
-      }
-    } catch (Throwable ignored) {
-    }
-  }
+	@Serial
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+	}
 
-  @Override
-  public String toString() {
-    return "<%s %s>".formatted("دالة", this.qualifiedCall);
-  }
+	@Serial
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		try {
+			ois.defaultReadObject();
+			for (Method m : clazz.getDeclaredMethods()) {
+				if (m.getName().equals(methodName)) {
+					this.method = m;
+					break;
+				}
+			}
+		}
+		catch (Throwable ignored) {
+		}
+	}
 
-  public static JvmFunction of(String qualifiedCall, Class<?> clazz, Method method) {
-    return new JvmFunction(
-        qualifiedCall, clazz, method, ClassUtils.isStatic(method), ClassUtils.isInvocable(method));
-  }
+	@Override
+	public String toString() {
+		return "<%s %s>".formatted("دالة", this.qualifiedCall);
+	}
 }

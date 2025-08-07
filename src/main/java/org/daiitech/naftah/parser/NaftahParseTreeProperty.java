@@ -10,11 +10,11 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
  */
 public class NaftahParseTreeProperty<V> extends ParseTreeProperty<V> {
 
-  public Map<ParseTree, V> getAll() {
-    return annotations;
-  }
+	public Map<ParseTree, V> getAll() {
+		return annotations;
+	}
 
-  public void copyFrom(NaftahParseTreeProperty<V> other) {
-    annotations.putAll(other.getAll());
-  }
+	public void copyFrom(NaftahParseTreeProperty<V> other) {
+		annotations.putAll(other.getAll());
+	}
 }

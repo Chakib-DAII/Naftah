@@ -1,68 +1,71 @@
 package org.daiitech.naftah.builtin.lang;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /**
- * representation of a builtin function
+ * representation of a builtin function.
  *
  * @author Chakib Daii
  */
 public class BuiltinFunction implements Serializable {
-  private transient Method method;
-  private final String methodName;
-  private final String className;
-  private final NaftahFunctionProvider providerInfo;
-  private final NaftahFunction functionInfo;
+	private final String methodName;
+	private final String className;
+	private final NaftahFunctionProvider providerInfo;
+	private final NaftahFunction functionInfo;
+	private transient Method method;
 
-  public BuiltinFunction(
-      Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
-    this.method = method;
-    this.methodName = method.getName();
-    this.className = method.getDeclaringClass().getName();
-    this.providerInfo = providerInfo;
-    this.functionInfo = functionInfo;
-  }
+	public BuiltinFunction(Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
+		this.method = method;
+		this.methodName = method.getName();
+		this.className = method.getDeclaringClass().getName();
+		this.providerInfo = providerInfo;
+		this.functionInfo = functionInfo;
+	}
 
-  public Method getMethod() {
-    return method;
-  }
+	public static BuiltinFunction of(Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
+		return new BuiltinFunction(method, providerInfo, functionInfo);
+	}
 
-  public NaftahFunctionProvider getProviderInfo() {
-    return providerInfo;
-  }
+	public Method getMethod() {
+		return method;
+	}
 
-  public NaftahFunction getFunctionInfo() {
-    return functionInfo;
-  }
+	public NaftahFunctionProvider getProviderInfo() {
+		return providerInfo;
+	}
 
-  @Serial
-  private void writeObject(ObjectOutputStream oos) throws IOException {
-    oos.defaultWriteObject();
-  }
+	public NaftahFunction getFunctionInfo() {
+		return functionInfo;
+	}
 
-  @Serial
-  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-    try {
-      ois.defaultReadObject();
-      Class<?> clazz = Class.forName(className);
-      for (Method m : clazz.getDeclaredMethods()) {
-        if (m.getName().equals(methodName)) {
-          this.method = m;
-          break;
-        }
-      }
-    } catch (Throwable ignored) {
-    }
-  }
+	@Serial
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+	}
 
-  @Override
-  public String toString() {
-    return "<%s %s>".formatted("دالة", this.getFunctionInfo().name());
-  }
+	@Serial
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		try {
+			ois.defaultReadObject();
+			Class<?> clazz = Class.forName(className);
+			for (Method m : clazz.getDeclaredMethods()) {
+				if (m.getName().equals(methodName)) {
+					this.method = m;
+					break;
+				}
+			}
+		}
+		catch (Throwable ignored) {
+		}
+	}
 
-  public static BuiltinFunction of(
-      Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
-    return new BuiltinFunction(method, providerInfo, functionInfo);
-  }
+	@Override
+	public String toString() {
+		return "<%s %s>".formatted("دالة", this.getFunctionInfo().name());
+	}
 }

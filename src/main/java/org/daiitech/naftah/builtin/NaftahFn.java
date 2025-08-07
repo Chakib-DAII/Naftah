@@ -1,10 +1,10 @@
 package org.daiitech.naftah.builtin;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Naftah function metadata as part of built-in
@@ -14,15 +14,15 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
 public @interface NaftahFn {
-  String name();
+	String name();
 
-  String description();
+	String description();
 
-  String usage();
+	String usage();
 
-  Class<?> returnType() default Void.class;
+	Class<?> returnType() default Void.class;
 
-  Class<?>[] parameterTypes() default {};
+	Class<?>[] parameterTypes() default {};
 
-  Class<?>[] exceptionTypes() default {};
+	Class<?>[] exceptionTypes() default {};
 }
