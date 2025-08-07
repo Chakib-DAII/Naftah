@@ -248,6 +248,16 @@ spotless {
 	java {
 		// Using Google Java Format for formatting
 		googleJavaFormat('1.17.0')
+		removeUnusedImports()
+		importOrder('java', 'javax', 'org', 'com', '')
+		trimTrailingWhitespace()
+		endWithNewline()
+
+	}
+	format 'misc', {
+		target '*.gradle', '*.md', '.gitignore'
+		trimTrailingWhitespace()
+		endWithNewline()
 	}
 }
 
