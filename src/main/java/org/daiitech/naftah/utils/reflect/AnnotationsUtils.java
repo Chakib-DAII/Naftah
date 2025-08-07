@@ -84,12 +84,11 @@ public class AnnotationsUtils {
      */
     @SafeVarargs
     public static boolean isAnnotationsPresent(Class<?> aClass, Class<? extends Annotation>... annotations) {
+        List<Boolean> annotationsPresence = new ArrayList<>();
         for (var annotation : annotations) {
-            if (!aClass.isAnnotationPresent(annotation)) {
-                return false;
-            }
+            annotationsPresence.add(aClass.isAnnotationPresent(annotation));
         }
-        return true;
+        return !annotationsPresence.contains(false);
     }
 
     /**
