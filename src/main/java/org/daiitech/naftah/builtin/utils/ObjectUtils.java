@@ -35,13 +35,23 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
  */
 public final class ObjectUtils {
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private ObjectUtils() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
+
 	public static boolean isTruthy(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return false;
+		}
 
 		// Boolean
-		if (obj instanceof Boolean bool)
+		if (obj instanceof Boolean bool) {
 			return bool;
+		}
 
 		// Number (includes Integer, Double, etc.)
 		if (obj instanceof Number num) {
@@ -51,23 +61,28 @@ public final class ObjectUtils {
 		}
 
 		// String
-		if (obj instanceof String str)
+		if (obj instanceof String str) {
 			return !str.isBlank();
+		}
 
 		// Array
-		if (obj.getClass().isArray())
+		if (obj.getClass().isArray()) {
 			return Array.getLength(obj) > 0;
+		}
 
 		// Collection (e.g., List, Set)
-		if (obj instanceof Collection<?> collection)
+		if (obj instanceof Collection<?> collection) {
 			return !collection.isEmpty();
+		}
 
 		// Map (e.g., HashMap)
-		if (obj instanceof Map<?, ?> map)
+		if (obj instanceof Map<?, ?> map) {
 			return !map.isEmpty();
+		}
 
-		if (obj instanceof Map.Entry<?, ?> entry)
+		if (obj instanceof Map.Entry<?, ?> entry) {
 			return isTruthy(entry.getKey()) && isTruthy(entry.getValue());
+		}
 
 		// Other objects (non-null) are truthy
 		return true;
@@ -102,8 +117,7 @@ public final class ObjectUtils {
 	 * If the given object is non-null and not one of the aforementioned supported
 	 * types, this method returns {@code false}.
 	 *
-	 * @param obj
-	 *            the object to check
+	 * @param obj the object to check
 	 * @return {@code true} if the object is {@code null} or <em>empty</em>
 	 */
 	public static boolean isEmpty(Object obj) {
@@ -173,90 +187,116 @@ public final class ObjectUtils {
 	}
 
 	public static Class<?> getJavaType(NaftahParser.BuiltInContext builtInContext) {
-		if (hasChild(builtInContext.BOOLEAN()))
+		if (hasChild(builtInContext.BOOLEAN())) {
 			return Boolean.class;
-		if (hasChild(builtInContext.CHAR()))
+		}
+		if (hasChild(builtInContext.CHAR())) {
 			return Character.class;
-		if (hasChild(builtInContext.BYTE()))
+		}
+		if (hasChild(builtInContext.BYTE())) {
 			return Byte.class;
-		if (hasChild(builtInContext.SHORT()))
+		}
+		if (hasChild(builtInContext.SHORT())) {
 			return Short.class;
-		if (hasChild(builtInContext.INT()))
+		}
+		if (hasChild(builtInContext.INT())) {
 			return Integer.class;
-		if (hasChild(builtInContext.LONG()))
+		}
+		if (hasChild(builtInContext.LONG())) {
 			return Long.class;
-		if (hasChild(builtInContext.FLOAT()))
+		}
+		if (hasChild(builtInContext.FLOAT())) {
 			return Float.class;
-		if (hasChild(builtInContext.DOUBLE()))
+		}
+		if (hasChild(builtInContext.DOUBLE())) {
 			return Double.class;
-		if (hasChild(builtInContext.STRING_TYPE()))
+		}
+		if (hasChild(builtInContext.STRING_TYPE())) {
 			return String.class;
+		}
 		return Object.class;
 	}
 
 	public static String getNaftahType(Parser parser, Class<?> javaType) {
 		Vocabulary vocabulary = parser.getVocabulary();
-		if (Objects.isNull(javaType))
+		if (Objects.isNull(javaType)) {
 			return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
+		}
 		else {
-			if (Boolean.class.isAssignableFrom(javaType))
+			if (Boolean.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN, false);
-			if (Character.class.isAssignableFrom(javaType))
+			}
+			if (Character.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.CHAR, false);
-			if (Byte.class.isAssignableFrom(javaType))
+			}
+			if (Byte.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.BYTE, false);
-			if (Short.class.isAssignableFrom(javaType))
+			}
+			if (Short.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.SHORT, false);
-			if (Integer.class.isAssignableFrom(javaType))
+			}
+			if (Integer.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.INT, false);
-			if (Long.class.isAssignableFrom(javaType))
+			}
+			if (Long.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.LONG, false);
-			if (Float.class.isAssignableFrom(javaType))
+			}
+			if (Float.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.FLOAT, false);
-			if (Double.class.isAssignableFrom(javaType))
+			}
+			if (Double.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.DOUBLE, false);
-			if (String.class.isAssignableFrom(javaType))
+			}
+			if (String.class.isAssignableFrom(javaType)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, false);
+			}
 		}
 		return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
 	}
 
 	public static boolean isBuiltinType(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return false;
+		}
 		Class<?> cls = obj.getClass();
 		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class;
 	}
 
 	public static boolean isSimpleType(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return false;
+		}
 		Class<?> cls = obj.getClass();
 
 		return cls.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class;
 	}
 
 	public static boolean isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return false;
+		}
 
 		// Simple value
-		if (isSimpleType(obj))
+		if (isSimpleType(obj)) {
 			return true;
+		}
 
 		// Builtin value
-		if (isBuiltinType(obj))
+		if (isBuiltinType(obj)) {
 			return true;
+		}
 
 		// Array of simple or recursive types
 		if (obj.getClass().isArray()) {
 			int len = Array.getLength(obj);
 			for (int i = 0; i < len; i++) {
 				Object element = Array.get(obj, i);
-				if (!isTruthy(element))
+				if (!isTruthy(element)) {
 					continue;
-				if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(element))
+				}
+				if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(element)) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -264,10 +304,12 @@ public final class ObjectUtils {
 		// Collection of simple or recursive types
 		if (obj instanceof Collection<?> collection) {
 			for (Object item : collection) {
-				if (!isTruthy(item))
+				if (!isTruthy(item)) {
 					continue;
-				if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(item))
+				}
+				if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(item)) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -275,12 +317,15 @@ public final class ObjectUtils {
 		// Map with simple keys and values
 		if (obj instanceof Map<?, ?> map) {
 			for (Map.Entry<?, ?> entry : map.entrySet()) {
-				if (!isTruthy(entry))
+				if (!isTruthy(entry)) {
 					continue;
-				if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(entry.getKey()))
+				}
+				if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(entry.getKey())) {
 					return false;
-				if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(entry.getValue()))
+				}
+				if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(entry.getValue())) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -290,8 +335,9 @@ public final class ObjectUtils {
 	}
 
 	public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
-		if (left == null || right == null)
+		if (left == null || right == null) {
 			throw new NaftahBugError("لا يمكن أن تكون الوسائط فارغة.");
+		}
 
 		// Number vs Number
 		if (left instanceof Number number && right instanceof Number number1) {
@@ -376,8 +422,9 @@ public final class ObjectUtils {
 	}
 
 	public static Object applyOperation(Object a, UnaryOperation operation) {
-		if (a == null)
+		if (a == null) {
 			throw new NaftahBugError("لا يمكن أن يكون الوسيط فارغًا.");
+		}
 
 		// Number
 		if (a instanceof Number number) {
@@ -441,44 +488,58 @@ public final class ObjectUtils {
 		}
 
 		// Handle primitive arrays
-		if (obj instanceof int[])
+		if (obj instanceof int[]) {
 			return Arrays.toString((int[]) obj);
-		if (obj instanceof long[])
+		}
+		if (obj instanceof long[]) {
 			return Arrays.toString((long[]) obj);
-		if (obj instanceof double[])
+		}
+		if (obj instanceof double[]) {
 			return Arrays.toString((double[]) obj);
-		if (obj instanceof float[])
+		}
+		if (obj instanceof float[]) {
 			return Arrays.toString((float[]) obj);
-		if (obj instanceof boolean[])
+		}
+		if (obj instanceof boolean[]) {
 			return Arrays.toString((boolean[]) obj);
-		if (obj instanceof char[])
+		}
+		if (obj instanceof char[]) {
 			return Arrays.toString((char[]) obj);
-		if (obj instanceof byte[])
+		}
+		if (obj instanceof byte[]) {
 			return Arrays.toString((byte[]) obj);
-		if (obj instanceof short[])
+		}
+		if (obj instanceof short[]) {
 			return Arrays.toString((short[]) obj);
+		}
 
 		// Handle object arrays
 		return replaceAllNulls(Arrays.toString((Object[]) obj));
 	}
 
 	public static String getNaftahValueToString(Object o) {
-		if (o == null)
+		if (o == null) {
 			return NULL;
-		if (o instanceof Boolean aBoolean)
+		}
+		if (o instanceof Boolean aBoolean) {
 			return booleanToString(aBoolean);
-		if (o instanceof LoopSignal.LoopSignalDetails loopSignalDetails)
+		}
+		if (o instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
 			return getNaftahValueToString(loopSignalDetails.result());
-		if (o.getClass().isArray())
+		}
+		if (o.getClass().isArray()) {
 			return arrayToString(o);
+		}
 		return replaceAllNulls(o.toString());
 	}
 
 	public static Object getNaftahValue(Object o) {
-		if (o == null)
+		if (o == null) {
 			return NULL;
-		if (o instanceof Boolean aBoolean)
+		}
+		if (o instanceof Boolean aBoolean) {
 			return booleanToString(aBoolean);
+		}
 		return o;
 	}
 

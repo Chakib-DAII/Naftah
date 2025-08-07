@@ -2,13 +2,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
-    id 'java'
-    id 'antlr'
-    id 'idea'
-    id 'checkstyle'
-    id 'com.diffplug.spotless' version '6.21.0'
-    id 'maven-publish'
-    id 'signing'
+	id 'java'
+	id 'antlr'
+	id 'idea'
+	id 'checkstyle'
+	id 'com.diffplug.spotless' version '6.21.0'
+	id 'maven-publish'
+	id 'signing'
 }
 
 group = 'org.daiitech'
@@ -17,293 +17,295 @@ version = '0.0.1-SNAPSHOT' // TODO: automate version
 //version = file('VERSION').text.trim()
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs += [
-            '--enable-preview',
-            '--add-modules', 'jdk.incubator.vector'
-    ]
+	options.compilerArgs += [
+			'--enable-preview',
+			'--add-modules', 'jdk.incubator.vector'
+	]
 }
 
 tasks.withType(JavaExec).configureEach {
-    jvmArgs += [
-            '--enable-preview',
-            '--add-modules', 'jdk.incubator.vector'
-    ]
+	jvmArgs += [
+			'--enable-preview',
+			'--add-modules', 'jdk.incubator.vector'
+	]
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    antlr "org.antlr:antlr4:4.9.3"
-    implementation "org.antlr:antlr4-runtime:4.9.3"
-    testImplementation(platform('org.junit:junit-bom:5.7.0'))
-    testImplementation('org.junit.jupiter:junit-jupiter')
-    checkstyle 'com.puppycrawl.tools:checkstyle:10.0'
-    implementation 'info.picocli:picocli:4.7.6'
-    implementation 'org.jline:jline:3.23.0'
-    implementation 'org.jline:jline-terminal-jansi:3.28.0'
-    implementation 'org.openjdk.jmh:jmh-core:1.37'
-    annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
+	antlr "org.antlr:antlr4:4.9.3"
+	implementation "org.antlr:antlr4-runtime:4.9.3"
+	testImplementation(platform('org.junit:junit-bom:5.7.0'))
+	testImplementation('org.junit.jupiter:junit-jupiter')
+	checkstyle 'com.puppycrawl.tools:checkstyle:10.0'
+	implementation 'info.picocli:picocli:4.7.6'
+	implementation 'org.jline:jline:3.23.0'
+	implementation 'org.jline:jline-terminal-jansi:3.28.0'
+	implementation 'org.openjdk.jmh:jmh-core:1.37'
+	annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+	options.encoding = 'UTF-8'
 }
 
 tasks.withType(ProcessResources).configureEach {
-    filteringCharset = 'UTF-8'
+	filteringCharset = 'UTF-8'
 }
 
 generateGrammarSource {
-    maxHeapSize = "128m"
-    arguments += ['-encoding', 'UTF-8', '-package', 'org.daiitech.naftah.parser', '-visitor', '-no-listener']
+	maxHeapSize = "128m"
+	arguments += ['-encoding', 'UTF-8', '-package', 'org.daiitech.naftah.parser', '-visitor', '-no-listener']
 }
 
 compileJava.dependsOn generateGrammarSource
 
 sourceSets {
-    generated {
-        java.srcDir 'generated-src/antlr/main/'
-    }
+	generated {
+		java.srcDir 'generated-src/antlr/main/'
+	}
 
-    benchmark {
-        java.srcDir 'benchmark/java'
-        resources.srcDir 'benchmark/resources'
-        compileClasspath += sourceSets.main.output + configurations.annotationProcessor
-        runtimeClasspath += output + compileClasspath
-    }
+	benchmark {
+		java.srcDir 'benchmark/java'
+		resources.srcDir 'benchmark/resources'
+		compileClasspath += sourceSets.main.output + configurations.annotationProcessor
+		runtimeClasspath += output + compileClasspath
+	}
 }
 
 compileJava.source sourceSets.generated.java, sourceSets.main.java
 
 clean {
-    delete "generated-src"
+	delete "generated-src"
 }
 
 idea {
-    module {
-        sourceDirs += file("generated-src/antlr/main/")
-    }
+	module {
+		sourceDirs += file("generated-src/antlr/main/")
+	}
 }
 
 tasks.register('extractLexerLiterals') {
-    description = 'Extracts all literal strings from lexer grammar rules.'
+	description = 'Extracts all literal strings from lexer grammar rules.'
 
-    def lexerFile = file('src/main/antlr/NaftahLexer.g4')
-    def outputFile = file("$buildDir/libs/lexer-literals")
+	def lexerFile = file('src/main/antlr/NaftahLexer.g4')
+	def outputFile = file("$buildDir/libs/lexer-literals")
 
-    def tokensFile = file("$buildDir/libs/tokens-symbols.properties")
+	def tokensFile = file("$buildDir/libs/tokens-symbols.properties")
 
-    doLast {
-        // literals processing
-        def literalsPattern = ~/'([^']+)'/
-        def literals = []
-        // tokens list processing
-        def tokensPattern = ~/^(\w+)\s*:\s*((?:'[^']+'\s*\|\s*)*'[^']+')\s*;$/
-        def skipPatterns = [
-                ~/^\s*fragment\s*.*/,
-                ~/.*\s*skip\s*.*/,
-                ~/^\s*WS\s*:\s*.*/,
-                ~/^\s*LINE_COMMENT\s*:\s*.*/,
-                ~/^\s*BLOCK_COMMENT\s*:\s*.*/,
-                ~/^\s*QuotationMark\s*:\s*.*/,
-                ~/^\s*DoubleQuotationMark\s*:\s*.*/,
-                ~/^\s*DoubleQuotationMarkLeft\s*:\s*.*/,
-                ~/^\s*DoubleQuotationMarkRight\s*:\s*.*/,
-                ~/^\s*\/\/.*$/,      // skip comment lines starting with //
-                ~/^\s*$/,            // skip empty lines
-        ]
+	doLast {
+		// literals processing
+		def literalsPattern = ~/'([^']+)'/
+		def literals = []
+		// tokens list processing
+		def tokensPattern = ~/^(\w+)\s*:\s*((?:'[^']+'\s*\|\s*)*'[^']+')\s*;$/
+		def skipPatterns = [
+				~/^\s*fragment\s*.*/,
+				~/.*\s*skip\s*.*/,
+				~/^\s*WS\s*:\s*.*/,
+				~/^\s*LINE_COMMENT\s*:\s*.*/,
+				~/^\s*BLOCK_COMMENT\s*:\s*.*/,
+				~/^\s*QuotationMark\s*:\s*.*/,
+				~/^\s*DoubleQuotationMark\s*:\s*.*/,
+				~/^\s*DoubleQuotationMarkLeft\s*:\s*.*/,
+				~/^\s*DoubleQuotationMarkRight\s*:\s*.*/,
+				~/^\s*\/\/.*$/,      // skip comment lines starting with //
+				~/^\s*$/,            // skip empty lines
+		]
 
-        def literalPatterns = [
-                ~/^\s*NUMBER\s*:\s*.*/,
-                ~/^\s*CHARACTER\s*:\s*.*/,
-                ~/^\s*STRING\s*:\s*.*/,
-                ~/^\s*ID\s*:\s*.*/,
-                ~/^\s*PUNCTUATION\s*:\s*.*/
-        ]
+		def literalPatterns = [
+				~/^\s*NUMBER\s*:\s*.*/,
+				~/^\s*CHARACTER\s*:\s*.*/,
+				~/^\s*STRING\s*:\s*.*/,
+				~/^\s*ID\s*:\s*.*/,
+				~/^\s*PUNCTUATION\s*:\s*.*/
+		]
 
-        def literalTranslations = [
-                "NUMBER"     : "رقم",
-                "CHARACTER"  : "حرف",
-                "STRING"     : "سلسلة",
-                "ID"         : "معرف",
-                "PUNCTUATION": "ترقيم"
-        ]
-        def tokens = new Properties()
+		def literalTranslations = [
+				"NUMBER"     : "رقم",
+				"CHARACTER"  : "حرف",
+				"STRING"     : "سلسلة",
+				"ID"         : "معرف",
+				"PUNCTUATION": "ترقيم"
+		]
+		def tokens = new Properties()
 
-        lexerFile.withReader('UTF-8') { reader ->
-            reader.eachLine { line ->
-                // processing literals
-                if (line.contains(":")) {
-                    literalsPattern.matcher(line).each { match ->
-                        literals << match[1]
-                    }
-                }
-                // processing tokens list
-                // Skip lines matching any skip pattern
-                boolean toSkip = skipPatterns.any { skipPattern -> line ==~ skipPattern }
-                if (toSkip) {
-                    return
-                }
-                // Check for matching literal patterns and print Arabic translation
-                boolean isLiteral = literalPatterns.any { literalPattern ->
-                    if (line ==~ literalPattern) {
-                        // Extract the key (e.g., NUMBER) from the line using regex
-                        def matcher = (line =~ /^\s*(\w+)\s*:/)
-                        if (matcher.find()) {
-                            def token = matcher.group(1)
-                            def symbol = literalTranslations[token]
-                            tokens.setProperty(token, "'${symbol}'")
-                        }
-                        return true
-                    }
-                    return false
-                }
+		lexerFile.withReader('UTF-8') { reader ->
+			reader.eachLine { line ->
+				// processing literals
+				if (line.contains(":")) {
+					literalsPattern.matcher(line).each { match ->
+						literals << match[1]
+					}
+				}
+				// processing tokens list
+				// Skip lines matching any skip pattern
+				boolean toSkip = skipPatterns.any { skipPattern -> line ==~ skipPattern }
+				if (toSkip) {
+					return
+				}
+				// Check for matching literal patterns and print Arabic translation
+				boolean isLiteral = literalPatterns.any { literalPattern ->
+					if (line ==~ literalPattern) {
+						// Extract the key (e.g., NUMBER) from the line using regex
+						def matcher = (line =~ /^\s*(\w+)\s*:/)
+						if (matcher.find()) {
+							def token = matcher.group(1)
+							def symbol = literalTranslations[token]
+							tokens.setProperty(token, "'${symbol}'")
+						}
+						return true
+					}
+					return false
+				}
 
-                if (!isLiteral) {
+				if (!isLiteral) {
 
-                    def matcher = line =~ tokensPattern
+					def matcher = line =~ tokensPattern
 
-                    if (matcher.matches()) {
-                        def token = matcher[0][1]
-                        def tokensGroup = matcher[0][2]
+					if (matcher.matches()) {
+						def token = matcher[0][1]
+						def tokensGroup = matcher[0][2]
 
-                        // Extract all quoted tokens
-                        def symbols = []
-                        (tokensGroup =~ literalsPattern).each { match ->
-                            symbols << match[0]
-                        }
-                        tokens.setProperty(token, symbols.join(", "))
-                    } else {
-                        def placeholderPattern = /^(\w+)\s*:\s*(.+);$/
-                        def placeholderMatcher = line =~ placeholderPattern
-                        if (placeholderMatcher.matches()) {
-                            def token = placeholderMatcher[0][1]
-                            def symbolsStr = placeholderMatcher[0][2].trim()
+						// Extract all quoted tokens
+						def symbols = []
+						(tokensGroup =~ literalsPattern).each { match ->
+							symbols << match[0]
+						}
+						tokens.setProperty(token, symbols.join(", "))
+					} else {
+						def placeholderPattern = /^(\w+)\s*:\s*(.+);$/
+						def placeholderMatcher = line =~ placeholderPattern
+						if (placeholderMatcher.matches()) {
+							def token = placeholderMatcher[0][1]
+							def symbolsStr = placeholderMatcher[0][2].trim()
 
-                            // Split tokens by whitespace (since no pipes here)
-                            def symbolsList = symbolsStr.split(/\s+/).collect { "PLACEHOLDER(${it.trim()})" }
+							// Split tokens by whitespace (since no pipes here)
+							def symbolsList = symbolsStr.split(/\s+/).collect { "PLACEHOLDER(${it.trim()})" }
 
-                            // Remove single quotes if any (none here but safe)
-                            symbolsList = symbolsList.collect { it.replaceAll(/^'(.*)'$/, '$1') }
+							// Remove single quotes if any (none here but safe)
+							symbolsList = symbolsList.collect { it.replaceAll(/^'(.*)'$/, '$1') }
 
-                            tokens.setProperty(token, symbolsList.join(" "))
-                        }
-                    }
-                }
-            }
-        }
+							tokens.setProperty(token, symbolsList.join(" "))
+						}
+					}
+				}
+			}
+		}
 
-        outputFile.parentFile.mkdirs()
-        outputFile.withWriter('UTF-8') { writer ->
-            literals.each { writer.writeLine(it) }
-        }
+		outputFile.parentFile.mkdirs()
+		outputFile.withWriter('UTF-8') { writer ->
+			literals.each { writer.writeLine(it) }
+		}
 
-        tokensFile.withOutputStream { stream ->
-            tokens.store(stream, "tokens symbols list extracted from lexer.")
-        }
+		tokensFile.withOutputStream { stream ->
+			tokens.store(stream, "tokens symbols list extracted from lexer.")
+		}
 
-        println "Extracted ${literals.size()} literals to ${outputFile}"
-    }
+		println "Extracted ${literals.size()} literals to ${outputFile}"
+	}
 }
 
 tasks.register('writeResolvedJars') {
-    description = 'Writes resolved JAR file names to build/libs/original-dependencies'
+	description = 'Writes resolved JAR file names to build/libs/original-dependencies'
 
-    doLast {
-        def outputFile = file("$buildDir/libs/original-dependencies")
-        outputFile.text = ""
+	doLast {
+		def outputFile = file("$buildDir/libs/original-dependencies")
+		outputFile.text = ""
 
-        configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-            def jarName = artifact.file.name
-            outputFile << jarName + "\n"
-        }
+		configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+			def jarName = artifact.file.name
+			outputFile << jarName + "\n"
+		}
 
-        println "Dependencies written to: ${outputFile}"
-    }
+		println "Dependencies written to: ${outputFile}"
+	}
 }
 
 test {
-    useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
 }
 
 checkstyle {
-    toolVersion = '10.0'
-    configFile = file("config/checkstyle/checkstyle.xml")
-    ignoreFailures = false
-    showViolations = true
+	toolVersion = '10.0'
+	configFile = file("config/checkstyle/checkstyle.xml")
+	ignoreFailures = false
+	showViolations = true
 }
 
 spotless {
-    java {
-        eclipse().configFile('config/eclipse-formatter.xml')
-        removeUnusedImports()
-        importOrder('java',
-                'javax',
-                'org',
-                'com',
-                '',
-                'static java',
-                'static javax',
-                'static org',
-                'static com')
-        trimTrailingWhitespace()
-        endWithNewline()
+	java {
+		eclipse().configFile('config/eclipse-formatter.xml')
+		removeUnusedImports()
+		importOrder('java',
+				'javax',
+				'org',
+				'picocli',
+				'com',
+				'',
+				'static java',
+				'static javax',
+				'static org',
+				'static picocli',
+				'static com')
+		trimTrailingWhitespace()
+		endWithNewline()
 
-        targetExclude('build/generated-src/antlr/main/**/*.java')
-    }
-    format 'misc', {
-        target '*.gradle', '*.md', '.gitignore'
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
+		targetExclude('build/generated-src/antlr/main/**/*.java')
+	}
+	format 'misc', {
+		target '*.gradle', '*.md', '.gitignore'
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
 }
 
 tasks.named("spotlessJava").configure {
-    dependsOn tasks.named("generateGrammarSource")
+	dependsOn tasks.named("generateGrammarSource")
 }
 
 // This task formats the code, but doesn't run on build by default
 tasks.register('format') {
-    group = 'formatting'
-    description = 'Formats all Java source files.'
+	group = 'formatting'
+	description = 'Formats all Java source files.'
 
-    dependsOn 'spotlessApply'
+	dependsOn 'spotlessApply'
 }
 check.dependsOn checkstyleMain, checkstyleTest, checkstyleBenchmark
 
 // lint + format in one custom task
 tasks.register('lintAndFormat') {
-    group = 'verification'
-    description = 'Run checkstyle lint and auto-format code.'
+	group = 'verification'
+	description = 'Run checkstyle lint and auto-format code.'
 
-    dependsOn checkstyleMain, checkstyleTest, checkstyleBenchmark, spotlessApply
+	dependsOn checkstyleMain, checkstyleTest, checkstyleBenchmark, spotlessApply
 }
 
 tasks.register('generateReleasePropertiesFile') {
-    doLast {
-        def outputFile = new File("$buildDir/resources/main/META-INF/naftah-release-info.properties")
+	doLast {
+		def outputFile = new File("$buildDir/resources/main/META-INF/naftah-release-info.properties")
 
-        // Create properties file and set properties
-        outputFile.parentFile.mkdirs()  // Create the META-INF directory if it doesn't exist
+		// Create properties file and set properties
+		outputFile.parentFile.mkdirs()  // Create the META-INF directory if it doesn't exist
 
-        def buildDate = LocalDateTime.now()
+		def buildDate = LocalDateTime.now()
 
-        def date = buildDate.format(DateTimeFormatter.ofPattern('dd-MMM-yyyy'))
-        def time = buildDate.format(DateTimeFormatter.ofPattern('hh:mm:ss'))
+		def date = buildDate.format(DateTimeFormatter.ofPattern('dd-MMM-yyyy'))
+		def time = buildDate.format(DateTimeFormatter.ofPattern('hh:mm:ss'))
 
-        outputFile.withWriter('utf-8') {
-            it.write("""#
+		outputFile.withWriter('utf-8') {
+			it.write("""#
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -327,217 +329,217 @@ BundleVersion=${version}
 BuildDate=$date
 BuildTime=$time
 Class-Path= ${configurations.runtimeClasspath
-                    .files
-                    .collect { "lib/${it.name}" }
-                    .join(' ')
-            }
+					.files
+					.collect { "lib/${it.name}" }
+					.join(' ')
+			}
 """)
-        }
-    }
+		}
+	}
 }
 
 processResources.dependsOn generateReleasePropertiesFile
 
 jar {
-    manifest {
-        attributes(
-                'Main-Class': 'org.daiitech.naftah.Naftah',
-                'Implementation-Title': 'NAFTAH',
-                'Implementation-Version': project.version,
-                'Implementation-Vendor': 'DaiiTech',
-                'Built-By': System.getProperty('user.name'),
-                'Built-Date': LocalDateTime.now().format("yyyy-MM-dd'T'HH:mm"),
-                // 👇 Class-Path attribute (relative paths to JARs in /lib/)
-                'Class-Path': configurations.runtimeClasspath
-                        .files
-                        .collect { "lib/${it.name}" }
-                        .join(' ')
-        )
-    }
+	manifest {
+		attributes(
+				'Main-Class': 'org.daiitech.naftah.Naftah',
+				'Implementation-Title': 'NAFTAH',
+				'Implementation-Version': project.version,
+				'Implementation-Vendor': 'DaiiTech',
+				'Built-By': System.getProperty('user.name'),
+				'Built-Date': LocalDateTime.now().format("yyyy-MM-dd'T'HH:mm"),
+				// 👇 Class-Path attribute (relative paths to JARs in /lib/)
+				'Class-Path': configurations.runtimeClasspath
+						.files
+						.collect { "lib/${it.name}" }
+						.join(' ')
+		)
+	}
 }
 
 // Task to copy dependencies to /build/libs/lib/
 tasks.register('copyDependencies', Copy) {
-    from configurations.runtimeClasspath
-    into "$buildDir/libs/lib"
+	from configurations.runtimeClasspath
+	into "$buildDir/libs/lib"
 }
 
 jar.dependsOn processResources
 jar.finalizedBy copyDependencies
 
 tasks.register('fatJar', Jar) {
-    archiveBaseName = "${project.name}-standalone"
-    destinationDirectory.set(file("$buildDir/libs/"))
-    manifest {
-        attributes(
-                'Main-Class': 'org.daiitech.naftah.Naftah',
-                'Implementation-Title': 'NAFTAH',
-                'Implementation-Version': project.version,
-                'Implementation-Vendor': 'DaiiTech',
-                'Built-By': System.getProperty('user.name'),
-                'Built-Date': LocalDateTime.now().format("yyyy-MM-dd'T'HH:mm")
-        )
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	archiveBaseName = "${project.name}-standalone"
+	destinationDirectory.set(file("$buildDir/libs/"))
+	manifest {
+		attributes(
+				'Main-Class': 'org.daiitech.naftah.Naftah',
+				'Implementation-Title': 'NAFTAH',
+				'Implementation-Version': project.version,
+				'Implementation-Vendor': 'DaiiTech',
+				'Built-By': System.getProperty('user.name'),
+				'Built-Date': LocalDateTime.now().format("yyyy-MM-dd'T'HH:mm")
+		)
+	}
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    with jar
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+	with jar
 }
 
 tasks.register('baseDistZip', Zip) {
-    // Set the name of the output zip file
-    destinationDirectory.set(file("$buildDir/distributions"))
-    archiveBaseName.set("${project.name}")
+	// Set the name of the output zip file
+	destinationDirectory.set(file("$buildDir/distributions"))
+	archiveBaseName.set("${project.name}")
 
-    from('.') {
-        include 'INSTALL', 'LICENSE'
-        into '.'
-    }
+	from('.') {
+		include 'INSTALL', 'LICENSE'
+		into '.'
+	}
 
-    from('src/main/bin') {
-        into 'bin'
-    }
+	from('src/main/bin') {
+		into 'bin'
+	}
 
-    from('learn-by-example') {
-        into 'learn-by-example'
-    }
+	from('learn-by-example') {
+		into 'learn-by-example'
+	}
 
-    from("$buildDir/libs") {
-        include 'lexer-literals', 'original-dependencies', 'tokens-symbols.properties'
-        into 'lib'
-    }
+	from("$buildDir/libs") {
+		include 'lexer-literals', 'original-dependencies', 'tokens-symbols.properties'
+		into 'lib'
+	}
 
-    // Avoid execution by itself
-    enabled = false
+	// Avoid execution by itself
+	enabled = false
 }
 
 tasks.register('dist', Zip) {
-    dependsOn tasks.named("processResources"), tasks.named("copyDependencies"), tasks.named("jar"), tasks.named("extractLexerLiterals"), tasks.named("writeResolvedJars"), tasks.named("baseDistZip")
+	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"), tasks.named("jar"), tasks.named("extractLexerLiterals"), tasks.named("writeResolvedJars"), tasks.named("baseDistZip")
 
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    archiveVersion.set("${project.version}-bin")
+	archiveVersion.set("${project.version}-bin")
 
-    with tasks.named("baseDistZip").get()
+	with tasks.named("baseDistZip").get()
 
-    from("$buildDir/libs") {
-        include 'lib/*.jar', "${project.name}-${project.version}.jar"
-        into 'lib'
-    }
+	from("$buildDir/libs") {
+		include 'lib/*.jar', "${project.name}-${project.version}.jar"
+		into 'lib'
+	}
 
 }
 
 tasks.register('distStandalone', Zip) {
-    dependsOn tasks.named("fatJar"), tasks.named("baseDistZip")
+	dependsOn tasks.named("fatJar"), tasks.named("baseDistZip")
 
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    archiveVersion.set("${project.version}-standalone-bin")
+	archiveVersion.set("${project.version}-standalone-bin")
 
-    with tasks.named("baseDistZip").get()
+	with tasks.named("baseDistZip").get()
 
-    from("$buildDir/libs") {
-        include "${project.name}-standalone-${project.version}.jar"
-        into 'lib'
-    }
+	from("$buildDir/libs") {
+		include "${project.name}-standalone-${project.version}.jar"
+		into 'lib'
+	}
 }
 
 tasks.register('compileJmh', JavaCompile) {
-    dependsOn tasks.named('generateBenchmarkGrammarSource')
-    source = sourceSets.benchmark.java
-    classpath = sourceSets.benchmark.compileClasspath
-    destinationDirectory = file("$buildDir/classes/benchmark")
-    options.annotationProcessorPath = configurations.annotationProcessor
+	dependsOn tasks.named('generateBenchmarkGrammarSource')
+	source = sourceSets.benchmark.java
+	classpath = sourceSets.benchmark.compileClasspath
+	destinationDirectory = file("$buildDir/classes/benchmark")
+	options.annotationProcessorPath = configurations.annotationProcessor
 }
 
 tasks.register('runJmh', JavaExec) {
-    dependsOn tasks.named("compileJmh")
-    mainClass = 'org.openjdk.jmh.Main'
-    classpath = files(
-            compileJmh.destinationDirectory,
-            sourceSets.benchmark.runtimeClasspath,
-            sourceSets.main.runtimeClasspath
-    )
+	dependsOn tasks.named("compileJmh")
+	mainClass = 'org.openjdk.jmh.Main'
+	classpath = files(
+			compileJmh.destinationDirectory,
+			sourceSets.benchmark.runtimeClasspath,
+			sourceSets.main.runtimeClasspath
+	)
 
-    // Output directory for benchmark results
-    def outputDir = file("$buildDir/reports/benchmarks")
-    def resultFileJson = file("$outputDir/jmh-results.json")
+	// Output directory for benchmark results
+	def outputDir = file("$buildDir/reports/benchmarks")
+	def resultFileJson = file("$outputDir/jmh-results.json")
 
-    doFirst {
-        outputDir.mkdirs()
-    }
+	doFirst {
+		outputDir.mkdirs()
+	}
 
-    // Arguments for JMH
-    args = [
-            '-rf', 'json',               // result format
-            '-rff', resultFileJson.path, // result file for JSON
-            '-i', '5',                   // 5 iterations
-            '-wi', '3',                  // 3 warmup iterations
-            '-f', '1'                    // single fork
-    ]
+	// Arguments for JMH
+	args = [
+			'-rf', 'json',               // result format
+			'-rff', resultFileJson.path, // result file for JSON
+			'-i', '5',                   // 5 iterations
+			'-wi', '3',                  // 3 warmup iterations
+			'-f', '1'                    // single fork
+	]
 }
 
 tasks.withType(Javadoc).configureEach {
-    options {
-        encoding = 'UTF-8'
-        charSet = 'UTF-8'
-        author = true
-        version = true
-        // Add a window title for the generated docs
-        windowTitle = "${project.name} ${project.version} API"
-        // Add a doc title on the main page
-        docTitle = "${project.name} API Documentation"
-        // Show deprecated members in docs
-        addBooleanOption('Xdoclint:none', true)  // disables strict lint checks
-    }
+	options {
+		encoding = 'UTF-8'
+		charSet = 'UTF-8'
+		author = true
+		version = true
+		// Add a window title for the generated docs
+		windowTitle = "${project.name} ${project.version} API"
+		// Add a doc title on the main page
+		docTitle = "${project.name} API Documentation"
+		// Show deprecated members in docs
+		addBooleanOption('Xdoclint:none', true)  // disables strict lint checks
+	}
 }
 
 //TODO: create maven central account
 // https://central.sonatype.org/register/central-portal/
 // https://central.sonatype.com/
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
 
-            // Optional: add metadata
-            pom {
-                name = 'Naftah'
-                description = 'Naftah Programming Language : Let\'s write programs in Arabic, like living in Naftah'
-                url = 'https://github.com/Chakib-DAII/Naftah'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'yourid'
-                        name = 'Your Name'
-                        email = 'you@example.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git://github.com/yourusername/yourlang.git'
-                    developerConnection = 'scm:git:ssh://github.com/yourusername/yourlang.git'
-                    url = 'https://github.com/yourusername/yourlang'
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            name = 'MavenCentral'  // or your repo
-            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'  // For Maven Central
-            credentials {
-                username = project.findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
-                password = project.findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
-            }
-        }
-    }
+			// Optional: add metadata
+			pom {
+				name = 'Naftah'
+				description = 'Naftah Programming Language : Let\'s write programs in Arabic, like living in Naftah'
+				url = 'https://github.com/Chakib-DAII/Naftah'
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						id = 'yourid'
+						name = 'Your Name'
+						email = 'you@example.com'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/yourusername/yourlang.git'
+					developerConnection = 'scm:git:ssh://github.com/yourusername/yourlang.git'
+					url = 'https://github.com/yourusername/yourlang'
+				}
+			}
+		}
+	}
+	repositories {
+		maven {
+			name = 'MavenCentral'  // or your repo
+			url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'  // For Maven Central
+			credentials {
+				username = project.findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+				password = project.findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
+			}
+		}
+	}
 }
 
 //TODO: add signing

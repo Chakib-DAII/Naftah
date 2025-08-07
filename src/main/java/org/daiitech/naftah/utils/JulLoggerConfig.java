@@ -9,19 +9,55 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.logging.LogManager;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
 /**
+ * Utility class for initializing Java Util Logging (JUL) configuration.
+ * <p>
+ * Provides methods to initialize logging configuration from external property files
+ * or resources within the classpath. Ensures that the configuration is loaded only once.
+ * </p>
+ * <p>
+ * Supports creating log file directories and files if they do not already exist.
+ * </p>
+ *
  * @author Chakib Daii
  */
-public class JulLoggerConfig {
+public final class JulLoggerConfig {
 
 	private static boolean initialized = false;
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private JulLoggerConfig() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
+
+	/**
+	 * Initializes the logging configuration from an external properties file path.
+	 * This method is synchronized to prevent multiple initializations.
+	 *
+	 * @param propertiesPath the file system path to the logging properties file
+	 * @throws IOException if the properties file cannot be loaded or read
+	 */
 	public static synchronized void initialize(String propertiesPath) throws IOException {
 		try (InputStream configFile = Files.newInputStream(Path.of(propertiesPath))) {
 			initialize(configFile);
 		}
 	}
 
+	/**
+	 * Initializes the logging configuration from a properties file located in the classpath resources.
+	 * Ensures that the log file specified by the "java.util.logging.FileHandler.pattern" property exists,
+	 * creating parent directories and the file itself if necessary.
+	 * This method is synchronized to prevent multiple initializations.
+	 *
+	 * @param propertiesPath the resource path to the logging properties file within the classpath
+	 * @throws IOException           if the properties file cannot be found, loaded, or read
+	 * @throws FileNotFoundException if the resource cannot be found
+	 */
 	public static synchronized void initializeFromResources(String propertiesPath) throws IOException {
 		try (InputStream configStream = JulLoggerConfig.class.getClassLoader().getResourceAsStream(propertiesPath)) {
 			if (configStream == null) {
@@ -53,13 +89,11 @@ public class JulLoggerConfig {
 	}
 
 	/**
-	 * Initialize JUL logging from an external properties file path. This method is
-	 * synchronized to prevent multiple initializations.
+	 * Initializes the Java Util Logging framework from the given InputStream configuration.
+	 * This method only performs initialization once; subsequent calls are ignored.
 	 *
-	 * @param configFile
-	 *                   the path to the logging.properties file
-	 * @throws IOException
-	 *                     if the properties file cannot be loaded
+	 * @param configFile InputStream of the logging properties configuration
+	 * @throws IOException if there is an error reading the configuration
 	 */
 	public static synchronized void initialize(InputStream configFile) throws IOException {
 		if (!initialized) {

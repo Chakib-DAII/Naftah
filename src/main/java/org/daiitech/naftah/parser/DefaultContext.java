@@ -190,8 +190,9 @@ public class DefaultContext {
 	}
 
 	protected DefaultContext(DefaultContext parent, Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
-		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS.size() != 0))
+		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS.size() != 0)) {
 			throw new NaftahBugError("استخدام غير مسموح به.");
+		}
 		this.parent = parent;
 		this.depth = parent == null ? 0 : parent.getDepth() + 1;
 		this.arguments = arguments;
@@ -236,8 +237,9 @@ public class DefaultContext {
 	}
 
 	public static Pair<Pair<DeclaredFunction, Map<String, Object>>, Object> popCall() {
-		if (CALL_STACK.empty())
+		if (CALL_STACK.empty()) {
 			throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
+		}
 		return CALL_STACK.pop();
 	}
 
@@ -263,8 +265,9 @@ public class DefaultContext {
 	}
 
 	public static Pair<String, ? extends ParserRuleContext> popLoop() {
-		if (LOOP_STACK.isEmpty())
+		if (LOOP_STACK.isEmpty()) {
 			throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس الحلقات الفارغ.");
+		}
 		return LOOP_STACK.pop();
 	}
 
@@ -285,8 +288,9 @@ public class DefaultContext {
 	}
 
 	protected static void callLoader(boolean async) {
-		if (async)
+		if (async) {
 			CompletableFuture.supplyAsync(LOADER_TASK).whenComplete(LOADER_CONSUMER);
+		}
 		else {
 			ClassScanningResult classScanningResult = null;
 			Throwable thr = null;
@@ -308,8 +312,9 @@ public class DefaultContext {
 	protected static void serializeClassScanningResult(ClassScanningResult result) {
 		try {
 			var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
-			if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
+			if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY)) {
 				padText("تم حفظ البيانات في: " + path, true);
+			}
 		}
 		catch (IOException e) {
 			throw new NaftahBugError(e);
@@ -334,8 +339,9 @@ public class DefaultContext {
 	}
 
 	public static void bootstrap(boolean async) {
-		if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY))
+		if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY)) {
 			padText("تحضير فئات مسار فئات جافا (Java classpath)...", true);
+		}
 		SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
 		ASYNC_BOOT_STRAP = async;
 		long start = System.nanoTime();
@@ -368,12 +374,15 @@ public class DefaultContext {
 	}
 
 	protected static Class<?> doGetJavaType(String qualifiedName) {
-		if (INSTANTIABLE_CLASSES.containsKey(qualifiedName))
+		if (INSTANTIABLE_CLASSES.containsKey(qualifiedName)) {
 			return INSTANTIABLE_CLASSES.get(qualifiedName);
-		if (ACCESSIBLE_CLASSES.containsKey(qualifiedName))
+		}
+		if (ACCESSIBLE_CLASSES.containsKey(qualifiedName)) {
 			return ACCESSIBLE_CLASSES.get(qualifiedName);
-		if (CLASSES.containsKey(qualifiedName))
+		}
+		if (CLASSES.containsKey(qualifiedName)) {
 			return CLASSES.get(qualifiedName);
+		}
 		return Object.class;
 	}
 
@@ -381,8 +390,9 @@ public class DefaultContext {
 		if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
 			while (!BOOT_STRAPPED && (Objects.isNull(INSTANTIABLE_CLASSES) || Objects.isNull(ACCESSIBLE_CLASSES) || Objects.isNull(CLASSES))) {
 				// block the execution until bootstrapped
-				if (BOOT_STRAP_FAILED)
+				if (BOOT_STRAP_FAILED) {
 					return Object.class;
+				}
 			}
 			return doGetJavaType(qualifiedName);
 		}
@@ -460,8 +470,9 @@ public class DefaultContext {
 				else if (name.matches(QUALIFIED_CALL_REGEX)) {
 					while (!BOOT_STRAPPED && Objects.isNull(JVM_FUNCTIONS)) {
 						// block the execution until bootstrapped
-						if (BOOT_STRAP_FAILED)
+						if (BOOT_STRAP_FAILED) {
 							return null;
+						}
 					}
 					var functions = JVM_FUNCTIONS.get(name);
 					return new Pair<>(depth, functions.size() == 1 ? functions.get(0) : functions);
@@ -497,8 +508,9 @@ public class DefaultContext {
 	// functions parameters
 
 	public String getFunctionParameterName(String name) {
-		if (parameters == null)
+		if (parameters == null) {
 			parameters = new HashMap<>();
+		}
 		if (functionCallId != null) {
 			String functionName = functionCallId.split("-")[1];
 			name = DefaultContext.PARAMETER_NAME_GENERATOR.apply(functionName, name);
@@ -542,8 +554,9 @@ public class DefaultContext {
 	public void defineFunctionParameter(String name, DeclaredParameter value, boolean lenient) {
 		name = getFunctionParameterName(name);
 		if (parameters.containsKey(name)) {
-			if (lenient)
+			if (lenient) {
 				return;
+			}
 
 			throw new NaftahBugError(
 					"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
@@ -554,8 +567,9 @@ public class DefaultContext {
 	public void defineFunctionParameters(Map<String, DeclaredParameter> parameters, boolean lenient) {
 		parameters = parameters.entrySet().stream().map(entry -> Map.entry(getFunctionParameterName(entry.getKey()), entry.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
-			if (lenient)
+			if (lenient) {
 				return;
+			}
 
 			throw new NaftahBugError("المعامل موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
 		}
@@ -565,8 +579,9 @@ public class DefaultContext {
 	// functions arguments
 
 	public String getFunctionArgumentName(String name) {
-		if (arguments == null)
+		if (arguments == null) {
 			arguments = new HashMap<>();
+		}
 		if (functionCallId != null) {
 			name = DefaultContext.ARGUMENT_NAME_GENERATOR.apply(functionCallId, name);
 		}
@@ -626,8 +641,9 @@ public class DefaultContext {
 	// loop variables
 
 	public String getLoopVariableName(String name) {
-		if (loopVariables == null)
+		if (loopVariables == null) {
 			loopVariables = new HashMap<>();
+		}
 		if (loopLabel != null) {
 			name = loopLabel + "-" + name;
 		}
@@ -635,8 +651,9 @@ public class DefaultContext {
 	}
 
 	public List<String> getLoopVariableNames(String name) {
-		if (loopVariables == null)
+		if (loopVariables == null) {
 			loopVariables = new HashMap<>();
+		}
 		return getLoopLabels().stream().map(label -> label + "-" + name).toList();
 	}
 
@@ -681,8 +698,9 @@ public class DefaultContext {
 	public void defineLoopVariable(String name, Object value, boolean lenient) {
 		name = getLoopVariableName(name);
 		if (loopVariables.containsKey(name)) {
-			if (lenient)
+			if (lenient) {
 				return;
+			}
 
 			throw new NaftahBugError(
 					"المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه.".formatted(name));
@@ -693,8 +711,9 @@ public class DefaultContext {
 	public void removeLoopVariable(String name, boolean lenient) {
 		name = getLoopVariableName(name);
 		if (loopVariables.containsKey(name)) {
-			if (lenient)
+			if (lenient) {
 				return;
+			}
 
 			throw new NaftahBugError("المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إزالته.".formatted(name));
 		}
@@ -758,8 +777,9 @@ public class DefaultContext {
 
 	public void setParsingAssignment(boolean parsingAssignment) {
 		this.parsingAssignment = parsingAssignment;
-		if (!this.parsingAssignment)
+		if (!this.parsingAssignment) {
 			setDeclarationOfAssignment(null);
+		}
 	}
 
 	public Pair<DeclaredVariable, Boolean> getDeclarationOfAssignment() {

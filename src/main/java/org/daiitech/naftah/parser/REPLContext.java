@@ -37,8 +37,9 @@ public class REPLContext extends DefaultContext {
 			if (context.parent != null) {
 				context.parent.variables.putAll(context.variables);
 				context.parent.functions.putAll(context.functions);
-				if (context.parseTreeExecution != null)
+				if (context.parseTreeExecution != null) {
 					context.parent.parseTreeExecution.copyFrom(context.parseTreeExecution);
+				}
 			}
 			return context;
 		}

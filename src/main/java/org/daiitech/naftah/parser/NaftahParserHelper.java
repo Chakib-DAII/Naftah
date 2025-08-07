@@ -48,7 +48,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
 /**
  * @author Chakib Daii
  */
-public class NaftahParserHelper {
+public final class NaftahParserHelper {
 	public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("PLACEHOLDER\\((.*?)\\)");
 	public static final String NULL = "<فارغ>";
 	public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
@@ -64,6 +64,14 @@ public class NaftahParserHelper {
 		catch (Throwable ignored) {
 
 		}
+	}
+
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private NaftahParserHelper() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
 	public static <T extends Tree> boolean hasParentOfType(ParseTree ctx, Class<T> type) {
@@ -135,17 +143,20 @@ public class NaftahParserHelper {
 
 	public static void prepareDeclaredFunction(
 												org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor, DeclaredFunction function) {
-		if (function.getParameters() == null && hasChild(function.getParametersContext()))
+		if (function.getParameters() == null && hasChild(function.getParametersContext())) {
 			function.setParameters(
 					(List<DeclaredParameter>) visit(naftahParserBaseVisitor, function.getParametersContext()));
-		if (function.getReturnType() == null && hasChild(function.getReturnTypeContext()))
+		}
+		if (function.getReturnType() == null && hasChild(function.getReturnTypeContext())) {
 			function.setReturnType(visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
+		}
 	}
 
 	public static Map<String, Object> prepareDeclaredFunctionArguments(List<DeclaredParameter> parameters, List<Pair<String, Object>> arguments) {
-		if (parameters.size() < arguments.size())
+		if (parameters.size() < arguments.size()) {
 			throw new NaftahBugError(
 					"عدد الوسائط الممررة '%s' يتجاوز عدد المعاملات '%s' المحددة.".formatted(arguments, parameters));
+		}
 
 		// how many params don't have defaults
 		List<DeclaredParameter> requiredParams = parameters.stream().filter(p -> p.getDefaultValue() == null).toList();
@@ -158,9 +169,10 @@ public class NaftahParserHelper {
 
 		Map<String, Object> finalArguments = new HashMap<>();
 		if (namedArguments.isEmpty()) {
-			if (arguments.size() < requiredParams.size())
+			if (arguments.size() < requiredParams.size()) {
 				throw new NaftahBugError(
 						"عدد الوسائط الممررة '%s' أقل من عدد المعاملات '%s' المحددة.".formatted(arguments, parameters));
+			}
 			// process non named args
 			finalArguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
 				var argument = arguments.get(i);
@@ -324,8 +336,9 @@ public class NaftahParserHelper {
 			// fixes, like
 			// above)
 			script = NORMALIZER.normalize(script);
-			if (Boolean.getBoolean(DEBUG_PROPERTY))
+			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				getRawHexBytes(script);
+			}
 			charStream = CharStreams.fromString(script);
 		}
 		return charStream;
@@ -382,8 +395,9 @@ public class NaftahParserHelper {
 
 	public static String declaredValueToString(boolean constant, String name, Object value) {
 		return "<%s %s = %s>".formatted(constant ? "ثابت" : "متغير", name, Optional.ofNullable(value).map(o -> {
-			if (o instanceof Boolean aBoolean)
+			if (o instanceof Boolean aBoolean) {
 				return ObjectUtils.booleanToString(aBoolean);
+			}
 			return o;
 		}).orElse(NaftahParserHelper.NULL));
 	}
@@ -414,8 +428,9 @@ public class NaftahParserHelper {
 		if (result instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
 			return loopSignalDetails.signal();
 		}
-		else
+		else {
 			return LoopSignal.NONE;
+		}
 	}
 
 	public static boolean checkInsideLoop(ParseTree ctx) {

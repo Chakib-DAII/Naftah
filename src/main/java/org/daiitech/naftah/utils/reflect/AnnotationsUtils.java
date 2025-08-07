@@ -11,6 +11,7 @@ import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.NaftahFunction;
 import org.daiitech.naftah.builtin.lang.NaftahFunctionProvider;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * Utility class for working with Java annotations on methods, classes, and
@@ -18,18 +19,24 @@ import org.daiitech.naftah.builtin.lang.NaftahFunctionProvider;
  *
  * @author Chakib Daii
  */
-public class AnnotationsUtils {
+public final class AnnotationsUtils {
+
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Throws {@link NaftahBugError} if called.
+	 */
+	private AnnotationsUtils() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
 
 	/**
 	 * Checks if the specified annotations are present on the given method.
 	 *
-	 * @param method
-	 *                    The method to check.
-	 * @param annotations
-	 *                    One or more annotation classes to verify.
+	 * @param method      The method to check.
+	 * @param annotations One or more annotation classes to verify.
 	 * @return {@code true} if all specified annotations are present on the method,
 	 *         otherwise {@code
-	*     false}.
+	 * false}.
 	 */
 	@SafeVarargs
 	public static boolean isAnnotationsPresent(Method method, Class<? extends Annotation>... annotations) {
@@ -43,8 +50,7 @@ public class AnnotationsUtils {
 	/**
 	 * Returns a list of all annotations declared on the given method.
 	 *
-	 * @param method
-	 *               The method to inspect.
+	 * @param method The method to inspect.
 	 * @return A list of annotations present on the method.
 	 */
 	public static List<Annotation> getMethodAnnotations(Method method) {
@@ -54,12 +60,9 @@ public class AnnotationsUtils {
 	/**
 	 * Returns a specific annotation instance from the given method.
 	 *
-	 * @param method
-	 *                        The method to inspect.
-	 * @param annotationClass
-	 *                        The class of the annotation to retrieve.
-	 * @param <T>
-	 *                        The type of the annotation.
+	 * @param method          The method to inspect.
+	 * @param annotationClass The class of the annotation to retrieve.
+	 * @param <T>             The type of the annotation.
 	 * @return The annotation instance if present, or {@code null} if not.
 	 */
 	public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass) {
@@ -70,8 +73,7 @@ public class AnnotationsUtils {
 	 * Extracts the custom {@link NaftahFunction} representation from the
 	 * {@link NaftahFn} annotation on the method.
 	 *
-	 * @param method
-	 *               The method annotated with {@link NaftahFn}.
+	 * @param method The method annotated with {@link NaftahFn}.
 	 * @return A {@link NaftahFunction} instance constructed from the annotation.
 	 */
 	public static NaftahFunction getNaftahFunctionAnnotation(Method method) {
@@ -82,13 +84,11 @@ public class AnnotationsUtils {
 	/**
 	 * Checks if the specified annotations are present on the given class.
 	 *
-	 * @param aClass
-	 *                    The class to check.
-	 * @param annotations
-	 *                    One or more annotation classes to verify.
+	 * @param aClass      The class to check.
+	 * @param annotations One or more annotation classes to verify.
 	 * @return {@code true} if all specified annotations are present on the class,
 	 *         otherwise {@code
-	*     false}.
+	 * false}.
 	 */
 	@SafeVarargs
 	public static boolean isAnnotationsPresent(Class<?> aClass, Class<? extends Annotation>... annotations) {
@@ -102,8 +102,7 @@ public class AnnotationsUtils {
 	/**
 	 * Returns a list of all annotations present on the given class.
 	 *
-	 * @param aClass
-	 *               The class to inspect.
+	 * @param aClass The class to inspect.
 	 * @return A list of annotations present on the class.
 	 */
 	public static List<Annotation> getClassAnnotations(Class<?> aClass) {
@@ -113,12 +112,9 @@ public class AnnotationsUtils {
 	/**
 	 * Returns a specific annotation instance from the given class.
 	 *
-	 * @param aClass
-	 *                        The class to inspect.
-	 * @param annotationClass
-	 *                        The class of the annotation to retrieve.
-	 * @param <T>
-	 *                        The type of the annotation.
+	 * @param aClass          The class to inspect.
+	 * @param annotationClass The class of the annotation to retrieve.
+	 * @param <T>             The type of the annotation.
 	 * @return The annotation instance if present, or {@code null} if not.
 	 */
 	public static <T extends Annotation> T getClassAnnotation(Class<?> aClass, Class<T> annotationClass) {
@@ -129,8 +125,7 @@ public class AnnotationsUtils {
 	 * Extracts the custom {@link NaftahFunctionProvider} representation from the
 	 * {@link NaftahFnProvider} annotation on the class.
 	 *
-	 * @param aClass
-	 *               The class annotated with {@link NaftahFnProvider}.
+	 * @param aClass The class annotated with {@link NaftahFnProvider}.
 	 * @return A {@link NaftahFunctionProvider} instance constructed from the
 	 *         annotation.
 	 */
@@ -142,8 +137,7 @@ public class AnnotationsUtils {
 	/**
 	 * Returns a list of all annotations present on the given method parameter.
 	 *
-	 * @param parameter
-	 *                  The method parameter to inspect.
+	 * @param parameter The method parameter to inspect.
 	 * @return A list of annotations present on the parameter.
 	 */
 	public static List<Annotation> getParametersAnnotations(Parameter parameter) {
@@ -153,12 +147,9 @@ public class AnnotationsUtils {
 	/**
 	 * Returns a specific annotation instance from the given method parameter.
 	 *
-	 * @param parameter
-	 *                        The parameter to inspect.
-	 * @param annotationClass
-	 *                        The class of the annotation to retrieve.
-	 * @param <T>
-	 *                        The type of the annotation.
+	 * @param parameter       The parameter to inspect.
+	 * @param annotationClass The class of the annotation to retrieve.
+	 * @param <T>             The type of the annotation.
 	 * @return The annotation instance if present, or {@code null} if not.
 	 */
 	public static <T extends Annotation> T getParametersAnnotation(Parameter parameter, Class<T> annotationClass) {

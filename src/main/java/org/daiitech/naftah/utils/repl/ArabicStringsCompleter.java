@@ -10,10 +10,29 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 /**
+ * A custom {@link StringsCompleter} implementation that supports shaping Arabic text
+ * for better display in terminals that require right-to-left formatting.
+ * <p>
+ * This completer processes a collection of strings and optionally reshapes them
+ * using a utility method (e.g., for contextual Arabic script display).
+ * </p>
+ *
+ * <p>
+ * Each input string is added as a {@link Candidate}, with reshaping applied if necessary.
+ * ANSI escape codes are stripped from the completion value but not the display value.
+ * </p>
+ *
  * @author Chakib Daii
  */
 public class ArabicStringsCompleter extends StringsCompleter {
 
+	/**
+	 * Constructs a new {@code ArabicStringsCompleter} using the given iterable of strings.
+	 * If Arabic text shaping is enabled, each string will be reshaped for display.
+	 *
+	 * @param strings an iterable collection of string candidates for completion (must not be {@code null})
+	 * @throws AssertionError if {@code strings} is {@code null}
+	 */
 	public ArabicStringsCompleter(Iterable<String> strings) {
 		assert strings != null;
 		this.candidates = new ArrayList<>();
@@ -27,7 +46,9 @@ public class ArabicStringsCompleter extends StringsCompleter {
 					// do nothing
 				}
 			}
-			candidates.add(new Candidate(AttributedString.stripAnsi(string), display, null, null, null, null, true));
+			candidates.add(new Candidate(
+					AttributedString.stripAnsi(string), display, null, null, null, null, true
+			));
 		}
 	}
 }

@@ -15,7 +15,11 @@ import org.daiitech.naftah.errors.NaftahBugError;
 public final class NaftahExecutionLogger {
 	private static final Logger LOGGER = Logger.getLogger("DefaultNaftahParserVisitor");
 
-	public NaftahExecutionLogger() {
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private NaftahExecutionLogger() {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
@@ -29,118 +33,174 @@ public final class NaftahExecutionLogger {
 
 	public static <T extends ParserRuleContext> String logExecution(boolean doLog, T ctx) {
 		String result = null;
-		if (ctx instanceof NaftahParser.ProgramContext context)
+		if (ctx instanceof NaftahParser.ProgramContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.BlockStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.BlockStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.IfStatementStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.IfStatementStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.DeclarationStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.DeclarationStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.AssignmentStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.AssignmentStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.FunctionDeclarationStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.FunctionDeclarationStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.FunctionCallStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.FunctionCallStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ExpressionStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.ExpressionStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ReturnStatementStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.ReturnStatementStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.DeclarationContext context)
+		}
+		else if (ctx instanceof NaftahParser.DeclarationContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.AssignmentContext context)
+		}
+		else if (ctx instanceof NaftahParser.AssignmentContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.FunctionDeclarationContext context)
+		}
+		else if (ctx instanceof NaftahParser.FunctionDeclarationContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ParameterDeclarationListContext context)
+		}
+		else if (ctx instanceof NaftahParser.ParameterDeclarationListContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ParameterDeclarationContext context)
+		}
+		else if (ctx instanceof NaftahParser.ParameterDeclarationContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.FunctionCallContext context)
+		}
+		else if (ctx instanceof NaftahParser.FunctionCallContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ArgumentListContext context)
+		}
+		else if (ctx instanceof NaftahParser.ArgumentListContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.IfStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.IfStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ReturnStatementContext context)
+		}
+		else if (ctx instanceof NaftahParser.ReturnStatementContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.BlockContext context)
+		}
+		else if (ctx instanceof NaftahParser.BlockContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ValueExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.ValueExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.MinusExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.MinusExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ParenthesisExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.ParenthesisExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.ModExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.ModExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.DivExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.DivExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.GreaterThanExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.GreaterThanExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.LessThanEqualsExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.LessThanEqualsExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.GreaterThanEqualsExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.GreaterThanEqualsExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.NotEqualsExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.NotEqualsExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.EqualsExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.EqualsExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.LessThanExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.LessThanExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.PlusExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.PlusExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.MulExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.MulExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.NumberValueContext context)
+		}
+		else if (ctx instanceof NaftahParser.NumberValueContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.CharacterValueContext context)
+		}
+		else if (ctx instanceof NaftahParser.CharacterValueContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.StringValueContext context)
+		}
+		else if (ctx instanceof NaftahParser.StringValueContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.TrueValueContext context)
+		}
+		else if (ctx instanceof NaftahParser.TrueValueContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.FalseValueContext context)
+		}
+		else if (ctx instanceof NaftahParser.FalseValueContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.NullValueContext context)
+		}
+		else if (ctx instanceof NaftahParser.NullValueContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.IdValueContext context)
+		}
+		else if (ctx instanceof NaftahParser.IdValueContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.VoidReturnTypeContext context)
+		}
+		else if (ctx instanceof NaftahParser.VoidReturnTypeContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.TypeReturnTypeContext context)
+		}
+		else if (ctx instanceof NaftahParser.TypeReturnTypeContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.VarTypeContext context)
+		}
+		else if (ctx instanceof NaftahParser.VarTypeContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.BuiltInTypeContext context)
+		}
+		else if (ctx instanceof NaftahParser.BuiltInTypeContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.BuiltInContext context)
+		}
+		else if (ctx instanceof NaftahParser.BuiltInContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.QualifiedNameTypeContext context)
+		}
+		else if (ctx instanceof NaftahParser.QualifiedNameTypeContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.QualifiedNameContext context)
+		}
+		else if (ctx instanceof NaftahParser.QualifiedNameContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.QualifiedCallContext context)
+		}
+		else if (ctx instanceof NaftahParser.QualifiedCallContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.BitwiseXorExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.BitwiseXorExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.NotExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.NotExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.PreDecrementExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.PreDecrementExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.PostDecrementExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.PostDecrementExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.BitwiseOrExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.BitwiseOrExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.BitwiseNotExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.BitwiseNotExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.BitwiseAndExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.BitwiseAndExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.PreIncrementExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.PreIncrementExpressionContext context) {
 			result = logExecution(doLog, context);
-		else if (ctx instanceof NaftahParser.PostIncrementExpressionContext context)
+		}
+		else if (ctx instanceof NaftahParser.PostIncrementExpressionContext context) {
 			result = logExecution(doLog, context);
+		}
 		return result;
 	}
 

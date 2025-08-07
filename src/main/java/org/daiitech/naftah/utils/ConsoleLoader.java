@@ -1,11 +1,50 @@
 package org.daiitech.naftah.utils;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
-public class ConsoleLoader {
+/**
+ * Utility class for displaying a console-based loading spinner animation.
+ * <p>
+ * The spinner runs on a separate thread and can be started/stopped using static methods.
+ * It uses ANSI escape codes to clear the terminal screen for visual effect.
+ * </p>
+ *
+ * <p>
+ * Example usage:
+ * </p>
+ * <pre>{@code
+ * ConsoleLoader.startLoader("Loading...");
+ * // do work
+ * ConsoleLoader.stopLoader();
+ * }</pre>
+ *
+ * @author Chakib Daii
+ */
+public final class ConsoleLoader {
+	/**
+	 * Characters used to animate the spinner.
+	 */
 	private static final char[] SPINNER = {'|', '/', '-', '\\'};
+	/**
+	 * Background thread responsible for rendering the spinner animation.
+	 */
 	private static Thread LOADER_THREAD;
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private ConsoleLoader() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
+
+	/**
+	 * Starts the loader spinner in a separate thread.
+	 *
+	 * @param text the message to display alongside the spinner
+	 */
 	public static void startLoader(String text) {
 		LOADER_THREAD = new Thread(() -> {
 			int i = 0;
@@ -26,14 +65,21 @@ public class ConsoleLoader {
 		LOADER_THREAD.start();
 	}
 
+	/**
+	 * Stops the loader spinner if running and clears the screen.
+	 */
 	public static void stopLoader() {
-		if (LOADER_THREAD.isAlive())
+		if (LOADER_THREAD.isAlive()) {
 			LOADER_THREAD.interrupt();
+		}
 		clearScreen();
 	}
 
+	/**
+	 * Clears the console screen using ANSI escape codes.
+	 * Moves the cursor to the top-left corner.
+	 */
 	public static void clearScreen() {
-		// ANSI escape code to clear screen and move cursor to top-left
 		System.out.print("\033[H\033[2J");
 		System.out.flush();
 	}

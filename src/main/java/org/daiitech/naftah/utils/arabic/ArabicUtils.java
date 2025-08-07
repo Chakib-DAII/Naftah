@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.OS;
 import org.daiitech.naftah.utils.function.ThrowingBiFunction;
 import org.daiitech.naftah.utils.function.ThrowingFunction;
@@ -28,7 +29,7 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 /**
  * @author Chakib Daii
  */
-public class ArabicUtils {
+public final class ArabicUtils {
 	// Escape code for setting RTL text direction in the terminal (for compatible
 	// terminals)
 	public static final String RTL_DIRECTION = "\u001B[?2004h"; // Set RTL
@@ -86,13 +87,22 @@ public class ArabicUtils {
 		CUSTOM_RULES = stringBuilder + CUSTOM_RULES;
 	}
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private ArabicUtils() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
+
 	public static boolean isMultiline(String input) {
 		return getTextMatcher(input).find();
 	}
 
 	private static Matcher getTextMatcher(String input) {
-		if (TEXT_MATCHER_CACHE.containsKey(input))
+		if (TEXT_MATCHER_CACHE.containsKey(input)) {
 			return TEXT_MATCHER_CACHE.get(input).reset();
+		}
 
 		Matcher matcher = TEXT_MULTILINE_PATTERN.matcher(input);
 		TEXT_MATCHER_CACHE.put(input, matcher);
@@ -111,12 +121,14 @@ public class ArabicUtils {
 
 				if (!line.trim().isEmpty()) {
 					String result = function.apply(line, print);
-					if (!print)
+					if (!print) {
 						output.append(result);
+					}
 				}
 
-				if (!print)
+				if (!print) {
 					output.append(newline); // keep original newlines
+				}
 			}
 			return print ? null : output.toString();
 
@@ -146,8 +158,9 @@ public class ArabicUtils {
 
 			return output.toString();
 		}
-		else
+		else {
 			return function.apply(input);
+		}
 	}
 
 	public static synchronized String shape(String input) {
@@ -179,8 +192,9 @@ public class ArabicUtils {
 			System.out.println(result);
 			return null;
 		}
-		else
+		else {
 			return result;
+		}
 	}
 
 	public static synchronized String doPadText(String input, int terminalWidth, boolean print) {
@@ -196,14 +210,16 @@ public class ArabicUtils {
 				if (print) {
 					System.out.println(result);
 				}
-				else
+				else {
 					lines.add(result);
+				}
 
 				currentLine = new StringBuilder(word);
 			}
 			else {
-				if (!currentLine.isEmpty())
+				if (!currentLine.isEmpty()) {
 					currentLine.append(" ");
+				}
 				currentLine.append(word);
 			}
 		}
@@ -214,8 +230,9 @@ public class ArabicUtils {
 			if (print) {
 				System.out.println(result);
 			}
-			else
+			else {
 				lines.add(result);
+			}
 		}
 		return print ? null : String.join("\n", lines);
 	}
@@ -243,8 +260,7 @@ public class ArabicUtils {
 	/**
 	 * Removes diacritic marks from Arabic text.
 	 *
-	 * @param text
-	 *             Arabic text with diacritics
+	 * @param text Arabic text with diacritics
 	 * @return Arabic text without diacritics
 	 */
 	public static String removeDiacritics(String text) {
@@ -280,8 +296,9 @@ public class ArabicUtils {
 		word = splitIdentifier(word).stream().map(transliterator::transliterate).collect(Collectors.joining());
 
 		// Remove the diacritics from the Arabic text
-		if (removeDiacritics)
+		if (removeDiacritics) {
 			word = removeDiacritics(word);
+		}
 
 		return word;
 	}

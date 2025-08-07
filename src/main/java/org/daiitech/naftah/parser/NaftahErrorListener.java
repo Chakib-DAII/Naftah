@@ -41,8 +41,9 @@ public class NaftahErrorListener extends BaseErrorListener {
 				StringBuilder expected = new StringBuilder();
 				for (int tokenType : expectedTokens.toArray()) {
 					String formattedTokenSymbols = getFormattedTokenSymbols(vocabulary, tokenType, true);
-					if (formattedTokenSymbols == null)
+					if (formattedTokenSymbols == null) {
 						continue;
+					}
 					expected.append(formattedTokenSymbols);
 				}
 

@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Properties;
 
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.ResourceUtils;
 
 /**
@@ -13,7 +14,7 @@ import org.daiitech.naftah.utils.ResourceUtils;
  *         <p>
  *         Exposes the Naftah release information
  */
-public class ReleaseInfo {
+public final class ReleaseInfo {
 
 	private static final Properties RELEASE_INFO = new Properties();
 	private static final String RELEASE_INFO_FILE = "META-INF/naftah-release-info.properties";
@@ -25,8 +26,9 @@ public class ReleaseInfo {
 	static {
 		URL url;
 		ClassLoader cl = ReleaseInfo.class.getClassLoader();
-		if (cl == null)
+		if (cl == null) {
 			cl = ClassLoader.getSystemClassLoader();
+		}
 		if (cl instanceof URLClassLoader) {
 			// this avoids going through the parent classloaders/bootstrap
 			url = ((URLClassLoader) cl).findResource(RELEASE_INFO_FILE);
@@ -45,6 +47,14 @@ public class ReleaseInfo {
 				// ignore. In case of some exception, release info is not available
 			}
 		}
+	}
+
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private ReleaseInfo() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
 	public static String getVersion() {

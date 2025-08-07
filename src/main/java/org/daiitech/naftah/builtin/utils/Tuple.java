@@ -23,14 +23,16 @@ public final class Tuple implements List<Object>, Serializable {
 
 	// factory methods
 	public static Tuple of(Object... elements) {
-		if (elements == null)
+		if (elements == null) {
 			throw newNaftahBugNullError();
+		}
 		return new Tuple(List.of(elements));
 	}
 
 	public static Tuple of(List<Object> elements) {
-		if (elements == null)
+		if (elements == null) {
 			throw newNaftahBugNullError();
+		}
 		return new Tuple(elements);
 	}
 

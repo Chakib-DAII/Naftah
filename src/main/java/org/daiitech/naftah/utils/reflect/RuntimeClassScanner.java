@@ -18,6 +18,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
@@ -55,6 +57,14 @@ public final class RuntimeClassScanner {
 	}
 
 	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private RuntimeClassScanner() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
+
+	/**
 	 * scans classes from default paths
 	 *
 	 * @return map of class files and possible {@link URLClassLoader}
@@ -82,8 +92,7 @@ public final class RuntimeClassScanner {
 	/**
 	 * loads classes using a map of classnames
 	 *
-	 * @param classNames
-	 *                   map of classnames to load
+	 * @param classNames map of classnames to load
 	 * @return a set of @{@link Class} objects
 	 */
 	public static Set<Class<?>> loadClassSet(Map<String, ClassLoader> classNames, boolean accessibleOnly) {
@@ -97,10 +106,11 @@ public final class RuntimeClassScanner {
 			var classLoaderOptional = Optional.ofNullable(nameEntry.getValue());
 			var loaders = Arrays.copyOf(CLASS_LOADERS, CLASS_LOADERS.length + (classLoaderOptional.isEmpty() ? 0 : 1));
 			classLoaderOptional.ifPresent(classLoader -> loaders[CLASS_LOADERS.length + 1] = classLoader);
-			for (ClassLoader cl : loaders)
+			for (ClassLoader cl : loaders) {
 				try {
-					if (Objects.isNull(cl))
+					if (Objects.isNull(cl)) {
 						continue;
+					}
 					String className = nameEntry.getKey();
 					Class<?> currentClass = Class.forName(className, false, cl);
 					if (!instantiableOnly || isInstantiableClass(currentClass)) {
@@ -112,6 +122,7 @@ public final class RuntimeClassScanner {
 				catch (Throwable t) {
 					// Silently skip classes that can't be loaded
 				}
+			}
 		}
 		return loadedClasses;
 	}
@@ -119,10 +130,8 @@ public final class RuntimeClassScanner {
 	/**
 	 * scans classes inside directories
 	 *
-	 * @param root
-	 *             root directory where to start the scan
-	 * @param dir
-	 *             current dir/file
+	 * @param root root directory where to start the scan
+	 * @param dir  current dir/file
 	 * @return map of class files and possible {@link URLClassLoader}
 	 */
 	public static Map<String, ClassLoader> findClassesInDirectory(File root, File dir) {
@@ -145,8 +154,7 @@ public final class RuntimeClassScanner {
 	/**
 	 * scans classes inside jar
 	 *
-	 * @param jarFile
-	 *                jar file
+	 * @param jarFile jar file
 	 * @return map of class files and possible {@link URLClassLoader}
 	 */
 	public static Map<String, ClassLoader> findClassesInJar(File jarFile) {
@@ -178,13 +186,10 @@ public final class RuntimeClassScanner {
 	/**
 	 * reading jar nested entries
 	 *
-	 * @param outerJar
-	 *                      the system jar
-	 * @param innerJarEntry
-	 *                      the jar inside the system jar
+	 * @param outerJar      the system jar
+	 * @param innerJarEntry the jar inside the system jar
 	 * @return jar file
-	 * @throws IOException
-	 *                     IO exception
+	 * @throws IOException IO exception
 	 */
 	public static File jarEntryToTempFile(JarFile outerJar, JarEntry innerJarEntry) throws IOException {
 		// Create a temp file

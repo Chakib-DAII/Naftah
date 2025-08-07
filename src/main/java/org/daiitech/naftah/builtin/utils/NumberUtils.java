@@ -17,14 +17,18 @@ import org.daiitech.naftah.errors.NaftahBugError;
  * @author Chakib Daii
  */
 public final class NumberUtils {
-
 	private static final BigInteger LONG_MIN = BigInteger.valueOf(Long.MIN_VALUE);
 
 	private static final BigInteger LONG_MAX = BigInteger.valueOf(Long.MAX_VALUE);
 
-	public NumberUtils() {
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private NumberUtils() {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
+
 
 	public static Number parseDynamicNumber(Object object) {
 		if (object instanceof Number number) {
@@ -46,11 +50,9 @@ public final class NumberUtils {
 	 * that order).
 	 * </ul>
 	 *
-	 * @param text
-	 *             the input numeric string
+	 * @param text the input numeric string
 	 * @return the parsed Number
-	 * @throws RuntimeException
-	 *                          if parsing fails or if value is NaN or infinite
+	 * @throws RuntimeException if parsing fails or if value is NaN or infinite
 	 */
 	public static Number parseDynamicNumber(String text) {
 		Objects.requireNonNull(text, "text must not be null");
@@ -126,13 +128,10 @@ public final class NumberUtils {
 	/**
 	 * Convert the given number into an instance of the given target class.
 	 *
-	 * @param number
-	 *                    the number to convert
-	 * @param targetClass
-	 *                    the target class to convert to
+	 * @param number      the number to convert
+	 * @param targetClass the target class to convert to
 	 * @return the converted number
-	 * @throws IllegalArgumentException
-	 *                                  if the target class is not supported (i.e. not a standard Number
+	 * @throws IllegalArgumentException if the target class is not supported (i.e. not a standard Number
 	 *                                  subclass as included in the JDK)
 	 * @see java.lang.Byte
 	 * @see java.lang.Short
@@ -207,13 +206,10 @@ public final class NumberUtils {
 	 * Check for a {@code BigInteger}/{@code BigDecimal} long overflow before
 	 * returning the given number as a long value.
 	 *
-	 * @param number
-	 *                    the number to convert
-	 * @param targetClass
-	 *                    the target class to convert to
+	 * @param number      the number to convert
+	 * @param targetClass the target class to convert to
 	 * @return the long value, if convertible without overflow
-	 * @throws IllegalArgumentException
-	 *                                  if there is an overflow
+	 * @throws IllegalArgumentException if there is an overflow
 	 * @see #raiseOverflowException
 	 */
 	private static long checkedLongValue(Number number, Class<? extends Number> targetClass) {
@@ -234,12 +230,9 @@ public final class NumberUtils {
 	/**
 	 * Raise an <em>overflow</em> exception for the given number and target class.
 	 *
-	 * @param number
-	 *                    the number we tried to convert
-	 * @param targetClass
-	 *                    the target class we tried to convert to
-	 * @throws IllegalArgumentException
-	 *                                  if there is an overflow
+	 * @param number      the number we tried to convert
+	 * @param targetClass the target class we tried to convert to
+	 * @throws IllegalArgumentException if there is an overflow
 	 */
 	private static void raiseOverflowException(Number number, Class<?> targetClass) {
 		// TODO: classNames should be in arabic or transliterated or in naftah language
@@ -255,13 +248,10 @@ public final class NumberUtils {
 	/**
 	 * Adds two {@link Number} values.
 	 *
-	 * @param x
-	 *          left operand
-	 * @param y
-	 *          right operand
+	 * @param x   left operand
+	 * @param y   right operand
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the result of addition
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number add(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -272,10 +262,8 @@ public final class NumberUtils {
 	/**
 	 * Adds two numeric values represented as strings.
 	 *
-	 * @param x
-	 *          left operand
-	 * @param y
-	 *          right operand
+	 * @param x left operand
+	 * @param y right operand
 	 * @return the result of addition
 	 */
 	public static Number add(Object x, Object y) {
@@ -287,10 +275,8 @@ public final class NumberUtils {
 	/**
 	 * Adds two {@link DynamicNumber} instances with type promotion.
 	 *
-	 * @param dx
-	 *           left operand
-	 * @param dy
-	 *           right operand
+	 * @param dx left operand
+	 * @param dy right operand
 	 * @return the result of addition
 	 */
 	public static Number add(DynamicNumber dx, DynamicNumber dy) {
@@ -336,13 +322,10 @@ public final class NumberUtils {
 	/**
 	 * Subtracts two {@link Number} values.
 	 *
-	 * @param x
-	 *          left operand
-	 * @param y
-	 *          right operand
+	 * @param x   left operand
+	 * @param y   right operand
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the result of subtraction
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number subtract(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -353,10 +336,8 @@ public final class NumberUtils {
 	/**
 	 * Subtracts two numeric values represented as strings.
 	 *
-	 * @param x
-	 *          left operand
-	 * @param y
-	 *          right operand
+	 * @param x left operand
+	 * @param y right operand
 	 * @return the result of subtraction
 	 */
 	public static Number subtract(Object x, Object y) {
@@ -368,10 +349,8 @@ public final class NumberUtils {
 	/**
 	 * Subtracts two {@link DynamicNumber} instances with type promotion.
 	 *
-	 * @param dx
-	 *           left operand
-	 * @param dy
-	 *           right operand
+	 * @param dx left operand
+	 * @param dy right operand
 	 * @return the result of subtraction
 	 */
 	public static Number subtract(DynamicNumber dx, DynamicNumber dy) {
@@ -417,13 +396,10 @@ public final class NumberUtils {
 	/**
 	 * Multiplies two {@link Number} values.
 	 *
-	 * @param x
-	 *          left operand
-	 * @param y
-	 *          right operand
+	 * @param x   left operand
+	 * @param y   right operand
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the result of multiplication
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number multiply(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -434,10 +410,8 @@ public final class NumberUtils {
 	/**
 	 * Multiplies two numeric values represented as strings.
 	 *
-	 * @param x
-	 *          left operand
-	 * @param y
-	 *          right operand
+	 * @param x left operand
+	 * @param y right operand
 	 * @return the result of multiplication
 	 */
 	public static Number multiply(Object x, Object y) {
@@ -449,10 +423,8 @@ public final class NumberUtils {
 	/**
 	 * Multiplies two {@link DynamicNumber} instances with type promotion.
 	 *
-	 * @param dx
-	 *           left operand
-	 * @param dy
-	 *           right operand
+	 * @param dx left operand
+	 * @param dy right operand
 	 * @return the result of multiplication
 	 */
 	public static Number multiply(DynamicNumber dx, DynamicNumber dy) {
@@ -498,13 +470,10 @@ public final class NumberUtils {
 	/**
 	 * Divides two {@link Number} values.
 	 *
-	 * @param x
-	 *          the dividend
-	 * @param y
-	 *          the divisor
+	 * @param x   the dividend
+	 * @param y   the divisor
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the result of division
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number divide(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -515,10 +484,8 @@ public final class NumberUtils {
 	/**
 	 * Divides two numeric values represented as strings.
 	 *
-	 * @param x
-	 *          the dividend
-	 * @param y
-	 *          the divisor
+	 * @param x the dividend
+	 * @param y the divisor
 	 * @return the result of division
 	 */
 	public static Number divide(Object x, Object y) {
@@ -530,10 +497,8 @@ public final class NumberUtils {
 	/**
 	 * Divides two {@link DynamicNumber} instances with type promotion.
 	 *
-	 * @param dx
-	 *           the dividend
-	 * @param dy
-	 *           the divisor
+	 * @param dx the dividend
+	 * @param dy the divisor
 	 * @return the result of division
 	 */
 	public static Number divide(DynamicNumber dx, DynamicNumber dy) {
@@ -579,13 +544,10 @@ public final class NumberUtils {
 	/**
 	 * Computes the modulo (remainder) of two {@link Number} values.
 	 *
-	 * @param x
-	 *          the dividend
-	 * @param y
-	 *          the divisor
+	 * @param x   the dividend
+	 * @param y   the divisor
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the result of division
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number modulo(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -596,10 +558,8 @@ public final class NumberUtils {
 	/**
 	 * Computes the modulo (remainder) of two numeric values represented as strings.
 	 *
-	 * @param x
-	 *          the dividend
-	 * @param y
-	 *          the divisor
+	 * @param x the dividend
+	 * @param y the divisor
 	 * @return the result of division
 	 */
 	public static Number modulo(Object x, Object y) {
@@ -612,10 +572,8 @@ public final class NumberUtils {
 	 * Computes the modulo (remainder) of two {@link DynamicNumber} instances with
 	 * type promotion.
 	 *
-	 * @param dx
-	 *           the dividend
-	 * @param dy
-	 *           the divisor
+	 * @param dx the dividend
+	 * @param dy the divisor
 	 * @return the result of division
 	 */
 	public static Number modulo(DynamicNumber dx, DynamicNumber dy) {
@@ -661,13 +619,10 @@ public final class NumberUtils {
 	/**
 	 * Returns the greater of two {@link Number} values.
 	 *
-	 * @param x
-	 *          the first number
-	 * @param y
-	 *          the second number
+	 * @param x   the first number
+	 * @param y   the second number
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the greatest of {@code x} and {@code y}, as a {@code Number}
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number max(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -678,10 +633,8 @@ public final class NumberUtils {
 	/**
 	 * Returns the greater of two numeric values represented as strings.
 	 *
-	 * @param x
-	 *          the first number
-	 * @param y
-	 *          the second number
+	 * @param x the first number
+	 * @param y the second number
 	 * @return the greatest of {@code x} and {@code y}, as a {@code Number}
 	 */
 	public static Number max(Object x, Object y) {
@@ -694,10 +647,8 @@ public final class NumberUtils {
 	 * Returns the greater of two {@link DynamicNumber} instances with type
 	 * promotion.
 	 *
-	 * @param dx
-	 *           the first number
-	 * @param dy
-	 *           the second number
+	 * @param dx the first number
+	 * @param dy the second number
 	 * @return the greatest of {@code dx} and {@code dy}, as a {@code Number}
 	 */
 	public static Number max(DynamicNumber dx, DynamicNumber dy) {
@@ -737,13 +688,10 @@ public final class NumberUtils {
 	/**
 	 * Returns the lesser of two {@link Number} values.
 	 *
-	 * @param x
-	 *          the first number
-	 * @param y
-	 *          the second number
+	 * @param x   the first number
+	 * @param y   the second number
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the least of {@code x} and {@code y}, as a {@code Number}
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number min(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -754,10 +702,8 @@ public final class NumberUtils {
 	/**
 	 * Returns the lesser of two numeric values represented as strings.
 	 *
-	 * @param x
-	 *          the first number
-	 * @param y
-	 *          the second number
+	 * @param x the first number
+	 * @param y the second number
 	 * @return the least of {@code x} and {@code y}, as a {@code Number}
 	 */
 	public static Number min(Object x, Object y) {
@@ -770,10 +716,8 @@ public final class NumberUtils {
 	 * Returns the lesser of two {@link DynamicNumber} instances with type
 	 * promotion.
 	 *
-	 * @param dx
-	 *           the first number
-	 * @param dy
-	 *           the second number
+	 * @param dx the first number
+	 * @param dy the second number
 	 * @return the least of {@code dx} and {@code dy}, as a {@code Number}
 	 */
 	public static Number min(DynamicNumber dx, DynamicNumber dy) {
@@ -813,15 +757,12 @@ public final class NumberUtils {
 	/**
 	 * Raises a number {@link Number} to the power of another.
 	 *
-	 * @param base
-	 *                 the base number
-	 * @param exponent
-	 *                 the exponent
+	 * @param base     the base number
+	 * @param exponent the exponent
+	 * @param <T>      concrete type that extends @{@link Number}
 	 * @return the result of raising {@code base} to the power of {@code exponent},
 	 *         as a {@code
-	*     Number}
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
+	 * Number}
 	 */
 	public static <T extends Number> Number pow(T base, int exponent) {
 		DynamicNumber dx = DynamicNumber.of(base);
@@ -831,13 +772,11 @@ public final class NumberUtils {
 	/**
 	 * Raises a number represented as string to the power of another.
 	 *
-	 * @param base
-	 *                 the base number
-	 * @param exponent
-	 *                 the exponent
+	 * @param base     the base number
+	 * @param exponent the exponent
 	 * @return the result of raising {@code base} to the power of {@code exponent},
 	 *         as a {@code
-	*     Number}
+	 * Number}
 	 */
 	public static Number pow(Object base, int exponent) {
 		DynamicNumber dx = DynamicNumber.of(base);
@@ -847,13 +786,11 @@ public final class NumberUtils {
 	/**
 	 * Raises a number {@link DynamicNumber} to the power of another.
 	 *
-	 * @param base
-	 *                 the base number
-	 * @param exponent
-	 *                 the exponent
+	 * @param base     the base number
+	 * @param exponent the exponent
 	 * @return the result of raising {@code base} to the power of {@code exponent},
 	 *         as a {@code
-	*     Number}
+	 * Number}
 	 */
 	public static Number pow(DynamicNumber base, int exponent) {
 		if (base.isBigDecimal() || base.isBigInteger()) {
@@ -868,11 +805,9 @@ public final class NumberUtils {
 	/**
 	 * Rounds the given number {@link Number} to the nearest integer.
 	 *
-	 * @param x
-	 *          the number to round
+	 * @param x   the number to round
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the rounded number
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number round(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -882,8 +817,7 @@ public final class NumberUtils {
 	/**
 	 * Rounds the given number represented as string to the nearest integer.
 	 *
-	 * @param x
-	 *          the number to round
+	 * @param x the number to round
 	 * @return the rounded number
 	 */
 	public static Number round(Object x) {
@@ -894,15 +828,16 @@ public final class NumberUtils {
 	/**
 	 * Rounds the given number {@link DynamicNumber} to the nearest integer.
 	 *
-	 * @param dx
-	 *           the number to round
+	 * @param dx the number to round
 	 * @return the rounded number
 	 */
 	public static Number round(DynamicNumber dx) {
-		if (dx.isDecimal() || dx.isInteger())
+		if (dx.isDecimal() || dx.isInteger()) {
 			return dx.asBigDecimal().round(MathContext.UNLIMITED);
-		if (dx.isDouble() || dx.isLong())
+		}
+		if (dx.isDouble() || dx.isLong()) {
 			return Math.round(dx.asDouble());
+		}
 		return Math.round(dx.asFloat());
 	}
 
@@ -910,11 +845,9 @@ public final class NumberUtils {
 	 * Returns the largest integer less than or equal the given number
 	 * {@link Number} to the nearest integer.
 	 *
-	 * @param x
-	 *          the number to round
+	 * @param x   the number to round
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the rounded number
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number floor(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -925,8 +858,7 @@ public final class NumberUtils {
 	 * Returns the largest integer less than or equal the given number represented
 	 * as string to the nearest integer.
 	 *
-	 * @param x
-	 *          the number to round
+	 * @param x the number to round
 	 * @return the rounded number
 	 */
 	public static Number floor(Object x) {
@@ -938,8 +870,7 @@ public final class NumberUtils {
 	 * Returns the largest integer less than or equal the given number
 	 * {@link DynamicNumber} to the nearest integer.
 	 *
-	 * @param dx
-	 *           the number to round
+	 * @param dx the number to round
 	 * @return the rounded number
 	 */
 	public static Number floor(DynamicNumber dx) {
@@ -977,11 +908,9 @@ public final class NumberUtils {
 	 * Returns the smallest integer greater than or equal the given number
 	 * {@link Number} to the nearest integer.
 	 *
-	 * @param x
-	 *          the number to apply ceiling to
+	 * @param x   the number to apply ceiling to
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the ceiling value
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number ceil(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -992,8 +921,7 @@ public final class NumberUtils {
 	 * Returns the smallest integer greater than or equal the given number
 	 * represented as string to the nearest integer.
 	 *
-	 * @param x
-	 *          the number to apply ceiling to
+	 * @param x the number to apply ceiling to
 	 * @return the ceiling value
 	 */
 	public static Number ceil(Object x) {
@@ -1005,8 +933,7 @@ public final class NumberUtils {
 	 * Returns the smallest integer greater than or equal the given number
 	 * {@link DynamicNumber} to the nearest integer.
 	 *
-	 * @param dx
-	 *           the number to apply ceiling to
+	 * @param dx the number to apply ceiling to
 	 * @return the ceiling value
 	 */
 	public static Number ceil(DynamicNumber dx) {
@@ -1043,11 +970,9 @@ public final class NumberUtils {
 	/**
 	 * Returns the negation of the given number {@link Number}.
 	 *
-	 * @param x
-	 *          the number to negate
+	 * @param x   the number to negate
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the negated number
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number negate(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1057,8 +982,7 @@ public final class NumberUtils {
 	/**
 	 * Returns the negation of the given number represented as string.
 	 *
-	 * @param x
-	 *          the number to negate
+	 * @param x the number to negate
 	 * @return the negated number
 	 */
 	public static Number negate(Object x) {
@@ -1069,28 +993,35 @@ public final class NumberUtils {
 	/**
 	 * Returns the negation of the given number {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the number to negate
+	 * @param dx the number to negate
 	 * @return the negated number
 	 */
 	public static Number negate(DynamicNumber dx) {
 		Number result;
-		if (dx.isBigDecimal())
+		if (dx.isBigDecimal()) {
 			result = dx.asBigDecimal().negate();
-		else if (dx.isDouble())
+		}
+		else if (dx.isDouble()) {
 			result = -dx.asDouble();
-		else if (dx.isFloat())
+		}
+		else if (dx.isFloat()) {
 			result = -dx.asFloat();
-		else if (dx.isBigInteger())
+		}
+		else if (dx.isBigInteger()) {
 			result = dx.asBigInteger().negate();
-		else if (dx.isLong())
+		}
+		else if (dx.isLong()) {
 			result = -dx.asLong();
-		else if (dx.isInt())
+		}
+		else if (dx.isInt()) {
 			result = -dx.asInt();
-		else if (dx.isShort())
+		}
+		else if (dx.isShort()) {
 			result = -dx.asShort();
-		else if (dx.isByte())
+		}
+		else if (dx.isByte()) {
 			result = -dx.asByte();
+		}
 		else {
 			// Unknown or unsupported number types
 
@@ -1104,11 +1035,9 @@ public final class NumberUtils {
 	/**
 	 * Returns the square root of the given number {@link Number}.
 	 *
-	 * @param x
-	 *          the number to compute the square root of
+	 * @param x   the number to compute the square root of
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the square root of the number
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number sqrt(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1118,8 +1047,7 @@ public final class NumberUtils {
 	/**
 	 * Returns the square root of the given number represented as string.
 	 *
-	 * @param x
-	 *          the number to compute the square root of
+	 * @param x the number to compute the square root of
 	 * @return the square root of the number
 	 */
 	public static Number sqrt(Object x) {
@@ -1130,26 +1058,25 @@ public final class NumberUtils {
 	/**
 	 * Returns the square root of the given number {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the number to compute the square root of
+	 * @param dx the number to compute the square root of
 	 * @return the square root of the number
 	 */
 	public static Number sqrt(DynamicNumber dx) {
-		if (dx.isBigDecimal())
+		if (dx.isBigDecimal()) {
 			return dx.asBigDecimal().sqrt(MathContext.UNLIMITED);
-		if (dx.isBigInteger())
+		}
+		if (dx.isBigInteger()) {
 			return dx.asBigInteger().sqrt();
+		}
 		return Math.sqrt(dx.asDouble());
 	}
 
 	/**
 	 * Returns the absolute value of the given number {@link Number}.
 	 *
-	 * @param x
-	 *          the number to compute the absolute value of
+	 * @param x   the number to compute the absolute value of
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return the absolute value of the number
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> Number abs(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1159,8 +1086,7 @@ public final class NumberUtils {
 	/**
 	 * Returns the absolute value of the given number represented as string.
 	 *
-	 * @param x
-	 *          the number to compute the absolute value of
+	 * @param x the number to compute the absolute value of
 	 * @return the absolute value of the number
 	 */
 	public static Number abs(Object x) {
@@ -1171,26 +1097,25 @@ public final class NumberUtils {
 	/**
 	 * Returns the absolute value of the given number {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the number to compute the absolute value of
+	 * @param dx the number to compute the absolute value of
 	 * @return the absolute value of the number
 	 */
 	public static Number abs(DynamicNumber dx) {
-		if (dx.isDecimal())
+		if (dx.isDecimal()) {
 			return dx.asBigDecimal().abs();
-		if (dx.isBigInteger())
+		}
+		if (dx.isBigInteger()) {
 			return dx.asBigInteger().abs();
+		}
 		return Math.abs(dx.asDouble());
 	}
 
 	/**
 	 * Returns the signum of the given number {@link Number}.
 	 *
-	 * @param x
-	 *          the number to compute the signum of
+	 * @param x   the number to compute the signum of
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return -1 if the number is negative, 0 if zero, and 1 if positive
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> int signum(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1200,8 +1125,7 @@ public final class NumberUtils {
 	/**
 	 * Returns the signum of the given number represented as string.
 	 *
-	 * @param x
-	 *          the number to compute the signum of
+	 * @param x the number to compute the signum of
 	 * @return -1 if the number is negative, 0 if zero, and 1 if positive
 	 */
 	public static int signum(Object x) {
@@ -1212,26 +1136,25 @@ public final class NumberUtils {
 	/**
 	 * Returns the signum of the given number {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the number to compute the signum of
+	 * @param dx the number to compute the signum of
 	 * @return -1 if the number is negative, 0 if zero, and 1 if positive
 	 */
 	public static int signum(DynamicNumber dx) {
-		if (dx.isDecimal())
+		if (dx.isDecimal()) {
 			return dx.asBigDecimal().signum();
-		if (dx.isInteger())
+		}
+		if (dx.isInteger()) {
 			return dx.asBigInteger().signum();
+		}
 		return Double.compare(dx.asDouble(), 0);
 	}
 
 	/**
 	 * Checks if the given number {@link Number} is zero.
 	 *
-	 * @param x
-	 *          the number to check
+	 * @param x   the number to check
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return {@code true} if the number is zero; {@code false} otherwise
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> boolean isZero(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1241,8 +1164,7 @@ public final class NumberUtils {
 	/**
 	 * Checks if the given number is zero represented as string.
 	 *
-	 * @param x
-	 *          the number to check
+	 * @param x the number to check
 	 * @return {@code true} if the number is zero; {@code false} otherwise
 	 */
 	public static boolean isZero(Object x) {
@@ -1253,8 +1175,7 @@ public final class NumberUtils {
 	/**
 	 * Checks if the given number {@link DynamicNumber} is zero.
 	 *
-	 * @param dx
-	 *           the number to check
+	 * @param dx the number to check
 	 * @return {@code true} if the number is zero; {@code false} otherwise
 	 */
 	public static boolean isZero(DynamicNumber dx) {
@@ -1264,14 +1185,11 @@ public final class NumberUtils {
 	/**
 	 * Checks if two numbers {@link Number} are equal.
 	 *
-	 * @param x
-	 *          the first number
-	 * @param y
-	 *          the second number
+	 * @param x   the first number
+	 * @param y   the second number
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return {@code true} if {@code x} and {@code y} are equal in value;
 	 *         {@code false} otherwise
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> boolean equals(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1282,10 +1200,8 @@ public final class NumberUtils {
 	/**
 	 * Checks if two numbers, represented as strings, are equal.
 	 *
-	 * @param x
-	 *          the first number
-	 * @param y
-	 *          the second number
+	 * @param x the first number
+	 * @param y the second number
 	 * @return {@code true} if {@code x} and {@code y} are equal in value;
 	 *         {@code false} otherwise
 	 */
@@ -1298,10 +1214,8 @@ public final class NumberUtils {
 	/**
 	 * Checks if two numbers {@link DynamicNumber} are equal.
 	 *
-	 * @param dx
-	 *           the first number
-	 * @param dy
-	 *           the second number
+	 * @param dx the first number
+	 * @param dy the second number
 	 * @return {@code true} if {@code dx} and {@code dy} are equal in value;
 	 *         {@code false} otherwise
 	 */
@@ -1312,14 +1226,11 @@ public final class NumberUtils {
 	/**
 	 * Compares two numbers {@link Number}.
 	 *
-	 * @param x
-	 *          the first number
-	 * @param y
-	 *          the second number
+	 * @param x   the first number
+	 * @param y   the second number
+	 * @param <T> concrete type that extends @{@link Number}
 	 * @return a negative integer if {@code x < y}; zero if {@code x == y}; a
 	 *         positive integer if {@code x > y}
-	 * @param <T>
-	 *            concrete type that extends @{@link Number}
 	 */
 	public static <T extends Number> int compare(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1330,10 +1241,8 @@ public final class NumberUtils {
 	/**
 	 * Compares two numbers, represented as strings.
 	 *
-	 * @param x
-	 *          the first number
-	 * @param y
-	 *          the second number
+	 * @param x the first number
+	 * @param y the second number
 	 * @return a negative integer if {@code x < y}; zero if {@code x == y}; a
 	 *         positive integer if {@code x > y}
 	 */
@@ -1346,10 +1255,8 @@ public final class NumberUtils {
 	/**
 	 * Compares two numbers {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the first number
-	 * @param dy
-	 *           the second number
+	 * @param dx the first number
+	 * @param dy the second number
 	 * @return a negative integer if {@code dx < dy}; zero if {@code dx == dy}; a
 	 *         positive integer if {@code dx > dy}
 	 */
@@ -1384,10 +1291,8 @@ public final class NumberUtils {
 	/**
 	 * Performs a bitwise AND operation on the given numbers {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the first number
-	 * @param dy
-	 *           the first number
+	 * @param dx the first number
+	 * @param dy the first number
 	 * @return the number representing {@code x & y}
 	 */
 	public static Number and(DynamicNumber dx, DynamicNumber dy) {
@@ -1434,10 +1339,8 @@ public final class NumberUtils {
 	/**
 	 * Performs a bitwise OR operation on the given numbers {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the first number
-	 * @param dy
-	 *           the first number
+	 * @param dx the first number
+	 * @param dy the first number
 	 * @return the number representing {@code x | y}
 	 */
 	public static Number or(DynamicNumber dx, DynamicNumber dy) {
@@ -1484,10 +1387,8 @@ public final class NumberUtils {
 	/**
 	 * Performs a bitwise XOR operation on the given numbers {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the first number
-	 * @param dy
-	 *           the first number
+	 * @param dx the first number
+	 * @param dy the first number
 	 * @return the number representing {@code x ^ y}
 	 */
 	public static Number xor(DynamicNumber dx, DynamicNumber dy) {
@@ -1532,8 +1433,7 @@ public final class NumberUtils {
 	/**
 	 * Performs a bitwise NOT operation on the given number {@link DynamicNumber}.
 	 *
-	 * @param dx
-	 *           the number to apply bitwise NOT operation to
+	 * @param dx the number to apply bitwise NOT operation to
 	 * @return the number representing {@code ~x}
 	 */
 	public static Number not(DynamicNumber dx) {
@@ -1581,10 +1481,8 @@ public final class NumberUtils {
 	 * <p>
 	 * This is equivalent to multiplying the value by {@code 2^n}.
 	 *
-	 * @param dx
-	 *                  the number to shift
-	 * @param positions
-	 *                  the number of bits to shift to the left; must be non-negative
+	 * @param dx        the number to shift
+	 * @param positions the number of bits to shift to the left; must be non-negative
 	 * @return the result of {@code value << n}
 	 */
 	public static Number shiftLeft(DynamicNumber dx, int positions) {
@@ -1632,10 +1530,8 @@ public final class NumberUtils {
 	 * <p>
 	 * This is equivalent to dividing the value by {@code 2^n}, with sign extension.
 	 *
-	 * @param dx
-	 *                  the number to shift
-	 * @param positions
-	 *                  the number of bits to shift to the right; must be non-negative
+	 * @param dx        the number to shift
+	 * @param positions the number of bits to shift to the right; must be non-negative
 	 * @return the result of {@code value >> n}
 	 */
 	public static Number shiftRight(DynamicNumber dx, int positions) {
@@ -1683,10 +1579,8 @@ public final class NumberUtils {
 	 * <p>
 	 * This is equivalent to dividing the value by {@code 2^n}, with sign extension.
 	 *
-	 * @param dx
-	 *                  the number to shift
-	 * @param positions
-	 *                  the number of bits to shift to the right; must be non-negative
+	 * @param dx        the number to shift
+	 * @param positions the number of bits to shift to the right; must be non-negative
 	 * @return the result of an unsigned right shift (zero-fill) of {@code value} by
 	 *         {@code n} bits
 	 */
@@ -2019,16 +1913,12 @@ public final class NumberUtils {
 	 * non-negative values. If the value is negative, the behavior may not match
 	 * unsigned semantics in lower-level languages like Java's primitive types.
 	 *
-	 * @param value
-	 *              the {@code BigInteger} to shift; must not be {@code null}
-	 * @param n
-	 *              the number of bits to shift right; must be non-negative
+	 * @param value the {@code BigInteger} to shift; must not be {@code null}
+	 * @param n     the number of bits to shift right; must be non-negative
 	 * @return the result of shifting {@code value} to the right by {@code n} bits,
 	 *         using zero-fill
-	 * @throws NullPointerException
-	 *                                  if {@code value} is {@code null}
-	 * @throws IllegalArgumentException
-	 *                                  if {@code n} is negative
+	 * @throws NullPointerException     if {@code value} is {@code null}
+	 * @throws IllegalArgumentException if {@code n} is negative
 	 */
 	public static BigInteger unsignedShiftRight(BigInteger value, int n) {
 		if (value.signum() >= 0) {

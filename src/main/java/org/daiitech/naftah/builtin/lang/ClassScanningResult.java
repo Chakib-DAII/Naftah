@@ -6,19 +6,66 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Holds the results of a classpath or module scanning operation.
+ * <p>
+ * This class maintains collections of discovered classes, their qualifiers,
+ * loaders, and associated functions for use within the runtime or interpreter.
+ * </p>
+ * <p>
+ * The data includes:
+ * <ul>
+ * <li>Mapping of class names to their {@link ClassLoader}</li>
+ * <li>Sets of class qualifiers, including Arabic-qualified names</li>
+ * <li>Maps of qualified class names to {@link Class} objects</li>
+ * <li>Filtered maps for accessible and instantiable classes</li>
+ * <li>Collections of JVM and builtin functions grouped by qualified call names</li>
+ * </ul>
+ * </p>
+ *
  * @author Chakib Daii
  */
 public class ClassScanningResult implements Serializable {
+	/**
+	 * Maps class names to their respective ClassLoader instances.
+	 */
 	private Map<String, ClassLoader> classNames;
+
+	/**
+	 * Set of fully qualified class names discovered.
+	 */
 	private Set<String> classQualifiers;
+
+	/**
+	 * Set of fully qualified class names in Arabic notation.
+	 */
 	private Set<String> arabicClassQualifiers;
-	// qualifiedName -> CLass<?>
+
+	/**
+	 * Maps fully qualified class names to their corresponding Class objects.
+	 */
 	private Map<String, Class<?>> classes;
+
+	/**
+	 * Subset of classes that are accessible for reflection or usage.
+	 */
 	private Map<String, Class<?>> accessibleClasses;
+
+	/**
+	 * Subset of classes that can be instantiated (e.g., not abstract).
+	 */
 	private Map<String, Class<?>> instantiableClasses;
-	// qualifiedCall -> Method
+
+	/**
+	 * Maps qualified method or function names to lists of JVM functions (methods).
+	 */
 	private Map<String, List<JvmFunction>> jvmFunctions;
+
+	/**
+	 * Maps qualified method or function names to lists of builtin functions.
+	 */
 	private Map<String, List<BuiltinFunction>> builtinFunctions;
+
+	// Getters and setters
 
 	public Map<String, ClassLoader> getClassNames() {
 		return classNames;

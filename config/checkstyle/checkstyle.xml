@@ -79,10 +79,10 @@
 			<property name="processJavadoc" value="true"/>
 		</module>
 		<module name="com.puppycrawl.tools.checkstyle.checks.imports.ImportOrderCheck">
-			<property name="groups" value="java,javax,org,com"/>
+			<property name="groups" value="java,javax,org,picocli,com"/>
 			<property name="ordered" value="true"/>
 			<property name="separated" value="true"/>
-			<property name="staticGroups" value="java,javax,org,com"/>
+			<property name="staticGroups" value="java,javax,org,picocli,com"/>
 			<property name="option" value="bottom"/>
 		</module>
 		<module name="com.puppycrawl.tools.checkstyle.checks.imports.IllegalImportCheck">
@@ -139,7 +139,7 @@
 		</module>
 		<module name="com.puppycrawl.tools.checkstyle.checks.javadoc.AtclauseOrderCheck">
 			<property name="target" value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, RECORD_DEF"/>
-			<property name="tagOrder" value="@author, @since, @param, @see, @version, @serial, @deprecated"/>
+			<property name="tagOrder" value="@param, @author, @serial, @see, @since, @serial, @deprecated"/>
 		</module>
 		<module name="com.puppycrawl.tools.checkstyle.checks.javadoc.AtclauseOrderCheck">
 			<property name="target" value="METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
@@ -204,14 +204,6 @@
 			<property name="maximum" value="0"/>
 			<property name="message"
 					  value="String.toUpperCase() should be String.toUpperCase(Locale.ROOT)"/>
-			<property name="ignoreComments" value="true"/>
-		</module>
-		<module name="com.puppycrawl.tools.checkstyle.checks.regexp.RegexpSinglelineJavaCheck">
-			<property name="id" value="systemOutErrPrint"/>
-			<property name="format" value="System\.(out|err)\.print"/>
-			<property name="maximum" value="0"/>
-			<property name="message"
-					  value="Printing to System.out and System.err is forbidden in the main codebase"/>
 			<property name="ignoreComments" value="true"/>
 		</module>
 		<module

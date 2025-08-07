@@ -6,7 +6,16 @@ import static org.daiitech.naftah.errors.ExceptionUtils.getMostSpecificCause;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
 
 public final class ExceptionLocalizer {
+
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("exceptions", ARABIC);
+
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private ExceptionLocalizer() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
 
 	public static String localizeException(Throwable e) {
 		e = getMostSpecificCause(e);

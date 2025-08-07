@@ -42,7 +42,8 @@ public class ArabicOutputTransformer extends OutputStream {
 				original.write(b, off, len); // fallback
 			}
 		}
-		else
+		else {
 			original.write(b, off, len); // fallback
+		}
 	}
 }

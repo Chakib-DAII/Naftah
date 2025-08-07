@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
 <!DOCTYPE suppressions PUBLIC "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
-        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+		"https://checkstyle.org/dtds/suppressions_1_2.dtd">
 <suppressions>
 
-    <!-- Global: generated sources -->
-    <suppress files="[\\/]build[\\/]generated[\\/]sources[\\/]" checks=".*"/>
-    <suppress files="[\\/]build[\\/]generated-src[\\/]antlr[\\/]" checks=".*"/>
+	<!-- Global: generated sources -->
+	<suppress files="[\\/]build[\\/]generated[\\/]sources[\\/]" checks=".*"/>
+	<suppress files="[\\/]build[\\/]generated-src[\\/]antlr[\\/]" checks=".*"/>
 
-    <!-- Global: package-info.java -->
-    <suppress files="(^(?!.+[\\/]src[\\/]main[\\/]java[\\/]).*)|(.*framework-docs.*)" checks="JavadocPackage"/>
-    <suppress files="(^(?!.+[\\/]src[\\/]main[\\/]java[\\/].*package-info\.java))" checks="RegexpSinglelineJava"
-              id="packageLevelNullMarkedAnnotation"/>
+	<!-- Global: package-info.java -->
+	<suppress files="(^(?!.+[\\/]src[\\/]main[\\/]java[\\/]).*)|(.*framework-docs.*)" checks="JavadocPackage"/>
+	<suppress files="(^(?!.+[\\/]src[\\/]main[\\/]java[\\/].*package-info\.java))" checks="RegexpSinglelineJava"
+			  id="packageLevelNullMarkedAnnotation"/>
 
-    <!-- Global: tests and test fixtures -->
-    <suppress files="[\\/]src[\\/](test|testFixtures)[\\/](java|java21)[\\/]"
-              checks="AnnotationLocation|AnnotationUseStyle|AtclauseOrder|AvoidNestedBlocks|FinalClass|HideUtilityClassConstructor|InnerTypeLast|JavadocStyle|JavadocType|JavadocVariable|LeftCurly|MultipleVariableDeclarations|NeedBraces|OneTopLevelClass|OuterTypeFilename|RequireThis"/>
-    <suppress files="[\\/]src[\\/](test|testFixtures)[\\/](java|java21)[\\/]" checks="RegexpSinglelineJava"
-              id="toLowerCaseWithoutLocale"/>
-    <suppress files="[\\/]src[\\/](test|testFixtures)[\\/](java|java21)[\\/]" checks="RegexpSinglelineJava"
-              id="toUpperCaseWithoutLocale"/>
-    <suppress files="[\\/]src[\\/](test|testFixtures)[\\/](java|java21)[\\/]" checks="RegexpSinglelineJava"
-              id="systemOutErrPrint"/>
+	<!-- Global: tests and test fixtures -->
+	<suppress files="[\\/]src[\\/](test|testFixtures)[\\/](java|java21)[\\/]"
+			  checks="AnnotationLocation|AnnotationUseStyle|AtclauseOrder|AvoidNestedBlocks|FinalClass|HideUtilityClassConstructor|InnerTypeLast|JavadocStyle|JavadocType|JavadocVariable|LeftCurly|MultipleVariableDeclarations|NeedBraces|OneTopLevelClass|OuterTypeFilename|RequireThis"/>
+	<suppress files="[\\/]src[\\/](test|testFixtures)[\\/](java|java21)[\\/]" checks="RegexpSinglelineJava"
+			  id="toLowerCaseWithoutLocale"/>
+	<suppress files="[\\/]src[\\/](test|testFixtures)[\\/](java|java21)[\\/]" checks="RegexpSinglelineJava"
+			  id="toUpperCaseWithoutLocale"/>
 
-    <!-- JMH benchmarks -->
-    <suppress files="[\\/]src[\\/]benchmark[\\/]java[\\/]org[\\/]daiitech[\\/]naftah[\\/]benchmarks[\\/]"
-              checks="JavadocVariable|JavadocStyle|InnerTypeLast"/>
+	<!-- JMH benchmarks -->
+	<suppress files="[\\/]src[\\/]benchmark[\\/]java[\\/]org[\\/]daiitech[\\/]naftah[\\/]benchmarks[\\/]"
+			  checks="JavadocVariable|JavadocStyle|InnerTypeLast"/>
 
 </suppressions>

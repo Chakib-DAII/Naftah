@@ -4,7 +4,15 @@ import org.antlr.v4.runtime.Parser;
 
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 
-public class ExceptionUtils {
+public final class ExceptionUtils {
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private ExceptionUtils() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
+
 	public static Throwable getRootCause(Throwable original) {
 		if (original == null) {
 			return null;

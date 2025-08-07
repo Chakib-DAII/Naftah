@@ -18,11 +18,14 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
  * @author Chakib Daii
  */
 public final class StringInterpolator {
-
 	private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("(?:\\$\\{([^}]+)}|\\{([^}]+)}\\$)");
 	private static final Map<String, Matcher> MATCHER_CACHE = new HashMap<>();
 
-	public StringInterpolator() {
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private StringInterpolator() {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
@@ -75,8 +78,9 @@ public final class StringInterpolator {
 	}
 
 	private static Matcher getMatcher(String input) {
-		if (MATCHER_CACHE.containsKey(input))
+		if (MATCHER_CACHE.containsKey(input)) {
 			return MATCHER_CACHE.get(input).reset();
+		}
 
 		Matcher matcher = INTERPOLATION_PATTERN.matcher(input);
 		MATCHER_CACHE.put(input, matcher);

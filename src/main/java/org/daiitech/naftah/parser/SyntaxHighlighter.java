@@ -39,8 +39,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 			return new AttributedString(buffer);
 		}
 
-		if (buffer.split(ESCAPE_CHARS_REGEX).length > 1)
+		if (buffer.split(ESCAPE_CHARS_REGEX).length > 1) {
 			throw new EOFError(-1, -1, "Escaped new line", "newline");
+		}
 
 		// Create input stream from buffer
 		CharStream input = CharStreams.fromString(buffer);
@@ -63,8 +64,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 			int type = token.getType();
 			String text = token.getText();
 
-			if (type == -1 || text == null)
+			if (type == -1 || text == null) {
 				continue;
+			}
 
 			int tokenStartIndex = token.getStartIndex();
 			int tokenStopIndex = token.getStopIndex();

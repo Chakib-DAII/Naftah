@@ -22,6 +22,14 @@ public class DynamicNumber {
 		this.value = NumberUtils.parseDynamicNumber(value);
 	}
 
+	public static DynamicNumber of(Number value) {
+		return new DynamicNumber(value);
+	}
+
+	public static DynamicNumber of(Object value) {
+		return new DynamicNumber(value);
+	}
+
 	public boolean isByte() {
 		return value instanceof Byte;
 	}
@@ -87,16 +95,19 @@ public class DynamicNumber {
 	}
 
 	public BigInteger asBigInteger() {
-		if (isBigInteger())
+		if (isBigInteger()) {
 			return (BigInteger) value;
+		}
 		return new BigInteger(value.toString());
 	}
 
 	public BigDecimal asBigDecimal() {
-		if (isBigDecimal())
+		if (isBigDecimal()) {
 			return (BigDecimal) value;
-		if (isBigInteger())
+		}
+		if (isBigInteger()) {
 			return new BigDecimal((BigInteger) value);
+		}
 		return new BigDecimal(value.toString());
 	}
 
@@ -152,8 +163,7 @@ public class DynamicNumber {
 			return this; // keep BigDecimal as is if decimal part exists
 		}
 
-		if (val instanceof BigInteger) {
-			BigInteger bi = (BigInteger) val;
+		if (val instanceof BigInteger bi) {
 			// Try to downcast BigInteger to Long if fits
 			if (bi.bitLength() <= 63) {
 				long l = bi.longValue();
@@ -185,10 +195,12 @@ public class DynamicNumber {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
 
 		DynamicNumber that = (DynamicNumber) o;
 
@@ -203,13 +215,5 @@ public class DynamicNumber {
 	@Override
 	public String toString() {
 		return value.toString();
-	}
-
-	public static DynamicNumber of(Number value) {
-		return new DynamicNumber(value);
-	}
-
-	public static DynamicNumber of(Object value) {
-		return new DynamicNumber(value);
 	}
 }

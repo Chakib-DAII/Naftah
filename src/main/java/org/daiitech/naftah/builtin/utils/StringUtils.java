@@ -19,12 +19,12 @@ import static org.daiitech.naftah.Naftah.VECTOR_API_PROPERTY;
  * @author Chakib Daii
  */
 public final class StringUtils {
+
 	// Bit wise
 	public static final BiFunction<Character, Character, Integer> XOR = (character, character2) -> character ^ character2;
 	public static final BiFunction<Character, Character, Integer> AND = (character, character2) -> character & character2;
 	public static final BiFunction<Character, Character, Integer> OR = (character, character2) -> character | character2;
 	public static final Function<Character, Number> NOT = (character) -> ~character;
-
 	// Char wise
 	public static final BiFunction<Character, Character, Integer> ADD = Integer::sum;
 	public static final BiFunction<Character, Character, Integer> SUBTRACT = Math::subtractExact;
@@ -35,18 +35,15 @@ public final class StringUtils {
 	public static final Function<Character, Number> POST_INCREMENT = NumberUtils::postIncrement;
 	public static final Function<Character, Number> PRE_DECREMENT = NumberUtils::preDecrement;
 	public static final Function<Character, Number> POST_DECREMENT = NumberUtils::postDecrement;
+	public static final Boolean USE_VECTOR_API = Boolean.getBoolean(VECTOR_API_PROPERTY);
 
 	// Vector
-
-	public static final Boolean USE_VECTOR_API = Boolean.getBoolean(VECTOR_API_PROPERTY);
 	public static final int VECTOR_THRESHOLD = 128; // TODO: tune the threshold
-	private static final VectorSpecies<Short> SPECIES = ShortVector.SPECIES_PREFERRED;
 	// Bit wise
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> XOR_VEC = (v1, v2) -> v1.lanewise(VectorOperators.XOR, v2);
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> AND_VEC = ShortVector::and;
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> OR_VEC = ShortVector::or;
 	public static final Function<ShortVector, ShortVector> NOT_VEC = ShortVector::not;
-
 	// Char wise
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> ADD_VEC = ShortVector::add;
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> SUBTRACT_VEC = ShortVector::sub;
@@ -55,10 +52,18 @@ public final class StringUtils {
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> MOD_VEC = (v1, v2) -> v1.sub(v1.div(v2).mul(v2)); // simulates floorMod: a - (a / b) * b
 	public static final Function<ShortVector, ShortVector> PRE_INCREMENT_VEC = (v) -> v.add((short) 1);
 	public static final Function<ShortVector, ShortVector> PRE_DECREMENT_VEC = (v) -> v.sub((short) 1);
-
 	// Mappings from scalar to vector
 	public static final Map<BiFunction<Character, Character, Integer>, BiFunction<ShortVector, ShortVector, ShortVector>> BINARY_OP_MAP = Map.of(XOR, XOR_VEC, AND, AND_VEC, OR, OR_VEC, ADD, ADD_VEC, SUBTRACT, SUBTRACT_VEC, MUL, MUL_VEC, DIV, DIV_VEC, MOD, MOD_VEC);
 	public static final Map<Function<Character, Number>, Function<ShortVector, ShortVector>> UNARY_OP_MAP = Map.of(NOT, NOT_VEC, PRE_INCREMENT, PRE_INCREMENT_VEC, PRE_DECREMENT, PRE_DECREMENT_VEC);
+	private static final VectorSpecies<Short> SPECIES = ShortVector.SPECIES_PREFERRED;
+
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private StringUtils() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
 
 	// Equality
 	public static boolean equals(String a, String b) {
@@ -87,12 +92,15 @@ public final class StringUtils {
 	}
 
 	public static String[] divide(String s, int parts) {
-		if (s == null || s.isEmpty())
+		if (s == null || s.isEmpty()) {
 			throw new NaftahBugError("النص لا يمكن أن يكون فارغًا.");
-		if (parts <= 0)
+		}
+		if (parts <= 0) {
 			throw new NaftahBugError("يجب أن يكون عدد الأجزاء أكبر من 0.");
-		if (parts > s.length())
+		}
+		if (parts > s.length()) {
 			throw new NaftahBugError("عدد الأجزاء لا يمكن أن يتجاوز طول السلسلة.");
+		}
 
 		int length = s.length();
 		int partSize = length / parts;

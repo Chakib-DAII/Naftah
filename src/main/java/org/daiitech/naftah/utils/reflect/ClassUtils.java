@@ -16,6 +16,7 @@ import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
 import static org.daiitech.naftah.utils.reflect.AnnotationsUtils.getNaftahFunctionAnnotation;
@@ -29,6 +30,14 @@ public final class ClassUtils {
 	public static final String CLASS_SEPARATORS_REGEX = "[.$]";
 	public static final String QUALIFIED_NAME_SEPARATOR = ":";
 	public static final String QUALIFIED_CALL_SEPARATOR = "::";
+
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private ClassUtils() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
+	}
 
 	public static String getQualifiedName(String className) {
 		return String.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefaultCustom(className.split(CLASS_SEPARATORS_REGEX)));
@@ -47,14 +56,11 @@ public final class ClassUtils {
 	public static Map<String, String[]> getClassQualifiers(Set<String> classNames, boolean flattened) {
 		var baseStream = classNames.stream().map(s -> s.split(CLASS_SEPARATORS_REGEX));
 
-		if (flattened)
+		if (flattened) {
 			return baseStream.flatMap(strings -> Arrays.stream(strings).map(element -> Map.entry(element, strings))).collect(
-					Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (existing, replacement) -> existing // in
-					// case
-					// of
-					// duplicate
-					// keys
+					Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (existing, replacement) -> existing
 					));
+		}
 
 		return baseStream.map(strings -> Map.entry(String.join(QUALIFIED_NAME_SEPARATOR, strings), strings)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
@@ -87,10 +93,8 @@ public final class ClassUtils {
 	 * Map<Class<?>, Method[]> classPublicMethods = ClassUtils.getClassMethods(classes, classPublicMethodPredicate);
 	 * </pre>
 	 *
-	 * @param classes
-	 *                        set of classes having methods as members
-	 * @param methodPredicate
-	 *                        methods filter
+	 * @param classes         set of classes having methods as members
+	 * @param methodPredicate methods filter
 	 * @return hashtable (Map) of classes and methods
 	 */
 	public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
@@ -126,8 +130,7 @@ public final class ClassUtils {
 	 * Map<Class<?>, Method[]> methods = ClassUtils.getClassMethods(classes);
 	 * </pre>
 	 *
-	 * @param classes
-	 *                set of classes having methods as members
+	 * @param classes set of classes having methods as members
 	 * @return hashtable (Map) of classes and methods
 	 */
 	public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes) {
@@ -146,18 +149,21 @@ public final class ClassUtils {
 
 	public static boolean isInstantiableClass(Class<?> clazz) {
 		// Must be public
-		if (!Modifier.isPublic(clazz.getModifiers()))
+		if (!Modifier.isPublic(clazz.getModifiers())) {
 			return false;
+		}
 
 		// Cannot be abstract or an interface
-		if (Modifier.isAbstract(clazz.getModifiers()) || clazz.isInterface())
+		if (Modifier.isAbstract(clazz.getModifiers()) || clazz.isInterface()) {
 			return false;
+		}
 
 		// Try to find a public no-arg constructor
 		try {
 			Constructor<?> constructor = clazz.getConstructor();
-			if (Modifier.isPublic(constructor.getModifiers()))
+			if (Modifier.isPublic(constructor.getModifiers())) {
 				return true;
+			}
 		}
 		catch (NoSuchMethodException ignored) {
 		}
@@ -172,12 +178,14 @@ public final class ClassUtils {
 
 	public static boolean isInvocable(Method method) {
 		// Must be public
-		if (!Modifier.isPublic(method.getModifiers()))
+		if (!Modifier.isPublic(method.getModifiers())) {
 			return false;
+		}
 
 		// Ignore synthetic or bridge methods (compiler-generated)
-		if (method.isSynthetic() || method.isBridge())
+		if (method.isSynthetic() || method.isBridge()) {
 			return false;
+		}
 
 		Class<?> declaringClass = method.getDeclaringClass();
 

@@ -7,7 +7,7 @@ import org.daiitech.naftah.parser.NaftahParserHelper;
 /**
  * @author Chakib Daii
  */
-public class DeclaredParameter {
+public final class DeclaredParameter {
 	private final NaftahParser.ParameterDeclarationContext originalContext;
 	private final String name;
 	private final boolean constant;
@@ -22,6 +22,10 @@ public class DeclaredParameter {
 		this.constant = constant;
 		this.type = type;
 		this.defaultValue = defaultValue;
+	}
+
+	public static DeclaredParameter of(NaftahParser.ParameterDeclarationContext originalContext, String name, boolean constant, Object type, Object defaultValue) {
+		return new DeclaredParameter(originalContext, name, constant, type, defaultValue);
 	}
 
 	public NaftahParser.ParameterDeclarationContext getOriginalContext() {
@@ -49,19 +53,17 @@ public class DeclaredParameter {
 	}
 
 	public void setValue(Object currentValue) {
-		if (constant)
+		if (constant) {
 			throw new NaftahBugError("حدث خطأ أثناء إعادة تعيين القيمة الثابتة للمعامل: '%s'. لا يمكن إعادة تعيين ثابت.".formatted(name));
+		}
 		this.currentValue = currentValue;
-		if (!updatedCurrentValue)
+		if (!updatedCurrentValue) {
 			updatedCurrentValue = true;
+		}
 	}
 
 	@Override
 	public String toString() {
 		return NaftahParserHelper.declaredValueToString(constant, name, getValue());
-	}
-
-	public static DeclaredParameter of(NaftahParser.ParameterDeclarationContext originalContext, String name, boolean constant, Object type, Object defaultValue) {
-		return new DeclaredParameter(originalContext, name, constant, type, defaultValue);
 	}
 }

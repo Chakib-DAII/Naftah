@@ -9,13 +9,13 @@ import org.daiitech.naftah.parser.NaftahParser;
  *
  * @author Chakib Daii
  */
-public class DeclaredFunction {
+public final class DeclaredFunction {
 	private final NaftahParser.FunctionDeclarationContext originalContext;
 	private final String name;
 	private final NaftahParser.ParameterDeclarationListContext parametersContext;
-	private List<DeclaredParameter> parameters;
 	private final NaftahParser.BlockContext body;
 	private final NaftahParser.ReturnTypeContext returnTypeContext;
+	private List<DeclaredParameter> parameters;
 	private Object returnType;
 
 	private DeclaredFunction(NaftahParser.FunctionDeclarationContext originalContext) {
@@ -24,6 +24,10 @@ public class DeclaredFunction {
 		this.parametersContext = originalContext.parameterDeclarationList();
 		this.body = originalContext.block();
 		this.returnTypeContext = originalContext.returnType();
+	}
+
+	public static DeclaredFunction of(NaftahParser.FunctionDeclarationContext originalContext) {
+		return new DeclaredFunction(originalContext);
 	}
 
 	public NaftahParser.FunctionDeclarationContext getOriginalContext() {
@@ -65,9 +69,5 @@ public class DeclaredFunction {
 	@Override
 	public String toString() {
 		return "<%s %s>".formatted("دالة", name);
-	}
-
-	public static DeclaredFunction of(NaftahParser.FunctionDeclarationContext originalContext) {
-		return new DeclaredFunction(originalContext);
 	}
 }

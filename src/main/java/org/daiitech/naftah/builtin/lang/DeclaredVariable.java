@@ -7,12 +7,12 @@ import org.daiitech.naftah.parser.NaftahParserHelper;
 /**
  * @author Chakib Daii
  */
-public class DeclaredVariable {
-	private ParserRuleContext originalContext;
+public final class DeclaredVariable {
 	private final String name;
 	private final boolean constant;
 	private final Class<?> type;
 	private final Object defaultValue;
+	private ParserRuleContext originalContext;
 	private Object currentValue;
 	private boolean updatedCurrentValue;
 
@@ -22,6 +22,10 @@ public class DeclaredVariable {
 		this.constant = constant;
 		this.type = type;
 		this.defaultValue = defaultValue;
+	}
+
+	public static DeclaredVariable of(ParserRuleContext originalContext, String name, boolean constant, Class<?> type, Object defaultValue) {
+		return new DeclaredVariable(originalContext, name, constant, type, defaultValue);
 	}
 
 	public ParserRuleContext getOriginalContext() {
@@ -53,20 +57,18 @@ public class DeclaredVariable {
 	}
 
 	public void setValue(Object currentValue) {
-		if (constant)
+		if (constant) {
 			throw new NaftahBugError(
 					"حدث خطأ أثناء إعادة تعيين القيمة الثابتة: '%s'. لا يمكن إعادة تعيين ثابت.".formatted(name));
+		}
 		this.currentValue = currentValue;
-		if (!updatedCurrentValue)
+		if (!updatedCurrentValue) {
 			updatedCurrentValue = true;
+		}
 	}
 
 	@Override
 	public String toString() {
 		return NaftahParserHelper.declaredValueToString(constant, name, getValue());
-	}
-
-	public static DeclaredVariable of(ParserRuleContext originalContext, String name, boolean constant, Class<?> type, Object defaultValue) {
-		return new DeclaredVariable(originalContext, name, constant, type, defaultValue);
 	}
 }

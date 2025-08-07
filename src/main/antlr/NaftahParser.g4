@@ -1,10 +1,11 @@
 /**
- * @author Chakib Daii
  *
  * The Naftah grammar is based on multiple programming languages tokens and syntaxes
  * that I learned during my programming journey.
  *
  * قواعد نفطه، تعتمد على رموز وقواعد لغوية متعددة للغات البرمجة تعلمتها خلال رحلتي مع البرمجة
+ *
+ * @author Chakib Daii
  *
  */
 

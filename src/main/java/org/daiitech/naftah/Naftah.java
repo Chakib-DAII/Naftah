@@ -70,7 +70,6 @@ import static picocli.CommandLine.printHelpIfRequested;
  *         main of Naftah programming language as an interpreted JVM language
  */
 public final class Naftah {
-
 	public static final String JAVA_VERSION_PROPERTY = "java.version";
 	public static final String JAVA_VM_VENDOR_PROPERTY = "java.vm.vendor";
 	public static final String SCAN_CLASSPATH_PROPERTY = "naftah.scanClassPath";
@@ -112,10 +111,12 @@ public final class Naftah {
 			String loggingConfigFile = System.getProperty("java.util.logging.config.file");
 
 			// Initialize logging from external file
-			if (Objects.nonNull(loggingConfigFile))
+			if (Objects.nonNull(loggingConfigFile)) {
 				JulLoggerConfig.initialize(loggingConfigFile);
-			else
+			}
+			else {
 				JulLoggerConfig.initializeFromResources("logging.properties");
+			}
 		}
 		catch (IOException e) {
 			try {
@@ -162,8 +163,9 @@ public final class Naftah {
 				return;
 			}
 
-			if (ObjectUtils.isEmpty(result.subcommands()))
+			if (ObjectUtils.isEmpty(result.subcommands())) {
 				throw new InitializationException("خطأ: لم يتم تقديم أمر (run/shell/init)");
+			}
 
 			var matchedSubCommandResult = result.subcommands().get(result.subcommands().size() - 1);
 
@@ -171,8 +173,9 @@ public final class Naftah {
 				// If we fail, then exit with an error so scripting frameworks can catch it.
 				System.exit(1);
 			}
-			else
+			else {
 				System.exit(0);
+			}
 
 		}
 		catch (ParameterException ex) { // command line arguments could not be parsed
@@ -229,12 +232,12 @@ public final class Naftah {
 	@Command(name = NaftahCommand.NAME, customSynopsis = "naftah [run/shell/init] [options] [filename] [args]", description = {"The Naftah command line processor.", "معالج الأوامر الخاص بـلغة البرمجة نفطة"}, sortOptions = false, versionProvider = VersionProvider.class)
 	private static class NaftahCommand {
 		private static final String NAME = "naftah";
+		@Option(names = {"-D", "--define"}, paramLabel = "<property=value>", description = {"Define a system property", "تعريف خاصية نظام"})
+		private final Map<String, String> systemProperties = new LinkedHashMap<>();
 		@Unmatched
 		List<String> arguments = new ArrayList<>();
 		@Option(names = {"-cp", "-classpath", "--classpath"}, paramLabel = "<path>", description = {"Specify where to find the class files - must be first argument", "حدّد مكان ملفات الفئات (class files) — يجب أن يكون هو الوسيط الأول"})
 		private String classpath;
-		@Option(names = {"-D", "--define"}, paramLabel = "<property=value>", description = {"Define a system property", "تعريف خاصية نظام"})
-		private final Map<String, String> systemProperties = new LinkedHashMap<>();
 		@Option(names = {"-d", "--debug"}, description = {"Debug mode will print out full stack traces", "في وضع التصحيح، سيتم طباعة تتبع الأخطاء الكامل."})
 		private boolean debug;
 		@Option(names = {"-c", "--encoding"}, paramLabel = "<charset>", description = {"Specify the encoding of the files", "تحديد ترميز الملفات"})
@@ -253,18 +256,17 @@ public final class Naftah {
 		private boolean useVectorApi;
 
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
-			if (Boolean.getBoolean(DEBUG_PROPERTY))
+			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
+			}
 			bootstrap(bootstrapAsync);
 		}
 
 		/**
 		 * Process the users request.
 		 *
-		 * @param parseResult
-		 *                    the parsed result command line.
-		 * @throws ParameterException
-		 *                            if the user input was invalid
+		 * @param parseResult the parsed result command line.
+		 * @throws ParameterException if the user input was invalid
 		 */
 		private boolean process(ParseResult parseResult) throws ParameterException, IOException {
 			var matchedCommand = (NaftahCommand) parseResult.commandSpec().userObject();
@@ -336,8 +338,9 @@ public final class Naftah {
 				var parser = prepareRun(input, NaftahErrorListener.INSTANCE);
 				var result = doRun(parser);
 
-				if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
+				if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) {
 					printPaddedToString(result);
+				}
 
 				System.out.println();
 			}
@@ -379,13 +382,15 @@ public final class Naftah {
 					try {
 						String line = MULTILINE_IS_ACTIVE ? reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null) : reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
 
-						if (!MULTILINE_IS_ACTIVE && line.isBlank())
+						if (!MULTILINE_IS_ACTIVE && line.isBlank()) {
 							continue;
+						}
 
 						checkManagementCommands(line);
 
-						if (!line.isBlank())
+						if (!line.isBlank()) {
 							fullLine.append(line);
+						}
 
 						var input = getCharStream(false, fullLine.toString());
 
@@ -400,8 +405,9 @@ public final class Naftah {
 
 						var result = doRun(parser);
 
-						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result))
+						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) {
 							printPaddedToString(result);
+						}
 						System.out.println();
 
 					}
@@ -434,8 +440,9 @@ public final class Naftah {
 				 * : shows full history /help : shows help of commands
 				 */
 
-				if (List.of("/exit", "/خروج").contains(line.trim()))
+				if (List.of("/exit", "/خروج").contains(line.trim())) {
 					throw new UserInterruptException(line);
+				}
 			}
 		}
 	}
