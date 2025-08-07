@@ -18,12 +18,17 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea
+# EXCEPT the code style settings we want to track
+!.idea/codeStyles
+!.idea/codeStyles/Project.xml
+!.idea/codeStyles/codeStyleConfig.xml
 *.iws
 *.iml
 *.ipr
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
 
 ### NetBeans ###
 /nbproject/private/
