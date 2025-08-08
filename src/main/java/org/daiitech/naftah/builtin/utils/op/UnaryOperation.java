@@ -71,6 +71,11 @@ public enum UnaryOperation implements Operation {
 		}
 	};
 
+	public static NaftahBugError newNaftahBugError(Operation unaryOperation, Object o) {
+		return new NaftahBugError("العملية '%s' غير مدعومة للنوع: '%s'".formatted(unaryOperation, o.getClass()));
+	}
+
+	// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating and using dynamic number
 	public abstract Number apply(Number number);
 
 	public Character apply(char c) {
@@ -82,8 +87,4 @@ public enum UnaryOperation implements Operation {
 	}
 
 	public abstract String apply(String string);
-
-	public static NaftahBugError newNaftahBugError(Operation unaryOperation, Object o) {
-		return new NaftahBugError("العملية '%s' غير مدعومة للنوع: '%s'".formatted(unaryOperation, o.getClass()));
-	}
 }

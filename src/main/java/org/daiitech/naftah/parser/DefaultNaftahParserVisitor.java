@@ -1406,6 +1406,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
 		Object value = ctx.NUMBER().getText();
+		// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating and using dynamic number
 		var result = NumberUtils.parseDynamicNumber(value);
 		currentContext.markExecuted(ctx); // Mark as executed
 		return result;

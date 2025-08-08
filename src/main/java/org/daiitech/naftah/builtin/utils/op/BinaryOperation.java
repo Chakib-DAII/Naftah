@@ -760,6 +760,11 @@ public enum BinaryOperation implements Operation {
 		}
 	};
 
+	public static NaftahBugError newNaftahBugError(Operation binaryOperation, Object left, Object right) {
+		return new NaftahBugError("العملية '%s' غير مدعومة للنوعين: '%s' و'%s'.".formatted(binaryOperation, left.getClass(), right.getClass()));
+	}
+
+	// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating and using dynamic number
 	public abstract Object apply(Number left, Number right);
 
 	public Object apply(Number left, char right) {
@@ -805,8 +810,4 @@ public enum BinaryOperation implements Operation {
 	}
 
 	public abstract Object apply(String left, String right);
-
-	public static NaftahBugError newNaftahBugError(Operation binaryOperation, Object left, Object right) {
-		return new NaftahBugError("العملية '%s' غير مدعومة للنوعين: '%s' و'%s'.".formatted(binaryOperation, left.getClass(), right.getClass()));
-	}
 }
