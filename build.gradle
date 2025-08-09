@@ -7,6 +7,7 @@ plugins {
 	id 'idea'
 	id 'checkstyle'
 	id 'com.diffplug.spotless' version '6.21.0'
+	id 'jacoco'
 	id 'maven-publish'
 	id 'signing'
 }
@@ -230,10 +231,40 @@ tasks.register('writeResolvedJars') {
 	}
 }
 
+jacoco {
+	toolVersion = "0.8.10"
+}
+
 test {
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"
+	}
+//	finalizedBy jacocoTestReport
+	finalizedBy jacocoTestReport, jacocoTestCoverageVerification
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true
+		html.required = true
+		csv.required = false
+	}
+}
+
+jacocoTestCoverageVerification {
+	dependsOn test
+	violationRules {
+		rule {
+			enabled = true
+			element = 'CLASS'
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.70 // 70% coverage threshold
+			}
+		}
 	}
 }
 
