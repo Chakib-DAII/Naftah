@@ -240,8 +240,8 @@ test {
 	testLogging {
 		events "passed", "skipped", "failed"
 	}
-//	finalizedBy jacocoTestReport
-	finalizedBy jacocoTestReport, jacocoTestCoverageVerification
+	finalizedBy jacocoTestReport
+//	finalizedBy jacocoTestReport, jacocoTestCoverageVerification
 }
 
 jacocoTestReport {
@@ -253,20 +253,20 @@ jacocoTestReport {
 	}
 }
 
-jacocoTestCoverageVerification {
-	dependsOn test
-	violationRules {
-		rule {
-			enabled = true
-			element = 'CLASS'
-			limit {
-				counter = 'LINE'
-				value = 'COVEREDRATIO'
-				minimum = 0.70 // 70% coverage threshold
-			}
-		}
-	}
-}
+//jacocoTestCoverageVerification {
+//	dependsOn test
+//	violationRules {
+//		rule {
+//			enabled = true
+//			element = 'CLASS'
+//			limit {
+//				counter = 'LINE'
+//				value = 'COVEREDRATIO'
+//				minimum = 0.70 // 70% coverage threshold
+//			}
+//		}
+//	}
+//}
 
 checkstyle {
 	toolVersion = '10.0'

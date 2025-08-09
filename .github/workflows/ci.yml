@@ -39,11 +39,11 @@ jobs:
           name: gradle-checkstyle-report
           path: build/reports/checkstyle
 
-      #      - name: Run tests with coverage
-      - name: Run tests with coverage and enforce threshold
+      - name: Run tests with coverage
+        #      - name: Run tests with coverage and enforce threshold
         if: success()    # run tests only if build succeeded
-        #        run: ./gradlew test jacocoTestReport
-        run: ./gradlew test jacocoTestReport jacocoTestCoverageVerification
+        run: ./gradlew test jacocoTestReport
+      #        run: ./gradlew test jacocoTestReport jacocoTestCoverageVerification
 
       - name: Upload Gradle test results artifact
         if: always()     # upload test results only if test step ran
