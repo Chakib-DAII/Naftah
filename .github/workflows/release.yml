@@ -21,9 +21,17 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
 
-      - name: Run semantic-release
+      - name: Run semantic-release and capture version
         id: semantic_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEXT_RELEASE_VERSION: ${{ steps.semantic_release.outputs.nextRelease.version }}
-        run: npx semantic-release
+        run: |
+          npx semantic-release > result.log
+          version=$(grep -oP 'The next release version is \K[^\s]+' result.log)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Update VERSION file
+        env:
+          NEXT_RELEASE_VERSION: ${{ steps.semantic_release.outputs.version }}
+        run: node ./updateVersionFile.js
+
