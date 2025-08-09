@@ -651,7 +651,7 @@ public final class ObjectUtils {
 
 		String result = replaceAllNulls(o.toString());
 
-		if (o instanceof Collection<?> || o instanceof Map<?,?>) {
+		if (o instanceof Collection<?> || o instanceof Map<?, ?>) {
 			return "مجموعة: " + result;
 		}
 
