@@ -216,18 +216,44 @@ tasks.register('extractLexerLiterals') {
 }
 
 tasks.register('writeResolvedJars') {
-	description = 'Writes resolved JAR file names to build/libs/original-dependencies'
+	description = 'Writes resolved JAR file names to build/libs/original-dependencies, skipping unneeded ones'
 
 	doLast {
 		def outputFile = file("$buildDir/libs/original-dependencies")
 		outputFile.text = ""
 
-		configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each { artifact ->
-			def jarName = artifact.file.name
-			outputFile << jarName + "\n"
+		// Base jar names to skip (without versions)
+		def skipBaseNames = [
+				"antlr4-runtime",
+				"picocli",
+				"jline",
+				"jline-terminal-jansi",
+				"jmh-core",
+				"org.abego.treelayout.core",
+				"jline-terminal",
+				"jopt-simple",
+				"jansi",
+				"jline-native"
+		]
+
+		// Function to extract base name without version and extension
+		def getBaseName = { String jarName ->
+			// Remove .jar suffix
+			jarName = jarName.replaceFirst(/\.jar$/, "")
+			// Remove version suffix: last dash followed by digits and dots, e.g. -4.9.3
+			jarName = jarName.replaceFirst(/-\d+(\.\d+)*$/, "")
+			return jarName
 		}
 
-		println "Dependencies written to: ${outputFile}"
+		configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+			def jarName = artifact.file.name
+			def baseName = getBaseName(jarName)
+			if (!skipBaseNames.contains(baseName)) {
+				outputFile << jarName + "\n"  // write full jar name with version
+			}
+		}
+
+		println "Filtered dependencies written to: ${outputFile}"
 	}
 }
 
