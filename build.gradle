@@ -530,6 +530,8 @@ tasks.withType(Javadoc).configureEach {
 		// Show deprecated members in docs
 		addBooleanOption('Xdoclint:none', true)  // disables strict lint checks
 	}
+	options.addStringOption('--enable-preview')
+	options.addStringOption('-add-modules', 'jdk.incubator.vector')
 }
 
 //TODO: create maven central account
