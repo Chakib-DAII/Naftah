@@ -424,12 +424,42 @@ public final class ObjectUtils {
 			return operation.apply(number, number1);
 		}
 
-		// Number vs Boolean/Character/String
+		// Number vs Boolean/Character/String/collection
 		if (left instanceof Number number) {
+			// Number vs Collection (scalar multiplication)
+			if (right instanceof Collection<?> collection) {
+				return CollectionUtils.applyOperation(collection, number, operation);
+			}
+
+			// Number vs Array (scalar multiplication)
+			if (right.getClass().isArray()) {
+				return CollectionUtils.applyOperation((Object[]) right, number, operation);
+			}
+
+			// Number vs Map (multiply all values by scalar)
+			if (right instanceof Map<?, ?> map) {
+				return CollectionUtils.applyOperation(map, number, operation);
+			}
+
 			return operation.apply(number, right);
 		}
 
 		if (right instanceof Number number) {
+			// Collection vs Number (scalar multiplication)
+			if (left instanceof Collection<?> collection) {
+				return CollectionUtils.applyOperation(collection, number, operation);
+			}
+
+			// Array vs Number (scalar multiplication)
+			if (left.getClass().isArray()) {
+				return CollectionUtils.applyOperation((Object[]) left, number, operation);
+			}
+
+			// Map vs Number (multiply all values by scalar)
+			if (left instanceof Map<?, ?> map) {
+				return CollectionUtils.applyOperation(map, number, operation);
+			}
+
 			return operation.apply(left, number);
 		}
 
@@ -463,39 +493,9 @@ public final class ObjectUtils {
 			return CollectionUtils.applyOperation((Object[]) left, (Object[]) right, operation);
 		}
 
-		// Collection vs Number (scalar multiplication)
-		if (left instanceof Collection<?> collection && right instanceof Number number) {
-			return CollectionUtils.applyOperation(collection, number, operation);
-		}
-
-		// Number vs Collection (scalar multiplication)
-		if (left instanceof Number number && right instanceof Collection<?> collection) {
-			return CollectionUtils.applyOperation(collection, number, operation);
-		}
-
-		// Array vs Number (scalar multiplication)
-		if (left.getClass().isArray() && right instanceof Number number) {
-			return CollectionUtils.applyOperation((Object[]) left, number, operation);
-		}
-
-		// Number vs Array (scalar multiplication)
-		if (left instanceof Number number && right.getClass().isArray()) {
-			return CollectionUtils.applyOperation((Object[]) right, number, operation);
-		}
-
 		// Map vs Map (element-wise value multiplication)
 		if (left instanceof Map<?, ?> map && right instanceof Map<?, ?> map1) {
 			return CollectionUtils.applyOperation(map, map1, operation);
-		}
-
-		// Map vs Number (multiply all values by scalar)
-		if (left instanceof Map<?, ?> map && right instanceof Number number) {
-			return CollectionUtils.applyOperation(map, number, operation);
-		}
-
-		// Number vs Map (multiply all values by scalar)
-		if (left instanceof Number number && right instanceof Map<?, ?> map) {
-			return CollectionUtils.applyOperation(map, number, operation);
 		}
 
 		throw BinaryOperation.newNaftahBugError(operation, left, right);
@@ -626,7 +626,7 @@ public final class ObjectUtils {
 		}
 
 		// Handle object arrays
-		return replaceAllNulls(Arrays.toString((Object[]) obj));
+		return "مجموعة: " + replaceAllNulls(Arrays.toString((Object[]) obj));
 	}
 
 	/**
@@ -648,7 +648,14 @@ public final class ObjectUtils {
 		if (o.getClass().isArray()) {
 			return arrayToString(o);
 		}
-		return replaceAllNulls(o.toString());
+
+		String result = replaceAllNulls(o.toString());
+
+		if (o instanceof Collection<?> || o instanceof Map<?,?>) {
+			return "مجموعة: " + result;
+		}
+
+		return result;
 	}
 
 	/**
