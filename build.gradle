@@ -520,7 +520,7 @@ tasks.withType(Javadoc).configureEach {
 	options {
 		encoding = 'UTF-8'
 		charSet = 'UTF-8'
-		memberLevel = JavadocMemberLevel.PUBLIC
+		memberLevel = JavadocMemberLevel.PRIVATE
 		author = true
 		version = true
 		// Add a window title for the generated docs
