@@ -146,8 +146,8 @@ expression: functionCall #functionCallExpression
           | expression BITWISE_XOR expression #bitwiseXorExpression
           | NOT expression #notExpression
           | BITWISE_NOT expression #bitwiseNotExpression
-          | value #valueExpression
           | qualifiedName #objectAccessExpression
+          | value #valueExpression
           ;
 
 // Object
