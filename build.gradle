@@ -513,6 +513,7 @@ tasks.register('runJmh', JavaExec) {
 }
 
 tasks.withType(Javadoc).configureEach {
+	dependsOn tasks.named("generateGrammarSource")
 	source = sourceSets.main.allJava
 	classpath = sourceSets.main.compileClasspath
 	destinationDir = file("$buildDir/docs/javadoc")

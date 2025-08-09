@@ -34,7 +34,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build project and generate Javadoc
-        run: ./gradlew build javadoc
+        run: ./gradlew build javadoc -x compileTestJava -x test -x jacocoTestReport
 
       - name: Copy Javadoc into website
         run: |
