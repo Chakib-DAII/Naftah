@@ -1,18 +1,21 @@
-✅ Markdown written to docs-site/benchmarks.md
-core | Error | Units |
+# 🧪 Benchmark Results
+
+| Benchmark | Mode | Score | Error | Units |
 |-----------|------|-------|-------|--------|
-| `scalarAdd` | thrpt | 62.6854045170 | ±0.7704727832 | ops/ms |
-| `vectorAdd` | thrpt | 62.9907367582 | ±1.0306275189 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 1381.9423119209 | ±15.2970721207 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 819.5502901516 | ±6.1440458596 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 639.3479255061 | ±7.6429877269 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 720.1877448928 | ±5.5990159206 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 615.9660566648 | ±4.4501713782 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 563.9757615435 | ±15.4516229013 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 813.0827129670 | ±12.5430535152 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 472.5072639718 | ±2.4000266762 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 977.1173100561 | ±9.9257207390 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 535.1027823627 | ±4.6555178708 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 559.1361440030 | ±17.1948180995 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 1140.7293881371 | ±9.2112151054 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 36.7528772340 | ±0.3800091556 | ops/ms |
+| `scalarAdd` | thrpt | 111.2088980375 | ±176.0952278168 | ops/ms |
+| `vectorAdd` | thrpt | 121.7883065599 | ±5.7780869854 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 1807.7636566221 | ±52.3336443346 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 1218.6769496801 | ±45.2672822865 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 828.0422635832 | ±26.8100763595 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 738.4224279846 | ±855.5166161592 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 365.4095776672 | ±43.3590832638 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 556.1418445741 | ±865.8129019088 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 783.9968933919 | ±1262.7985293435 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 280.9118766230 | ±23.5049605029 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 794.2098447506 | ±1165.2425897967 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 610.1205006372 | ±622.6647348016 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 353.8935631872 | ±47.9360976537 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 1078.5942555857 | ±1878.9533601008 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 37.5529984847 | ±48.4321929308 | ops/ms |
+| `benchmarkLargeInterpolation10_000_000` | thrpt | 0.0002468385 | ±0.0000200383 | ops/ms |
+| `benchmarkLargeInterpolation1_000_000` | thrpt | 0.0021624714 | ±0.0000327908 | ops/ms |
