@@ -25,5 +25,5 @@ jobs:
         id: semantic_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEXT_RELEASE_VERSION: ${{ steps.semantic_release.outputs.nextRelease.version }}  # optional, if using custom scripts
+          NEXT_RELEASE_VERSION: ${{ steps.semantic_release.outputs.nextRelease.version }}
         run: npx semantic-release
