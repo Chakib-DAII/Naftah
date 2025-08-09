@@ -5,9 +5,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -651,8 +653,16 @@ public final class ObjectUtils {
 
 		String result = replaceAllNulls(o.toString());
 
-		if (o instanceof Collection<?> || o instanceof Map<?, ?>) {
-			return "مجموعة: " + result;
+		if (o instanceof Collection<?> collection) {
+			if (collection instanceof Tuple) {
+				return result;
+			}
+			if (collection instanceof List<?>) {
+				return "قائمة: " + result;
+			}
+			if (collection instanceof Set<?>) {
+				return "مجموعة: " + result;
+			}
 		}
 
 		return result;
