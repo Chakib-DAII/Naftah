@@ -46,13 +46,13 @@ loadScripts(document, 'script');</script>
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
 <li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </div>
@@ -119,10 +119,32 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Regex pattern for matching qualified calls.</div>
 </div>
-<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a></code></div>
-<div class="col-second even-row-color"><code><a href="#TOKENS_SYMBOLS" class="member-name-link">TOKENS_SYMBOLS</a></code></div>
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;org.antlr.v4.runtime.tree.ParseTree,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#SUB_TREE_CACHE" class="member-name-link">SUB_TREE_CACHE</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Cache to store computed subtrees per parse tree node for optimization.</div>
+</div>
+<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#TOKENS_SYMBOLS" class="member-name-link">TOKENS_SYMBOLS</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Loaded properties representing token symbols, if available.</div>
+</div>
+</div>
+</section>
+</li>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<li>
+<section class="constructor-summary" id="constructor-summary">
+<h2>Constructor Summary</h2>
+<div class="caption"><span>Constructors</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier</div>
+<div class="table-header col-second">Constructor</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>private </code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E()" class="member-name-link">NaftahParserHelper</a>()</code></div>
+<div class="col-last even-row-color">
+<div class="block">Private constructor to prevent instantiation.</div>
 </div>
 </div>
 </section>
@@ -148,171 +170,183 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given result object is a loop signal and returns the corresponding signal.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.misc.Pair&lt;<a href="../builtin/lang/DeclaredVariable.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredVariable</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDeclaredVariable(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.parser.NaftahParser.DeclarationContext,java.lang.String,boolean,boolean)" class="member-name-link">createDeclaredVariable</a><wbr>(<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#collect(org.antlr.v4.runtime.tree.ParseTree,java.util.List)" class="member-name-link">collect</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;node,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;&nbsp;out)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Recursively collects all nodes in the subtree rooted at the given node.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.misc.Pair&lt;<a href="../builtin/lang/DeclaredVariable.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredVariable</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDeclaredVariable(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.parser.NaftahParser.DeclarationContext,java.lang.String,boolean,boolean)" class="member-name-link">createDeclaredVariable</a><wbr>(<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
  <a href="NaftahParser.DeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.DeclarationContext</a>&nbsp;ctx,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;variableName,
  boolean&nbsp;isConstant,
  boolean&nbsp;hasType)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a declared variable instance from the parser context.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#declaredValueToString(boolean,java.lang.String,java.lang.Object)" class="member-name-link">declaredValueToString</a><wbr>(boolean&nbsp;constant,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#declaredValueToString(boolean,java.lang.String,java.lang.Object)" class="member-name-link">declaredValueToString</a><wbr>(boolean&nbsp;constant,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Converts a declared variable or constant value to a string representation.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#doRun(org.daiitech.naftah.parser.NaftahParser)" class="member-name-link">doRun</a><wbr>(<a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a>&nbsp;parser)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#doRun(org.daiitech.naftah.parser.NaftahParser)" class="member-name-link">doRun</a><wbr>(<a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a>&nbsp;parser)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Executes the parser by visiting the parse tree and returning the result.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAllChildren(org.antlr.v4.runtime.tree.ParseTree)" class="member-name-link">getAllChildren</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAllChildren(org.antlr.v4.runtime.tree.ParseTree)" class="member-name-link">getAllChildren</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Collects all nodes in the subtree rooted at the given parse tree node, including itself.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAllChildrenOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">getAllChildrenOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAllChildrenOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">getAllChildrenOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Retrieves all children of the given parse tree node that are of the specified type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CharStream</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCharStream(boolean,java.lang.String)" class="member-name-link">getCharStream</a><wbr>(boolean&nbsp;isScriptFile,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CharStream</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCharStream(boolean,java.lang.String)" class="member-name-link">getCharStream</a><wbr>(boolean&nbsp;isScriptFile,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;script)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Obtains a CharStream from a script string or script file path.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CommonTokenStream</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CommonTokenStream</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Gets a CommonTokenStream from the given character stream with no error listeners.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.misc.Pair&lt;<a href="NaftahLexer.html" title="class in org.daiitech.naftah.parser">NaftahLexer</a>,<wbr>org.antlr.v4.runtime.CommonTokenStream&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream,java.util.List)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.misc.Pair&lt;<a href="NaftahLexer.html" title="class in org.daiitech.naftah.parser">NaftahLexer</a>,<wbr>org.antlr.v4.runtime.CommonTokenStream&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream,java.util.List)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.ANTLRErrorListener&gt;&nbsp;errorListeners)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a lexer and CommonTokenStream from the given character stream and error listeners.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CommonTokenStream</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CommonTokenStream</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream,
  org.antlr.v4.runtime.ANTLRErrorListener&nbsp;errorListener)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Gets a CommonTokenStream from the given character stream and a single error listener.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFormattedTokenSymbols(org.antlr.v4.runtime.Vocabulary,int,boolean)" class="member-name-link">getFormattedTokenSymbols</a><wbr>(org.antlr.v4.runtime.Vocabulary&nbsp;vocabulary,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFormattedTokenSymbols(org.antlr.v4.runtime.Vocabulary,int,boolean)" class="member-name-link">getFormattedTokenSymbols</a><wbr>(org.antlr.v4.runtime.Vocabulary&nbsp;vocabulary,
  int&nbsp;tokenType,
  boolean&nbsp;ln)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a formatted string of token symbols based on the token type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getParser(org.antlr.v4.runtime.CommonTokenStream,java.util.List)" class="member-name-link">getParser</a><wbr>(org.antlr.v4.runtime.CommonTokenStream&nbsp;commonTokenStream,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getParser(org.antlr.v4.runtime.CommonTokenStream,java.util.List)" class="member-name-link">getParser</a><wbr>(org.antlr.v4.runtime.CommonTokenStream&nbsp;commonTokenStream,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.ANTLRErrorListener&gt;&nbsp;errorListeners)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a parser instance from the given token stream and multiple error listeners.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getParser(org.antlr.v4.runtime.CommonTokenStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">getParser</a><wbr>(org.antlr.v4.runtime.CommonTokenStream&nbsp;commonTokenStream,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getParser(org.antlr.v4.runtime.CommonTokenStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">getParser</a><wbr>(org.antlr.v4.runtime.CommonTokenStream&nbsp;commonTokenStream,
  org.antlr.v4.runtime.ANTLRErrorListener&nbsp;errorListener)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a parser instance from the given token stream and a single error listener.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedNameContext)" class="member-name-link">getQualifiedName</a><wbr>(<a href="NaftahParser.QualifiedNameContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedNameContext)" class="member-name-link">getQualifiedName</a><wbr>(<a href="NaftahParser.QualifiedNameContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Constructs a qualified name string from the given parse context.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasAnyExecutedChildOrSubChildOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class,org.antlr.v4.runtime.tree.ParseTreeProperty)" class="member-name-link">hasAnyExecutedChildOrSubChildOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasAnyExecutedChildOrSubChildOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class,org.antlr.v4.runtime.tree.ParseTreeProperty)" class="member-name-link">hasAnyExecutedChildOrSubChildOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type,
  org.antlr.v4.runtime.tree.ParseTreeProperty&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;executedParseTreeProperty)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if any executed child or sub-child of the specified type exists under the given node,
  based on the provided execution property.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasAnyParentOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">hasAnyParentOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasAnyParentOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">hasAnyParentOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks recursively if the given parse tree node has any ancestor (parent or further up)
  of the specified type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasAnyParentOfType(org.antlr.v4.runtime.tree.ParseTree,java.util.List)" class="member-name-link">hasAnyParentOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasAnyParentOfType(org.antlr.v4.runtime.tree.ParseTree,java.util.List)" class="member-name-link">hasAnyParentOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends org.antlr.v4.runtime.tree.Tree&gt;&gt;&nbsp;types)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given parse tree node has any parent of any of the specified types.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasChild(T)" class="member-name-link">hasChild</a><wbr>(T&nbsp;child)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Checks if the given child node is non-null.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T,<wbr>
-T1 extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasChildOfType(java.util.List,java.lang.Class)" class="member-name-link">hasChildOfType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;T&gt;&nbsp;children,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T1&gt;&nbsp;type)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasChild(T)" class="member-name-link">hasChild</a><wbr>(T&nbsp;child)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Checks if any child in the list is of the specified type.</div>
+<div class="block">Checks if the given child node is non-null.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T,<wbr>
 T1 extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasChildOfType(T,java.lang.Class)" class="member-name-link">hasChildOfType</a><wbr>(T&nbsp;child,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasChildOfType(java.util.List,java.lang.Class)" class="member-name-link">hasChildOfType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;T&gt;&nbsp;children,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T1&gt;&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks if any child in the list is of the specified type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T,<wbr>
+T1 extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasChildOfType(T,java.lang.Class)" class="member-name-link">hasChildOfType</a><wbr>(T&nbsp;child,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T1&gt;&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given child node is of the specified type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasChildOrSubChildOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">hasChildOrSubChildOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasChildOrSubChildOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">hasChildOrSubChildOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given parse tree node has a child or sub-child of the specified type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasParentOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">hasParentOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasParentOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">hasParentOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given parse tree node has a direct parent of the specified type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareDeclaredFunction(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.builtin.lang.DeclaredFunction)" class="member-name-link">prepareDeclaredFunction</a><wbr>(<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareDeclaredFunction(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.builtin.lang.DeclaredFunction)" class="member-name-link">prepareDeclaredFunction</a><wbr>(<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
  <a href="../builtin/lang/DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredFunction</a>&nbsp;function)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Prepares a declared function by visiting and setting its parameters and return type if not already set.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareDeclaredFunctionArguments(java.util.List,java.util.List)" class="member-name-link">prepareDeclaredFunctionArguments</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../builtin/lang/DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a>&gt;&nbsp;parameters,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareDeclaredFunctionArguments(java.util.List,java.util.List)" class="member-name-link">prepareDeclaredFunctionArguments</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../builtin/lang/DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a>&gt;&nbsp;parameters,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;arguments)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Prepares a map of argument names to their values for a declared function.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Prepares a parser instance from the given input character stream with no error listeners.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream,java.util.List)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream,java.util.List)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.ANTLRErrorListener&gt;&nbsp;errorListeners)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Prepares a parser instance from the given input character stream with multiple error listeners.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input,
  org.antlr.v4.runtime.ANTLRErrorListener&nbsp;errorListener)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Prepares a parser instance from the given input character stream with a single error listener.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolvePlaceholders(java.util.Properties)" class="member-name-link">resolvePlaceholders</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;props)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolvePlaceholders(java.util.Properties)" class="member-name-link">resolvePlaceholders</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;props)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Resolves placeholders in the properties values by replacing them with their corresponding
  property values.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolveValue(java.lang.String,java.util.Properties)" class="member-name-link">resolveValue</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;props)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resolves placeholders within a string value using the given properties.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#searchForNaftahScriptFile(java.lang.String)" class="member-name-link">searchForNaftahScriptFile</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input)</code></div>
@@ -350,7 +384,7 @@ T1 extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
-<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 </section>
 </li>
 </ul>
@@ -407,10 +441,33 @@ T1 extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
 </section>
 </li>
 <li>
+<section class="detail" id="SUB_TREE_CACHE">
+<h3>SUB_TREE_CACHE</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;org.antlr.v4.runtime.tree.ParseTree,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;&gt;</span>&nbsp;<span class="element-name">SUB_TREE_CACHE</span></div>
+<div class="block">Cache to store computed subtrees per parse tree node for optimization.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="TOKENS_SYMBOLS">
 <h3>TOKENS_SYMBOLS</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a></span>&nbsp;<span class="element-name">TOKENS_SYMBOLS</span></div>
 <div class="block">Loaded properties representing token symbols, if available.</div>
+</section>
+</li>
+</ul>
+</section>
+</li>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<li>
+<section class="constructor-details" id="constructor-detail">
+<h2>Constructor Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="&lt;init&gt;()">
+<h3>NaftahParserHelper</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="element-name">NaftahParserHelper</span>()</div>
+<div class="block">Private constructor to prevent instantiation.
+ Always throws a <a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> when called.</div>
 </section>
 </li>
 </ul>
@@ -597,6 +654,19 @@ T1 extends org.antlr.v4.runtime.tree.Tree&gt;</span>
 <dd><code>ctx</code> - the root parse tree node</dd>
 <dt>Returns:</dt>
 <dd>list of all descendant nodes including the root node</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="collect(org.antlr.v4.runtime.tree.ParseTree,java.util.List)">
+<h3>collect</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">collect</span><wbr><span class="parameters">(org.antlr.v4.runtime.tree.ParseTree&nbsp;node,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;&nbsp;out)</span></div>
+<div class="block">Recursively collects all nodes in the subtree rooted at the given node.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>node</code> - the current parse tree node</dd>
+<dd><code>out</code> - the list to accumulate nodes</dd>
 </dl>
 </section>
 </li>
@@ -834,6 +904,21 @@ T1 extends org.antlr.v4.runtime.tree.Tree&gt;</span>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>props</code> - The Properties object with placeholders to resolve.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="resolveValue(java.lang.String,java.util.Properties)">
+<h3>resolveValue</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">resolveValue</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;props)</span></div>
+<div class="block">Resolves placeholders within a string value using the given properties.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>value</code> - The string potentially containing placeholders.</dd>
+<dd><code>props</code> - The properties to use for resolving placeholders.</dd>
+<dt>Returns:</dt>
+<dd>The resolved string, possibly wrapped in single quotes if placeholders were replaced.</dd>
 </dl>
 </section>
 </li>

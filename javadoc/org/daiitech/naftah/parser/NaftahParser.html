@@ -391,8 +391,20 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final org.antlr.v4.runtime.atn.ATN</code></div>
 <div class="col-second even-row-color"><code><a href="#_ATN" class="member-name-link">_ATN</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>protected static final org.antlr.v4.runtime.dfa.DFA[]</code></div>
+<div class="col-second odd-row-color"><code><a href="#_decisionToDFA" class="member-name-link">_decisionToDFA</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
+<div class="col-second even-row-color"><code><a href="#_LITERAL_NAMES" class="member-name-link">_LITERAL_NAMES</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#_serializedATN" class="member-name-link">_serializedATN</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>protected static final org.antlr.v4.runtime.atn.PredictionContextCache</code></div>
+<div class="col-second even-row-color"><code><a href="#_sharedContextCache" class="member-name-link">_sharedContextCache</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
+<div class="col-second odd-row-color"><code><a href="#_SYMBOLIC_NAMES" class="member-name-link">_SYMBOLIC_NAMES</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final int</code></div>
 <div class="col-second even-row-color"><code><a href="#AND" class="member-name-link">AND</a></code></div>
@@ -754,8 +766,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">&nbsp;</div>
 </div>
 <div class="inherited-list">
+<h3 id="fields-inherited-from-class-org.antlr.v4.runtime.Parser">Fields inherited from class&nbsp;org.antlr.v4.runtime.Parser</h3>
+<code>_buildParseTrees, _ctx, _errHandler, _input, _parseListeners, _precedenceStack, _syntaxErrors, matchedEOF</code></div>
+<div class="inherited-list">
 <h3 id="fields-inherited-from-class-org.antlr.v4.runtime.Recognizer">Fields inherited from class&nbsp;org.antlr.v4.runtime.Recognizer</h3>
-<code>EOF</code></div>
+<code>_interp, EOF</code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -776,7 +791,7 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -817,6 +832,13 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#expression()" class="member-name-link">expression</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#expression(int)" class="member-name-link">expression</a><wbr>(int&nbsp;_p)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#expression_sempred(org.daiitech.naftah.parser.NaftahParser.ExpressionContext,int)" class="member-name-link">expression_sempred</a><wbr>(<a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a>&nbsp;_localctx,
+ int&nbsp;predIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ForStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ForStatementContext</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#forStatement()" class="member-name-link">forStatement</a>()</code></div>
@@ -859,65 +881,74 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.LabelContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.LabelContext</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#label()" class="member-name-link">label</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ObjectContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#object()" class="member-name-link">object</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ObjectFieldsContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectFieldsContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#objectFields()" class="member-name-link">objectFields</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeLiteralNames()" class="member-name-link">makeLiteralNames</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeRuleNames()" class="member-name-link">makeRuleNames</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeSymbolicNames()" class="member-name-link">makeSymbolicNames</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ObjectContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#object()" class="member-name-link">object</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parameterDeclaration()" class="member-name-link">parameterDeclaration</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ObjectFieldsContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectFieldsContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#objectFields()" class="member-name-link">objectFields</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ParameterDeclarationListContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationListContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parameterDeclarationList()" class="member-name-link">parameterDeclarationList</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parameterDeclaration()" class="member-name-link">parameterDeclaration</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ProgramContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ProgramContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#program()" class="member-name-link">program</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ParameterDeclarationListContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationListContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#parameterDeclarationList()" class="member-name-link">parameterDeclarationList</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.QualifiedCallContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedCallContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#qualifiedCall()" class="member-name-link">qualifiedCall</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ProgramContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ProgramContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#program()" class="member-name-link">program</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.QualifiedNameContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#qualifiedName()" class="member-name-link">qualifiedName</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.QualifiedCallContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedCallContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#qualifiedCall()" class="member-name-link">qualifiedCall</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.RepeatStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.RepeatStatementContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#repeatStatement()" class="member-name-link">repeatStatement</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.QualifiedNameContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#qualifiedName()" class="member-name-link">qualifiedName</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ReturnStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ReturnStatementContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#returnStatement()" class="member-name-link">returnStatement</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.RepeatStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.RepeatStatementContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#repeatStatement()" class="member-name-link">repeatStatement</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ReturnTypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ReturnTypeContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#returnType()" class="member-name-link">returnType</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ReturnStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ReturnStatementContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#returnStatement()" class="member-name-link">returnStatement</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#sempred(org.antlr.v4.runtime.RuleContext,int,int)" class="member-name-link">sempred</a><wbr>(org.antlr.v4.runtime.RuleContext&nbsp;_localctx,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ReturnTypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ReturnTypeContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#returnType()" class="member-name-link">returnType</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#sempred(org.antlr.v4.runtime.RuleContext,int,int)" class="member-name-link">sempred</a><wbr>(org.antlr.v4.runtime.RuleContext&nbsp;_localctx,
  int&nbsp;ruleIndex,
  int&nbsp;predIndex)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.StatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.StatementContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#statement()" class="member-name-link">statement</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.TypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TypeContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.StatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.StatementContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#statement()" class="member-name-link">statement</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ValueContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#value()" class="member-name-link">value</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.TypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TypeContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.WhileStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.WhileStatementContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#whileStatement()" class="member-name-link">whileStatement</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.ValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ValueContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#value()" class="member-name-link">value</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="NaftahParser.WhileStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.WhileStatementContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#whileStatement()" class="member-name-link">whileStatement</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.antlr.v4.runtime.Parser">Methods inherited from class&nbsp;org.antlr.v4.runtime.Parser</h3>
-<code>addParseListener, compileParseTreePattern, compileParseTreePattern, consume, createErrorNode, createTerminalNode, dumpDFA, enterOuterAlt, enterRecursionRule, enterRecursionRule, enterRule, exitRule, getATNWithBypassAlts, getBuildParseTree, getContext, getCurrentToken, getDFAStrings, getErrorHandler, getExpectedTokens, getExpectedTokensWithinCurrentRule, getInputStream, getInvokingContext, getNumberOfSyntaxErrors, getParseInfo, getParseListeners, getPrecedence, getRuleContext, getRuleIndex, getRuleInvocationStack, getRuleInvocationStack, getSourceName, getTokenFactory, getTokenStream, getTrimParseTree, inContext, isExpectedToken, isMatchedEOF, isTrace, match, matchWildcard, notifyErrorListeners, notifyErrorListeners, precpred, pushNewRecursionContext, removeParseListener, removeParseListeners, reset, setBuildParseTree, setContext, setErrorHandler, setInputStream, setProfile, setTokenFactory, setTokenStream, setTrace, setTrimParseTree, unrollRecursionContexts</code></div>
+<code>addContextToParseTree, addParseListener, compileParseTreePattern, compileParseTreePattern, consume, createErrorNode, createTerminalNode, dumpDFA, enterOuterAlt, enterRecursionRule, enterRecursionRule, enterRule, exitRule, getATNWithBypassAlts, getBuildParseTree, getContext, getCurrentToken, getDFAStrings, getErrorHandler, getExpectedTokens, getExpectedTokensWithinCurrentRule, getInputStream, getInvokingContext, getNumberOfSyntaxErrors, getParseInfo, getParseListeners, getPrecedence, getRuleContext, getRuleIndex, getRuleInvocationStack, getRuleInvocationStack, getSourceName, getTokenFactory, getTokenStream, getTrimParseTree, inContext, isExpectedToken, isMatchedEOF, isTrace, match, matchWildcard, notifyErrorListeners, notifyErrorListeners, precpred, pushNewRecursionContext, removeParseListener, removeParseListeners, reset, setBuildParseTree, setContext, setErrorHandler, setInputStream, setProfile, setTokenFactory, setTokenStream, setTrace, setTrimParseTree, triggerEnterRuleEvent, triggerExitRuleEvent, unrollRecursionContexts</code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.antlr.v4.runtime.Recognizer">Methods inherited from class&nbsp;org.antlr.v4.runtime.Recognizer</h3>
 <code>action, addErrorListener, getErrorHeader, getErrorListenerDispatch, getErrorListeners, getInterpreter, getRuleIndexMap, getState, getTokenErrorDisplay, getTokenType, getTokenTypeMap, removeErrorListener, removeErrorListeners, setInterpreter, setState</code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
-<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 </section>
 </li>
 </ul>
@@ -929,6 +960,18 @@ loadScripts(document, 'script');</script>
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="_decisionToDFA">
+<h3>_decisionToDFA</h3>
+<div class="member-signature"><span class="modifiers">protected static final</span>&nbsp;<span class="return-type">org.antlr.v4.runtime.dfa.DFA[]</span>&nbsp;<span class="element-name">_decisionToDFA</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="_sharedContextCache">
+<h3>_sharedContextCache</h3>
+<div class="member-signature"><span class="modifiers">protected static final</span>&nbsp;<span class="return-type">org.antlr.v4.runtime.atn.PredictionContextCache</span>&nbsp;<span class="element-name">_sharedContextCache</span></div>
+</section>
+</li>
 <li>
 <section class="detail" id="AND">
 <h3>AND</h3>
@@ -2546,6 +2589,18 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="_LITERAL_NAMES">
+<h3>_LITERAL_NAMES</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">_LITERAL_NAMES</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="_SYMBOLIC_NAMES">
+<h3>_SYMBOLIC_NAMES</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">_SYMBOLIC_NAMES</span></div>
+</section>
+</li>
+<li>
 <section class="detail" id="VOCABULARY">
 <h3>VOCABULARY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">org.antlr.v4.runtime.Vocabulary</span>&nbsp;<span class="element-name">VOCABULARY</span></div>
@@ -2603,6 +2658,24 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="makeRuleNames()">
+<h3>makeRuleNames</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">makeRuleNames</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="makeLiteralNames()">
+<h3>makeLiteralNames</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">makeLiteralNames</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="makeSymbolicNames()">
+<h3>makeSymbolicNames</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">makeSymbolicNames</span>()</div>
+</section>
+</li>
 <li>
 <section class="detail" id="getTokenNames()">
 <h3>getTokenNames</h3>
@@ -2886,6 +2959,17 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="expression(int)">
+<h3>expression</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a></span>&nbsp;<span class="element-name">expression</span><wbr><span class="parameters">(int&nbsp;_p)</span>
+                                           throws <span class="exceptions">org.antlr.v4.runtime.RecognitionException</span></div>
+<dl class="notes">
+<dt>Throws:</dt>
+<dd><code>org.antlr.v4.runtime.RecognitionException</code></dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="object()">
 <h3>object</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="NaftahParser.ObjectContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectContext</a></span>&nbsp;<span class="element-name">object</span>()
@@ -3038,6 +3122,13 @@ loadScripts(document, 'script');</script>
 <dt>Overrides:</dt>
 <dd><code>sempred</code>&nbsp;in class&nbsp;<code>org.antlr.v4.runtime.Recognizer&lt;org.antlr.v4.runtime.Token,<wbr>org.antlr.v4.runtime.atn.ParserATNSimulator&gt;</code></dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="expression_sempred(org.daiitech.naftah.parser.NaftahParser.ExpressionContext,int)">
+<h3>expression_sempred</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">expression_sempred</span><wbr><span class="parameters">(<a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a>&nbsp;_localctx,
+ int&nbsp;predIndex)</span></div>
 </section>
 </li>
 </ul>

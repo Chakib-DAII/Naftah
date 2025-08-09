@@ -45,7 +45,7 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
@@ -98,6 +98,15 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- =========== FIELD SUMMARY =========== -->
+<li>
+<section class="field-summary" id="field-summary">
+<h2>Field Summary</h2>
+<div class="inherited-list">
+<h3 id="fields-inherited-from-class-org.daiitech.naftah.utils.repl.BaseHighlighter">Fields inherited from class&nbsp;org.daiitech.naftah.utils.repl.<a href="../utils/repl/BaseHighlighter.html" title="class in org.daiitech.naftah.utils.repl">BaseHighlighter</a></h3>
+<code><a href="../utils/repl/BaseHighlighter.html#originalHighlighter">originalHighlighter</a></code></div>
+</section>
+</li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li>
 <section class="constructor-summary" id="constructor-summary">
@@ -124,11 +133,23 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.jline.utils.AttributedString</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#highlight(org.jline.reader.LineReader,java.lang.String)" class="member-name-link">highlight</a><wbr>(org.jline.reader.LineReader&nbsp;reader,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;buffer)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private org.jline.utils.AttributedStyle</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getStyleForTokenType(int)" class="member-name-link">getStyleForTokenType</a><wbr>(int&nbsp;tokenType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Maps token types to specific styles (e.g., colors, bold, italic).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.jline.utils.AttributedString</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#highlight(org.jline.reader.LineReader,java.lang.String)" class="member-name-link">highlight</a><wbr>(org.jline.reader.LineReader&nbsp;reader,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;buffer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Highlights the input line with token-based styles and formatting.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private org.jline.utils.AttributedString</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#rightAlign(org.jline.utils.AttributedString,int)" class="member-name-link">rightAlign</a><wbr>(org.jline.utils.AttributedString&nbsp;str,
+ int&nbsp;width)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Aligns the given attributed string to the right side of the terminal,
+ applying appropriate spacing and appending the prompt.</div>
 </div>
 </div>
 </div>
@@ -138,7 +159,7 @@ loadScripts(document, 'script');</script>
 <code><a href="../utils/repl/BaseHighlighter.html#merge(org.jline.utils.AttributedString,org.jline.utils.AttributedString)">merge</a>, <a href="../utils/repl/BaseHighlighter.html#setErrorIndex(int)">setErrorIndex</a>, <a href="../utils/repl/BaseHighlighter.html#setErrorPattern(java.util.regex.Pattern)">setErrorPattern</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
-<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.jline.reader.Highlighter">Methods inherited from interface&nbsp;org.jline.reader.Highlighter</h3>
 <code>refresh</code></div>
@@ -191,6 +212,35 @@ loadScripts(document, 'script');</script>
 <dd>an <code>AttributedString</code> containing styled output</dd>
 <dt>Throws:</dt>
 <dd><code>org.jline.reader.EOFError</code> - if the buffer contains escape sequences indicating multiline</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getStyleForTokenType(int)">
+<h3>getStyleForTokenType</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">org.jline.utils.AttributedStyle</span>&nbsp;<span class="element-name">getStyleForTokenType</span><wbr><span class="parameters">(int&nbsp;tokenType)</span></div>
+<div class="block">Maps token types to specific styles (e.g., colors, bold, italic).</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>tokenType</code> - the integer type of the token from the lexer</dd>
+<dt>Returns:</dt>
+<dd>the corresponding <code>AttributedStyle</code> for the token</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="rightAlign(org.jline.utils.AttributedString,int)">
+<h3>rightAlign</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">org.jline.utils.AttributedString</span>&nbsp;<span class="element-name">rightAlign</span><wbr><span class="parameters">(org.jline.utils.AttributedString&nbsp;str,
+ int&nbsp;width)</span></div>
+<div class="block">Aligns the given attributed string to the right side of the terminal,
+ applying appropriate spacing and appending the prompt.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>str</code> - the input string to align</dd>
+<dd><code>width</code> - the total width of the terminal line</dd>
+<dt>Returns:</dt>
+<dd>a right-aligned <code>AttributedString</code></dd>
 </dl>
 </section>
 </li>
