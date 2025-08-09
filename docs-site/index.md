@@ -15,10 +15,11 @@ title: Naftah Programming Language
 ## 📚 Documentation
 
 - [Javadoc](./javadoc/index.html)
+- [Benchmarks](./benchmarks.md)
 - [About](./about.md)
 
 ---
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/Chakib-DAII/Naftah.git)
+- [GitHub Repository](https://github.com/Chakib-DAII/Naftah)
