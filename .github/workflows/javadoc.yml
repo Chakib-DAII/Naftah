@@ -1,0 +1,52 @@
+name: Generate and Deploy Javadoc
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  javadoc:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java (Temurin 17)
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Copy Javadoc into website
+        run: |
+          mkdir -p docs-site/javadoc
+          cp -r build/docs/javadoc/* docs-site/javadoc/
+
+      #TODO: Enable GitHub Pages
+      #Go to your repo on GitHub
+      #Settings → Pages
+      #Select source: Deploy from a branch
+      #Branch: gh-pages (create this if it doesn’t exist yet)
+      #Folder: / (root)
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs-site
+          publish_branch: gh-pages
