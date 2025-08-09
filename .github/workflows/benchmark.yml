@@ -1,5 +1,4 @@
-name: Generate and Deploy Javadoc and Benchmarks
-
+name: Run, Report and Deploy Benchmark
 on:
   push:
     branches: [ main ]
