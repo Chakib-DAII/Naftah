@@ -454,7 +454,7 @@ public enum BinaryOperation implements Operation {
 	},
 
 	/**
-	 * Represents the less-than comparison operation (<).
+	 * Represents the less-than comparison operation (&lt;).
 	 * Compares two numeric values or compatible types and returns a boolean indicating
 	 * whether the left operand is less than the right operand.
 	 * Supports conversions from boolean and character types to numbers.
@@ -515,7 +515,7 @@ public enum BinaryOperation implements Operation {
 	},
 
 	/**
-	 * Represents the less-than-or-equal-to comparison operation (<=).
+	 * Represents the less-than-or-equal-to comparison operation (&lt;=).
 	 * Compares two numeric values or compatible types and returns a boolean indicating
 	 * whether the left operand is less than or equal to the right operand.
 	 * Supports conversions from boolean and character types to numbers.
@@ -697,7 +697,7 @@ public enum BinaryOperation implements Operation {
 
 	// Bitwise
 	/**
-	 * Represents the bitwise AND operation (&).
+	 * Represents the bitwise AND operation (&amp;).
 	 * Performs a bitwise AND between two operands.
 	 * Supports numeric and character operands with appropriate conversions.
 	 */

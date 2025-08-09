@@ -127,10 +127,11 @@ public final class ClassUtils {
 	 * <p>
 	 * Usage example:
 	 * <pre>
-	 * {@link Set}<{@link Class}> classes = {@link ClassUtils}.getClasses();
-	 * {@link Predicate}<{@link Method}> instancePublicMethodPredicate = method ->
+	 * {@link Set}&lt;{@link Class}&gt; classes = {@link ClassUtils}.getClasses();
+	 * {@link Predicate}&lt;{@link Method}&gt; instancePublicMethodPredicate = method ->
 	 * {@link Modifier}.isPublic(method.getModifiers());
-	 * {@link Map}<{@link Class}, {@link Method}[]> instancePublicMethods = {@link ClassUtils}.getClassMethods(classes,
+	 * {@link Map}&lt;{@link Class}, {@link Method}[]&gt; instancePublicMethods =
+	 * {@link ClassUtils}.getClassMethods(classes,
 	 * instancePublicMethodPredicate);
 	 * </pre>
 	 *

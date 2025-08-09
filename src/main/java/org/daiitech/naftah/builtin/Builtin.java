@@ -336,7 +336,7 @@ public final class Builtin {
 	 * @param <T> The type of the objects being compared
 	 * @param x   The first object
 	 * @param y   The second object
-	 * @return true if x < y, false otherwise
+	 * @return true if x &lt; y, false otherwise
 	 * @usage lessThan(x, y)
 	 */
 	@NaftahFn(name = "أصغر_من", description = "دالة (أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد الثاني. تُرجع true إذا كان الأول أصغر، وfalse خلاف ذلك.", usage = "أصغر_من(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
