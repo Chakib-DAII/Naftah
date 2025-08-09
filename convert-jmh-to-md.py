@@ -25,8 +25,8 @@ lines = [
 for entry in data:
 	benchmark = entry.get("benchmark", "N/A").split(".")[-1]
 	mode = entry.get("mode", "N/A")
-	score = f"{entry.get('primaryMetric', {}).get('score', 'N/A'):.2f}"
-	error = f"{entry.get('primaryMetric', {}).get('scoreError', 'N/A'):.2f}"
+	score = f"{entry.get('primaryMetric', {}).get('score', 'N/A'):.10f}"
+	error = f"{entry.get('primaryMetric', {}).get('scoreError', 'N/A'):.10f}"
 	unit = entry.get("primaryMetric", {}).get("scoreUnit", "N/A")
 
 	lines.append(f"| `{benchmark}` | {mode} | {score} | ±{error} | {unit} |")
