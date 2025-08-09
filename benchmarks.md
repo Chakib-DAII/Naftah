@@ -1,18 +1,18 @@
 ✅ Markdown written to docs-site/benchmarks.md
 core | Error | Units |
 |-----------|------|-------|-------|--------|
-| `scalarAdd` | thrpt | 62.4334088394 | ±1.5516345328 | ops/ms |
-| `vectorAdd` | thrpt | 64.7621368439 | ±1.4897610317 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 1416.3020593015 | ±52.2543354518 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 803.9059083135 | ±8.0939436296 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 611.0372908162 | ±7.9512755750 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 720.5919097314 | ±5.7756449852 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 700.8068563214 | ±7.8887037563 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 610.7311873551 | ±7.0218181811 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 925.7908804940 | ±28.1349677427 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 481.1306443868 | ±4.2298490010 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 814.8749471041 | ±8.1803288159 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 550.6502877574 | ±3.7798283245 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 544.3577460582 | ±4.2444228109 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 1076.7912112040 | ±12.1903933040 | ops/ms |
-| `benchmarkInterpolation` | thrpt | 34.3382001203 | ±0.7786425325 | ops/ms |
+| `scalarAdd` | thrpt | 62.6854045170 | ±0.7704727832 | ops/ms |
+| `vectorAdd` | thrpt | 62.9907367582 | ±1.0306275189 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 1381.9423119209 | ±15.2970721207 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 819.5502901516 | ±6.1440458596 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 639.3479255061 | ±7.6429877269 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 720.1877448928 | ±5.5990159206 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 615.9660566648 | ±4.4501713782 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 563.9757615435 | ±15.4516229013 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 813.0827129670 | ±12.5430535152 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 472.5072639718 | ±2.4000266762 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 977.1173100561 | ±9.9257207390 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 535.1027823627 | ±4.6555178708 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 559.1361440030 | ±17.1948180995 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 1140.7293881371 | ±9.2112151054 | ops/ms |
+| `benchmarkInterpolation` | thrpt | 36.7528772340 | ±0.3800091556 | ops/ms |
