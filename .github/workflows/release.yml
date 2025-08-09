@@ -16,24 +16,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
+          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install Node.js dependencies
+        run: npm ci
 
       - name: Run semantic-release
+        id: semantic_release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    # default token for pushing tags & commits
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEXT_RELEASE_VERSION: ${{ steps.semantic_release.outputs.nextRelease.version }}  # optional, if using custom scripts
         run: npx semantic-release
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Build and publish artifacts
-        env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        run: ./gradlew publish
