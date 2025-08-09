@@ -25,6 +25,19 @@ jobs:
           # signing-key: ${{ secrets.SIGNING_KEY }}
           # signing-password: ${{ secrets.SIGNING_PASSWORD }}
 
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
       - name: Publish artifacts
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}

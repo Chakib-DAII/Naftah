@@ -33,6 +33,9 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
+      - name: Build project and generate Javadoc
+        run: ./gradlew build javadoc
+
       - name: Copy Javadoc into website
         run: |
           mkdir -p docs-site/javadoc
