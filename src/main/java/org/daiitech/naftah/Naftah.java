@@ -159,10 +159,8 @@ public final class Naftah {
 
 	/**
 	 * Private constructor to prevent instantiation.
-	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private Naftah() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
 	/**
