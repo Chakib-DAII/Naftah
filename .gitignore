@@ -42,3 +42,4 @@ out/
 /src/main/antlr/gen/
 /src/main/gen/
 /logs/
+/node_modules/
