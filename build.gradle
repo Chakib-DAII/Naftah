@@ -513,9 +513,13 @@ tasks.register('runJmh', JavaExec) {
 }
 
 tasks.withType(Javadoc).configureEach {
+	source = sourceSets.main.allJava
+	classpath = sourceSets.main.compileClasspath
+	destinationDir = file("$buildDir/docs/javadoc")
 	options {
 		encoding = 'UTF-8'
 		charSet = 'UTF-8'
+		memberLevel = JavadocMemberLevel.PUBLIC
 		author = true
 		version = true
 		// Add a window title for the generated docs
