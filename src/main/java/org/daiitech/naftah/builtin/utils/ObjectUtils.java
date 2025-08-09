@@ -31,9 +31,24 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 
 /**
+ * Utility class providing various helper methods for working with Java objects in the context of the Naftah language
+ * runtime.
+ * <p>
+ * This class includes methods for:
+ * <ul>
+ * <li>Evaluating object truthiness and emptiness</li>
+ * <li>Determining and converting between Java and Naftah types</li>
+ * <li>Applying arithmetic and logical operations to objects</li>
+ * <li>Handling arrays, collections, maps, and primitive wrappers</li>
+ * <li>Converting objects to their Naftah string representations</li>
+ * </ul>
+ * <p>
+ * This class is not instantiable.
+ *
  * @author Chakib Daii
  */
 public final class ObjectUtils {
+
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -43,6 +58,16 @@ public final class ObjectUtils {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
+	/**
+	 * Checks whether the given object is considered "truthy".
+	 * <p>
+	 * This method returns {@code false} for {@code null}, {@code false} booleans,
+	 * numeric zero, NaN, blank strings, empty arrays, collections, and maps.
+	 * For all other objects, it returns {@code true}.
+	 *
+	 * @param obj the object to evaluate
+	 * @return {@code true} if the object is considered truthy; {@code false} otherwise
+	 */
 	public static boolean isTruthy(Object obj) {
 		if (obj == null) {
 			return false;
@@ -88,6 +113,15 @@ public final class ObjectUtils {
 		return true;
 	}
 
+	/**
+	 * Negates the given value.
+	 * <p>
+	 * Tries arithmetic negation using {@link NumberUtils#negate(Object)}.
+	 * If that fails, it performs logical negation using {@link #isTruthy(Object)}.
+	 *
+	 * @param value the value to negate
+	 * @return the negated value
+	 */
 	public static Object not(Object value) {
 		try {
 			// arithmetic negation
@@ -145,6 +179,12 @@ public final class ObjectUtils {
 		return false;
 	}
 
+	/**
+	 * Resolves the Java type from a Naftah type context.
+	 *
+	 * @param naftahTypeContext the parser context for the type
+	 * @return the corresponding Java {@link Class}, or {@code Object.class} if unknown
+	 */
 	public static Class<?> getJavaType(ParserRuleContext naftahTypeContext) {
 		if (naftahTypeContext instanceof NaftahParser.ReturnTypeContext returnTypeContext) {
 			if (returnTypeContext instanceof NaftahParser.VoidReturnTypeContext) {
@@ -186,6 +226,12 @@ public final class ObjectUtils {
 		return Object.class;
 	}
 
+	/**
+	 * Resolves the Java type from a built-in type context in Naftah.
+	 *
+	 * @param builtInContext the built-in type context
+	 * @return the corresponding Java type
+	 */
 	public static Class<?> getJavaType(NaftahParser.BuiltInContext builtInContext) {
 		if (hasChild(builtInContext.BOOLEAN())) {
 			return Boolean.class;
@@ -217,6 +263,13 @@ public final class ObjectUtils {
 		return Object.class;
 	}
 
+	/**
+	 * Converts a Java class into its corresponding Naftah type token string.
+	 *
+	 * @param parser   the parser instance used for vocabulary lookup
+	 * @param javaType the Java class
+	 * @return the Naftah language representation of the type
+	 */
 	public static String getNaftahType(Parser parser, Class<?> javaType) {
 		Vocabulary vocabulary = parser.getVocabulary();
 		if (Objects.isNull(javaType)) {
@@ -254,6 +307,12 @@ public final class ObjectUtils {
 		return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
 	}
 
+	/**
+	 * Checks if the object is a Naftah built-in type.
+	 *
+	 * @param obj the object to check
+	 * @return {@code true} if the object is a built-in type
+	 */
 	public static boolean isBuiltinType(Object obj) {
 		if (obj == null) {
 			return false;
@@ -262,6 +321,12 @@ public final class ObjectUtils {
 		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class;
 	}
 
+	/**
+	 * Checks if the object is a "simple" type (primitive wrapper, string, number, etc.).
+	 *
+	 * @param obj the object to check
+	 * @return {@code true} if the object is a simple type
+	 */
 	public static boolean isSimpleType(Object obj) {
 		if (obj == null) {
 			return false;
@@ -271,6 +336,12 @@ public final class ObjectUtils {
 		return cls.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class;
 	}
 
+	/**
+	 * Checks whether the object or its components are simple, built-in, or collections/maps of such types.
+	 *
+	 * @param obj the object to evaluate
+	 * @return {@code true} if the object is simple or composed only of simple/builtin types
+	 */
 	public static boolean isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(Object obj) {
 		if (obj == null) {
 			return false;
@@ -334,6 +405,15 @@ public final class ObjectUtils {
 		return false;
 	}
 
+	/**
+	 * Applies a binary operation to two values.
+	 *
+	 * @param left      the left operand
+	 * @param right     the right operand
+	 * @param operation the binary operation to apply
+	 * @return the result of the operation
+	 * @throws NaftahBugError if operands are incompatible
+	 */
 	public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
 		if (left == null || right == null) {
 			throw new NaftahBugError("لا يمكن أن تكون الوسائط فارغة.");
@@ -421,6 +501,14 @@ public final class ObjectUtils {
 		throw BinaryOperation.newNaftahBugError(operation, left, right);
 	}
 
+	/**
+	 * Applies a unary operation to a value.
+	 *
+	 * @param a         the operand
+	 * @param operation the unary operation to apply
+	 * @return the result of the operation
+	 * @throws NaftahBugError if the operand type is unsupported
+	 */
 	public static Object applyOperation(Object a, UnaryOperation operation) {
 		if (a == null) {
 			throw new NaftahBugError("لا يمكن أن يكون الوسيط فارغًا.");
@@ -464,18 +552,42 @@ public final class ObjectUtils {
 		throw UnaryOperation.newNaftahBugError(operation, a);
 	}
 
+	/**
+	 * Converts a boolean to an integer (1 for {@code true}, 0 for {@code false}).
+	 *
+	 * @param aBoolean the boolean to convert
+	 * @return 1 if {@code true}, 0 if {@code false}
+	 */
 	public static int booleanToInt(boolean aBoolean) {
 		return aBoolean ? 1 : 0;
 	}
 
+	/**
+	 * Converts an integer to a boolean (true if odd, false if even).
+	 *
+	 * @param i the integer to convert
+	 * @return {@code true} if the integer is odd; {@code false} otherwise
+	 */
 	public static boolean intToBoolean(int i) {
 		return Math.abs(i) % 2 != 0;
 	}
 
+	/**
+	 * Converts a boolean value to its Naftah string representation ("صحيح" or "خطأ").
+	 *
+	 * @param b the boolean value
+	 * @return "صحيح" if {@code true}, "خطأ" if {@code false}
+	 */
 	public static String booleanToString(boolean b) {
 		return b ? "صحيح" : "خطأ";
 	}
 
+	/**
+	 * Converts an array to a string representation, handling both primitive and object arrays.
+	 *
+	 * @param obj the array object
+	 * @return a string representation of the array
+	 */
 	public static String arrayToString(Object obj) {
 		if (obj == null) {
 			return NULL;
@@ -517,6 +629,12 @@ public final class ObjectUtils {
 		return replaceAllNulls(Arrays.toString((Object[]) obj));
 	}
 
+	/**
+	 * Converts a Naftah value into its string representation, using language-specific formatting.
+	 *
+	 * @param o the value to convert
+	 * @return the string representation
+	 */
 	public static String getNaftahValueToString(Object o) {
 		if (o == null) {
 			return NULL;
@@ -533,6 +651,12 @@ public final class ObjectUtils {
 		return replaceAllNulls(o.toString());
 	}
 
+	/**
+	 * Converts a Naftah value to its internal representation, with boolean values converted to localized strings.
+	 *
+	 * @param o the value to process
+	 * @return the processed value
+	 */
 	public static Object getNaftahValue(Object o) {
 		if (o == null) {
 			return NULL;
@@ -543,6 +667,12 @@ public final class ObjectUtils {
 		return o;
 	}
 
+	/**
+	 * Replaces all "null" occurrences in the given string with the localized {@code NULL} constant.
+	 *
+	 * @param s the string to process
+	 * @return the string with "null" replaced
+	 */
 	public static String replaceAllNulls(String s) {
 		return s.replaceAll("null", NULL);
 	}

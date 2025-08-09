@@ -8,23 +8,29 @@
       </option>
       <option name="IMPORT_LAYOUT_TABLE">
         <value>
-          <package name="java" withSubpackages="true" static="false" />
-          <package name="javax" withSubpackages="true" static="false" />
-          <emptyLine />
-          <package name="org" withSubpackages="true" static="false" />
-          <package name="picocli" withSubpackages="true" static="false" />
-          <package name="com" withSubpackages="true" static="false" />
-          <emptyLine />
-          <package name="" withSubpackages="true" static="false" />
-          <emptyLine />
-          <package name="java" withSubpackages="true" static="true" />
-          <package name="javax" withSubpackages="true" static="true" />
-          <emptyLine />
-          <package name="org" withSubpackages="true" static="true" />
-		  <package name="picocli" withSubpackages="true" static="false" />
-          <package name="com" withSubpackages="true" static="true" />
-          <emptyLine />
-          <package name="" withSubpackages="true" static="true" />
+          	<package name="java" withSubpackages="true" static="false" />
+			<emptyLine />
+			<package name="javax" withSubpackages="true" static="false" />
+          	<emptyLine />
+          	<package name="org" withSubpackages="true" static="false" />
+			<emptyLine />
+          	<package name="picocli" withSubpackages="true" static="false" />
+			<emptyLine />
+          	<package name="com" withSubpackages="true" static="false" />
+          	<emptyLine />
+          	<package name="" withSubpackages="true" static="false" />
+          	<emptyLine />
+          	<package name="java" withSubpackages="true" static="true" />
+			<emptyLine />
+          	<package name="javax" withSubpackages="true" static="true" />
+          	<emptyLine />
+          	<package name="org" withSubpackages="true" static="true" />
+			<emptyLine />
+		  	<package name="picocli" withSubpackages="true" static="false" />
+			<emptyLine />
+         	<package name="com" withSubpackages="true" static="true" />
+          	<emptyLine />
+          	<package name="" withSubpackages="true" static="true" />
         </value>
       </option>
       <option name="NEW_LINE_AFTER_LPAREN_IN_RECORD_HEADER" value="true" />

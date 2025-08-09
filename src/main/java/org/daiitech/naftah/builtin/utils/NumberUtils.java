@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
@@ -59,7 +60,7 @@ public final class NumberUtils {
 		// Replace all decimal-like characters with a dot
 		text = text.replaceAll("[,٫،٬]", ".");
 		try {
-			if (text.contains(".") || text.toLowerCase().contains("e")) {
+			if (text.contains(".") || text.toLowerCase(Locale.ROOT).contains("e")) {
 				try {
 					// Try parsing as a float first
 					float f = Float.parseFloat(text);

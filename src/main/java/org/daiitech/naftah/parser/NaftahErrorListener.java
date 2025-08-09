@@ -15,12 +15,53 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSym
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
 /**
+ * Custom error listener for Naftah language parsing errors.
+ * <p>
+ * This listener extends ANTLR's {@link BaseErrorListener} and provides custom error messages
+ * in Arabic with enhanced formatting for better developer feedback. It translates common
+ * syntax errors, provides detailed error locations (line, column), and handles special cases
+ * like unexpected end-of-file (EOF).
+ * </p>
+ *
+ * <p>
+ * On encountering a syntax error, it formats and prints the error message,
+ * then throws a {@link ParseCancellationException} to halt interpretation.
+ * </p>
+ *
+ * <p>
+ * Singleton instance: {@link #INSTANCE}
+ * Error strategy: {@link #ERROR_HANDLER_INSTANCE}
+ * </p>
+ *
  * @author Chakib Daii
  */
+
 public class NaftahErrorListener extends BaseErrorListener {
+	/**
+	 * A reusable ANTLR error handling strategy that immediately
+	 * terminates parsing on the first syntax error.
+	 */
 	public static final ANTLRErrorStrategy ERROR_HANDLER_INSTANCE = new BailErrorStrategy();
+
+	/**
+	 * Singleton instance of the NaftahErrorListener to be used
+	 * across the application for syntax error handling.
+	 */
 	public static final NaftahErrorListener INSTANCE = new NaftahErrorListener();
 
+	/**
+	 * Called by ANTLR when a syntax error is encountered during parsing.
+	 * It formats the error message, translates common error phrases into Arabic,
+	 * highlights the offending token, and displays expected tokens for EOF errors.
+	 * Then it throws a {@link ParseCancellationException} to stop parsing.
+	 *
+	 * @param recognizer         the parser instance
+	 * @param offendingSymbol    the symbol/token where the error occurred
+	 * @param line               the line number of the error (1-based)
+	 * @param charPositionInLine the character position within the line (0-based)
+	 * @param msg                the error message provided by ANTLR
+	 * @param e                  the exception thrown by the parser (can be null)
+	 */
 	@Override
 	public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
 
@@ -76,7 +117,13 @@ public class NaftahErrorListener extends BaseErrorListener {
 		throw new ParseCancellationException("خطأ في بناء الجملة. تم إيقاف التنفيذ.");
 	}
 
-	// Arabic translation for common error phrases
+	/**
+	 * Translates common ANTLR error message fragments from English into Arabic.
+	 * If no known phrase is matched, returns the original message.
+	 *
+	 * @param msg the original error message from ANTLR
+	 * @return the translated message in Arabic or the original if no translation exists
+	 */
 	private String translateMessage(String msg) {
 		if (msg.contains("mismatched input")) {
 			return msg.replace("mismatched input", "إدخال غير متطابق");

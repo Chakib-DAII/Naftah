@@ -65,47 +65,122 @@ import static picocli.CommandLine.Unmatched;
 import static picocli.CommandLine.printHelpIfRequested;
 
 /**
+ * Main entry point of the Naftah programming language.
+ * <p>
+ * Naftah is an interpreted JVM language.
+ * This class handles command line argument parsing and execution of
+ * different commands such as running scripts, initializing classpath scanning,
+ * and starting an interactive shell (REPL).
+ * </p>
+ *
+ * <p>
+ * Supports debug mode, encoding options, and classpath scanning configuration.
+ * </p>
+ *
+ * <p>
+ * The supported file extensions for Naftah scripts are:
+ * {@code ".naftah", ".nfth", ".na", ".nsh"}.
+ * </p>
+ *
  * @author Chakib Daii
- *         <p>
- *         main of Naftah programming language as an interpreted JVM language
  */
 public final class Naftah {
+
+	/**
+	 * System property key for the Java version.
+	 */
 	public static final String JAVA_VERSION_PROPERTY = "java.version";
+
+	/**
+	 * System property key for the Java Virtual Machine vendor.
+	 */
 	public static final String JAVA_VM_VENDOR_PROPERTY = "java.vm.vendor";
+
+	/**
+	 * Property to enable scanning the Java classpath for Naftah types.
+	 */
 	public static final String SCAN_CLASSPATH_PROPERTY = "naftah.scanClassPath";
+
+	/**
+	 * Property to force scanning the Java classpath.
+	 */
 	public static final String FORCE_CLASSPATH_PROPERTY = "naftah.forceClassPathScan";
+
+	/**
+	 * Property to enable debug mode.
+	 */
 	public static final String DEBUG_PROPERTY = "naftah.debug";
+
+	/**
+	 * Property set when inside the REPL (shell).
+	 */
 	public static final String INSIDE_REPL_PROPERTY = "naftah.repl";
+
+	/**
+	 * Property set when inside the init command.
+	 */
 	public static final String INSIDE_INIT_PROPERTY = "naftah.init";
+
+	/**
+	 * Property set when inside the run command.
+	 */
 	public static final String INSIDE_RUN_PROPERTY = "naftah.run";
+
+	/**
+	 * Property key for file encoding.
+	 */
 	public static final String FILE_ENCODING_PROPERTY = "file.encoding";
+
+	/**
+	 * Property to enable Vector API optimizations.
+	 */
 	public static final String VECTOR_API_PROPERTY = "naftah.vector.api.active";
 
+	/**
+	 * The recognized standard file extensions for Naftah scripts.
+	 */
 	public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
 
 	static {
 		setupTerminalWidthAndHeight(NaftahSystem::getTerminalWidthAndHeight);
 	}
 
-	// arguments to the script
+	// Script arguments
 	private List<String> args;
 
-	// is this a file on disk
+	// Indicates if the script source is a file
 	private boolean isScriptFile;
 
-	// filename or content of script
+	// The script source: either filename or raw content
 	private String script;
 
-	// do you want full stack traces in script exceptions?
+	// Whether debug mode is enabled (affects error stack traces)
 	private boolean debug = false;
 
+	/**
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
 	private Naftah() {
+		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
+	/**
+	 * Main method of the Naftah interpreter.
+	 * Parses command line arguments and dispatches commands.
+	 *
+	 * @param args the command line arguments
+	 */
 	public static void main(String[] args) {
 		processArgs(args);
 	}
 
+	/**
+	 * Initializes the Java Util Logging configuration.
+	 * If debug is true, logging levels are set to verbose.
+	 *
+	 * @param debug true to enable debug logging, false otherwise
+	 */
 	private static void initLogger(boolean debug) {
 		try {
 			String loggingConfigFile = System.getProperty("java.util.logging.config.file");
@@ -147,6 +222,11 @@ public final class Naftah {
 		}
 	}
 
+	/**
+	 * Processes the command line arguments and dispatches the appropriate command.
+	 *
+	 * @param args the raw command line arguments
+	 */
 	private static void processArgs(String[] args) {
 		setupOutputStream();
 		setupErrorStream();
@@ -188,10 +268,23 @@ public final class Naftah {
 		}
 	}
 
+	/**
+	 * Prints the string representation of the given object with padding applied.
+	 *
+	 * @param o the object to convert to a string and print with padding
+	 */
 	private static void printPaddedToString(Object o) {
 		padText(getNaftahValueToString(o), true);
 	}
 
+	/**
+	 * Prints the error message of the given throwable with padding applied.
+	 * If the throwable is not an instance of {@link NaftahBugError},
+	 * it will be wrapped inside a {@code NaftahBugError}.
+	 * The error message is formatted in Arabic as "تم التقاط الخطأ: 'message'".
+	 *
+	 * @param t the throwable whose error message will be printed with padding
+	 */
 	private static void printPaddedErrorMessageToString(Throwable t) {
 		Throwable throwable = t;
 		if (!(throwable instanceof NaftahBugError)) {
@@ -200,6 +293,12 @@ public final class Naftah {
 		padText(Objects.nonNull(throwable.getMessage()) ? String.format("تم التقاط الخطأ: '%s'", replaceAllNulls(throwable.getMessage())) : throwable.toString(), true);
 	}
 
+	/**
+	 * Runs the given NaftahCommand.
+	 *
+	 * @param naftahCommand the command to run
+	 * @return true if successful, false otherwise
+	 */
 	private boolean run(NaftahCommand naftahCommand) {
 		try {
 			naftahCommand.run(this, !(naftahCommand instanceof NaftahCommand.InitCommand));
@@ -217,6 +316,9 @@ public final class Naftah {
 		return false;
 	}
 
+	/**
+	 * Provides version information for the Naftah command line.
+	 */
 	public static class VersionProvider implements IVersionProvider {
 		@Override
 		public String[] getVersion() {
@@ -229,8 +331,15 @@ public final class Naftah {
 		}
 	}
 
+	/**
+	 * The base command class for the Naftah CLI, implemented with picocli.
+	 * Supports subcommands: run, init, and shell.
+	 */
 	@Command(name = NaftahCommand.NAME, customSynopsis = "naftah [run/shell/init] [options] [filename] [args]", description = {"The Naftah command line processor.", "معالج الأوامر الخاص بـلغة البرمجة نفطة"}, sortOptions = false, versionProvider = VersionProvider.class)
 	private static class NaftahCommand {
+		/**
+		 * The main command name.
+		 */
 		private static final String NAME = "naftah";
 		@Option(names = {"-D", "--define"}, paramLabel = "<property=value>", description = {"Define a system property", "تعريف خاصية نظام"})
 		private final Map<String, String> systemProperties = new LinkedHashMap<>();
@@ -255,6 +364,13 @@ public final class Naftah {
 		@Option(names = {"-vec", "--vector"}, description = {"Enable Vector API optimizations for performance", "تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"})
 		private boolean useVectorApi;
 
+		/**
+		 * Runs the command.
+		 *
+		 * @param main           the main Naftah instance
+		 * @param bootstrapAsync whether to bootstrap asynchronously
+		 * @throws Exception if any error occurs
+		 */
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
@@ -263,10 +379,12 @@ public final class Naftah {
 		}
 
 		/**
-		 * Process the users request.
+		 * Processes the parsed command line arguments and configures the environment.
 		 *
-		 * @param parseResult the parsed result command line.
-		 * @throws ParameterException if the user input was invalid
+		 * @param parseResult the parsed command line result
+		 * @return true if processing succeeded; false otherwise
+		 * @throws ParameterException if the command line is invalid
+		 * @throws IOException        if an I/O error occurs
 		 */
 		private boolean process(ParseResult parseResult) throws ParameterException, IOException {
 			var matchedCommand = (NaftahCommand) parseResult.commandSpec().userObject();
@@ -322,6 +440,9 @@ public final class Naftah {
 			return main.run(matchedCommand);
 		}
 
+		/**
+		 * The 'run' subcommand that interprets a Naftah script.
+		 */
 		@Command(name = RunCommand.NAME, customSynopsis = "naftah run [options] [filename] [args]", description = {"The Naftah run command. it starts the language interpreter (interpretes a naftah script).", "أمر تشغيل نفطة. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."}, sortOptions = false)
 		private static final class RunCommand extends NaftahCommand {
 			private static final String NAME = "run";
@@ -346,6 +467,9 @@ public final class Naftah {
 			}
 		}
 
+		/**
+		 * The 'init' subcommand that prepares Java classpath classes for Naftah reuse.
+		 */
 		@Command(name = InitCommand.NAME, customSynopsis = "naftah init [options] [filename] [args]", description = {"The Naftah init command. it prepares the classpath classes (java classpath) and process them to reuse inside naftah script.", "أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة."}, sortOptions = false)
 		private static final class InitCommand extends NaftahCommand {
 			private static final String NAME = "init";
@@ -358,6 +482,9 @@ public final class Naftah {
 			}
 		}
 
+		/**
+		 * The 'shell' subcommand that starts the interactive Naftah REPL.
+		 */
 		@Command(name = ShellCommand.NAME, customSynopsis = "naftah shell [options] [filename] [args]", description = {"The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code", "يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."}, sortOptions = false)
 		private static final class ShellCommand extends NaftahCommand {
 			private static final String NAME = "shell";
@@ -432,6 +559,11 @@ public final class Naftah {
 				}
 			}
 
+			/**
+			 * Checks for management commands like '/exit' or '/خروج' and handles them accordingly.
+			 *
+			 * @param line the input line to check
+			 */
 			private void checkManagementCommands(String line) {
 				/*
 				 * TODO: add support for /reset : reset repl /list : list all valid code

@@ -46,15 +46,42 @@ import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
 
 /**
+ * Helper class for various parsing-related utilities used in the Naftah language parser.
+ * Includes methods for working with parse trees, preparing function calls, resolving placeholders,
+ * and other parsing helper utilities.
+ *
+ * <p>All methods are static, and instantiation is prevented.
+ *
  * @author Chakib Daii
  */
 public final class NaftahParserHelper {
+
+	/**
+	 * Regex pattern for detecting placeholders in the form PLACEHOLDER(key).
+	 */
 	public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("PLACEHOLDER\\((.*?)\\)");
+
+	/**
+	 * String representation for a null value in Naftah.
+	 */
 	public static final String NULL = "<فارغ>";
+	/**
+	 * Regex pattern for matching qualified calls.
+	 */
 	public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
+	/**
+	 * Unicode normalizer instance for normalization form NFKC.
+	 */
 	public static final Normalizer2 NORMALIZER = Normalizer2.getNFKCInstance();
 	// Cache to store computed subtrees per node
+
+	/**
+	 * Cache to store computed subtrees per parse tree node for optimization.
+	 */
 	private static final Map<ParseTree, List<ParseTree>> SUB_TREE_CACHE = new IdentityHashMap<>();
+	/**
+	 * Loaded properties representing token symbols, if available.
+	 */
 	public static Properties TOKENS_SYMBOLS;
 
 	static {
@@ -74,14 +101,39 @@ public final class NaftahParserHelper {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
+	/**
+	 * Checks if the given parse tree node has a direct parent of the specified type.
+	 *
+	 * @param <T>  the type of the parent tree node
+	 * @param ctx  the parse tree node to check
+	 * @param type the parent class type to look for
+	 * @return true if the parent is of the specified type; false otherwise
+	 */
 	public static <T extends Tree> boolean hasParentOfType(ParseTree ctx, Class<T> type) {
 		return ctx != null && ctx.getParent() != null && type.isAssignableFrom(ctx.getParent().getClass());
 	}
 
+
+	/**
+	 * Checks if the given parse tree node has any parent of any of the specified types.
+	 *
+	 * @param ctx   the parse tree node to check
+	 * @param types list of class types to check for as parent types
+	 * @return true if any parent matches one of the types; false otherwise
+	 */
 	public static boolean hasAnyParentOfType(ParseTree ctx, List<Class<? extends Tree>> types) {
 		return !ObjectUtils.isEmpty(types) && types.stream().anyMatch(type -> hasAnyParentOfType(ctx, type));
 	}
 
+	/**
+	 * Checks recursively if the given parse tree node has any ancestor (parent or further up)
+	 * of the specified type.
+	 *
+	 * @param <T>  the type of the ancestor tree node
+	 * @param ctx  the parse tree node to check
+	 * @param type the ancestor class type to look for
+	 * @return true if any ancestor is of the specified type; false otherwise
+	 */
 	public static <T extends Tree> boolean hasAnyParentOfType(ParseTree ctx, Class<T> type) {
 		boolean hasParent = hasParentOfType(ctx, type);
 		while (ctx.getParent() != null && !hasParent) {
@@ -91,33 +143,90 @@ public final class NaftahParserHelper {
 		return hasParent;
 	}
 
+	/**
+	 * Checks if the given child node is non-null.
+	 *
+	 * @param <T>   the type of the child node
+	 * @param child the child node to check
+	 * @return true if child is not null; false otherwise
+	 */
 	public static <T extends Tree> boolean hasChild(T child) {
 		return child != null;
 	}
 
+	/**
+	 * Checks if the given child node is of the specified type.
+	 *
+	 * @param <T>   the child node type
+	 * @param <T1>  the type to check against
+	 * @param child the child node to check
+	 * @param type  the class type to check
+	 * @return true if child is non-null and of the specified type; false otherwise
+	 */
 	public static <T, T1 extends Tree> boolean hasChildOfType(T child, Class<T1> type) {
 		return child != null && type.isAssignableFrom(child.getClass());
 	}
 
+	/**
+	 * Checks if any child in the list is of the specified type.
+	 *
+	 * @param <T>      the type of elements in the children list
+	 * @param <T1>     the type to check against
+	 * @param children the list of child nodes
+	 * @param type     the class type to check
+	 * @return true if any child is of the specified type; false otherwise
+	 */
 	public static <T, T1 extends Tree> boolean hasChildOfType(List<T> children, Class<T1> type) {
 		return !ObjectUtils.isEmpty(children) && children.stream().anyMatch(child -> hasChildOfType(child, type));
 	}
 
+	/**
+	 * Checks if the given parse tree node has a child or sub-child of the specified type.
+	 *
+	 * @param <T>  the type to check for in descendants
+	 * @param ctx  the parse tree node to check
+	 * @param type the class type to check
+	 * @return true if any child or descendant is of the specified type; false otherwise
+	 */
 	public static <T extends Tree> boolean hasChildOrSubChildOfType(ParseTree ctx, Class<T> type) {
 		var children = getAllChildren(ctx);
 		return !ObjectUtils.isEmpty(children) && children.stream().anyMatch(child -> hasChildOfType(child, type));
 	}
 
+	/**
+	 * Checks if any executed child or sub-child of the specified type exists under the given node,
+	 * based on the provided execution property.
+	 *
+	 * @param <T>                       the type of child to check
+	 * @param ctx                       the root parse tree node
+	 * @param type                      the child class type to look for
+	 * @param executedParseTreeProperty a property map indicating executed nodes
+	 * @return true if any executed child or descendant is of the specified type; false otherwise
+	 */
 	public static <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(ParseTree ctx, Class<T> type, ParseTreeProperty<Boolean> executedParseTreeProperty) {
 		return getAllChildrenOfType(ctx, type).stream().anyMatch(child -> Optional.ofNullable(executedParseTreeProperty).map(parseTreeProperty -> parseTreeProperty.get(child)).orElse(false));
 	}
 
+	/**
+	 * Retrieves all children of the given parse tree node that are of the specified type.
+	 *
+	 * @param <T>  the type of children to retrieve
+	 * @param ctx  the parse tree node
+	 * @param type the class type to filter children by
+	 * @return a list of children of the specified type, or empty list if none found
+	 */
 	public static <T extends Tree> List<ParseTree> getAllChildrenOfType(ParseTree ctx, Class<T> type) {
 		var children = getAllChildren(ctx);
 		return !ObjectUtils.isEmpty(children) ? children.stream().filter(child -> hasChildOfType(child, type)).toList() : List.of();
 	}
 
-	// Collects all nodes in the subtree rooted at 'ctx'
+	/**
+	 * Collects all nodes in the subtree rooted at the given parse tree node, including itself.
+	 * Uses an internal cache to optimize repeated calls on the same node.
+	 *
+	 * @param ctx the root parse tree node
+	 * @return list of all descendant nodes including the root node
+	 */
 	public static List<ParseTree> getAllChildren(ParseTree ctx) {
 		// If cached, return from cache
 		if (SUB_TREE_CACHE.containsKey(ctx)) {
@@ -130,6 +239,12 @@ public final class NaftahParserHelper {
 		return nodes;
 	}
 
+	/**
+	 * Recursively collects all nodes in the subtree rooted at the given node.
+	 *
+	 * @param node the current parse tree node
+	 * @param out  the list to accumulate nodes
+	 */
 	private static void collect(ParseTree node, List<ParseTree> out) {
 		out.add(node); // Include the node itself
 		for (int i = 0; i < node.getChildCount(); i++) {
@@ -137,10 +252,23 @@ public final class NaftahParserHelper {
 		}
 	}
 
+	/**
+	 * Visits the given parse tree using the provided Naftah parser visitor.
+	 *
+	 * @param naftahParserBaseVisitor the visitor instance
+	 * @param tree                    the parse tree to visit
+	 * @return the result of the visit operation
+	 */
 	public static Object visit(org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor, ParseTree tree) {
 		return naftahParserBaseVisitor.visit(tree);
 	}
 
+	/**
+	 * Prepares a declared function by visiting and setting its parameters and return type if not already set.
+	 *
+	 * @param naftahParserBaseVisitor the visitor to use for visiting parameter and return type contexts
+	 * @param function                the declared function to prepare
+	 */
 	public static void prepareDeclaredFunction(
 												org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor, DeclaredFunction function) {
 		if (function.getParameters() == null && hasChild(function.getParametersContext())) {
@@ -152,6 +280,15 @@ public final class NaftahParserHelper {
 		}
 	}
 
+	/**
+	 * Prepares a map of argument names to their values for a declared function.
+	 *
+	 * @param parameters List of declared parameters for the function.
+	 * @param arguments  List of pairs representing argument name (nullable) and value.
+	 * @return A map of parameter names to argument values.
+	 * @throws NaftahBugError if more arguments are passed than parameters, or if
+	 *                        required parameters are missing or duplicated.
+	 */
 	public static Map<String, Object> prepareDeclaredFunctionArguments(List<DeclaredParameter> parameters, List<Pair<String, Object>> arguments) {
 		if (parameters.size() < arguments.size()) {
 			throw new NaftahBugError(
@@ -235,6 +372,12 @@ public final class NaftahParserHelper {
 		return finalArguments;
 	}
 
+	/**
+	 * Constructs a qualified name string from the given parse context.
+	 *
+	 * @param ctx The qualified name parse context.
+	 * @return The fully qualified name as a string.
+	 */
 	public static String getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedNameContext ctx) {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
@@ -248,14 +391,34 @@ public final class NaftahParserHelper {
 		return result.get().toString();
 	}
 
+	/**
+	 * Prepares a parser instance from the given input character stream with no error listeners.
+	 *
+	 * @param input The input character stream.
+	 * @return The prepared parser instance.
+	 */
 	public static org.daiitech.naftah.parser.NaftahParser prepareRun(CharStream input) {
 		return prepareRun(input, List.of());
 	}
 
+	/**
+	 * Prepares a parser instance from the given input character stream with a single error listener.
+	 *
+	 * @param input         The input character stream.
+	 * @param errorListener The error listener to add.
+	 * @return The prepared parser instance.
+	 */
 	public static org.daiitech.naftah.parser.NaftahParser prepareRun(CharStream input, ANTLRErrorListener errorListener) {
 		return prepareRun(input, List.of(errorListener));
 	}
 
+	/**
+	 * Prepares a parser instance from the given input character stream with multiple error listeners.
+	 *
+	 * @param input          The input character stream.
+	 * @param errorListeners The list of error listeners to add.
+	 * @return The prepared parser instance.
+	 */
 	public static org.daiitech.naftah.parser.NaftahParser prepareRun(CharStream input, List<ANTLRErrorListener> errorListeners) {
 		// Create a lexer and token stream
 		var lexerCommonTokenStreamPair = getCommonTokenStream(input, errorListeners);
@@ -274,6 +437,12 @@ public final class NaftahParserHelper {
 		return getParser(tokens, errorListeners);
 	}
 
+	/**
+	 * Executes the parser by visiting the parse tree and returning the result.
+	 *
+	 * @param parser The parser instance.
+	 * @return The result of visiting the parse tree.
+	 */
 	public static Object doRun(org.daiitech.naftah.parser.NaftahParser parser) {
 		// Create a visitor and visit the parse tree
 		DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor(parser);
@@ -281,10 +450,24 @@ public final class NaftahParserHelper {
 		return visitor.visit();
 	}
 
+	/**
+	 * Creates a parser instance from the given token stream and a single error listener.
+	 *
+	 * @param commonTokenStream The token stream.
+	 * @param errorListener     The error listener.
+	 * @return The parser instance.
+	 */
 	public static org.daiitech.naftah.parser.NaftahParser getParser(CommonTokenStream commonTokenStream, ANTLRErrorListener errorListener) {
 		return getParser(commonTokenStream, List.of(errorListener));
 	}
 
+	/**
+	 * Creates a parser instance from the given token stream and multiple error listeners.
+	 *
+	 * @param commonTokenStream The token stream.
+	 * @param errorListeners    The list of error listeners.
+	 * @return The parser instance.
+	 */
 	public static org.daiitech.naftah.parser.NaftahParser getParser(CommonTokenStream commonTokenStream, List<ANTLRErrorListener> errorListeners) {
 		// Create a parser
 		org.daiitech.naftah.parser.NaftahParser parser = new org.daiitech.naftah.parser.NaftahParser(commonTokenStream);
@@ -297,14 +480,34 @@ public final class NaftahParserHelper {
 		return parser;
 	}
 
+	/**
+	 * Gets a CommonTokenStream from the given character stream with no error listeners.
+	 *
+	 * @param charStream The character stream.
+	 * @return The CommonTokenStream.
+	 */
 	public static CommonTokenStream getCommonTokenStream(CharStream charStream) {
 		return getCommonTokenStream(charStream, List.of()).b;
 	}
 
+	/**
+	 * Gets a CommonTokenStream from the given character stream and a single error listener.
+	 *
+	 * @param charStream    The character stream.
+	 * @param errorListener The error listener.
+	 * @return The CommonTokenStream.
+	 */
 	public static CommonTokenStream getCommonTokenStream(CharStream charStream, ANTLRErrorListener errorListener) {
 		return getCommonTokenStream(charStream, List.of(errorListener)).b;
 	}
 
+	/**
+	 * Creates a lexer and CommonTokenStream from the given character stream and error listeners.
+	 *
+	 * @param charStream     The character stream.
+	 * @param errorListeners List of error listeners to add.
+	 * @return A pair containing the lexer and token stream.
+	 */
 	public static Pair<org.daiitech.naftah.parser.NaftahLexer, CommonTokenStream> getCommonTokenStream(
 																										CharStream charStream, List<ANTLRErrorListener> errorListeners) {
 		// Create a lexer and token stream
@@ -314,6 +517,14 @@ public final class NaftahParserHelper {
 		return new Pair<>(lexer, new CommonTokenStream(lexer));
 	}
 
+	/**
+	 * Obtains a CharStream from a script string or script file path.
+	 *
+	 * @param isScriptFile True if the input string represents a file path, false if it is script content.
+	 * @param script       The script content or file path.
+	 * @return The CharStream for the script.
+	 * @throws Exception If an error occurs reading the file.
+	 */
 	public static CharStream getCharStream(boolean isScriptFile, String script) throws Exception {
 		CharStream charStream;
 		if (isScriptFile) {
@@ -344,13 +555,16 @@ public final class NaftahParserHelper {
 		return charStream;
 	}
 
+
 	/**
-	 * Search for the script file, doesn't bother if it is named precisely.
+	 * Searches for a Naftah script file based on a given name, trying multiple extensions.
 	 *
 	 * <p>
 	 * Tries in this order: - actual supplied name - name.naftah - name.nfth -
 	 * name.na - name.nsh
 	 *
+	 * @param input The input file name or path.
+	 * @return The File object pointing to the found script file, or the original if none found.
 	 * @since 0.0.1
 	 */
 	public static File searchForNaftahScriptFile(String input) {
@@ -369,6 +583,12 @@ public final class NaftahParserHelper {
 		return scriptFile;
 	}
 
+	/**
+	 * Resolves placeholders in the properties values by replacing them with their corresponding
+	 * property values.
+	 *
+	 * @param props The Properties object with placeholders to resolve.
+	 */
 	public static void resolvePlaceholders(Properties props) {
 		for (String key : props.stringPropertyNames()) {
 			String value = props.getProperty(key);
@@ -377,6 +597,13 @@ public final class NaftahParserHelper {
 		}
 	}
 
+	/**
+	 * Resolves placeholders within a string value using the given properties.
+	 *
+	 * @param value The string potentially containing placeholders.
+	 * @param props The properties to use for resolving placeholders.
+	 * @return The resolved string, possibly wrapped in single quotes if placeholders were replaced.
+	 */
 	private static String resolveValue(String value, Properties props) {
 		Matcher matcher = PLACEHOLDER_PATTERN.matcher(value);
 		StringBuilder result = new StringBuilder();
@@ -393,6 +620,14 @@ public final class NaftahParserHelper {
 		return found ? "'" + resultValue.replaceAll(" ", "") + "'" : resultValue;
 	}
 
+	/**
+	 * Converts a declared variable or constant value to a string representation.
+	 *
+	 * @param constant True if the variable is constant, false if mutable.
+	 * @param name     The name of the variable.
+	 * @param value    The value of the variable.
+	 * @return A formatted string representing the declared variable or constant.
+	 */
 	public static String declaredValueToString(boolean constant, String name, Object value) {
 		return "<%s %s = %s>".formatted(constant ? "ثابت" : "متغير", name, Optional.ofNullable(value).map(o -> {
 			if (o instanceof Boolean aBoolean) {
@@ -402,6 +637,14 @@ public final class NaftahParserHelper {
 		}).orElse(NaftahParserHelper.NULL));
 	}
 
+	/**
+	 * Returns a formatted string of token symbols based on the token type.
+	 *
+	 * @param vocabulary The vocabulary containing token definitions.
+	 * @param tokenType  The token type.
+	 * @param ln         If true, formats output with a line break.
+	 * @return A string representing token symbols, or null if none found.
+	 */
 	public static String getFormattedTokenSymbols(Vocabulary vocabulary, int tokenType, boolean ln) {
 		String tokenName = vocabulary.getDisplayName(tokenType);
 		String tokenSymbols = Objects.isNull(TOKENS_SYMBOLS) ? tokenName : TOKENS_SYMBOLS.getProperty(tokenName);
@@ -410,20 +653,51 @@ public final class NaftahParserHelper {
 				""" : "%s").formatted(tokenSymbols.replaceAll(",", " أو"));
 	}
 
+	/**
+	 * Checks if there is a type mismatch between the given value and the declared type.
+	 *
+	 * @param value           The value to check.
+	 * @param valueType       The class of the value.
+	 * @param declarationType The declared type class.
+	 * @return True if types mismatch, false otherwise.
+	 */
 	public static boolean typeMismatch(Object value, Class<?> valueType, Class<?> declarationType) {
 		return Objects.nonNull(value) && typeMismatch(valueType, declarationType);
 	}
 
+	/**
+	 * Checks if there is a type mismatch between two classes.
+	 *
+	 * @param valueType       The class of the value.
+	 * @param declarationType The declared type class.
+	 * @return True if types mismatch, false otherwise.
+	 */
 	public static boolean typeMismatch(Class<?> valueType, Class<?> declarationType) {
 		return Objects.nonNull(declarationType) && !Object.class.equals(declarationType) && !Collection.class.isAssignableFrom(declarationType) && !Map.class.isAssignableFrom(declarationType) && (((Number.class.isAssignableFrom(valueType) && !Number.class.isAssignableFrom(declarationType)) || (!Number.class.isAssignableFrom(valueType) && Number.class.isAssignableFrom(declarationType))) || (!Number.class.isAssignableFrom(declarationType) && !Number.class.isAssignableFrom(valueType) && !valueType.isAssignableFrom(declarationType)) || Collection.class.isAssignableFrom(valueType) || Map.class.isAssignableFrom(valueType));
 	}
 
+	/**
+	 * Creates a declared variable instance from the parser context.
+	 *
+	 * @param naftahParserBaseVisitor The base visitor for the parser.
+	 * @param ctx                     The declaration context.
+	 * @param variableName            The variable name.
+	 * @param isConstant              True if the variable is constant.
+	 * @param hasType                 True if the variable has an explicit type.
+	 * @return A pair containing the declared variable and a boolean flag.
+	 */
 	public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(
 																			org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor, org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx, String variableName, boolean isConstant, boolean hasType) {
 
 		return new Pair<>(DeclaredVariable.of(ctx, variableName, isConstant, hasType ? (Class<?>) visit(naftahParserBaseVisitor, ctx.type()) : null, null), true);
 	}
 
+	/**
+	 * Checks if the given result object is a loop signal and returns the corresponding signal.
+	 *
+	 * @param result The result object to check.
+	 * @return The detected loop signal, or LoopSignal.NONE if none.
+	 */
 	public static LoopSignal checkLoopSignal(Object result) {
 		if (result instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
 			return loopSignalDetails.signal();
@@ -433,10 +707,24 @@ public final class NaftahParserHelper {
 		}
 	}
 
+	/**
+	 * Checks if the given parse tree node is inside a loop construct.
+	 *
+	 * @param ctx The parse tree node to check.
+	 * @return True if inside a loop, false otherwise.
+	 */
 	public static boolean checkInsideLoop(ParseTree ctx) {
 		return hasAnyParentOfType(ctx, List.of(org.daiitech.naftah.parser.NaftahParser.ForStatementContext.class, org.daiitech.naftah.parser.NaftahParser.WhileStatementContext.class, org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext.class, org.daiitech.naftah.parser.NaftahParser.CaseStatementContext.class));
 	}
 
+	/**
+	 * Determines whether to break out of a loop based on the current context, statement, and result.
+	 *
+	 * @param currentContext   The current execution context.
+	 * @param currentStatement The current parse tree statement.
+	 * @param result           The result of the statement execution.
+	 * @return True if the loop should break, false otherwise.
+	 */
 	public static boolean shouldBreakStatementsLoop(DefaultContext currentContext, ParseTree currentStatement, Object result) {
 		return currentContext.hasAnyExecutedChildOrSubChildOfType(currentStatement, org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class) || (result instanceof LoopSignal.LoopSignalDetails && (currentContext.hasAnyExecutedChildOrSubChildOfType(currentStatement, org.daiitech.naftah.parser.NaftahParser.BreakStatementStatementContext.class) || currentContext.hasAnyExecutedChildOrSubChildOfType(currentStatement, org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext.class)));
 	}

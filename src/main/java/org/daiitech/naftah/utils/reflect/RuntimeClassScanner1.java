@@ -21,22 +21,83 @@ import org.daiitech.naftah.builtin.lang.ScannedClass;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
+ * Utility class for scanning runtime classes from the classpath and Java home directories.
+ * <p>
+ * This class provides methods to scan class files inside directories and JAR/JMOD archives,
+ * and to load them reflectively using different class loaders.
+ * </p>
+ *
  * @author Chakib Daii
+ * @deprecated This class is deprecated and marked for removal.
  */
 @Deprecated(forRemoval = true)
 public final class RuntimeClassScanner1 {
+	/**
+	 * System property key for the Java class path.
+	 */
 	public static final String CLASS_PATH_PROPERTY = "java.class.path";
+
+	/**
+	 * The Java class path obtained from the system property {@code java.class.path}.
+	 * This is a list of paths where classes and resources are searched for.
+	 */
 	public static final String CLASS_PATH = System.getProperty(CLASS_PATH_PROPERTY);
+
+	/**
+	 * System property key for the Java installation directory (JAVA_HOME).
+	 */
 	public static final String JAVA_HOME_PROPERTY = "java.home";
+
+	/**
+	 * The Java home directory obtained from the system property {@code java.home}.
+	 * Typically points to the directory where the JRE or JDK is installed.
+	 */
 	public static final String JAVA_HOME = System.getProperty(JAVA_HOME_PROPERTY);
-	// Get the classpath and java home files
+
+	/**
+	 * Array of filesystem paths (directories or archives) used as scan roots.
+	 * Initialized statically by combining the classpath and Java home paths,
+	 * filtering out ignored dependencies if available.
+	 */
 	public static final String[] PATHS = (CLASS_PATH + File.pathSeparator + JAVA_HOME).split(File.pathSeparator);
+
+	/**
+	 * The file extension for Java archive files (JAR).
+	 */
 	public static final String JAR_EXTENSION = ".jar";
+
+	/**
+	 * The file extension for Java module files (JMOD).
+	 */
 	public static final String JMOD_EXTENSION = ".jmod";
+
+	/**
+	 * The file extension for compiled Java class files.
+	 */
 	public static final String CLASS_EXTENSION = ".class";
+
+	/**
+	 * Regular expression pattern to match the class file extension {@code .class}.
+	 * Used to identify class files in file names.
+	 */
 	public static final String CLASS_EXTENSION_REGEX = "\\.class$";
+
+	/**
+	 * A set of class file base names to ignore during scanning.
+	 * Typically these include special files like module-info and package-info.
+	 */
 	public static final Set<String> IGNORE = Set.of("module-info", "package-info");
+
+	/**
+	 * A set of full class file names to ignore during scanning.
+	 * This is the {@link #IGNORE} set with the {@code .class} extension appended.
+	 */
 	public static final Set<String> IGNORE_CLASS = IGNORE.stream().map(s -> s + CLASS_EXTENSION).collect(Collectors.toSet());
+
+	/**
+	 * Array of common base package names to be used when scanning classes.
+	 * Includes standard Java and popular top-level package prefixes.
+	 */
 	public static final ClassLoader[] CLASS_LOADERS = {ClassLoader.getSystemClassLoader(), ClassLoader.getPlatformClassLoader(), Object.class.getClassLoader()};
 
 	/**
@@ -48,14 +109,20 @@ public final class RuntimeClassScanner1 {
 	}
 
 	/**
-	 * scans classes from default paths
+	 * Scans for classes in the default classpath and java home paths.
 	 *
-	 * @return map of class files and possible {@link URLClassLoader}
+	 * @return a map of fully qualified class names to their corresponding class loaders (may be null if default)
 	 */
 	public static Map<String, ScannedClass> scanCLasses() {
 		return scanCLasses(PATHS);
 	}
 
+	/**
+	 * Scans for classes in the given paths.
+	 *
+	 * @param paths an array of file system paths (directories or JAR files) to scan for classes
+	 * @return a map of fully qualified class names to their corresponding class loaders (may be null if default)
+	 */
 	public static Map<String, ScannedClass> scanCLasses(String[] paths) {
 		Map<String, ScannedClass> classes = new HashMap<>();
 		for (String path : paths) {
@@ -72,6 +139,17 @@ public final class RuntimeClassScanner1 {
 		return classes;
 	}
 
+	/**
+	 * Attempts to load a class with the given name using a set of class loaders.
+	 *
+	 * <p>The method tries the predefined class loaders, optionally including the provided
+	 * {@link URLClassLoader}, to load the class without initializing it.</p>
+	 *
+	 * @param className   the fully qualified name of the class to load
+	 * @param classLoader an optional {@link URLClassLoader} to use for loading the class; may be null
+	 * @return the {@link Class} object if found and loaded successfully; {@code null} if the class
+	 *         could not be loaded by any of the class loaders
+	 */
 	public static Class<?> loadClass(String className, URLClassLoader classLoader) {
 		var loaders = Arrays.copyOf(CLASS_LOADERS, CLASS_LOADERS.length + (Objects.nonNull(classLoader) ? 0 : 1));
 		if (Objects.nonNull(classLoader)) {
@@ -92,12 +170,13 @@ public final class RuntimeClassScanner1 {
 		return null;
 	}
 
+
 	/**
-	 * scans classes inside directories
+	 * Recursively scans for classes inside a directory.
 	 *
-	 * @param root root directory where to start the scan
-	 * @param dir  current dir/file
-	 * @return map of class files and possible {@link URLClassLoader}
+	 * @param root root directory where scanning started
+	 * @param dir  current directory or file to scan
+	 * @return a map of fully qualified class names to their corresponding class loaders (null here)
 	 */
 	public static Map<String, ScannedClass> findClassesInDirectory(File root, File dir) {
 		Map<String, ScannedClass> classes = new HashMap<>();
@@ -120,11 +199,13 @@ public final class RuntimeClassScanner1 {
 		return classes;
 	}
 
+
 	/**
-	 * scans classes inside jar
+	 * Scans for classes inside a JAR or JMOD file.
 	 *
-	 * @param jarFile jar file
-	 * @return map of class files and possible {@link URLClassLoader}
+	 * @param jarFile the JAR or JMOD file to scan
+	 * @return a map of fully qualified class names to their associated class loaders (null or URLClassLoader for nested
+	 *         jars)
 	 */
 	public static Map<String, ScannedClass> findClassesInJar(File jarFile) {
 		Map<String, ScannedClass> classes = new HashMap<>();
@@ -160,12 +241,13 @@ public final class RuntimeClassScanner1 {
 	}
 
 	/**
-	 * reading jar nested entries
+	 * Extracts a nested JAR entry from a JAR file and writes it to a temporary file.
+	 * The temporary file is deleted on JVM exit.
 	 *
-	 * @param outerJar      the system jar
-	 * @param innerJarEntry the jar inside the system jar
-	 * @return jar file
-	 * @throws IOException IO exception
+	 * @param outerJar      the outer JAR file containing the nested JAR entry
+	 * @param innerJarEntry the nested JAR entry inside the outer JAR
+	 * @return a temporary File representing the extracted nested JAR
+	 * @throws IOException if an I/O error occurs during extraction
 	 */
 	public static File jarEntryToTempFile(JarFile outerJar, JarEntry innerJarEntry) throws IOException {
 		// Create a temp file

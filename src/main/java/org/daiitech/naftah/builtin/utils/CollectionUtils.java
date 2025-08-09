@@ -13,6 +13,11 @@ import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
+ * Utility class for applying binary and unary operations on collections, arrays, and maps.
+ * <p>
+ * This class cannot be instantiated.
+ * </p>
+ *
  * @author Chakib Daii
  */
 public final class CollectionUtils {
@@ -25,6 +30,15 @@ public final class CollectionUtils {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
+	/**
+	 * Applies a binary operation element-wise to two arrays of objects.
+	 *
+	 * @param left      the first array
+	 * @param right     the second array
+	 * @param operation the binary operation to apply
+	 * @return a new array containing the results of the operation
+	 * @throws NaftahBugError if arrays have different lengths
+	 */
 	public static Object[] applyOperation(Object[] left, Object[] right, BinaryOperation operation) {
 		if (left.length != right.length) {
 			throw newNaftahSizeBugError(left, right);
@@ -32,6 +46,15 @@ public final class CollectionUtils {
 		return IntStream.range(0, left.length).mapToObj(i -> ObjectUtils.applyOperation(left[i], right[i], operation)).toArray(Object[]::new);
 	}
 
+	/**
+	 * Applies a binary operation element-wise to two collections.
+	 *
+	 * @param left      the first collection
+	 * @param right     the second collection
+	 * @param operation the binary operation to apply
+	 * @return a new collection containing the results of the operation
+	 * @throws NaftahBugError if collections have different sizes
+	 */
 	public static Collection<?> applyOperation(Collection<?> left, Collection<?> right, BinaryOperation operation) {
 		if (left.size() != right.size()) {
 			throw newNaftahSizeBugError(left.toArray(), right.toArray());
@@ -41,14 +64,40 @@ public final class CollectionUtils {
 		return List.of(applyOperation(arr1, arr2, operation));
 	}
 
+	/**
+	 * Applies a binary operation between each element of an array and a scalar number.
+	 *
+	 * @param arr       the array of objects
+	 * @param scalar    the scalar number
+	 * @param operation the binary operation to apply
+	 * @return a new array containing the results of the operation
+	 */
 	public static Object[] applyOperation(Object[] arr, Number scalar, BinaryOperation operation) {
 		return Arrays.stream(arr).map(o -> ObjectUtils.applyOperation(o, scalar, operation)).toArray(Object[]::new);
 	}
 
+	/**
+	 * Applies a binary operation between each element of a collection and a scalar number.
+	 *
+	 * @param collection the collection of objects
+	 * @param scalar     the scalar number
+	 * @param operation  the binary operation to apply
+	 * @return a new collection containing the results of the operation
+	 */
 	public static Collection<?> applyOperation(Collection<?> collection, Number scalar, BinaryOperation operation) {
 		return List.of(applyOperation(collection.toArray(Object[]::new), scalar, operation));
 	}
 
+	/**
+	 * Applies a binary operation element-wise to two maps.
+	 * The keys of the first map must exist in the second map.
+	 *
+	 * @param left      the first map
+	 * @param right     the second map
+	 * @param operation the binary operation to apply
+	 * @return a new map containing the results of the operation
+	 * @throws NaftahBugError if a key from the first map is missing in the second map
+	 */
 	public static Map<?, ?> applyOperation(Map<?, ?> left, Map<?, ?> right, BinaryOperation operation) {
 		Map<Object, Object> result = new HashMap<>();
 
@@ -66,30 +115,65 @@ public final class CollectionUtils {
 		return result;
 	}
 
+	/**
+	 * Applies a binary operation between each value in a map and a scalar number.
+	 *
+	 * @param map       the map of key-value pairs
+	 * @param scalar    the scalar number
+	 * @param operation the binary operation to apply
+	 * @return a new map containing the results of the operation
+	 */
 	public static Map<?, ?> applyOperation(Map<?, ?> map, Number scalar, BinaryOperation operation) {
 		Map<Object, Object> result = new HashMap<>();
 
 		for (var entry : map.entrySet()) {
-			result.put(entry.getKey(), ObjectUtils.applyOperation(entry.getValue(), scalar, operation)); // Reuse from
-			// earlier
+			result.put(entry.getKey(), ObjectUtils.applyOperation(entry.getValue(), scalar, operation)); // Reuse from earlier
 		}
 
 		return result;
 	}
 
+	/**
+	 * Applies a unary operation to each element in an array.
+	 *
+	 * @param arr       the array of objects
+	 * @param operation the unary operation to apply
+	 * @return a new array containing the results of the operation
+	 */
 	public static Object[] applyOperation(Object[] arr, UnaryOperation operation) {
 		return Arrays.stream(arr).map(o -> ObjectUtils.applyOperation(o, operation)).toArray(Object[]::new);
 	}
 
+	/**
+	 * Applies a unary operation to each element in a collection.
+	 *
+	 * @param collection the collection of objects
+	 * @param operation  the unary operation to apply
+	 * @return a new collection containing the results of the operation
+	 */
 	public static Collection<?> applyOperation(Collection<?> collection, UnaryOperation operation) {
 		var arr = collection.toArray(Object[]::new);
 		return List.of(applyOperation(arr, operation));
 	}
 
+	/**
+	 * Applies a unary operation to each value in a map.
+	 *
+	 * @param map       the map of key-value pairs
+	 * @param operation the unary operation to apply
+	 * @return a new map containing the results of the operation
+	 */
 	public static Map<?, ?> applyOperation(Map<?, ?> map, UnaryOperation operation) {
 		return map.entrySet().stream().map(entry -> Map.entry(entry.getKey(), ObjectUtils.applyOperation(entry.getValue(), operation))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
+	/**
+	 * Constructs a new {@link NaftahBugError} indicating that the sizes of the two arrays do not match.
+	 *
+	 * @param left  the first array
+	 * @param right the second array
+	 * @return a new NaftahBugError with a descriptive message in Arabic
+	 */
 	public static NaftahBugError newNaftahSizeBugError(Object[] left, Object[] right) {
 		return new NaftahBugError("""
 				يجب أن تكون أحجام المصفوفات متساوية.

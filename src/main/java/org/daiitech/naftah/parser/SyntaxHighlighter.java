@@ -26,13 +26,35 @@ import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
 
 /**
+ * A syntax highlighter class specifically tailored for highlighting
+ * Naftah language source code in a terminal environment.
+ * <p>
+ * It tokenizes the input buffer using a lexer and applies color styling
+ * to various language constructs based on token types.
+ * <p>
+ * Right-to-left (RTL) shaping and terminal wrapping support are also handled.
+ *
  * @author Chakib Daii
  */
 public class SyntaxHighlighter extends BaseHighlighter {
+	/**
+	 * Constructs a SyntaxHighlighter that wraps another highlighter.
+	 *
+	 * @param originalHighlighter the base highlighter to delegate to
+	 */
 	public SyntaxHighlighter(Highlighter originalHighlighter) {
 		super(originalHighlighter);
 	}
 
+	/**
+	 * Highlights the input line with token-based styles and formatting.
+	 * It performs RTL shaping and wraps lines based on terminal width.
+	 *
+	 * @param reader the line reader
+	 * @param buffer the input string buffer
+	 * @return an {@link AttributedString} containing styled output
+	 * @throws EOFError if the buffer contains escape sequences indicating multiline
+	 */
 	@Override
 	public AttributedString highlight(LineReader reader, String buffer) {
 		if (buffer.isBlank()) {
@@ -132,6 +154,12 @@ public class SyntaxHighlighter extends BaseHighlighter {
 		return AttributedString.join(AttributedString.NEWLINE, lines);
 	}
 
+	/**
+	 * Maps token types to specific styles (e.g., colors, bold, italic).
+	 *
+	 * @param tokenType the integer type of the token from the lexer
+	 * @return the corresponding {@link AttributedStyle} for the token
+	 */
 	private AttributedStyle getStyleForTokenType(int tokenType) {
 		return switch (tokenType) {
 			case org.daiitech.naftah.parser.NaftahLexer.AND, org.daiitech.naftah.parser.NaftahLexer.OR,
@@ -193,6 +221,14 @@ public class SyntaxHighlighter extends BaseHighlighter {
 		};
 	}
 
+	/**
+	 * Aligns the given attributed string to the right side of the terminal,
+	 * applying appropriate spacing and appending the prompt.
+	 *
+	 * @param str   the input string to align
+	 * @param width the total width of the terminal line
+	 * @return a right-aligned {@link AttributedString}
+	 */
 	private AttributedString rightAlign(AttributedString str, int width) {
 		int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
 		int padding = Math.max(0, width - contentWidth);

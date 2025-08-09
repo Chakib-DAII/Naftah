@@ -16,45 +16,172 @@ import jdk.incubator.vector.VectorSpecies;
 import static org.daiitech.naftah.Naftah.VECTOR_API_PROPERTY;
 
 /**
+ * Utility class for performing various operations on {@link String} objects,
+ * including arithmetic, bitwise, and vectorized character-wise operations.
+ *
+ * <p>Supports both scalar and vector APIs for enhanced performance on large strings.
+ * The vector operations are backed by the {@link ShortVector} API.
+ *
+ * <p>This class also defines several functional constants used to map
+ * operations across strings.
+ *
+ * <p>This class is not instantiable.
+ *
  * @author Chakib Daii
  */
 public final class StringUtils {
-
-	// Bit wise
+	// Bitwise scalar operations on characters
+	/**
+	 * Bitwise XOR operation for two characters.
+	 */
 	public static final BiFunction<Character, Character, Integer> XOR = (character, character2) -> character ^ character2;
+
+	/**
+	 * Bitwise AND operation for two characters.
+	 */
 	public static final BiFunction<Character, Character, Integer> AND = (character, character2) -> character & character2;
+
+	/**
+	 * Bitwise OR operation for two characters.
+	 */
 	public static final BiFunction<Character, Character, Integer> OR = (character, character2) -> character | character2;
+
+	/**
+	 * Bitwise NOT operation for a single character.
+	 */
 	public static final Function<Character, Number> NOT = (character) -> ~character;
-	// Char wise
+
+	// Character-wise arithmetic operations
+	/**
+	 * Character addition (based on ASCII code points).
+	 */
 	public static final BiFunction<Character, Character, Integer> ADD = Integer::sum;
+
+	/**
+	 * Character subtraction.
+	 */
 	public static final BiFunction<Character, Character, Integer> SUBTRACT = Math::subtractExact;
+
+	/**
+	 * Character multiplication.
+	 */
 	public static final BiFunction<Character, Character, Integer> MUL = Math::multiplyExact;
+
+	/**
+	 * Character division.
+	 */
 	public static final BiFunction<Character, Character, Integer> DIV = Math::floorDiv;
+
+	/**
+	 * Character modulo.
+	 */
 	public static final BiFunction<Character, Character, Integer> MOD = Math::floorMod;
+
+	/**
+	 * Pre-increment a character (based on ASCII code).
+	 */
 	public static final Function<Character, Number> PRE_INCREMENT = NumberUtils::preIncrement;
+
+	/**
+	 * Post-increment a character (based on ASCII code).
+	 */
 	public static final Function<Character, Number> POST_INCREMENT = NumberUtils::postIncrement;
+
+	/**
+	 * Pre-decrement a character (based on ASCII code).
+	 */
 	public static final Function<Character, Number> PRE_DECREMENT = NumberUtils::preDecrement;
+
+	/**
+	 * Post-decrement a character (based on ASCII code).
+	 */
 	public static final Function<Character, Number> POST_DECREMENT = NumberUtils::postDecrement;
+
+	/**
+	 * Indicates whether vectorized operations should be used (controlled via JVM property).
+	 */
 	public static final Boolean USE_VECTOR_API = Boolean.getBoolean(VECTOR_API_PROPERTY);
 
-	// Vector
+	// Vector configuration
+	/**
+	 * Minimum string length for vectorized execution.
+	 */
 	public static final int VECTOR_THRESHOLD = 128; // TODO: tune the threshold
-	// Bit wise
+
+	// Bitwise vector operations
+	/**
+	 * Bitwise XOR for vectorized characters.
+	 */
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> XOR_VEC = (v1, v2) -> v1.lanewise(VectorOperators.XOR, v2);
+
+	/**
+	 * Bitwise AND for vectorized characters.
+	 */
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> AND_VEC = ShortVector::and;
+
+	/**
+	 * Bitwise OR for vectorized characters.
+	 */
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> OR_VEC = ShortVector::or;
+
+	/**
+	 * Bitwise NOT for a vectorized character.
+	 */
 	public static final Function<ShortVector, ShortVector> NOT_VEC = ShortVector::not;
-	// Char wise
+
+	// Arithmetic vector operations
+	/**
+	 * Vectorized addition of characters.
+	 */
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> ADD_VEC = ShortVector::add;
+
+	/**
+	 * Vectorized subtraction of characters.
+	 */
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> SUBTRACT_VEC = ShortVector::sub;
+
+	/**
+	 * Vectorized multiplication of characters.
+	 */
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> MUL_VEC = ShortVector::mul;
+
+	/**
+	 * Vectorized division of characters.
+	 */
 	public static final BiFunction<ShortVector, ShortVector, ShortVector> DIV_VEC = ShortVector::div;
-	public static final BiFunction<ShortVector, ShortVector, ShortVector> MOD_VEC = (v1, v2) -> v1.sub(v1.div(v2).mul(v2)); // simulates floorMod: a - (a / b) * b
+
+	/**
+	 * Vectorized modulo operation (simulates {@code floorMod}).
+	 */
+	public static final BiFunction<ShortVector, ShortVector, ShortVector> MOD_VEC = (v1, v2) -> v1.sub(v1.div(v2).mul(v2));
+
+	/**
+	 * Vectorized pre-increment.
+	 */
 	public static final Function<ShortVector, ShortVector> PRE_INCREMENT_VEC = (v) -> v.add((short) 1);
+
+	/**
+	 * Vectorized pre-decrement.
+	 */
 	public static final Function<ShortVector, ShortVector> PRE_DECREMENT_VEC = (v) -> v.sub((short) 1);
-	// Mappings from scalar to vector
-	public static final Map<BiFunction<Character, Character, Integer>, BiFunction<ShortVector, ShortVector, ShortVector>> BINARY_OP_MAP = Map.of(XOR, XOR_VEC, AND, AND_VEC, OR, OR_VEC, ADD, ADD_VEC, SUBTRACT, SUBTRACT_VEC, MUL, MUL_VEC, DIV, DIV_VEC, MOD, MOD_VEC);
-	public static final Map<Function<Character, Number>, Function<ShortVector, ShortVector>> UNARY_OP_MAP = Map.of(NOT, NOT_VEC, PRE_INCREMENT, PRE_INCREMENT_VEC, PRE_DECREMENT, PRE_DECREMENT_VEC);
+
+	/**
+	 * Mapping from scalar binary operations to vectorized equivalents.
+	 */
+	public static final Map<BiFunction<Character, Character, Integer>, BiFunction<ShortVector, ShortVector, ShortVector>> BINARY_OP_MAP = Map.of(
+			XOR, XOR_VEC, AND, AND_VEC, OR, OR_VEC, ADD, ADD_VEC, SUBTRACT, SUBTRACT_VEC, MUL, MUL_VEC, DIV, DIV_VEC, MOD, MOD_VEC
+	);
+
+	/**
+	 * Mapping from scalar unary operations to vectorized equivalents.
+	 */
+	public static final Map<Function<Character, Number>, Function<ShortVector, ShortVector>> UNARY_OP_MAP = Map.of(
+			NOT, NOT_VEC, PRE_INCREMENT, PRE_INCREMENT_VEC, PRE_DECREMENT, PRE_DECREMENT_VEC
+	);
+
+	/**
+	 * Preferred vector species for character-based operations.
+	 */
 	private static final VectorSpecies<Short> SPECIES = ShortVector.SPECIES_PREFERRED;
 
 	/**
@@ -65,32 +192,74 @@ public final class StringUtils {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
-	// Equality
+
+	/**
+	 * Checks if two strings are equal.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return {@code true} if both strings are equal
+	 */
 	public static boolean equals(String a, String b) {
 		return a.equals(b);
 	}
 
-	// Lexicographic comparison
 
+	/**
+	 * Compares two strings lexicographically.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return a negative integer, zero, or a positive integer as {@code a} is less than, equal to, or greater than
+	 *         {@code b}
+	 */
 	public static int compare(String a, String b) {
 		return a.compareTo(b);
 	}
 
-	// Concatenation
+
+	/**
+	 * Concatenates two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the concatenated string
+	 */
 	public static String add(String a, String b) {
 		return a + b;
 	}
 
-	// Subtract (remove all occurrences of b from a)
+
+	/**
+	 * Removes all occurrences of {@code b} from {@code a}.
+	 *
+	 * @param a the original string
+	 * @param b the substring to remove
+	 * @return the resulting string
+	 */
 	public static String subtract(String a, String b) {
 		return a.replace(b, "");
 	}
 
-	// Split (divide)
+	/**
+	 * Splits a string using the given delimiter.
+	 *
+	 * @param a         the string to split
+	 * @param delimiter the delimiter
+	 * @return an array of substrings
+	 */
 	public static String[] divide(String a, String delimiter) {
 		return a.split(delimiter);
 	}
 
+	/**
+	 * Splits a string into a specified number of parts.
+	 *
+	 * @param s     the string to split
+	 * @param parts the number of parts
+	 * @return an array containing the parts
+	 * @throws NaftahBugError if the string is empty, or if {@code parts} is invalid
+	 */
 	public static String[] divide(String s, int parts) {
 		if (s == null || s.isEmpty()) {
 			throw new NaftahBugError("النص لا يمكن أن يكون فارغًا.");
@@ -118,12 +287,25 @@ public final class StringUtils {
 		return result.toArray(String[]::new);
 	}
 
-	// repeat (multiply)
+	/**
+	 * Repeats the given string a specified number of times.
+	 *
+	 * @param a          the input string
+	 * @param multiplier number of repetitions
+	 * @return the repeated string
+	 */
 	public static String multiply(String a, int multiplier) {
 		return a.repeat(multiplier);
 	}
 
-	// char wise operation
+	/**
+	 * Applies a binary character-wise operation to two strings.
+	 *
+	 * @param a         the first string
+	 * @param b         the second string
+	 * @param operation the character-wise binary operation
+	 * @return the resulting string after applying the operation
+	 */
 	public static String applyOperation(String a, String b, BiFunction<Character, Character, Integer> operation) {
 		BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation;
 		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
@@ -134,6 +316,14 @@ public final class StringUtils {
 		}
 	}
 
+	/**
+	 * Applies a scalar binary character-wise operation to two strings.
+	 *
+	 * @param a         the first string
+	 * @param b         the second string
+	 * @param operation the binary operation
+	 * @return the result string after applying the operation character-wise
+	 */
 	public static String applyOperationScalar(String a, String b, BiFunction<Character, Character, Integer> operation) {
 		int minLen = Math.min(a.length(), b.length());
 		StringBuilder result = new StringBuilder(minLen);
@@ -149,6 +339,15 @@ public final class StringUtils {
 		return result.toString();
 	}
 
+	/**
+	 * Applies a vectorized binary operation to two strings using {@link ShortVector}.
+	 *
+	 * @param a               the first string
+	 * @param b               the second string
+	 * @param operation       the scalar operation (for fallback)
+	 * @param vectorOperation the vectorized operation
+	 * @return the resulting string after applying the vectorized operation
+	 */
 	public static String applyOperationVectorized(String a, String b, BiFunction<Character, Character, Integer> operation, BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation) {
 		int minLen = Math.min(a.length(), b.length());
 		StringBuilder result = new StringBuilder(minLen);
@@ -193,52 +392,115 @@ public final class StringUtils {
 		return result.toString();
 	}
 
+	/**
+	 * Applies a scalar binary operation on two characters.
+	 *
+	 * @param aChar     the first character
+	 * @param bChar     the second character
+	 * @param operation the binary operation
+	 * @return the resulting character after applying the operation
+	 */
 	public static char doApplyOperation(char aChar, char bChar, BiFunction<Character, Character, Integer> operation) {
 		int intResult = operation.apply(aChar, bChar);
 		// Cast result to char (lower 16 bits)
 		return (char) intResult;
 	}
 
-	// Bitwise ADD (character-wise)
+	/**
+	 * Performs character-wise addition between two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the resulting string
+	 */
 	public static String charWiseAdd(String a, String b) {
 		return applyOperation(a, b, ADD);
 	}
 
-	// Bitwise SUBTRACT (character-wise)
+	/**
+	 * Performs character-wise subtraction between two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the resulting string
+	 */
 	public static String charWiseSubtract(String a, String b) {
 		return applyOperation(a, b, SUBTRACT);
 	}
 
-	// Bitwise MUL (character-wise)
+	/**
+	 * Performs character-wise multiplication between two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the resulting string
+	 */
 	public static String charWiseMultiply(String a, String b) {
 		return applyOperation(a, b, MUL);
 	}
 
-	// Bitwise DIV (character-wise)
+	/**
+	 * Performs character-wise division between two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the resulting string
+	 */
 	public static String charWiseDivide(String a, String b) {
 		return applyOperation(a, b, DIV);
 	}
 
-	// Bitwise MOD (character-wise)
+	/**
+	 * Performs character-wise modulo between two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the resulting string
+	 */
 	public static String charWiseModulo(String a, String b) {
 		return applyOperation(a, b, MOD);
 	}
 
-	// Bitwise XOR (character-wise)
+	/**
+	 * Performs bitwise XOR between characters in two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the resulting string
+	 */
 	public static String xor(String a, String b) {
 		return applyOperation(a, b, XOR);
 	}
 
-	// Bitwise AND (character-wise AND)
+	/**
+	 * Performs bitwise AND between characters in two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the resulting string
+	 */
 	public static String and(String a, String b) {
 		return applyOperation(a, b, AND);
 	}
 
-	// Bitwise OR (character-wise OR)
+	/**
+	 * Performs bitwise OR between characters in two strings.
+	 *
+	 * @param a the first string
+	 * @param b the second string
+	 * @return the resulting string
+	 */
 	public static String or(String a, String b) {
 		return applyOperation(a, b, OR);
 	}
 
+	/**
+	 * Applies a unary character-wise operation to a string.
+	 *
+	 * @param a         the input string
+	 * @param operation the unary character operation
+	 * @return the resulting string
+	 */
 	public static String applyOperation(String a, Function<Character, Number> operation) {
 		Function<ShortVector, ShortVector> vectorOperation;
 		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects.isNull(vectorOperation = UNARY_OP_MAP.get(operation))) {
@@ -249,6 +511,13 @@ public final class StringUtils {
 		}
 	}
 
+	/**
+	 * Applies a scalar unary character-wise operation to a string.
+	 *
+	 * @param a         the input string
+	 * @param operation the unary character operation
+	 * @return the resulting string
+	 */
 	public static String applyOperationScalar(String a, Function<Character, Number> operation) {
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < a.length(); i++) {
@@ -257,6 +526,14 @@ public final class StringUtils {
 		return result.toString();
 	}
 
+	/**
+	 * Applies a vectorized unary operation using {@link ShortVector}.
+	 *
+	 * @param input           the input string
+	 * @param scalarOperation the scalar fallback operation
+	 * @param vectorOperation the vector operation to apply
+	 * @return the resulting string
+	 */
 	public static String applyOperationVectorized(String input, Function<Character, Number> scalarOperation, Function<ShortVector, ShortVector> vectorOperation) {
 		int length = input.length();
 
@@ -306,33 +583,75 @@ public final class StringUtils {
 		return new String(resultChars);
 	}
 
+	/**
+	 * Applies a unary operation on a single character.
+	 *
+	 * @param aChar     the input character
+	 * @param operation the unary character operation
+	 * @return the resulting character
+	 */
 	public static char doApplyOperation(char aChar, Function<Character, Number> operation) {
 		int intResult = operation.apply(aChar).intValue();
 		// Cast result to char (lower 16 bits)
 		return (char) intResult;
 	}
 
-	// Bitwise NOT (character-wise NOT)
+	/**
+	 * Performs bitwise NOT operation on each character of the string.
+	 *
+	 * @param a the input string
+	 * @return the resulting string
+	 */
 	public static String not(String a) {
 		return applyOperation(a, NOT);
 	}
 
+	/**
+	 * Pre-increments each character in the string.
+	 *
+	 * @param a the input string
+	 * @return the resulting string
+	 */
 	public static String preIncrement(String a) {
 		return applyOperation(a, PRE_INCREMENT);
 	}
 
+	/**
+	 * Post-increments each character in the string.
+	 *
+	 * @param a the input string
+	 * @return the resulting string
+	 */
 	public static String postIncrement(String a) {
 		return applyOperation(a, POST_INCREMENT);
 	}
 
+	/**
+	 * Pre-decrements each character in the string.
+	 *
+	 * @param a the input string
+	 * @return the resulting string
+	 */
 	public static String preDecrement(String a) {
 		return applyOperation(a, PRE_DECREMENT);
 	}
 
+	/**
+	 * Post-decrements each character in the string.
+	 *
+	 * @param a the input string
+	 * @return the resulting string
+	 */
 	public static String postDecrement(String a) {
 		return applyOperation(a, POST_DECREMENT);
 	}
 
+	/**
+	 * Converts a string into an integer by summing its Unicode code points.
+	 *
+	 * @param s the input string
+	 * @return the sum of the code points
+	 */
 	public static int stringToInt(String s) {
 		return s.codePoints().sum();
 	}

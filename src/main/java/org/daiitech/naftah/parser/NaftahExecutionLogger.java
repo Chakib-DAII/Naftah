@@ -10,9 +10,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
+ * Utility class for logging execution details within the Naftah system.
+ * <p>
+ * This class provides logging functionality specifically tailored to track
+ * execution events, errors, and debug information during the runtime of Naftah applications.
+ * </p>
+ *
  * @author Chakib Daii
  */
 public final class NaftahExecutionLogger {
+	/**
+	 * Logger instance for logging messages related to the default Naftah parser visitor.
+	 * This logger is used to record execution details, warnings, and errors during parsing.
+	 */
 	private static final Logger LOGGER = Logger.getLogger("DefaultNaftahParserVisitor");
 
 	/**
@@ -23,14 +33,37 @@ public final class NaftahExecutionLogger {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
+	/**
+	 * Joins the string representations of a collection of parser contexts into a single string,
+	 * separated by newlines.
+	 *
+	 * @param <T>        the type of the parser context extending {@link ParserRuleContext}
+	 * @param collection the collection of parser contexts to join
+	 * @return a single string containing the log execution outputs of each context, separated by newlines
+	 */
 	private static <T extends ParserRuleContext> String join(Collection<T> collection) {
 		return collection.stream().map(o -> logExecution(false, o)).collect(Collectors.joining("\n"));
 	}
 
+	/**
+	 * Logs the execution details of a given parser context.
+	 *
+	 * @param <T> the type of the parser context extending {@link ParserRuleContext}
+	 * @param ctx the parser context to log
+	 * @return a string representation of the execution log for the provided context
+	 */
 	public static <T extends ParserRuleContext> String logExecution(T ctx) {
 		return logExecution(true, ctx);
 	}
 
+	/**
+	 * Logs the execution details of the given parser context.
+	 *
+	 * @param <T>   the type of the parser context extending {@link ParserRuleContext}
+	 * @param doLog whether to perform logging (true to log, false to just generate the string)
+	 * @param ctx   the parser context to log
+	 * @return a string representation of the execution log for the provided context
+	 */
 	public static <T extends ParserRuleContext> String logExecution(boolean doLog, T ctx) {
 		String result = null;
 		if (ctx instanceof NaftahParser.ProgramContext context) {
