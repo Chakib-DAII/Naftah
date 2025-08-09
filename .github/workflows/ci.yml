@@ -121,44 +121,36 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ lint, build, test ]   # depends on all these jobs
     steps:
-      - name: Debug needs
-        run: |
-          echo "Test job result: ${{ needs.lint.result }}"
-          echo "Test job result: ${{ needs.lint.outcome }}"
-          echo "Test job result: ${{ needs.build.result }}"
-          echo "Test job result: ${{ needs.build.outcome }}"
-          echo "Test job result: ${{ needs.test.result }}"
-          echo "Test job result: ${{ needs.test.outcome }}"
       - name: Download Checkstyle report artifact
-        if: needs.lint.outcome == 'failure'
+        if: needs.lint.result == 'failure'
         uses: actions/download-artifact@v4
         with:
           name: gradle-checkstyle-report
           path: build/reports/checkstyle
 
       - name: Download problems report artifact
-        if: needs.build.outcome == 'failure'
+        if: needs.build.result == 'failure'
         uses: actions/download-artifact@v4
         with:
           name: gradle-problems-report
           path: build/reports/problems
 
       - name: Download Gradle test results artifact
-        if: needs.test.outcome == 'success'
+        if: needs.test.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: gradle-test-results
           path: build/reports/tests/test
 
       - name: Download JaCoCo HTML report
-        if: needs.test.outcome == 'success'
+        if: needs.test.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: jacoco-html-report
           path: build/reports/jacoco/test/html
 
       - name: Download JaCoCo XML report
-        if: needs.test.outcome == 'success'
+        if: needs.test.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: jacoco-xml-report
