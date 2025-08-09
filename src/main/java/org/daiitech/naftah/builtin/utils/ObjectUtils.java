@@ -600,35 +600,35 @@ public final class ObjectUtils {
 		if (!objClass.isArray()) {
 			return obj.toString(); // not an array
 		}
-
+		String prefix = "قائمة: ";
 		// Handle primitive arrays
 		if (obj instanceof int[]) {
-			return Arrays.toString((int[]) obj);
+			return prefix + Arrays.toString((int[]) obj);
 		}
 		if (obj instanceof long[]) {
-			return Arrays.toString((long[]) obj);
+			return prefix + Arrays.toString((long[]) obj);
 		}
 		if (obj instanceof double[]) {
-			return Arrays.toString((double[]) obj);
+			return prefix + Arrays.toString((double[]) obj);
 		}
 		if (obj instanceof float[]) {
-			return Arrays.toString((float[]) obj);
+			return prefix + Arrays.toString((float[]) obj);
 		}
 		if (obj instanceof boolean[]) {
-			return Arrays.toString((boolean[]) obj);
+			return prefix + Arrays.toString((boolean[]) obj);
 		}
 		if (obj instanceof char[]) {
-			return Arrays.toString((char[]) obj);
+			return prefix + Arrays.toString((char[]) obj);
 		}
 		if (obj instanceof byte[]) {
-			return Arrays.toString((byte[]) obj);
+			return prefix + Arrays.toString((byte[]) obj);
 		}
 		if (obj instanceof short[]) {
-			return Arrays.toString((short[]) obj);
+			return prefix + Arrays.toString((short[]) obj);
 		}
 
 		// Handle object arrays
-		return "مجموعة: " + replaceAllNulls(Arrays.toString((Object[]) obj));
+		return prefix + replaceAllNulls(Arrays.toString((Object[]) obj));
 	}
 
 	/**
