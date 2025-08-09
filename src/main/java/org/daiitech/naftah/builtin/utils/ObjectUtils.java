@@ -665,6 +665,13 @@ public final class ObjectUtils {
 			}
 		}
 
+		if (o instanceof Map<?, ?> map) {
+			if (map.values().stream().allMatch(value -> value instanceof DeclaredVariable)) {
+				return "كائن: " + result;
+			}
+			return "مصفوفة ترابطية: " + result;
+		}
+
 		return result;
 	}
 
