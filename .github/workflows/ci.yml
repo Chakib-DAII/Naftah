@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ '**' ]      # all branches
   pull_request:
-    branches: [main]
+    branches: [ '**' ]      # all branches for PRs
 
 jobs:
   build:
@@ -23,7 +23,43 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
 
-      - name: Run tests
-        run: ./gradlew test
+      - name: Upload problems report artifact (on failure)
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: gradle-problems-report
+          path: build/reports/problems
+
+      - name: Upload Checkstyle report artifact (on failure)
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: gradle-checkstyle-report
+          path: build/reports/checkstyle
+
+      #      - name: Run tests with coverage
+      - name: Run tests with coverage and enforce threshold
+        if: success()    # run tests only if build succeeded
+        #        run: ./gradlew test jacocoTestReport
+        run: ./gradlew test jacocoTestReport jacocoTestCoverageVerification
+
+      - name: Upload Gradle test results artifact
+        if: always()     # upload test results only if test step ran
+        uses: actions/upload-artifact@v3
+        with:
+          name: gradle-test-results
+          path: build/reports/tests/test
+
+      - name: Upload JaCoCo HTML coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-html-report
+          path: build/reports/jacoco/test/html
+
+      - name: Upload JaCoCo XML report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-xml-report
+          path: build/reports/jacoco/test/jacocoTestReport.xml
