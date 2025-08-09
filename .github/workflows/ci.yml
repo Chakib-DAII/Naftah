@@ -151,7 +151,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: jacoco-xml-report
-          path: build/reports/jacoco/test/jacocoTestReport.xml
+          path: build/reports/jacoco/test
 
       - name: Print JaCoCo coverage summary
         run: |
