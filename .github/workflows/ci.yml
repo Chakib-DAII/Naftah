@@ -26,14 +26,14 @@ jobs:
         run: ./gradlew clean build -x test
 
       - name: Upload problems report artifact (on failure)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: gradle-problems-report
           path: build/reports/problems
 
       - name: Upload Checkstyle report artifact (on failure)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: gradle-checkstyle-report
@@ -47,19 +47,19 @@ jobs:
 
       - name: Upload Gradle test results artifact
         if: always()     # upload test results only if test step ran
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: gradle-test-results
           path: build/reports/tests/test
 
       - name: Upload JaCoCo HTML coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-html-report
           path: build/reports/jacoco/test/html
 
       - name: Upload JaCoCo XML report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-xml-report
           path: build/reports/jacoco/test/jacocoTestReport.xml
