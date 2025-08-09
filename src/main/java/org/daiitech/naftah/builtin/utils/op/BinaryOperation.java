@@ -36,11 +36,18 @@ public enum BinaryOperation implements Operation {
 	 * booleans and characters appropriately during addition.
 	 */
 	ADD {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.add(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -55,6 +62,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -69,6 +80,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.add(left, right);
@@ -81,11 +96,18 @@ public enum BinaryOperation implements Operation {
 	 * appropriately during subtraction.
 	 */
 	SUBTRACT {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.subtract(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -100,6 +122,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -114,6 +140,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.subtract(left, right);
@@ -126,11 +156,18 @@ public enum BinaryOperation implements Operation {
 	 * appropriately during multiplication.
 	 */
 	MULTIPLY {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.multiply(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -145,6 +182,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -159,6 +200,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.charWiseMultiply(left, right);
@@ -171,11 +216,18 @@ public enum BinaryOperation implements Operation {
 	 * appropriately during division.
 	 */
 	DIVIDE {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.divide(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -190,6 +242,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -204,6 +260,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String[] apply(String left, String right) {
 			return StringUtils.divide(left, right);
@@ -216,11 +276,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports conversion of booleans and characters to numbers for the operation.
 	 */
 	MODULO {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.modulo(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -235,6 +302,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -249,6 +320,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(String left, String right) {
 			return charWiseModulo(left, right);
@@ -263,11 +338,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports conversions from boolean and character types to numbers.
 	 */
 	GREATER_THAN {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) > 0;
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -282,6 +364,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -296,6 +382,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) > 0;
@@ -309,11 +399,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports conversions from boolean and character types to numbers.
 	 */
 	GREATER_THAN_EQUALS {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) >= 0;
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -328,6 +425,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -342,6 +443,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) >= 0;
@@ -355,11 +460,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports conversions from boolean and character types to numbers.
 	 */
 	LESS_THAN {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) < 0;
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -374,6 +486,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -388,6 +504,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) < 0;
@@ -401,11 +521,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports conversions from boolean and character types to numbers.
 	 */
 	LESS_THAN_EQUALS {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) <= 0;
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -420,6 +547,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -434,6 +565,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) <= 0;
@@ -446,11 +581,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports numeric, boolean, character, and string comparisons with necessary conversions.
 	 */
 	EQUALS {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Number right) {
 			return NumberUtils.equals(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -465,6 +607,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -479,6 +625,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(String left, String right) {
 			return StringUtils.equals(left, right);
@@ -491,11 +641,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports numeric, boolean, character, and string comparisons with necessary conversions.
 	 */
 	NOT_EQUALS {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) != 0;
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -510,6 +667,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -524,6 +685,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Boolean apply(String left, String right) {
 			return !StringUtils.equals(left, right);
@@ -537,11 +702,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports numeric and character operands with appropriate conversions.
 	 */
 	BITWISE_AND {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.and(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -556,6 +728,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -570,6 +746,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.and(left, right);
@@ -582,11 +762,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports numeric and character operands with appropriate conversions.
 	 */
 	BITWISE_OR {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.or(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -601,6 +788,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -615,6 +806,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.or(left, right);
@@ -627,11 +822,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports numeric and character operands with appropriate conversions.
 	 */
 	BITWISE_XOR {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.xor(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -646,6 +848,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -660,6 +866,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.xor(left, right);
@@ -672,11 +882,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports element-wise combination of compatible data structures.
 	 */
 	ELEMENTWISE_ADD {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.xor(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -691,6 +908,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -705,6 +926,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.charWiseAdd(left, right);
@@ -717,11 +942,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports element-wise operations on compatible data structures.
 	 */
 	ELEMENTWISE_SUBTRACT {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.xor(left, NumberUtils.not(right));
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -736,6 +968,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -750,6 +986,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.charWiseSubtract(left, right);
@@ -762,11 +1002,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports element-wise operations on compatible data structures.
 	 */
 	ELEMENTWISE_MULTIPLY {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.and(left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -781,6 +1028,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -795,6 +1046,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.charWiseMultiply(left, right);
@@ -807,11 +1062,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports element-wise operations on compatible data structures.
 	 */
 	ELEMENTWISE_DIVIDE {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.shiftRight(left, right.intValue());
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -826,6 +1088,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -840,6 +1106,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.charWiseDivide(left, right);
@@ -852,11 +1122,18 @@ public enum BinaryOperation implements Operation {
 	 * Supports element-wise operations on compatible data structures.
 	 */
 	ELEMENTWISE_MODULO {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number left, Number right) {
 			return NumberUtils.and(left, NumberUtils.subtract(right, 1));
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Number left, Object right) {
 			if (right instanceof Boolean aBoolean) {
@@ -871,6 +1148,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
@@ -885,6 +1166,10 @@ public enum BinaryOperation implements Operation {
 			throw BinaryOperation.newNaftahBugError(this, left, right);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String left, String right) {
 			return StringUtils.charWiseModulo(left, right);

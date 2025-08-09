@@ -25,11 +25,18 @@ public enum UnaryOperation implements Operation {
 	 * Strings are unsupported and will typically throw a runtime exception.
 	 */
 	BITWISE_NOT {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number number) {
 			return NumberUtils.not(number);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String string) {
 			return StringUtils.not(string);
@@ -46,11 +53,18 @@ public enum UnaryOperation implements Operation {
 	 * Strings are unsupported and will typically result in a runtime error.
 	 */
 	PRE_INCREMENT {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number number) {
 			return NumberUtils.preIncrement(number);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String string) {
 			return StringUtils.preIncrement(string);
@@ -66,11 +80,18 @@ public enum UnaryOperation implements Operation {
 	 * Strings are unsupported and will typically result in a runtime error.
 	 */
 	POST_INCREMENT {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number number) {
 			return NumberUtils.postIncrement(number);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String string) {
 			return StringUtils.postIncrement(string);
@@ -86,11 +107,18 @@ public enum UnaryOperation implements Operation {
 	 * Strings are unsupported and will typically result in a runtime error.
 	 */
 	PRE_DECREMENT {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number number) {
 			return NumberUtils.preDecrement(number);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String string) {
 			return StringUtils.preDecrement(string);
@@ -106,11 +134,18 @@ public enum UnaryOperation implements Operation {
 	 * Strings are not supported and will result in an error if used.
 	 */
 	POST_DECREMENT {
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Number apply(Number number) {
 			return NumberUtils.postDecrement(number);
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String apply(String string) {
 			return StringUtils.postDecrement(string);

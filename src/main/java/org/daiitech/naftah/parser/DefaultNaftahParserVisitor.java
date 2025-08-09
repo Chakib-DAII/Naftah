@@ -202,6 +202,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visit(tree);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitProgram(org.daiitech.naftah.parser.NaftahParser.ProgramContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -224,6 +227,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitObjectAccessStatement(org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -236,6 +242,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitDeclarationStatement(org.daiitech.naftah.parser.NaftahParser.DeclarationStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -248,6 +257,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitAssignmentStatement(org.daiitech.naftah.parser.NaftahParser.AssignmentStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -262,6 +275,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitFunctionDeclarationStatement(
 													org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationStatementContext ctx) {
@@ -275,6 +292,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitFunctionCallStatement(org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -287,6 +308,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitIfStatementStatement(org.daiitech.naftah.parser.NaftahParser.IfStatementStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -299,6 +324,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitForStatementStatement(org.daiitech.naftah.parser.NaftahParser.ForStatementStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -311,6 +340,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitWhileStatementStatement(
 												org.daiitech.naftah.parser.NaftahParser.WhileStatementStatementContext ctx) {
@@ -324,6 +357,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitRepeatStatementStatement(
 												org.daiitech.naftah.parser.NaftahParser.RepeatStatementStatementContext ctx) {
@@ -337,6 +374,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitCaseStatementStatement(org.daiitech.naftah.parser.NaftahParser.CaseStatementStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -349,6 +390,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitBreakStatementStatement(
 												org.daiitech.naftah.parser.NaftahParser.BreakStatementStatementContext ctx) {
@@ -362,6 +407,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitContinueStatementStatement(
 													org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext ctx) {
@@ -375,6 +424,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitReturnStatementStatement(
 												org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext ctx) {
@@ -388,6 +441,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitBlockStatement(org.daiitech.naftah.parser.NaftahParser.BlockStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -400,6 +457,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitDeclaration(org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -439,6 +500,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.a;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitAssignment(org.daiitech.naftah.parser.NaftahParser.AssignmentContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -468,6 +533,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return declaredVariable;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitFunctionDeclaration(org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -482,6 +551,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return declaredFunction;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitParameterDeclarationList(
 												org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationListContext ctx) {
@@ -498,6 +571,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return args;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitParameterDeclaration(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -511,6 +588,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitFunctionCall(org.daiitech.naftah.parser.NaftahParser.FunctionCallContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -588,6 +669,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitQualifiedCall(org.daiitech.naftah.parser.NaftahParser.QualifiedCallContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -600,6 +685,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitArgumentList(org.daiitech.naftah.parser.NaftahParser.ArgumentListContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -617,6 +706,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return args;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitIfStatement(org.daiitech.naftah.parser.NaftahParser.IfStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -648,6 +741,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitForStatement(org.daiitech.naftah.parser.NaftahParser.ForStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -800,26 +897,46 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) ? Optional.ofNullable((LoopSignal.LoopSignalDetails) result).map(LoopSignal.LoopSignalDetails::result).orElse(null) : result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitWhileStatement(org.daiitech.naftah.parser.NaftahParser.WhileStatementContext ctx) {
 		return super.visitWhileStatement(ctx);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitRepeatStatement(org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext ctx) {
 		return super.visitRepeatStatement(ctx);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitCaseStatement(org.daiitech.naftah.parser.NaftahParser.CaseStatementContext ctx) {
 		return super.visitCaseStatement(ctx);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitCaseLabelList(org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext ctx) {
 		return super.visitCaseLabelList(ctx);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitExpressionStatement(org.daiitech.naftah.parser.NaftahParser.ExpressionStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -832,6 +949,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result; // No expression after 'return' means returning null
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitBreakStatement(org.daiitech.naftah.parser.NaftahParser.BreakStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -860,6 +981,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return LoopSignal.LoopSignalDetails.of(BREAK, currentLoopLabel, targetLabel);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitContinueStatement(org.daiitech.naftah.parser.NaftahParser.ContinueStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -889,6 +1014,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return LoopSignal.LoopSignalDetails.of(CONTINUE, currentLoopLabel, targetLabel);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitReturnStatement(org.daiitech.naftah.parser.NaftahParser.ReturnStatementContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -906,6 +1035,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		// means returning null
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitBlock(org.daiitech.naftah.parser.NaftahParser.BlockContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -929,6 +1062,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitObjectExpression(org.daiitech.naftah.parser.NaftahParser.ObjectExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -941,6 +1078,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitObject(org.daiitech.naftah.parser.NaftahParser.ObjectContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -953,6 +1094,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitObjectFields(org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -972,6 +1117,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitObjectAccessExpression(org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -984,6 +1133,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitCollectionExpression(org.daiitech.naftah.parser.NaftahParser.CollectionExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -996,6 +1149,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Object> visitListValue(org.daiitech.naftah.parser.NaftahParser.ListValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1008,6 +1165,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Tuple visitTupleValue(org.daiitech.naftah.parser.NaftahParser.TupleValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1029,6 +1190,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Object> visitSetValue(org.daiitech.naftah.parser.NaftahParser.SetValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1041,6 +1206,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<Object, Object> visitMapValue(org.daiitech.naftah.parser.NaftahParser.MapValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1053,6 +1222,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Object> visitElements(org.daiitech.naftah.parser.NaftahParser.ElementsContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1102,6 +1275,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return elements;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<Object, Object> visitKeyValuePairs(org.daiitech.naftah.parser.NaftahParser.KeyValuePairsContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1162,6 +1339,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return map;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map.Entry<Object, Object> visitKeyValue(org.daiitech.naftah.parser.NaftahParser.KeyValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1181,6 +1362,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitValueExpression(org.daiitech.naftah.parser.NaftahParser.ValueExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1209,6 +1394,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitMinusExpression(org.daiitech.naftah.parser.NaftahParser.MinusExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1229,6 +1418,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitParenthesisExpression(org.daiitech.naftah.parser.NaftahParser.ParenthesisExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1241,6 +1434,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitModExpression(org.daiitech.naftah.parser.NaftahParser.ModExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1261,6 +1458,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitDivExpression(org.daiitech.naftah.parser.NaftahParser.DivExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1281,6 +1482,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitGreaterThanExpression(org.daiitech.naftah.parser.NaftahParser.GreaterThanExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1301,6 +1506,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitLessThanEqualsExpression(
 												org.daiitech.naftah.parser.NaftahParser.LessThanEqualsExpressionContext ctx) {
@@ -1322,6 +1531,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitGreaterThanEqualsExpression(
 													org.daiitech.naftah.parser.NaftahParser.GreaterThanEqualsExpressionContext ctx) {
@@ -1343,6 +1556,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitNotEqualsExpression(org.daiitech.naftah.parser.NaftahParser.NotEqualsExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1363,6 +1580,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitEqualsExpression(org.daiitech.naftah.parser.NaftahParser.EqualsExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1383,6 +1604,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitLessThanExpression(org.daiitech.naftah.parser.NaftahParser.LessThanExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1403,6 +1628,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitFunctionCallExpression(org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1415,6 +1644,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitPlusExpression(org.daiitech.naftah.parser.NaftahParser.PlusExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1435,6 +1668,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitMulExpression(org.daiitech.naftah.parser.NaftahParser.MulExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1455,6 +1692,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitNumberValue(org.daiitech.naftah.parser.NaftahParser.NumberValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1469,6 +1710,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitCharacterValue(org.daiitech.naftah.parser.NaftahParser.CharacterValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1481,6 +1726,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitStringValue(org.daiitech.naftah.parser.NaftahParser.StringValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1494,6 +1743,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitTrueValue(org.daiitech.naftah.parser.NaftahParser.TrueValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1505,6 +1758,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return Boolean.TRUE;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitFalseValue(org.daiitech.naftah.parser.NaftahParser.FalseValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1516,6 +1773,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return Boolean.FALSE;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitNullValue(org.daiitech.naftah.parser.NaftahParser.NullValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1527,6 +1788,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return null;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitIdValue(org.daiitech.naftah.parser.NaftahParser.IdValueContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1543,6 +1808,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Class<?> visitVoidReturnType(org.daiitech.naftah.parser.NaftahParser.VoidReturnTypeContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1555,6 +1824,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitTypeReturnType(org.daiitech.naftah.parser.NaftahParser.TypeReturnTypeContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1567,6 +1840,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Class<?> visitVarType(org.daiitech.naftah.parser.NaftahParser.VarTypeContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1579,6 +1856,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Class<?> visitBuiltInType(org.daiitech.naftah.parser.NaftahParser.BuiltInTypeContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1591,6 +1872,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Class<?> visitBuiltIn(org.daiitech.naftah.parser.NaftahParser.BuiltInContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1603,6 +1888,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitQualifiedNameType(org.daiitech.naftah.parser.NaftahParser.QualifiedNameTypeContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1616,6 +1905,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedNameContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1655,6 +1948,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1667,6 +1964,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitBitwiseXorExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseXorExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1687,6 +1988,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitNotExpression(org.daiitech.naftah.parser.NaftahParser.NotExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1699,6 +2004,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitAndExpression(org.daiitech.naftah.parser.NaftahParser.AndExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1713,6 +2022,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitOrExpression(org.daiitech.naftah.parser.NaftahParser.OrExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1727,6 +2040,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitNegateExpression(org.daiitech.naftah.parser.NaftahParser.NegateExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1739,6 +2056,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitPreDecrementExpression(org.daiitech.naftah.parser.NaftahParser.PreDecrementExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1758,6 +2079,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitPostDecrementExpression(
 												org.daiitech.naftah.parser.NaftahParser.PostDecrementExpressionContext ctx) {
@@ -1778,6 +2103,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitBitwiseOrExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseOrExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1798,6 +2127,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitBitwiseNotExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseNotExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1817,6 +2150,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitBitwiseAndExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseAndExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1837,6 +2174,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitPreIncrementExpression(org.daiitech.naftah.parser.NaftahParser.PreIncrementExpressionContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
@@ -1856,6 +2197,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object visitPostIncrementExpression(
 												org.daiitech.naftah.parser.NaftahParser.PostIncrementExpressionContext ctx) {
