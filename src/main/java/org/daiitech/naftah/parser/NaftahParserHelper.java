@@ -84,6 +84,13 @@ public final class NaftahParserHelper {
 	 * Loaded properties representing token symbols, if available.
 	 */
 	public static Properties TOKENS_SYMBOLS;
+	/**
+	 * A list of literal keywords or token strings defined by the lexer.
+	 * <p>
+	 * These are fixed words or symbols in the language (e.g., operators, control keywords)
+	 * that are recognized directly by the lexer and mapped to specific tokens.
+	 * </p>
+	 */
 	public static List<String> LEXER_LITERALS;
 
 	static {
