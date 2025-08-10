@@ -34,12 +34,12 @@ public class StringUtilsBenchmark {
 	}
 
 	@Benchmark
-	public String scalarAdd() {
+	public String scalarAdd3600chars() {
 		return StringUtils.applyOperationScalar(input1, input2, ADD);
 	}
 
 	@Benchmark
-	public String vectorAdd() {
+	public String vectorAdd3600chars() {
 		return StringUtils.applyOperationVectorized(input1, input2, ADD, ADD_VEC);
 	}
 }
