@@ -60,7 +60,7 @@ public final class Builtin {
 	 * @param y   the second value
 	 * @return the sum of x and y
 	 */
-	@NaftahFn(name = "جمع", description = "إضافة الأعداد معًا للحصول على مجموع. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة الإجمالية من خلال جمع عدة أرقام.", usage = "جمع(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "إجمع", description = "إضافة الأعداد معًا للحصول على مجموع. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة الإجمالية من خلال جمع عدة أرقام.", usage = "إجمع(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> Object add(T x, T y) {
 		return applyOperation(x, y, ADD);
 	}
@@ -73,7 +73,7 @@ public final class Builtin {
 	 * @param y   the subtrahend
 	 * @return the difference between x and y
 	 */
-	@NaftahFn(name = "طرح", description = "طرح الأعداد للحصول على الفرق. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة المتبقية عند إزالة قيمة عدد من عدد آخر.", usage = "طرح(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "إطرح", description = "طرح الأعداد للحصول على الفرق. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة المتبقية عند إزالة قيمة عدد من عدد آخر.", usage = "إطرح(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> Object subtract(T x, T y) {
 		return applyOperation(x, y, BinaryOperation.SUBTRACT);
 	}
@@ -86,7 +86,7 @@ public final class Builtin {
 	 * @param y   the second factor
 	 * @return the product of x and y
 	 */
-	@NaftahFn(name = "ضرب", description = "ضرب الأعداد للحصول على الناتج هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة الإجمالية عند تكرار جمع عدد معين عدة مرات.", usage = "ضرب(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "إضرب", description = "ضرب الأعداد للحصول على الناتج هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة الإجمالية عند تكرار جمع عدد معين عدة مرات.", usage = "إضرب(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> Object multiply(T x, T y) {
 		return applyOperation(x, y, BinaryOperation.MULTIPLY);
 	}
@@ -99,7 +99,7 @@ public final class Builtin {
 	 * @param y   the divisor
 	 * @return the quotient of x divided by y
 	 */
-	@NaftahFn(name = "قسمة", description = "قسمة الأعداد للحصول على خارج القسمة هي العملية الأساسية التي تُستخدم في الرياضيات لتحديد كم مرة يمكن تقسيم عدد إلى أجزاء متساوية.", usage = "قسمة(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "إقسم", description = "قسمة الأعداد للحصول على خارج القسمة هي العملية الأساسية التي تُستخدم في الرياضيات لتحديد كم مرة يمكن تقسيم عدد إلى أجزاء متساوية.", usage = "إقسم(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> Object divide(T x, T y) {
 		return applyOperation(x, y, BinaryOperation.DIVIDE);
 	}
@@ -159,7 +159,7 @@ public final class Builtin {
 	 * @return The result of raising the base to the specified power
 	 * @usage pow(base, exponent)
 	 */
-	@NaftahFn(name = "رفع", description = "دالة (رفع) تُستخدم لرفع عدد (الأساس) إلى قوة عدد صحيح (الأس). تُفيد هذه العملية في الحسابات الرياضية التي تتطلب التكرار الأسي مثل حساب المربعات أو المكعبات.", usage = "رفع(الأساس ، الأس)", parameterTypes = {Number.class, int.class}, returnType = Number.class)
+	@NaftahFn(name = "إرفع", description = "دالة (إرفع) تُستخدم لرفع عدد (الأساس) إلى قوة عدد صحيح (الأس). تُفيد هذه العملية في الحسابات الرياضية التي تتطلب التكرار الأسي مثل حساب المربعات أو المكعبات.", usage = "إرفع(الأساس ، الأس)", parameterTypes = {Number.class, int.class}, returnType = Number.class)
 	public static <T extends Number> Number pow(T base, int exponent) {
 		return NumberUtils.pow(base, exponent);
 	}
@@ -219,7 +219,7 @@ public final class Builtin {
 	 * @return The given number after changing it to its negative value
 	 * @usage negate(x)
 	 */
-	@NaftahFn(name = "نفي", description = "دالة (نفي) تُستخدم لإرجاع العدد المعطى بعد تغييره إلى قيمته السالبة. تُفيد هذه العملية في العمليات الحسابية التي تتطلب عكس الإشارة العددية.", usage = "نفي(ش)", parameterTypes = {Number.class}, returnType = Number.class)
+	@NaftahFn(name = "إنفي", description = "دالة (إنفي) تُستخدم لإرجاع العدد المعطى بعد تغييره إلى قيمته السالبة. تُفيد هذه العملية في العمليات الحسابية التي تتطلب عكس الإشارة العددية.", usage = "إنفي(ش)", parameterTypes = {Number.class}, returnType = Number.class)
 	public static <T extends Number> Number negate(T x) {
 		return NumberUtils.negate(x);
 	}
@@ -278,7 +278,7 @@ public final class Builtin {
 	 * @return true if x is zero, false otherwise
 	 * @usage isZero(x)
 	 */
-	@NaftahFn(name = "هل_صفر", description = "دالة (هل_صفر) تُستخدم للتحقق مما إذا كان العدد المعطى يساوي صفرًا. تُرجع true إذا كان العدد صفرًا، وfalse خلاف ذلك.", usage = "هل_صفر(ش)", parameterTypes = {Number.class}, returnType = boolean.class)
+	@NaftahFn(name = "هل_صفر", description = "دالة (هل_صفر) تُستخدم للتحقق مما إذا كان العدد المعطى يساوي صفرًا. تُرجع صحيح إذا كان العدد صفرًا، وخطأ خلاف ذلك.", usage = "هل_صفر(ش)", parameterTypes = {Number.class}, returnType = boolean.class)
 	public static <T extends Number> boolean isZero(T x) {
 		return NumberUtils.isZero(x);
 	}
@@ -293,7 +293,7 @@ public final class Builtin {
 	 * @return true if x equals y, false otherwise
 	 * @usage equals(x, y)
 	 */
-	@NaftahFn(name = "يساوي", description = "دالة (يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا متساويين في القيمة. تُرجع true إذا كان العددان متساويين، وfalse خلاف ذلك.", usage = "يساوي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "هل_يساوي", description = "دالة (هل_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا متساويين في القيمة. تُرجع صحيح إذا كان العددان متساويين، وخطأ خلاف ذلك.", usage = "هل_يساوي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> boolean equals(T x, T y) {
 		try {
 			return (boolean) applyOperation(x, y, BinaryOperation.EQUALS);
@@ -316,7 +316,7 @@ public final class Builtin {
 	 * @return true if x does not equal y, false otherwise
 	 * @usage notEquals(x, y)
 	 */
-	@NaftahFn(name = "لا_يساوي", description = "دالة (لا_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا غير متساويين في القيمة. تُرجع true إذا كان العددان غير متساويين، وfalse خلاف ذلك.", usage = "لا_يساوي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "هل_لا_يساوي", description = "دالة (هل_لا_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا غير متساويين في القيمة. تُرجع صحيح إذا كان العددان غير متساويين، وخطأ خلاف ذلك.", usage = "هل_لا_يساوي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> boolean notEquals(T x, T y) {
 		try {
 			return (boolean) applyOperation(x, y, BinaryOperation.NOT_EQUALS);
@@ -339,7 +339,7 @@ public final class Builtin {
 	 * @return true if x &lt; y, false otherwise
 	 * @usage lessThan(x, y)
 	 */
-	@NaftahFn(name = "أصغر_من", description = "دالة (أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد الثاني. تُرجع true إذا كان الأول أصغر، وfalse خلاف ذلك.", usage = "أصغر_من(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "هل_أصغر_من", description = "دالة (هل_أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد الثاني. تُرجع صحيح إذا كان الأول أصغر، وخطأ خلاف ذلك.", usage = "هل_أصغر_من(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> boolean lessThan(T x, T y) {
 		return (boolean) applyOperation(x, y, BinaryOperation.LESS_THAN);
 	}
@@ -354,7 +354,7 @@ public final class Builtin {
 	 * @return true if x ≤ y, false otherwise
 	 * @usage lessThanEquals(x, y)
 	 */
-	@NaftahFn(name = "أصغر_أو_يساوي", description = "دالة (أصغر_أو_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر أو يساوي العدد الثاني. تُرجع true إذا كان الأول أصغر أو يساوي، وfalse خلاف ذلك.", usage = "أصغر_أو_يساوي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "هل_أصغر_أو_يساوي", description = "دالة (هل_أصغر_أو_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر أو يساوي العدد الثاني. تُرجع صحيح إذا كان الأول أصغر أو يساوي، وخطأ خلاف ذلك.", usage = "هل_أصغر_أو_يساوي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> boolean lessThanEquals(T x, T y) {
 		return (boolean) applyOperation(x, y, BinaryOperation.LESS_THAN_EQUALS);
 	}
@@ -369,7 +369,7 @@ public final class Builtin {
 	 * @return true if x > y, false otherwise
 	 * @usage greaterThan(x, y)
 	 */
-	@NaftahFn(name = "أكبر_من", description = "دالة (أكبر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر من العدد الثاني. تُرجع true إذا كان الأول أكبر، وfalse خلاف ذلك.", usage = "أكبر_من(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "هل_أكبر_من", description = "دالة (هل_أكبر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر من العدد الثاني. تُرجع صحيح إذا كان الأول أكبر، وخطأ خلاف ذلك.", usage = "هل_أكبر_من(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> boolean greaterThan(T x, T y) {
 		return (boolean) applyOperation(x, y, BinaryOperation.GREATER_THAN);
 	}
@@ -384,7 +384,7 @@ public final class Builtin {
 	 * @return true if x ≥ y, false otherwise
 	 * @usage greaterThanEquals(x, y)
 	 */
-	@NaftahFn(name = "أكبر_أو_يساوي", description = "دالة (أكبر_أو_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر أو يساوي العدد الثاني. تُرجع true إذا كان الأول أكبر أو يساوي، وfalse خلاف ذلك.", usage = "أكبر_أو_يساوي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "هل_أكبر_أو_يساوي", description = "دالة (هل_أكبر_أو_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر أو يساوي العدد الثاني. تُرجع صحيح إذا كان الأول أكبر أو يساوي، وخطأ خلاف ذلك.", usage = "هل_أكبر_أو_يساوي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> boolean greaterThanEquals(T x, T y) {
 		return (boolean) applyOperation(x, y, BinaryOperation.GREATER_THAN_EQUALS);
 	}
@@ -399,7 +399,7 @@ public final class Builtin {
 	 * @return The result of bitwise AND operation
 	 * @usage and(x, y)
 	 */
-	@NaftahFn(name = "و", description = "دالة (و) تُنفذ عملية 'AND' على الأعداد الثنائية (bitwise) المعطاة. تُرجع العدد الناتج عن العملية الثنائية بين العددين.", usage = "و(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "و_بتي", description = "دالة (و_بتي) تُنفذ عملية 'AND' على الأعداد الثنائية (bitwise) المعطاة. تُرجع العدد الناتج عن العملية الثنائية بين العددين.", usage = "و_بتي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> Object and(T x, T y) {
 		return applyOperation(x, y, BinaryOperation.BITWISE_AND);
 	}
@@ -414,7 +414,7 @@ public final class Builtin {
 	 * @return The result of bitwise OR operation
 	 * @usage or(x, y)
 	 */
-	@NaftahFn(name = "أو", description = "دالة (أو) تُنفذ عملية 'OR' الثنائية على الأعداد المعطاة. تُرجع العدد الناتج عن تطبيق العملية الثنائية بين العددين.", usage = "أو(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "أو_بتي", description = "دالة (أو_بتي) تُنفذ عملية 'OR' الثنائية على الأعداد المعطاة. تُرجع العدد الناتج عن تطبيق العملية الثنائية بين العددين.", usage = "أو_بتي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> Object or(T x, T y) {
 		return applyOperation(x, y, BinaryOperation.BITWISE_OR);
 	}
@@ -429,7 +429,7 @@ public final class Builtin {
 	 * @return The result of bitwise XOR operation
 	 * @usage xor(x, y)
 	 */
-	@NaftahFn(name = "حصري_أو", description = "دالة (حصري_أو) تُنفذ عملية 'XOR' الثنائية على الأعداد المعطاة. تُرجع العدد الناتج عن تطبيق العملية الثنائية الحصرية بين العددين.", usage = "حصري_أو(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "حصري_أو_بتي", description = "دالة (حصري_أو_بتي) تُنفذ عملية 'XOR' الثنائية على الأعداد المعطاة. تُرجع العدد الناتج عن تطبيق العملية الثنائية الحصرية بين العددين.", usage = "حصري_أو_بتي(ش ، ي)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> Object xor(T x, T y) {
 		return applyOperation(x, y, BinaryOperation.BITWISE_XOR);
 	}
@@ -443,7 +443,7 @@ public final class Builtin {
 	 * @return The bitwise NOT of the number
 	 * @usage not(x)
 	 */
-	@NaftahFn(name = "ليس", description = "دالة (ليس) تُنفذ عملية النفي الثنائي (bitwise NOT) على العدد المعطى. تُرجع العدد الناتج عن عكس كل بت في العدد.", usage = "ليس(ش)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
+	@NaftahFn(name = "ليس_بتي", description = "دالة (ليس_بتي) تُنفذ عملية النفي الثنائي (bitwise NOT) على العدد المعطى. تُرجع العدد الناتج عن عكس كل بت في العدد.", usage = "ليس_بتي(ش)", parameterTypes = {Object.class, Object.class}, returnType = Object.class)
 	public static <T> Object not(T x) {
 		return applyOperation(x, UnaryOperation.BITWISE_NOT);
 	}
