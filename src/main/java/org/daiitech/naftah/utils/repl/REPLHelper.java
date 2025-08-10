@@ -19,8 +19,7 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
-import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
-import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
+import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
@@ -126,15 +125,10 @@ public final class REPLHelper {
 		var lineReaderBuilder = LineReaderBuilder.builder().terminal(terminal).parser(parser).highlighter(new SyntaxHighlighter(originalHighlighter));
 
 		// Load static and runtime completions for autocompletion
-		try {
-			var completions = readFileLines(getJarDirectory() + "/lexer-literals");
-			var runtimeCompletions = getCompletions();
-			completions.addAll(runtimeCompletions);
-			Completer stringsCompleter = new ArabicStringsCompleter(completions);
-			lineReaderBuilder.completer(stringsCompleter);
-		}
-		catch (IOException ignored) {
-		}
+		var runtimeCompletions = getCompletions();
+		runtimeCompletions.addAll(LEXER_LITERALS);
+		Completer stringsCompleter = new ArabicStringsCompleter(runtimeCompletions);
+		lineReaderBuilder.completer(stringsCompleter);
 
 		return lineReaderBuilder.build();
 	}

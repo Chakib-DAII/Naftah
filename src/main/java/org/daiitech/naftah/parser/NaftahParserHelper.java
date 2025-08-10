@@ -43,6 +43,7 @@ import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
+import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
 
 /**
@@ -83,10 +84,12 @@ public final class NaftahParserHelper {
 	 * Loaded properties representing token symbols, if available.
 	 */
 	public static Properties TOKENS_SYMBOLS;
+	public static List<String> LEXER_LITERALS;
 
 	static {
 		try {
 			TOKENS_SYMBOLS = getProperties(getJarDirectory() + "/tokens-symbols.properties");
+			LEXER_LITERALS = readFileLines(getJarDirectory() + "/lexer-literals");
 		}
 		catch (Throwable ignored) {
 
