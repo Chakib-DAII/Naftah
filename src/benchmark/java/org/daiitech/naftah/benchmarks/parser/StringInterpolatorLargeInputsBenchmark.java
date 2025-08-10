@@ -58,12 +58,12 @@ public class StringInterpolatorLargeInputsBenchmark {
 	}
 
 	@Benchmark
-	public String benchmarkLargeInterpolation1_000_000() {
+	public String benchmarkLargeInterpolation1_000_000Vars() {
 		return StringInterpolator.process(largeInput, context);
 	}
 
 	@Benchmark
-	public String benchmarkLargeInterpolation10_000_000() {
+	public String benchmarkLargeInterpolation10_000_000Vars() {
 		return StringInterpolator.process(largeInput1, context);
 	}
 }
