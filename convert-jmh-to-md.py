@@ -13,24 +13,49 @@ if not input_file.exists():
 with input_file.open("r", encoding="utf-8") as f:
 	data = json.load(f)
 
+
+def fmt(val):
+	try:
+		return f"{float(val):.10f}"
+	except (ValueError, TypeError):
+		return str(val)
+
+
 # Markdown header
 lines = [
 	"# 🧪 Benchmark Results",
 	"",
-	"| Benchmark | Mode | Score | Error | Units |",
-	"|-----------|------|-------|-------|--------|"
+	"| Benchmark | Params | Mode | Score | Error | Units | Percentiles |",
+	"|-----------|--------|------|-------|-------|--------|--------------|"
 ]
 
 # Loop through each benchmark result
 for entry in data:
 	benchmark = entry.get("benchmark", "N/A").split(".")[-1]
 	mode = entry.get("mode", "N/A")
-	score = f"{entry.get('primaryMetric', {}).get('score', 'N/A'):.10f}"
-	error = f"{entry.get('primaryMetric', {}).get('scoreError', 'N/A'):.10f}"
-	unit = entry.get("primaryMetric", {}).get("scoreUnit", "N/A")
 
-	lines.append(f"| `{benchmark}` | {mode} | {score} | ±{error} | {unit} |")
+	params_dict = entry.get("params", {})
+	params = ", ".join(f"{k}={v}" for k, v in params_dict.items()) if params_dict else "-"
 
+	score = entry.get('primaryMetric', {}).get('score', 'N/A')
+	error = entry.get('primaryMetric', {}).get('scoreError', 'N/A')
+	unit = entry.get('primaryMetric', {}).get('scoreUnit', 'N/A')
+
+	percentiles = entry.get('primaryMetric', {}).get('scorePercentiles', {})
+	# Sort and format all percentiles
+	formatted_percentiles = []
+	for key in sorted(percentiles, key=lambda x: float(x)):
+		try:
+			formatted_value = f"{float(percentiles[key]):.6f}"
+		except (ValueError, TypeError):
+			formatted_value = str(percentiles[key])
+		formatted_percentiles.append(f"P{key}={formatted_value}")
+
+	percentiles_str = ", ".join(formatted_percentiles)
+
+	lines.append(
+		f"| `{benchmark}` | {params} | {mode} | {fmt(score)} | ±{fmt(error)} | {unit} | {percentiles_str} |"
+	)
 # Write to file
 output_file.parent.mkdir(parents=True, exist_ok=True)
 output_file.write_text("\n".join(lines), encoding="utf-8")
