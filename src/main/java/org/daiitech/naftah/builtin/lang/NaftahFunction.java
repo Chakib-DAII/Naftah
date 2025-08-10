@@ -3,6 +3,10 @@ package org.daiitech.naftah.builtin.lang;
 import java.io.Serializable;
 import java.util.List;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
+import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
+
 /**
  * Represents a function definition in the Naftah scripting language.
  * <p>
@@ -22,6 +26,13 @@ public record NaftahFunction(
 		String name, String description, String usage, Class<?> returnType,
 		List<Class<?>> parameterTypes, List<Class<?>> exceptionTypes
 ) implements Serializable {
+
+	public NaftahFunction {
+		if (LEXER_LITERALS.contains(name)) {
+			throw new NaftahBugError(
+					String.format("اسم الدالة المضمّنة '%s' لا يجوز أن يتطابق مع كلمة مفتاحية في اللغة.", name));
+		}
+	}
 
 	/**
 	 * Factory method to create a {@code NaftahFunction} instance.
