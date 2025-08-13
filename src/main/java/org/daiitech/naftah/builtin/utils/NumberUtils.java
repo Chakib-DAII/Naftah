@@ -287,10 +287,23 @@ public final class NumberUtils {
 				result = dx.asBigDecimal().add(dy.asBigDecimal());
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				result = dx.asDouble() + dy.asDouble();
+				double res = dx.asDouble() + dy.asDouble();
+				if (Double.isInfinite(res) || Double.isNaN(res)) {
+					// Promote to BigDecimal
+					result = dx.promote().asBigDecimal().add(dy.promote().asBigDecimal());
+				}
+				else {
+					result = res;
+				}
 			}
 			else {
-				result = dx.asFloat() + dy.asFloat();
+				float res = dx.asFloat() + dy.asFloat();
+				if (Float.isInfinite(res) || Float.isNaN(res)) {
+					result = dx.promote().asDouble() + dy.promote().asDouble();
+				}
+				else {
+					result = res;
+				}
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
@@ -298,16 +311,34 @@ public final class NumberUtils {
 				result = dx.asBigInteger().add(dy.asBigInteger());
 			}
 			else if (dx.isLong() || dy.isLong()) {
-				result = dx.asLong() + dy.asLong();
+				long a = dx.asLong();
+				long b = dy.asLong();
+				try {
+					result = Math.addExact(a, b);
+				}
+				catch (ArithmeticException e) {
+					result = BigInteger.valueOf(a).add(BigInteger.valueOf(b));
+				}
 			}
 			else if (dx.isInt() || dy.isInt()) {
-				result = dx.asInt() + dy.asInt();
+				int a = dx.asInt();
+				int b = dy.asInt();
+				try {
+					result = Math.addExact(a, b);
+				}
+				catch (ArithmeticException e) {
+					result = (long) a + b;
+				}
 			}
 			else if (dx.isShort() || dy.isShort()) {
-				result = dx.asShort() + dy.asShort();
+				short a = dx.asShort();
+				short b = dy.asShort();
+				result = a + b; // promotes to int
 			}
 			else {
-				result = dx.asByte() + dy.asByte();
+				byte a = dx.asByte();
+				byte b = dy.asByte();
+				result = a + b; // promotes to int
 			}
 		}
 		else {
@@ -356,15 +387,28 @@ public final class NumberUtils {
 	 */
 	public static Number subtract(DynamicNumber dx, DynamicNumber dy) {
 		Number result;
+
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().subtract(dy.asBigDecimal());
+				result = dx.set(dx.asBigDecimal().subtract(dy.asBigDecimal())).normalize().get();
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				result = dx.asDouble() - dy.asDouble();
+				double res = dx.asDouble() - dy.asDouble();
+				if (Double.isInfinite(res) || Double.isNaN(res)) {
+					result = dx.set(dx.promote().asBigDecimal().subtract(dy.promote().asBigDecimal())).normalize().get();
+				}
+				else {
+					result = res;
+				}
 			}
 			else {
-				result = dx.asFloat() - dy.asFloat();
+				float res = dx.asFloat() - dy.asFloat();
+				if (Float.isInfinite(res) || Float.isNaN(res)) {
+					result = dx.promote().asDouble() - dy.promote().asDouble();
+				}
+				else {
+					result = res;
+				}
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
@@ -372,17 +416,37 @@ public final class NumberUtils {
 				result = dx.asBigInteger().subtract(dy.asBigInteger());
 			}
 			else if (dx.isLong() || dy.isLong()) {
-				result = dx.asLong() - dy.asLong();
+				long a = dx.asLong();
+				long b = dy.asLong();
+				try {
+					result = Math.subtractExact(a, b);
+				}
+				catch (ArithmeticException e) {
+					result = BigInteger.valueOf(a).subtract(BigInteger.valueOf(b));
+				}
 			}
 			else if (dx.isInt() || dy.isInt()) {
-				result = dx.asInt() - dy.asInt();
+				int a = dx.asInt();
+				int b = dy.asInt();
+				try {
+					result = Math.subtractExact(a, b);
+				}
+				catch (ArithmeticException e) {
+					result = (long) a - b;
+				}
 			}
 			else if (dx.isShort() || dy.isShort()) {
-				result = dx.asShort() - dy.asShort();
+				short a = dx.asShort();
+				short b = dy.asShort();
+				result = a - b;
 			}
 			else {
-				result = dx.asByte() - dy.asByte();
+				byte a = dx.asByte();
+				byte b = dy.asByte();
+				result = a - b;
 			}
+			// Normalize for all integer results
+			result = dx.set(result).normalize().get();
 		}
 		else {
 			// Unknown or unsupported number types
@@ -435,29 +499,72 @@ public final class NumberUtils {
 				result = dx.asBigDecimal().multiply(dy.asBigDecimal());
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				result = dx.asDouble() * dy.asDouble();
+				double res = dx.asDouble() * dy.asDouble();
+
+				// Check for overflow or infinity
+				if (Double.isInfinite(res) || Double.isNaN(res)) {
+					result = dx.promote().asBigDecimal().multiply(dy.promote().asBigDecimal());
+				}
+				else {
+					result = res;
+				}
 			}
 			else {
-				result = dx.asFloat() * dy.asFloat();
+				float res = dx.asFloat() * dy.asFloat();
+				if (Float.isInfinite(res) || Float.isNaN(res)) {
+					result = dx.promote().asDouble() * dy.promote().asDouble();
+				}
+				else {
+					result = res;
+				}
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
+			// If either is BigInteger, use BigInteger multiplication
 			if (dx.isBigInteger() || dy.isBigInteger()) {
 				result = dx.asBigInteger().multiply(dy.asBigInteger());
 			}
+
+			// Handle long carefully (to avoid overflow)
 			else if (dx.isLong() || dy.isLong()) {
-				result = dx.asLong() * dy.asLong();
+				long a = dx.asLong();
+				long b = dy.asLong();
+
+				// Check for overflow using Math.multiplyExact
+				try {
+					result = Math.multiplyExact(a, b);
+				}
+				catch (ArithmeticException e) {
+					// Promote to BigInteger
+					result = BigInteger.valueOf(a).multiply(BigInteger.valueOf(b));
+				}
 			}
+
+			// Handle int (with promotion on overflow)
 			else if (dx.isInt() || dy.isInt()) {
-				result = dx.asInt() * dy.asInt();
+				int a = dx.asInt();
+				int b = dy.asInt();
+				try {
+					result = Math.multiplyExact(a, b);
+				}
+				catch (ArithmeticException e) {
+					result = (long) a * b;
+				}
 			}
+
+			// Handle short and byte with safe promotion
 			else if (dx.isShort() || dy.isShort()) {
-				result = dx.asShort() * dy.asShort();
+				short a = dx.asShort();
+				short b = dy.asShort();
+				result = a * b;
 			}
 			else {
-				result = dx.asByte() * dy.asByte();
+				byte a = dx.asByte();
+				byte b = dy.asByte();
+				result = a * b;
 			}
 		}
+
 		else {
 			// Unknown or unsupported number types
 			// TODO: classNames should be in arabic or transliterated or in naftah language
@@ -794,13 +901,68 @@ public final class NumberUtils {
 	 * Number}
 	 */
 	public static Number pow(DynamicNumber base, int exponent) {
-		if (base.isBigDecimal() || base.isBigInteger()) {
-			return base.asBigDecimal().pow(exponent);
+		if (base.isDecimal()) {
+			if (base.isBigDecimal()) {
+				// BigDecimal.pow only supports non-negative exponents
+				if (exponent < 0) {
+					BigDecimal result = BigDecimal.ONE.divide(base.asBigDecimal().pow(-exponent), RoundingMode.HALF_UP);
+					return base.set(result).normalize().get();
+				}
+				else {
+					return base.set(base.asBigDecimal().pow(exponent)).normalize().get();
+				}
+			}
+			else {
+				double res = Math.pow(base.asDouble(), exponent);
+				if (Double.isInfinite(res) || Double.isNaN(res)) {
+					// Promote to BigDecimal for better precision and large values
+					BigDecimal bdBase = base.promote().asBigDecimal();
+					BigDecimal result;
+					if (exponent < 0) {
+						result = BigDecimal.ONE.divide(bdBase.pow(-exponent), RoundingMode.HALF_UP);
+					}
+					else {
+						result = bdBase.pow(exponent);
+					}
+					return base.set(result).normalize().get();
+				}
+				return res;
+			}
 		}
-		else if (base.isBigInteger()) {
-			return base.asBigInteger().pow(exponent);
+		else if (base.isInteger()) {
+			if (base.isBigInteger()) {
+				if (exponent < 0) {
+					// Promote to BigDecimal for negative exponent
+					BigDecimal bdBase = new BigDecimal(base.asBigInteger());
+					BigDecimal result = BigDecimal.ONE.divide(bdBase.pow(-exponent));
+					return base.set(result).normalize().get();
+				}
+				else {
+					return base.set(base.asBigInteger().pow(exponent)).normalize().get();
+				}
+			}
+			else {
+				try {
+					long result = 1;
+					long b = base.asLong();
+					for (int i = 0; i < exponent; i++) {
+						result = Math.multiplyExact(result, b);
+					}
+					return base.set(result).normalize().get();
+				}
+				catch (ArithmeticException e) {
+					// Overflow, promote to BigInteger and recurse
+					BigInteger bigBase = BigInteger.valueOf(base.asLong());
+					return base.set(bigBase.pow(exponent)).normalize().get();
+				}
+			}
 		}
-		return Math.pow(base.asDouble(), exponent);
+		else {
+			// Unknown or unsupported number types
+			// TODO: classNames should be in arabic or transliterated or in naftah language
+			// types
+			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(base.get().getClass()));
+		}
 	}
 
 	/**
