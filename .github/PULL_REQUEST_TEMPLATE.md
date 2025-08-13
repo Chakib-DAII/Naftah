@@ -7,7 +7,7 @@
 - [ ] Bug fix (`fix:`)
 - [ ] New feature (`feat:`)
 - [ ] Documentation update (`docs:`)
-- [ ] Other (describe):
+- [ ] Other (describe in comments)
 
 ## Checklist
 
