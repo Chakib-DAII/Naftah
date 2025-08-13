@@ -652,7 +652,7 @@ public class DefaultContext {
 		}
 
 		if (!safe) {
-			throw new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
+			throw newNaftahBugVariableNotFoundError(name);
 		}
 		return null;
 	}
@@ -1339,5 +1339,10 @@ public class DefaultContext {
 	 */
 	public void setLoopLabel(String loopLabel) {
 		this.loopLabel = loopLabel;
+	}
+
+	public static NaftahBugError newNaftahBugVariableNotFoundError(String name) {
+		return new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
+
 	}
 }
