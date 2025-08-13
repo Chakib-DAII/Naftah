@@ -68,6 +68,7 @@ import static org.daiitech.naftah.parser.DefaultContext.currentLoopLabel;
 import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.getContextByDepth;
 import static org.daiitech.naftah.parser.DefaultContext.loopContainsLabel;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
 import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.popLoop;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
@@ -1921,7 +1922,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (accessingObjectField) {
 			var qualifiedName = getQualifiedName(ctx);
 			var accessArray = qualifiedName.split(":");
-			if (accessArray.length > 1 && currentContext.getVariable(accessArray[0], false).b.getValue() instanceof Map<?, ?> map) {
+			if (accessArray.length > 1 && Optional.ofNullable(VARIABLE_GETTER.apply(accessArray[0], currentContext)
+			).orElseThrow(() -> newNaftahBugVariableNotFoundError(accessArray[0])) instanceof Map<?, ?> map) {
 				var object = (Map<String, DeclaredVariable>) map;
 				result = object;
 				for (int i = 1; i < accessArray.length; i++) {
@@ -1934,7 +1936,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 				}
 			}
 			else {
-				result = currentContext.getVariable(accessArray[0], false).b.getValue();
+				result = Optional.ofNullable(VARIABLE_GETTER.apply(accessArray[0], currentContext)
+				).orElseThrow(() -> newNaftahBugVariableNotFoundError(accessArray[0]));
 			}
 		}
 		else if (currentContext.isParsingFunctionCallId()) {
