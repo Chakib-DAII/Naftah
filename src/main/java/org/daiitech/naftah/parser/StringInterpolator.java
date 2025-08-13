@@ -2,7 +2,6 @@ package org.daiitech.naftah.parser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -94,7 +93,7 @@ public final class StringInterpolator {
 	 * @return the interpolated result
 	 */
 	public static synchronized String interpolate(String template, DefaultContext context) {
-		Function<String, Object> replacementFunction = varName -> Optional.ofNullable(VARIABLE_GETTER.apply(varName, context)).orElse(NULL);
+		Function<String, Object> replacementFunction = varName -> VARIABLE_GETTER.apply(varName, context).orElse(NULL);
 		return interpolate(template, replacementFunction);
 	}
 
