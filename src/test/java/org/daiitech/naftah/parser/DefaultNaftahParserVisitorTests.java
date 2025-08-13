@@ -5,6 +5,7 @@ import org.daiitech.naftah.parser.provider.ArithmeticExpressionsProvider;
 import org.daiitech.naftah.parser.provider.AssignmentProvider;
 import org.daiitech.naftah.parser.provider.BlockProvider;
 import org.daiitech.naftah.parser.provider.DeclarationProvider;
+import org.daiitech.naftah.parser.provider.FunctionDeclarationProvider;
 import org.daiitech.naftah.parser.provider.LogicalExpressionsProvider;
 import org.daiitech.naftah.parser.provider.ValueExpressionsProvider;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -79,6 +80,18 @@ public class DefaultNaftahParserVisitorTests {
 	@ParameterizedTest
 	@ArgumentsSource(DeclarationProvider.class)
 	void declarationTests(boolean validScript, String script, Object expectedValue, NaftahBugError expectedNaftahBugError) throws Exception {
+		if (validScript) {
+			var result = runScript(script);
+			assertEquals(result, expectedValue);
+		}
+		else {
+			doAssertBugEquals(script, expectedNaftahBugError);
+		}
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(FunctionDeclarationProvider.class)
+	void functionDeclarationTests(boolean validScript, String script, Object expectedValue, NaftahBugError expectedNaftahBugError) throws Exception {
 		if (validScript) {
 			var result = runScript(script);
 			assertEquals(result, expectedValue);

@@ -29,22 +29,26 @@ public final class TestUtils {
 				if (value instanceof DeclaredVariable declaredVariable) {
 					doAssertEquals(expectedValueFromMap, declaredVariable.getValue());
 				}
-				else
+				else {
 					doAssertEquals(expectedValueFromMap, value);
+				}
 			});
 		}
 		else if (result instanceof DeclaredVariable declaredVariable) {
 			doAssertEquals(expectedValue, declaredVariable.getValue());
 		}
-		else
+		else {
 			doAssertEquals(result, expectedValue);
+		}
 	}
 
 	public static void doAssertEquals(Object result, Object expectedValue) {
-		if (result instanceof Number)
+		if (result instanceof Number) {
 			Assertions.assertTrue(NumberUtils.equals(expectedValue, result));
-		else
+		}
+		else {
 			Assertions.assertEquals(expectedValue, result);
+		}
 	}
 
 	public static void doAssertBugEquals(String script, NaftahBugError expectedNaftahBugError) {

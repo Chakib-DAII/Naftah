@@ -106,28 +106,22 @@ public class DefaultContext {
 	 */
 	public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (functionCallId, argumentName) -> "%s-%s".formatted(functionCallId, argumentName);
 
-	// Helper to generate unique labels for unlabeled loops
 	/**
 	 * Generates unique loop labels for unlabeled loops based on depth and a UUID.
 	 */
 	public static final Function<Integer, String> LOOP_ID_GENERATOR = (depth) -> "%s-loop-%s".formatted(depth, UUID.randomUUID());
 
-	// CONTEXTS
 	/**
 	 * Global map holding contexts indexed by their depth.
 	 */
 	protected static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
 
-	// CALL STACK
-	// function - arguments - returned value
 	/**
 	 * Stack representing the call stack containing pairs of function and argument maps,
 	 * along with the returned value.
 	 */
 	protected static final Stack<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>> CALL_STACK = new Stack<>();
 
-	// LOOP STACK
-	// loop labels
 	/**
 	 * Stack representing loop labels and their associated parser rule contexts.
 	 */
@@ -137,7 +131,7 @@ public class DefaultContext {
 	 * Function to resolve variable values given a variable name and context.
 	 * searching in loop variables, function arguments, function parameters, and declared variables.
 	 */
-	public static final BiFunction<String, DefaultContext, Object> VARIABLE_GETTER = (varName, context) -> Optional.ofNullable(context.getLoopVariable(varName, true)).flatMap(functionArgument -> Optional.ofNullable(functionArgument.b)).orElseGet(() -> Optional.ofNullable(context.getFunctionArgument(varName, true)).flatMap(functionArgument -> Optional.ofNullable(functionArgument.b)).orElseGet(() -> Optional.ofNullable(context.getFunctionParameter(varName, true)).flatMap(functionParameter -> Optional.ofNullable(functionParameter.b.getValue())).orElseGet(() -> Optional.ofNullable(context.getVariable(varName, true)).flatMap(declaredVariable -> Optional.ofNullable(declaredVariable.b.getValue())).orElse(null))));
+	public static final BiFunction<String, DefaultContext, VariableLookupResult<Object>> VARIABLE_GETTER = (varName, context) -> Optional.ofNullable(context.getLoopVariable(varName, true)).flatMap(functionArgument -> Optional.of(VariableLookupResult.of(varName, functionArgument.b))).orElseGet(() -> Optional.ofNullable(context.getFunctionArgument(varName, true)).flatMap(functionArgument -> Optional.of(VariableLookupResult.of(varName, functionArgument.b))).orElseGet(() -> Optional.ofNullable(context.getFunctionParameter(varName, true)).flatMap(functionParameter -> Optional.of(VariableLookupResult.of(varName, functionParameter.b.getValue()))).orElseGet(() -> Optional.ofNullable(context.getVariable(varName, true)).flatMap(declaredVariable -> Optional.of(VariableLookupResult.of(varName, declaredVariable.b.getValue()))).orElse(VariableLookupResult.notFound(varName)))));
 
 	/**
 	 * A supplier task to perform class scanning, loading, filtering, and extraction of JVM and builtin functions
@@ -625,6 +619,10 @@ public class DefaultContext {
 
 	// variables
 
+	public static NaftahBugError newNaftahBugVariableNotFoundError(String name) {
+		return new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
+	}
+
 	/**
 	 * Checks if the variable with the given name exists in the current context or any parent context.
 	 *
@@ -652,7 +650,7 @@ public class DefaultContext {
 		}
 
 		if (!safe) {
-			throw new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
+			throw newNaftahBugVariableNotFoundError(name);
 		}
 		return null;
 	}
@@ -702,8 +700,6 @@ public class DefaultContext {
 		}
 		this.variables.putAll(variables); // force local
 	}
-
-	// functions
 
 	/**
 	 * Checks if the function with the given name exists in the current context, built-in functions,
@@ -793,8 +789,6 @@ public class DefaultContext {
 		}
 		functions.put(name, value); // force local
 	}
-
-	// functions parameters
 
 	/**
 	 * Generates the canonical name for a function parameter based on the current function call ID.
@@ -907,7 +901,12 @@ public class DefaultContext {
 		this.parameters.putAll(parameters); // force local
 	}
 
-	// functions arguments
+	/**
+	 * Checks if a function argument with the given name exists in the current or parent contexts.
+	 *
+	 * @param name the argument name
+	 * @return true if the function argument exists, false otherwise
+	 */
 
 	/**
 	 * Generates the canonical name for a function argument based on the current function call ID.
@@ -925,12 +924,6 @@ public class DefaultContext {
 		return name;
 	}
 
-	/**
-	 * Checks if a function argument with the given name exists in the current or parent contexts.
-	 *
-	 * @param name the argument name
-	 * @return true if the function argument exists, false otherwise
-	 */
 	/**
 	 * Checks if a function argument with the given name exists in the current or parent contexts.
 	 *
@@ -1014,8 +1007,6 @@ public class DefaultContext {
 		}
 		this.arguments.putAll(arguments); // force local
 	}
-
-	// loop variables
 
 	/**
 	 * Generates the canonical name for a loop variable based on the current loop ID.
@@ -1145,8 +1136,6 @@ public class DefaultContext {
 		}
 		loopVariables.remove(name); // force local
 	}
-
-	// execution tree
 
 	/**
 	 * Marks the given parse tree node as executed in the execution tracking map.
