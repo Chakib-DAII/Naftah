@@ -68,7 +68,6 @@ import static org.daiitech.naftah.parser.DefaultContext.currentLoopLabel;
 import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.getContextByDepth;
 import static org.daiitech.naftah.parser.DefaultContext.loopContainsLabel;
-import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
 import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.popLoop;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
@@ -1804,7 +1803,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		boolean creatingMap = hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.MapValueContext.class);
 		boolean creatingObject = hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
 		String id = ctx.ID().getText();
-		var result = creatingMap || creatingObject ? id : VARIABLE_GETTER.apply(id, currentContext);
+		var result = creatingMap || creatingObject ? id : VARIABLE_GETTER.apply(id, currentContext).orElse(null);
 		currentContext.markExecuted(ctx); // Mark as executed
 		return result;
 	}
@@ -1922,8 +1921,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (accessingObjectField) {
 			var qualifiedName = getQualifiedName(ctx);
 			var accessArray = qualifiedName.split(":");
-			if (accessArray.length > 1 && Optional.ofNullable(VARIABLE_GETTER.apply(accessArray[0], currentContext)
-			).orElseThrow(() -> newNaftahBugVariableNotFoundError(accessArray[0])) instanceof Map<?, ?> map) {
+			if (accessArray.length > 1 && VARIABLE_GETTER.apply(accessArray[0], currentContext).get() instanceof Map<?, ?> map) {
 				var object = (Map<String, DeclaredVariable>) map;
 				result = object;
 				for (int i = 1; i < accessArray.length; i++) {
@@ -1936,8 +1934,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 				}
 			}
 			else {
-				result = Optional.ofNullable(VARIABLE_GETTER.apply(accessArray[0], currentContext)
-				).orElseThrow(() -> newNaftahBugVariableNotFoundError(accessArray[0]));
+				result = VARIABLE_GETTER.apply(accessArray[0], currentContext).get();
 			}
 		}
 		else if (currentContext.isParsingFunctionCallId()) {
