@@ -233,7 +233,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 		int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
 		int padding = Math.max(0, width - contentWidth);
 		AttributedString spacePad = new AttributedString(" ".repeat(padding));
-		AttributedString prompt = MULTILINE_IS_ACTIVE ? new AttributedString(RTL_MULTILINE_PROMPT) : new AttributedString(RTL_PROMPT);
+		AttributedString prompt = MULTILINE_IS_ACTIVE ?
+				new AttributedString(RTL_MULTILINE_PROMPT) :
+				new AttributedString(RTL_PROMPT);
 		return AttributedString.join(new AttributedString(""), spacePad, str, prompt);
 	}
 }

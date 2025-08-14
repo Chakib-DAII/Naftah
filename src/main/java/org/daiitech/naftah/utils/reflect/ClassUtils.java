@@ -61,7 +61,9 @@ public final class ClassUtils {
 	 * @return the qualified name transliterated to Arabic script
 	 */
 	public static String getQualifiedName(String className) {
-		return String.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefaultCustom(className.split(CLASS_SEPARATORS_REGEX)));
+		return String
+				.join(  QUALIFIED_NAME_SEPARATOR,
+						ArabicUtils.transliterateToArabicScriptDefaultCustom(className.split(CLASS_SEPARATORS_REGEX)));
 	}
 
 	/**
@@ -73,7 +75,8 @@ public final class ClassUtils {
 	 * @return qualified call string of the form "qualifiedName::methodName" in Arabic script
 	 */
 	public static String getQualifiedCall(String qualifiedName, Method method) {
-		return "%s::%s".formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefaultCustom(method.getName()));
+		return "%s::%s"
+				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefaultCustom(method.getName()));
 	}
 
 	/**
@@ -90,12 +93,19 @@ public final class ClassUtils {
 		var baseStream = classNames.stream().map(s -> s.split(CLASS_SEPARATORS_REGEX));
 
 		if (flattened) {
-			return baseStream.flatMap(strings -> Arrays.stream(strings).map(element -> Map.entry(element, strings))).collect(
-					Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (existing, replacement) -> existing
-					));
+			return baseStream
+					.flatMap(strings -> Arrays.stream(strings).map(element -> Map.entry(element, strings)))
+					.collect(
+								Collectors
+										.toMap( Map.Entry::getKey,
+												Map.Entry::getValue,
+												(existing, replacement) -> existing
+										));
 		}
 
-		return baseStream.map(strings -> Map.entry(String.join(QUALIFIED_NAME_SEPARATOR, strings), strings)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		return baseStream
+				.map(strings -> Map.entry(String.join(QUALIFIED_NAME_SEPARATOR, strings), strings))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	/**
@@ -106,7 +116,11 @@ public final class ClassUtils {
 	 * @return set of Arabic transliterated qualified names joined by colon
 	 */
 	public static Set<String> getArabicClassQualifiers(Collection<String[]> classQualifiers) {
-		return classQualifiers.stream().map(strings -> String.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefaultCustom(strings))).collect(Collectors.toSet());
+		return classQualifiers
+				.stream()
+				.map(strings -> String
+						.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)))
+				.collect(Collectors.toSet());
 	}
 
 	/**
@@ -117,8 +131,15 @@ public final class ClassUtils {
 	 * @return map of Arabic qualified names to original qualified names
 	 */
 	public static Map<String, String> getArabicClassQualifiersMapping(Collection<String[]> classQualifiers) {
-		return classQualifiers.stream().map(strings -> Map.entry(
-				String.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)), String.join(QUALIFIED_NAME_SEPARATOR, strings))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (existing, replacement) -> existing));
+		return classQualifiers
+				.stream()
+				.map(strings -> Map
+						.entry(
+								String
+										.join(  QUALIFIED_NAME_SEPARATOR,
+												ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)),
+								String.join(QUALIFIED_NAME_SEPARATOR, strings)))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (existing, replacement) -> existing));
 	}
 
 
@@ -139,10 +160,14 @@ public final class ClassUtils {
 	 * @param methodPredicate predicate to filter methods
 	 * @return map from qualified call string to list of JvmFunction wrappers
 	 */
-	public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
+	public static Map<String, List<JvmFunction>> getClassMethods(   Map<String, Class<?>> classes,
+																	Predicate<Method> methodPredicate) {
 		return classes.entrySet().stream().filter(Objects::nonNull).flatMap(classEntry -> {
 			try {
-				return Arrays.stream(classEntry.getValue().getMethods()).filter(methodPredicate).map(method -> Map.entry(method, classEntry));
+				return Arrays
+						.stream(classEntry.getValue().getMethods())
+						.filter(methodPredicate)
+						.map(method -> Map.entry(method, classEntry));
 			}
 			catch (Throwable e) {
 				// skip
@@ -153,8 +178,11 @@ public final class ClassUtils {
 			Method method = methodEntry.getKey();
 			String qualifiedCall = getQualifiedCall(methodEntry.getValue().getKey(), method);
 			return Map.entry(qualifiedCall, JvmFunction.of(qualifiedCall, clazz, method));
-		}).collect(
-				Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+		})
+				.collect(
+							Collectors
+									.groupingBy(Map.Entry::getKey,
+												Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 	}
 
 	/**
@@ -276,7 +304,8 @@ public final class ClassUtils {
 	 * @param classPredicate predicate to filter classes
 	 * @return filtered map of classes
 	 */
-	public static Map<String, Class<?>> filterClasses(Map<String, Class<?>> classes, Predicate<Class<?>> classPredicate) {
+	public static Map<String, Class<?>> filterClasses(  Map<String, Class<?>> classes,
+														Predicate<Class<?>> classPredicate) {
 		return classes.entrySet().stream().filter(classEntry -> {
 			try {
 				return classPredicate.test(classEntry.getValue());
@@ -304,22 +333,38 @@ public final class ClassUtils {
 	 * @param methodPredicate predicate to filter methods
 	 * @return map of function names to lists of BuiltinFunction instances
 	 */
-	public static Map<String, List<BuiltinFunction>> getBuiltinMethods(Map<String, Class<?>> classes, Predicate<Method> methodPredicate) {
-		return classes.entrySet().stream().filter(Objects::nonNull).filter(classEntry -> isAnnotationsPresent(classEntry.getValue(), NaftahFnProvider.class)).flatMap(classEntry -> {
-			try {
-				return Arrays.stream(classEntry.getValue().getMethods()).filter(method -> isAnnotationsPresent(method, NaftahFn.class) && methodPredicate.test((method))).map(method -> Map.entry(method, classEntry));
-			}
-			catch (Throwable e) {
-				// skip
-				return null;
-			}
-		}).filter(Objects::nonNull).map(methodEntry -> {
-			Class<?> clazz = methodEntry.getValue().getValue();
-			Method method = methodEntry.getKey();
-			var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
-			var naftahFunction = getNaftahFunctionAnnotation(method);
-			return Map.entry(naftahFunction.name(), BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction));
-		}).collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+	public static Map<String, List<BuiltinFunction>> getBuiltinMethods( Map<String, Class<?>> classes,
+																		Predicate<Method> methodPredicate) {
+		return classes
+				.entrySet()
+				.stream()
+				.filter(Objects::nonNull)
+				.filter(classEntry -> isAnnotationsPresent(classEntry.getValue(), NaftahFnProvider.class))
+				.flatMap(classEntry -> {
+					try {
+						return Arrays
+								.stream(classEntry.getValue().getMethods())
+								.filter(method -> isAnnotationsPresent(method, NaftahFn.class) && methodPredicate
+										.test((method)))
+								.map(method -> Map.entry(method, classEntry));
+					}
+					catch (Throwable e) {
+						// skip
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
+				.map(methodEntry -> {
+					Class<?> clazz = methodEntry.getValue().getValue();
+					Method method = methodEntry.getKey();
+					var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
+					var naftahFunction = getNaftahFunctionAnnotation(method);
+					return Map
+							.entry( naftahFunction.name(),
+									BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction));
+				})
+				.collect(Collectors
+						.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 	}
 
 	/**
@@ -340,10 +385,16 @@ public final class ClassUtils {
 	 * @return list of BuiltinFunction instances or empty list if not annotated
 	 */
 	public static List<BuiltinFunction> getBuiltinMethods(Class<?> clazz) {
-		return isAnnotationsPresent(clazz, NaftahFnProvider.class) ? Arrays.stream(clazz.getMethods()).filter(method -> isAnnotationsPresent(method, NaftahFn.class)).map(method -> {
-			var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
-			var naftahFunction = getNaftahFunctionAnnotation(method);
-			return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
-		}).toList() : List.of();
+		return isAnnotationsPresent(clazz, NaftahFnProvider.class) ?
+				Arrays
+						.stream(clazz.getMethods())
+						.filter(method -> isAnnotationsPresent(method, NaftahFn.class))
+						.map(method -> {
+							var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
+							var naftahFunction = getNaftahFunctionAnnotation(method);
+							return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
+						})
+						.toList() :
+				List.of();
 	}
 }

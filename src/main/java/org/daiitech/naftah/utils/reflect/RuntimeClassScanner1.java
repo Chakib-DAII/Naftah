@@ -92,13 +92,18 @@ public final class RuntimeClassScanner1 {
 	 * A set of full class file names to ignore during scanning.
 	 * This is the {@link #IGNORE} set with the {@code .class} extension appended.
 	 */
-	public static final Set<String> IGNORE_CLASS = IGNORE.stream().map(s -> s + CLASS_EXTENSION).collect(Collectors.toSet());
+	public static final Set<String> IGNORE_CLASS = IGNORE
+			.stream()
+			.map(s -> s + CLASS_EXTENSION)
+			.collect(Collectors.toSet());
 
 	/**
 	 * Array of common base package names to be used when scanning classes.
 	 * Includes standard Java and popular top-level package prefixes.
 	 */
-	public static final ClassLoader[] CLASS_LOADERS = {ClassLoader.getSystemClassLoader(), ClassLoader.getPlatformClassLoader(), Object.class.getClassLoader()};
+	public static final ClassLoader[] CLASS_LOADERS = { ClassLoader.getSystemClassLoader(),
+														ClassLoader.getPlatformClassLoader(),
+														Object.class.getClassLoader()};
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -184,14 +189,22 @@ public final class RuntimeClassScanner1 {
 			if (file.isDirectory()) {
 				classes.putAll(findClassesInDirectory(root, file));
 			}
-			else if (IGNORE_CLASS.stream().noneMatch(s -> file.getName().endsWith(s)) && file.getName().endsWith(CLASS_EXTENSION)) {
-				String className = file.getAbsolutePath().substring(root.getAbsolutePath().length() + 1).replace("/", ".").replace(File.separatorChar, '.').replaceAll(CLASS_EXTENSION_REGEX, "");
-				Class<?> clazz = loadClass(className, null);
-				if (Objects.nonNull(clazz)) {
-					var scannedClassOptional = ScannedClass.safeOf(clazz);
-					scannedClassOptional.ifPresent(scannedClass -> classes.put(scannedClass.qualifiedName(), scannedClass));
-				}
-			}
+			else if (IGNORE_CLASS.stream().noneMatch(s -> file.getName().endsWith(s)) && file
+					.getName()
+					.endsWith(CLASS_EXTENSION)) {
+						String className = file
+								.getAbsolutePath()
+								.substring(root.getAbsolutePath().length() + 1)
+								.replace("/", ".")
+								.replace(File.separatorChar, '.')
+								.replaceAll(CLASS_EXTENSION_REGEX, "");
+						Class<?> clazz = loadClass(className, null);
+						if (Objects.nonNull(clazz)) {
+							var scannedClassOptional = ScannedClass.safeOf(clazz);
+							scannedClassOptional
+									.ifPresent(scannedClass -> classes.put(scannedClass.qualifiedName(), scannedClass));
+						}
+					}
 			else if (file.getName().endsWith(JAR_EXTENSION) || file.getName().endsWith(JMOD_EXTENSION)) {
 				classes.putAll(findClassesInJar(file));
 			}
@@ -213,23 +226,43 @@ public final class RuntimeClassScanner1 {
 			Enumeration<JarEntry> entries = jar.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry entry = entries.nextElement();
-				if (IGNORE_CLASS.stream().noneMatch(s -> entry.getName().endsWith(s)) && entry.getName().endsWith(CLASS_EXTENSION)) {
-					String className = entry.getName().replace("classes/", "") // handling jmod class prefix
-							.replace("/", ".").replace(File.separatorChar, '.').replaceAll(CLASS_EXTENSION_REGEX, "");
+				if (IGNORE_CLASS.stream().noneMatch(s -> entry.getName().endsWith(s)) && entry
+						.getName()
+						.endsWith(CLASS_EXTENSION)) {
+					String className = entry
+							.getName()
+							.replace("classes/", "") // handling jmod class prefix
+							.replace("/", ".")
+							.replace(File.separatorChar, '.')
+							.replaceAll(CLASS_EXTENSION_REGEX, "");
 					Class<?> clazz = loadClass(className, null);
 					if (Objects.nonNull(clazz)) {
 						var scannedClassOptional = ScannedClass.safeOf(clazz);
-						scannedClassOptional.ifPresent(scannedClass -> classes.put(scannedClass.qualifiedName(), scannedClass));
+						scannedClassOptional
+								.ifPresent(scannedClass -> classes.put(scannedClass.qualifiedName(), scannedClass));
 					}
 				}
 				else if (entry.getName().endsWith(JAR_EXTENSION) || entry.getName().endsWith(JMOD_EXTENSION)) {
 					File tempInnerJar = jarEntryToTempFile(jar, entry);
 					// Load inner JAR with URLClassLoader
-					try (URLClassLoader loader = new URLClassLoader(new URL[]{tempInnerJar.toURI().toURL()}, RuntimeClassScanner1.class.getClassLoader())) {
-						classes.putAll(findClassesInJar(tempInnerJar).keySet().stream().map(className -> Optional.ofNullable(loadClass(className, loader)).map(clazz -> {
-							var scannedClassOptional = ScannedClass.safeOf(clazz);
-							return scannedClassOptional.map(scannedClass -> Map.entry(scannedClass.qualifiedName(), scannedClass)).orElse(null);
-						}).orElse(null)).filter(Objects::nonNull).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+					try (URLClassLoader loader = new URLClassLoader(new URL[]{tempInnerJar.toURI().toURL()},
+																	RuntimeClassScanner1.class.getClassLoader())) {
+						classes
+								.putAll(findClassesInJar(tempInnerJar)
+										.keySet()
+										.stream()
+										.map(className -> Optional
+												.ofNullable(loadClass(className, loader))
+												.map(clazz -> {
+													var scannedClassOptional = ScannedClass.safeOf(clazz);
+													return scannedClassOptional
+															.map(scannedClass -> Map
+																	.entry(scannedClass.qualifiedName(), scannedClass))
+															.orElse(null);
+												})
+												.orElse(null))
+										.filter(Objects::nonNull)
+										.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 					}
 				}
 			}
@@ -251,10 +284,13 @@ public final class RuntimeClassScanner1 {
 	 */
 	public static File jarEntryToTempFile(JarFile outerJar, JarEntry innerJarEntry) throws IOException {
 		// Create a temp file
-		File tempInnerJar = File.createTempFile("entry-", "-" + innerJarEntry.getName().replace("/", "-").replace(File.separatorChar, '-'));
+		File tempInnerJar = File
+				.createTempFile("entry-",
+								"-" + innerJarEntry.getName().replace("/", "-").replace(File.separatorChar, '-'));
 		tempInnerJar.deleteOnExit();
 
-		try (InputStream is = outerJar.getInputStream(innerJarEntry); FileOutputStream os = new FileOutputStream(tempInnerJar)) {
+		try (   InputStream is = outerJar.getInputStream(innerJarEntry);
+				FileOutputStream os = new FileOutputStream(tempInnerJar)) {
 			byte[] buffer = new byte[4096];
 			int bytesRead;
 			while ((bytesRead = is.read(buffer)) != -1) {

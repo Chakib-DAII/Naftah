@@ -24,22 +24,22 @@ import static org.daiitech.naftah.builtin.utils.StringUtils.ADD_VEC;
 @Fork(1)
 @State(Scope.Thread)
 public class StringUtilsBenchmark {
-	private String input1;
-	private String input2;
+    private String input1;
+    private String input2;
 
-	@Setup
-	public void setup() {
-		input1 = "abcdefghijklmnopqrstuvwxyz0123456789".repeat(100); // ~3.6K chars
-		input2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9876543210".repeat(100);
-	}
+    @Setup
+    public void setup() {
+        input1 = "abcdefghijklmnopqrstuvwxyz0123456789".repeat(100); // ~3.6K chars
+        input2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ9876543210".repeat(100);
+    }
 
-	@Benchmark
-	public String scalarAdd3600chars() {
-		return StringUtils.applyOperationScalar(input1, input2, ADD);
-	}
+    @Benchmark
+    public String scalarAdd3600chars() {
+        return StringUtils.applyOperationScalar(input1, input2, ADD);
+    }
 
-	@Benchmark
-	public String vectorAdd3600chars() {
-		return StringUtils.applyOperationVectorized(input1, input2, ADD, ADD_VEC);
-	}
+    @Benchmark
+    public String vectorAdd3600chars() {
+        return StringUtils.applyOperationVectorized(input1, input2, ADD, ADD_VEC);
+    }
 }

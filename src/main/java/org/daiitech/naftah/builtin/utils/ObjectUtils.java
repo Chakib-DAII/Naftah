@@ -174,7 +174,10 @@ public final class ObjectUtils {
 			return collection.isEmpty() || collection.stream().allMatch(Objects::isNull);
 		}
 		if (obj instanceof Map<?, ?> map) {
-			return map.isEmpty() || map.entrySet().stream().allMatch(entry -> Objects.isNull(entry.getKey()) || Objects.isNull(entry.getValue()));
+			return map.isEmpty() || map
+					.entrySet()
+					.stream()
+					.allMatch(entry -> Objects.isNull(entry.getKey()) || Objects.isNull(entry.getValue()));
 		}
 
 		// else
@@ -335,7 +338,8 @@ public final class ObjectUtils {
 		}
 		Class<?> cls = obj.getClass();
 
-		return cls.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class;
+		return cls
+				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class;
 	}
 
 	/**

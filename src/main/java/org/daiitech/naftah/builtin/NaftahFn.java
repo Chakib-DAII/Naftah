@@ -33,46 +33,46 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)
 public @interface NaftahFn {
-	/**
-	 * The function name as exposed to the Naftah environment.
-	 *
-	 * @return the function name
-	 */
-	String name();
+    /**
+     * The function name as exposed to the Naftah environment.
+     *
+     * @return the function name
+     */
+    String name();
 
-	/**
-	 * A brief description of what the function does.
-	 *
-	 * @return the function description
-	 */
-	String description();
+    /**
+     * A brief description of what the function does.
+     *
+     * @return the function description
+     */
+    String description();
 
-	/**
-	 * The usage string or signature for the function.
-	 *
-	 * @return the usage information
-	 */
-	String usage();
+    /**
+     * The usage string or signature for the function.
+     *
+     * @return the usage information
+     */
+    String usage();
 
-	/**
-	 * The return type class of the function.
-	 * Defaults to {@code Void.class} if no return value.
-	 *
-	 * @return the return type class
-	 */
-	Class<?> returnType() default Void.class;
+    /**
+     * The return type class of the function.
+     * Defaults to {@code Void.class} if no return value.
+     *
+     * @return the return type class
+     */
+    Class<?> returnType() default Void.class;
 
-	/**
-	 * The array of parameter type classes accepted by the function.
-	 *
-	 * @return array of parameter types
-	 */
-	Class<?>[] parameterTypes() default {};
+    /**
+     * The array of parameter type classes accepted by the function.
+     *
+     * @return array of parameter types
+     */
+    Class<?>[] parameterTypes() default {};
 
-	/**
-	 * The array of exception type classes that the function may throw.
-	 *
-	 * @return array of exception types
-	 */
-	Class<?>[] exceptionTypes() default {};
+    /**
+     * The array of exception type classes that the function may throw.
+     *
+     * @return array of exception types
+     */
+    Class<?>[] exceptionTypes() default {};
 }

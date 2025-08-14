@@ -15,22 +15,22 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
  */
 public class NaftahParseTreeProperty<V> extends ParseTreeProperty<V> {
 
-	/**
-	 * Returns the internal map holding parse tree nodes and their associated values.
-	 *
-	 * @return a map of ParseTree keys to values of type V
-	 */
-	public Map<ParseTree, V> getAll() {
-		return annotations;
-	}
+    /**
+     * Returns the internal map holding parse tree nodes and their associated values.
+     *
+     * @return a map of ParseTree keys to values of type V
+     */
+    public Map<ParseTree, V> getAll() {
+        return annotations;
+    }
 
-	/**
-	 * Copies all annotations from another NaftahParseTreeProperty instance
-	 * into this one, effectively merging the two.
-	 *
-	 * @param other another NaftahParseTreeProperty to copy from
-	 */
-	public void copyFrom(NaftahParseTreeProperty<V> other) {
-		annotations.putAll(other.getAll());
-	}
+    /**
+     * Copies all annotations from another NaftahParseTreeProperty instance
+     * into this one, effectively merging the two.
+     *
+     * @param other another NaftahParseTreeProperty to copy from
+     */
+    public void copyFrom(NaftahParseTreeProperty<V> other) {
+        annotations.putAll(other.getAll());
+    }
 }

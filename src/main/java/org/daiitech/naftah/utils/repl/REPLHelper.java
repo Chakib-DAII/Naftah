@@ -53,7 +53,9 @@ public final class REPLHelper {
 	/**
 	 * Public RTL multiline prompt with optional reshaping for display.
 	 */
-	public static final String RTL_MULTILINE_PROMPT = shouldReshape() ? shape(RTL_MULTILINE_PROMPT_VALUE) : RTL_MULTILINE_PROMPT_VALUE;
+	public static final String RTL_MULTILINE_PROMPT = shouldReshape() ?
+			shape(RTL_MULTILINE_PROMPT_VALUE) :
+			RTL_MULTILINE_PROMPT_VALUE;
 
 	/**
 	 * Indicates if multiline mode is active in the REPL.
@@ -83,7 +85,12 @@ public final class REPLHelper {
 	/**
 	 * Regex pattern for matching escape characters or escape + newline.
 	 */
-	public static String ESCAPE_CHARS_REGEX = String.join("|", ESCAPE_CHAR_SET.stream().flatMap(character -> Stream.of(String.valueOf(character), character + "\n")).toArray(String[]::new));
+	public static String ESCAPE_CHARS_REGEX = String
+			.join(  "|",
+					ESCAPE_CHAR_SET
+							.stream()
+							.flatMap(character -> Stream.of(String.valueOf(character), character + "\n"))
+							.toArray(String[]::new));
 
 	/**
 	 * Quotation characters allowed in the REPL.
@@ -105,7 +112,17 @@ public final class REPLHelper {
 	 * @throws IOException if terminal initialization fails
 	 */
 	public static Terminal getTerminal() throws IOException {
-		return TerminalBuilder.builder().encoding(StandardCharsets.UTF_8).streams(System.in, System.out).jna(true).jansi(true).color(true).nativeSignals(true).system(true).exec(true).build();
+		return TerminalBuilder
+				.builder()
+				.encoding(StandardCharsets.UTF_8)
+				.streams(System.in, System.out)
+				.jna(true)
+				.jansi(true)
+				.color(true)
+				.nativeSignals(true)
+				.system(true)
+				.exec(true)
+				.build();
 	}
 
 	/**
@@ -120,9 +137,19 @@ public final class REPLHelper {
 
 		Highlighter originalHighlighter = baseReader.getHighlighter();
 
-		DefaultParser parser = new DefaultParser().regexVariable(REGEX_VARIABLE).regexCommand(REGEX_COMMAND).eofOnEscapedNewLine(true).eofOnUnclosedQuote(true).quoteChars(QUOTE_CHARS).escapeChars(ESCAPE_CHARS);
+		DefaultParser parser = new DefaultParser()
+				.regexVariable(REGEX_VARIABLE)
+				.regexCommand(REGEX_COMMAND)
+				.eofOnEscapedNewLine(true)
+				.eofOnUnclosedQuote(true)
+				.quoteChars(QUOTE_CHARS)
+				.escapeChars(ESCAPE_CHARS);
 
-		var lineReaderBuilder = LineReaderBuilder.builder().terminal(terminal).parser(parser).highlighter(new SyntaxHighlighter(originalHighlighter));
+		var lineReaderBuilder = LineReaderBuilder
+				.builder()
+				.terminal(terminal)
+				.parser(parser)
+				.highlighter(new SyntaxHighlighter(originalHighlighter));
 
 		// Load static and runtime completions for autocompletion
 		var runtimeCompletions = getCompletions();

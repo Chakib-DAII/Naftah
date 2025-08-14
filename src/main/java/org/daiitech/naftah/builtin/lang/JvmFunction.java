@@ -78,7 +78,11 @@ public class JvmFunction implements Serializable {
 	 * @return a new {@code JvmFunction} instance
 	 */
 	public static JvmFunction of(String qualifiedCall, Class<?> clazz, Method method) {
-		return new JvmFunction(qualifiedCall, clazz, method, ClassUtils.isStatic(method), ClassUtils.isInvocable(method));
+		return new JvmFunction( qualifiedCall,
+								clazz,
+								method,
+								ClassUtils.isStatic(method),
+								ClassUtils.isInvocable(method));
 	}
 
 	/**

@@ -79,7 +79,10 @@ public final class JulLoggerConfig {
 			}
 
 			// Step 4: Reload the stream (LogManager needs a fresh one)
-			try (InputStream configStream1 = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertiesPath)) {
+			try (InputStream configStream1 = Thread
+					.currentThread()
+					.getContextClassLoader()
+					.getResourceAsStream(propertiesPath)) {
 				if (configStream1 == null) {
 					throw new IOException("تعذر إعادة قراءة الملف: " + propertiesPath);
 				}

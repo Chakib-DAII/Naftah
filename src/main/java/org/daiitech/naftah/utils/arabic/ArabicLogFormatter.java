@@ -25,8 +25,8 @@ public class ArabicLogFormatter extends Formatter {
 	 * It includes the log level and the message itself.
 	 */
 	private static final String LOG_MSG = """
-			[ %s ]: %s
-			""";
+											[ %s ]: %s
+											""";
 
 	/**
 	 * Formats a given {@link LogRecord} by checking if the message contains Arabic text.

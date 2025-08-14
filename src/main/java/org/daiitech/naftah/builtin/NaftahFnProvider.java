@@ -33,24 +33,24 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(ElementType.TYPE)
 @Retention(RUNTIME)
 public @interface NaftahFnProvider {
-	/**
-	 * The provider's name.
-	 *
-	 * @return the name of the function provider
-	 */
-	String name();
+    /**
+     * The provider's name.
+     *
+     * @return the name of the function provider
+     */
+    String name();
 
-	/**
-	 * A brief description of the function provider.
-	 *
-	 * @return the description of the provider
-	 */
-	String description();
+    /**
+     * A brief description of the function provider.
+     *
+     * @return the description of the provider
+     */
+    String description();
 
-	/**
-	 * The list of function names provided by this provider.
-	 *
-	 * @return an array of function names
-	 */
-	String[] functionNames();
+    /**
+     * The list of function names provided by this provider.
+     *
+     * @return an array of function names
+     */
+    String[] functionNames();
 }

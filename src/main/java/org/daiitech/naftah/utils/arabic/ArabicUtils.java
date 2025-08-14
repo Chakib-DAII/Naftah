@@ -118,17 +118,17 @@ public final class ArabicUtils {
 	 * For example, "com > كوم" transliterates "com" to Arabic "كوم".
 	 */
 	public static String CUSTOM_RULES = """
-			com > كوم;
-			org > أورغ;
-			co > كو;
-			o > و;
-			aa > ع;
-			a > ا;
-			b > ب;
-			tech > تاك;
-			t > ت;
-			ii > عي;
-			""";
+										com > كوم;
+										org > أورغ;
+										co > كو;
+										o > و;
+										aa > ع;
+										a > ا;
+										b > ب;
+										tech > تاك;
+										t > ت;
+										ii > عي;
+										""";
 
 	static {
 		Set<String> keys = CUSTOM_RULES_BUNDLE.keySet();
@@ -148,8 +148,8 @@ public final class ArabicUtils {
 			}
 
 			stringBuilder.append("""
-					%s > %s;
-					""".formatted(key, value));
+									%s > %s;
+									""".formatted(key, value));
 		}
 		CUSTOM_RULES = stringBuilder + CUSTOM_RULES;
 	}
@@ -206,7 +206,9 @@ public final class ArabicUtils {
 	 * @param function a bi-function taking a line and the print flag, returning the processed line
 	 * @return the processed text if {@code print} is false; otherwise, null
 	 */
-	public static synchronized String applyBiFunction(String input, boolean print, ThrowingBiFunction<String, Boolean, String> function) {
+	public static synchronized String applyBiFunction(  String input,
+														boolean print,
+														ThrowingBiFunction<String, Boolean, String> function) {
 		if (isMultiline(input)) {
 			Matcher matcher = getTextMatcher(input).reset();
 
@@ -447,13 +449,17 @@ public final class ArabicUtils {
 	 * @param text             one or more strings to transliterate
 	 * @return an array of transliterated strings in the same order
 	 */
-	public static String[] transliterateScript(String transliteratorID, boolean removeDiacritics, String customRules, String... text) {
+	public static String[] transliterateScript( String transliteratorID,
+												boolean removeDiacritics,
+												String customRules,
+												String... text) {
 		Transliterator transliterator = null;
 
 		if (Objects.nonNull(customRules) && !customRules.isEmpty() && !customRules.isBlank()) {
 			String customTransliteratorID = "Custom";
 			// Create a transliterator to convert based on ID with the custom rules
-			Transliterator customTransliterator = Transliterator.createFromRules(customTransliteratorID, customRules, Transliterator.FORWARD);
+			Transliterator customTransliterator = Transliterator
+					.createFromRules(customTransliteratorID, customRules, Transliterator.FORWARD);
 			Transliterator.registerInstance(customTransliterator);
 			// Create a transliterator to convert based on ID
 			transliterator = Transliterator.getInstance(customTransliteratorID + "; " + transliteratorID);

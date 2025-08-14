@@ -51,8 +51,14 @@ public final class ConsoleLoader {
 			int j = 0;
 			while (!Thread.currentThread().isInterrupted()) {
 				clearScreen();
-				System.out.print(padText(
-						String.format("%c %s %c", SPINNER[i++ % SPINNER.length], text, SPINNER[j++ % SPINNER.length]), false));
+				System.out
+						.print(padText(
+										String
+												.format("%c %s %c",
+														SPINNER[i++ % SPINNER.length],
+														text,
+														SPINNER[j++ % SPINNER.length]),
+										false));
 				try {
 					Thread.sleep(150); // control speed
 				}

@@ -2,6 +2,7 @@ package org.daiitech.naftah.builtin.lang;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
@@ -23,14 +24,20 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
  * @author Chakib Daii
  */
 public record NaftahFunction(
-		String name, String description, String usage, Class<?> returnType,
-		List<Class<?>> parameterTypes, List<Class<?>> exceptionTypes
+		String name,
+		String description,
+		String usage,
+		Class<?> returnType,
+		List<Class<?>> parameterTypes,
+		List<Class<?>> exceptionTypes
 ) implements Serializable {
 
 	public NaftahFunction {
-		if (LEXER_LITERALS.contains(name)) {
+		if (Objects.nonNull(LEXER_LITERALS) && LEXER_LITERALS.contains(name)) {
 			throw new NaftahBugError(
-					String.format("اسم الدالة المضمّنة '%s' لا يجوز أن يتطابق مع كلمة مفتاحية في اللغة.", name));
+										String
+												.format("اسم الدالة المضمّنة '%s' لا يجوز أن يتطابق مع كلمة مفتاحية في اللغة.",
+														name));
 		}
 	}
 
@@ -45,7 +52,17 @@ public record NaftahFunction(
 	 * @param exceptionTypes an array of exception type classes
 	 * @return a new {@code NaftahFunction} instance
 	 */
-	public static NaftahFunction of(String name, String description, String usage, Class<?> returnType, Class<?>[] parameterTypes, Class<?>[] exceptionTypes) {
-		return new NaftahFunction(name, description, usage, returnType, List.of(parameterTypes), List.of(exceptionTypes));
+	public static NaftahFunction of(String name,
+									String description,
+									String usage,
+									Class<?> returnType,
+									Class<?>[] parameterTypes,
+									Class<?>[] exceptionTypes) {
+		return new NaftahFunction(  name,
+									description,
+									usage,
+									returnType,
+									List.of(parameterTypes),
+									List.of(exceptionTypes));
 	}
 }

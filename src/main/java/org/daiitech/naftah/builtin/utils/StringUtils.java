@@ -34,17 +34,20 @@ public final class StringUtils {
 	/**
 	 * Bitwise XOR operation for two characters.
 	 */
-	public static final BiFunction<Character, Character, Integer> XOR = (character, character2) -> character ^ character2;
+	public static final BiFunction<Character, Character, Integer> XOR = (   character,
+																			character2) -> character ^ character2;
 
 	/**
 	 * Bitwise AND operation for two characters.
 	 */
-	public static final BiFunction<Character, Character, Integer> AND = (character, character2) -> character & character2;
+	public static final BiFunction<Character, Character, Integer> AND = (   character,
+																			character2) -> character & character2;
 
 	/**
 	 * Bitwise OR operation for two characters.
 	 */
-	public static final BiFunction<Character, Character, Integer> OR = (character, character2) -> character | character2;
+	public static final BiFunction<Character, Character, Integer> OR = (character,
+																		character2) -> character | character2;
 
 	/**
 	 * Bitwise NOT operation for a single character.
@@ -112,7 +115,8 @@ public final class StringUtils {
 	/**
 	 * Bitwise XOR for vectorized characters.
 	 */
-	public static final BiFunction<ShortVector, ShortVector, ShortVector> XOR_VEC = (v1, v2) -> v1.lanewise(VectorOperators.XOR, v2);
+	public static final BiFunction<ShortVector, ShortVector, ShortVector> XOR_VEC = (v1, v2) -> v1
+			.lanewise(VectorOperators.XOR, v2);
 
 	/**
 	 * Bitwise AND for vectorized characters.
@@ -153,7 +157,8 @@ public final class StringUtils {
 	/**
 	 * Vectorized modulo operation (simulates {@code floorMod}).
 	 */
-	public static final BiFunction<ShortVector, ShortVector, ShortVector> MOD_VEC = (v1, v2) -> v1.sub(v1.div(v2).mul(v2));
+	public static final BiFunction<ShortVector, ShortVector, ShortVector> MOD_VEC = (v1, v2) -> v1
+			.sub(v1.div(v2).mul(v2));
 
 	/**
 	 * Vectorized pre-increment.
@@ -168,16 +173,38 @@ public final class StringUtils {
 	/**
 	 * Mapping from scalar binary operations to vectorized equivalents.
 	 */
-	public static final Map<BiFunction<Character, Character, Integer>, BiFunction<ShortVector, ShortVector, ShortVector>> BINARY_OP_MAP = Map.of(
-			XOR, XOR_VEC, AND, AND_VEC, OR, OR_VEC, ADD, ADD_VEC, SUBTRACT, SUBTRACT_VEC, MUL, MUL_VEC, DIV, DIV_VEC, MOD, MOD_VEC
-	);
+	public static final Map<BiFunction<Character, Character, Integer>, BiFunction<ShortVector, ShortVector, ShortVector>> BINARY_OP_MAP = Map
+			.of(
+				XOR,
+				XOR_VEC,
+				AND,
+				AND_VEC,
+				OR,
+				OR_VEC,
+				ADD,
+				ADD_VEC,
+				SUBTRACT,
+				SUBTRACT_VEC,
+				MUL,
+				MUL_VEC,
+				DIV,
+				DIV_VEC,
+				MOD,
+				MOD_VEC
+			);
 
 	/**
 	 * Mapping from scalar unary operations to vectorized equivalents.
 	 */
-	public static final Map<Function<Character, Number>, Function<ShortVector, ShortVector>> UNARY_OP_MAP = Map.of(
-			NOT, NOT_VEC, PRE_INCREMENT, PRE_INCREMENT_VEC, PRE_DECREMENT, PRE_DECREMENT_VEC
-	);
+	public static final Map<Function<Character, Number>, Function<ShortVector, ShortVector>> UNARY_OP_MAP = Map
+			.of(
+				NOT,
+				NOT_VEC,
+				PRE_INCREMENT,
+				PRE_INCREMENT_VEC,
+				PRE_DECREMENT,
+				PRE_DECREMENT_VEC
+			);
 
 	/**
 	 * Preferred vector species for character-based operations.
@@ -308,7 +335,8 @@ public final class StringUtils {
 	 */
 	public static String applyOperation(String a, String b, BiFunction<Character, Character, Integer> operation) {
 		BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation;
-		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
+		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects
+				.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
 			return applyOperationScalar(a, b, operation);
 		}
 		else {
@@ -348,7 +376,10 @@ public final class StringUtils {
 	 * @param vectorOperation the vectorized operation
 	 * @return the resulting string after applying the vectorized operation
 	 */
-	public static String applyOperationVectorized(String a, String b, BiFunction<Character, Character, Integer> operation, BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation) {
+	public static String applyOperationVectorized(  String a,
+													String b,
+													BiFunction<Character, Character, Integer> operation,
+													BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation) {
 		int minLen = Math.min(a.length(), b.length());
 		StringBuilder result = new StringBuilder(minLen);
 		result.ensureCapacity(minLen); // reduce internal resizing
@@ -503,7 +534,8 @@ public final class StringUtils {
 	 */
 	public static String applyOperation(String a, Function<Character, Number> operation) {
 		Function<ShortVector, ShortVector> vectorOperation;
-		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects.isNull(vectorOperation = UNARY_OP_MAP.get(operation))) {
+		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects
+				.isNull(vectorOperation = UNARY_OP_MAP.get(operation))) {
 			return applyOperationScalar(a, operation);
 		}
 		else {
@@ -534,7 +566,9 @@ public final class StringUtils {
 	 * @param vectorOperation the vector operation to apply
 	 * @return the resulting string
 	 */
-	public static String applyOperationVectorized(String input, Function<Character, Number> scalarOperation, Function<ShortVector, ShortVector> vectorOperation) {
+	public static String applyOperationVectorized(  String input,
+													Function<Character, Number> scalarOperation,
+													Function<ShortVector, ShortVector> vectorOperation) {
 		int length = input.length();
 
 		// Preallocate all necessary buffers

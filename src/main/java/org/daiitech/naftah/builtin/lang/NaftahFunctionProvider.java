@@ -16,7 +16,8 @@ import java.util.List;
  * @author Chakib Daii
  */
 public record NaftahFunctionProvider(
-		String name, String description,
+		String name,
+		String description,
 		List<String> functionNames
 ) implements Serializable {
 

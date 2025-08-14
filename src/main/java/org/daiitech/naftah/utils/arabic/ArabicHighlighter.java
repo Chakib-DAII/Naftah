@@ -25,34 +25,34 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
  */
 public class ArabicHighlighter extends BaseHighlighter {
 
-	/**
-	 * Constructs an ArabicHighlighter wrapping the specified original highlighter.
-	 *
-	 * @param originalHighlighter the underlying highlighter to delegate to
-	 */
-	public ArabicHighlighter(Highlighter originalHighlighter) {
-		super(originalHighlighter);
-	}
+    /**
+     * Constructs an ArabicHighlighter wrapping the specified original highlighter.
+     *
+     * @param originalHighlighter the underlying highlighter to delegate to
+     */
+    public ArabicHighlighter(Highlighter originalHighlighter) {
+        super(originalHighlighter);
+    }
 
-	/**
-	 * Highlights the input buffer, reshaping Arabic text if applicable.
-	 *
-	 * @param reader the {@link LineReader} used for reading input
-	 * @param buffer the input text to be highlighted
-	 * @return an {@link AttributedString} representing the highlighted and reshaped text
-	 */
-	@Override
-	public AttributedString highlight(LineReader reader, String buffer) {
-		AttributedString attributedString = super.highlight(reader, buffer);
-		if (shouldReshape() && containsArabic(buffer)) {
-			try {
-				String reshaped = shape(buffer); // display only
-				attributedString = merge(attributedString, new AttributedString(reshaped));
-			}
-			catch (Exception e) {
-				// do nothing
-			}
-		}
-		return attributedString;
-	}
+    /**
+     * Highlights the input buffer, reshaping Arabic text if applicable.
+     *
+     * @param reader the {@link LineReader} used for reading input
+     * @param buffer the input text to be highlighted
+     * @return an {@link AttributedString} representing the highlighted and reshaped text
+     */
+    @Override
+    public AttributedString highlight(LineReader reader, String buffer) {
+        AttributedString attributedString = super.highlight(reader, buffer);
+        if (shouldReshape() && containsArabic(buffer)) {
+            try {
+                String reshaped = shape(buffer); // display only
+                attributedString = merge(attributedString, new AttributedString(reshaped));
+            }
+            catch (Exception e) {
+                // do nothing
+            }
+        }
+        return attributedString;
+    }
 }

@@ -58,7 +58,8 @@ public abstract class BaseHighlighter implements Highlighter {
 			AttributedStyle overlayStyle = overlay.styleAt(i);
 
 			AttributedStyle style = new AttributedStyle(
-					baseStyle.getStyle() | overlayStyle.getStyle(), baseStyle.getMask() | overlayStyle.getMask()
+														baseStyle.getStyle() | overlayStyle.getStyle(),
+														baseStyle.getMask() | overlayStyle.getMask()
 			);
 
 			builder.append(String.valueOf(c), style);

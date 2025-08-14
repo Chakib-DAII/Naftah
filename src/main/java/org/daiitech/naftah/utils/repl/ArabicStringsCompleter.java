@@ -46,9 +46,16 @@ public class ArabicStringsCompleter extends StringsCompleter {
 					// do nothing
 				}
 			}
-			candidates.add(new Candidate(
-					AttributedString.stripAnsi(string), display, null, null, null, null, true
-			));
+			candidates
+					.add(new Candidate(
+										AttributedString.stripAnsi(string),
+										display,
+										null,
+										null,
+										null,
+										null,
+										true
+					));
 		}
 	}
 }

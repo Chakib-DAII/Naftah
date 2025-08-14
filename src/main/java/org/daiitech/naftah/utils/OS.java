@@ -312,10 +312,12 @@ public final class OS {
 					isFamily = OS_NAME.contains("nonstop_kernel");
 				}
 				else if (family.equals(FAMILY_UNIX)) {
-					isFamily = PATH_SEP.equals(":") && !isFamily(FAMILY_OPENVMS) && (!isFamily(FAMILY_MAC) || OS_NAME.endsWith("x"));
+					isFamily = PATH_SEP.equals(":") && !isFamily(FAMILY_OPENVMS) && (!isFamily(FAMILY_MAC) || OS_NAME
+							.endsWith("x"));
 				}
 				else if (family.equals(FAMILY_WIN9X)) {
-					isFamily = isFamily(FAMILY_WINDOWS) && (OS_NAME.contains("95") || OS_NAME.contains("98") || OS_NAME.contains("me") || OS_NAME.contains("ce"));
+					isFamily = isFamily(FAMILY_WINDOWS) && (OS_NAME.contains("95") || OS_NAME.contains("98") || OS_NAME
+							.contains("me") || OS_NAME.contains("ce"));
 				}
 				else if (!family.equals(FAMILY_Z_OS)) {
 					if (family.equals(FAMILY_OS_400)) {
@@ -323,7 +325,8 @@ public final class OS {
 					}
 					else {
 						if (!family.equals(FAMILY_OPENVMS)) {
-							throw new NaftahBugError("لا يمكن تحديد عائلة نظام التشغيل \"%s\" بسبب عدم توفر المعلومات الكافية.".formatted(family));
+							throw new NaftahBugError("لا يمكن تحديد عائلة نظام التشغيل \"%s\" بسبب عدم توفر المعلومات الكافية."
+									.formatted(family));
 						}
 						isFamily = OS_NAME.contains(FAMILY_OPENVMS);
 					}

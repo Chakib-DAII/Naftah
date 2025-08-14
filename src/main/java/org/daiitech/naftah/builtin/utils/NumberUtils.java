@@ -66,11 +66,13 @@ public final class NumberUtils {
 					float f = Float.parseFloat(text);
 					if (Float.isInfinite(f)) {
 						throw new NumberFormatException(
-								"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'.".formatted(text));
+														"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
+																.formatted(text));
 					}
 					if (Float.isNaN(f)) {
 						throw new NaftahBugError(
-								new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'".formatted(text)));
+													new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
+															.formatted(text)));
 					}
 					return f;
 				}
@@ -80,11 +82,13 @@ public final class NumberUtils {
 						double d = Double.parseDouble(text);
 						if (Double.isInfinite(d)) {
 							throw new NumberFormatException(
-									"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'.".formatted(text));
+															"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
+																	.formatted(text));
 						}
 						if (Double.isNaN(d)) {
 							throw new NaftahBugError(
-									new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'".formatted(text)));
+														new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
+																.formatted(text)));
 						}
 						return d;
 					}
@@ -144,7 +148,8 @@ public final class NumberUtils {
 	 * @see java.math.BigDecimal
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Number> T convertNumberToTargetClass(Number number, Class<T> targetClass) throws IllegalArgumentException {
+	public static <T extends Number> T convertNumberToTargetClass(Number number, Class<T> targetClass)
+			throws IllegalArgumentException {
 		Objects.requireNonNull(number, "Number must not be null");
 		Objects.requireNonNull(targetClass, "Target class must not be null");
 
@@ -199,7 +204,8 @@ public final class NumberUtils {
 		else {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
-			throw new NaftahBugError("تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s'.".formatted(number, number.getClass().getName(), targetClass.getName()));
+			throw new NaftahBugError("تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s'."
+					.formatted(number, number.getClass().getName(), targetClass.getName()));
 		}
 	}
 
@@ -239,7 +245,8 @@ public final class NumberUtils {
 		// TODO: classNames should be in arabic or transliterated or in naftah language
 		// types
 		throw new NaftahBugError(
-				"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' بسبب: تجاوز السعة.".formatted(number, number.getClass().getName(), targetClass.getName()));
+									"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' بسبب: تجاوز السعة."
+											.formatted(number, number.getClass().getName(), targetClass.getName()));
 	}
 
 	// ==============================
@@ -346,7 +353,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -395,7 +403,10 @@ public final class NumberUtils {
 			else if (dx.isDouble() || dy.isDouble()) {
 				double res = dx.asDouble() - dy.asDouble();
 				if (Double.isInfinite(res) || Double.isNaN(res)) {
-					result = dx.set(dx.promote().asBigDecimal().subtract(dy.promote().asBigDecimal())).normalize().get();
+					result = dx
+							.set(dx.promote().asBigDecimal().subtract(dy.promote().asBigDecimal()))
+							.normalize()
+							.get();
 				}
 				else {
 					result = res;
@@ -453,7 +464,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -570,7 +582,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -644,7 +657,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -719,7 +733,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -788,7 +803,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -857,7 +873,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -1435,7 +1452,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'".formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 	}
 
@@ -1461,7 +1479,8 @@ public final class NumberUtils {
 	public static Number and(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'".formatted(dx, dy));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+												.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().and(dy.asBigInteger());
@@ -1509,7 +1528,8 @@ public final class NumberUtils {
 	public static Number or(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'".formatted(dx, dy));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+												.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().or(dy.asBigInteger());
@@ -1557,7 +1577,8 @@ public final class NumberUtils {
 	public static Number xor(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'".formatted(dx, dy));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+												.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().xor(dy.asBigInteger());
@@ -1602,7 +1623,8 @@ public final class NumberUtils {
 	public static Number not(DynamicNumber dx) {
 		if (dx.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،".formatted(dx));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
+												.formatted(dx));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().not();
@@ -1651,7 +1673,8 @@ public final class NumberUtils {
 	public static Number shiftLeft(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،".formatted(dx));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
+												.formatted(dx));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().shiftLeft(positions);
@@ -1700,7 +1723,8 @@ public final class NumberUtils {
 	public static Number shiftRight(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،".formatted(dx));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
+												.formatted(dx));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().shiftRight(positions);
@@ -1750,7 +1774,8 @@ public final class NumberUtils {
 	public static Number unsignedShiftRight(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،".formatted(dx));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
+												.formatted(dx));
 		}
 		else if (dx.isBigInteger()) {
 			return unsignedShiftRight(dx.asBigInteger(), positions);
@@ -1801,10 +1826,12 @@ public final class NumberUtils {
 		if (dx.isLong() && val.longValue() == Long.MAX_VALUE) {
 			return dx.promote().set(((BigInteger) dx.promote().get()).add(BigInteger.ONE)).get();
 		}
-		if (dx.isFloat() && (val.floatValue() == Float.MAX_VALUE || Float.isNaN(val.floatValue()) || Float.isInfinite(val.floatValue()))) {
+		if (dx.isFloat() && (val.floatValue() == Float.MAX_VALUE || Float.isNaN(val.floatValue()) || Float
+				.isInfinite(val.floatValue()))) {
 			return dx.promote().set(dx.promote().get().doubleValue() + 1d).get();
 		}
-		if (dx.isDouble() && (val.doubleValue() == Double.MAX_VALUE || Double.isNaN(val.doubleValue()) || Double.isInfinite(val.doubleValue()))) {
+		if (dx.isDouble() && (val.doubleValue() == Double.MAX_VALUE || Double.isNaN(val.doubleValue()) || Double
+				.isInfinite(val.doubleValue()))) {
 			return dx.promote().set(((BigDecimal) dx.promote().get()).add(BigDecimal.ONE)).get();
 		}
 
@@ -1913,7 +1940,8 @@ public final class NumberUtils {
 		// Handle overflow and promotion for floating types
 		if (dx.isFloat()) {
 			oldValue = val.floatValue();
-			if (oldValue.equals(Float.MAX_VALUE) || Float.isNaN(oldValue.floatValue()) || Float.isInfinite(oldValue.floatValue())) {
+			if (oldValue.equals(Float.MAX_VALUE) || Float.isNaN(oldValue.floatValue()) || Float
+					.isInfinite(oldValue.floatValue())) {
 				DynamicNumber promoted = dx.promote();
 				promoted.set(promoted.get().doubleValue() + 1d);
 				dx.set(promoted.get());
@@ -1926,7 +1954,8 @@ public final class NumberUtils {
 
 		if (dx.isDouble()) {
 			oldValue = val.doubleValue();
-			if (oldValue.equals(Double.MAX_VALUE) || Double.isNaN(oldValue.doubleValue()) || Double.isInfinite(oldValue.doubleValue())) {
+			if (oldValue.equals(Double.MAX_VALUE) || Double.isNaN(oldValue.doubleValue()) || Double
+					.isInfinite(oldValue.doubleValue())) {
 				DynamicNumber promoted = dx.promote();
 				promoted.set(((BigDecimal) promoted.get()).add(BigDecimal.ONE));
 				dx.set(promoted.get());

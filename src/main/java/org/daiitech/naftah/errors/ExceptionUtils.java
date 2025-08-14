@@ -79,6 +79,11 @@ public final class ExceptionUtils {
 	 * @return a new {@link NaftahBugError} with a localized error message
 	 */
 	public static NaftahBugError newNaftahBugInvalidLoopLabelError(String label, Parser parser) {
-		return new NaftahBugError(String.format("لا يمكن استخدام تسمية الحلقة نفسها '%s' في جملة '%s'.", label, getFormattedTokenSymbols(parser.getVocabulary(), org.daiitech.naftah.parser.NaftahLexer.BREAK, false)));
+		return new NaftahBugError(String
+				.format("لا يمكن استخدام تسمية الحلقة نفسها '%s' في جملة '%s'.",
+						label,
+						getFormattedTokenSymbols(   parser.getVocabulary(),
+													org.daiitech.naftah.parser.NaftahLexer.BREAK,
+													false)));
 	}
 }

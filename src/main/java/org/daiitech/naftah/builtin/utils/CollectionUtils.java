@@ -43,7 +43,10 @@ public final class CollectionUtils {
 		if (left.length != right.length) {
 			throw newNaftahSizeBugError(left, right);
 		}
-		return IntStream.range(0, left.length).mapToObj(i -> ObjectUtils.applyOperation(left[i], right[i], operation)).toArray(Object[]::new);
+		return IntStream
+				.range(0, left.length)
+				.mapToObj(i -> ObjectUtils.applyOperation(left[i], right[i], operation))
+				.toArray(Object[]::new);
 	}
 
 	/**
@@ -164,7 +167,11 @@ public final class CollectionUtils {
 	 * @return a new map containing the results of the operation
 	 */
 	public static Map<?, ?> applyOperation(Map<?, ?> map, UnaryOperation operation) {
-		return map.entrySet().stream().map(entry -> Map.entry(entry.getKey(), ObjectUtils.applyOperation(entry.getValue(), operation))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		return map
+				.entrySet()
+				.stream()
+				.map(entry -> Map.entry(entry.getKey(), ObjectUtils.applyOperation(entry.getValue(), operation)))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	/**
@@ -176,9 +183,9 @@ public final class CollectionUtils {
 	 */
 	public static NaftahBugError newNaftahSizeBugError(Object[] left, Object[] right) {
 		return new NaftahBugError("""
-				يجب أن تكون أحجام المصفوفات متساوية.
-				'%s'
-				'%s'
-				""".formatted(Arrays.toString(left), Arrays.toString(right)));
+									يجب أن تكون أحجام المصفوفات متساوية.
+									'%s'
+									'%s'
+									""".formatted(Arrays.toString(left), Arrays.toString(right)));
 	}
 }

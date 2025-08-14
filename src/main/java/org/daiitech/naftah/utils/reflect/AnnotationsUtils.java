@@ -78,7 +78,13 @@ public final class AnnotationsUtils {
 	 */
 	public static NaftahFunction getNaftahFunctionAnnotation(Method method) {
 		NaftahFn naftahFn = getMethodAnnotation(method, NaftahFn.class);
-		return NaftahFunction.of(naftahFn.name(), naftahFn.description(), naftahFn.usage(), naftahFn.returnType(), naftahFn.parameterTypes(), naftahFn.exceptionTypes());
+		return NaftahFunction
+				.of(naftahFn.name(),
+					naftahFn.description(),
+					naftahFn.usage(),
+					naftahFn.returnType(),
+					naftahFn.parameterTypes(),
+					naftahFn.exceptionTypes());
 	}
 
 	/**
@@ -131,7 +137,8 @@ public final class AnnotationsUtils {
 	 */
 	public static NaftahFunctionProvider getNaftahFunctionProviderAnnotation(Class<?> aClass) {
 		NaftahFnProvider naftahFnProvider = getClassAnnotation(aClass, NaftahFnProvider.class);
-		return NaftahFunctionProvider.of(naftahFnProvider.name(), naftahFnProvider.description(), naftahFnProvider.functionNames());
+		return NaftahFunctionProvider
+				.of(naftahFnProvider.name(), naftahFnProvider.description(), naftahFnProvider.functionNames());
 	}
 
 	/**

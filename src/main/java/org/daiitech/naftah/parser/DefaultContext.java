@@ -94,22 +94,38 @@ public class DefaultContext {
 	/**
 	 * Generates unique function call IDs based on the depth, function name, and a random UUID.
 	 */
-	public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (depth, functionName) -> "%s-%s-%s".formatted(depth, functionName, UUID.randomUUID());
+	public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (  depth,
+																							functionName) -> ("%s" + "-%s-%s")
+																									.formatted(
+																												depth,
+																												functionName,
+																												UUID
+																														.randomUUID());
 
 	/**
 	 * Generates unique parameter names based on the function name and parameter name.
 	 */
-	public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR = (functionName, parameterName) -> "%s-%s".formatted(functionName, parameterName);
+	public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR = ( functionName,
+																						parameterName) -> "%s-%s"
+																								.formatted(
+																											functionName,
+																											parameterName);
 
 	/**
 	 * Generates unique argument names based on the function call ID and argument name.
 	 */
-	public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (functionCallId, argumentName) -> "%s-%s".formatted(functionCallId, argumentName);
+	public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (  functionCallId,
+																						argumentName) -> "%s-%s"
+																								.formatted(
+																											functionCallId,
+																											argumentName);
 
 	/**
 	 * Generates unique loop labels for unlabeled loops based on depth and a UUID.
 	 */
-	public static final Function<Integer, String> LOOP_ID_GENERATOR = (depth) -> "%s-loop-%s".formatted(depth, UUID.randomUUID());
+	public static final Function<Integer, String> LOOP_ID_GENERATOR = (depth) -> "%s-loop-%s"
+			.formatted( depth,
+						UUID.randomUUID());
 
 	/**
 	 * Global map holding contexts indexed by their depth.
@@ -131,7 +147,43 @@ public class DefaultContext {
 	 * Function to resolve variable values given a variable name and context.
 	 * searching in loop variables, function arguments, function parameters, and declared variables.
 	 */
-	public static final BiFunction<String, DefaultContext, VariableLookupResult<Object>> VARIABLE_GETTER = (varName, context) -> Optional.ofNullable(context.getLoopVariable(varName, true)).flatMap(functionArgument -> Optional.of(VariableLookupResult.of(varName, functionArgument.b))).orElseGet(() -> Optional.ofNullable(context.getFunctionArgument(varName, true)).flatMap(functionArgument -> Optional.of(VariableLookupResult.of(varName, functionArgument.b))).orElseGet(() -> Optional.ofNullable(context.getFunctionParameter(varName, true)).flatMap(functionParameter -> Optional.of(VariableLookupResult.of(varName, functionParameter.b.getValue()))).orElseGet(() -> Optional.ofNullable(context.getVariable(varName, true)).flatMap(declaredVariable -> Optional.of(VariableLookupResult.of(varName, declaredVariable.b.getValue()))).orElse(VariableLookupResult.notFound(varName)))));
+	public static final BiFunction<String, DefaultContext, VariableLookupResult<Object>> VARIABLE_GETTER = (varName,
+																											context) -> Optional
+																													.ofNullable(context
+																															.getLoopVariable(   varName,
+																																				true))
+																													.flatMap(functionArgument -> Optional
+																															.of(VariableLookupResult
+																																	.of(varName,
+																																		functionArgument.b)))
+																													.orElseGet(() -> Optional
+																															.ofNullable(context
+																																	.getFunctionArgument(   varName,
+																																							true))
+																															.flatMap(functionArgument -> Optional
+																																	.of(VariableLookupResult
+																																			.of(varName,
+																																				functionArgument.b)))
+																															.orElseGet(() -> Optional
+																																	.ofNullable(context
+																																			.getFunctionParameter(  varName,
+																																									true))
+																																	.flatMap(functionParameter -> Optional
+																																			.of(VariableLookupResult
+																																					.of(varName,
+																																						functionParameter.b
+																																								.getValue())))
+																																	.orElseGet(() -> Optional
+																																			.ofNullable(context
+																																					.getVariable(   varName,
+																																									true))
+																																			.flatMap(declaredVariable -> Optional
+																																					.of(VariableLookupResult
+																																							.of(varName,
+																																								declaredVariable.b
+																																										.getValue())))
+																																			.orElse(VariableLookupResult
+																																					.notFound(varName)))));
 
 	/**
 	 * A supplier task to perform class scanning, loading, filtering, and extraction of JVM and builtin functions
@@ -161,10 +213,12 @@ public class DefaultContext {
 
 			result.setClasses(classFuture.get());
 
-			Callable<Map<String, Class<?>>> accessibleClassLoaderTask = () -> filterClasses(result.getClasses(), ClassUtils::isAccessibleClass);
+			Callable<Map<String, Class<?>>> accessibleClassLoaderTask = () -> filterClasses(result.getClasses(),
+																							ClassUtils::isAccessibleClass);
 			var accessibleClassFuture = internalExecutor.submit(accessibleClassLoaderTask);
 
-			Callable<Map<String, Class<?>>> instantiableClassLoaderTask = () -> filterClasses(result.getClasses(), ClassUtils::isInstantiableClass);
+			Callable<Map<String, Class<?>>> instantiableClassLoaderTask = () -> filterClasses(  result.getClasses(),
+																								ClassUtils::isInstantiableClass);
 			var instantiableClassFuture = internalExecutor.submit(instantiableClassLoaderTask);
 
 			result.setAccessibleClasses(accessibleClassFuture.get());
@@ -177,11 +231,11 @@ public class DefaultContext {
 			};
 
 			Callable<Map<String, List<JvmFunction>>> jvmFunctionsLoaderTask = () -> getClassMethods(
-					accessibleAndInstantiable);
+																									accessibleAndInstantiable);
 			var jvmFunctionsFuture = internalExecutor.submit(jvmFunctionsLoaderTask);
 
 			Callable<Map<String, List<BuiltinFunction>>> builtinFunctionsLoaderTask = () -> getBuiltinMethods(
-					accessibleAndInstantiable);
+																												accessibleAndInstantiable);
 			var builtinFunctionsFuture = internalExecutor.submit(builtinFunctionsLoaderTask);
 
 			result.setJvmFunctions(jvmFunctionsFuture.get());
@@ -216,7 +270,8 @@ public class DefaultContext {
 	/**
 	 * Consumer to handle the result or error from class scanning and loading.
 	 */
-	protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (result, throwable) -> {
+	protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (   result,
+																											throwable) -> {
 		if (Objects.nonNull(throwable)) {
 			defaultBootstrap();
 			BOOT_STRAP_FAILED = true;
@@ -269,8 +324,11 @@ public class DefaultContext {
 	 * @param parameters function parameters map
 	 * @param arguments  function arguments map
 	 */
-	protected DefaultContext(DefaultContext parent, Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
-		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS.size() != 0)) {
+	protected DefaultContext(   DefaultContext parent,
+								Map<String, DeclaredParameter> parameters,
+								Map<String, Object> arguments) {
+		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS
+				.size() != 0)) {
 			throw new NaftahBugError("استخدام غير مسموح به.");
 		}
 		this.parent = parent;
@@ -296,7 +354,8 @@ public class DefaultContext {
 	 * @param arguments  the function arguments map
 	 * @return a new {@link DefaultContext} instance
 	 */
-	public static DefaultContext registerContext(Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
+	public static DefaultContext registerContext(   Map<String, DeclaredParameter> parameters,
+													Map<String, Object> arguments) {
 		return new DefaultContext(parameters, arguments);
 	}
 
@@ -318,7 +377,9 @@ public class DefaultContext {
 	 * @param arguments  the function arguments map
 	 * @return a new {@link DefaultContext} instance
 	 */
-	public static DefaultContext registerContext(DefaultContext parent, Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
+	public static DefaultContext registerContext(   DefaultContext parent,
+													Map<String, DeclaredParameter> parameters,
+													Map<String, Object> arguments) {
 		return new DefaultContext(parent, parameters, arguments);
 	}
 
@@ -463,7 +524,12 @@ public class DefaultContext {
 	 * Loads the default builtin functions into the context.
 	 */
 	public static void defaultBootstrap() {
-		BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class).stream().map(builtinFunction -> Map.entry(builtinFunction.getFunctionInfo().name(), builtinFunction)).collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+		BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class)
+				.stream()
+				.map(builtinFunction -> Map.entry(builtinFunction.getFunctionInfo().name(), builtinFunction))
+				.collect(Collectors
+						.groupingBy(Map.Entry::getKey,
+									Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 	}
 
 	/**
@@ -480,7 +546,7 @@ public class DefaultContext {
 			Throwable thr = null;
 			try {
 				startLoader(
-						"تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد يستغرق الأمر عدة دقائق حسب الإعدادات");
+							"تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد " + "يستغرق الأمر عدة دقائق حسب الإعدادات");
 				classScanningResult = LOADER_TASK.get();
 				stopLoader();
 			}
@@ -532,8 +598,12 @@ public class DefaultContext {
 	 */
 	public static List<String> getCompletions() {
 		var runtimeCompletions = new ArrayList<>(BUILTIN_FUNCTIONS.keySet());
-		Optional.ofNullable(JVM_FUNCTIONS).ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
-		Optional.ofNullable(INSTANTIABLE_CLASSES).ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+		Optional
+				.ofNullable(JVM_FUNCTIONS)
+				.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+		Optional
+				.ofNullable(INSTANTIABLE_CLASSES)
+				.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
 		return runtimeCompletions;
 	}
 
@@ -606,7 +676,10 @@ public class DefaultContext {
 	 */
 	public static Class<?> getJavaType(String qualifiedName) {
 		if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
-			while (!BOOT_STRAPPED && (Objects.isNull(INSTANTIABLE_CLASSES) || Objects.isNull(ACCESSIBLE_CLASSES) || Objects.isNull(CLASSES))) {
+			while (!BOOT_STRAPPED && (Objects.isNull(INSTANTIABLE_CLASSES) || Objects
+					.isNull(ACCESSIBLE_CLASSES) || Objects
+							.isNull(
+									CLASSES))) {
 				// block the execution until bootstrapped
 				if (BOOT_STRAP_FAILED) {
 					return Object.class;
@@ -709,7 +782,11 @@ public class DefaultContext {
 	 * @return true if the function exists, false otherwise
 	 */
 	public boolean containsFunction(String name) {
-		return functions.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name.matches(QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS.containsKey(name))) || parent != null && parent.containsFunction(name);
+		return functions.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name
+				.matches(
+							QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS
+									.containsKey(
+													name))) || parent != null && parent.containsFunction(name);
 	}
 
 	/**
@@ -815,7 +892,8 @@ public class DefaultContext {
 	 */
 	public boolean containsFunctionParameter(String name) {
 		String functionParameterName = getFunctionParameterName(name);
-		return parameters.containsKey(functionParameterName) || (parent != null && parent.containsFunctionParameter(name));
+		return parameters.containsKey(functionParameterName) || (parent != null && parent
+				.containsFunctionParameter(name));
 	}
 
 	/**
@@ -877,7 +955,8 @@ public class DefaultContext {
 			}
 
 			throw new NaftahBugError(
-					"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
+										"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
+												.formatted(name));
 		}
 		parameters.put(name, value); // force local
 	}
@@ -890,7 +969,11 @@ public class DefaultContext {
 	 * @throws NaftahBugError if any parameter already exists and lenient is false
 	 */
 	public void defineFunctionParameters(Map<String, DeclaredParameter> parameters, boolean lenient) {
-		parameters = parameters.entrySet().stream().map(entry -> Map.entry(getFunctionParameterName(entry.getKey()), entry.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		parameters = parameters
+				.entrySet()
+				.stream()
+				.map(entry -> Map.entry(getFunctionParameterName(entry.getKey()), entry.getValue()))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
 			if (lenient) {
 				return;
@@ -989,7 +1072,8 @@ public class DefaultContext {
 		name = getFunctionArgumentName(name);
 		if (arguments.containsKey(name)) {
 			throw new NaftahBugError(
-					"الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
+										"الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
+												.formatted(name));
 		}
 		arguments.put(name, value); // force local
 	}
@@ -1001,7 +1085,11 @@ public class DefaultContext {
 	 * @throws NaftahBugError if any argument already exists and lenient is false
 	 */
 	public void defineFunctionArguments(Map<String, Object> arguments) {
-		arguments = arguments.entrySet().stream().map(entry -> Map.entry(getFunctionArgumentName(entry.getKey()), entry.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		arguments = arguments
+				.entrySet()
+				.stream()
+				.map(entry -> Map.entry(getFunctionArgumentName(entry.getKey()), entry.getValue()))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		if (arguments.keySet().stream().anyMatch(this.arguments::containsKey)) {
 			throw new NaftahBugError("الوسيط موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
 		}
@@ -1046,7 +1134,11 @@ public class DefaultContext {
 	 */
 	public boolean containsLoopVariable(String name) {
 		var loopVariableNames = getLoopVariableNames(name);
-		return loopVariableNames.stream().anyMatch(loopVariableName -> loopVariables.containsKey(loopVariableName)) || (parent != null && parent.containsLoopVariable(name));
+		return loopVariableNames
+				.stream()
+				.anyMatch(loopVariableName -> loopVariables.containsKey(loopVariableName)) || (parent != null && parent
+						.containsLoopVariable(
+												name));
 	}
 
 	/**
@@ -1059,7 +1151,11 @@ public class DefaultContext {
 	 */
 	public Pair<Integer, Object> getLoopVariable(String name, boolean safe) {
 		var loopVariableNames = getLoopVariableNames(name);
-		var firstMatchedLoopVariableName = loopVariableNames.stream().filter(loopVariableName -> loopVariables.containsKey(loopVariableName)).findFirst().orElse(null);
+		var firstMatchedLoopVariableName = loopVariableNames
+				.stream()
+				.filter(loopVariableName -> loopVariables.containsKey(loopVariableName))
+				.findFirst()
+				.orElse(null);
 		if (Objects.nonNull(firstMatchedLoopVariableName)) {
 			return new Pair<>(depth, loopVariables.get(firstMatchedLoopVariableName));
 		}
@@ -1082,7 +1178,11 @@ public class DefaultContext {
 	 */
 	public Object setLoopVariable(String name, Object value) {
 		var loopVariableNames = getLoopVariableNames(name);
-		var firstMatchedLoopVariableName = loopVariableNames.stream().filter(loopVariableName -> loopVariables.containsKey(loopVariableName)).findFirst().orElse(null);
+		var firstMatchedLoopVariableName = loopVariableNames
+				.stream()
+				.filter(loopVariableName -> loopVariables.containsKey(loopVariableName))
+				.findFirst()
+				.orElse(null);
 		if (Objects.nonNull(firstMatchedLoopVariableName)) {
 			loopVariables.put(firstMatchedLoopVariableName, value);
 			return value;
@@ -1112,7 +1212,8 @@ public class DefaultContext {
 			}
 
 			throw new NaftahBugError(
-					"المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه.".formatted(name));
+										"المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه."
+												.formatted(name));
 		}
 		loopVariables.put(name, value); // force local
 	}
@@ -1167,7 +1268,12 @@ public class DefaultContext {
 	 * @return true if any child or sub-child of the specified type has been executed, false otherwise
 	 */
 	public <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(ParseTree node, Class<T> type) {
-		return prepareParseTreeExecution() && getChildren(true).stream().anyMatch(currentContext -> NaftahParserHelper.hasAnyExecutedChildOrSubChildOfType(node, type, currentContext.parseTreeExecution));
+		return prepareParseTreeExecution() && getChildren(true)
+				.stream()
+				.anyMatch(currentContext -> NaftahParserHelper
+						.hasAnyExecutedChildOrSubChildOfType(   node,
+																type,
+																currentContext.parseTreeExecution));
 	}
 
 	/**
@@ -1208,7 +1314,12 @@ public class DefaultContext {
 	 * @return list of child DefaultContext objects matching the criteria
 	 */
 	public List<DefaultContext> getChildren(boolean includeParent) {
-		return CONTEXTS.entrySet().stream().filter(entry -> includeParent ? entry.getKey() >= depth : entry.getKey() > depth).map(Map.Entry::getValue).toList();
+		return CONTEXTS
+				.entrySet()
+				.stream()
+				.filter(entry -> includeParent ? entry.getKey() >= depth : entry.getKey() > depth)
+				.map(Map.Entry::getValue)
+				.toList();
 	}
 
 	/**

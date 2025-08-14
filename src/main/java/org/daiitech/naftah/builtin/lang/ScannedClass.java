@@ -27,8 +27,12 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
  */
 @Deprecated
 public record ScannedClass(
-		Class<?> clazz, String qualifiedName, boolean isAccessible, boolean isInstantiable,
-		List<JvmFunction> jvmFunctions, List<BuiltinFunction> builtinFunctions
+		Class<?> clazz,
+		String qualifiedName,
+		boolean isAccessible,
+		boolean isInstantiable,
+		List<JvmFunction> jvmFunctions,
+		List<BuiltinFunction> builtinFunctions
 ) {
 
 	/**
@@ -39,7 +43,12 @@ public record ScannedClass(
 	 * @return a new {@code ScannedClass} instance
 	 */
 	public static ScannedClass of(Class<?> clazz, String qualifiedName) {
-		return new ScannedClass(clazz, qualifiedName, ClassUtils.isAccessibleClass(clazz), ClassUtils.isInstantiableClass(clazz), getClassMethods(qualifiedName, clazz), getBuiltinMethods(clazz));
+		return new ScannedClass(clazz,
+								qualifiedName,
+								ClassUtils.isAccessibleClass(clazz),
+								ClassUtils.isInstantiableClass(clazz),
+								getClassMethods(qualifiedName, clazz),
+								getBuiltinMethods(clazz));
 	}
 
 	/**

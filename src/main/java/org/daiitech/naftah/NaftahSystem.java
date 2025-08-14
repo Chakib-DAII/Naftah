@@ -120,11 +120,17 @@ public final class NaftahSystem {
 	public static void setupRefreshTerminalWidthAndHeight(Terminal terminal) {
 		if (OS.isFamilyWindows()) {
 			ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-			executor.scheduleAtFixedRate(() -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)), 0, 500, TimeUnit.MILLISECONDS);
+			executor
+					.scheduleAtFixedRate(   () -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
+											0,
+											500,
+											TimeUnit.MILLISECONDS);
 		}
 		else {
 			// TODO: check support for Linux systems (didn't work for a ubuntu Virtual machine)
-			terminal.handle(Terminal.Signal.WINCH, signal -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)));
+			terminal
+					.handle(Terminal.Signal.WINCH,
+							signal -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)));
 		}
 	}
 

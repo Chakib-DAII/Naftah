@@ -57,7 +57,8 @@ public class REPLContext extends DefaultContext {
 	 * @param arguments  the argument values for the new context
 	 * @return a new {@link DefaultContext} initialized with given parameters and arguments
 	 */
-	public static DefaultContext registerContext(Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
+	public static DefaultContext registerContext(   Map<String, DeclaredParameter> parameters,
+													Map<String, Object> arguments) {
 		DefaultContext context = new DefaultContext(ETERNAL_CONTEXT, parameters, arguments);
 		context.prepareParseTreeExecution();
 		return context;
