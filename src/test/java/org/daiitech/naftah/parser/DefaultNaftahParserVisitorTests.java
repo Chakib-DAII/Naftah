@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_HEIGHT_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
@@ -28,6 +29,7 @@ public class DefaultNaftahParserVisitorTests {
 		System.setProperty(TERMINAL_WIDTH_PROPERTY, Integer.toString(80));
 		System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(24));
 		System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
+		System.setProperty(INSIDE_REPL_PROPERTY, Boolean.toString(true));
 
 		bootstrap(false);
 	}
