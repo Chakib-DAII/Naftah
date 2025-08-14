@@ -3,6 +3,7 @@ package org.daiitech.naftah;
 import java.util.Map;
 
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahErrorListener;
@@ -44,6 +45,7 @@ public final class TestUtils {
 
     public static void doAssertEquals(Object result, Object expectedValue) {
         if (result instanceof Number) {
+            System.out.println(DynamicNumber.of(result) + "-" + DynamicNumber.of(expectedValue));
             Assertions.assertTrue(NumberUtils.equals(expectedValue, result));
         }
         else {
