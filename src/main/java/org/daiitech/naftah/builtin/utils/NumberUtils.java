@@ -626,7 +626,7 @@ public final class NumberUtils {
 		Number result;
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().divide(dy.asBigDecimal(), MathContext.UNLIMITED);
+				result = dx.asBigDecimal().divide(dy.asBigDecimal(), MathContext.DECIMAL128);
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
 				result = dx.asDouble() / dy.asDouble();
@@ -1013,7 +1013,7 @@ public final class NumberUtils {
 	 */
 	public static Number round(DynamicNumber dx) {
 		if (dx.isDecimal() || dx.isInteger()) {
-			return dx.asBigDecimal().round(MathContext.UNLIMITED);
+			return dx.asBigDecimal().round(MathContext.DECIMAL128);
 		}
 		if (dx.isDouble() || dx.isLong()) {
 			return Math.round(dx.asDouble());
@@ -1243,7 +1243,7 @@ public final class NumberUtils {
 	 */
 	public static Number sqrt(DynamicNumber dx) {
 		if (dx.isBigDecimal()) {
-			return dx.asBigDecimal().sqrt(MathContext.UNLIMITED);
+			return dx.asBigDecimal().sqrt(MathContext.DECIMAL128);
 		}
 		if (dx.isBigInteger()) {
 			return dx.asBigInteger().sqrt();
@@ -1622,9 +1622,7 @@ public final class NumberUtils {
 	 */
 	public static Number not(DynamicNumber dx) {
 		if (dx.isDecimal()) {
-			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
-												.formatted(dx));
+			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().not();
@@ -1672,9 +1670,7 @@ public final class NumberUtils {
 	 */
 	public static Number shiftLeft(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
-			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
-												.formatted(dx));
+			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().shiftLeft(positions);
@@ -1722,9 +1718,7 @@ public final class NumberUtils {
 	 */
 	public static Number shiftRight(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
-			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
-												.formatted(dx));
+			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().shiftRight(positions);
@@ -1773,9 +1767,7 @@ public final class NumberUtils {
 	 */
 	public static Number unsignedShiftRight(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
-			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
-												.formatted(dx));
+			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
 		}
 		else if (dx.isBigInteger()) {
 			return unsignedShiftRight(dx.asBigInteger(), positions);
@@ -2127,5 +2119,11 @@ public final class NumberUtils {
 			// 2. Shift right logically
 			return unsignedValue.shiftRight(n);
 		}
+	}
+
+	public static NaftahBugError newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber dx) {
+		return new NaftahBugError(
+									"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
+											.formatted(dx));
 	}
 }
