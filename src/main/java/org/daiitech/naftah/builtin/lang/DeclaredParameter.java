@@ -152,7 +152,7 @@ public final class DeclaredParameter {
 	 */
 	public void setValue(Object currentValue) {
 		if (constant) {
-			throw new NaftahBugError("حدث خطأ أثناء إعادة تعيين القيمة الثابتة للمعامل: '%s'. لا يمكن إعادة تعيين ثابت."
+			throw new NaftahBugError(("حدث خطأ أثناء إعادة تعيين القيمة الثابتة للمعامل: '%s'. لا يمكن إعادة تعيين " + "ثابت.")
 					.formatted(name));
 		}
 		this.currentValue = currentValue;
