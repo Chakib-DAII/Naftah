@@ -311,7 +311,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Adds padding spaces to the left or right of the input to reach the specified padding length.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#and(java.lang.Object,java.lang.Object)" class="member-name-link">and(Object, Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a bitwise AND operation between two dynamically-typed numeric values.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#and(java.lang.String,java.lang.String)" class="member-name-link">and(String, String)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Performs bitwise AND between characters in two strings.</div>
@@ -325,7 +327,9 @@ loadScripts(document, 'script');</script>
 <div class="block">The (and) function performs a bitwise AND operation on the given numbers.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#and(T,T)" class="member-name-link">and(T, T)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a bitwise AND operation between two <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> values of the same type.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#AND" class="member-name-link">AND</a> - Static variable in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Bitwise AND operation for two characters.</div>
@@ -982,6 +986,20 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks if the given parse tree node is inside a loop construct.</div>
 </dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkLeftShiftOverflow(int,long,long,java.math.BigInteger,int)" class="member-name-link">checkLeftShiftOverflow(int, long, long, BigInteger, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Checks for overflow when left-shifting a BigInteger value by a given number of bits.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkLeftShiftOverflow(int,long,long,java.math.BigInteger,int,boolean)" class="member-name-link">checkLeftShiftOverflow(int, long, long, BigInteger, int, boolean)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Checks if left shift operation on the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigInteger.html" title="class or interface in java.math" class="external-link"><code>BigInteger</code></a> value by a number of positions
+ would cause overflow or underflow based on the provided limits and size.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkLeftShiftOverflow(java.math.BigInteger,int)" class="member-name-link">checkLeftShiftOverflow(BigInteger, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Checks if left shift operation on the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigInteger.html" title="class or interface in java.math" class="external-link"><code>BigInteger</code></a> value by a number of positions
+ would cause overflow according to the specified limits.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahParserHelper.html#checkLoopSignal(java.lang.Object)" class="member-name-link">checkLoopSignal(Object)</a> - Static method in class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParserHelper.html" title="class in org.daiitech.naftah.parser">NaftahParserHelper</a></dt>
 <dd>
 <div class="block">Checks if the given result object is a loop signal and returns the corresponding signal.</div>
@@ -989,6 +1007,30 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/daiitech/naftah/Naftah.NaftahCommand.ShellCommand.html#checkManagementCommands(java.lang.String)" class="member-name-link">checkManagementCommands(String)</a> - Method in class org.daiitech.naftah.<a href="org/daiitech/naftah/Naftah.NaftahCommand.ShellCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand.ShellCommand</a></dt>
 <dd>
 <div class="block">Checks for management commands like '/exit' or '/خروج' and handles them accordingly.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkPrecision(java.lang.String,double)" class="member-name-link">checkPrecision(String, double)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Checks whether a double value retains full precision when parsed from the original string.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkPrecision(java.lang.String,float)" class="member-name-link">checkPrecision(String, float)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Checks whether a float value retains full precision when parsed from the original string.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkPrecision(java.math.BigDecimal,double)" class="member-name-link">checkPrecision(BigDecimal, double)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Checks whether a double value matches the expected BigDecimal value.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkPrecision(java.math.BigDecimal,float)" class="member-name-link">checkPrecision(BigDecimal, float)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Checks whether a float value matches the expected BigDecimal value.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkShiftPositions(int,int)" class="member-name-link">checkShiftPositions(int, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Checks if the shift positions parameter is valid given the bit size of the type.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#checkShiftPositions(int,int,boolean)" class="member-name-link">checkShiftPositions(int, int, boolean)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Validates the shift positions against the allowed range for a given bit size.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/utils/reflect/RuntimeClassScanner.html#CLASS_EXTENSION" class="member-name-link">CLASS_EXTENSION</a> - Static variable in class org.daiitech.naftah.utils.reflect.<a href="org/daiitech/naftah/utils/reflect/RuntimeClassScanner.html" title="class in org.daiitech.naftah.utils.reflect">RuntimeClassScanner</a></dt>
 <dd>
@@ -4301,6 +4343,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new <a href="org/daiitech/naftah/errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating null values are not allowed.</div>
 </dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#newNaftahBugUnsupportedBitwiseDecimalError(org.daiitech.naftah.builtin.lang.DynamicNumber)" class="member-name-link">newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Creates a NaftahBugError indicating that bitwise operations on decimal numbers are unsupported.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/parser/DefaultContext.html#newNaftahBugVariableNotFoundError(java.lang.String)" class="member-name-link">newNaftahBugVariableNotFoundError(String)</a> - Static method in class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/CollectionUtils.html#newNaftahSizeBugError(java.lang.Object%5B%5D,java.lang.Object%5B%5D)" class="member-name-link">newNaftahSizeBugError(Object[], Object[])</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/CollectionUtils.html" title="class in org.daiitech.naftah.builtin.utils">CollectionUtils</a></dt>
@@ -4320,7 +4366,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Unicode normalizer instance for normalization form NFKC.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#not(java.lang.Object)" class="member-name-link">not(Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a bitwise NOT (inversion) operation on a dynamically-typed numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/ObjectUtils.html#not(java.lang.Object)" class="member-name-link">not(Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/ObjectUtils.html" title="class in org.daiitech.naftah.builtin.utils">ObjectUtils</a></dt>
 <dd>
 <div class="block">Negates the given value.</div>
@@ -4338,7 +4386,9 @@ loadScripts(document, 'script');</script>
 <div class="block">The (not) function performs a bitwise NOT operation on the given number.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#not(T)" class="member-name-link">not(T)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a bitwise NOT (inversion) operation on a numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#NOT" class="member-name-link">NOT</a> - Static variable in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Bitwise NOT operation for a single character.</div>
@@ -4542,7 +4592,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Represents a general operation in the Naftah language.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#or(java.lang.Object,java.lang.Object)" class="member-name-link">or(Object, Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a bitwise OR operation between two dynamically-typed numeric values.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#or(java.lang.String,java.lang.String)" class="member-name-link">or(String, String)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Performs bitwise OR between characters in two strings.</div>
@@ -4556,7 +4608,9 @@ loadScripts(document, 'script');</script>
 <div class="block">The (or) function performs a bitwise OR operation on the given numbers.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#or(T,T)" class="member-name-link">or(T, T)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a bitwise OR operation between two <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> values of the same type.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#OR" class="member-name-link">OR</a> - Static variable in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Bitwise OR operation for two characters.</div>
@@ -4738,7 +4792,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/daiitech/naftah/parser/NaftahParser.ParenthesisExpressionContext.html#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)" class="member-name-link">ParenthesisExpressionContext(NaftahParser.ExpressionContext)</a> - Constructor for class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParser.ParenthesisExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParenthesisExpressionContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#parseDynamicNumber(java.lang.Object)" class="member-name-link">parseDynamicNumber(Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Parses a dynamic numeric value from the given <code>Object</code>.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#parseDynamicNumber(java.lang.String)" class="member-name-link">parseDynamicNumber(String)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
 <dd>
 <div class="block">Parses a string into the most appropriate <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> type.</div>
@@ -4803,35 +4859,47 @@ loadScripts(document, 'script');</script>
 <div class="block">Post-increment a character (based on ASCII code).</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#postDecrement(java.lang.Object)" class="member-name-link">postDecrement(Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a post-decrement operation on a dynamically-typed numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#postDecrement(java.lang.String)" class="member-name-link">postDecrement(String)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Post-decrements each character in the string.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#postDecrement(org.daiitech.naftah.builtin.lang.DynamicNumber)" class="member-name-link">postDecrement(DynamicNumber)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a post-decrement operation on the given <a href="org/daiitech/naftah/builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a>.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/Builtin.html#postDecrement(T)" class="member-name-link">postDecrement(T)</a> - Static method in class org.daiitech.naftah.builtin.<a href="org/daiitech/naftah/builtin/Builtin.html" title="class in org.daiitech.naftah.builtin">Builtin</a></dt>
 <dd>
 <div class="block">The (postDecrement) function decreases the given number by one after using it in the expression.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#postDecrement(T)" class="member-name-link">postDecrement(T)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a post-decrement operation on a numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahParser.PostDecrementExpressionContext.html#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)" class="member-name-link">PostDecrementExpressionContext(NaftahParser.ExpressionContext)</a> - Constructor for class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParser.PostDecrementExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.PostDecrementExpressionContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#postIncrement(java.lang.Object)" class="member-name-link">postIncrement(Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a post-increment operation on a dynamically-typed numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#postIncrement(java.lang.String)" class="member-name-link">postIncrement(String)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Post-increments each character in the string.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#postIncrement(org.daiitech.naftah.builtin.lang.DynamicNumber)" class="member-name-link">postIncrement(DynamicNumber)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a post-increment operation on the given <a href="org/daiitech/naftah/builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a>.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/Builtin.html#postIncrement(T)" class="member-name-link">postIncrement(T)</a> - Static method in class org.daiitech.naftah.builtin.<a href="org/daiitech/naftah/builtin/Builtin.html" title="class in org.daiitech.naftah.builtin">Builtin</a></dt>
 <dd>
 <div class="block">The (postIncrement) function increases the given number by one after using it in the expression.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#postIncrement(T)" class="member-name-link">postIncrement(T)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a post-increment operation on a numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahParser.PostIncrementExpressionContext.html#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)" class="member-name-link">PostIncrementExpressionContext(NaftahParser.ExpressionContext)</a> - Constructor for class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParser.PostIncrementExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.PostIncrementExpressionContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#pow(java.lang.Object,int)" class="member-name-link">pow(Object, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
@@ -4875,35 +4943,47 @@ loadScripts(document, 'script');</script>
 <div class="block">Vectorized pre-increment.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#preDecrement(java.lang.Object)" class="member-name-link">preDecrement(Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a pre-decrement operation on a dynamically-typed numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#preDecrement(java.lang.String)" class="member-name-link">preDecrement(String)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Pre-decrements each character in the string.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#preDecrement(org.daiitech.naftah.builtin.lang.DynamicNumber)" class="member-name-link">preDecrement(DynamicNumber)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a pre-decrement operation on the given <a href="org/daiitech/naftah/builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a>.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/Builtin.html#preDecrement(T)" class="member-name-link">preDecrement(T)</a> - Static method in class org.daiitech.naftah.builtin.<a href="org/daiitech/naftah/builtin/Builtin.html" title="class in org.daiitech.naftah.builtin">Builtin</a></dt>
 <dd>
 <div class="block">The (preDecrement) function decreases the given number by one before using it in the expression.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#preDecrement(T)" class="member-name-link">preDecrement(T)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a pre-decrement operation on a numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahParser.PreDecrementExpressionContext.html#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)" class="member-name-link">PreDecrementExpressionContext(NaftahParser.ExpressionContext)</a> - Constructor for class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParser.PreDecrementExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.PreDecrementExpressionContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#preIncrement(java.lang.Object)" class="member-name-link">preIncrement(Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a pre-increment operation on a dynamically-typed numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#preIncrement(java.lang.String)" class="member-name-link">preIncrement(String)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Pre-increments each character in the string.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#preIncrement(org.daiitech.naftah.builtin.lang.DynamicNumber)" class="member-name-link">preIncrement(DynamicNumber)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a pre-increment operation on the given <a href="org/daiitech/naftah/builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a> instance.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/Builtin.html#preIncrement(T)" class="member-name-link">preIncrement(T)</a> - Static method in class org.daiitech.naftah.builtin.<a href="org/daiitech/naftah/builtin/Builtin.html" title="class in org.daiitech.naftah.builtin">Builtin</a></dt>
 <dd>
 <div class="block">The (preIncrement) function increases the given number by one before using it in the expression.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#preIncrement(T)" class="member-name-link">preIncrement(T)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a pre-increment operation on a numeric value.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahParser.PreIncrementExpressionContext.html#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)" class="member-name-link">PreIncrementExpressionContext(NaftahParser.ExpressionContext)</a> - Constructor for class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParser.PreIncrementExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.PreIncrementExpressionContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahParserHelper.html#prepareDeclaredFunction(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.builtin.lang.DeclaredFunction)" class="member-name-link">prepareDeclaredFunction(NaftahParserBaseVisitor&lt;?&gt;, DeclaredFunction)</a> - Static method in class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParserHelper.html" title="class in org.daiitech.naftah.parser">NaftahParserHelper</a></dt>
@@ -5658,7 +5738,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/daiitech/naftah/Naftah.NaftahCommand.ShellCommand.html#%3Cinit%3E()" class="member-name-link">ShellCommand()</a> - Constructor for class org.daiitech.naftah.<a href="org/daiitech/naftah/Naftah.NaftahCommand.ShellCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand.ShellCommand</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#shiftLeft(java.lang.Object,int)" class="member-name-link">shiftLeft(Object, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a left bitwise shift on a dynamically-typed numeric value by the specified number of positions.</div>
+</dd>
+<dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#shiftLeft(java.math.BigInteger,int)" class="member-name-link">shiftLeft(BigInteger, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
+<dd>
+<div class="block">Performs a left bitwise shift on a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigInteger.html" title="class or interface in java.math" class="external-link"><code>BigInteger</code></a> value by the specified number of positions,
+ with overflow checking against 64-bit <code>long</code> bounds.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#shiftLeft(org.daiitech.naftah.builtin.lang.DynamicNumber,int)" class="member-name-link">shiftLeft(DynamicNumber, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
 <dd>
 <div class="block">Shifts the given number <a href="org/daiitech/naftah/builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a> to the left (signed shift).</div>
@@ -5668,9 +5755,13 @@ loadScripts(document, 'script');</script>
 <div class="block">The (shiftLeft) function performs a bitwise left shift on the given number by a specified number of positions.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#shiftLeft(T,int)" class="member-name-link">shiftLeft(T, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a left bitwise shift on a numeric value by the specified number of positions.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#shiftRight(java.lang.Object,int)" class="member-name-link">shiftRight(Object, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a right bitwise shift on a dynamically-typed numeric value by the specified number of positions.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#shiftRight(org.daiitech.naftah.builtin.lang.DynamicNumber,int)" class="member-name-link">shiftRight(DynamicNumber, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
 <dd>
 <div class="block">Shifts the given number <a href="org/daiitech/naftah/builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a> to the right (signed shift).</div>
@@ -5680,7 +5771,9 @@ loadScripts(document, 'script');</script>
 <div class="block">The (shiftRight) function performs a bitwise right shift on the given number by a specified number of positions.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#shiftRight(T,int)" class="member-name-link">shiftRight(T, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a right bitwise shift on a numeric value by the specified number of positions.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahLexer.html#SHORT" class="member-name-link">SHORT</a> - Static variable in class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahLexer.html" title="class in org.daiitech.naftah.parser">NaftahLexer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahParser.html#SHORT" class="member-name-link">SHORT</a> - Static variable in class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></dt>
@@ -6143,7 +6236,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/daiitech/naftah/builtin/utils/op/UnaryOperation.html#%3Cinit%3E()" class="member-name-link">UnaryOperation()</a> - Constructor for enum class org.daiitech.naftah.builtin.utils.op.<a href="org/daiitech/naftah/builtin/utils/op/UnaryOperation.html" title="enum class in org.daiitech.naftah.builtin.utils.op">UnaryOperation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#unsignedShiftRight(java.lang.Object,int)" class="member-name-link">unsignedShiftRight(Object, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs an unsigned (logical) right bitwise shift on a dynamically-typed numeric value by the specified number
+ of positions.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#unsignedShiftRight(java.math.BigInteger,int)" class="member-name-link">unsignedShiftRight(BigInteger, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
 <dd>
 <div class="block">Performs an unsigned (logical) right shift on a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigInteger.html" title="class or interface in java.math" class="external-link"><code>BigInteger</code></a>.</div>
@@ -6158,7 +6254,9 @@ loadScripts(document, 'script');</script>
  number of positions.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#unsignedShiftRight(T,int)" class="member-name-link">unsignedShiftRight(T, int)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs an unsigned (logical) right bitwise shift on a numeric value by the specified number of positions.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahLexer.html#UNTIL" class="member-name-link">UNTIL</a> - Static variable in class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahLexer.html" title="class in org.daiitech.naftah.parser">NaftahLexer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/daiitech/naftah/parser/NaftahParser.html#UNTIL" class="member-name-link">UNTIL</a> - Static variable in class org.daiitech.naftah.parser.<a href="org/daiitech/naftah/parser/NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></dt>
@@ -7571,7 +7669,9 @@ the order they are declared.</div>
 <h2 class="title" id="I:X">X</h2>
 <dl class="index">
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#xor(java.lang.Object,java.lang.Object)" class="member-name-link">xor(Object, Object)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a bitwise XOR (exclusive OR) operation between two dynamically-typed numeric values.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#xor(java.lang.String,java.lang.String)" class="member-name-link">xor(String, String)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Performs bitwise XOR between characters in two strings.</div>
@@ -7585,7 +7685,9 @@ the order they are declared.</div>
 <div class="block">The (xor) function performs a bitwise XOR operation on the given numbers.</div>
 </dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/NumberUtils.html#xor(T,T)" class="member-name-link">xor(T, T)</a> - Static method in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/NumberUtils.html" title="class in org.daiitech.naftah.builtin.utils">NumberUtils</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Performs a bitwise XOR (exclusive OR) operation between two <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> values of the same type.</div>
+</dd>
 <dt><a href="org/daiitech/naftah/builtin/utils/StringUtils.html#XOR" class="member-name-link">XOR</a> - Static variable in class org.daiitech.naftah.builtin.utils.<a href="org/daiitech/naftah/builtin/utils/StringUtils.html" title="class in org.daiitech.naftah.builtin.utils">StringUtils</a></dt>
 <dd>
 <div class="block">Bitwise XOR operation for two characters.</div>
