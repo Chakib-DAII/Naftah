@@ -10,6 +10,8 @@ import java.util.Objects;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static java.math.MathContext.DECIMAL128;
+
 /**
  * Utility class for dynamically parsing and performing arithmetic operations on
  * various numeric types. Supports Byte, Short, Integer, Long, Float, Double,
@@ -70,11 +72,11 @@ public final class NumberUtils {
 																.formatted(text));
 					}
 					if (Float.isNaN(f)) {
-						throw new NaftahBugError(
-													new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
-															.formatted(text)));
+						throw new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
+								.formatted(text));
 					}
-					return f;
+
+					return checkPrecision(text, f);
 				}
 				catch (NumberFormatException e1) {
 					try {
@@ -86,11 +88,11 @@ public final class NumberUtils {
 																	.formatted(text));
 						}
 						if (Double.isNaN(d)) {
-							throw new NaftahBugError(
-														new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
-																.formatted(text)));
+							throw new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
+									.formatted(text));
 						}
-						return d;
+
+						return checkPrecision(text, d);
 					}
 					catch (NumberFormatException e2) {
 						// Fall back to BigDecimal for high-precision decimals
@@ -300,7 +302,8 @@ public final class NumberUtils {
 					result = dx.promote().asBigDecimal().add(dy.promote().asBigDecimal());
 				}
 				else {
-					result = res;
+					BigDecimal expected = dx.asBigDecimal().add(dy.asBigDecimal());
+					result = checkPrecision(expected, res);
 				}
 			}
 			else {
@@ -309,7 +312,8 @@ public final class NumberUtils {
 					result = dx.promote().asDouble() + dy.promote().asDouble();
 				}
 				else {
-					result = res;
+					BigDecimal expected = dx.asBigDecimal().add(dy.asBigDecimal());
+					result = checkPrecision(expected, res);
 				}
 			}
 		}
@@ -626,7 +630,7 @@ public final class NumberUtils {
 		Number result;
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().divide(dy.asBigDecimal(), MathContext.DECIMAL128);
+				result = dx.asBigDecimal().divide(dy.asBigDecimal(), MathContext.UNLIMITED);
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
 				result = dx.asDouble() / dy.asDouble();
@@ -922,7 +926,9 @@ public final class NumberUtils {
 			if (base.isBigDecimal()) {
 				// BigDecimal.pow only supports non-negative exponents
 				if (exponent < 0) {
-					BigDecimal result = BigDecimal.ONE.divide(base.asBigDecimal().pow(-exponent), RoundingMode.HALF_UP);
+					BigDecimal result = BigDecimal.ONE
+							.divide(base.asBigDecimal().pow(-exponent),
+									RoundingMode.HALF_UP);
 					return base.set(result).normalize().get();
 				}
 				else {
@@ -1013,7 +1019,16 @@ public final class NumberUtils {
 	 */
 	public static Number round(DynamicNumber dx) {
 		if (dx.isDecimal() || dx.isInteger()) {
-			return dx.asBigDecimal().round(MathContext.DECIMAL128);
+			BigDecimal bd = dx.asBigDecimal();
+			int signum = bd.signum();
+			// Determine how many integer digits exist
+			int integerDigits = bd.precision() - bd.scale();
+			MathContext context = new MathContext(
+													integerDigits > 0 ? integerDigits : 1,
+													signum >= 0 ?
+															RoundingMode.HALF_UP :
+															RoundingMode.HALF_DOWN);
+			return bd.round(context);
 		}
 		if (dx.isDouble() || dx.isLong()) {
 			return Math.round(dx.asDouble());
@@ -1243,7 +1258,7 @@ public final class NumberUtils {
 	 */
 	public static Number sqrt(DynamicNumber dx) {
 		if (dx.isBigDecimal()) {
-			return dx.asBigDecimal().sqrt(MathContext.DECIMAL128);
+			return dx.asBigDecimal().sqrt(DECIMAL128);
 		}
 		if (dx.isBigInteger()) {
 			return dx.asBigInteger().sqrt();
@@ -1672,20 +1687,55 @@ public final class NumberUtils {
 		if (dx.isDecimal()) {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
 		}
+		else if (isZero(dx)) {
+			return 0;
+		}
 		else if (dx.isBigInteger()) {
-			return dx.asBigInteger().shiftLeft(positions);
+			return shiftLeft(dx.asBigInteger(), positions);
 		}
 		else if (dx.isLong()) {
-			return dx.asLong() << positions;
+			try {
+				checkLeftShiftOverflow(Long.SIZE, Long.MAX_VALUE, Long.MIN_VALUE, dx.asBigInteger(), positions);
+				return dx.asLong() << positions;
+			}
+			catch (ArithmeticException ignored) {
+				return shiftLeft(dx.asBigInteger(), positions);
+			}
 		}
 		else if (dx.isInt()) {
-			return dx.asInt() << positions;
+			try {
+				checkLeftShiftOverflow( Integer.SIZE,
+										Integer.MAX_VALUE,
+										Integer.MIN_VALUE,
+										dx.asBigInteger(),
+										positions);
+				return dx.asInt() << positions;
+			}
+			catch (ArithmeticException ignored) {
+				return shiftLeft(dx.asBigInteger(), positions);
+			}
 		}
 		else if (dx.isShort()) {
-			return dx.asShort() << positions;
+			try {
+				checkLeftShiftOverflow( Short.SIZE,
+										Short.MAX_VALUE,
+										Short.MIN_VALUE,
+										dx.asBigInteger(),
+										positions);
+				return dx.asShort() << positions;
+			}
+			catch (ArithmeticException ignored) {
+				return shiftLeft(dx.asBigInteger(), positions);
+			}
 		}
 		else if (dx.isByte()) {
-			return dx.asByte() << positions;
+			try {
+				checkLeftShiftOverflow(Byte.SIZE, Byte.MAX_VALUE, Byte.MIN_VALUE, dx.asBigInteger(), positions);
+				return dx.asByte() << positions;
+			}
+			catch (ArithmeticException ignored) {
+				return shiftLeft(dx.asBigInteger(), positions);
+			}
 		}
 		else {
 			// Unknown or unsupported number types
@@ -1694,6 +1744,11 @@ public final class NumberUtils {
 			// types
 			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
 		}
+	}
+
+	public static BigInteger shiftLeft(BigInteger bigInteger, int positions) {
+		checkLeftShiftOverflow(bigInteger, positions);
+		return bigInteger.shiftLeft(positions);
 	}
 
 	public static <T extends Number> Number shiftRight(T x, int positions) {
@@ -1720,19 +1775,28 @@ public final class NumberUtils {
 		if (dx.isDecimal()) {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
 		}
+		else if (isZero(dx)) {
+			return 0;
+		}
 		else if (dx.isBigInteger()) {
-			return dx.asBigInteger().shiftRight(positions);
+			var bigInteger = dx.asBigInteger();
+			checkShiftPositions(bigInteger.bitLength(), positions);
+			return bigInteger.shiftRight(positions);
 		}
 		else if (dx.isLong()) {
+			checkShiftPositions(Long.SIZE, positions);
 			return dx.asLong() >> positions;
 		}
 		else if (dx.isInt()) {
+			checkShiftPositions(Integer.SIZE, positions);
 			return dx.asInt() >> positions;
 		}
 		else if (dx.isShort()) {
+			checkShiftPositions(Short.SIZE, positions);
 			return dx.asShort() >> positions;
 		}
 		else if (dx.isByte()) {
+			checkShiftPositions(Byte.SIZE, positions);
 			return dx.asByte() >> positions;
 		}
 		else {
@@ -1769,19 +1833,28 @@ public final class NumberUtils {
 		if (dx.isDecimal()) {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
 		}
+		else if (isZero(dx)) {
+			return 0;
+		}
 		else if (dx.isBigInteger()) {
-			return unsignedShiftRight(dx.asBigInteger(), positions);
+			var bigInteger = dx.asBigInteger();
+			checkShiftPositions(bigInteger.bitLength(), positions);
+			return unsignedShiftRight(bigInteger, positions);
 		}
 		else if (dx.isLong()) {
+			checkShiftPositions(Long.SIZE, positions);
 			return dx.asLong() >>> positions;
 		}
 		else if (dx.isInt()) {
+			checkShiftPositions(Integer.SIZE, positions);
 			return dx.asInt() >>> positions;
 		}
 		else if (dx.isShort()) {
+			checkShiftPositions(Short.SIZE, positions);
 			return dx.asShort() >>> positions;
 		}
 		else if (dx.isByte()) {
+			checkShiftPositions(Byte.SIZE, positions);
 			return dx.asByte() >>> positions;
 		}
 		else {
@@ -2121,6 +2194,185 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Checks whether a double value retains full precision when parsed from the original string.
+	 * Throws a NumberFormatException if precision is lost.
+	 *
+	 * @param text the original string representing the number
+	 * @param d    the parsed double value
+	 * @return the double value if precision is preserved
+	 * @throws NumberFormatException if precision is lost during parsing
+	 */
+	public static Number checkPrecision(String text, double d) {
+		// Precision check
+		BigDecimal expected = new BigDecimal(text);
+		BigDecimal actual = new BigDecimal(Double.toString(d));
+
+		if (expected.compareTo(actual) != 0) {
+			throw new NumberFormatException("فُقدت الدقة عند تحويل '%s' إلى Double. الناتج: %s"
+					.formatted(text, actual.toPlainString()));
+		}
+
+		return d;
+	}
+
+	/**
+	 * Checks whether a float value retains full precision when parsed from the original string.
+	 * Throws a NumberFormatException if precision is lost.
+	 *
+	 * @param text the original string representing the number
+	 * @param f    the parsed float value
+	 * @return the float value if precision is preserved
+	 * @throws NumberFormatException if precision is lost during parsing
+	 */
+	public static Number checkPrecision(String text, float f) {
+		// Precision check
+		BigDecimal expected = new BigDecimal(text);
+		BigDecimal actual = new BigDecimal(Float.toString(f));
+
+		if (expected.compareTo(actual) != 0) {
+			throw new NumberFormatException("فُقدت الدقة عند تحويل '%s' إلى Float. الناتج: %s"
+					.formatted(text, actual.toPlainString()));
+		}
+		return f;
+	}
+
+	/**
+	 * Checks whether a double value matches the expected BigDecimal value.
+	 * If not, returns the expected BigDecimal as a fallback.
+	 *
+	 * @param expected the expected BigDecimal value
+	 * @param d        the double value to compare
+	 * @return the original double if precise, otherwise the expected BigDecimal
+	 */
+	public static Number checkPrecision(BigDecimal expected, double d) {
+		BigDecimal actual = new BigDecimal(Double.toString(d));
+
+		if (expected.compareTo(actual) != 0) {
+			return expected;
+		}
+		else {
+			return d;
+		}
+	}
+
+	/**
+	 * Checks whether a float value matches the expected BigDecimal value.
+	 * If not, returns the expected BigDecimal as a fallback.
+	 *
+	 * @param expected the expected BigDecimal value
+	 * @param f        the float value to compare
+	 * @return the original float if precise, otherwise the expected BigDecimal
+	 */
+	public static Number checkPrecision(BigDecimal expected, float f) {
+		BigDecimal actual = new BigDecimal(Float.toString(f));
+
+		if (expected.compareTo(actual) != 0) {
+			return expected;
+		}
+		else {
+			return f;
+		}
+	}
+
+	/**
+	 * Checks for overflow when left-shifting a BigInteger value by a given number of bits.
+	 * <p>
+	 * This method verifies that the shift amount is within valid bounds and that the value,
+	 * when shifted, will not exceed the range of a 64-bit signed long. If an overflow condition
+	 * is detected, an exception is thrown with a descriptive message.
+	 * </p>
+	 *
+	 * @param size      the maximum allowed shift size (in bits). If set to -1, no upper bound check is performed.
+	 * @param value     the {@link BigInteger} value to be shifted.
+	 * @param positions the number of bits to shift left; must be non-negative and less than {@code size} if {@code
+	 *                  size} is not -1.
+	 * @throws NaftahBugError      if the shift amount is invalid (negative or out of range).
+	 * @throws ArithmeticException if shifting the value would overflow the range of a {@code long}.
+	 */
+	public static void checkLeftShiftOverflow(int size, long max, long min, BigInteger value, int positions) {
+		checkLeftShiftOverflow(size, max, min, value, positions, false);
+	}
+
+	public static void checkLeftShiftOverflow(BigInteger value, int positions) {
+		checkLeftShiftOverflow(-1, -1, -1, value, positions, true);
+	}
+
+	public static void checkLeftShiftOverflow(  int size,
+												long max,
+												long min,
+												BigInteger value,
+												int positions,
+												boolean wrap) {
+		ArithmeticException exception = (ArithmeticException) checkShiftPositions(size, positions, false);
+
+		if (Objects.isNull(exception) && max != -1) {
+			long maxSafe = max >> positions;
+
+			if (value.compareTo(BigInteger.valueOf(maxSafe)) > 0) {
+				exception = new ArithmeticException(
+													String
+															.format("تجاوز الحد الأعلى بعد الإزاحة: القيمة %d كبيرة جدًا للإزاحة بمقدار %d.",
+																	value,
+																	positions));
+			}
+		}
+
+		if (Objects.isNull(exception) && min != -1) {
+			long minSafe = min >> positions;
+
+			if (value.compareTo(BigInteger.valueOf(minSafe)) < 0) {
+				exception = new ArithmeticException(
+													String
+															.format("تجاوز الحد الأدنى بعد الإزاحة: القيمة %d صغيرة جدًا للإزاحة بمقدار %d.",
+																	value,
+																	positions));
+			}
+		}
+
+		if (Objects.nonNull(exception)) {
+			if (wrap) {
+				throw new NaftahBugError(exception);
+			}
+			throw exception;
+		}
+	}
+
+	public static void checkShiftPositions( int size,
+											int positions) {
+		NaftahBugError naftahBugError = (NaftahBugError) checkShiftPositions(size, positions, true);
+		if (Objects.nonNull(naftahBugError)) {
+			throw naftahBugError;
+		}
+	}
+
+	public static Throwable checkShiftPositions(int size,
+												int positions,
+												boolean wrap) {
+		ArithmeticException exception = null;
+
+		if (positions < 0 || (size != -1 && positions >= size)) {
+			exception = new ArithmeticException(
+												String
+														.format("مقدار الإزاحة غير صالح: %d. يجب أن يكون بين 0 و %d.",
+																positions,
+																size - 1));
+		}
+
+		if (Objects.nonNull(exception)) {
+			if (wrap) {
+				return new NaftahBugError(exception);
+			}
+		}
+		return exception;
+	}
+
+	/**
+	 * Creates a NaftahBugError indicating that bitwise operations on decimal numbers are unsupported.
+	 *
+	 * @param dx the decimal number on which the bitwise operation was attempted
+	 * @return a NaftahBugError with an explanatory message
+	 */
 	public static NaftahBugError newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber dx) {
 		return new NaftahBugError(
 									"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
