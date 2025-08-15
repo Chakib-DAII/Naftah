@@ -137,6 +137,11 @@ public final class Naftah {
 	public static final String VECTOR_API_PROPERTY = "naftah.vector.api.active";
 
 	/**
+	 * Property to enable Arabic-Indic digit formatting in Naftah.
+	 */
+	public static final String ARABIC_INDIC_PROPERTY = "naftah.arabic.indic.active";
+
+	/**
 	 * The recognized standard file extensions for Naftah scripts.
 	 */
 	public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
@@ -402,6 +407,12 @@ public final class Naftah {
 				description = { "Enable Vector API optimizations for performance",
 								"تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"})
 		private boolean useVectorApi;
+		@Option(names = {"-ar_ind", "--arabic_indic"},
+				description = {
+								"Display numbers using Arabic-Indic digits (٠١٢٣٤٥٦٧٨٩)",
+								"عرض الأرقام باستخدام الأرقام الهندية-العربية (٠١٢٣٤٥٦٧٨٩)"
+				})
+		private boolean useArabicIndic;
 
 		/**
 		 * Runs the command.
@@ -477,6 +488,10 @@ public final class Naftah {
 				System.setProperty(VECTOR_API_PROPERTY, Boolean.toString(true));
 			}
 
+			if (matchedCommand.useArabicIndic) {
+				System.setProperty(ARABIC_INDIC_PROPERTY, Boolean.toString(true));
+			}
+
 			main.args = matchedCommand.arguments;
 
 			return main.run(matchedCommand);
@@ -487,7 +502,8 @@ public final class Naftah {
 		 */
 		@Command(   name = RunCommand.NAME,
 					customSynopsis = "naftah run [options] [filename] [args]",
-					description = { "The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
+					description = {
+									"The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
 									"أمر تشغيل نفطة. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."},
 					sortOptions = false)
 		private static final class RunCommand extends NaftahCommand {
@@ -518,8 +534,9 @@ public final class Naftah {
 		 */
 		@Command(   name = InitCommand.NAME,
 					customSynopsis = "naftah init [options] [filename] [args]",
-					description = { "The Naftah init command. it prepares the classpath classes (java classpath) and process them to reuse inside naftah script.",
-									"أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة."},
+					description = {
+									"The Naftah init command. it prepares the classpath classes (java classpath) and process " + "them" + " to reuse inside naftah script.",
+									"أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها " + "داخل سكربت نفطة."},
 					sortOptions = false)
 		private static final class InitCommand extends NaftahCommand {
 			private static final String NAME = "init";
@@ -537,8 +554,9 @@ public final class Naftah {
 		 */
 		@Command(   name = ShellCommand.NAME,
 					customSynopsis = "naftah shell [options] [filename] [args]",
-					description = { "The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code",
-									"يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."},
+					description = {
+									"The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive " + "programming environment where you can enter single lines of naftah code",
+									"يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال " + "أسطر مفردة من كود نفطح وتنفيذها فورًا."},
 					sortOptions = false)
 		private static final class ShellCommand extends NaftahCommand {
 			private static final String NAME = "shell";
