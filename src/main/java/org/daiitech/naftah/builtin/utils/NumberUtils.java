@@ -81,12 +81,12 @@ public final class NumberUtils {
 					float f = Float.parseFloat(text);
 					if (Float.isInfinite(f)) {
 						throw new NumberFormatException(
-								"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
-										.formatted(text));
+														"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
+																.formatted(text));
 					}
 					if (Float.isNaN(f)) {
 						throw new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
-																.formatted(text));
+								.formatted(text));
 					}
 
 					return checkPrecision(text, f);
@@ -97,12 +97,12 @@ public final class NumberUtils {
 						double d = Double.parseDouble(text);
 						if (Double.isInfinite(d)) {
 							throw new NumberFormatException(
-									"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
-											.formatted(text));
+															"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
+																	.formatted(text));
 						}
 						if (Double.isNaN(d)) {
 							throw new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
-																	.formatted(text));
+									.formatted(text));
 						}
 
 						return checkPrecision(text, d);
@@ -220,7 +220,7 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError("تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s'."
-											 .formatted(number, number.getClass().getName(), targetClass.getName()));
+					.formatted(number, number.getClass().getName(), targetClass.getName()));
 		}
 	}
 
@@ -260,8 +260,8 @@ public final class NumberUtils {
 		// TODO: classNames should be in arabic or transliterated or in naftah language
 		// types
 		throw new NaftahBugError(
-				"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' بسبب: تجاوز السعة."
-						.formatted(number, number.getClass().getName(), targetClass.getName()));
+									"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' بسبب: تجاوز السعة."
+											.formatted(number, number.getClass().getName(), targetClass.getName()));
 	}
 
 	// ==============================
@@ -370,8 +370,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-							.formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -481,8 +481,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-							.formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -599,8 +599,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-							.formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -674,8 +674,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-							.formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -750,8 +750,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-							.formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -820,8 +820,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-							.formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -890,8 +890,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-							.formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -903,7 +903,7 @@ public final class NumberUtils {
 	 * @param exponent the exponent
 	 * @param <T>      concrete type that extends @{@link Number}
 	 * @return the result of raising {@code base} to the power of {@code exponent},
-	 * as a {@code
+	 *         as a {@code
 	 * Number}
 	 */
 	public static <T extends Number> Number pow(T base, int exponent) {
@@ -917,7 +917,7 @@ public final class NumberUtils {
 	 * @param base     the base number
 	 * @param exponent the exponent
 	 * @return the result of raising {@code base} to the power of {@code exponent},
-	 * as a {@code
+	 *         as a {@code
 	 * Number}
 	 */
 	public static Number pow(Object base, int exponent) {
@@ -931,7 +931,7 @@ public final class NumberUtils {
 	 * @param base     the base number
 	 * @param exponent the exponent
 	 * @return the result of raising {@code base} to the power of {@code exponent},
-	 * as a {@code
+	 *         as a {@code
 	 * Number}
 	 */
 	public static Number pow(DynamicNumber base, int exponent) {
@@ -1037,10 +1037,10 @@ public final class NumberUtils {
 			// Determine how many integer digits exist
 			int integerDigits = bd.precision() - bd.scale();
 			MathContext context = new MathContext(
-					integerDigits > 0 ? integerDigits : 1,
-					signum >= 0 ?
-					RoundingMode.HALF_UP :
-					RoundingMode.HALF_DOWN);
+													integerDigits > 0 ? integerDigits : 1,
+													signum >= 0 ?
+															RoundingMode.HALF_UP :
+															RoundingMode.HALF_DOWN);
 			return bd.round(context);
 		}
 		if (dx.isDouble() || dx.isLong()) {
@@ -1397,7 +1397,7 @@ public final class NumberUtils {
 	 * @param y   the second number
 	 * @param <T> concrete type that extends @{@link Number}
 	 * @return {@code true} if {@code x} and {@code y} are equal in value;
-	 * {@code false} otherwise
+	 *         {@code false} otherwise
 	 */
 	public static <T extends Number> boolean equals(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1411,7 +1411,7 @@ public final class NumberUtils {
 	 * @param x the first number
 	 * @param y the second number
 	 * @return {@code true} if {@code x} and {@code y} are equal in value;
-	 * {@code false} otherwise
+	 *         {@code false} otherwise
 	 */
 	public static boolean equals(Object x, Object y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1425,7 +1425,7 @@ public final class NumberUtils {
 	 * @param dx the first number
 	 * @param dy the second number
 	 * @return {@code true} if {@code dx} and {@code dy} are equal in value;
-	 * {@code false} otherwise
+	 *         {@code false} otherwise
 	 */
 	public static boolean equals(DynamicNumber dx, DynamicNumber dy) {
 		return compare(dx, dy) == 0;
@@ -1438,7 +1438,7 @@ public final class NumberUtils {
 	 * @param y   the second number
 	 * @param <T> concrete type that extends @{@link Number}
 	 * @return a negative integer if {@code x < y}; zero if {@code x == y}; a
-	 * positive integer if {@code x > y}
+	 *         positive integer if {@code x > y}
 	 */
 	public static <T extends Number> int compare(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1452,7 +1452,7 @@ public final class NumberUtils {
 	 * @param x the first number
 	 * @param y the second number
 	 * @return a negative integer if {@code x < y}; zero if {@code x == y}; a
-	 * positive integer if {@code x > y}
+	 *         positive integer if {@code x > y}
 	 */
 	public static int compare(Object x, Object y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1466,7 +1466,7 @@ public final class NumberUtils {
 	 * @param dx the first number
 	 * @param dy the second number
 	 * @return a negative integer if {@code dx < dy}; zero if {@code dx == dy}; a
-	 * positive integer if {@code dx > dy}
+	 *         positive integer if {@code dx > dy}
 	 */
 	public static int compare(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
@@ -1480,8 +1480,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-							.formatted(dx.get().getClass(), dy.get().getClass()));
+										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+												.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 	}
 
@@ -1540,8 +1540,8 @@ public final class NumberUtils {
 	public static Number and(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-							.formatted(dx, dy));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+												.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().and(dy.asBigInteger());
@@ -1620,8 +1620,8 @@ public final class NumberUtils {
 	public static Number or(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-							.formatted(dx, dy));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+												.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().or(dy.asBigInteger());
@@ -1700,8 +1700,8 @@ public final class NumberUtils {
 	public static Number xor(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-							.formatted(dx, dy));
+										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+												.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().xor(dy.asBigInteger());
@@ -1875,11 +1875,11 @@ public final class NumberUtils {
 		}
 		else if (dx.isInt()) {
 			try {
-				checkLeftShiftOverflow(Integer.SIZE,
-									   Integer.MAX_VALUE,
-									   Integer.MIN_VALUE,
-									   dx.asBigInteger(),
-									   positions);
+				checkLeftShiftOverflow( Integer.SIZE,
+										Integer.MAX_VALUE,
+										Integer.MIN_VALUE,
+										dx.asBigInteger(),
+										positions);
 				return dx.asInt() << positions;
 			}
 			catch (ArithmeticException ignored) {
@@ -1888,11 +1888,11 @@ public final class NumberUtils {
 		}
 		else if (dx.isShort()) {
 			try {
-				checkLeftShiftOverflow(Short.SIZE,
-									   Short.MAX_VALUE,
-									   Short.MIN_VALUE,
-									   dx.asBigInteger(),
-									   positions);
+				checkLeftShiftOverflow( Short.SIZE,
+										Short.MAX_VALUE,
+										Short.MIN_VALUE,
+										dx.asBigInteger(),
+										positions);
 				return dx.asShort() << positions;
 			}
 			catch (ArithmeticException ignored) {
@@ -2080,7 +2080,7 @@ public final class NumberUtils {
 	 * @param dx        the number to shift
 	 * @param positions the number of bits to shift to the right; must be non-negative
 	 * @return the result of an unsigned right shift (zero-fill) of {@code value} by
-	 * {@code n} bits
+	 *         {@code n} bits
 	 */
 	public static Number unsignedShiftRight(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
@@ -2162,11 +2162,11 @@ public final class NumberUtils {
 	 * This method handles numeric overflow by promoting the underlying number type to
 	 * a larger or more precise numeric type when the maximum value is reached:
 	 * <ul>
-	 *   <li>Byte and Short promote to Integer.</li>
-	 *   <li>Integer promotes to Long.</li>
-	 *   <li>Long promotes to BigInteger.</li>
-	 *   <li>Float promotes to Double.</li>
-	 *   <li>Double promotes to BigDecimal.</li>
+	 * <li>Byte and Short promote to Integer.</li>
+	 * <li>Integer promotes to Long.</li>
+	 * <li>Long promotes to BigInteger.</li>
+	 * <li>Float promotes to Double.</li>
+	 * <li>Double promotes to BigDecimal.</li>
 	 * </ul>
 	 * <p>
 	 * For {@link BigInteger} and {@link BigDecimal}, it simply adds one without promotion.
@@ -2279,11 +2279,11 @@ public final class NumberUtils {
 	 * The method returns the original value before incrementing.
 	 * It handles overflow by promoting the underlying numeric type to a larger or more precise type when needed:
 	 * <ul>
-	 *   <li>Byte and Short promote to Integer.</li>
-	 *   <li>Integer promotes to Long.</li>
-	 *   <li>Long promotes to {@link BigInteger}.</li>
-	 *   <li>Float promotes to Double.</li>
-	 *   <li>Double promotes to {@link BigDecimal}.</li>
+	 * <li>Byte and Short promote to Integer.</li>
+	 * <li>Integer promotes to Long.</li>
+	 * <li>Long promotes to {@link BigInteger}.</li>
+	 * <li>Float promotes to Double.</li>
+	 * <li>Double promotes to {@link BigDecimal}.</li>
 	 * </ul>
 	 * <p>
 	 * For {@link BigInteger} and {@link BigDecimal}, it increments without promotion.
@@ -2445,11 +2445,11 @@ public final class NumberUtils {
 	 * when
 	 * the minimum value is reached:
 	 * <ul>
-	 *   <li>Byte and Short promote to Integer.</li>
-	 *   <li>Integer promotes to Long.</li>
-	 *   <li>Long promotes to {@link BigInteger}.</li>
-	 *   <li>Float promotes to Double.</li>
-	 *   <li>Double promotes to {@link BigDecimal}.</li>
+	 * <li>Byte and Short promote to Integer.</li>
+	 * <li>Integer promotes to Long.</li>
+	 * <li>Long promotes to {@link BigInteger}.</li>
+	 * <li>Float promotes to Double.</li>
+	 * <li>Double promotes to {@link BigDecimal}.</li>
 	 * </ul>
 	 * For {@link BigInteger} and {@link BigDecimal}, it decrements without promotion.
 	 * If no underflow occurs, it decrements normally.
@@ -2545,11 +2545,11 @@ public final class NumberUtils {
 	 * The method returns the original value before decrementing.
 	 * It handles underflow by promoting the underlying numeric type to a larger or more precise type when needed:
 	 * <ul>
-	 *   <li>Byte and Short promote to Integer.</li>
-	 *   <li>Integer promotes to Long.</li>
-	 *   <li>Long promotes to {@link BigInteger}.</li>
-	 *   <li>Float promotes to Double.</li>
-	 *   <li>Double promotes to {@link BigDecimal}.</li>
+	 * <li>Byte and Short promote to Integer.</li>
+	 * <li>Integer promotes to Long.</li>
+	 * <li>Long promotes to {@link BigInteger}.</li>
+	 * <li>Float promotes to Double.</li>
+	 * <li>Double promotes to {@link BigDecimal}.</li>
 	 * </ul>
 	 * For {@link BigInteger} and {@link BigDecimal}, it decrements without promotion.
 	 * If the type is unsupported, it throws a {@link NaftahBugError}.
@@ -2621,7 +2621,7 @@ public final class NumberUtils {
 	 * @param value the {@code BigInteger} to shift; must not be {@code null}
 	 * @param n     the number of bits to shift right; must be non-negative
 	 * @return the result of shifting {@code value} to the right by {@code n} bits,
-	 * using zero-fill
+	 *         using zero-fill
 	 * @throws NullPointerException     if {@code value} is {@code null}
 	 * @throws IllegalArgumentException if {@code n} is negative
 	 */
@@ -2658,7 +2658,7 @@ public final class NumberUtils {
 
 		if (expected.compareTo(actual) != 0) {
 			throw new NumberFormatException("فُقدت الدقة عند تحويل '%s' إلى Double. الناتج: %s"
-													.formatted(text, actual.toPlainString()));
+					.formatted(text, actual.toPlainString()));
 		}
 
 		return d;
@@ -2680,7 +2680,7 @@ public final class NumberUtils {
 
 		if (expected.compareTo(actual) != 0) {
 			throw new NumberFormatException("فُقدت الدقة عند تحويل '%s' إلى Float. الناتج: %s"
-													.formatted(text, actual.toPlainString()));
+					.formatted(text, actual.toPlainString()));
 		}
 		return f;
 	}
@@ -2775,12 +2775,12 @@ public final class NumberUtils {
 	 * @throws NaftahBugError      if wrap is true and invalid shift or overflow/underflow detected.
 	 * @throws ArithmeticException if wrap is false and invalid shift or overflow/underflow detected.
 	 */
-	public static void checkLeftShiftOverflow(int size,
-											  long max,
-											  long min,
-											  BigInteger value,
-											  int positions,
-											  boolean wrap) {
+	public static void checkLeftShiftOverflow(  int size,
+												long max,
+												long min,
+												BigInteger value,
+												int positions,
+												boolean wrap) {
 		ArithmeticException exception = (ArithmeticException) checkShiftPositions(size, positions, false);
 
 		if (Objects.isNull(exception) && max != -1) {
@@ -2788,10 +2788,10 @@ public final class NumberUtils {
 
 			if (value.compareTo(BigInteger.valueOf(maxSafe)) > 0) {
 				exception = new ArithmeticException(
-						String
-								.format("تجاوز الحد الأعلى بعد الإزاحة: القيمة %d كبيرة جدًا للإزاحة بمقدار %d.",
-										value,
-										positions));
+													String
+															.format("تجاوز الحد الأعلى بعد الإزاحة: القيمة %d كبيرة جدًا للإزاحة بمقدار %d.",
+																	value,
+																	positions));
 			}
 		}
 
@@ -2800,10 +2800,10 @@ public final class NumberUtils {
 
 			if (value.compareTo(BigInteger.valueOf(minSafe)) < 0) {
 				exception = new ArithmeticException(
-						String
-								.format("تجاوز الحد الأدنى بعد الإزاحة: القيمة %d صغيرة جدًا للإزاحة بمقدار %d.",
-										value,
-										positions));
+													String
+															.format("تجاوز الحد الأدنى بعد الإزاحة: القيمة %d صغيرة جدًا للإزاحة بمقدار %d.",
+																	value,
+																	positions));
 			}
 		}
 
@@ -2825,8 +2825,8 @@ public final class NumberUtils {
 	 * @param positions the number of bit positions to shift.
 	 * @throws NaftahBugError if positions is negative or exceeds size - 1.
 	 */
-	public static void checkShiftPositions(int size,
-										   int positions) {
+	public static void checkShiftPositions( int size,
+											int positions) {
 		NaftahBugError naftahBugError = (NaftahBugError) checkShiftPositions(size, positions, true);
 		if (Objects.nonNull(naftahBugError)) {
 			throw naftahBugError;
@@ -2852,10 +2852,10 @@ public final class NumberUtils {
 
 		if (positions < 0 || (size != -1 && positions >= size)) {
 			exception = new ArithmeticException(
-					String
-							.format("مقدار الإزاحة غير صالح: %d. يجب أن يكون بين 0 و %d.",
-									positions,
-									size - 1));
+												String
+														.format("مقدار الإزاحة غير صالح: %d. يجب أن يكون بين 0 و %d.",
+																positions,
+																size - 1));
 		}
 
 		if (Objects.nonNull(exception)) {
@@ -2874,7 +2874,7 @@ public final class NumberUtils {
 	 */
 	public static NaftahBugError newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber dx) {
 		return new NaftahBugError(
-				"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
-						.formatted(dx));
+									"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
+											.formatted(dx));
 	}
 }
