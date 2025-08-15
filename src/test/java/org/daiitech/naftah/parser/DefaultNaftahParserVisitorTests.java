@@ -5,9 +5,13 @@ import org.daiitech.naftah.parser.provider.ArithmeticExpressionsProvider;
 import org.daiitech.naftah.parser.provider.AssignmentProvider;
 import org.daiitech.naftah.parser.provider.BlockProvider;
 import org.daiitech.naftah.parser.provider.DeclarationProvider;
+import org.daiitech.naftah.parser.provider.ForStatementProvider;
 import org.daiitech.naftah.parser.provider.FunctionCallProvider;
 import org.daiitech.naftah.parser.provider.FunctionDeclarationProvider;
+import org.daiitech.naftah.parser.provider.IfStatementProvider;
 import org.daiitech.naftah.parser.provider.LogicalExpressionsProvider;
+import org.daiitech.naftah.parser.provider.QualifiedNameProvider;
+import org.daiitech.naftah.parser.provider.ReturnStatementProvider;
 import org.daiitech.naftah.parser.provider.ValueExpressionsProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,14 +38,7 @@ public class DefaultNaftahParserVisitorTests {
 		bootstrap(false);
 	}
 
-	@BeforeEach
-	void setup() {
-		CONTEXTS.clear();
-	}
-
-	@ParameterizedTest
-	@ArgumentsSource(ValueExpressionsProvider.class)
-	void valueExpressionTests(  boolean validScript,
+	private static void runTest(boolean validScript,
 								String script,
 								Object expectedValue,
 								NaftahBugError expectedNaftahBugError) throws Exception {
@@ -52,6 +49,20 @@ public class DefaultNaftahParserVisitorTests {
 		else {
 			doAssertBugEquals(script, expectedNaftahBugError);
 		}
+	}
+
+	@BeforeEach
+	void setup() {
+		CONTEXTS.clear();
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(ValueExpressionsProvider.class)
+	void valueExpressionTests(boolean validScript,
+							  String script,
+							  Object expectedValue,
+							  NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
@@ -60,101 +71,94 @@ public class DefaultNaftahParserVisitorTests {
 								String script,
 								Object expectedValue,
 								NaftahBugError expectedNaftahBugError) throws Exception {
-		if (validScript) {
-			var result = runScript(script);
-			assertEquals(result, expectedValue);
-		}
-		else {
-			doAssertBugEquals(script, expectedNaftahBugError);
-		}
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(ArithmeticExpressionsProvider.class)
-	void arithmeticExpressionTests( boolean validScript,
-									String script,
-									Object expectedValue,
-									NaftahBugError expectedNaftahBugError) throws Exception {
-		if (validScript) {
-			var result = runScript(script);
-			assertEquals(result, expectedValue);
-		}
-		else {
-			doAssertBugEquals(script, expectedNaftahBugError);
-		}
+	void arithmeticExpressionTests(boolean validScript,
+								   String script,
+								   Object expectedValue,
+								   NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(BlockProvider.class)
 	void blockTests(boolean validScript, String script, Object expectedValue, NaftahBugError expectedNaftahBugError)
 			throws Exception {
-		if (validScript) {
-			var result = runScript(script);
-			assertEquals(result, expectedValue);
-		}
-		else {
-			doAssertBugEquals(script, expectedNaftahBugError);
-		}
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(AssignmentProvider.class)
-	void assignmentTests(   boolean validScript,
-							String script,
-							Object expectedValue,
-							NaftahBugError expectedNaftahBugError) throws Exception {
-		if (validScript) {
-			var result = runScript(script);
-			assertEquals(result, expectedValue);
-		}
-		else {
-			doAssertBugEquals(script, expectedNaftahBugError);
-		}
+	void assignmentTests(boolean validScript,
+						 String script,
+						 Object expectedValue,
+						 NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(DeclarationProvider.class)
-	void declarationTests(  boolean validScript,
-							String script,
-							Object expectedValue,
-							NaftahBugError expectedNaftahBugError) throws Exception {
-		if (validScript) {
-			var result = runScript(script);
-			assertEquals(result, expectedValue);
-		}
-		else {
-			doAssertBugEquals(script, expectedNaftahBugError);
-		}
+	void declarationTests(boolean validScript,
+						  String script,
+						  Object expectedValue,
+						  NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(FunctionDeclarationProvider.class)
-	void functionDeclarationTests(  boolean validScript,
-									String script,
-									Object expectedValue,
-									NaftahBugError expectedNaftahBugError) throws Exception {
-		if (validScript) {
-			var result = runScript(script);
-			assertEquals(result, expectedValue);
-		}
-		else {
-			doAssertBugEquals(script, expectedNaftahBugError);
-		}
+	void functionDeclarationTests(boolean validScript,
+								  String script,
+								  Object expectedValue,
+								  NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
-
 
 	@ParameterizedTest
 	@ArgumentsSource(FunctionCallProvider.class)
-	void functionCallTests( boolean validScript,
+	void functionCallTests(boolean validScript,
+						   String script,
+						   Object expectedValue,
+						   NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(QualifiedNameProvider.class)
+	void qualifiedNameTests(boolean validScript,
 							String script,
 							Object expectedValue,
 							NaftahBugError expectedNaftahBugError) throws Exception {
-		if (validScript) {
-			var result = runScript(script);
-			assertEquals(result, expectedValue);
-		}
-		else {
-			doAssertBugEquals(script, expectedNaftahBugError);
-		}
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(ReturnStatementProvider.class)
+	void returnTests(boolean validScript,
+					 String script,
+					 Object expectedValue,
+					 NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(IfStatementProvider.class)
+	void ifStatementTests(boolean validScript,
+						  String script,
+						  Object expectedValue,
+						  NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(ForStatementProvider.class)
+	void forStatementTests(boolean validScript,
+						   String script,
+						   Object expectedValue,
+						   NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 }
