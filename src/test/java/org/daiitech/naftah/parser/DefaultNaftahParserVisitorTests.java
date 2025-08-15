@@ -1,5 +1,9 @@
 package org.daiitech.naftah.parser;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.provider.ArithmeticExpressionsProvider;
 import org.daiitech.naftah.parser.provider.AssignmentProvider;
@@ -26,16 +30,26 @@ import static org.daiitech.naftah.TestUtils.doAssertBugEquals;
 import static org.daiitech.naftah.TestUtils.runScript;
 import static org.daiitech.naftah.parser.DefaultContext.CONTEXTS;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
+import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 
 public class DefaultNaftahParserVisitorTests {
 
 	@BeforeAll
 	static void setupAll() {
+		String originalClassPath = System.getProperty(CLASS_PATH_PROPERTY);
+		String tempPaths = Arrays
+				.stream((originalClassPath).split(File.pathSeparator))
+				.filter(path -> path.contains("Naftah"))
+				.collect(Collectors.joining(File.pathSeparator));
+		System.setProperty(CLASS_PATH_PROPERTY, tempPaths);
+
 		System.setProperty(TERMINAL_WIDTH_PROPERTY, Integer.toString(80));
 		System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(24));
 		System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
 
 		bootstrap(false);
+
+		System.setProperty(CLASS_PATH_PROPERTY, originalClassPath);
 	}
 
 	private static void runTest(boolean validScript,
