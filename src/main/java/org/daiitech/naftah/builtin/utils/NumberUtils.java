@@ -32,7 +32,20 @@ public final class NumberUtils {
 		throw new NaftahBugError("استخدام غير مسموح به.");
 	}
 
-
+	/**
+	 * Parses a dynamic numeric value from the given {@code Object}.
+	 * <p>
+	 * If the object is already an instance of {@link Number}, it is returned as-is.
+	 * If the object is a {@link String}, it is parsed using {@link #parseDynamicNumber(String)}.
+	 * Otherwise, an exception is thrown indicating that the value is not a valid numeric type.
+	 * </p>
+	 *
+	 * @param object the object to parse as a numeric value; expected to be either a {@link Number} or a
+	 *               {@link String}.
+	 * @return the parsed {@link Number}.
+	 * @throws NaftahBugError if the object is not a valid numeric value.
+	 * @see #parseDynamicNumber(String)
+	 */
 	public static Number parseDynamicNumber(Object object) {
 		if (object instanceof Number number) {
 			return number;
@@ -68,12 +81,12 @@ public final class NumberUtils {
 					float f = Float.parseFloat(text);
 					if (Float.isInfinite(f)) {
 						throw new NumberFormatException(
-														"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
-																.formatted(text));
+								"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
+										.formatted(text));
 					}
 					if (Float.isNaN(f)) {
 						throw new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
-								.formatted(text));
+																.formatted(text));
 					}
 
 					return checkPrecision(text, f);
@@ -84,12 +97,12 @@ public final class NumberUtils {
 						double d = Double.parseDouble(text);
 						if (Double.isInfinite(d)) {
 							throw new NumberFormatException(
-															"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
-																	.formatted(text));
+									"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
+											.formatted(text));
 						}
 						if (Double.isNaN(d)) {
 							throw new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
-									.formatted(text));
+																	.formatted(text));
 						}
 
 						return checkPrecision(text, d);
@@ -207,7 +220,7 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError("تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s'."
-					.formatted(number, number.getClass().getName(), targetClass.getName()));
+											 .formatted(number, number.getClass().getName(), targetClass.getName()));
 		}
 	}
 
@@ -247,8 +260,8 @@ public final class NumberUtils {
 		// TODO: classNames should be in arabic or transliterated or in naftah language
 		// types
 		throw new NaftahBugError(
-									"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' بسبب: تجاوز السعة."
-											.formatted(number, number.getClass().getName(), targetClass.getName()));
+				"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' بسبب: تجاوز السعة."
+						.formatted(number, number.getClass().getName(), targetClass.getName()));
 	}
 
 	// ==============================
@@ -357,8 +370,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+							.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -468,8 +481,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+							.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -586,8 +599,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+							.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -661,8 +674,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+							.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -737,8 +750,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+							.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -807,8 +820,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+							.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -877,8 +890,8 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+							.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 		return result;
 	}
@@ -890,7 +903,7 @@ public final class NumberUtils {
 	 * @param exponent the exponent
 	 * @param <T>      concrete type that extends @{@link Number}
 	 * @return the result of raising {@code base} to the power of {@code exponent},
-	 *         as a {@code
+	 * as a {@code
 	 * Number}
 	 */
 	public static <T extends Number> Number pow(T base, int exponent) {
@@ -904,7 +917,7 @@ public final class NumberUtils {
 	 * @param base     the base number
 	 * @param exponent the exponent
 	 * @return the result of raising {@code base} to the power of {@code exponent},
-	 *         as a {@code
+	 * as a {@code
 	 * Number}
 	 */
 	public static Number pow(Object base, int exponent) {
@@ -918,7 +931,7 @@ public final class NumberUtils {
 	 * @param base     the base number
 	 * @param exponent the exponent
 	 * @return the result of raising {@code base} to the power of {@code exponent},
-	 *         as a {@code
+	 * as a {@code
 	 * Number}
 	 */
 	public static Number pow(DynamicNumber base, int exponent) {
@@ -1024,10 +1037,10 @@ public final class NumberUtils {
 			// Determine how many integer digits exist
 			int integerDigits = bd.precision() - bd.scale();
 			MathContext context = new MathContext(
-													integerDigits > 0 ? integerDigits : 1,
-													signum >= 0 ?
-															RoundingMode.HALF_UP :
-															RoundingMode.HALF_DOWN);
+					integerDigits > 0 ? integerDigits : 1,
+					signum >= 0 ?
+					RoundingMode.HALF_UP :
+					RoundingMode.HALF_DOWN);
 			return bd.round(context);
 		}
 		if (dx.isDouble() || dx.isLong()) {
@@ -1384,7 +1397,7 @@ public final class NumberUtils {
 	 * @param y   the second number
 	 * @param <T> concrete type that extends @{@link Number}
 	 * @return {@code true} if {@code x} and {@code y} are equal in value;
-	 *         {@code false} otherwise
+	 * {@code false} otherwise
 	 */
 	public static <T extends Number> boolean equals(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1398,7 +1411,7 @@ public final class NumberUtils {
 	 * @param x the first number
 	 * @param y the second number
 	 * @return {@code true} if {@code x} and {@code y} are equal in value;
-	 *         {@code false} otherwise
+	 * {@code false} otherwise
 	 */
 	public static boolean equals(Object x, Object y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1412,7 +1425,7 @@ public final class NumberUtils {
 	 * @param dx the first number
 	 * @param dy the second number
 	 * @return {@code true} if {@code dx} and {@code dy} are equal in value;
-	 *         {@code false} otherwise
+	 * {@code false} otherwise
 	 */
 	public static boolean equals(DynamicNumber dx, DynamicNumber dy) {
 		return compare(dx, dy) == 0;
@@ -1425,7 +1438,7 @@ public final class NumberUtils {
 	 * @param y   the second number
 	 * @param <T> concrete type that extends @{@link Number}
 	 * @return a negative integer if {@code x < y}; zero if {@code x == y}; a
-	 *         positive integer if {@code x > y}
+	 * positive integer if {@code x > y}
 	 */
 	public static <T extends Number> int compare(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1439,7 +1452,7 @@ public final class NumberUtils {
 	 * @param x the first number
 	 * @param y the second number
 	 * @return a negative integer if {@code x < y}; zero if {@code x == y}; a
-	 *         positive integer if {@code x > y}
+	 * positive integer if {@code x > y}
 	 */
 	public static int compare(Object x, Object y) {
 		DynamicNumber dx = DynamicNumber.of(x);
@@ -1453,7 +1466,7 @@ public final class NumberUtils {
 	 * @param dx the first number
 	 * @param dy the second number
 	 * @return a negative integer if {@code dx < dy}; zero if {@code dx == dy}; a
-	 *         positive integer if {@code dx > dy}
+	 * positive integer if {@code dx > dy}
 	 */
 	public static int compare(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
@@ -1467,17 +1480,50 @@ public final class NumberUtils {
 			// TODO: classNames should be in arabic or transliterated or in naftah language
 			// types
 			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+					"أنواع الأرقام غير مدعومة: '%s'، '%s'"
+							.formatted(dx.get().getClass(), dy.get().getClass()));
 		}
 	}
 
+	/**
+	 * Performs a bitwise AND operation between two {@link Number} values of the same type.
+	 * <p>
+	 * This method wraps both input numbers in {@link DynamicNumber}, then delegates
+	 * the operation to {@link #and(DynamicNumber, DynamicNumber)}. It supports all types
+	 * that can be safely converted into {@code DynamicNumber} and that allow bitwise operations.
+	 * </p>
+	 *
+	 * @param <T> the type of the input numbers, which must extend {@link Number}.
+	 * @param x   the first operand.
+	 * @param y   the second operand.
+	 * @return the result of the bitwise AND operation as a {@link Number}.
+	 * @throws NaftahBugError if the underlying number types do not support bitwise operations.
+	 * @see DynamicNumber#of(Number)
+	 * @see #and(DynamicNumber, DynamicNumber)
+	 */
 	public static <T extends Number> Number and(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		DynamicNumber dy = DynamicNumber.of(y);
 		return and(dx, dy);
 	}
 
+	/**
+	 * Performs a bitwise AND operation between two dynamically-typed numeric values.
+	 * <p>
+	 * This method accepts arbitrary {@code Object} inputs, attempts to wrap them as {@link DynamicNumber}
+	 * instances, and delegates the bitwise operation to {@link #and(DynamicNumber, DynamicNumber)}.
+	 * It is useful in dynamic or loosely-typed contexts where inputs may be {@link Number}, {@link String}, or other
+	 * types.
+	 * </p>
+	 *
+	 * @param x the first operand; expected to be convertible to a {@link DynamicNumber}.
+	 * @param y the second operand; expected to be convertible to a {@link DynamicNumber}.
+	 * @return the result of the bitwise AND operation as a {@link Number}.
+	 * @throws NaftahBugError if either input is not a valid number or if bitwise operations are not supported on the
+	 *                        types.
+	 * @see DynamicNumber#of(Object)
+	 * @see #and(DynamicNumber, DynamicNumber)
+	 */
 	public static Number and(Object x, Object y) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		DynamicNumber dy = DynamicNumber.of(y);
@@ -1494,8 +1540,8 @@ public final class NumberUtils {
 	public static Number and(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-												.formatted(dx, dy));
+					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+							.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().and(dy.asBigInteger());
@@ -1521,12 +1567,43 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Performs a bitwise OR operation between two {@link Number} values of the same type.
+	 * <p>
+	 * Both operands are converted to {@link DynamicNumber}, and the operation is delegated
+	 * to {@link #or(DynamicNumber, DynamicNumber)}. This method is useful when working with strongly typed
+	 * numeric values that support bitwise logic (e.g., integers).
+	 * </p>
+	 *
+	 * @param <T> the type of the input numbers, extending {@link Number}.
+	 * @param x   the first operand.
+	 * @param y   the second operand.
+	 * @return the result of the bitwise OR operation as a {@link Number}.
+	 * @throws NaftahBugError if bitwise operations are not supported on the operand types.
+	 * @see DynamicNumber#of(Number)
+	 * @see #or(DynamicNumber, DynamicNumber)
+	 */
 	public static <T extends Number> Number or(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		DynamicNumber dy = DynamicNumber.of(y);
 		return or(dx, dy);
 	}
 
+	/**
+	 * Performs a bitwise OR operation between two dynamically-typed numeric values.
+	 * <p>
+	 * This method accepts arbitrary {@code Object} inputs, converts them to {@link DynamicNumber},
+	 * and delegates the operation to {@link #or(DynamicNumber, DynamicNumber)}.
+	 * It is designed for dynamic contexts where the input types may vary at runtime.
+	 * </p>
+	 *
+	 * @param x the first operand; must be convertible to a {@link DynamicNumber}.
+	 * @param y the second operand; must be convertible to a {@link DynamicNumber}.
+	 * @return the result of the bitwise OR operation as a {@link Number}.
+	 * @throws NaftahBugError if either operand is not a valid numeric value or bitwise operations are not supported.
+	 * @see DynamicNumber#of(Object)
+	 * @see #or(DynamicNumber, DynamicNumber)
+	 */
 	public static Number or(Object x, Object y) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		DynamicNumber dy = DynamicNumber.of(y);
@@ -1543,8 +1620,8 @@ public final class NumberUtils {
 	public static Number or(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-												.formatted(dx, dy));
+					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+							.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().or(dy.asBigInteger());
@@ -1570,12 +1647,43 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Performs a bitwise XOR (exclusive OR) operation between two {@link Number} values of the same type.
+	 * <p>
+	 * Both operands are wrapped as {@link DynamicNumber} instances, and the operation is delegated to
+	 * {@link #xor(DynamicNumber, DynamicNumber)}. This method supports bitwise XOR on numeric types
+	 * that allow such operations (typically integers).
+	 * </p>
+	 *
+	 * @param <T> the type of the input numbers, extending {@link Number}.
+	 * @param x   the first operand.
+	 * @param y   the second operand.
+	 * @return the result of the bitwise XOR operation as a {@link Number}.
+	 * @throws NaftahBugError if the operand types do not support bitwise operations.
+	 * @see DynamicNumber#of(Number)
+	 * @see #xor(DynamicNumber, DynamicNumber)
+	 */
 	public static <T extends Number> Number xor(T x, T y) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		DynamicNumber dy = DynamicNumber.of(y);
 		return xor(dx, dy);
 	}
 
+	/**
+	 * Performs a bitwise XOR (exclusive OR) operation between two dynamically-typed numeric values.
+	 * <p>
+	 * This method accepts any {@code Object} inputs, converts them to {@link DynamicNumber} instances,
+	 * and delegates the operation to {@link #xor(DynamicNumber, DynamicNumber)}.
+	 * It is suitable for dynamic contexts where inputs may vary in type (e.g., {@link Number}, {@link String}, etc.).
+	 * </p>
+	 *
+	 * @param x the first operand; must be convertible to a {@link DynamicNumber}.
+	 * @param y the second operand; must be convertible to a {@link DynamicNumber}.
+	 * @return the result of the bitwise XOR operation as a {@link Number}.
+	 * @throws NaftahBugError if either input is not a valid numeric type or does not support bitwise operations.
+	 * @see DynamicNumber#of(Object)
+	 * @see #xor(DynamicNumber, DynamicNumber)
+	 */
 	public static Number xor(Object x, Object y) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		DynamicNumber dy = DynamicNumber.of(y);
@@ -1592,8 +1700,8 @@ public final class NumberUtils {
 	public static Number xor(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
 			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-												.formatted(dx, dy));
+					"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
+							.formatted(dx, dy));
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().xor(dy.asBigInteger());
@@ -1619,11 +1727,40 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Performs a bitwise NOT (inversion) operation on a numeric value.
+	 * <p>
+	 * The input number is wrapped as a {@link DynamicNumber}, and the operation is delegated to
+	 * {@link #not(DynamicNumber)}. This method supports numeric types that allow bitwise operations
+	 * (typically integers).
+	 * </p>
+	 *
+	 * @param <T> the type of the input number, extending {@link Number}.
+	 * @param x   the number to invert.
+	 * @return the result of the bitwise NOT operation as a {@link Number}.
+	 * @throws NaftahBugError if the number type does not support bitwise operations.
+	 * @see DynamicNumber#of(Number)
+	 * @see #not(DynamicNumber)
+	 */
 	public static <T extends Number> Number not(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return not(dx);
 	}
 
+	/**
+	 * Performs a bitwise NOT (inversion) operation on a dynamically-typed numeric value.
+	 * <p>
+	 * This method accepts any {@code Object} that can be converted to a {@link DynamicNumber},
+	 * and delegates the operation to {@link #not(DynamicNumber)}. It is intended for use in
+	 * dynamic contexts where the input type may vary.
+	 * </p>
+	 *
+	 * @param x the value to invert; must be convertible to a {@link DynamicNumber}.
+	 * @return the result of the bitwise NOT operation as a {@link Number}.
+	 * @throws NaftahBugError if the input is not a valid numeric value or does not support bitwise operations.
+	 * @see DynamicNumber#of(Object)
+	 * @see #not(DynamicNumber)
+	 */
 	public static Number not(Object x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return not(dx);
@@ -1663,11 +1800,45 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Performs a left bitwise shift on a numeric value by the specified number of positions.
+	 * <p>
+	 * The input number is wrapped as a {@link DynamicNumber}, and the shift operation is
+	 * delegated to {@link #shiftLeft(DynamicNumber, int)}. This method is suitable for statically
+	 * typed {@link Number} values that support bitwise operations (typically integer types).
+	 * </p>
+	 *
+	 * @param <T>       the type of the input number, extending {@link Number}.
+	 * @param x         the number to shift.
+	 * @param positions the number of bit positions to shift to the left; must be non-negative.
+	 * @return the result of the left shift operation as a {@link Number}.
+	 * @throws NaftahBugError           if the number type does not support bitwise operations.
+	 * @throws IllegalArgumentException if the shift amount is negative or exceeds allowed bounds.
+	 * @see DynamicNumber#of(Number)
+	 * @see #shiftLeft(DynamicNumber, int)
+	 */
 	public static <T extends Number> Number shiftLeft(T x, int positions) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return shiftLeft(dx, positions);
 	}
 
+	/**
+	 * Performs a left bitwise shift on a dynamically-typed numeric value by the specified number of positions.
+	 * <p>
+	 * This method accepts any {@code Object} that can be converted to a {@link DynamicNumber},
+	 * and delegates the shift operation to {@link #shiftLeft(DynamicNumber, int)}.
+	 * It is designed for use in dynamic or loosely typed contexts.
+	 * </p>
+	 *
+	 * @param x         the value to shift; must be convertible to a {@link DynamicNumber}.
+	 * @param positions the number of bit positions to shift to the left; must be non-negative.
+	 * @return the result of the left shift operation as a {@link Number}.
+	 * @throws NaftahBugError           if the input is not a valid numeric value or does not support bitwise
+	 *                                  operations.
+	 * @throws IllegalArgumentException if the shift amount is negative or exceeds allowed bounds.
+	 * @see DynamicNumber#of(Object)
+	 * @see #shiftLeft(DynamicNumber, int)
+	 */
 	public static Number shiftLeft(Object x, int positions) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return shiftLeft(dx, positions);
@@ -1704,11 +1875,11 @@ public final class NumberUtils {
 		}
 		else if (dx.isInt()) {
 			try {
-				checkLeftShiftOverflow( Integer.SIZE,
-										Integer.MAX_VALUE,
-										Integer.MIN_VALUE,
-										dx.asBigInteger(),
-										positions);
+				checkLeftShiftOverflow(Integer.SIZE,
+									   Integer.MAX_VALUE,
+									   Integer.MIN_VALUE,
+									   dx.asBigInteger(),
+									   positions);
 				return dx.asInt() << positions;
 			}
 			catch (ArithmeticException ignored) {
@@ -1717,11 +1888,11 @@ public final class NumberUtils {
 		}
 		else if (dx.isShort()) {
 			try {
-				checkLeftShiftOverflow( Short.SIZE,
-										Short.MAX_VALUE,
-										Short.MIN_VALUE,
-										dx.asBigInteger(),
-										positions);
+				checkLeftShiftOverflow(Short.SIZE,
+									   Short.MAX_VALUE,
+									   Short.MIN_VALUE,
+									   dx.asBigInteger(),
+									   positions);
 				return dx.asShort() << positions;
 			}
 			catch (ArithmeticException ignored) {
@@ -1746,16 +1917,65 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Performs a left bitwise shift on a {@link BigInteger} value by the specified number of positions,
+	 * with overflow checking against 64-bit {@code long} bounds.
+	 * <p>
+	 * This method ensures that the shift will not produce a value that exceeds the range of a 64-bit
+	 * signed integer, and throws an exception if overflow is detected.
+	 * </p>
+	 *
+	 * @param bigInteger the {@link BigInteger} value to shift.
+	 * @param positions  the number of bit positions to shift to the left; must be non-negative.
+	 * @return a new {@link BigInteger} representing the result of the shift.
+	 * @throws NaftahBugError      if the shift amount is invalid (e.g., negative or too large).
+	 * @throws ArithmeticException if the shift would cause overflow beyond {@code long} range.
+	 * @see #checkLeftShiftOverflow(BigInteger, int)
+	 * @see java.math.BigInteger#shiftLeft(int)
+	 */
 	public static BigInteger shiftLeft(BigInteger bigInteger, int positions) {
 		checkLeftShiftOverflow(bigInteger, positions);
 		return bigInteger.shiftLeft(positions);
 	}
 
+	/**
+	 * Performs a right bitwise shift on a numeric value by the specified number of positions.
+	 * <p>
+	 * The input value is converted to a {@link DynamicNumber}, and the operation is delegated
+	 * to {@link #shiftRight(DynamicNumber, int)}. This operation is safe and does not cause overflow.
+	 * </p>
+	 *
+	 * @param <T>       the type of the input number, extending {@link Number}.
+	 * @param x         the number to shift.
+	 * @param positions the number of bit positions to shift to the right; must be non-negative.
+	 * @return the result of the right shift operation as a {@link Number}.
+	 * @throws NaftahBugError           if the number type does not support bitwise operations.
+	 * @throws IllegalArgumentException if the shift amount is negative.
+	 * @see DynamicNumber#of(Number)
+	 * @see #shiftRight(DynamicNumber, int)
+	 */
 	public static <T extends Number> Number shiftRight(T x, int positions) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return shiftRight(dx, positions);
 	}
 
+	/**
+	 * Performs a right bitwise shift on a dynamically-typed numeric value by the specified number of positions.
+	 * <p>
+	 * This method accepts any {@code Object} that can be converted to a {@link DynamicNumber},
+	 * and delegates the operation to {@link #shiftRight(DynamicNumber, int)}.
+	 * It is designed for use in dynamic contexts where the input type may vary at runtime.
+	 * </p>
+	 *
+	 * @param x         the value to shift; must be convertible to a {@link DynamicNumber}.
+	 * @param positions the number of bit positions to shift to the right; must be non-negative.
+	 * @return the result of the right shift operation as a {@link Number}.
+	 * @throws NaftahBugError           if the input is not a valid numeric value or does not support bitwise
+	 *                                  operations.
+	 * @throws IllegalArgumentException if the shift amount is negative.
+	 * @see DynamicNumber#of(Object)
+	 * @see #shiftRight(DynamicNumber, int)
+	 */
 	public static Number shiftRight(Object x, int positions) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return shiftRight(dx, positions);
@@ -1808,11 +2028,44 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Performs an unsigned (logical) right bitwise shift on a numeric value by the specified number of positions.
+	 * <p>
+	 * The input number is converted to a {@link DynamicNumber}, and the operation is delegated to
+	 * {@link #unsignedShiftRight(DynamicNumber, int)}. This shift fills the left bits with zeros regardless of sign.
+	 * </p>
+	 *
+	 * @param <T>       the type of the input number, extending {@link Number}.
+	 * @param x         the number to shift.
+	 * @param positions the number of bit positions to shift to the right; must be non-negative.
+	 * @return the result of the unsigned right shift operation as a {@link Number}.
+	 * @throws NaftahBugError           if the number type does not support bitwise operations.
+	 * @throws IllegalArgumentException if the shift amount is negative.
+	 * @see DynamicNumber#of(Number)
+	 * @see #unsignedShiftRight(DynamicNumber, int)
+	 */
 	public static <T extends Number> Number unsignedShiftRight(T x, int positions) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return unsignedShiftRight(dx, positions);
 	}
 
+	/**
+	 * Performs an unsigned (logical) right bitwise shift on a dynamically-typed numeric value by the specified number
+	 * of positions.
+	 * <p>
+	 * This method accepts any {@code Object} convertible to {@link DynamicNumber},
+	 * and delegates the operation to {@link #unsignedShiftRight(DynamicNumber, int)}.
+	 * </p>
+	 *
+	 * @param x         the value to shift; must be convertible to a {@link DynamicNumber}.
+	 * @param positions the number of bit positions to shift to the right; must be non-negative.
+	 * @return the result of the unsigned right shift operation as a {@link Number}.
+	 * @throws NaftahBugError           if the input is not a valid numeric value or does not support bitwise
+	 *                                  operations.
+	 * @throws IllegalArgumentException if the shift amount is negative.
+	 * @see DynamicNumber#of(Object)
+	 * @see #unsignedShiftRight(DynamicNumber, int)
+	 */
 	public static Number unsignedShiftRight(Object x, int positions) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return unsignedShiftRight(dx, positions);
@@ -1827,7 +2080,7 @@ public final class NumberUtils {
 	 * @param dx        the number to shift
 	 * @param positions the number of bits to shift to the right; must be non-negative
 	 * @return the result of an unsigned right shift (zero-fill) of {@code value} by
-	 *         {@code n} bits
+	 * {@code n} bits
 	 */
 	public static Number unsignedShiftRight(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
@@ -1866,16 +2119,64 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Performs a pre-increment operation on a numeric value.
+	 * <p>
+	 * The input number is wrapped as a {@link DynamicNumber}, and the increment operation
+	 * is delegated to {@link #preIncrement(DynamicNumber)}.
+	 * </p>
+	 *
+	 * @param <T> the type of the input number, extending {@link Number}.
+	 * @param x   the number to increment.
+	 * @return the result of the pre-increment operation as a {@link Number}.
+	 * @throws NaftahBugError if the input type is unsupported for arithmetic operations.
+	 * @see DynamicNumber#of(Number)
+	 * @see #preIncrement(DynamicNumber)
+	 */
 	public static <T extends Number> Number preIncrement(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return preIncrement(dx);
 	}
 
+	/**
+	 * Performs a pre-increment operation on a dynamically-typed numeric value.
+	 * <p>
+	 * This method accepts any {@code Object} convertible to a {@link DynamicNumber}
+	 * and delegates the increment operation to {@link #preIncrement(DynamicNumber)}.
+	 * </p>
+	 *
+	 * @param x the value to increment; must be convertible to {@link DynamicNumber}.
+	 * @return the result of the pre-increment operation as a {@link Number}.
+	 * @throws NaftahBugError if the input is not a valid numeric value or unsupported for arithmetic.
+	 * @see DynamicNumber#of(Object)
+	 * @see #preIncrement(DynamicNumber)
+	 */
 	public static Number preIncrement(Object x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return preIncrement(dx);
 	}
 
+	/**
+	 * Performs a pre-increment operation on the given {@link DynamicNumber} instance.
+	 * <p>
+	 * This method handles numeric overflow by promoting the underlying number type to
+	 * a larger or more precise numeric type when the maximum value is reached:
+	 * <ul>
+	 *   <li>Byte and Short promote to Integer.</li>
+	 *   <li>Integer promotes to Long.</li>
+	 *   <li>Long promotes to BigInteger.</li>
+	 *   <li>Float promotes to Double.</li>
+	 *   <li>Double promotes to BigDecimal.</li>
+	 * </ul>
+	 * <p>
+	 * For {@link BigInteger} and {@link BigDecimal}, it simply adds one without promotion.
+	 * If no overflow occurs, it increments normally.
+	 * </p>
+	 *
+	 * @param dx the {@link DynamicNumber} to increment.
+	 * @return the incremented number as a {@link Number}.
+	 * @throws NaftahBugError if the underlying numeric type is not supported.
+	 */
 	public static Number preIncrement(DynamicNumber dx) {
 		Number val = dx.get();
 
@@ -1933,16 +2234,66 @@ public final class NumberUtils {
 		throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(val.getClass()));
 	}
 
+	/**
+	 * Performs a post-increment operation on a numeric value.
+	 * <p>
+	 * The input number is wrapped as a {@link DynamicNumber}, and the increment operation
+	 * is delegated to {@link #postIncrement(DynamicNumber)}.
+	 * The returned value is the original value before the increment.
+	 * </p>
+	 *
+	 * @param <T> the type of the input number, extending {@link Number}.
+	 * @param x   the number to increment.
+	 * @return the original value before increment as a {@link Number}.
+	 * @throws NaftahBugError if the input type is unsupported for arithmetic operations.
+	 * @see DynamicNumber#of(Number)
+	 * @see #postIncrement(DynamicNumber)
+	 */
 	public static <T extends Number> Number postIncrement(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return postIncrement(dx);
 	}
 
+	/**
+	 * Performs a post-increment operation on a dynamically-typed numeric value.
+	 * <p>
+	 * This method accepts any {@code Object} convertible to a {@link DynamicNumber}
+	 * and delegates the increment operation to {@link #postIncrement(DynamicNumber)}.
+	 * The returned value is the original value before the increment.
+	 * </p>
+	 *
+	 * @param x the value to increment; must be convertible to {@link DynamicNumber}.
+	 * @return the original value before increment as a {@link Number}.
+	 * @throws NaftahBugError if the input is not a valid numeric value or unsupported for arithmetic.
+	 * @see DynamicNumber#of(Object)
+	 * @see #postIncrement(DynamicNumber)
+	 */
 	public static Number postIncrement(Object x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return postIncrement(dx);
 	}
 
+	/**
+	 * Performs a post-increment operation on the given {@link DynamicNumber}.
+	 * <p>
+	 * The method returns the original value before incrementing.
+	 * It handles overflow by promoting the underlying numeric type to a larger or more precise type when needed:
+	 * <ul>
+	 *   <li>Byte and Short promote to Integer.</li>
+	 *   <li>Integer promotes to Long.</li>
+	 *   <li>Long promotes to {@link BigInteger}.</li>
+	 *   <li>Float promotes to Double.</li>
+	 *   <li>Double promotes to {@link BigDecimal}.</li>
+	 * </ul>
+	 * <p>
+	 * For {@link BigInteger} and {@link BigDecimal}, it increments without promotion.
+	 * If the type is unsupported, it throws a {@link NaftahBugError}.
+	 * </p>
+	 *
+	 * @param dx the {@link DynamicNumber} to post-increment.
+	 * @return the original value before the increment as a {@link Number}.
+	 * @throws NaftahBugError if the number type is unsupported.
+	 */
 	public static Number postIncrement(DynamicNumber dx) {
 		Number val = dx.get();
 
@@ -2050,16 +2401,64 @@ public final class NumberUtils {
 		throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(val.getClass()));
 	}
 
+	/**
+	 * Performs a pre-decrement operation on a numeric value.
+	 * <p>
+	 * The input number is wrapped as a {@link DynamicNumber}, and the decrement operation
+	 * is delegated to {@link #preDecrement(DynamicNumber)}.
+	 * </p>
+	 *
+	 * @param <T> the type of the input number, extending {@link Number}.
+	 * @param x   the number to decrement.
+	 * @return the result of the pre-decrement operation as a {@link Number}.
+	 * @throws NaftahBugError if the input type is unsupported for arithmetic operations.
+	 * @see DynamicNumber#of(Number)
+	 * @see #preDecrement(DynamicNumber)
+	 */
 	public static <T extends Number> Number preDecrement(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return preDecrement(dx);
 	}
 
+	/**
+	 * Performs a pre-decrement operation on a dynamically-typed numeric value.
+	 * <p>
+	 * This method accepts any {@code Object} convertible to a {@link DynamicNumber}
+	 * and delegates the decrement operation to {@link #preDecrement(DynamicNumber)}.
+	 * </p>
+	 *
+	 * @param x the value to decrement; must be convertible to {@link DynamicNumber}.
+	 * @return the result of the pre-decrement operation as a {@link Number}.
+	 * @throws NaftahBugError if the input is not a valid numeric value or unsupported for arithmetic.
+	 * @see DynamicNumber#of(Object)
+	 * @see #preDecrement(DynamicNumber)
+	 */
 	public static Number preDecrement(Object x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return preDecrement(dx);
 	}
 
+	/**
+	 * Performs a pre-decrement operation on the given {@link DynamicNumber}.
+	 * <p>
+	 * This method handles underflow by promoting the underlying number type to a larger or more precise numeric type
+	 * when
+	 * the minimum value is reached:
+	 * <ul>
+	 *   <li>Byte and Short promote to Integer.</li>
+	 *   <li>Integer promotes to Long.</li>
+	 *   <li>Long promotes to {@link BigInteger}.</li>
+	 *   <li>Float promotes to Double.</li>
+	 *   <li>Double promotes to {@link BigDecimal}.</li>
+	 * </ul>
+	 * For {@link BigInteger} and {@link BigDecimal}, it decrements without promotion.
+	 * If no underflow occurs, it decrements normally.
+	 * </p>
+	 *
+	 * @param dx the {@link DynamicNumber} to decrement.
+	 * @return the decremented number as a {@link Number}.
+	 * @throws NaftahBugError if the underlying numeric type is not supported.
+	 */
 	public static Number preDecrement(DynamicNumber dx) {
 		if (dx.isBigDecimal()) {
 			dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE));
@@ -2101,16 +2500,65 @@ public final class NumberUtils {
 		}
 	}
 
+	/**
+	 * Performs a post-decrement operation on a numeric value.
+	 * <p>
+	 * The input number is wrapped as a {@link DynamicNumber}, and the decrement operation
+	 * is delegated to {@link #postDecrement(DynamicNumber)}.
+	 * The returned value is the original value before the decrement.
+	 * </p>
+	 *
+	 * @param <T> the type of the input number, extending {@link Number}.
+	 * @param x   the number to decrement.
+	 * @return the original value before decrement as a {@link Number}.
+	 * @throws NaftahBugError if the input type is unsupported for arithmetic operations.
+	 * @see DynamicNumber#of(Number)
+	 * @see #postDecrement(DynamicNumber)
+	 */
 	public static <T extends Number> Number postDecrement(T x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return postDecrement(dx);
 	}
 
+	/**
+	 * Performs a post-decrement operation on a dynamically-typed numeric value.
+	 * <p>
+	 * This method accepts any {@code Object} convertible to a {@link DynamicNumber}
+	 * and delegates the decrement operation to {@link #postDecrement(DynamicNumber)}.
+	 * The returned value is the original value before the decrement.
+	 * </p>
+	 *
+	 * @param x the value to decrement; must be convertible to {@link DynamicNumber}.
+	 * @return the original value before decrement as a {@link Number}.
+	 * @throws NaftahBugError if the input is not a valid numeric value or unsupported for arithmetic.
+	 * @see DynamicNumber#of(Object)
+	 * @see #postDecrement(DynamicNumber)
+	 */
 	public static Number postDecrement(Object x) {
 		DynamicNumber dx = DynamicNumber.of(x);
 		return postDecrement(dx);
 	}
 
+	/**
+	 * Performs a post-decrement operation on the given {@link DynamicNumber}.
+	 * <p>
+	 * The method returns the original value before decrementing.
+	 * It handles underflow by promoting the underlying numeric type to a larger or more precise type when needed:
+	 * <ul>
+	 *   <li>Byte and Short promote to Integer.</li>
+	 *   <li>Integer promotes to Long.</li>
+	 *   <li>Long promotes to {@link BigInteger}.</li>
+	 *   <li>Float promotes to Double.</li>
+	 *   <li>Double promotes to {@link BigDecimal}.</li>
+	 * </ul>
+	 * For {@link BigInteger} and {@link BigDecimal}, it decrements without promotion.
+	 * If the type is unsupported, it throws a {@link NaftahBugError}.
+	 * </p>
+	 *
+	 * @param dx the {@link DynamicNumber} to post-decrement.
+	 * @return the original value before the decrement as a {@link Number}.
+	 * @throws NaftahBugError if the number type is unsupported.
+	 */
 	public static Number postDecrement(DynamicNumber dx) {
 		Number current;
 
@@ -2173,7 +2621,7 @@ public final class NumberUtils {
 	 * @param value the {@code BigInteger} to shift; must not be {@code null}
 	 * @param n     the number of bits to shift right; must be non-negative
 	 * @return the result of shifting {@code value} to the right by {@code n} bits,
-	 *         using zero-fill
+	 * using zero-fill
 	 * @throws NullPointerException     if {@code value} is {@code null}
 	 * @throws IllegalArgumentException if {@code n} is negative
 	 */
@@ -2210,7 +2658,7 @@ public final class NumberUtils {
 
 		if (expected.compareTo(actual) != 0) {
 			throw new NumberFormatException("فُقدت الدقة عند تحويل '%s' إلى Double. الناتج: %s"
-					.formatted(text, actual.toPlainString()));
+													.formatted(text, actual.toPlainString()));
 		}
 
 		return d;
@@ -2232,7 +2680,7 @@ public final class NumberUtils {
 
 		if (expected.compareTo(actual) != 0) {
 			throw new NumberFormatException("فُقدت الدقة عند تحويل '%s' إلى Float. الناتج: %s"
-					.formatted(text, actual.toPlainString()));
+													.formatted(text, actual.toPlainString()));
 		}
 		return f;
 	}
@@ -2294,16 +2742,45 @@ public final class NumberUtils {
 		checkLeftShiftOverflow(size, max, min, value, positions, false);
 	}
 
+	/**
+	 * Checks if left shift operation on the given {@link BigInteger} value by a number of positions
+	 * would cause overflow according to the specified limits.
+	 * <p>
+	 * This method delegates to the general {@link #checkLeftShiftOverflow(int, long, long, BigInteger, int, boolean)}
+	 * method with default size and limits (-1 means no limit).
+	 * </p>
+	 *
+	 * @param value     the {@link BigInteger} value to be shifted left.
+	 * @param positions the number of bit positions to shift left.
+	 * @throws NaftahBugError if the shift positions are invalid or if the shifted value would overflow.
+	 */
 	public static void checkLeftShiftOverflow(BigInteger value, int positions) {
 		checkLeftShiftOverflow(-1, -1, -1, value, positions, true);
 	}
 
-	public static void checkLeftShiftOverflow(  int size,
-												long max,
-												long min,
-												BigInteger value,
-												int positions,
-												boolean wrap) {
+	/**
+	 * Checks if left shift operation on the given {@link BigInteger} value by a number of positions
+	 * would cause overflow or underflow based on the provided limits and size.
+	 * <p>
+	 * Throws {@link NaftahBugError} wrapping an {@link ArithmeticException} if overflow or underflow
+	 * conditions are detected and wrap is true; otherwise throws the raw {@link ArithmeticException}.
+	 * </p>
+	 *
+	 * @param size      the bit size of the type being shifted, or -1 if unknown/unbounded.
+	 * @param max       the maximum allowed long value before shifting, or -1 if no maximum limit.
+	 * @param min       the minimum allowed long value before shifting, or -1 if no minimum limit.
+	 * @param value     the {@link BigInteger} value to be shifted.
+	 * @param positions the number of bits to shift left.
+	 * @param wrap      if true, wraps any {@link ArithmeticException} in a {@link NaftahBugError}.
+	 * @throws NaftahBugError      if wrap is true and invalid shift or overflow/underflow detected.
+	 * @throws ArithmeticException if wrap is false and invalid shift or overflow/underflow detected.
+	 */
+	public static void checkLeftShiftOverflow(int size,
+											  long max,
+											  long min,
+											  BigInteger value,
+											  int positions,
+											  boolean wrap) {
 		ArithmeticException exception = (ArithmeticException) checkShiftPositions(size, positions, false);
 
 		if (Objects.isNull(exception) && max != -1) {
@@ -2311,10 +2788,10 @@ public final class NumberUtils {
 
 			if (value.compareTo(BigInteger.valueOf(maxSafe)) > 0) {
 				exception = new ArithmeticException(
-													String
-															.format("تجاوز الحد الأعلى بعد الإزاحة: القيمة %d كبيرة جدًا للإزاحة بمقدار %d.",
-																	value,
-																	positions));
+						String
+								.format("تجاوز الحد الأعلى بعد الإزاحة: القيمة %d كبيرة جدًا للإزاحة بمقدار %d.",
+										value,
+										positions));
 			}
 		}
 
@@ -2323,10 +2800,10 @@ public final class NumberUtils {
 
 			if (value.compareTo(BigInteger.valueOf(minSafe)) < 0) {
 				exception = new ArithmeticException(
-													String
-															.format("تجاوز الحد الأدنى بعد الإزاحة: القيمة %d صغيرة جدًا للإزاحة بمقدار %d.",
-																	value,
-																	positions));
+						String
+								.format("تجاوز الحد الأدنى بعد الإزاحة: القيمة %d صغيرة جدًا للإزاحة بمقدار %d.",
+										value,
+										positions));
 			}
 		}
 
@@ -2338,14 +2815,36 @@ public final class NumberUtils {
 		}
 	}
 
-	public static void checkShiftPositions( int size,
-											int positions) {
+	/**
+	 * Checks if the shift positions parameter is valid given the bit size of the type.
+	 * <p>
+	 * Throws a {@link NaftahBugError} if the positions are invalid.
+	 * </p>
+	 *
+	 * @param size      the bit size of the type being shifted, or -1 if unbounded.
+	 * @param positions the number of bit positions to shift.
+	 * @throws NaftahBugError if positions is negative or exceeds size - 1.
+	 */
+	public static void checkShiftPositions(int size,
+										   int positions) {
 		NaftahBugError naftahBugError = (NaftahBugError) checkShiftPositions(size, positions, true);
 		if (Objects.nonNull(naftahBugError)) {
 			throw naftahBugError;
 		}
 	}
 
+	/**
+	 * Validates the shift positions against the allowed range for a given bit size.
+	 * <p>
+	 * Returns a wrapped {@link NaftahBugError} or raw {@link ArithmeticException} if invalid,
+	 * or null if valid.
+	 * </p>
+	 *
+	 * @param size      the bit size of the type being shifted, or -1 if unbounded.
+	 * @param positions the number of bits to shift.
+	 * @param wrap      if true, returns a {@link NaftahBugError} wrapping the exception; otherwise raw.
+	 * @return a Throwable representing the error if invalid, or null if valid.
+	 */
 	public static Throwable checkShiftPositions(int size,
 												int positions,
 												boolean wrap) {
@@ -2353,10 +2852,10 @@ public final class NumberUtils {
 
 		if (positions < 0 || (size != -1 && positions >= size)) {
 			exception = new ArithmeticException(
-												String
-														.format("مقدار الإزاحة غير صالح: %d. يجب أن يكون بين 0 و %d.",
-																positions,
-																size - 1));
+					String
+							.format("مقدار الإزاحة غير صالح: %d. يجب أن يكون بين 0 و %d.",
+									positions,
+									size - 1));
 		}
 
 		if (Objects.nonNull(exception)) {
@@ -2375,7 +2874,7 @@ public final class NumberUtils {
 	 */
 	public static NaftahBugError newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber dx) {
 		return new NaftahBugError(
-									"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
-											.formatted(dx));
+				"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
+						.formatted(dx));
 	}
 }
