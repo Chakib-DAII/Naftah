@@ -292,6 +292,7 @@ spotless {
 				'static com')
 		trimTrailingWhitespace()
 		endWithNewline()
+		indentWithTabs()
 
 		targetExclude('build/generated-src/antlr/main/**/*.java')
 	}
