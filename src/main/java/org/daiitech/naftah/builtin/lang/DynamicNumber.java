@@ -396,7 +396,7 @@ public class DynamicNumber {
     public int hashCode() {
         return value.hashCode();
     }
-
+    
     /**
      * Returns the string representation of the numeric value.
      *
@@ -404,6 +404,17 @@ public class DynamicNumber {
      */
     @Override
     public String toString() {
-        return value.toString();
+        if (value instanceof BigDecimal bd) {
+            return bd.toPlainString();
+        }
+        else if (value instanceof BigInteger bi) {
+            return bi.toString();
+        }
+        else if (value instanceof Float || value instanceof Double) {
+            return new BigDecimal(value.toString()).toPlainString();
+        }
+        else {
+            return value.toString();
+        }
     }
 }
