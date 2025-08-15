@@ -143,7 +143,11 @@ public final class ArabicUtils {
 		for (String key : keylist) {
 			String value = CUSTOM_RULES_BUNDLE.getString(key);
 			// If s contains underscore or spaces or any special char, quote it
-			if (value.matches(".*[ _\\t\\r\\n].*")) { // underscore or space or whitespace
+			String regex = ".*[ _\\t\\r\\n].*";
+			if (key.matches(regex)) { // underscore or space or whitespace
+				key = "'" + key + "'";
+			}
+			if (value.matches(regex)) { // underscore or space or whitespace
 				value = "'" + value + "'";
 			}
 
