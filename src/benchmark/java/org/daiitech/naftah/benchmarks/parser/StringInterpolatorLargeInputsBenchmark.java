@@ -24,46 +24,46 @@ import org.openjdk.jmh.annotations.Warmup;
 @State(Scope.Thread)
 public class StringInterpolatorLargeInputsBenchmark {
 
-    String largeInput = generateTemplate(1_000_000);
-    String largeInput1 = generateTemplate(10_000_000);
+	String largeInput = generateTemplate(1_000_000);
+	String largeInput1 = generateTemplate(10_000_000);
 
-    Map<String, Object> context;
+	Map<String, Object> context;
 
-    static String generateTemplate(int nVars) {
-        StringBuilder sb = new StringBuilder();
+	static String generateTemplate(int nVars) {
+		StringBuilder sb = new StringBuilder();
 
-        sb.append("تقرير المتغيرات:\n");
+		sb.append("تقرير المتغيرات:\n");
 
-        for (int i = 1; i < nVars - 1; i++) {
-            sb.append("متغير ").append(i).append(": ${متغير_").append(i).append("}");
+		for (int i = 1; i < nVars - 1; i++) {
+			sb.append("متغير ").append(i).append(": ${متغير_").append(i).append("}");
 
-            if (i < nVars - 2) {
-                sb.append(", ");
-            }
-            // new line every 5 vars for readability
-            if (i % 5 == 0) {
-                sb.append("\n");
-            }
-        }
+			if (i < nVars - 2) {
+				sb.append(", ");
+			}
+			// new line every 5 vars for readability
+			if (i % 5 == 0) {
+				sb.append("\n");
+			}
+		}
 
-        return sb.toString();
-    }
+		return sb.toString();
+	}
 
-    @Setup
-    public void setup() {
-        context = new HashMap<>();
-        for (int i = 0; i < 10_000_000; i++) {
-            context.put("متغير_" + i, "قيمة_" + i);
-        }
-    }
+	@Setup
+	public void setup() {
+		context = new HashMap<>();
+		for (int i = 0; i < 10_000_000; i++) {
+			context.put("متغير_" + i, "قيمة_" + i);
+		}
+	}
 
-    @Benchmark
-    public String benchmarkLargeInterpolation1_000_000Vars() {
-        return StringInterpolator.process(largeInput, context);
-    }
+	@Benchmark
+	public String benchmarkLargeInterpolation1_000_000Vars() {
+		return StringInterpolator.process(largeInput, context);
+	}
 
-    @Benchmark
-    public String benchmarkLargeInterpolation10_000_000Vars() {
-        return StringInterpolator.process(largeInput1, context);
-    }
+	@Benchmark
+	public String benchmarkLargeInterpolation10_000_000Vars() {
+		return StringInterpolator.process(largeInput1, context);
+	}
 }

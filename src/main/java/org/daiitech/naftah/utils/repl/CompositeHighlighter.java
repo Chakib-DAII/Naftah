@@ -29,98 +29,98 @@ import org.jline.utils.AttributedString;
  */
 public class CompositeHighlighter extends BaseHighlighter {
 
-    /**
-     * List of highlighters to apply in sequence.
-     */
-    private final List<Highlighter> highlighters;
+	/**
+	 * List of highlighters to apply in sequence.
+	 */
+	private final List<Highlighter> highlighters;
 
-    /**
-     * Constructs a CompositeHighlighter with the original highlighter and a list of additional highlighters.
-     *
-     * @param originalHighlighter the original highlighter to delegate to if no others are specified
-     * @param highlighters        a list of highlighters to apply in sequence
-     */
-    public CompositeHighlighter(Highlighter originalHighlighter, List<Highlighter> highlighters) {
-        super(originalHighlighter);
-        this.highlighters = highlighters;
-    }
+	/**
+	 * Constructs a CompositeHighlighter with the original highlighter and a list of additional highlighters.
+	 *
+	 * @param originalHighlighter the original highlighter to delegate to if no others are specified
+	 * @param highlighters        a list of highlighters to apply in sequence
+	 */
+	public CompositeHighlighter(Highlighter originalHighlighter, List<Highlighter> highlighters) {
+		super(originalHighlighter);
+		this.highlighters = highlighters;
+	}
 
-    /**
-     * Creates a new builder for a CompositeHighlighter.
-     *
-     * @param originalHighlighter the original highlighter
-     * @return a new Builder instance
-     */
-    public static Builder builder(Highlighter originalHighlighter) {
-        return new Builder(originalHighlighter);
-    }
+	/**
+	 * Creates a new builder for a CompositeHighlighter.
+	 *
+	 * @param originalHighlighter the original highlighter
+	 * @return a new Builder instance
+	 */
+	public static Builder builder(Highlighter originalHighlighter) {
+		return new Builder(originalHighlighter);
+	}
 
-    /**
-     * Applies each highlighter in the list to the given input line and merges the results.
-     *
-     * @param reader the LineReader instance
-     * @param buffer the input line to highlight
-     * @return an AttributedString representing the highlighted line
-     */
-    @Override
-    public AttributedString highlight(LineReader reader, String buffer) {
-        if (highlighters.isEmpty()) {
-            return super.highlight(reader, buffer);
-        }
+	/**
+	 * Applies each highlighter in the list to the given input line and merges the results.
+	 *
+	 * @param reader the LineReader instance
+	 * @param buffer the input line to highlight
+	 * @return an AttributedString representing the highlighted line
+	 */
+	@Override
+	public AttributedString highlight(LineReader reader, String buffer) {
+		if (highlighters.isEmpty()) {
+			return super.highlight(reader, buffer);
+		}
 
-        AttributedString attributedString = null;
+		AttributedString attributedString = null;
 
-        for (Highlighter h : highlighters) {
-            attributedString = merge(attributedString, h.highlight(reader, buffer));
-        }
+		for (Highlighter h : highlighters) {
+			attributedString = merge(attributedString, h.highlight(reader, buffer));
+		}
 
-        return attributedString;
-    }
+		return attributedString;
+	}
 
-    /**
-     * Builder class for creating a CompositeHighlighter instance using a fluent interface.
-     */
-    public static class Builder {
+	/**
+	 * Builder class for creating a CompositeHighlighter instance using a fluent interface.
+	 */
+	public static class Builder {
 
-        /**
-         * The original highlighter.
-         */
-        private final Highlighter originalHighlighter;
+		/**
+		 * The original highlighter.
+		 */
+		private final Highlighter originalHighlighter;
 
-        /**
-         * List of highlighters to add to the composite.
-         */
-        private final List<Highlighter> highlighters = new ArrayList<>();
+		/**
+		 * List of highlighters to add to the composite.
+		 */
+		private final List<Highlighter> highlighters = new ArrayList<>();
 
-        /**
-         * Creates a new Builder with the specified original highlighter.
-         *
-         * @param originalHighlighter the base highlighter
-         */
-        public Builder(Highlighter originalHighlighter) {
-            this.originalHighlighter = originalHighlighter;
-        }
+		/**
+		 * Creates a new Builder with the specified original highlighter.
+		 *
+		 * @param originalHighlighter the base highlighter
+		 */
+		public Builder(Highlighter originalHighlighter) {
+			this.originalHighlighter = originalHighlighter;
+		}
 
-        /**
-         * Adds a highlighter to the composite.
-         *
-         * @param highlighter the highlighter to add
-         * @return this builder instance
-         */
-        public Builder add(Highlighter highlighter) {
-            if (highlighter != null) {
-                highlighters.add(highlighter);
-            }
-            return this;
-        }
+		/**
+		 * Adds a highlighter to the composite.
+		 *
+		 * @param highlighter the highlighter to add
+		 * @return this builder instance
+		 */
+		public Builder add(Highlighter highlighter) {
+			if (highlighter != null) {
+				highlighters.add(highlighter);
+			}
+			return this;
+		}
 
-        /**
-         * Builds the CompositeHighlighter with the specified highlighters.
-         *
-         * @return a new CompositeHighlighter instance
-         */
-        public CompositeHighlighter build() {
-            return new CompositeHighlighter(originalHighlighter, new ArrayList<>(highlighters));
-        }
-    }
+		/**
+		 * Builds the CompositeHighlighter with the specified highlighters.
+		 *
+		 * @return a new CompositeHighlighter instance
+		 */
+		public CompositeHighlighter build() {
+			return new CompositeHighlighter(originalHighlighter, new ArrayList<>(highlighters));
+		}
+	}
 }

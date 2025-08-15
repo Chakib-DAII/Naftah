@@ -20,132 +20,132 @@ import java.lang.reflect.Method;
  */
 public class BuiltinFunction implements Serializable {
 
-    /**
-     * The name of the method.
-     */
-    private final String methodName;
+	/**
+	 * The name of the method.
+	 */
+	private final String methodName;
 
-    /**
-     * The fully qualified name of the class declaring the method.
-     */
-    private final String className;
+	/**
+	 * The fully qualified name of the class declaring the method.
+	 */
+	private final String className;
 
-    /**
-     * Provider information for this function.
-     */
-    private final NaftahFunctionProvider providerInfo;
+	/**
+	 * Provider information for this function.
+	 */
+	private final NaftahFunctionProvider providerInfo;
 
-    /**
-     * Function information for this function.
-     */
-    private final NaftahFunction functionInfo;
+	/**
+	 * Function information for this function.
+	 */
+	private final NaftahFunction functionInfo;
 
-    /**
-     * The reflected method instance. Marked transient because
-     * it is not serializable and restored after deserialization.
-     */
-    private transient Method method;
+	/**
+	 * The reflected method instance. Marked transient because
+	 * it is not serializable and restored after deserialization.
+	 */
+	private transient Method method;
 
-    /**
-     * Constructs a {@code BuiltinFunction} with the given method and metadata.
-     *
-     * @param method       the reflected method representing this builtin function
-     * @param providerInfo the provider information for the function
-     * @param functionInfo the function-specific information
-     */
-    public BuiltinFunction(Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
-        this.method = method;
-        this.methodName = method.getName();
-        this.className = method.getDeclaringClass().getName();
-        this.providerInfo = providerInfo;
-        this.functionInfo = functionInfo;
-    }
+	/**
+	 * Constructs a {@code BuiltinFunction} with the given method and metadata.
+	 *
+	 * @param method       the reflected method representing this builtin function
+	 * @param providerInfo the provider information for the function
+	 * @param functionInfo the function-specific information
+	 */
+	public BuiltinFunction(Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
+		this.method = method;
+		this.methodName = method.getName();
+		this.className = method.getDeclaringClass().getName();
+		this.providerInfo = providerInfo;
+		this.functionInfo = functionInfo;
+	}
 
-    /**
-     * Static factory method to create a new {@code BuiltinFunction} instance.
-     *
-     * @param method       the reflected method representing this builtin function
-     * @param providerInfo the provider information for the function
-     * @param functionInfo the function-specific information
-     * @return a new {@code BuiltinFunction} instance
-     */
-    public static BuiltinFunction of(Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
-        return new BuiltinFunction(method, providerInfo, functionInfo);
-    }
+	/**
+	 * Static factory method to create a new {@code BuiltinFunction} instance.
+	 *
+	 * @param method       the reflected method representing this builtin function
+	 * @param providerInfo the provider information for the function
+	 * @param functionInfo the function-specific information
+	 * @return a new {@code BuiltinFunction} instance
+	 */
+	public static BuiltinFunction of(Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
+		return new BuiltinFunction(method, providerInfo, functionInfo);
+	}
 
-    /**
-     * Returns the reflected {@link Method} instance representing this builtin function.
-     *
-     * @return the method instance
-     */
-    public Method getMethod() {
-        return method;
-    }
+	/**
+	 * Returns the reflected {@link Method} instance representing this builtin function.
+	 *
+	 * @return the method instance
+	 */
+	public Method getMethod() {
+		return method;
+	}
 
-    /**
-     * Returns the provider information associated with this function.
-     *
-     * @return the function provider information
-     */
-    public NaftahFunctionProvider getProviderInfo() {
-        return providerInfo;
-    }
+	/**
+	 * Returns the provider information associated with this function.
+	 *
+	 * @return the function provider information
+	 */
+	public NaftahFunctionProvider getProviderInfo() {
+		return providerInfo;
+	}
 
-    /**
-     * Returns the function-specific information associated with this function.
-     *
-     * @return the function information
-     */
-    public NaftahFunction getFunctionInfo() {
-        return functionInfo;
-    }
+	/**
+	 * Returns the function-specific information associated with this function.
+	 *
+	 * @return the function information
+	 */
+	public NaftahFunction getFunctionInfo() {
+		return functionInfo;
+	}
 
-    /**
-     * Custom serialization logic.
-     * Writes the non-transient fields using default serialization.
-     *
-     * @param oos the output stream to write to
-     * @throws IOException if an I/O error occurs
-     */
-    @Serial
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
-    }
+	/**
+	 * Custom serialization logic.
+	 * Writes the non-transient fields using default serialization.
+	 *
+	 * @param oos the output stream to write to
+	 * @throws IOException if an I/O error occurs
+	 */
+	@Serial
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+	}
 
-    /**
-     * Custom deserialization logic.
-     * Reads the non-transient fields using default deserialization,
-     * then restores the transient {@code method} field by locating
-     * the method by name in the deserialized class.
-     *
-     * @param ois the input stream to read from
-     * @throws IOException            if an I/O error occurs
-     * @throws ClassNotFoundException if the class for the method cannot be found
-     */
-    @Serial
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        try {
-            ois.defaultReadObject();
-            Class<?> clazz = Class.forName(className);
-            for (Method m : clazz.getDeclaredMethods()) {
-                if (m.getName().equals(methodName)) {
-                    this.method = m;
-                    break;
-                }
-            }
-        }
-        catch (Throwable ignored) {
-        }
-    }
+	/**
+	 * Custom deserialization logic.
+	 * Reads the non-transient fields using default deserialization,
+	 * then restores the transient {@code method} field by locating
+	 * the method by name in the deserialized class.
+	 *
+	 * @param ois the input stream to read from
+	 * @throws IOException            if an I/O error occurs
+	 * @throws ClassNotFoundException if the class for the method cannot be found
+	 */
+	@Serial
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		try {
+			ois.defaultReadObject();
+			Class<?> clazz = Class.forName(className);
+			for (Method m : clazz.getDeclaredMethods()) {
+				if (m.getName().equals(methodName)) {
+					this.method = m;
+					break;
+				}
+			}
+		}
+		catch (Throwable ignored) {
+		}
+	}
 
-    /**
-     * Returns a string representation of this builtin function.
-     * The format is &lt;دالة functionName&gt;.
-     *
-     * @return a string describing this builtin function
-     */
-    @Override
-    public String toString() {
-        return "<%s %s>".formatted("دالة", this.getFunctionInfo().name());
-    }
+	/**
+	 * Returns a string representation of this builtin function.
+	 * The format is &lt;دالة functionName&gt;.
+	 *
+	 * @return a string describing this builtin function
+	 */
+	@Override
+	public String toString() {
+		return "<%s %s>".formatted("دالة", this.getFunctionInfo().name());
+	}
 }
