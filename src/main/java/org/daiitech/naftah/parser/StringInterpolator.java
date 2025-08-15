@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValue;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.parser.DefaultContext.VARIABLE_GETTER;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 
@@ -125,7 +125,7 @@ public final class StringInterpolator {
 
 		while (matcher.find()) {
 			String varName = matcher.group(1);
-			Object replacement = getNaftahValue(replacementFunction.apply(varName));
+			Object replacement = getNaftahValueToString(replacementFunction.apply(varName));
 			matcher.appendReplacement(result.get(), Matcher.quoteReplacement(replacement.toString()));
 		}
 		matcher.appendTail(result.get());
