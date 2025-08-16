@@ -5,18 +5,18 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.parser.provider.ArithmeticExpressionsProvider;
-import org.daiitech.naftah.parser.provider.AssignmentProvider;
-import org.daiitech.naftah.parser.provider.BlockProvider;
-import org.daiitech.naftah.parser.provider.DeclarationProvider;
-import org.daiitech.naftah.parser.provider.ForStatementProvider;
-import org.daiitech.naftah.parser.provider.FunctionCallProvider;
-import org.daiitech.naftah.parser.provider.FunctionDeclarationProvider;
-import org.daiitech.naftah.parser.provider.IfStatementProvider;
-import org.daiitech.naftah.parser.provider.LogicalExpressionsProvider;
-import org.daiitech.naftah.parser.provider.QualifiedNameProvider;
-import org.daiitech.naftah.parser.provider.ReturnStatementProvider;
-import org.daiitech.naftah.parser.provider.ValueExpressionsProvider;
+import org.daiitech.naftah.parser.provider.script.ArithmeticExpressionsProvider;
+import org.daiitech.naftah.parser.provider.script.AssignmentProvider;
+import org.daiitech.naftah.parser.provider.script.BlockProvider;
+import org.daiitech.naftah.parser.provider.script.DeclarationProvider;
+import org.daiitech.naftah.parser.provider.script.ForStatementProvider;
+import org.daiitech.naftah.parser.provider.script.FunctionCallProvider;
+import org.daiitech.naftah.parser.provider.script.FunctionDeclarationProvider;
+import org.daiitech.naftah.parser.provider.script.IfStatementProvider;
+import org.daiitech.naftah.parser.provider.script.LogicalExpressionsProvider;
+import org.daiitech.naftah.parser.provider.script.QualifiedNameProvider;
+import org.daiitech.naftah.parser.provider.script.ReturnStatementProvider;
+import org.daiitech.naftah.parser.provider.script.ValueExpressionsProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,8 +25,8 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_HEIGHT_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
+import static org.daiitech.naftah.TestUtils.assertBugEquals;
 import static org.daiitech.naftah.TestUtils.assertEquals;
-import static org.daiitech.naftah.TestUtils.doAssertBugEquals;
 import static org.daiitech.naftah.TestUtils.runScript;
 import static org.daiitech.naftah.parser.DefaultContext.CONTEXTS;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
@@ -61,7 +61,7 @@ public class DefaultNaftahParserVisitorTests {
 			assertEquals(result, expectedValue);
 		}
 		else {
-			doAssertBugEquals(script, expectedNaftahBugError);
+			assertBugEquals(script, expectedNaftahBugError);
 		}
 	}
 
