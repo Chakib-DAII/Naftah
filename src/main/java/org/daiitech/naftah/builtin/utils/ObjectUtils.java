@@ -663,7 +663,7 @@ public final class ObjectUtils {
 
 		if (o instanceof Collection<?> collection) {
 			if (collection instanceof Tuple) {
-				return result;
+				return "تركيبة: " + result;
 			}
 			if (collection instanceof List<?>) {
 				return "قائمة: " + result;

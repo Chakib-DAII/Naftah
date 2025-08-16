@@ -10,6 +10,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -149,13 +150,16 @@ public final class Tuple implements List<Object>, Serializable {
 
 	/**
 	 * Returns a string representation of the tuple.
-	 * The string starts with "تركيبة: " followed by the list's string.
+	 * The list's string as a tuple
 	 *
 	 * @return the string representation of this tuple
 	 */
 	@Override
 	public String toString() {
-		return "تركيبة: " + values.toString();
+		return values
+				.stream()
+				.map(Object::toString)
+				.collect(Collectors.joining(", ", "(", ")"));
 	}
 
 	/**
