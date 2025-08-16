@@ -1,4 +1,4 @@
-package org.daiitech.naftah.parser.provider;
+package org.daiitech.naftah.parser.provider.script;
 
 import java.math.BigInteger;
 import java.util.stream.Stream;
