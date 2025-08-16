@@ -8,6 +8,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.provider.script.ArithmeticExpressionsProvider;
 import org.daiitech.naftah.parser.provider.script.AssignmentProvider;
 import org.daiitech.naftah.parser.provider.script.BlockProvider;
+import org.daiitech.naftah.parser.provider.script.CollectionExpressionProvider;
 import org.daiitech.naftah.parser.provider.script.DeclarationProvider;
 import org.daiitech.naftah.parser.provider.script.ForStatementProvider;
 import org.daiitech.naftah.parser.provider.script.FunctionCallProvider;
@@ -116,6 +117,15 @@ public class DefaultNaftahParserVisitorTests {
 	@ParameterizedTest
 	@ArgumentsSource(DeclarationProvider.class)
 	void declarationTests(  boolean validScript,
+							String script,
+							Object expectedValue,
+							NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(CollectionExpressionProvider.class)
+	void collectionTests(   boolean validScript,
 							String script,
 							Object expectedValue,
 							NaftahBugError expectedNaftahBugError) throws Exception {
