@@ -61,7 +61,7 @@ class BuiltinTests {
 					Arguments.of(new Object[]{1, 2}, "قائمة: " + Arrays.toString(new Object[]{1, 2})),
 					Arguments.of(List.of(1, 2), "قائمة: " + List.of(1, 2)),
 					Arguments.of(Set.of(1, 2), "مجموعة: " + Set.of(1, 2)),
-					Arguments.of(Tuple.of(1, 2), Tuple.of(1, 2).toString()),
+					Arguments.of(Tuple.of(1, 2), "تركيبة: " + Tuple.of(1, 2)),
 					Arguments.of(Map.of(1, 2), "مصفوفة ترابطية: " + Map.of(1, 2)),
 					Arguments.of(LoopSignal.LoopSignalDetails.of(LoopSignal.CONTINUE, null), NULL),
 					Arguments.of(LoopSignal.LoopSignalDetails.of(LoopSignal.RETURN, null), NULL),
