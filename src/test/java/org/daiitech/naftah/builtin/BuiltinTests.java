@@ -57,7 +57,6 @@ class BuiltinTests {
 					Arguments.of(new boolean[]{true, false}, "قائمة: " + Arrays.toString(new boolean[]{true, false})),
 					Arguments.of(new char[]{1, 2}, "قائمة: " + Arrays.toString(new char[]{1, 2})),
 					Arguments.of(new byte[]{1, 2}, "قائمة: " + Arrays.toString(new byte[]{1, 2})),
-					Arguments.of(new char[]{1, 2}, "قائمة: " + Arrays.toString(new char[]{1, 2})),
 					Arguments.of(new short[]{1, 2}, "قائمة: " + Arrays.toString(new short[]{1, 2})),
 					Arguments.of(new Object[]{1, 2}, "قائمة: " + Arrays.toString(new Object[]{1, 2})),
 					Arguments.of(List.of(1, 2), "قائمة: " + List.of(1, 2)),
