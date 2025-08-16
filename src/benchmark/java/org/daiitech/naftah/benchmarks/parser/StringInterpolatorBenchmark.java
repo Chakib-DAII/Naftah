@@ -43,7 +43,7 @@ public class StringInterpolatorBenchmark {
 			"مرحباً بك، يا ${الاسم}! لقد أرسلت ${عدد_الرسائل} رسائل اليوم.",
 
 			// Placeholder with nested pattern-like value (mimicking a bug scenario)
-			"القيمة: ${map[\"القيمة\"]} يجب أن تكون مساوية لـ ${المتوقع}",
+			"القيمة: ${مصفوفة_ترابطية[\"القيمة\"]} يجب أن تكون مساوية لـ ${المتوقع}",
 
 			// Arabic number formatting (assumes context provides formatted values)
 			"المبلغ الإجمالي: ${المبلغ_الإجمالي} د.إ",
@@ -104,7 +104,7 @@ public class StringInterpolatorBenchmark {
 		context.put("الوقت", "١٢:٣٠");
 		context.put("التاريخ", "٢٠٢٥-٠٨-٠٦");
 		context.put("الجهاز", "iPhone");
-		context.put("map[\"القيمة\"]", "٣٠");
+		context.put("مصفوفة_ترابطية[\"القيمة\"]", "٣٠");
 		context.put("المتوقع", "٣٠");
 		context.put("المبلغ_الإجمالي", "١٬٥٠٠٫٠٠");
 		context.put("العمر", null);
