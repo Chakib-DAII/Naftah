@@ -45,7 +45,7 @@ public class DefaultNaftahParserVisitorTests {
 
 		System.setProperty(TERMINAL_WIDTH_PROPERTY, Integer.toString(80));
 		System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(24));
-		System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
+		System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(false));
 
 		bootstrap(false);
 
@@ -72,10 +72,10 @@ public class DefaultNaftahParserVisitorTests {
 
 	@ParameterizedTest
 	@ArgumentsSource(ValueExpressionsProvider.class)
-	void valueExpressionTests(  boolean validScript,
-								String script,
-								Object expectedValue,
-								NaftahBugError expectedNaftahBugError) throws Exception {
+	void valueExpressionTests(boolean validScript,
+							  String script,
+							  Object expectedValue,
+							  NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
@@ -90,10 +90,10 @@ public class DefaultNaftahParserVisitorTests {
 
 	@ParameterizedTest
 	@ArgumentsSource(ArithmeticExpressionsProvider.class)
-	void arithmeticExpressionTests( boolean validScript,
-									String script,
-									Object expectedValue,
-									NaftahBugError expectedNaftahBugError) throws Exception {
+	void arithmeticExpressionTests(boolean validScript,
+								   String script,
+								   Object expectedValue,
+								   NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
@@ -106,37 +106,37 @@ public class DefaultNaftahParserVisitorTests {
 
 	@ParameterizedTest
 	@ArgumentsSource(AssignmentProvider.class)
-	void assignmentTests(   boolean validScript,
-							String script,
-							Object expectedValue,
-							NaftahBugError expectedNaftahBugError) throws Exception {
+	void assignmentTests(boolean validScript,
+						 String script,
+						 Object expectedValue,
+						 NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(DeclarationProvider.class)
-	void declarationTests(  boolean validScript,
-							String script,
-							Object expectedValue,
-							NaftahBugError expectedNaftahBugError) throws Exception {
+	void declarationTests(boolean validScript,
+						  String script,
+						  Object expectedValue,
+						  NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(FunctionDeclarationProvider.class)
-	void functionDeclarationTests(  boolean validScript,
-									String script,
-									Object expectedValue,
-									NaftahBugError expectedNaftahBugError) throws Exception {
+	void functionDeclarationTests(boolean validScript,
+								  String script,
+								  Object expectedValue,
+								  NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(FunctionCallProvider.class)
-	void functionCallTests( boolean validScript,
-							String script,
-							Object expectedValue,
-							NaftahBugError expectedNaftahBugError) throws Exception {
+	void functionCallTests(boolean validScript,
+						   String script,
+						   Object expectedValue,
+						   NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
@@ -151,28 +151,28 @@ public class DefaultNaftahParserVisitorTests {
 
 	@ParameterizedTest
 	@ArgumentsSource(ReturnStatementProvider.class)
-	void returnTests(   boolean validScript,
-						String script,
-						Object expectedValue,
-						NaftahBugError expectedNaftahBugError) throws Exception {
+	void returnTests(boolean validScript,
+					 String script,
+					 Object expectedValue,
+					 NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(IfStatementProvider.class)
-	void ifStatementTests(  boolean validScript,
-							String script,
-							Object expectedValue,
-							NaftahBugError expectedNaftahBugError) throws Exception {
+	void ifStatementTests(boolean validScript,
+						  String script,
+						  Object expectedValue,
+						  NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(ForStatementProvider.class)
-	void forStatementTests( boolean validScript,
-							String script,
-							Object expectedValue,
-							NaftahBugError expectedNaftahBugError) throws Exception {
+	void forStatementTests(boolean validScript,
+						   String script,
+						   Object expectedValue,
+						   NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 }
