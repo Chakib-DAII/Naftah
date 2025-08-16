@@ -895,17 +895,19 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 			result = visit(ctx.block(0)); // If the condition is true, execute the 'then' block
 		}
 		else {
+			boolean elseifConditionMatched = false;
 			// Iterate through elseif blocks
 			for (int i = 0; i < ctx.ELSEIF().size(); i++) {
 				Object elseifCondition = visit(ctx.expression(i + 1)); // Evaluate elseif condition
 				if (isTruthy(elseifCondition)) {
 					result = visit(ctx.block(i + 1)); // Execute the corresponding elseif block if condition is true
+					elseifConditionMatched = true;
 					break;
 				}
 			}
 
 			// If no elseif was true, execute the else block (if it exists)
-			if (Objects.isNull(result) && hasChild(ctx.ELSE())) {
+			if (!elseifConditionMatched && hasChild(ctx.ELSE())) {
 				result = visit(ctx.block(ctx.ELSEIF().size() + 1)); // Execute the 'else' block if present
 			}
 		}
