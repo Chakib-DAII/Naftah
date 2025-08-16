@@ -54,10 +54,14 @@ public final class TestUtils {
 		}
 	}
 
-	public static void doAssertBugEquals(String script, NaftahBugError expectedNaftahBugError) {
+	public static void assertBugEquals(String script, NaftahBugError expectedNaftahBugError) {
 		NaftahBugError naftahBugError = Assertions.assertThrows(NaftahBugError.class, () -> runScript(script));
+		doAssertBugEquals(naftahBugError, expectedNaftahBugError);
+	}
+
+	public static void doAssertBugEquals(NaftahBugError thrownNaftahBugError, NaftahBugError expectedNaftahBugError) {
 		var expected = ExceptionUtils.getMostSpecificCause(expectedNaftahBugError);
-		var actual = ExceptionUtils.getMostSpecificCause(naftahBugError);
+		var actual = ExceptionUtils.getMostSpecificCause(thrownNaftahBugError);
 		Assertions.assertEquals(expected.getClass(), actual.getClass());
 		Assertions.assertEquals(expected.getMessage(), actual.getMessage());
 	}
