@@ -1,9 +1,10 @@
 package org.daiitech.naftah;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
-import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -26,27 +27,55 @@ public final class TestUtils {
 	public static void assertEquals(Object result, Object expectedValue) {
 		if (result instanceof Map<?, ?> map) {
 			var expectedValueMap = (Map<?, ?>) expectedValue;
-			map.forEach((key, value) -> {
-				var expectedValueFromMap = expectedValueMap.get(key);
-				if (value instanceof DeclaredVariable declaredVariable) {
-					doAssertEquals(expectedValueFromMap, declaredVariable.getValue());
-				}
-				else {
-					doAssertEquals(expectedValueFromMap, value);
-				}
-			});
+			doAssertEquals(map, expectedValueMap);
+		}
+		else if (result instanceof Collection<?> collection) {
+			var expectedValueCollection = (Collection<?>) expectedValue;
+			doAssertEquals(collection, expectedValueCollection);
 		}
 		else if (result instanceof DeclaredVariable declaredVariable) {
-			doAssertEquals(expectedValue, declaredVariable.getValue());
+			assertEquals(expectedValue, declaredVariable.getValue());
 		}
 		else {
 			doAssertEquals(result, expectedValue);
 		}
 	}
 
+	public static void doAssertEquals(Map<?, ?> map, Map<?, ?> expectedMap) {
+		map.forEach((key, value) -> {
+			var expectedValueFromMap = expectedMap.get(key);
+
+			if (value instanceof Map<?, ?> internalMap && expectedValueFromMap instanceof Map<?, ?> internalExpectedMap) {
+				doAssertEquals(internalMap, internalExpectedMap);
+			}
+			else if (value instanceof DeclaredVariable declaredVariable) {
+				assertEquals(expectedValueFromMap, declaredVariable.getValue());
+			}
+			else {
+				assertEquals(expectedValueFromMap, value);
+			}
+		});
+	}
+
+	public static void doAssertEquals(Collection<?> collection, Collection<?> expectedCollection) {
+		Iterator<?> collectionIterator = collection.iterator();
+		Iterator<?> expectedValueCollectionIterator = expectedCollection.iterator();
+
+		while (collectionIterator.hasNext() && expectedValueCollectionIterator.hasNext()) {
+			var elementResult = collectionIterator.next();
+			var elementExpectedValue = expectedValueCollectionIterator.next();
+
+			if (elementResult instanceof Collection<?> internalCollection && elementExpectedValue instanceof Collection<?> internalExpectedCollection) {
+				doAssertEquals(internalCollection, internalExpectedCollection);
+			}
+			else {
+				assertEquals(elementResult, elementExpectedValue);
+			}
+		}
+	}
+
 	public static void doAssertEquals(Object result, Object expectedValue) {
 		if (result instanceof Number) {
-			System.out.println(DynamicNumber.of(result) + "\n" + DynamicNumber.of(expectedValue));
 			Assertions.assertTrue(NumberUtils.equals(expectedValue, result));
 		}
 		else {
