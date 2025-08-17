@@ -236,6 +236,7 @@ jacoco {
 }
 
 test {
+	jvmArgs += '--add-modules=jdk.incubator.vector'
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"
