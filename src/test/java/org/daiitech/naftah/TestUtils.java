@@ -78,6 +78,11 @@ public final class TestUtils {
 		if (result instanceof Number) {
 			Assertions.assertTrue(NumberUtils.equals(expectedValue, result));
 		}
+		else if ((result != null && result.getClass().isArray()) && (expectedValue != null && expectedValue
+				.getClass()
+				.isArray())) {
+					Assertions.assertArrayEquals((Object[]) expectedValue, (Object[]) result);
+				}
 		else {
 			Assertions.assertEquals(expectedValue, result);
 		}
