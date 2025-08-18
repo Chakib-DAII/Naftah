@@ -83,22 +83,26 @@ public final class StringUtils {
 	/**
 	 * Pre-increment a character (based on ASCII code).
 	 */
-	public static final Function<Character, Number> PRE_INCREMENT = NumberUtils::preIncrement;
+	public static final Function<Character, Number> PRE_INCREMENT = character -> NumberUtils
+			.preIncrement((int) character);
 
 	/**
 	 * Post-increment a character (based on ASCII code).
 	 */
-	public static final Function<Character, Number> POST_INCREMENT = NumberUtils::postIncrement;
+	public static final Function<Character, Number> POST_INCREMENT = character -> NumberUtils
+			.postIncrement((int) character);
 
 	/**
 	 * Pre-decrement a character (based on ASCII code).
 	 */
-	public static final Function<Character, Number> PRE_DECREMENT = NumberUtils::preDecrement;
+	public static final Function<Character, Number> PRE_DECREMENT = character -> NumberUtils
+			.preDecrement((int) character);
 
 	/**
 	 * Post-decrement a character (based on ASCII code).
 	 */
-	public static final Function<Character, Number> POST_DECREMENT = NumberUtils::postDecrement;
+	public static final Function<Character, Number> POST_DECREMENT = character -> NumberUtils
+			.postDecrement((int) character);
 
 	/**
 	 * Indicates whether vectorized operations should be used (controlled via JVM property).
@@ -358,13 +362,18 @@ public final class StringUtils {
 			throw newNaftahInvalidEmptyInputStringCannotBeEmptyBugError();
 		}
 
-		BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation;
-		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects
-				.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
-			return applyOperationScalar(a, b, operation);
+		try {
+			BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation;
+			if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects
+					.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
+				return applyOperationScalar(a, b, operation);
+			}
+			else {
+				return applyOperationVectorized(a, b, operation, vectorOperation);
+			}
 		}
-		else {
-			return applyOperationVectorized(a, b, operation, vectorOperation);
+		catch (ArithmeticException arithmeticException) {
+			throw new NaftahBugError(arithmeticException);
 		}
 	}
 
@@ -719,6 +728,12 @@ public final class StringUtils {
 	 * @return the sum of the code points
 	 */
 	public static int stringToInt(String s) {
+		if (s == null) {
+			throw newNaftahInvalidEmptyInputStringCannotBeEmptyBugError();
+		}
+		if (s.isEmpty()) {
+			return 0;
+		}
 		return s.codePoints().sum();
 	}
 
