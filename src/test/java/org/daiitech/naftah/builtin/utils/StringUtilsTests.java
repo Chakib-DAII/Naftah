@@ -1,5 +1,9 @@
 package org.daiitech.naftah.builtin.utils;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -10,7 +14,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.daiitech.naftah.Naftah.VECTOR_API_PROPERTY;
 import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.TestUtils.doAssertBugEquals;
 
@@ -309,7 +312,6 @@ public class StringUtilsTests {
 	static Stream<Arguments> charWiseModuloProvider() {
 		return Stream
 				.of(
-					// Normal ASCII
 					Arguments
 							.of(true,
 								"ABC",
@@ -317,8 +319,6 @@ public class StringUtilsTests {
 								"" + (char) Math.floorMod('A', 'a') + (char) Math.floorMod('B', 'b') + (char) Math
 										.floorMod('C', 'c'),
 								null),
-
-					// Unicode with Arabic characters
 					Arguments
 							.of(true,
 								"مرح",
@@ -326,13 +326,9 @@ public class StringUtilsTests {
 								"" + (char) Math.floorMod('م', '1') + (char) Math.floorMod('ر', '2') + (char) Math
 										.floorMod('ح', '3'),
 								null),
-
-					// Empty cases
 					Arguments.of(true, "", "test", "", null),
 					Arguments.of(true, "test", "", "", null),
 					Arguments.of(true, "", "", "", null),
-
-					// Mixed Unicode + Latin
 					Arguments
 							.of(true,
 								"أبج",
@@ -340,8 +336,6 @@ public class StringUtilsTests {
 								"" + (char) Math.floorMod('أ', 'X') + (char) Math.floorMod('ب', 'Y') + (char) Math
 										.floorMod('ج', 'Z'),
 								null),
-
-					// Invalid: null inputs
 					Arguments
 							.of(false,
 								null,
@@ -360,8 +354,6 @@ public class StringUtilsTests {
 								null,
 								null,
 								StringUtils.newNaftahInvalidEmptyInputStringCannotBeEmptyBugError()),
-
-					// Modulo by zero (invalid operation)
 					Arguments
 							.of(false,
 								"ABC",
@@ -373,37 +365,35 @@ public class StringUtilsTests {
 
 	static Stream<Arguments> xorProvider() {
 		return Stream
-				.of(
-					// Normal ASCII
+				.of(Arguments
+						.of(true,
+							"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+							"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+							("" + (char) ('A' | 'a') + (char) ('B' | 'b') + (char) ('C' | 'c') + (char) ('D' | 'd') + (char) ('E' | 'e') + (char) ('F' | 'f') + (char) ('G' | 'g') + (char) ('H' | 'h') + (char) ('I' | 'i') + (char) ('J' | 'j') + (char) ('K' | 'k') + (char) ('L' | 'l') + (char) ('M' | 'm') + (char) ('N' | 'n') + (char) ('O' | 'o') + (char) ('P' | 'p') + (char) ('Q' | 'q') + (char) ('R' | 'r') + (char) ('S' | 's') + (char) ('T' | 't') + (char) ('U' | 'u') + (char) ('V' | 'v') + (char) ('W' | 'w') + (char) ('X' | 'x') + (char) ('Y' | 'y') + (char) ('Z' | 'z'))
+									.repeat(
+											10),
+							null),
 					Arguments
 							.of(true,
 								"ABC",
 								"abc",
 								"" + (char) ('A' ^ 'a') + (char) ('B' ^ 'b') + (char) ('C' ^ 'c'),
 								null),
-
-					// Unicode (Arabic)
 					Arguments
 							.of(true,
 								"مرح",
 								"123",
 								"" + (char) ('م' ^ '1') + (char) ('ر' ^ '2') + (char) ('ح' ^ '3'),
 								null),
-
-					// Empty input cases
 					Arguments.of(true, "", "test", "", null),
 					Arguments.of(true, "test", "", "", null),
 					Arguments.of(true, "", "", "", null),
-
-					// Mixed Arabic + Latin
 					Arguments
 							.of(true,
 								"أبج",
 								"XYZ",
 								"" + (char) ('أ' ^ 'X') + (char) ('ب' ^ 'Y') + (char) ('ج' ^ 'Z'),
 								null),
-
-					// Null inputs — should trigger NaftahBugError
 					Arguments
 							.of(false,
 								null,
@@ -427,7 +417,14 @@ public class StringUtilsTests {
 
 	static Stream<Arguments> orProvider() {
 		return Stream
-				.of(
+				.of(Arguments
+						.of(true,
+							"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+							"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+							("" + (char) ('A' ^ 'a') + (char) ('B' ^ 'b') + (char) ('C' ^ 'c') + (char) ('D' ^ 'd') + (char) ('E' ^ 'e') + (char) ('F' ^ 'f') + (char) ('G' ^ 'g') + (char) ('H' ^ 'h') + (char) ('I' ^ 'i') + (char) ('J' ^ 'j') + (char) ('K' ^ 'k') + (char) ('L' ^ 'l') + (char) ('M' ^ 'm') + (char) ('N' ^ 'n') + (char) ('O' ^ 'o') + (char) ('P' ^ 'p') + (char) ('Q' ^ 'q') + (char) ('R' ^ 'r') + (char) ('S' ^ 's') + (char) ('T' ^ 't') + (char) ('U' ^ 'u') + (char) ('V' ^ 'v') + (char) ('W' ^ 'w') + (char) ('X' ^ 'x') + (char) ('Y' ^ 'y') + (char) ('Z' ^ 'z'))
+									.repeat(
+											10),
+							null),
 					Arguments
 							.of(true,
 								"ABC",
@@ -473,36 +470,35 @@ public class StringUtilsTests {
 	static Stream<Arguments> andProvider() {
 		return Stream
 				.of(
-					// Normal ASCII
+					Arguments
+							.of(true,
+								"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+								"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+								("" + (char) ('A' & 'a') + (char) ('B' & 'b') + (char) ('C' & 'c') + (char) ('D' & 'd') + (char) ('E' & 'e') + (char) ('F' & 'f') + (char) ('G' & 'g') + (char) ('H' & 'h') + (char) ('I' & 'i') + (char) ('J' & 'j') + (char) ('K' & 'k') + (char) ('L' & 'l') + (char) ('M' & 'm') + (char) ('N' & 'n') + (char) ('O' & 'o') + (char) ('P' & 'p') + (char) ('Q' & 'q') + (char) ('R' & 'r') + (char) ('S' & 's') + (char) ('T' & 't') + (char) ('U' & 'u') + (char) ('V' & 'v') + (char) ('W' & 'w') + (char) ('X' & 'x') + (char) ('Y' & 'y') + (char) ('Z' & 'z'))
+										.repeat(
+												10),
+								null),
 					Arguments
 							.of(true,
 								"ABC",
 								"abc",
 								"" + (char) ('A' & 'a') + (char) ('B' & 'b') + (char) ('C' & 'c'),
 								null),
-
-					// Unicode (Arabic)
 					Arguments
 							.of(true,
 								"مرح",
 								"123",
 								"" + (char) ('م' & '1') + (char) ('ر' & '2') + (char) ('ح' & '3'),
 								null),
-
-					// Empty strings
 					Arguments.of(true, "", "test", "", null),
 					Arguments.of(true, "test", "", "", null),
 					Arguments.of(true, "", "", "", null),
-
-					// Mixed Arabic + Latin
 					Arguments
 							.of(true,
 								"أبج",
 								"XYZ",
 								"" + (char) ('أ' & 'X') + (char) ('ب' & 'Y') + (char) ('ج' & 'Z'),
 								null),
-
-					// Null input cases (invalid)
 					Arguments
 							.of(false,
 								null,
@@ -527,6 +523,11 @@ public class StringUtilsTests {
 	static Stream<Arguments> preIncrementProvider() {
 		return Stream
 				.of(
+					Arguments
+							.of(true,
+								"abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxy",
+								"bcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyz",
+								null),
 					Arguments.of(true, "abc", "bcd", null),
 					Arguments.of(true, "ABC", "BCD", null),
 					Arguments.of(true, "123", "234", null),
@@ -546,6 +547,11 @@ public class StringUtilsTests {
 	static Stream<Arguments> postIncrementDecrementProvider() {
 		return Stream
 				.of(
+					Arguments
+							.of(true,
+								"abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxy",
+								"abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxy",
+								null),
 					Arguments.of(true, "abc", "abc", null),
 					Arguments.of(true, "ABC", "ABC", null),
 					Arguments.of(true, "123", "123", null),
@@ -565,6 +571,11 @@ public class StringUtilsTests {
 	static Stream<Arguments> preDecrementProvider() {
 		return Stream
 				.of(
+					Arguments
+							.of(true,
+								"bcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyzbcdefghijklmnopqrstuvwxyz",
+								"abcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxyabcdefghijklmnopqrstuvwxy",
+								null),
 					Arguments.of(true, "bcd", "abc", null),
 					Arguments.of(true, "BCD", "ABC", null),
 					Arguments.of(true, "234", "123", null),
@@ -591,11 +602,12 @@ public class StringUtilsTests {
 			var result = resultSupplier.get();
 			assertEquals(result, expectedResult);
 			if (vectorCapable) {
-				System.setProperty(VECTOR_API_PROPERTY, Boolean.toString(true));
+				setUseVectorApi(true);
+
 				result = resultSupplier.get();
 				assertEquals(result, expectedResult);
 
-				System.setProperty(VECTOR_API_PROPERTY, Boolean.toString(false));
+				setUseVectorApi(false);
 			}
 		}
 		else {
@@ -606,9 +618,39 @@ public class StringUtilsTests {
 		}
 	}
 
+	static void setUseVectorApi(boolean useVectorApi) {
+		try {
+			Field field = StringUtils.class.getDeclaredField("USE_VECTOR_API");
+			field.setAccessible(true);
+
+			// Remove final modifier from the field
+			VarHandle MODIFIERS;
+
+			field.setAccessible(true);
+
+			var lookup = MethodHandles.privateLookupIn(Field.class, MethodHandles.lookup());
+			MODIFIERS = lookup.findVarHandle(Field.class, "modifiers", int.class);
+			int mods = field.getModifiers();
+
+			if (Modifier.isFinal(mods)) {
+				MODIFIERS.set(field, mods & ~Modifier.FINAL);
+			}
+
+			// Set new value
+			field.set(null, useVectorApi);
+		}
+		catch (Exception ignored) {
+		}
+	}
+
 	static Stream<Arguments> stringToIntProvider() {
 		return Stream
 				.of(
+					Arguments
+							.of(true,
+								"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+								('a' + 'b' + 'c' + 'd' + 'e' + 'f' + 'g' + 'h' + 'i' + 'j' + 'k' + 'l' + 'm' + 'n' + 'o' + 'p' + 'q' + 'r' + 's' + 't' + 'u' + 'v' + 'w' + 'x' + 'y' + 'z') * 10,
+								null),
 					Arguments.of(true, "abc", 'a' + 'b' + 'c', null),
 					Arguments.of(true, "ABC", 'A' + 'B' + 'C', null),
 					Arguments.of(true, "123", '1' + '2' + '3', null),
@@ -624,6 +666,60 @@ public class StringUtilsTests {
 							.of(false,
 								null,
 								0,
+								StringUtils.newNaftahInvalidEmptyInputStringCannotBeEmptyBugError())
+				);
+	}
+
+	static Stream<Arguments> notProvider() {
+		return Stream
+				.of(
+					Arguments
+							.of(true,
+								"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+								("" + (char) ~'a' + (char) ~'b' + (char) ~'c' + (char) ~'d' + (char) ~'e' + (char) ~'f' + (char) ~'g' + (char) ~'h' + (char) ~'i' + (char) ~'j' + (char) ~'k' + (char) ~'l' + (char) ~'m' + (char) ~'n' + (char) ~'o' + (char) ~'p' + (char) ~'q' + (char) ~'r' + (char) ~'s' + (char) ~'t' + (char) ~'u' + (char) ~'v' + (char) ~'w' + (char) ~'x' + (char) ~'y' + (char) ~'z')
+										.repeat(
+												10),
+
+								null),
+					Arguments
+							.of(true,
+								"abc",
+								"" + (char) ~'a' + (char) ~'b' + (char) ~'c',
+								null),
+					Arguments
+							.of(true,
+								"ABC",
+								"" + (char) ~'A' + (char) ~'B' + (char) ~'C',
+								null),
+					Arguments
+							.of(true,
+								"123",
+								"" + (char) ~'1' + (char) ~'2' + (char) ~'3',
+								null),
+					Arguments
+							.of(true,
+								"!@#",
+								"" + (char) ~'!' + (char) ~'@' + (char) ~'#',
+								null),
+					Arguments
+							.of(true,
+								"",
+								"",
+								null),
+					Arguments
+							.of(true,
+								"\u0000",
+								"" + (char) ~0,
+								null),
+					Arguments
+							.of(true,
+								"\uffff",
+								"" + (char) ~0xffff,
+								null),
+					Arguments
+							.of(false,
+								null,
+								null,
 								StringUtils.newNaftahInvalidEmptyInputStringCannotBeEmptyBugError())
 				);
 	}
@@ -818,6 +914,15 @@ public class StringUtilsTests {
 			String expectedResult,
 			NaftahBugError expectedNaftahBugError) {
 		runTest(true, valid, () -> StringUtils.or(left, right), expectedResult, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@MethodSource("notProvider")
+	void not(   boolean valid,
+				String a,
+				String expectedResult,
+				NaftahBugError expectedNaftahBugError) {
+		runTest(true, valid, () -> StringUtils.not(a), expectedResult, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest
