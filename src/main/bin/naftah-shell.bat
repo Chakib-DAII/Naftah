@@ -63,8 +63,10 @@ set CMD_LINE_ARGS=%$
 
 :execute
 @rem Setup the command line
-
 set CLASSPATH=%NAFTAH_HOME%\lib\*
+
+@rem Append JVM options to JAVA_OPTS
+set JAVA_OPTS=%JAVA_OPTS% --add-modules=jdk.incubator.vector --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
 
 @if /I not "%DEBUG%" == "true" goto executeNoDebug
 

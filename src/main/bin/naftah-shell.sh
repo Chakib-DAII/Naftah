@@ -119,6 +119,9 @@ if $cygwin; then
 	CLASSPATH=$(cygpath --path --mixed "$CLASSPATH")
 fi
 
+# Append JVM options to JAVA_OPTS
+JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector --add-opens=java.base/java.lang.reflect=ALL-UNNAMED"
+
 IFS=" " read -r -a javaOpts <<< "$JAVA_OPTS"
 
 if [[ "${DEBUG}" == "true" ]]; then
