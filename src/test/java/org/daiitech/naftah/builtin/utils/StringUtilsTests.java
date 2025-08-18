@@ -369,7 +369,7 @@ public class StringUtilsTests {
 						.of(true,
 							"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
 							"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
-							("" + (char) ('A' | 'a') + (char) ('B' | 'b') + (char) ('C' | 'c') + (char) ('D' | 'd') + (char) ('E' | 'e') + (char) ('F' | 'f') + (char) ('G' | 'g') + (char) ('H' | 'h') + (char) ('I' | 'i') + (char) ('J' | 'j') + (char) ('K' | 'k') + (char) ('L' | 'l') + (char) ('M' | 'm') + (char) ('N' | 'n') + (char) ('O' | 'o') + (char) ('P' | 'p') + (char) ('Q' | 'q') + (char) ('R' | 'r') + (char) ('S' | 's') + (char) ('T' | 't') + (char) ('U' | 'u') + (char) ('V' | 'v') + (char) ('W' | 'w') + (char) ('X' | 'x') + (char) ('Y' | 'y') + (char) ('Z' | 'z'))
+							("" + (char) ('A' ^ 'a') + (char) ('B' ^ 'b') + (char) ('C' ^ 'c') + (char) ('D' ^ 'd') + (char) ('E' ^ 'e') + (char) ('F' ^ 'f') + (char) ('G' ^ 'g') + (char) ('H' ^ 'h') + (char) ('I' ^ 'i') + (char) ('J' ^ 'j') + (char) ('K' ^ 'k') + (char) ('L' ^ 'l') + (char) ('M' ^ 'm') + (char) ('N' ^ 'n') + (char) ('O' ^ 'o') + (char) ('P' ^ 'p') + (char) ('Q' ^ 'q') + (char) ('R' ^ 'r') + (char) ('S' ^ 's') + (char) ('T' ^ 't') + (char) ('U' ^ 'u') + (char) ('V' ^ 'v') + (char) ('W' ^ 'w') + (char) ('X' ^ 'x') + (char) ('Y' ^ 'y') + (char) ('Z' ^ 'z'))
 									.repeat(
 											10),
 							null),
@@ -421,7 +421,7 @@ public class StringUtilsTests {
 						.of(true,
 							"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
 							"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
-							("" + (char) ('A' ^ 'a') + (char) ('B' ^ 'b') + (char) ('C' ^ 'c') + (char) ('D' ^ 'd') + (char) ('E' ^ 'e') + (char) ('F' ^ 'f') + (char) ('G' ^ 'g') + (char) ('H' ^ 'h') + (char) ('I' ^ 'i') + (char) ('J' ^ 'j') + (char) ('K' ^ 'k') + (char) ('L' ^ 'l') + (char) ('M' ^ 'm') + (char) ('N' ^ 'n') + (char) ('O' ^ 'o') + (char) ('P' ^ 'p') + (char) ('Q' ^ 'q') + (char) ('R' ^ 'r') + (char) ('S' ^ 's') + (char) ('T' ^ 't') + (char) ('U' ^ 'u') + (char) ('V' ^ 'v') + (char) ('W' ^ 'w') + (char) ('X' ^ 'x') + (char) ('Y' ^ 'y') + (char) ('Z' ^ 'z'))
+							("" + (char) ('A' | 'a') + (char) ('B' | 'b') + (char) ('C' | 'c') + (char) ('D' | 'd') + (char) ('E' | 'e') + (char) ('F' | 'f') + (char) ('G' | 'g') + (char) ('H' | 'h') + (char) ('I' | 'i') + (char) ('J' | 'j') + (char) ('K' | 'k') + (char) ('L' | 'l') + (char) ('M' | 'm') + (char) ('N' | 'n') + (char) ('O' | 'o') + (char) ('P' | 'p') + (char) ('Q' | 'q') + (char) ('R' | 'r') + (char) ('S' | 's') + (char) ('T' | 't') + (char) ('U' | 'u') + (char) ('V' | 'v') + (char) ('W' | 'w') + (char) ('X' | 'x') + (char) ('Y' | 'y') + (char) ('Z' | 'z'))
 									.repeat(
 											10),
 							null),
