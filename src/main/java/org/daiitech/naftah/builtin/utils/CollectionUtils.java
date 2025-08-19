@@ -70,25 +70,38 @@ public final class CollectionUtils {
 	/**
 	 * Applies a binary operation between each element of an array and a scalar number.
 	 *
-	 * @param arr       the array of objects
-	 * @param scalar    the scalar number
-	 * @param operation the binary operation to apply
+	 * @param arr           the array of objects
+	 * @param scalar        the scalar number
+	 * @param isLeftOperand is the array left operand
+	 * @param operation     the binary operation to apply
 	 * @return a new array containing the results of the operation
 	 */
-	public static Object[] applyOperation(Object[] arr, Number scalar, BinaryOperation operation) {
-		return Arrays.stream(arr).map(o -> ObjectUtils.applyOperation(o, scalar, operation)).toArray(Object[]::new);
+	public static Object[] applyOperation(  Object[] arr,
+											Number scalar,
+											boolean isLeftOperand,
+											BinaryOperation operation) {
+		return Arrays
+				.stream(arr)
+				.map(o -> isLeftOperand ?
+						ObjectUtils.applyOperation(o, scalar, operation) :
+						ObjectUtils.applyOperation(scalar, o, operation))
+				.toArray(Object[]::new);
 	}
 
 	/**
 	 * Applies a binary operation between each element of a collection and a scalar number.
 	 *
-	 * @param collection the collection of objects
-	 * @param scalar     the scalar number
-	 * @param operation  the binary operation to apply
+	 * @param collection    the collection of objects
+	 * @param scalar        the scalar number
+	 * @param isLeftOperand is the collection left operand
+	 * @param operation     the binary operation to apply
 	 * @return a new collection containing the results of the operation
 	 */
-	public static Collection<?> applyOperation(Collection<?> collection, Number scalar, BinaryOperation operation) {
-		return List.of(applyOperation(collection.toArray(Object[]::new), scalar, operation));
+	public static Collection<?> applyOperation( Collection<?> collection,
+												Number scalar,
+												boolean isLeftOperand,
+												BinaryOperation operation) {
+		return List.of(applyOperation(collection.toArray(Object[]::new), scalar, isLeftOperand, operation));
 	}
 
 	/**
@@ -121,16 +134,27 @@ public final class CollectionUtils {
 	/**
 	 * Applies a binary operation between each value in a map and a scalar number.
 	 *
-	 * @param map       the map of key-value pairs
-	 * @param scalar    the scalar number
-	 * @param operation the binary operation to apply
+	 * @param map           the map of key-value pairs
+	 * @param scalar        the scalar number
+	 * @param isLeftOperand is the map left operand
+	 * @param operation     the binary operation to apply
 	 * @return a new map containing the results of the operation
 	 */
-	public static Map<?, ?> applyOperation(Map<?, ?> map, Number scalar, BinaryOperation operation) {
+	public static Map<?, ?> applyOperation( Map<?, ?> map,
+											Number scalar,
+											boolean isLeftOperand,
+											BinaryOperation operation) {
 		Map<Object, Object> result = new HashMap<>();
 
 		for (var entry : map.entrySet()) {
-			result.put(entry.getKey(), ObjectUtils.applyOperation(entry.getValue(), scalar, operation)); // Reuse from earlier
+			result
+					.put(   entry.getKey(),
+							isLeftOperand ?
+									ObjectUtils.applyOperation(entry.getValue(), scalar, operation) :
+									ObjectUtils
+											.applyOperation(scalar,
+															entry.getValue(),
+															operation)); // Reuse from earlier
 		}
 
 		return result;
