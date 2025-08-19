@@ -51,6 +51,8 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_NUMBER_FORMAT;
  * @author Chakib Daii
  */
 public final class ObjectUtils {
+	public static final String EMPTY_ARGUMENT_ERROR = "لا يمكن أن يكون الوسيط فارغًا.";
+	public static final String EMPTY_ARGUMENTS_ERROR = "لا يمكن أن تكون الوسائط فارغة.";
 
 
 	/**
@@ -423,7 +425,7 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
 		if (left == null || right == null) {
-			throw new NaftahBugError("لا يمكن أن تكون الوسائط فارغة.");
+			throw newNaftahBugNullInputError(false);
 		}
 
 		// Number vs Number
@@ -435,17 +437,17 @@ public final class ObjectUtils {
 		if (left instanceof Number number) {
 			// Number vs Collection (scalar multiplication)
 			if (right instanceof Collection<?> collection) {
-				return CollectionUtils.applyOperation(collection, number, operation);
+				return CollectionUtils.applyOperation(collection, number, false, operation);
 			}
 
 			// Number vs Array (scalar multiplication)
 			if (right.getClass().isArray()) {
-				return CollectionUtils.applyOperation((Object[]) right, number, operation);
+				return CollectionUtils.applyOperation((Object[]) right, number, false, operation);
 			}
 
 			// Number vs Map (multiply all values by scalar)
 			if (right instanceof Map<?, ?> map) {
-				return CollectionUtils.applyOperation(map, number, operation);
+				return CollectionUtils.applyOperation(map, number, false, operation);
 			}
 
 			return operation.apply(number, right);
@@ -454,17 +456,17 @@ public final class ObjectUtils {
 		if (right instanceof Number number) {
 			// Collection vs Number (scalar multiplication)
 			if (left instanceof Collection<?> collection) {
-				return CollectionUtils.applyOperation(collection, number, operation);
+				return CollectionUtils.applyOperation(collection, number, true, operation);
 			}
 
 			// Array vs Number (scalar multiplication)
 			if (left.getClass().isArray()) {
-				return CollectionUtils.applyOperation((Object[]) left, number, operation);
+				return CollectionUtils.applyOperation((Object[]) left, number, true, operation);
 			}
 
 			// Map vs Number (multiply all values by scalar)
 			if (left instanceof Map<?, ?> map) {
-				return CollectionUtils.applyOperation(map, number, operation);
+				return CollectionUtils.applyOperation(map, number, true, operation);
 			}
 
 			return operation.apply(left, number);
@@ -518,7 +520,7 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object a, UnaryOperation operation) {
 		if (a == null) {
-			throw new NaftahBugError("لا يمكن أن يكون الوسيط فارغًا.");
+			throw newNaftahBugNullInputError(true);
 		}
 
 		// Number
@@ -713,5 +715,19 @@ public final class ObjectUtils {
 		synchronized (ARABIC_NUMBER_FORMAT) {
 			return ARABIC_NUMBER_FORMAT.format(number);
 		}
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} indicating that a required input argument is null or missing.
+	 *
+	 * <p>This method selects the appropriate error message depending on whether the error is related to a
+	 * single input or multiple inputs.</p>
+	 *
+	 * @param singleInput {@code true} if the error is due to a single missing input argument;
+	 *                    {@code false} if multiple input arguments are missing.
+	 * @return a {@link NaftahBugError} instance with the corresponding error message.
+	 */
+	public static NaftahBugError newNaftahBugNullInputError(boolean singleInput) {
+		return new NaftahBugError(singleInput ? EMPTY_ARGUMENT_ERROR : EMPTY_ARGUMENTS_ERROR);
 	}
 }
