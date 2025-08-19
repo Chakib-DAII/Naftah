@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.newNaftahBugNullInputError;
+
 public class FunctionCallProvider implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
@@ -185,9 +187,13 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "هل_صفر(0،0)", true, null),
 					Arguments.of(true, "هل_صفر(2،0-)", false, null),
 					Arguments.of(true, "هل_يساوي(2 ، 2)", true, null),
+					Arguments.of(false, "هل_يساوي(فارغ ، 2)", null, newNaftahBugNullInputError(false)),
+					Arguments.of(false, "هل_يساوي(2 ، فارغ)", null, newNaftahBugNullInputError(false)),
 					Arguments.of(true, "هل_يساوي(2- ، 2)", false, null),
 					Arguments.of(true, "هل_يساوي(2 ، 2-)", false, null),
 					Arguments.of(true, "هل_يساوي(1 ، 2)", false, null),
+					Arguments.of(false, "هل_لا_يساوي(فارغ ، 2)", null, newNaftahBugNullInputError(false)),
+					Arguments.of(false, "هل_لا_يساوي(2 ، فارغ)", null, newNaftahBugNullInputError(false)),
 					Arguments.of(true, "هل_لا_يساوي(2 ، 2)", false, null),
 					Arguments.of(true, "هل_لا_يساوي(2- ، 2)", true, null),
 					Arguments.of(true, "هل_لا_يساوي(2 ، 2-)", true, null),
