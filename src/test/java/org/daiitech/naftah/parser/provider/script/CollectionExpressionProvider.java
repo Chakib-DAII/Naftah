@@ -64,7 +64,7 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 																																			1))))))
 																))),
 								null),
-					Arguments.of(true, "{١، ٢، ٣، ٤}", new HashSet() {
+					Arguments.of(true, "{١، ٢، ٣، ٤}", new HashSet<>() {
 						{
 							add(1);
 							add(2);
@@ -121,7 +121,674 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 							put("العناوين", List.of("المنزل", "العمل"));
 							put("الأرقام", Tuple.of(1001, 2002));
 						}
-					}, null)
+					}, null),
+					Arguments.of(true, "2 * [٨٥، ٩٠، ٧٨، ٩٢]", List.of(170, 180, 156, 184), null),
+					Arguments.of(true, "2 + [٨٥، ٩٠، ٧٨، ٩٢]", List.of(87, 92, 80, 94), null),
+					Arguments.of(true, "2 - [٨٥، ٩٠، ٧٨، ٩٢]", List.of(-83, -88, -76, -90), null),
+					Arguments.of(true, "2 / [٨٥، ٩٠، ٧٨، ٩٢]", List.of(0, 0, 0, 0), null),
+					Arguments.of(true, "2 % [٨٥، ٩٠، ٧٨، ٩٢]", List.of(2, 2, 2, 2), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] * 2", List.of(170, 180, 156, 184), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] + 2", List.of(87, 92, 80, 94), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] - 2", List.of(83, 88, 76, 90), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] / 2", List.of(42, 45, 39, 46), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] % 2", List.of(1, 0, 0, 0), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢]++", List.of(85, 90, 78, 92), null),
+					Arguments.of(true, "++[٨٥، ٩٠، ٧٨، ٩٢]", List.of(86, 91, 79, 93), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢]--", List.of(85, 90, 78, 92), null),
+					Arguments.of(true, "--[٨٥، ٩٠، ٧٨، ٩٢]", List.of(84, 89, 77, 91), null),
+					Arguments.of(true, "بت_ليس [٨٥، ٩٠، ٧٨، ٩٢]", List.of(-86, -91, -79, -93), null),
+					Arguments
+							.of(true,
+								"[٨٥، ٩٠، ٧٨، ٩٢] * [٨٥، ٩٠، ٧٨، ٩٢]",
+								List.of(7225, 8100, 6084, 8464),
+								null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] + [٨٥، ٩٠، ٧٨، ٩٢]", List.of(170, 180, 156, 184), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] - [٨٥، ٩٠، ٧٨، ٩٢]", List.of(0, 0, 0, 0), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] / [٨٥، ٩٠، ٧٨، ٩٢]", List.of(1, 1, 1, 1), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] % [٨٥، ٩٠، ٧٨، ٩٢]", List.of(0, 0, 0, 0), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] .*. [٨٥، ٩٠، ٧٨، ٩٢]", List.of(85, 90, 78, 92), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] .+. [٨٥، ٩٠، ٧٨، ٩٢]", List.of(0, 0, 0, 0), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] .-. [٨٥، ٩٠، ٧٨، ٩٢]", List.of(-1, -1, -1, -1), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] ./. [2، 2، 2، 2]", List.of(21, 22, 19, 23), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] .%. [٨٥، ٩٠، ٧٨، ٩٢]", List.of(84, 88, 76, 88), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] بت_و [٨٥، ٩٠، ٧٨، ٩٢]", List.of(85, 90, 78, 92), null),
+					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] بت_أو [٨٥، ٩٠، ٧٨، ٩٢]", List.of(85, 90, 78, 92), null),
+					Arguments
+							.of(true,
+								"[٨٥، ٩٠، ٧٨، ٩٢] بت_أو_حصري [٨٥، ٩٠، ٧٨، ٩٢]",
+								List.of(0, 0, 0, 0),
+								null),
+					Arguments
+							.of(true,
+								"[٨٥، ٩٠، ٧٨، ٩٢] أصغر_من [٨٥، ٩٠، ٧٨، ٩٢]",
+								List.of(false, false, false, false),
+								null),
+					Arguments
+							.of(true,
+								"[٨٥، ٩٠، ٧٨، ٩٢] أكبر_من [٨٥، ٩٠، ٧٨، ٩٢]",
+								List.of(false, false, false, false),
+								null),
+					Arguments
+							.of(true,
+								"[٨٥، ٩٠، ٧٨، ٩٢] أصغر_أو_يساوي [٨٥، ٩٠، ٧٨، ٩٢]",
+								List.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"[٨٥، ٩٠، ٧٨، ٩٢] أكبر_أو_يساوي [٨٥، ٩٠، ٧٨، ٩٢]",
+								List.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"[٨٥، ٩٠، ٧٨، ٩٢] يساوي [٨٥، ٩٠، ٧٨، ٩٢]",
+								List.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"[٨٥، ٩٠، ٧٨، ٩٢] لا_يساوي [٨٥، ٩٠، ٧٨، ٩٢]",
+								List.of(false, false, false, false),
+								null),
+					Arguments.of(true, "2 * (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(170, 180, 156, 184), null),
+					Arguments.of(true, "2 + (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(87, 92, 80, 94), null),
+					Arguments.of(true, "2 - (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(-83, -88, -76, -90), null),
+					Arguments.of(true, "2 / (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(0, 0, 0, 0), null),
+					Arguments.of(true, "2 % (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(2, 2, 2, 2), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) * 2", Tuple.of(170, 180, 156, 184), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) + 2", Tuple.of(87, 92, 80, 94), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) - 2", Tuple.of(83, 88, 76, 90), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) / 2", Tuple.of(42, 45, 39, 46), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) % 2", Tuple.of(1, 0, 0, 0), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢)++", Tuple.of(85, 90, 78, 92), null),
+					Arguments.of(true, "++(٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(86, 91, 79, 93), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢)--", Tuple.of(85, 90, 78, 92), null),
+					Arguments.of(true, "--(٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(84, 89, 77, 91), null),
+					Arguments.of(true, "بت_ليس (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(-86, -91, -79, -93), null),
+					Arguments
+							.of(true,
+								"(٨٥، ٩٠، ٧٨، ٩٢) * (٨٥، ٩٠، ٧٨، ٩٢)",
+								Tuple.of(7225, 8100, 6084, 8464),
+								null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) + (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(170, 180, 156, 184), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) - (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(0, 0, 0, 0), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) / (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(1, 1, 1, 1), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) % (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(0, 0, 0, 0), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) .*. (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(85, 90, 78, 92), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) .+. (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(0, 0, 0, 0), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) .-. (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(-1, -1, -1, -1), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) ./. [2، 2، 2، 2]", Tuple.of(21, 22, 19, 23), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) .%. (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(84, 88, 76, 88), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) بت_و (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(85, 90, 78, 92), null),
+					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) بت_أو (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(85, 90, 78, 92), null),
+					Arguments
+							.of(true,
+								"(٨٥، ٩٠، ٧٨، ٩٢) بت_أو_حصري (٨٥، ٩٠، ٧٨، ٩٢)",
+								Tuple.of(0, 0, 0, 0),
+								null),
+					Arguments
+							.of(true,
+								"(٨٥، ٩٠، ٧٨، ٩٢) أصغر_من (٨٥، ٩٠، ٧٨، ٩٢)",
+								Tuple.of(false, false, false, false),
+								null),
+					Arguments
+							.of(true,
+								"(٨٥، ٩٠، ٧٨، ٩٢) أكبر_من (٨٥، ٩٠، ٧٨، ٩٢)",
+								Tuple.of(false, false, false, false),
+								null),
+					Arguments
+							.of(true,
+								"(٨٥، ٩٠، ٧٨، ٩٢) أصغر_أو_يساوي (٨٥، ٩٠، ٧٨، ٩٢)",
+								Tuple.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"(٨٥، ٩٠، ٧٨، ٩٢) أكبر_أو_يساوي (٨٥، ٩٠، ٧٨، ٩٢)",
+								Tuple.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"(٨٥، ٩٠، ٧٨، ٩٢) يساوي (٨٥، ٩٠، ٧٨، ٩٢)",
+								Tuple.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"(٨٥، ٩٠، ٧٨، ٩٢) لا_يساوي (٨٥، ٩٠، ٧٨، ٩٢)",
+								Tuple.of(false, false, false, false),
+								null),
+					Arguments.of(true, "2 * {٨٥، ٩٠، ٧٨، ٩٢}", List.of(170, 180, 184, 156), null),
+					Arguments.of(true, "2 + {٨٥، ٩٠، ٧٨، ٩٢}", List.of(87, 92, 94, 80), null),
+					Arguments.of(true, "2 - {٨٥، ٩٠، ٧٨، ٩٢}", List.of(-83, -88, -90, -76), null),
+					Arguments.of(true, "2 / {٨٥، ٩٠، ٧٨، ٩٢}", List.of(0, 0, 0, 0), null),
+					Arguments.of(true, "2 % {٨٥، ٩٠، ٧٨، ٩٢}", List.of(2, 2, 2, 2), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} * 2", List.of(170, 180, 184, 156), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} + 2", List.of(87, 92, 94, 80), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} - 2", List.of(83, 88, 90, 76), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} / 2", List.of(42, 45, 46, 39), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} % 2", List.of(1, 0, 0, 0), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢}++", List.of(85, 90, 92, 78), null),
+					Arguments.of(true, "++{٨٥، ٩٠، ٧٨، ٩٢}", List.of(86, 91, 93, 79), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢}--", List.of(85, 90, 92, 78), null),
+					Arguments.of(true, "--{٨٥، ٩٠، ٧٨، ٩٢}", List.of(84, 89, 91, 77), null),
+					Arguments.of(true, "بت_ليس {٨٥، ٩٠، ٧٨، ٩٢}", List.of(-86, -91, -93, -79), null),
+					Arguments
+							.of(true,
+								"{٨٥، ٩٠، ٧٨، ٩٢} * {٨٥، ٩٠، ٧٨، ٩٢}",
+								List.of(7225, 8100, 8464, 6084),
+								null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} + {٨٥، ٩٠، ٧٨، ٩٢}", List.of(170, 180, 184, 156), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} - {٨٥، ٩٠، ٧٨، ٩٢}", List.of(0, 0, 0, 0), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} / {٨٥، ٩٠، ٧٨، ٩٢}", List.of(1, 1, 1, 1), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} % {٨٥، ٩٠، ٧٨، ٩٢}", List.of(0, 0, 0, 0), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} .*. {٨٥، ٩٠، ٧٨، ٩٢}", List.of(85, 90, 92, 78), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} .+. {٨٥، ٩٠، ٧٨، ٩٢}", List.of(0, 0, 0, 0), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} .-. {٨٥، ٩٠، ٧٨، ٩٢}", List.of(-1, -1, -1, -1), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} ./. [2، 2، 2، 2]", List.of(21, 22, 23, 19), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} .%. {٨٥، ٩٠، ٧٨، ٩٢}", List.of(84, 88, 88, 76), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} بت_و {٨٥، ٩٠، ٧٨، ٩٢}", List.of(85, 90, 92, 78), null),
+					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} بت_أو {٨٥، ٩٠، ٧٨، ٩٢}", List.of(85, 90, 92, 78), null),
+					Arguments
+							.of(true,
+								"{٨٥، ٩٠، ٧٨، ٩٢} بت_أو_حصري {٨٥، ٩٠، ٧٨، ٩٢}",
+								List.of(0, 0, 0, 0),
+								null),
+					Arguments
+							.of(true,
+								"{٨٥، ٩٠، ٧٨، ٩٢} أصغر_من {٨٥، ٩٠، ٧٨، ٩٢}",
+								List.of(false, false, false, false),
+								null),
+					Arguments
+							.of(true,
+								"{٨٥، ٩٠، ٧٨، ٩٢} أكبر_من {٨٥، ٩٠، ٧٨، ٩٢}",
+								List.of(false, false, false, false),
+								null),
+					Arguments
+							.of(true,
+								"{٨٥، ٩٠، ٧٨، ٩٢} أصغر_أو_يساوي {٨٥، ٩٠، ٧٨، ٩٢}",
+								List.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"{٨٥، ٩٠، ٧٨، ٩٢} أكبر_أو_يساوي {٨٥، ٩٠، ٧٨، ٩٢}",
+								List.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"{٨٥، ٩٠، ٧٨، ٩٢} يساوي {٨٥، ٩٠، ٧٨، ٩٢}",
+								List.of(true, true, true, true),
+								null),
+					Arguments
+							.of(true,
+								"{٨٥، ٩٠، ٧٨، ٩٢} لا_يساوي {٨٥، ٩٠، ٧٨، ٩٢}",
+								List.of(false, false, false, false),
+								null),
+					Arguments
+							.of(true,
+								"""
+															2 * {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", 12680);
+										put("عمر", 40);
+										put("معدل", 176);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+															2 + {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", 6342);
+										put("عمر", 22);
+										put("معدل", 90);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+									2 - {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", -6338);
+										put("عمر", -18);
+										put("معدل", -86);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								2 / {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", 0);
+										put("عمر", 0);
+										put("معدل", 0);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								2 % {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", 2);
+										put("عمر", 2);
+										put("معدل", 2);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} * 2
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "أحمدأحمد");
+										put("عمر", 40);
+										put("معدل", 176);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} + 2
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "أحمد2");
+										put("عمر", 22);
+										put("معدل", 90);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} - 2
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "أحمد");
+										put("عمر", 18);
+										put("معدل", 86);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} / 2
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", new String[]{"أح", "مد"});
+										put("عمر", 10);
+										put("معدل", 44);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} % 2
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "\u0015");
+										put("عمر", 0);
+										put("معدل", 0);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}++
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "أحمد");
+										put("عمر", 20);
+										put("معدل", 88);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								++{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "ؤخنذ");
+										put("عمر", 21);
+										put("معدل", 89);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}--
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "أحمد");
+										put("عمر", 20);
+										put("معدل", 88);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								--{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "آجلخ");
+										put("عمر", 19);
+										put("معدل", 87);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								بت_ليس {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "隆戮了類");
+										put("عمر", -21);
+										put("معدل", -89);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} * {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "\uA8C9⏩亙㲡");
+										put("عمر", 400);
+										put("معدل", 7744);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} + {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "أحمدأحمد");
+										put("عمر", 40);
+										put("معدل", 176);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} - {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "");
+										put("عمر", 0);
+										put("معدل", 0);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} / {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", new String[0]);
+										put("عمر", 1);
+										put("معدل", 1);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{ "عمر": ٢٠, "معدل": ٨٨} % { "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("عمر", 0);
+										put("معدل", 0);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} .*. {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "\uA8C9⏩亙㲡");
+										put("عمر", 20);
+										put("معدل", 88);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} .+. {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "ెౚಊ\u0C5E");
+										put("عمر", 0);
+										put("معدل", 0);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{ "عمر": ٢٠, "معدل": ٨٨} .-. { "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("عمر", -1);
+										put("معدل", -1);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{ "عمر": ٢٠, "معدل": ٨٨} ./. {"عمر": 2, "معدل": 7}
+
+								""",
+								new HashMap<>() {
+									{
+										put("عمر", 5);
+										put("معدل", 0);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{"عمر": ٢٠, "معدل": ٨٨} .%. {"عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("عمر", 16);
+										put("معدل", 80);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} بت_و {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "أحمد");
+										put("عمر", 20);
+										put("معدل", 88);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} بت_أو {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", "أحمد");
+										put("عمر", 20);
+										put("معدل", 88);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								{"عمر": ٢٠, "معدل": ٨٨} بت_أو_حصري {"عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("عمر", 0);
+										put("معدل", 0);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} أصغر_من {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", false);
+										put("عمر", false);
+										put("معدل", false);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} أكبر_من {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", false);
+										put("عمر", false);
+										put("معدل", false);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} أصغر_أو_يساوي {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", true);
+										put("عمر", true);
+										put("معدل", true);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} أكبر_أو_يساوي {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", true);
+										put("عمر", true);
+										put("معدل", true);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} يساوي {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								new HashMap<>() {
+									{
+										put("اسم", true);
+										put("عمر", true);
+										put("معدل", true);
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} لا_يساوي {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+
+								new HashMap<>() {
+									{
+										put("اسم", false);
+										put("عمر", false);
+										put("معدل", false);
+									}
+								},
+								null)
 				);
 	}
 }
