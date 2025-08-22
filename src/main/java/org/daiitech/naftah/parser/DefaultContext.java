@@ -94,38 +94,39 @@ public class DefaultContext {
 	/**
 	 * Generates unique function call IDs based on the depth, function name, and a random UUID.
 	 */
-	public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (  depth,
-																							functionName) -> ("%s" + "-%s-%s")
-																									.formatted(
-																												depth,
-																												functionName,
-																												UUID
-																														.randomUUID());
+	public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (depth,
+																						  functionName) -> ("%s" +
+			"-%s-%s")
+			.formatted(
+					depth,
+					functionName,
+					UUID
+							.randomUUID());
 
 	/**
 	 * Generates unique parameter names based on the function name and parameter name.
 	 */
-	public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR = ( functionName,
-																						parameterName) -> "%s-%s"
-																								.formatted(
-																											functionName,
-																											parameterName);
+	public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR = (functionName,
+																					   parameterName) -> "%s-%s"
+			.formatted(
+					functionName,
+					parameterName);
 
 	/**
 	 * Generates unique argument names based on the function call ID and argument name.
 	 */
-	public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (  functionCallId,
-																						argumentName) -> "%s-%s"
-																								.formatted(
-																											functionCallId,
-																											argumentName);
+	public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (functionCallId,
+																					  argumentName) -> "%s-%s"
+			.formatted(
+					functionCallId,
+					argumentName);
 
 	/**
 	 * Generates unique loop labels for unlabeled loops based on depth and a UUID.
 	 */
 	public static final Function<Integer, String> LOOP_ID_GENERATOR = (depth) -> "%s-loop-%s"
-			.formatted( depth,
-						UUID.randomUUID());
+			.formatted(depth,
+					   UUID.randomUUID());
 
 	/**
 	 * Global map holding contexts indexed by their depth.
@@ -149,41 +150,41 @@ public class DefaultContext {
 	 */
 	public static final BiFunction<String, DefaultContext, VariableLookupResult<Object>> VARIABLE_GETTER = (varName,
 																											context) -> Optional
-																													.ofNullable(context
-																															.getLoopVariable(   varName,
-																																				true))
-																													.flatMap(functionArgument -> Optional
-																															.of(VariableLookupResult
-																																	.of(varName,
-																																		functionArgument.b)))
-																													.orElseGet(() -> Optional
-																															.ofNullable(context
-																																	.getFunctionArgument(   varName,
-																																							true))
-																															.flatMap(functionArgument -> Optional
-																																	.of(VariableLookupResult
-																																			.of(varName,
-																																				functionArgument.b)))
-																															.orElseGet(() -> Optional
-																																	.ofNullable(context
-																																			.getFunctionParameter(  varName,
-																																									true))
-																																	.flatMap(functionParameter -> Optional
-																																			.of(VariableLookupResult
-																																					.of(varName,
-																																						functionParameter.b
-																																								.getValue())))
-																																	.orElseGet(() -> Optional
-																																			.ofNullable(context
-																																					.getVariable(   varName,
-																																									true))
-																																			.flatMap(declaredVariable -> Optional
-																																					.of(VariableLookupResult
-																																							.of(varName,
-																																								declaredVariable.b
-																																										.getValue())))
-																																			.orElse(VariableLookupResult
-																																					.notFound(varName)))));
+			.ofNullable(context
+								.getLoopVariable(varName,
+												 true))
+			.flatMap(functionArgument -> Optional
+					.of(VariableLookupResult
+								.of(varName,
+									functionArgument.b)))
+			.orElseGet(() -> Optional
+					.ofNullable(context
+										.getFunctionArgument(varName,
+															 true))
+					.flatMap(functionArgument -> Optional
+							.of(VariableLookupResult
+										.of(varName,
+											functionArgument.b)))
+					.orElseGet(() -> Optional
+							.ofNullable(context
+												.getFunctionParameter(varName,
+																	  true))
+							.flatMap(functionParameter -> Optional
+									.of(VariableLookupResult
+												.of(varName,
+													functionParameter.b
+															.getValue())))
+							.orElseGet(() -> Optional
+									.ofNullable(context
+														.getVariable(varName,
+																	 true))
+									.flatMap(declaredVariable -> Optional
+											.of(VariableLookupResult
+														.of(varName,
+															declaredVariable.b
+																	.getValue())))
+									.orElse(VariableLookupResult
+													.notFound(varName)))));
 
 	/**
 	 * A supplier task to perform class scanning, loading, filtering, and extraction of JVM and builtin functions
@@ -217,8 +218,8 @@ public class DefaultContext {
 																							ClassUtils::isAccessibleClass);
 			var accessibleClassFuture = internalExecutor.submit(accessibleClassLoaderTask);
 
-			Callable<Map<String, Class<?>>> instantiableClassLoaderTask = () -> filterClasses(  result.getClasses(),
-																								ClassUtils::isInstantiableClass);
+			Callable<Map<String, Class<?>>> instantiableClassLoaderTask = () -> filterClasses(result.getClasses(),
+																							  ClassUtils::isInstantiableClass);
 			var instantiableClassFuture = internalExecutor.submit(instantiableClassLoaderTask);
 
 			result.setAccessibleClasses(accessibleClassFuture.get());
@@ -231,11 +232,11 @@ public class DefaultContext {
 			};
 
 			Callable<Map<String, List<JvmFunction>>> jvmFunctionsLoaderTask = () -> getClassMethods(
-																									accessibleAndInstantiable);
+					accessibleAndInstantiable);
 			var jvmFunctionsFuture = internalExecutor.submit(jvmFunctionsLoaderTask);
 
 			Callable<Map<String, List<BuiltinFunction>>> builtinFunctionsLoaderTask = () -> getBuiltinMethods(
-																												accessibleAndInstantiable);
+					accessibleAndInstantiable);
 			var builtinFunctionsFuture = internalExecutor.submit(builtinFunctionsLoaderTask);
 
 			result.setJvmFunctions(jvmFunctionsFuture.get());
@@ -270,8 +271,8 @@ public class DefaultContext {
 	/**
 	 * Consumer to handle the result or error from class scanning and loading.
 	 */
-	protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (   result,
-																											throwable) -> {
+	protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (result,
+																										 throwable) -> {
 		if (Objects.nonNull(throwable)) {
 			defaultBootstrap();
 			BOOT_STRAP_FAILED = true;
@@ -324,9 +325,9 @@ public class DefaultContext {
 	 * @param parameters function parameters map
 	 * @param arguments  function arguments map
 	 */
-	protected DefaultContext(   DefaultContext parent,
-								Map<String, DeclaredParameter> parameters,
-								Map<String, Object> arguments) {
+	protected DefaultContext(DefaultContext parent,
+							 Map<String, DeclaredParameter> parameters,
+							 Map<String, Object> arguments) {
 		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS
 				.size() != 0)) {
 			throw new NaftahBugError("استخدام غير مسموح به.");
@@ -354,8 +355,8 @@ public class DefaultContext {
 	 * @param arguments  the function arguments map
 	 * @return a new {@link DefaultContext} instance
 	 */
-	public static DefaultContext registerContext(   Map<String, DeclaredParameter> parameters,
-													Map<String, Object> arguments) {
+	public static DefaultContext registerContext(Map<String, DeclaredParameter> parameters,
+												 Map<String, Object> arguments) {
 		return new DefaultContext(parameters, arguments);
 	}
 
@@ -377,9 +378,9 @@ public class DefaultContext {
 	 * @param arguments  the function arguments map
 	 * @return a new {@link DefaultContext} instance
 	 */
-	public static DefaultContext registerContext(   DefaultContext parent,
-													Map<String, DeclaredParameter> parameters,
-													Map<String, Object> arguments) {
+	public static DefaultContext registerContext(DefaultContext parent,
+												 Map<String, DeclaredParameter> parameters,
+												 Map<String, Object> arguments) {
 		return new DefaultContext(parent, parameters, arguments);
 	}
 
@@ -446,17 +447,12 @@ public class DefaultContext {
 	/**
 	 * Retrieves the current loop label based on the given label context or generates a unique one.
 	 *
-	 * @param labelCtx the label parser context, may be {@code null}
-	 * @param depth    the depth to use for label generation if none provided
+	 * @param label the parsed label, may be {@code null}
+	 * @param depth the depth to use for label generation if none provided
 	 * @return the current loop label as a string
 	 */
-	public static String currentLoopLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext labelCtx, int depth) {
-		if (labelCtx != null) {
-			return labelCtx.ID().getText();
-		}
-		else {
-			return LOOP_ID_GENERATOR.apply(depth);
-		}
+	public static String currentLoopLabel(String label, int depth) {
+		return Objects.nonNull(label) ? label : LOOP_ID_GENERATOR.apply(depth);
 	}
 
 	/**
@@ -528,8 +524,8 @@ public class DefaultContext {
 				.stream()
 				.map(builtinFunction -> Map.entry(builtinFunction.getFunctionInfo().name(), builtinFunction))
 				.collect(Collectors
-						.groupingBy(Map.Entry::getKey,
-									Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+								 .groupingBy(Map.Entry::getKey,
+											 Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 	}
 
 	/**
@@ -546,7 +542,7 @@ public class DefaultContext {
 			Throwable thr = null;
 			try {
 				startLoader(
-							"تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد " + "يستغرق الأمر عدة دقائق حسب الإعدادات");
+						"تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد " + "يستغرق الأمر عدة دقائق حسب الإعدادات");
 				classScanningResult = LOADER_TASK.get();
 				stopLoader();
 			}
@@ -592,7 +588,8 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Returns a list of all completion candidates combining builtin functions, JVM functions, and instantiable classes.
+	 * Returns a list of all completion candidates combining builtin functions, JVM functions, and instantiable
+	 * classes.
 	 *
 	 * @return list of completion names
 	 */
@@ -678,8 +675,8 @@ public class DefaultContext {
 		if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
 			while (!BOOT_STRAPPED && (Objects.isNull(INSTANTIABLE_CLASSES) || Objects
 					.isNull(ACCESSIBLE_CLASSES) || Objects
-							.isNull(
-									CLASSES))) {
+					.isNull(
+							CLASSES))) {
 				// block the execution until bootstrapped
 				if (BOOT_STRAP_FAILED) {
 					return Object.class;
@@ -784,9 +781,9 @@ public class DefaultContext {
 	public boolean containsFunction(String name) {
 		return functions.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name
 				.matches(
-							QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS
-									.containsKey(
-													name))) || parent != null && parent.containsFunction(name);
+						QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS
+				.containsKey(
+						name))) || parent != null && parent.containsFunction(name);
 	}
 
 	/**
@@ -955,8 +952,8 @@ public class DefaultContext {
 			}
 
 			throw new NaftahBugError(
-										"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
-												.formatted(name));
+					"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
+							.formatted(name));
 		}
 		parameters.put(name, value); // force local
 	}
@@ -1072,8 +1069,8 @@ public class DefaultContext {
 		name = getFunctionArgumentName(name);
 		if (arguments.containsKey(name)) {
 			throw new NaftahBugError(
-										"الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
-												.formatted(name));
+					"الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
+							.formatted(name));
 		}
 		arguments.put(name, value); // force local
 	}
@@ -1137,8 +1134,8 @@ public class DefaultContext {
 		return loopVariableNames
 				.stream()
 				.anyMatch(loopVariableName -> loopVariables.containsKey(loopVariableName)) || (parent != null && parent
-						.containsLoopVariable(
-												name));
+				.containsLoopVariable(
+						name));
 	}
 
 	/**
@@ -1212,8 +1209,8 @@ public class DefaultContext {
 			}
 
 			throw new NaftahBugError(
-										"المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه."
-												.formatted(name));
+					"المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه."
+							.formatted(name));
 		}
 		loopVariables.put(name, value); // force local
 	}
@@ -1271,9 +1268,9 @@ public class DefaultContext {
 		return prepareParseTreeExecution() && getChildren(true)
 				.stream()
 				.anyMatch(currentContext -> NaftahParserHelper
-						.hasAnyExecutedChildOrSubChildOfType(   node,
-																type,
-																currentContext.parseTreeExecution));
+						.hasAnyExecutedChildOrSubChildOfType(node,
+															 type,
+															 currentContext.parseTreeExecution));
 	}
 
 	/**
