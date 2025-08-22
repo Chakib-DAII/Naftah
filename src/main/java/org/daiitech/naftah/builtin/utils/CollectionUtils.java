@@ -115,6 +115,10 @@ public final class CollectionUtils {
 	 * @throws NaftahBugError if a key from the first map is missing in the second map
 	 */
 	public static Map<?, ?> applyOperation(Map<?, ?> left, Map<?, ?> right, BinaryOperation operation) {
+		if (left.size() != right.size()) {
+			throw newNaftahSizeBugError(left, right);
+		}
+
 		Map<Object, Object> result = new HashMap<>();
 
 		for (var key : left.keySet()) {
@@ -211,5 +215,21 @@ public final class CollectionUtils {
 									'%s'
 									'%s'
 									""".formatted(Arrays.toString(left), Arrays.toString(right)));
+	}
+
+	/**
+	 * Constructs a new {@link NaftahBugError} indicating that the sizes of the two associative arrays (maps) do not
+	 * match.
+	 *
+	 * @param left  the first associative array (map)
+	 * @param right the second associative array (map)
+	 * @return a new NaftahBugError with a descriptive message in Arabic showing both maps
+	 */
+	public static NaftahBugError newNaftahSizeBugError(Map<?, ?> left, Map<?, ?> right) {
+		return new NaftahBugError("""
+									يجب أن تكون أحجام المصفوفات الترابطية متساوية.
+									'%s'
+									'%s'
+									""".formatted(left, right));
 	}
 }
