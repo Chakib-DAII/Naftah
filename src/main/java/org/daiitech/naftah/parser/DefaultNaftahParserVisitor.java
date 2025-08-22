@@ -933,7 +933,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
 		Object result = null;
 		boolean loopInStack = false;
-		String label = currentLoopLabel(ctx.label(), depth);
+		String label = currentLoopLabel((String) (Objects.isNull(ctx.label()) ? null : visit(ctx.label())), depth);
 		currentContext.setLoopLabel(label);
 		// Initialization: ID := expression
 		String loopVar = ctx.ID().getText();
@@ -2332,7 +2332,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-		var result = getJavaType(ctx);
+		var result = (Class<?>) visit(ctx.builtIn());
 		currentContext.markExecuted(ctx); // Mark as executed
 		return result;
 	}
@@ -2438,7 +2438,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext ctx) {
+	public String visitLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitLabel(%s)"
