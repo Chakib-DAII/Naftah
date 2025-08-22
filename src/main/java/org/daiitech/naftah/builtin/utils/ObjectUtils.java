@@ -51,7 +51,15 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_NUMBER_FORMAT;
  * @author Chakib Daii
  */
 public final class ObjectUtils {
+	/**
+	 * Error message indicating that a single argument is empty.
+	 * Arabic: "لا يمكن أن يكون الوسيط فارغًا."
+	 */
 	public static final String EMPTY_ARGUMENT_ERROR = "لا يمكن أن يكون الوسيط فارغًا.";
+	/**
+	 * Error message indicating that multiple arguments are empty.
+	 * Arabic: "لا يمكن أن تكون الوسائط فارغة."
+	 */
 	public static final String EMPTY_ARGUMENTS_ERROR = "لا يمكن أن تكون الوسائط فارغة.";
 
 
