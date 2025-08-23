@@ -1,6 +1,7 @@
 package org.daiitech.naftah.parser;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -31,12 +32,16 @@ import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.TestUtils.runScript;
 import static org.daiitech.naftah.parser.DefaultContext.CONTEXTS;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
+import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
+import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 
 public class DefaultNaftahParserVisitorTests {
 
 	@BeforeAll
-	static void setupAll() {
+	static void setupAll() throws IOException {
+		initializeFromResources(LOGGING_FILE);
+
 		String originalClassPath = System.getProperty(CLASS_PATH_PROPERTY);
 		String tempPaths = Arrays
 				.stream((originalClassPath).split(File.pathSeparator))
