@@ -350,7 +350,7 @@ public final class ObjectUtils {
 		Class<?> cls = obj.getClass();
 
 		return cls
-				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class;
+				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class || cls == Object.class;
 	}
 
 	/**
