@@ -24,6 +24,19 @@ import org.daiitech.naftah.errors.NaftahBugError;
  * @author Chakib Daii
  */
 public final class JulLoggerConfig {
+	/**
+	 * The system property key used by the Java Logging API to locate the logging configuration file.
+	 * <p>
+	 * Example usage: {@code System.setProperty(JAVA_LOGGING_FILE_PROPERTY, LOGGING_FILE);}
+	 */
+	public static final String JAVA_LOGGING_FILE_PROPERTY = "java.util.logging.config.file";
+
+	/**
+	 * The default name of the Java logging configuration file.
+	 * <p>
+	 * This file should typically be located on the classpath or in the working directory.
+	 */
+	public static final String LOGGING_FILE = "logging.properties";
 
 	private static boolean initialized = false;
 

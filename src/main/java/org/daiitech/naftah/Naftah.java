@@ -19,7 +19,6 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahErrorListener;
-import org.daiitech.naftah.utils.JulLoggerConfig;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -43,6 +42,10 @@ import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.doRun;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getCharStream;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareRun;
+import static org.daiitech.naftah.utils.JulLoggerConfig.JAVA_LOGGING_FILE_PROPERTY;
+import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
+import static org.daiitech.naftah.utils.JulLoggerConfig.initialize;
+import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
@@ -186,20 +189,20 @@ public final class Naftah {
 	 */
 	private static void initLogger(boolean debug) {
 		try {
-			String loggingConfigFile = System.getProperty("java.util.logging.config.file");
+			String loggingConfigFile = System.getProperty(JAVA_LOGGING_FILE_PROPERTY);
 
 			// Initialize logging from external file
 			if (Objects.nonNull(loggingConfigFile)) {
-				JulLoggerConfig.initialize(loggingConfigFile);
+				initialize(loggingConfigFile);
 			}
 			else {
-				JulLoggerConfig.initializeFromResources("logging.properties");
+				initializeFromResources(LOGGING_FILE);
 			}
 		}
 		catch (IOException e) {
 			try {
 				// fallback to default logging
-				JulLoggerConfig.initializeFromResources("logging.properties");
+				initializeFromResources(LOGGING_FILE);
 			}
 			catch (IOException ex) {
 				throw new NaftahBugError(ex);
