@@ -67,7 +67,7 @@ functionCall: (ID | qualifiedCall) LPAREN argumentList? RPAREN;
 argumentList: (ID ASSIGN)? expression (COMMA (ID ASSIGN)? expression)*;
 
 // If statement: An 'if' block followed by an optional 'else' block
-ifStatement: IF expression THEN block (ELSEIF expression THEN block)* (ELSE block)? END;
+ifStatement: IF expression THEN block (ELSEIF expression THEN block)* (ELSE block)? END?;
 
 // A 'for' loop: iterates from a starting value to an end value (ascending or descending)
 forStatement:
@@ -76,7 +76,7 @@ forStatement:
     (TO | DOWNTO) expression                      // Direction of loop (e.g., TO 10 or DOWNTO 1)
     DO block                                      // Loop body
     (ELSE block)?                                 // Optional 'else' block if no break occurred
-    END;                                          // Explicit loop end (if required in your syntax)
+    END?;                                          // Explicit loop end (if required in your syntax)
 
 // A 'while' loop: repeats as long as the condition is true
 whileStatement:
@@ -96,7 +96,7 @@ caseStatement:
     OF
         (caseLabelList COLON block)+          // One or more labeled cases (e.g., 1: ..., 2,3: ...)
         (ELSE block)?                         // Optional default case if no labels match
-    END;
+    END?;
 
 // A list of labels for a 'case' option (e.g., 1, 2, 3)
 caseLabelList: expression (COMMA expression)*;                // One or more comma-separated expressions
