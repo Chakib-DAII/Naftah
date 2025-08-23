@@ -95,7 +95,7 @@ public class DefaultContext {
 	 * Generates unique function call IDs based on the depth, function name, and a random UUID.
 	 */
 	public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (  depth,
-																							functionName) -> ("%s" + "-%s-%s")
+																							functionName) -> ("%s-%s-%s")
 																									.formatted(
 																												depth,
 																												functionName,
@@ -103,22 +103,10 @@ public class DefaultContext {
 																														.randomUUID());
 
 	/**
-	 * Generates unique parameter names based on the function name and parameter name.
+	 * Generates unique parameter names based on the function name and parameter name
+	 * and unique argument names based on the function call ID and argument name.
 	 */
-	public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR = ( functionName,
-																						parameterName) -> "%s-%s"
-																								.formatted(
-																											functionName,
-																											parameterName);
-
-	/**
-	 * Generates unique argument names based on the function call ID and argument name.
-	 */
-	public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (  functionCallId,
-																						argumentName) -> "%s-%s"
-																								.formatted(
-																											functionCallId,
-																											argumentName);
+	public static final BiFunction<String, String, String> PARAMETER_ARGUMENT_NAME_GENERATOR = "%s-%s"::formatted;
 
 	/**
 	 * Generates unique loop labels for unlabeled loops based on depth and a UUID.
@@ -875,7 +863,7 @@ public class DefaultContext {
 		}
 		if (functionCallId != null) {
 			String functionName = functionCallId.split("-")[1];
-			name = DefaultContext.PARAMETER_NAME_GENERATOR.apply(functionName, name);
+			name = DefaultContext.PARAMETER_ARGUMENT_NAME_GENERATOR.apply(functionName, name);
 		}
 		return name;
 	}
@@ -998,7 +986,7 @@ public class DefaultContext {
 			arguments = new HashMap<>();
 		}
 		if (functionCallId != null) {
-			name = DefaultContext.ARGUMENT_NAME_GENERATOR.apply(functionCallId, name);
+			name = DefaultContext.PARAMETER_ARGUMENT_NAME_GENERATOR.apply(functionCallId, name);
 		}
 		return name;
 	}
