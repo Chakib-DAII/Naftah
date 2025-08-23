@@ -54,8 +54,8 @@ assignment: declaration ASSIGN expression;
 // Function declaration: Can have parameters and return values
 functionDeclaration: FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
 
-// Function declaration parameter list: parameterDeclarations separated by commas
-parameterDeclarationList: parameterDeclaration (COMMA parameterDeclaration)*;
+// Function declaration parameter list: parameterDeclarations separated by commas or semicolons
+parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclaration)*;
 
 // Parameter declaration : parameter id with optional type and assignment
 parameterDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
@@ -63,8 +63,8 @@ parameterDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 // Function call: Can have arguments and return values
 functionCall: (ID | qualifiedCall) LPAREN argumentList? RPAREN;
 
-// Argument list: Expressions separated by commas
-argumentList: (ID ASSIGN)? expression (COMMA (ID ASSIGN)? expression)*;
+// Argument list: Expressions separated by commas or semicolons
+argumentList: (ID ASSIGN)? expression ((COMMA | SEMI) (ID ASSIGN)? expression)*;
 
 // If statement: An 'if' block followed by an optional 'else' block
 ifStatement: IF expression THEN block (ELSEIF expression THEN block)* (ELSE block)? END?;
@@ -99,7 +99,7 @@ caseStatement:
     END?;
 
 // A list of labels for a 'case' option (e.g., 1, 2, 3)
-caseLabelList: expression (COMMA expression)*;                // One or more comma-separated expressions
+caseLabelList: expression ((COMMA | SEMI) expression)*;                // One or more comma or semicolon separated expressions
 
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;
@@ -152,7 +152,7 @@ expression: functionCall #functionCallExpression
 
 // Object
 object: LBRACE objectFields? RBRACE;
-objectFields: assignment ( COMMA assignment )*;
+objectFields: assignment ((COMMA | SEMI) assignment )*;
 
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
@@ -161,10 +161,10 @@ collection: LBRACK elements? RBRACK #listValue
           | LBRACE keyValuePairs? RBRACE #mapValue;
 
 // single value elements
-elements: expression ( COMMA expression )*;
+elements: expression ((COMMA | SEMI) expression )*;
 
 // key=value value elements
-keyValuePairs: keyValue ( COMMA keyValue )*;
+keyValuePairs: keyValue ((COMMA | SEMI) keyValue )*;
 keyValue: expression COLON expression;
 
 // Value: Can be numbers, strings, ID
