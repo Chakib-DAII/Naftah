@@ -11,7 +11,7 @@ public class FunctionDeclarationProvider implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		String factorial = """
-							دالة دالة_المضروب(عدد_مضروب تعيين 10) {
+							دالة دالة_المضروب(عدد_مضروب تعيين 10) : عدد_طويل {
 							إذا عدد_مضروب أصغر_أو_يساوي ١ إذن {
 							ارجع 1
 							}
@@ -22,8 +22,8 @@ public class FunctionDeclarationProvider implements ArgumentsProvider {
 							%s
 							""";
 		String factorialWithNestedPrintFunction = """
-													دالة دالة_المضروب(عدد_مضروب تعيين 10) {
-													دالة دالة_المضروب_إطبع(عدد_مضروب) {
+													دالة دالة_المضروب(عدد_مضروب تعيين 10) : عدد_طويل {
+													دالة دالة_المضروب_إطبع(عدد_مضروب) : عدم {
 														إطبع(عدد_مضروب)
 													}
 													دالة_المضروب_إطبع(عدد_مضروب)
