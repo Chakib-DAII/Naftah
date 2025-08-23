@@ -56,6 +56,7 @@ import static org.daiitech.naftah.utils.repl.REPLHelper.getLineReader;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
 import static org.daiitech.naftah.utils.repl.REPLHelper.println;
 import static org.daiitech.naftah.utils.repl.REPLHelper.setupHistoryConfig;
+import static org.daiitech.naftah.utils.repl.REPLHelper.setupKeyBindingsConfig;
 import static org.daiitech.naftah.utils.repl.REPLHelper.setupTerminalCapabilities;
 
 import static picocli.CommandLine.Command;
@@ -578,6 +579,8 @@ public final class Naftah {
 				LineReader reader = getLineReader(terminal);
 
 				setupHistoryConfig(reader);
+
+				setupKeyBindingsConfig(reader);
 
 				StringBuilder fullLine = new StringBuilder();
 
