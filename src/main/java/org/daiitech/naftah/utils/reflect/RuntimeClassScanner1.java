@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 import org.daiitech.naftah.builtin.lang.ScannedClass;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for scanning runtime classes from the classpath and Java home directories.
  * <p>
@@ -110,7 +112,7 @@ public final class RuntimeClassScanner1 {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private RuntimeClassScanner1() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -217,7 +219,8 @@ public final class RuntimeClassScanner1 {
 	 * Scans for classes inside a JAR or JMOD file.
 	 *
 	 * @param jarFile the JAR or JMOD file to scan
-	 * @return a map of fully qualified class names to their associated class loaders (null or URLClassLoader for nested
+	 * @return a map of fully qualified class names to their associated class loaders (null or URLClassLoader for
+	 *         nested
 	 *         jars)
 	 */
 	public static Map<String, ScannedClass> findClassesInJar(File jarFile) {
@@ -257,7 +260,8 @@ public final class RuntimeClassScanner1 {
 													var scannedClassOptional = ScannedClass.safeOf(clazz);
 													return scannedClassOptional
 															.map(scannedClass -> Map
-																	.entry(scannedClass.qualifiedName(), scannedClass))
+																	.entry( scannedClass.qualifiedName(),
+																			scannedClass))
 															.orElse(null);
 												})
 												.orElse(null))

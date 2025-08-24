@@ -21,6 +21,7 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
@@ -105,7 +106,7 @@ public final class REPLHelper {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private REPLHelper() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

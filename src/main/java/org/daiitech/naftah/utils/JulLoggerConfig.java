@@ -11,6 +11,8 @@ import java.util.logging.LogManager;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for initializing Java Util Logging (JUL) configuration.
  * <p>
@@ -45,7 +47,7 @@ public final class JulLoggerConfig {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private JulLoggerConfig() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

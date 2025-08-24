@@ -29,6 +29,7 @@ import com.ibm.icu.text.Transliterator;
 
 import static org.daiitech.naftah.Naftah.ARABIC_INDIC_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
  * Utility class providing various methods for handling Arabic text processing,
@@ -206,7 +207,7 @@ public final class ArabicUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private ArabicUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

@@ -14,6 +14,7 @@ import jdk.incubator.vector.VectorOperators;
 import jdk.incubator.vector.VectorSpecies;
 
 import static org.daiitech.naftah.Naftah.VECTOR_API_PROPERTY;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
  * Utility class for performing various operations on {@link String} objects,
@@ -220,7 +221,7 @@ public final class StringUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private StringUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 

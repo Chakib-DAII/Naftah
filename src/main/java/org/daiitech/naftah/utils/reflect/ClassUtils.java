@@ -19,6 +19,7 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.reflect.AnnotationsUtils.getNaftahFunctionAnnotation;
 import static org.daiitech.naftah.utils.reflect.AnnotationsUtils.getNaftahFunctionProviderAnnotation;
 import static org.daiitech.naftah.utils.reflect.AnnotationsUtils.isAnnotationsPresent;
@@ -50,7 +51,7 @@ public final class ClassUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private ClassUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -139,7 +140,10 @@ public final class ClassUtils {
 										.join(  QUALIFIED_NAME_SEPARATOR,
 												ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)),
 								String.join(QUALIFIED_NAME_SEPARATOR, strings)))
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (existing, replacement) -> existing));
+				.collect(Collectors
+						.toMap( Map.Entry::getKey,
+								Map.Entry::getValue,
+								(existing, replacement) -> existing));
 	}
 
 
@@ -364,7 +368,8 @@ public final class ClassUtils {
 									BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction));
 				})
 				.collect(Collectors
-						.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+						.groupingBy(Map.Entry::getKey,
+									Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 	}
 
 	/**

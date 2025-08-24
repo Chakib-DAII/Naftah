@@ -11,6 +11,7 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.EMPTY_ARGUMENTS_ERRO
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
@@ -36,7 +37,7 @@ public final class Builtin {
 	 * Throws {@link NaftahBugError} if called.
 	 */
 	private Builtin() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

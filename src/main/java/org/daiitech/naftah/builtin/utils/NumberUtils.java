@@ -12,6 +12,8 @@ import org.daiitech.naftah.errors.NaftahBugError;
 
 import static java.math.MathContext.DECIMAL128;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for dynamically parsing and performing arithmetic operations on
  * various numeric types. Supports Byte, Short, Integer, Long, Float, Double,
@@ -29,7 +31,7 @@ public final class NumberUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private NumberUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

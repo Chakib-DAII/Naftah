@@ -47,6 +47,7 @@ import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
 import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
@@ -317,7 +318,7 @@ public class DefaultContext {
 								Map<String, Object> arguments) {
 		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS
 				.size() != 0)) {
-			throw new NaftahBugError("استخدام غير مسموح به.");
+			throw newNaftahBugInvalidUsageError();
 		}
 		this.parent = parent;
 		this.depth = parent == null ? 0 : parent.getDepth() + 1;

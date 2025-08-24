@@ -27,6 +27,7 @@ import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
@@ -68,7 +69,7 @@ public final class ObjectUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private ObjectUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

@@ -146,7 +146,7 @@ public class ObjectUtilsTests {
 				);
 	}
 
-	static Stream<Arguments> isSimpleOrBuiltinOrCollectionOrMapOfSimpleType() {
+	static Stream<Arguments> isSimpleOrBuiltinOrCollectionOrMapOfSimpleTypeProvider() {
 		Class<Object> clazz = Object.class;
 		Method method = null;
 		try {
@@ -220,7 +220,7 @@ public class ObjectUtilsTests {
 	}
 
 	@ParameterizedTest
-	@MethodSource("isSimpleOrBuiltinOrCollectionOrMapOfSimpleType")
+	@MethodSource("isSimpleOrBuiltinOrCollectionOrMapOfSimpleTypeProvider")
 	void isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(Object input,
 														Object expectedResult) {
 		assertEquals(ObjectUtils.isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(input), expectedResult);

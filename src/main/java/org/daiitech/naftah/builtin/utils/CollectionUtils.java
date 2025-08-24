@@ -12,6 +12,8 @@ import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for applying binary and unary operations on collections, arrays, and maps.
  * <p>
@@ -27,7 +29,7 @@ public final class CollectionUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private CollectionUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

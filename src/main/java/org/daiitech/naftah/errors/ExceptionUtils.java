@@ -24,7 +24,7 @@ public final class ExceptionUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private ExceptionUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -85,5 +85,9 @@ public final class ExceptionUtils {
 						getFormattedTokenSymbols(   parser.getVocabulary(),
 													org.daiitech.naftah.parser.NaftahLexer.BREAK,
 													false)));
+	}
+
+	public static NaftahBugError newNaftahBugInvalidUsageError() {
+		return new NaftahBugError("استخدام غير مسموح به.");
 	}
 }

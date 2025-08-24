@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for logging execution details within the Naftah system.
  * <p>
@@ -30,7 +32,7 @@ public final class NaftahExecutionLogger {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private NaftahExecutionLogger() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
