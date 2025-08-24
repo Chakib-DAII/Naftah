@@ -28,6 +28,7 @@ import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
@@ -52,18 +53,6 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_NUMBER_FORMAT;
  * @author Chakib Daii
  */
 public final class ObjectUtils {
-	/**
-	 * Error message indicating that a single argument is empty.
-	 * Arabic: "لا يمكن أن يكون الوسيط فارغًا."
-	 */
-	public static final String EMPTY_ARGUMENT_ERROR = "لا يمكن أن يكون الوسيط فارغًا.";
-	/**
-	 * Error message indicating that multiple arguments are empty.
-	 * Arabic: "لا يمكن أن تكون الوسائط فارغة."
-	 */
-	public static final String EMPTY_ARGUMENTS_ERROR = "لا يمكن أن تكون الوسائط فارغة.";
-
-
 	/**
 	 * Private constructor to prevent instantiation.
 	 * Always throws a {@link NaftahBugError} when called.
@@ -434,7 +423,7 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
 		if (left == null || right == null) {
-			throw newNaftahBugNullInputError(false);
+			throw newNaftahBugNullInputError(false, left, right);
 		}
 
 		// Number vs Number
@@ -529,7 +518,7 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object a, UnaryOperation operation) {
 		if (a == null) {
-			throw newNaftahBugNullInputError(true);
+			throw newNaftahBugNullInputError(true, a);
 		}
 
 		// Number
@@ -724,19 +713,5 @@ public final class ObjectUtils {
 		synchronized (ARABIC_NUMBER_FORMAT) {
 			return ARABIC_NUMBER_FORMAT.format(number);
 		}
-	}
-
-	/**
-	 * Creates a new {@link NaftahBugError} indicating that a required input argument is null or missing.
-	 *
-	 * <p>This method selects the appropriate error message depending on whether the error is related to a
-	 * single input or multiple inputs.</p>
-	 *
-	 * @param singleInput {@code true} if the error is due to a single missing input argument;
-	 *                    {@code false} if multiple input arguments are missing.
-	 * @return a {@link NaftahBugError} instance with the corresponding error message.
-	 */
-	public static NaftahBugError newNaftahBugNullInputError(boolean singleInput) {
-		return new NaftahBugError(singleInput ? EMPTY_ARGUMENT_ERROR : EMPTY_ARGUMENTS_ERROR);
 	}
 }

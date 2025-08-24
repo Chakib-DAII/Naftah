@@ -7,10 +7,10 @@ import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
+import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
@@ -374,7 +374,7 @@ public final class Builtin {
 			return (boolean) applyOperation(x, y, BinaryOperation.EQUALS);
 		}
 		catch (NaftahBugError bug) {
-			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR)) {
+			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
 				throw bug;
 			}
 			return x.equals(y);
@@ -401,7 +401,7 @@ public final class Builtin {
 			return (boolean) applyOperation(x, y, BinaryOperation.NOT_EQUALS);
 		}
 		catch (NaftahBugError bug) {
-			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR)) {
+			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
 				throw bug;
 			}
 			return !x.equals(y);

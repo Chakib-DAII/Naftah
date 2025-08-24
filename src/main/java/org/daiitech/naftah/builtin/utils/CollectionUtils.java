@@ -13,6 +13,7 @@ import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahKeyNotFoundError;
 
 /**
  * Utility class for applying binary and unary operations on collections, arrays, and maps.
@@ -130,7 +131,7 @@ public final class CollectionUtils {
 				result.put(key, ObjectUtils.applyOperation(val1, val2, operation)); // Reuse from earlier
 			}
 			else {
-				throw new NaftahBugError("المفتاح '%s' غير موجود في المصفوفة الترابطية الثانية.");
+				throw newNaftahKeyNotFoundError(key);
 			}
 		}
 
