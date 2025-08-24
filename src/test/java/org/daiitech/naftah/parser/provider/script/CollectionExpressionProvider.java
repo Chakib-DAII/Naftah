@@ -10,6 +10,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.newNaftahSizeBugError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahKeyNotFoundError;
+
 public class CollectionExpressionProvider implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
@@ -143,6 +146,12 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 								List.of(7225, 8100, 6084, 8464),
 								null),
 					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] + [٨٥، ٩٠، ٧٨، ٩٢]", List.of(170, 180, 156, 184), null),
+					Arguments
+							.of(false,
+								"[٨٥، ٩٠، ٧٨] + [٨٥، ٩٠، ٧٨، ٩٢]",
+								null,
+								newNaftahSizeBugError(  new Byte[]{85, 90, 78},
+														new Byte[]{85, 90, 78, 92})),
 					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] - [٨٥، ٩٠، ٧٨، ٩٢]", List.of(0, 0, 0, 0), null),
 					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] / [٨٥، ٩٠، ٧٨، ٩٢]", List.of(1, 1, 1, 1), null),
 					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] % [٨٥، ٩٠، ٧٨، ٩٢]", List.of(0, 0, 0, 0), null),
@@ -208,6 +217,12 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 								"(٨٥، ٩٠، ٧٨، ٩٢) * (٨٥، ٩٠، ٧٨، ٩٢)",
 								Tuple.of(7225, 8100, 6084, 8464),
 								null),
+					Arguments
+							.of(false,
+								"(٨٥، ٩٠، ٧٨) * (٨٥، ٩٠، ٧٨، ٩٢)",
+								null,
+								newNaftahSizeBugError(  new Byte[]{85, 90, 78},
+														new Byte[]{85, 90, 78, 92})),
 					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) + (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(170, 180, 156, 184), null),
 					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) - (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(0, 0, 0, 0), null),
 					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) / (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(1, 1, 1, 1), null),
@@ -276,6 +291,12 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 								null),
 					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} + {٨٥، ٩٠، ٧٨، ٩٢}", List.of(170, 180, 184, 156), null),
 					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} - {٨٥، ٩٠، ٧٨، ٩٢}", List.of(0, 0, 0, 0), null),
+					Arguments
+							.of(false,
+								"{٨٥، ٩٠، ٧٨} - {٨٥، ٩٠، ٧٨، ٩٢}",
+								null,
+								newNaftahSizeBugError(  new Byte[]{85, 90, 78},
+														new Byte[]{85, 90, 92, 78})),
 					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} / {٨٥، ٩٠، ٧٨، ٩٢}", List.of(1, 1, 1, 1), null),
 					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} % {٨٥، ٩٠، ٧٨، ٩٢}", List.of(0, 0, 0, 0), null),
 					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} .*. {٨٥، ٩٠، ٧٨، ٩٢}", List.of(85, 90, 92, 78), null),
@@ -576,6 +597,14 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 								},
 								null),
 					Arguments
+							.of(false,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} / {"اسم1": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
+
+								""",
+								null,
+								newNaftahKeyNotFoundError("اسم")),
+					Arguments
 							.of(true,
 
 								"""
@@ -788,7 +817,27 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 										put("معدل", false);
 									}
 								},
-								null)
+								null),
+					Arguments
+							.of(false,
+								"""
+								{"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} لا_يساوي {"اسم": "أحمد", "معدل": ٨٨}
+
+								""",
+								null,
+								newNaftahSizeBugError(  new HashMap<>() {
+															{
+																put("اسم", "أحمد");
+																put("عمر", 20);
+																put("معدل", 88);
+															}
+														},
+														new HashMap<>() {
+															{
+																put("اسم", "أحمد");
+																put("معدل", 88);
+															}
+														}))
 				);
 	}
 }

@@ -5,13 +5,14 @@ import java.math.BigInteger;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
-import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.newNaftahBugNullInputError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugUnsupportedBitwiseDecimalError;
+
 
 public class FunctionCallProvider implements ArgumentsProvider {
 	@Override
@@ -187,13 +188,13 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "هل_صفر(0،0)", true, null),
 					Arguments.of(true, "هل_صفر(2،0-)", false, null),
 					Arguments.of(true, "هل_يساوي(2 ، 2)", true, null),
-					Arguments.of(false, "هل_يساوي(فارغ ، 2)", null, newNaftahBugNullInputError(false)),
-					Arguments.of(false, "هل_يساوي(2 ، فارغ)", null, newNaftahBugNullInputError(false)),
+					Arguments.of(false, "هل_يساوي(فارغ ، 2)", null, newNaftahBugNullInputError(false, null, 2)),
+					Arguments.of(false, "هل_يساوي(2 ، فارغ)", null, newNaftahBugNullInputError(false, 2, null)),
 					Arguments.of(true, "هل_يساوي(2- ، 2)", false, null),
 					Arguments.of(true, "هل_يساوي(2 ، 2-)", false, null),
 					Arguments.of(true, "هل_يساوي(1 ، 2)", false, null),
-					Arguments.of(false, "هل_لا_يساوي(فارغ ، 2)", null, newNaftahBugNullInputError(false)),
-					Arguments.of(false, "هل_لا_يساوي(2 ، فارغ)", null, newNaftahBugNullInputError(false)),
+					Arguments.of(false, "هل_لا_يساوي(فارغ ، 2)", null, newNaftahBugNullInputError(false, null, 2)),
+					Arguments.of(false, "هل_لا_يساوي(2 ، فارغ)", null, newNaftahBugNullInputError(false, 2, null)),
 					Arguments.of(true, "هل_لا_يساوي(2 ، 2)", false, null),
 					Arguments.of(true, "هل_لا_يساوي(2- ، 2)", true, null),
 					Arguments.of(true, "هل_لا_يساوي(2 ، 2-)", true, null),
@@ -253,19 +254,19 @@ public class FunctionCallProvider implements ArgumentsProvider {
 							.of(false,
 								"إزاحة_إلى_اليسار(340282346638528859811704183484516925440,000000 ، 2)",
 								null,
-								NumberUtils
-										.newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber
-												.of(
-													"340282346638528859811704183484516925440.000000"))
+								newNaftahBugUnsupportedBitwiseDecimalError( true,
+																			DynamicNumber
+																					.of(
+																						"340282346638528859811704183484516925440.000000"))
 							),
 					Arguments
 							.of(false,
 								"إزاحة_إلى_اليسار" + "(179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,000000 ، 2)",
 								null,
-								NumberUtils
-										.newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber
-												.of(
-													"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,000000"))),
+								newNaftahBugUnsupportedBitwiseDecimalError( true,
+																			DynamicNumber
+																					.of(
+																						"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,000000"))),
 					Arguments.of(true, "إزاحة_إلى_اليمين(128 ، 2)", 32, null),
 					Arguments.of(true, "إزاحة_إلى_اليمين(32768 ، 2)", 8192, null),
 					Arguments.of(true, "إزاحة_إلى_اليمين(2147483648 ، 2)", 536870912, null),
@@ -274,19 +275,19 @@ public class FunctionCallProvider implements ArgumentsProvider {
 							.of(false,
 								"إزاحة_إلى_اليمين(340282346638528859811704183484516925441,000000 ، 2)",
 								null,
-								NumberUtils
-										.newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber
-												.of(
-													"340282346638528859811704183484516925441.000000"))),
+								newNaftahBugUnsupportedBitwiseDecimalError( true,
+																			DynamicNumber
+																					.of(
+																						"340282346638528859811704183484516925441.000000"))),
 					Arguments
 
 							.of(false,
 								"إزاحة_إلى_اليمين" + "(179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000 ، 2)",
 								null,
-								NumberUtils
-										.newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber
-												.of(
-													"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000"))),
+								newNaftahBugUnsupportedBitwiseDecimalError( true,
+																			DynamicNumber
+																					.of(
+																						"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000"))),
 					Arguments.of(true, "إزاحة_إلى_اليمين_غير_موقعة(128 ، 2)", 32, null),
 					Arguments.of(true, "إزاحة_إلى_اليمين_غير_موقعة(32768 ، 2)", 8192, null),
 					Arguments.of(true, "إزاحة_إلى_اليمين_غير_موقعة(2147483648 ، 2)", 536870912, null),
@@ -299,18 +300,18 @@ public class FunctionCallProvider implements ArgumentsProvider {
 							.of(false,
 								"إزاحة_إلى_اليمين_غير_موقعة(340282346638528859811704183484516925441,000000 ، 2)",
 								null,
-								NumberUtils
-										.newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber
-												.of(
-													"340282346638528859811704183484516925441.000000"))),
+								newNaftahBugUnsupportedBitwiseDecimalError( true,
+																			DynamicNumber
+																					.of(
+																						"340282346638528859811704183484516925441.000000"))),
 					Arguments
 							.of(false,
 								"إزاحة_إلى_اليمين_غير_موقعة" + "		" + "(179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000 ، 2)",
 								null,
-								NumberUtils
-										.newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber
-												.of(
-													"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000"))),
+								newNaftahBugUnsupportedBitwiseDecimalError( true,
+																			DynamicNumber
+																					.of(
+																						"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000"))),
 					Arguments.of(true, "زيادة_قبلية(127)", 128, null),
 					Arguments.of(true, "زيادة_قبلية(32767)", 32768, null),
 					Arguments.of(true, "زيادة_قبلية(2147483647)", 2147483648L, null),
