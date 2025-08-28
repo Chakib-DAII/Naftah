@@ -87,7 +87,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">private static class </span><span class="element-name type-name-label">Naftah.NaftahCommand</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">The base command class for the Naftah CLI, implemented with picocli.
- Supports subcommands: run, init, and shell.</div>
+ Supports subcommands: run, init, and shell.
+ TODO: add support for ManCammand (Manual), to list java apis in arabic (transliterated)</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -160,11 +161,14 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color"><code><a href="#systemProperties" class="member-name-link">systemProperties</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>private boolean</code></div>
-<div class="col-second even-row-color"><code><a href="#useVectorApi" class="member-name-link">useVectorApi</a></code></div>
+<div class="col-second even-row-color"><code><a href="#useArabicIndic" class="member-name-link">useArabicIndic</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>private boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#versionRequested" class="member-name-link">versionRequested</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#useVectorApi" class="member-name-link">useVectorApi</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>private boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#versionRequested" class="member-name-link">versionRequested</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -301,6 +305,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="useVectorApi">
 <h3>useVectorApi</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useVectorApi</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="useArabicIndic">
+<h3>useArabicIndic</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useArabicIndic</span></div>
 </section>
 </li>
 </ul>
