@@ -363,13 +363,13 @@ public final class ClassUtils {
 					Method method = methodEntry.getKey();
 					var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
 					var naftahFunction = getNaftahFunctionAnnotation(method);
-					return Map
-							.entry( naftahFunction.name(),
-									BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction));
+					return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
 				})
 				.collect(Collectors
-						.groupingBy(Map.Entry::getKey,
-									Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+						.groupingBy(builtinFunction -> builtinFunction.getFunctionInfo().name(),
+									Collectors
+											.mapping(   builtinFunction -> builtinFunction,
+														Collectors.toList())));
 	}
 
 	/**
