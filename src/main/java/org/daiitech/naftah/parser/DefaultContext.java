@@ -47,6 +47,7 @@ import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
@@ -510,10 +511,7 @@ public class DefaultContext {
 	public static void defaultBootstrap() {
 		BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class)
 				.stream()
-				.map(builtinFunction -> Map.entry(builtinFunction.getFunctionInfo().name(), builtinFunction))
-				.collect(Collectors
-						.groupingBy(Map.Entry::getKey,
-									Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+				.collect(toAliasGroupedByName());
 	}
 
 	/**

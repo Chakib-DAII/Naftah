@@ -1,6 +1,7 @@
 package org.daiitech.naftah.builtin.lang;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +26,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
  */
 public record NaftahFunction(
 		String name,
+		String[] aliases,
 		String description,
 		String usage,
 		Class<?> returnType,
@@ -33,11 +35,14 @@ public record NaftahFunction(
 ) implements Serializable {
 
 	public NaftahFunction {
-		if (Objects.nonNull(LEXER_LITERALS) && LEXER_LITERALS.contains(name)) {
+		if (Objects.nonNull(LEXER_LITERALS) && (LEXER_LITERALS.contains(name) || Arrays
+				.stream(aliases)
+				.anyMatch(alias -> LEXER_LITERALS.contains(alias)))) {
 			throw new NaftahBugError(
 										String
-												.format("اسم الدالة المضمّنة '%s' لا يجوز أن يتطابق مع كلمة مفتاحية في اللغة.",
-														name));
+												.format("اسم الدالة المضمّنة '%s' %s لا يجوز أن يتطابق مع كلمة مفتاحية في اللغة.",
+														name,
+														aliases.length > 0 ? " : " + Arrays.toString(aliases) : ""));
 		}
 	}
 
@@ -53,12 +58,14 @@ public record NaftahFunction(
 	 * @return a new {@code NaftahFunction} instance
 	 */
 	public static NaftahFunction of(String name,
+									String[] aliases,
 									String description,
 									String usage,
 									Class<?> returnType,
 									Class<?>[] parameterTypes,
 									Class<?>[] exceptionTypes) {
 		return new NaftahFunction(  name,
+									aliases,
 									description,
 									usage,
 									returnType,
