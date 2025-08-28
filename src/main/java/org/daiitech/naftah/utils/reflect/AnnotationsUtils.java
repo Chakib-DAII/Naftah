@@ -82,6 +82,7 @@ public final class AnnotationsUtils {
 		NaftahFn naftahFn = getMethodAnnotation(method, NaftahFn.class);
 		return NaftahFunction
 				.of(naftahFn.name(),
+					naftahFn.aliases(),
 					naftahFn.description(),
 					naftahFn.usage(),
 					naftahFn.returnType(),
