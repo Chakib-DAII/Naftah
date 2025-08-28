@@ -41,6 +41,16 @@ public @interface NaftahFn {
 	String name();
 
 	/**
+	 * Alternative names (aliases) by which the function may also be referenced.
+	 *
+	 * <p>Aliases can be used to access the same function under different identifiers,
+	 * typically for backwards compatibility or syntactic sugar.</p>
+	 *
+	 * @return an array of alias names, or an empty array if none
+	 */
+	String[] aliases() default {};
+
+	/**
 	 * A brief description of what the function does.
 	 *
 	 * @return the function description
