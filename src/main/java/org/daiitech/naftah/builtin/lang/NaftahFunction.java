@@ -17,6 +17,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
  * </p>
  *
  * @param name           the function name
+ * @param aliases        function aliases, list of alternative function name
  * @param description    a brief description of the function
  * @param usage          usage information or signature of the function
  * @param returnType     the return type class of the function
