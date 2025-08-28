@@ -47,6 +47,7 @@ public final class Builtin {
 	 * @param o the object to print; can be any object
 	 */
 	@NaftahFn(  name = "إطبع",
+				aliases = {"ڨول", "قول", "قل", "ڨلي", "ڨلّي", "قلي", "قلّي", "إكتب"},
 				description = "تعليمة الطباعة (إطبع) هي التعليمة التي تُستخدم في البرمجة لإظهار نص معين على الشاشة، مثل " + "إظهار رسالة ترحيبية للمستخدم.",
 				usage = "إطبع(ش)",
 				parameterTypes = {Object.class})
