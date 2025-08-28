@@ -40,11 +40,11 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 	 * Returns a {@link Collector} that groups {@link BuiltinFunction} instances by their canonical function name,
 	 * storing the results in an {@link AliasHashMap} where:
 	 * <ul>
-	 *     <li>The key is the canonical function name as returned by {@code getFunctionInfo().name()}.</li>
-	 *     <li>The value is a {@code List} of {@link BuiltinFunction} instances sharing that name.</li>
-	 *     <li>Each function's declared aliases ({@code getFunctionInfo().aliases()}) are registered in the resulting
-	 *     map,
-	 *         allowing lookup by alias as well.</li>
+	 * <li>The key is the canonical function name as returned by {@code getFunctionInfo().name()}.</li>
+	 * <li>The value is a {@code List} of {@link BuiltinFunction} instances sharing that name.</li>
+	 * <li>Each function's declared aliases ({@code getFunctionInfo().aliases()}) are registered in the resulting
+	 * map,
+	 * allowing lookup by alias as well.</li>
 	 * </ul>
 	 *
 	 * <p>This collector can be used to efficiently index built-in functions by their primary name and aliases,
@@ -66,32 +66,31 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 	 * @see AliasHashMap
 	 */
 
-	public static Collector<BuiltinFunction, AliasHashMap<String, List<BuiltinFunction>>, AliasHashMap<String,
-			List<BuiltinFunction>>> toAliasGroupedByName() {
+	public static Collector<BuiltinFunction, AliasHashMap<String, List<BuiltinFunction>>, AliasHashMap<String, List<BuiltinFunction>>> toAliasGroupedByName() {
 		return Collector
 				.of(
-						AliasHashMap::new,
-						(map, fn) -> {
-							String canonicalKey = fn.getFunctionInfo().name();
-							map.computeIfAbsent(canonicalKey, k -> new ArrayList<>()).add(fn);
-							for (String alias : fn.getFunctionInfo().aliases()) {
-								map.aliasToKeyMap.put(alias, canonicalKey);
-							}
-						},
-						(left, right) -> {
-							for (Map.Entry<String, List<BuiltinFunction>> entry : right.entrySet()) {
-								left.merge(entry.getKey(), entry.getValue(), (list1, list2) -> {
-									list1.addAll(list2);
-									return list1;
-								});
-							}
+					AliasHashMap::new,
+					(map, fn) -> {
+						String canonicalKey = fn.getFunctionInfo().name();
+						map.computeIfAbsent(canonicalKey, k -> new ArrayList<>()).add(fn);
+						for (String alias : fn.getFunctionInfo().aliases()) {
+							map.aliasToKeyMap.put(alias, canonicalKey);
+						}
+					},
+					(left, right) -> {
+						for (Map.Entry<String, List<BuiltinFunction>> entry : right.entrySet()) {
+							left.merge(entry.getKey(), entry.getValue(), (list1, list2) -> {
+								list1.addAll(list2);
+								return list1;
+							});
+						}
 
-							// Merge alias maps
-							left.aliasToKeyMap.putAll(right.aliasToKeyMap);
+						// Merge alias maps
+						left.aliasToKeyMap.putAll(right.aliasToKeyMap);
 
-							return left;
-						},
-						Collector.Characteristics.IDENTITY_FINISH
+						return left;
+					},
+					Collector.Characteristics.IDENTITY_FINISH
 				);
 	}
 
