@@ -104,6 +104,15 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
+      - name: Cache naftah CLASSPATH
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/bin/.naftah_cache
+          key: naftah_cache-${{ runner.os }}-${{ hashFiles('**/*.naftah_cache*') }}
+          restore-keys: |
+            naftah_cache-${{ runner.os }}-
+
       - name: Run tests with coverage
         #      - name: Run tests with coverage and enforce threshold
         run: ./gradlew test jacocoTestReport

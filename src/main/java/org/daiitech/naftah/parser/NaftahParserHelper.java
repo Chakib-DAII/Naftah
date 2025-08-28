@@ -40,6 +40,7 @@ import com.ibm.icu.text.Normalizer2;
 
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
@@ -108,7 +109,7 @@ public final class NaftahParserHelper {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private NaftahParserHelper() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

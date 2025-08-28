@@ -5,6 +5,8 @@ import java.util.Locale;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for detecting the current operating system's properties,
  * including name, architecture, version, and system family.
@@ -131,7 +133,7 @@ public final class OS {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private OS() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -325,8 +327,9 @@ public final class OS {
 					}
 					else {
 						if (!family.equals(FAMILY_OPENVMS)) {
-							throw new NaftahBugError("لا يمكن تحديد عائلة نظام التشغيل \"%s\" بسبب عدم توفر المعلومات الكافية."
-									.formatted(family));
+							throw new NaftahBugError(
+														"لا يمكن تحديد عائلة نظام التشغيل \"%s\" بسبب عدم توفر المعلومات الكافية."
+																.formatted(family));
 						}
 						isFamily = OS_NAME.contains(FAMILY_OPENVMS);
 					}

@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for logging execution details within the Naftah system.
  * <p>
@@ -30,7 +32,7 @@ public final class NaftahExecutionLogger {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private NaftahExecutionLogger() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -444,10 +446,11 @@ public final class NaftahExecutionLogger {
 		return Optional.ofNullable(ctx).map(context -> {
 			String result = """
 							ArgumentDeclarationListContext::COMMA -> %s
+							ArgumentDeclarationListContext::SEMI -> %s
 							ArgumentDeclarationListContext::parameterDeclaration -> {
 								%s
 							}
-							""".formatted(context.COMMA(), join(context.parameterDeclaration()));
+							""".formatted(context.COMMA(), context.SEMI(), join(context.parameterDeclaration()));
 			if (doLog && LOGGER.isLoggable(Level.FINEST)) {
 				LOGGER.finest(result);
 			}
@@ -526,10 +529,11 @@ public final class NaftahExecutionLogger {
 		return Optional.ofNullable(ctx).map(context -> {
 			String result = """
 							ArgumentListContext::COMMA -> %s
+							ArgumentListContext::SEMI -> %s
 							ArgumentListContext::expression -> {
 								%s
 							}
-							""".formatted(context.COMMA(), join(context.expression()));
+							""".formatted(context.COMMA(), context.SEMI(), join(context.expression()));
 			if (doLog && LOGGER.isLoggable(Level.FINEST)) {
 				LOGGER.finest(result);
 			}

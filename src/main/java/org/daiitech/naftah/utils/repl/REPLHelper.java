@@ -8,16 +8,20 @@ import java.util.stream.Stream;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
+import org.jline.keymap.KeyMap;
+import org.jline.reader.Binding;
 import org.jline.reader.Completer;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.Reference;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
@@ -102,7 +106,7 @@ public final class REPLHelper {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private REPLHelper() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -185,6 +189,18 @@ public final class REPLHelper {
 		reader.setOpt(LineReader.Option.HISTORY_IGNORE_SPACE);
 		reader.setOpt(LineReader.Option.HISTORY_BEEP);
 		reader.setOpt(LineReader.Option.HISTORY_VERIFY);
+	}
+
+	public static void setupKeyBindingsConfig(LineReader reader) {
+		KeyMap<Binding> keyMap = reader.getKeyMaps().get(LineReader.MAIN);
+
+		// Flip Left and Right arrow key bindings
+		keyMap
+				.bind(  new Reference(LineReader.FORWARD_CHAR),
+						KeyMap.key(reader.getTerminal(), InfoCmp.Capability.key_left));
+		keyMap
+				.bind(  new Reference(LineReader.BACKWARD_CHAR),
+						KeyMap.key(reader.getTerminal(), InfoCmp.Capability.key_right));
 	}
 
 	/**

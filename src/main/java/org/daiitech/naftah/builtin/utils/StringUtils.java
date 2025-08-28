@@ -14,6 +14,7 @@ import jdk.incubator.vector.VectorOperators;
 import jdk.incubator.vector.VectorSpecies;
 
 import static org.daiitech.naftah.Naftah.VECTOR_API_PROPERTY;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
  * Utility class for performing various operations on {@link String} objects,
@@ -83,22 +84,26 @@ public final class StringUtils {
 	/**
 	 * Pre-increment a character (based on ASCII code).
 	 */
-	public static final Function<Character, Number> PRE_INCREMENT = NumberUtils::preIncrement;
+	public static final Function<Character, Number> PRE_INCREMENT = character -> NumberUtils
+			.preIncrement((int) character);
 
 	/**
 	 * Post-increment a character (based on ASCII code).
 	 */
-	public static final Function<Character, Number> POST_INCREMENT = NumberUtils::postIncrement;
+	public static final Function<Character, Number> POST_INCREMENT = character -> NumberUtils
+			.postIncrement((int) character);
 
 	/**
 	 * Pre-decrement a character (based on ASCII code).
 	 */
-	public static final Function<Character, Number> PRE_DECREMENT = NumberUtils::preDecrement;
+	public static final Function<Character, Number> PRE_DECREMENT = character -> NumberUtils
+			.preDecrement((int) character);
 
 	/**
 	 * Post-decrement a character (based on ASCII code).
 	 */
-	public static final Function<Character, Number> POST_DECREMENT = NumberUtils::postDecrement;
+	public static final Function<Character, Number> POST_DECREMENT = character -> NumberUtils
+			.postDecrement((int) character);
 
 	/**
 	 * Indicates whether vectorized operations should be used (controlled via JVM property).
@@ -216,7 +221,7 @@ public final class StringUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private StringUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 
@@ -228,6 +233,9 @@ public final class StringUtils {
 	 * @return {@code true} if both strings are equal
 	 */
 	public static boolean equals(String a, String b) {
+		if (a == null) {
+			return b == null;
+		}
 		return a.equals(b);
 	}
 
@@ -241,7 +249,7 @@ public final class StringUtils {
 	 *         {@code b}
 	 */
 	public static int compare(String a, String b) {
-		return a.compareTo(b);
+		return a == null ? (b == null ? 0 : -1) : (b == null ? 1 : a.compareTo(b));
 	}
 
 
@@ -253,7 +261,7 @@ public final class StringUtils {
 	 * @return the concatenated string
 	 */
 	public static String add(String a, String b) {
-		return a + b;
+		return (a == null && b == null) ? null : (a == null ? "" : a) + (b == null ? "" : b);
 	}
 
 
@@ -265,7 +273,7 @@ public final class StringUtils {
 	 * @return the resulting string
 	 */
 	public static String subtract(String a, String b) {
-		return a.replace(b, "");
+		return (a == null && b == null) ? null : (a == null ? null : a.replace((b == null ? "" : b), ""));
 	}
 
 	/**
@@ -276,7 +284,7 @@ public final class StringUtils {
 	 * @return an array of substrings
 	 */
 	public static String[] divide(String a, String delimiter) {
-		return a.split(delimiter);
+		return (a == null) ? new String[]{} : ((delimiter == null) ? new String[]{a} : a.split(delimiter));
 	}
 
 	/**
@@ -289,13 +297,13 @@ public final class StringUtils {
 	 */
 	public static String[] divide(String s, int parts) {
 		if (s == null || s.isEmpty()) {
-			throw new NaftahBugError("النص لا يمكن أن يكون فارغًا.");
+			throw newNaftahInvalidEmptyInputStringCannotBeEmptyBugError();
 		}
 		if (parts <= 0) {
-			throw new NaftahBugError("يجب أن يكون عدد الأجزاء أكبر من 0.");
+			throw newNaftahPartsCountMustBeGreaterThanZeroBugError();
 		}
 		if (parts > s.length()) {
-			throw new NaftahBugError("عدد الأجزاء لا يمكن أن يتجاوز طول السلسلة.");
+			throw newNaftahPartsCountExceedsStringLengthBugError();
 		}
 
 		int length = s.length();
@@ -317,30 +325,56 @@ public final class StringUtils {
 	/**
 	 * Repeats the given string a specified number of times.
 	 *
-	 * @param a          the input string
+	 * @param s          the input string
 	 * @param multiplier number of repetitions
 	 * @return the repeated string
 	 */
-	public static String multiply(String a, int multiplier) {
-		return a.repeat(multiplier);
+	public static String multiply(String s, int multiplier) {
+		if (s == null) {
+			throw newNaftahInvalidEmptyInputStringCannotBeEmptyBugError();
+		}
+		try {
+			return s.repeat(multiplier);
+		}
+		catch (IllegalArgumentException | OutOfMemoryError throwable) {
+			throw new NaftahBugError(throwable);
+		}
 	}
 
 	/**
 	 * Applies a binary character-wise operation to two strings.
+	 * <p>
+	 * - If either {@code a} or {@code b} is {@code null}, throws a
+	 * {@link NaftahBugError} indicating invalid input.
+	 * - If one string is empty, returns the other string as-is.
+	 * - Otherwise, applies the provided character-wise operation. If vectorization
+	 * is enabled and applicable, uses a vectorized implementation for performance.
 	 *
-	 * @param a         the first string
-	 * @param b         the second string
-	 * @param operation the character-wise binary operation
+	 * @param a         the first string (must not be {@code null})
+	 * @param b         the second string (must not be {@code null})
+	 * @param operation the character-wise binary operation (e.g. addition, subtraction)
 	 * @return the resulting string after applying the operation
+	 * @throws NaftahBugError if either {@code a} or {@code b} is {@code null}
 	 */
-	public static String applyOperation(String a, String b, BiFunction<Character, Character, Integer> operation) {
-		BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation;
-		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects
-				.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
-			return applyOperationScalar(a, b, operation);
+	public static String applyOperation(String a,
+										String b,
+										BiFunction<Character, Character, Integer> operation) {
+		if (a == null || b == null) {
+			throw newNaftahInvalidEmptyInputStringCannotBeEmptyBugError();
 		}
-		else {
-			return applyOperationVectorized(a, b, operation, vectorOperation);
+
+		try {
+			BiFunction<ShortVector, ShortVector, ShortVector> vectorOperation;
+			if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects
+					.isNull(vectorOperation = BINARY_OP_MAP.get(operation))) {
+				return applyOperationScalar(a, b, operation);
+			}
+			else {
+				return applyOperationVectorized(a, b, operation, vectorOperation);
+			}
+		}
+		catch (ArithmeticException arithmeticException) {
+			throw new NaftahBugError(arithmeticException);
 		}
 	}
 
@@ -352,7 +386,9 @@ public final class StringUtils {
 	 * @param operation the binary operation
 	 * @return the result string after applying the operation character-wise
 	 */
-	public static String applyOperationScalar(String a, String b, BiFunction<Character, Character, Integer> operation) {
+	public static String applyOperationScalar(  String a,
+												String b,
+												BiFunction<Character, Character, Integer> operation) {
 		int minLen = Math.min(a.length(), b.length());
 		StringBuilder result = new StringBuilder(minLen);
 
@@ -533,6 +569,12 @@ public final class StringUtils {
 	 * @return the resulting string
 	 */
 	public static String applyOperation(String a, Function<Character, Number> operation) {
+		if (a == null) {
+			throw newNaftahInvalidEmptyInputStringCannotBeEmptyBugError();
+		}
+		if (a.isEmpty()) {
+			return a;
+		}
 		Function<ShortVector, ShortVector> vectorOperation;
 		if (!USE_VECTOR_API || a.length() < VECTOR_THRESHOLD || Objects
 				.isNull(vectorOperation = UNARY_OP_MAP.get(operation))) {
@@ -687,6 +729,40 @@ public final class StringUtils {
 	 * @return the sum of the code points
 	 */
 	public static int stringToInt(String s) {
+		if (s == null) {
+			throw newNaftahInvalidEmptyInputStringCannotBeEmptyBugError();
+		}
+		if (s.isEmpty()) {
+			return 0;
+		}
 		return s.codePoints().sum();
+	}
+
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that the input string was null or empty.
+	 *
+	 * @return a new {@code NaftahBugError} with a message explaining the invalid input.
+	 */
+	public static NaftahBugError newNaftahInvalidEmptyInputStringCannotBeEmptyBugError() {
+		return new NaftahBugError("النص لا يمكن أن يكون فارغًا.");
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that the number of parts is zero or negative.
+	 *
+	 * @return a new {@code NaftahBugError} with a message explaining the invalid part count.
+	 */
+	public static NaftahBugError newNaftahPartsCountMustBeGreaterThanZeroBugError() {
+		return new NaftahBugError("يجب أن يكون عدد الأجزاء أكبر من 0.");
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that the number of parts exceeds the string length.
+	 *
+	 * @return a new {@code NaftahBugError} with a message explaining the constraint violation.
+	 */
+	public static NaftahBugError newNaftahPartsCountExceedsStringLengthBugError() {
+		return new NaftahBugError("عدد الأجزاء لا يمكن أن يتجاوز طول السلسلة.");
 	}
 }

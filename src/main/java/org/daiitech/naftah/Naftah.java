@@ -19,7 +19,6 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahErrorListener;
-import org.daiitech.naftah.utils.JulLoggerConfig;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -43,6 +42,10 @@ import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.doRun;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getCharStream;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareRun;
+import static org.daiitech.naftah.utils.JulLoggerConfig.JAVA_LOGGING_FILE_PROPERTY;
+import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
+import static org.daiitech.naftah.utils.JulLoggerConfig.initialize;
+import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
@@ -53,6 +56,7 @@ import static org.daiitech.naftah.utils.repl.REPLHelper.getLineReader;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
 import static org.daiitech.naftah.utils.repl.REPLHelper.println;
 import static org.daiitech.naftah.utils.repl.REPLHelper.setupHistoryConfig;
+import static org.daiitech.naftah.utils.repl.REPLHelper.setupKeyBindingsConfig;
 import static org.daiitech.naftah.utils.repl.REPLHelper.setupTerminalCapabilities;
 
 import static picocli.CommandLine.Command;
@@ -137,6 +141,11 @@ public final class Naftah {
 	public static final String VECTOR_API_PROPERTY = "naftah.vector.api.active";
 
 	/**
+	 * Property to enable Arabic-Indic digit formatting in Naftah.
+	 */
+	public static final String ARABIC_INDIC_PROPERTY = "naftah.arabic.indic.active";
+
+	/**
 	 * The recognized standard file extensions for Naftah scripts.
 	 */
 	public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
@@ -181,20 +190,20 @@ public final class Naftah {
 	 */
 	private static void initLogger(boolean debug) {
 		try {
-			String loggingConfigFile = System.getProperty("java.util.logging.config.file");
+			String loggingConfigFile = System.getProperty(JAVA_LOGGING_FILE_PROPERTY);
 
 			// Initialize logging from external file
 			if (Objects.nonNull(loggingConfigFile)) {
-				JulLoggerConfig.initialize(loggingConfigFile);
+				initialize(loggingConfigFile);
 			}
 			else {
-				JulLoggerConfig.initializeFromResources("logging.properties");
+				initializeFromResources(LOGGING_FILE);
 			}
 		}
 		catch (IOException e) {
 			try {
 				// fallback to default logging
-				JulLoggerConfig.initializeFromResources("logging.properties");
+				initializeFromResources(LOGGING_FILE);
 			}
 			catch (IOException ex) {
 				throw new NaftahBugError(ex);
@@ -346,6 +355,7 @@ public final class Naftah {
 	/**
 	 * The base command class for the Naftah CLI, implemented with picocli.
 	 * Supports subcommands: run, init, and shell.
+	 * TODO: add support for ManCammand (Manual), to list java apis in arabic (transliterated)
 	 */
 	@Command(   name = NaftahCommand.NAME,
 				customSynopsis = "naftah [run/shell/init] [options] [filename] [args]",
@@ -402,6 +412,12 @@ public final class Naftah {
 				description = { "Enable Vector API optimizations for performance",
 								"تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"})
 		private boolean useVectorApi;
+		@Option(names = {"-ar_ind", "--arabic_indic"},
+				description = {
+								"Display numbers using Arabic-Indic digits (٠١٢٣٤٥٦٧٨٩)",
+								"عرض الأرقام باستخدام الأرقام الهندية-العربية (٠١٢٣٤٥٦٧٨٩)"
+				})
+		private boolean useArabicIndic;
 
 		/**
 		 * Runs the command.
@@ -477,6 +493,10 @@ public final class Naftah {
 				System.setProperty(VECTOR_API_PROPERTY, Boolean.toString(true));
 			}
 
+			if (matchedCommand.useArabicIndic) {
+				System.setProperty(ARABIC_INDIC_PROPERTY, Boolean.toString(true));
+			}
+
 			main.args = matchedCommand.arguments;
 
 			return main.run(matchedCommand);
@@ -487,7 +507,8 @@ public final class Naftah {
 		 */
 		@Command(   name = RunCommand.NAME,
 					customSynopsis = "naftah run [options] [filename] [args]",
-					description = { "The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
+					description = {
+									"The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
 									"أمر تشغيل نفطة. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."},
 					sortOptions = false)
 		private static final class RunCommand extends NaftahCommand {
@@ -518,8 +539,9 @@ public final class Naftah {
 		 */
 		@Command(   name = InitCommand.NAME,
 					customSynopsis = "naftah init [options] [filename] [args]",
-					description = { "The Naftah init command. it prepares the classpath classes (java classpath) and process them to reuse inside naftah script.",
-									"أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة."},
+					description = {
+									"The Naftah init command. it prepares the classpath classes (java classpath) and process " + "them" + " to reuse inside naftah script.",
+									"أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها " + "داخل سكربت نفطة."},
 					sortOptions = false)
 		private static final class InitCommand extends NaftahCommand {
 			private static final String NAME = "init";
@@ -537,8 +559,9 @@ public final class Naftah {
 		 */
 		@Command(   name = ShellCommand.NAME,
 					customSynopsis = "naftah shell [options] [filename] [args]",
-					description = { "The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code",
-									"يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."},
+					description = {
+									"The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive " + "programming environment where you can enter single lines of naftah code",
+									"يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال " + "أسطر مفردة من كود نفطح وتنفيذها فورًا."},
 					sortOptions = false)
 		private static final class ShellCommand extends NaftahCommand {
 			private static final String NAME = "shell";
@@ -556,6 +579,8 @@ public final class Naftah {
 				LineReader reader = getLineReader(terminal);
 
 				setupHistoryConfig(reader);
+
+				setupKeyBindingsConfig(reader);
 
 				StringBuilder fullLine = new StringBuilder();
 

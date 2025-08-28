@@ -12,6 +12,16 @@ import org.daiitech.naftah.errors.NaftahBugError;
 
 import static java.math.MathContext.DECIMAL128;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.INFINITE_DECIMAL_ERROR;
+import static org.daiitech.naftah.errors.ExceptionUtils.NAN_DECIMAL_ERROR;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidNumberConversionOverflowError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidNumberValueError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugUnsupportedBitwiseDecimalError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugUnsupportedNumbersError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNegativeNumberError;
+
 /**
  * Utility class for dynamically parsing and performing arithmetic operations on
  * various numeric types. Supports Byte, Short, Integer, Long, Float, Double,
@@ -29,7 +39,7 @@ public final class NumberUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private NumberUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -53,7 +63,7 @@ public final class NumberUtils {
 		else if (object instanceof String string) {
 			return parseDynamicNumber(string);
 		}
-		throw new NaftahBugError("قيمة رقمية غير صالحة: '%s'".formatted(object));
+		throw newNaftahBugInvalidNumberValueError(object);
 	}
 
 	/**
@@ -71,7 +81,9 @@ public final class NumberUtils {
 	 * @throws RuntimeException if parsing fails or if value is NaN or infinite
 	 */
 	public static Number parseDynamicNumber(String text) {
-		Objects.requireNonNull(text, "text must not be null");
+		if (text == null) {
+			throw newNaftahBugNullInputError(true, text);
+		}
 		// Replace all decimal-like characters with a dot
 		text = text.replaceAll("[,٫،٬]", ".");
 		try {
@@ -81,11 +93,11 @@ public final class NumberUtils {
 					float f = Float.parseFloat(text);
 					if (Float.isInfinite(f)) {
 						throw new NumberFormatException(
-														"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
+														INFINITE_DECIMAL_ERROR
 																.formatted(text));
 					}
 					if (Float.isNaN(f)) {
-						throw new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
+						throw new NumberFormatException(NAN_DECIMAL_ERROR
 								.formatted(text));
 					}
 
@@ -97,11 +109,11 @@ public final class NumberUtils {
 						double d = Double.parseDouble(text);
 						if (Double.isInfinite(d)) {
 							throw new NumberFormatException(
-															"تجاوز في العدد العشري: القيمة غير نهائية للمدخل '%s'."
+															INFINITE_DECIMAL_ERROR
 																	.formatted(text));
 						}
 						if (Double.isNaN(d)) {
-							throw new NumberFormatException("القيمة ليست رقمًا (NaN): '%s'"
+							throw new NumberFormatException(NAN_DECIMAL_ERROR
 									.formatted(text));
 						}
 
@@ -141,7 +153,7 @@ public final class NumberUtils {
 			}
 		}
 		catch (NumberFormatException ex) {
-			throw new NaftahBugError("قيمة رقمية غير صالحة: '%s'".formatted(text));
+			throw newNaftahBugInvalidNumberValueError(text);
 		}
 	}
 
@@ -165,8 +177,9 @@ public final class NumberUtils {
 	@SuppressWarnings("unchecked")
 	public static <T extends Number> T convertNumberToTargetClass(Number number, Class<T> targetClass)
 			throws IllegalArgumentException {
-		Objects.requireNonNull(number, "Number must not be null");
-		Objects.requireNonNull(targetClass, "Target class must not be null");
+		if (number == null || targetClass == null) {
+			throw newNaftahBugNullInputError(false, number, targetClass);
+		}
 
 		if (targetClass.isInstance(number)) {
 			return (T) number;
@@ -174,21 +187,21 @@ public final class NumberUtils {
 		else if (Byte.class == targetClass) {
 			long value = checkedLongValue(number, targetClass);
 			if (value < Byte.MIN_VALUE || value > Byte.MAX_VALUE) {
-				raiseOverflowException(number, targetClass);
+				throw newNaftahBugInvalidNumberConversionOverflowError(true, number, targetClass);
 			}
 			return (T) Byte.valueOf(number.byteValue());
 		}
 		else if (Short.class == targetClass) {
 			long value = checkedLongValue(number, targetClass);
 			if (value < Short.MIN_VALUE || value > Short.MAX_VALUE) {
-				raiseOverflowException(number, targetClass);
+				throw newNaftahBugInvalidNumberConversionOverflowError(true, number, targetClass);
 			}
 			return (T) Short.valueOf(number.shortValue());
 		}
 		else if (Integer.class == targetClass) {
 			long value = checkedLongValue(number, targetClass);
 			if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
-				raiseOverflowException(number, targetClass);
+				throw newNaftahBugInvalidNumberConversionOverflowError(true, number, targetClass);
 			}
 			return (T) Integer.valueOf(number.intValue());
 		}
@@ -217,10 +230,7 @@ public final class NumberUtils {
 			return (T) new BigDecimal(number.toString());
 		}
 		else {
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s'."
-					.formatted(number, number.getClass().getName(), targetClass.getName()));
+			throw newNaftahBugInvalidNumberConversionOverflowError(false, number, targetClass);
 		}
 	}
 
@@ -232,7 +242,7 @@ public final class NumberUtils {
 	 * @param targetClass the target class to convert to
 	 * @return the long value, if convertible without overflow
 	 * @throws IllegalArgumentException if there is an overflow
-	 * @see #raiseOverflowException
+	 * @see org.daiitech.naftah.errors.ExceptionUtils#newNaftahBugInvalidNumberConversionOverflowError
 	 */
 	private static long checkedLongValue(Number number, Class<? extends Number> targetClass) {
 		BigInteger bigInt = null;
@@ -244,29 +254,10 @@ public final class NumberUtils {
 		}
 		// Effectively analogous to JDK 8's BigInteger.longValueExact()
 		if (bigInt != null && (bigInt.compareTo(LONG_MIN) < 0 || bigInt.compareTo(LONG_MAX) > 0)) {
-			raiseOverflowException(number, targetClass);
+			throw newNaftahBugInvalidNumberConversionOverflowError(true, number, targetClass);
 		}
 		return number.longValue();
 	}
-
-	/**
-	 * Raise an <em>overflow</em> exception for the given number and target class.
-	 *
-	 * @param number      the number we tried to convert
-	 * @param targetClass the target class we tried to convert to
-	 * @throws IllegalArgumentException if there is an overflow
-	 */
-	private static void raiseOverflowException(Number number, Class<?> targetClass) {
-		// TODO: classNames should be in arabic or transliterated or in naftah language
-		// types
-		throw new NaftahBugError(
-									"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' بسبب: تجاوز السعة."
-											.formatted(number, number.getClass().getName(), targetClass.getName()));
-	}
-
-	// ==============================
-	// Arithmetic Operations
-	// ==============================
 
 	/**
 	 * Adds two {@link Number} values.
@@ -290,8 +281,8 @@ public final class NumberUtils {
 	 * @return the result of addition
 	 */
 	public static Number add(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return add(dx, dy);
 	}
 
@@ -366,12 +357,7 @@ public final class NumberUtils {
 			}
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
 		return result;
 	}
@@ -398,8 +384,8 @@ public final class NumberUtils {
 	 * @return the result of subtraction
 	 */
 	public static Number subtract(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return subtract(dx, dy);
 	}
 
@@ -477,12 +463,7 @@ public final class NumberUtils {
 			result = dx.set(result).normalize().get();
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
 		return result;
 	}
@@ -509,8 +490,8 @@ public final class NumberUtils {
 	 * @return the result of multiplication
 	 */
 	public static Number multiply(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return multiply(dx, dy);
 	}
 
@@ -593,14 +574,8 @@ public final class NumberUtils {
 				result = a * b;
 			}
 		}
-
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
 		return result;
 	}
@@ -627,8 +602,8 @@ public final class NumberUtils {
 	 * @return the result of division
 	 */
 	public static Number divide(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return divide(dx, dy);
 	}
 
@@ -670,12 +645,7 @@ public final class NumberUtils {
 			}
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
 		return result;
 	}
@@ -702,8 +672,8 @@ public final class NumberUtils {
 	 * @return the result of division
 	 */
 	public static Number modulo(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return modulo(dx, dy);
 	}
 
@@ -746,12 +716,7 @@ public final class NumberUtils {
 			}
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
 		return result;
 	}
@@ -778,8 +743,8 @@ public final class NumberUtils {
 	 * @return the greatest of {@code x} and {@code y}, as a {@code Number}
 	 */
 	public static Number max(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return max(dx, dy);
 	}
 
@@ -816,12 +781,7 @@ public final class NumberUtils {
 			}
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
 		return result;
 	}
@@ -848,8 +808,8 @@ public final class NumberUtils {
 	 * @return the least of {@code x} and {@code y}, as a {@code Number}
 	 */
 	public static Number min(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return min(dx, dy);
 	}
 
@@ -886,12 +846,7 @@ public final class NumberUtils {
 			}
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
 		return result;
 	}
@@ -921,7 +876,7 @@ public final class NumberUtils {
 	 * Number}
 	 */
 	public static Number pow(Object base, int exponent) {
-		DynamicNumber dx = DynamicNumber.of(base);
+		DynamicNumber dx = base instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(base);
 		return pow(dx, exponent);
 	}
 
@@ -994,10 +949,7 @@ public final class NumberUtils {
 			}
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(base.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, base);
 		}
 	}
 
@@ -1020,7 +972,7 @@ public final class NumberUtils {
 	 * @return the rounded number
 	 */
 	public static Number round(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return round(dx);
 	}
 
@@ -1070,7 +1022,7 @@ public final class NumberUtils {
 	 * @return the rounded number
 	 */
 	public static Number floor(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return floor(dx);
 	}
 
@@ -1104,11 +1056,7 @@ public final class NumberUtils {
 			return dx.asByte();
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -1133,7 +1081,7 @@ public final class NumberUtils {
 	 * @return the ceiling value
 	 */
 	public static Number ceil(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return ceil(dx);
 	}
 
@@ -1167,11 +1115,7 @@ public final class NumberUtils {
 			return dx.asByte();
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -1194,7 +1138,7 @@ public final class NumberUtils {
 	 * @return the negated number
 	 */
 	public static Number negate(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return negate(dx);
 	}
 
@@ -1231,11 +1175,7 @@ public final class NumberUtils {
 			result = -dx.asByte();
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 		return result;
 	}
@@ -1259,7 +1199,7 @@ public final class NumberUtils {
 	 * @return the square root of the number
 	 */
 	public static Number sqrt(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return sqrt(dx);
 	}
 
@@ -1270,6 +1210,9 @@ public final class NumberUtils {
 	 * @return the square root of the number
 	 */
 	public static Number sqrt(DynamicNumber dx) {
+		if (compare(dx, 0) < 0) {
+			throw newNaftahNegativeNumberError();
+		}
 		if (dx.isBigDecimal()) {
 			return dx.asBigDecimal().sqrt(DECIMAL128);
 		}
@@ -1298,7 +1241,7 @@ public final class NumberUtils {
 	 * @return the absolute value of the number
 	 */
 	public static Number abs(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return abs(dx);
 	}
 
@@ -1337,7 +1280,7 @@ public final class NumberUtils {
 	 * @return -1 if the number is negative, 0 if zero, and 1 if positive
 	 */
 	public static int signum(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return signum(dx);
 	}
 
@@ -1376,7 +1319,7 @@ public final class NumberUtils {
 	 * @return {@code true} if the number is zero; {@code false} otherwise
 	 */
 	public static boolean isZero(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return isZero(dx);
 	}
 
@@ -1414,8 +1357,8 @@ public final class NumberUtils {
 	 *         {@code false} otherwise
 	 */
 	public static boolean equals(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return equals(dx, dy);
 	}
 
@@ -1455,8 +1398,8 @@ public final class NumberUtils {
 	 *         positive integer if {@code x > y}
 	 */
 	public static int compare(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return compare(dx, dy);
 	}
 
@@ -1476,12 +1419,7 @@ public final class NumberUtils {
 			return dx.asBigInteger().compareTo(dy.asBigInteger());
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError(
-										"أنواع الأرقام غير مدعومة: '%s'، '%s'"
-												.formatted(dx.get().getClass(), dy.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
 	}
 
@@ -1525,8 +1463,8 @@ public final class NumberUtils {
 	 * @see #and(DynamicNumber, DynamicNumber)
 	 */
 	public static Number and(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return and(dx, dy);
 	}
 
@@ -1539,9 +1477,7 @@ public final class NumberUtils {
 	 */
 	public static Number and(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
-			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-												.formatted(dx, dy));
+			throw newNaftahBugUnsupportedBitwiseDecimalError(false, dx, dy);
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().and(dy.asBigInteger());
@@ -1559,11 +1495,7 @@ public final class NumberUtils {
 			return dx.asByte() & dy.asByte();
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -1605,8 +1537,8 @@ public final class NumberUtils {
 	 * @see #or(DynamicNumber, DynamicNumber)
 	 */
 	public static Number or(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return or(dx, dy);
 	}
 
@@ -1619,9 +1551,7 @@ public final class NumberUtils {
 	 */
 	public static Number or(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
-			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-												.formatted(dx, dy));
+			throw newNaftahBugUnsupportedBitwiseDecimalError(false, dx, dy);
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().or(dy.asBigInteger());
@@ -1639,11 +1569,7 @@ public final class NumberUtils {
 			return dx.asByte() | dy.asByte();
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -1685,8 +1611,8 @@ public final class NumberUtils {
 	 * @see #xor(DynamicNumber, DynamicNumber)
 	 */
 	public static Number xor(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
 		return xor(dx, dy);
 	}
 
@@ -1699,9 +1625,7 @@ public final class NumberUtils {
 	 */
 	public static Number xor(DynamicNumber dx, DynamicNumber dy) {
 		if (dx.isDecimal() || dy.isDecimal()) {
-			throw new NaftahBugError(
-										"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'، '%s'"
-												.formatted(dx, dy));
+			throw newNaftahBugUnsupportedBitwiseDecimalError(false, dx, dy);
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().xor(dy.asBigInteger());
@@ -1719,11 +1643,7 @@ public final class NumberUtils {
 			return dx.asByte() ^ dy.asByte();
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -1762,7 +1682,7 @@ public final class NumberUtils {
 	 * @see #not(DynamicNumber)
 	 */
 	public static Number not(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return not(dx);
 	}
 
@@ -1774,7 +1694,7 @@ public final class NumberUtils {
 	 */
 	public static Number not(DynamicNumber dx) {
 		if (dx.isDecimal()) {
-			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
+			throw newNaftahBugUnsupportedBitwiseDecimalError(true, dx);
 		}
 		else if (dx.isBigInteger()) {
 			return dx.asBigInteger().not();
@@ -1792,11 +1712,7 @@ public final class NumberUtils {
 			return ~dx.asByte();
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -1840,7 +1756,7 @@ public final class NumberUtils {
 	 * @see #shiftLeft(DynamicNumber, int)
 	 */
 	public static Number shiftLeft(Object x, int positions) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return shiftLeft(dx, positions);
 	}
 
@@ -1856,7 +1772,7 @@ public final class NumberUtils {
 	 */
 	public static Number shiftLeft(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
-			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
+			throw newNaftahBugUnsupportedBitwiseDecimalError(true, dx);
 		}
 		else if (isZero(dx)) {
 			return 0;
@@ -1909,11 +1825,7 @@ public final class NumberUtils {
 			}
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -1977,7 +1889,7 @@ public final class NumberUtils {
 	 * @see #shiftRight(DynamicNumber, int)
 	 */
 	public static Number shiftRight(Object x, int positions) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return shiftRight(dx, positions);
 	}
 
@@ -1993,7 +1905,7 @@ public final class NumberUtils {
 	 */
 	public static Number shiftRight(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
-			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
+			throw newNaftahBugUnsupportedBitwiseDecimalError(true, dx);
 		}
 		else if (isZero(dx)) {
 			return 0;
@@ -2020,11 +1932,7 @@ public final class NumberUtils {
 			return dx.asByte() >> positions;
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -2067,7 +1975,7 @@ public final class NumberUtils {
 	 * @see #unsignedShiftRight(DynamicNumber, int)
 	 */
 	public static Number unsignedShiftRight(Object x, int positions) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return unsignedShiftRight(dx, positions);
 	}
 
@@ -2084,7 +1992,7 @@ public final class NumberUtils {
 	 */
 	public static Number unsignedShiftRight(DynamicNumber dx, int positions) {
 		if (dx.isDecimal()) {
-			throw newNaftahBugUnsupportedBitwiseDecimalError(dx);
+			throw newNaftahBugUnsupportedBitwiseDecimalError(true, dx);
 		}
 		else if (isZero(dx)) {
 			return 0;
@@ -2111,11 +2019,7 @@ public final class NumberUtils {
 			return dx.asByte() >>> positions;
 		}
 		else {
-			// Unknown or unsupported number types
-
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -2152,7 +2056,7 @@ public final class NumberUtils {
 	 * @see #preIncrement(DynamicNumber)
 	 */
 	public static Number preIncrement(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return preIncrement(dx);
 	}
 
@@ -2228,10 +2132,7 @@ public final class NumberUtils {
 		if (dx.isDouble()) {
 			return dx.set(val.doubleValue() + 1d).get();
 		}
-		// Unknown or unsupported number types
-		// TODO: classNames should be in arabic or transliterated or in naftah language
-		// types
-		throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(val.getClass()));
+		throw newNaftahBugUnsupportedNumbersError(true, dx);
 	}
 
 	/**
@@ -2269,7 +2170,7 @@ public final class NumberUtils {
 	 * @see #postIncrement(DynamicNumber)
 	 */
 	public static Number postIncrement(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return postIncrement(dx);
 	}
 
@@ -2395,10 +2296,7 @@ public final class NumberUtils {
 			return oldValue;
 		}
 
-		// Unknown or unsupported number types
-		// TODO: classNames should be in arabic or transliterated or in naftah language
-		// types
-		throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(val.getClass()));
+		throw newNaftahBugUnsupportedNumbersError(true, dx);
 	}
 
 	/**
@@ -2434,7 +2332,7 @@ public final class NumberUtils {
 	 * @see #preDecrement(DynamicNumber)
 	 */
 	public static Number preDecrement(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return preDecrement(dx);
 	}
 
@@ -2493,10 +2391,7 @@ public final class NumberUtils {
 			return dx.get();
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 	}
 
@@ -2535,7 +2430,7 @@ public final class NumberUtils {
 	 * @see #postDecrement(DynamicNumber)
 	 */
 	public static Number postDecrement(Object x) {
-		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
 		return postDecrement(dx);
 	}
 
@@ -2595,10 +2490,7 @@ public final class NumberUtils {
 			dx.set(dx.asByte() - 1);
 		}
 		else {
-			// Unknown or unsupported number types
-			// TODO: classNames should be in arabic or transliterated or in naftah language
-			// types
-			throw new NaftahBugError("نوع الرقم غير مدعوم: '%s'".formatted(dx.get().getClass()));
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 
 		// Normalize the updated value inside dx after decrement
@@ -2864,17 +2756,5 @@ public final class NumberUtils {
 			}
 		}
 		return exception;
-	}
-
-	/**
-	 * Creates a NaftahBugError indicating that bitwise operations on decimal numbers are unsupported.
-	 *
-	 * @param dx the decimal number on which the bitwise operation was attempted
-	 * @return a NaftahBugError with an explanatory message
-	 */
-	public static NaftahBugError newNaftahBugUnsupportedBitwiseDecimalError(DynamicNumber dx) {
-		return new NaftahBugError(
-									"العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s'،"
-											.formatted(dx));
 	}
 }

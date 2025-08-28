@@ -11,6 +11,8 @@ import java.util.logging.LogManager;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for initializing Java Util Logging (JUL) configuration.
  * <p>
@@ -24,6 +26,19 @@ import org.daiitech.naftah.errors.NaftahBugError;
  * @author Chakib Daii
  */
 public final class JulLoggerConfig {
+	/**
+	 * The system property key used by the Java Logging API to locate the logging configuration file.
+	 * <p>
+	 * Example usage: {@code System.setProperty(JAVA_LOGGING_FILE_PROPERTY, LOGGING_FILE);}
+	 */
+	public static final String JAVA_LOGGING_FILE_PROPERTY = "java.util.logging.config.file";
+
+	/**
+	 * The default name of the Java logging configuration file.
+	 * <p>
+	 * This file should typically be located on the classpath or in the working directory.
+	 */
+	public static final String LOGGING_FILE = "logging.properties";
 
 	private static boolean initialized = false;
 
@@ -32,7 +47,7 @@ public final class JulLoggerConfig {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private JulLoggerConfig() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

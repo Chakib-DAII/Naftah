@@ -2,9 +2,10 @@ package org.daiitech.naftah.builtin.lang;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Objects;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
+
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 
 /**
  * A wrapper class for numeric values that supports dynamic typing and
@@ -31,10 +32,12 @@ public class DynamicNumber {
 	 * Constructs a {@code DynamicNumber} from a {@link Number}.
 	 *
 	 * @param value the numeric value, must not be null
-	 * @throws NullPointerException if the value is null
+	 * @throws org.daiitech.naftah.errors.NaftahBugError if the value is null
 	 */
 	public DynamicNumber(Number value) {
-		Objects.requireNonNull(value, "القيمة غير صالحة (null)");
+		if (value == null) {
+			throw newNaftahBugNullInputError(true, value);
+		}
 		this.value = value;
 	}
 
@@ -43,11 +46,13 @@ public class DynamicNumber {
 	 * to a numeric value.
 	 *
 	 * @param value the value to parse as a number, must not be null
-	 * @throws NullPointerException if the value is null
+	 * @throws org.daiitech.naftah.errors.NaftahBugError if the value is null
 	 * @see NumberUtils#parseDynamicNumber(Object)
 	 */
 	public DynamicNumber(Object value) {
-		Objects.requireNonNull(value, "القيمة غير صالحة (null)");
+		if (value == null) {
+			throw newNaftahBugNullInputError(true, value);
+		}
 		this.value = NumberUtils.parseDynamicNumber(value);
 	}
 

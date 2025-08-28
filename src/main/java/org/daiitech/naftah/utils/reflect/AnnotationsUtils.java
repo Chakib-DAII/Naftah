@@ -13,6 +13,8 @@ import org.daiitech.naftah.builtin.lang.NaftahFunction;
 import org.daiitech.naftah.builtin.lang.NaftahFunctionProvider;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for working with Java annotations on methods, classes, and
  * parameters.
@@ -26,7 +28,7 @@ public final class AnnotationsUtils {
 	 * Throws {@link NaftahBugError} if called.
 	 */
 	private AnnotationsUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -80,6 +82,7 @@ public final class AnnotationsUtils {
 		NaftahFn naftahFn = getMethodAnnotation(method, NaftahFn.class);
 		return NaftahFunction
 				.of(naftahFn.name(),
+					naftahFn.aliases(),
 					naftahFn.description(),
 					naftahFn.usage(),
 					naftahFn.returnType(),

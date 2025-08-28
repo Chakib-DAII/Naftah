@@ -3,6 +3,7 @@ package org.daiitech.naftah.errors;
 import java.util.ResourceBundle;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.getMostSpecificCause;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
 
 /**
@@ -30,7 +31,7 @@ public final class ExceptionLocalizer {
 	 * </p>
 	 */
 	private ExceptionLocalizer() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

@@ -9,6 +9,8 @@ import java.util.Properties;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.ResourceUtils;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Exposes the Naftah release information such as version, build date, and build time.
  * <p>
@@ -83,7 +85,7 @@ public final class ReleaseInfo {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private ReleaseInfo() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

@@ -47,6 +47,8 @@ import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
 import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
@@ -95,7 +97,7 @@ public class DefaultContext {
 	 * Generates unique function call IDs based on the depth, function name, and a random UUID.
 	 */
 	public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (  depth,
-																							functionName) -> ("%s" + "-%s-%s")
+																							functionName) -> ("%s-%s-%s")
 																									.formatted(
 																												depth,
 																												functionName,
@@ -103,22 +105,10 @@ public class DefaultContext {
 																														.randomUUID());
 
 	/**
-	 * Generates unique parameter names based on the function name and parameter name.
+	 * Generates unique parameter names based on the function name and parameter name
+	 * and unique argument names based on the function call ID and argument name.
 	 */
-	public static final BiFunction<String, String, String> PARAMETER_NAME_GENERATOR = ( functionName,
-																						parameterName) -> "%s-%s"
-																								.formatted(
-																											functionName,
-																											parameterName);
-
-	/**
-	 * Generates unique argument names based on the function call ID and argument name.
-	 */
-	public static final BiFunction<String, String, String> ARGUMENT_NAME_GENERATOR = (  functionCallId,
-																						argumentName) -> "%s-%s"
-																								.formatted(
-																											functionCallId,
-																											argumentName);
+	public static final BiFunction<String, String, String> PARAMETER_ARGUMENT_NAME_GENERATOR = "%s-%s"::formatted;
 
 	/**
 	 * Generates unique loop labels for unlabeled loops based on depth and a UUID.
@@ -329,7 +319,7 @@ public class DefaultContext {
 								Map<String, Object> arguments) {
 		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS
 				.size() != 0)) {
-			throw new NaftahBugError("استخدام غير مسموح به.");
+			throw newNaftahBugInvalidUsageError();
 		}
 		this.parent = parent;
 		this.depth = parent == null ? 0 : parent.getDepth() + 1;
@@ -446,17 +436,12 @@ public class DefaultContext {
 	/**
 	 * Retrieves the current loop label based on the given label context or generates a unique one.
 	 *
-	 * @param labelCtx the label parser context, may be {@code null}
-	 * @param depth    the depth to use for label generation if none provided
+	 * @param label the parsed label, may be {@code null}
+	 * @param depth the depth to use for label generation if none provided
 	 * @return the current loop label as a string
 	 */
-	public static String currentLoopLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext labelCtx, int depth) {
-		if (labelCtx != null) {
-			return labelCtx.ID().getText();
-		}
-		else {
-			return LOOP_ID_GENERATOR.apply(depth);
-		}
+	public static String currentLoopLabel(String label, int depth) {
+		return Objects.nonNull(label) ? label : LOOP_ID_GENERATOR.apply(depth);
 	}
 
 	/**
@@ -526,10 +511,7 @@ public class DefaultContext {
 	public static void defaultBootstrap() {
 		BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class)
 				.stream()
-				.map(builtinFunction -> Map.entry(builtinFunction.getFunctionInfo().name(), builtinFunction))
-				.collect(Collectors
-						.groupingBy(Map.Entry::getKey,
-									Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+				.collect(toAliasGroupedByName());
 	}
 
 	/**
@@ -592,7 +574,8 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Returns a list of all completion candidates combining builtin functions, JVM functions, and instantiable classes.
+	 * Returns a list of all completion candidates combining builtin functions, JVM functions, and instantiable
+	 * classes.
 	 *
 	 * @return list of completion names
 	 */
@@ -879,7 +862,7 @@ public class DefaultContext {
 		}
 		if (functionCallId != null) {
 			String functionName = functionCallId.split("-")[1];
-			name = DefaultContext.PARAMETER_NAME_GENERATOR.apply(functionName, name);
+			name = DefaultContext.PARAMETER_ARGUMENT_NAME_GENERATOR.apply(functionName, name);
 		}
 		return name;
 	}
@@ -1002,7 +985,7 @@ public class DefaultContext {
 			arguments = new HashMap<>();
 		}
 		if (functionCallId != null) {
-			name = DefaultContext.ARGUMENT_NAME_GENERATOR.apply(functionCallId, name);
+			name = DefaultContext.PARAMETER_ARGUMENT_NAME_GENERATOR.apply(functionCallId, name);
 		}
 		return name;
 	}

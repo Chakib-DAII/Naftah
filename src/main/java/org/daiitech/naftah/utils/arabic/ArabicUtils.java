@@ -22,9 +22,14 @@ import com.ibm.icu.impl.Pair;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
+import com.ibm.icu.text.DecimalFormat;
+import com.ibm.icu.text.DecimalFormatSymbols;
+import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.Transliterator;
 
+import static org.daiitech.naftah.Naftah.ARABIC_INDIC_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
  * Utility class providing various methods for handling Arabic text processing,
@@ -77,7 +82,6 @@ public final class ArabicUtils {
 	 * Locale instance representing Arabic language.
 	 */
 	public static final Locale ARABIC = new Locale(ARABIC_LANGUAGE);
-
 	/**
 	 * ResourceBundle loaded with custom transliteration rules for Arabic.
 	 */
@@ -105,13 +109,27 @@ public final class ArabicUtils {
 					"|(?<=[^A-Z])(?=[A-Z])" + // IPv6 → IPv, 6
 					"|(?<=[A-Za-z])(?=\\d)" + // 6Parser → 6, Parser
 					"|(?<=\\d)(?=[A-Za-z])";
-
 	/**
 	 * Cache of precompiled {@link Matcher} instances for text processing, keyed by the input text string.
 	 * Used to improve performance by avoiding
 	 * repeated compilation of patterns.
 	 */
 	private static final Map<String, Matcher> TEXT_MATCHER_CACHE = new HashMap<>();
+	/**
+	 * A reusable {@link NumberFormat} instance configured for the Arabic locale.
+	 * <p>
+	 * This formatter uses Arabic locale conventions for decimal and grouping separators,
+	 * and may render numbers using Arabic-Indic digits (e.g., ٠١٢٣٤٥٦٧٨٩), depending on JVM
+	 * settings and font support.
+	 * <p>
+	 * Note: {@link NumberFormat} instances are <strong>not thread-safe</strong>. If this
+	 * formatter is used across multiple threads, synchronize access or create a new instance
+	 * via {@code NumberFormat.getNumberInstance(ARABIC)}.
+	 *
+	 * @see Locale#forLanguageTag(String)
+	 * @see NumberFormat#getNumberInstance(Locale)
+	 */
+	public static NumberFormat ARABIC_NUMBER_FORMAT;
 	/**
 	 * Custom transliteration rules defined as a multi-line string.
 	 * Each rule maps Latin script sequences to their corresponding Arabic script sequences.
@@ -143,7 +161,11 @@ public final class ArabicUtils {
 		for (String key : keylist) {
 			String value = CUSTOM_RULES_BUNDLE.getString(key);
 			// If s contains underscore or spaces or any special char, quote it
-			if (value.matches(".*[ _\\t\\r\\n].*")) { // underscore or space or whitespace
+			String regex = ".*[ _\\t\\r\\n].*";
+			if (key.matches(regex)) { // underscore or space or whitespace
+				key = "'" + key + "'";
+			}
+			if (value.matches(regex)) { // underscore or space or whitespace
 				value = "'" + value + "'";
 			}
 
@@ -152,6 +174,32 @@ public final class ArabicUtils {
 									""".formatted(key, value));
 		}
 		CUSTOM_RULES = stringBuilder + CUSTOM_RULES;
+
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(ARABIC);
+
+		if (Boolean.getBoolean(ARABIC_INDIC_PROPERTY)) {
+//			TODO : not working; check it
+			symbols
+					.setDigitStrings(new String[]{
+													"٠",
+													"١",
+													"٢",
+													"٣",
+													"٤",
+													"٥",
+													"٦",
+													"٧",
+													"٨",
+													"٩"
+					}); // Arabic-Indic zero
+		}
+		else {
+			symbols.setZeroDigit('0'); // Latin digits
+		}
+
+		symbols.setDecimalSeparator('٫'); // Arabic decimal separator
+		symbols.setGroupingSeparator('_'); // Arabic grouping separator
+		ARABIC_NUMBER_FORMAT = new DecimalFormat("#,##0.###", symbols);
 	}
 
 	/**
@@ -159,7 +207,7 @@ public final class ArabicUtils {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private ArabicUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

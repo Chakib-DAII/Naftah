@@ -10,6 +10,8 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
+import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
@@ -35,7 +37,7 @@ public final class Builtin {
 	 * Throws {@link NaftahBugError} if called.
 	 */
 	private Builtin() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -45,6 +47,7 @@ public final class Builtin {
 	 * @param o the object to print; can be any object
 	 */
 	@NaftahFn(  name = "إطبع",
+				aliases = {"ڨول", "قول", "قل", "ڨلي", "ڨلّي", "قلي", "قلّي", "إكتب"},
 				description = "تعليمة الطباعة (إطبع) هي التعليمة التي تُستخدم في البرمجة لإظهار نص معين على الشاشة، مثل " + "إظهار رسالة ترحيبية للمستخدم.",
 				usage = "إطبع(ش)",
 				parameterTypes = {Object.class})
@@ -66,7 +69,7 @@ public final class Builtin {
 	 * @return the sum of x and y
 	 */
 	@NaftahFn(  name = "إجمع",
-				description = "إضافة الأعداد معًا للحصول على مجموع. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد" + " القيمة الإجمالية من خلال جمع عدة أرقام.",
+				description = "إضافة الأعداد معًا للحصول على مجموع. هو العملية الأساسية التي تُستخدم في الرياضيات " + "لتحديد" + " القيمة الإجمالية من خلال جمع عدة أرقام.",
 				usage = "إجمع(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -83,7 +86,7 @@ public final class Builtin {
 	 * @return the difference between x and y
 	 */
 	@NaftahFn(  name = "إطرح",
-				description = "طرح الأعداد للحصول على الفرق. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة" + " المتبقية عند إزالة قيمة عدد من عدد آخر.",
+				description = "طرح الأعداد للحصول على الفرق. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد " + "القيمة" + " المتبقية عند إزالة قيمة عدد من عدد آخر.",
 				usage = "إطرح(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -100,7 +103,7 @@ public final class Builtin {
 	 * @return the product of x and y
 	 */
 	@NaftahFn(  name = "إضرب",
-				description = "ضرب الأعداد للحصول على الناتج هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة" + " الإجمالية عند تكرار جمع عدد معين عدة مرات.",
+				description = "ضرب الأعداد للحصول على الناتج هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد " + "القيمة" + " الإجمالية عند تكرار جمع عدد معين عدة مرات.",
 				usage = "إضرب(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -231,7 +234,7 @@ public final class Builtin {
 	 * @usage floor(x)
 	 */
 	@NaftahFn(  name = "أرضي",
-				description = "دالة (أرضي) تُستخدم لإرجاع أكبر عدد صحيح أصغر من أو يساوي العدد المعطى. تُفيد هذه العملية" + " في العمليات الحسابية التي تتطلب تقريب الأعداد إلى الأسفل.",
+				description = "دالة (أرضي) تُستخدم لإرجاع أكبر عدد صحيح أصغر من أو يساوي العدد المعطى. تُفيد هذه " + "العملية" + " في العمليات الحسابية التي تتطلب تقريب الأعداد إلى الأسفل.",
 				usage = "أرضي(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -269,7 +272,7 @@ public final class Builtin {
 	 * @usage negate(x)
 	 */
 	@NaftahFn(  name = "إنفي",
-				description = "دالة (إنفي) تُستخدم لإرجاع العدد المعطى بعد تغييره إلى قيمته السالبة. تُفيد هذه العملية " + "في العمليات الحسابية التي تتطلب عكس الإشارة العددية.",
+				description = "دالة (إنفي) تُستخدم لإرجاع العدد المعطى بعد تغييره إلى قيمته السالبة. تُفيد هذه العملية " + "في" + " العمليات الحسابية التي تتطلب عكس الإشارة العددية.",
 				usage = "إنفي(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -307,7 +310,7 @@ public final class Builtin {
 	 * @usage abs(x)
 	 */
 	@NaftahFn(  name = "القيمة_المطلقة",
-				description = "دالة (القيمة_المطلقة) تُستخدم لحساب القيمة المطلقة للعدد المعطى، أي إزالة إشارة السالب إن" + " وجدت. تُفيد هذه العملية في الحسابات التي تتطلب قيمة موجبة دائمًا.",
+				description = "دالة (القيمة_المطلقة) تُستخدم لحساب القيمة المطلقة للعدد المعطى، أي إزالة إشارة السالب " + "إن" + " وجدت. تُفيد هذه العملية في الحسابات التي تتطلب قيمة موجبة دائمًا.",
 				usage = "القيمة_المطلقة(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -363,7 +366,7 @@ public final class Builtin {
 	 * @usage equals(x, y)
 	 */
 	@NaftahFn(  name = "هل_يساوي",
-				description = "دالة (هل_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا متساويين في القيمة. تُرجع صحيح" + " إذا كان العددان متساويين، وخطأ خلاف ذلك.",
+				description = "دالة (هل_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا متساويين في القيمة. تُرجع " + "صحيح" + " إذا كان العددان متساويين، وخطأ خلاف ذلك.",
 				usage = "هل_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -372,7 +375,7 @@ public final class Builtin {
 			return (boolean) applyOperation(x, y, BinaryOperation.EQUALS);
 		}
 		catch (NaftahBugError bug) {
-			if (bug.getBugText().equals("لا يمكن أن تكون الوسائط فارغة.")) {
+			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
 				throw bug;
 			}
 			return x.equals(y);
@@ -399,7 +402,7 @@ public final class Builtin {
 			return (boolean) applyOperation(x, y, BinaryOperation.NOT_EQUALS);
 		}
 		catch (NaftahBugError bug) {
-			if (bug.getBugText().equals("لا يمكن أن تكون الوسائط فارغة.")) {
+			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
 				throw bug;
 			}
 			return !x.equals(y);
@@ -493,7 +496,7 @@ public final class Builtin {
 	 * @usage and(x, y)
 	 */
 	@NaftahFn(  name = "و_بتي",
-				description = "دالة (و_بتي) تُنفذ عملية 'AND' على الأعداد الثنائية (bitwise) المعطاة. تُرجع العدد الناتج" + " عن العملية الثنائية بين العددين.",
+				description = "دالة (و_بتي) تُنفذ عملية 'AND' على الأعداد الثنائية (bitwise) المعطاة. تُرجع العدد " + "الناتج" + " عن العملية الثنائية بين العددين.",
 				usage = "و_بتي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -607,7 +610,7 @@ public final class Builtin {
 	 * @usage unsignedShiftRight(x, positions)
 	 */
 	@NaftahFn(  name = "إزاحة_إلى_اليمين_غير_موقعة",
-				description = "دالة (إزاحة_إلى_اليمين_غير_موقعة) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بدون " + "اعتبار الإشارة، بعدد المواقع المحدد. تُستخدم هذه العملية لمعالجة الأعداد بدون تأثير الإشارة " + "السالبة.",
+				description = "دالة (إزاحة_إلى_اليمين_غير_موقعة) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بدون " + "اعتبار الإشارة، بعدد المواقع المحدد. تُستخدم هذه العملية لمعالجة الأعداد بدون تأثير " + "الإشارة " + "السالبة.",
 				usage = "إزاحة_إلى_اليمين_غير_موقعة(ش ، مواقِع)",
 				parameterTypes = {Number.class, int.class},
 				returnType = Number.class)

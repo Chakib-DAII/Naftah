@@ -227,7 +227,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitProgram(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		// TODO: add the functions (processed from classpath and provider annotations)
@@ -254,7 +257,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitObjectAccessStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -271,7 +277,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitDeclarationStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -289,7 +298,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitAssignmentStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -311,7 +323,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitFunctionDeclarationStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -329,7 +344,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitFunctionCallStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -347,7 +365,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitIfStatementStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -365,7 +386,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitForStatementStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -384,7 +408,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitWhileStatementStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -403,7 +430,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitRepeatStatementStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -421,7 +451,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitCaseStatementStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -440,7 +473,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBreakStatementStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -459,7 +495,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitContinueStatementStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -478,7 +517,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitReturnStatementStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -496,7 +538,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBlockStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -514,7 +559,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitDeclaration(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -566,7 +614,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitAssignment(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -607,7 +658,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitFunctionDeclaration(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -628,7 +682,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitArgumentDeclarationList(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -650,7 +707,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitArgumentDeclaration(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -674,7 +734,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitFunctionCall(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -772,7 +835,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitQualifiedCall(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -790,7 +856,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitArgumentList(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -813,7 +882,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitIfStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -823,17 +895,19 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 			result = visit(ctx.block(0)); // If the condition is true, execute the 'then' block
 		}
 		else {
+			boolean elseifConditionMatched = false;
 			// Iterate through elseif blocks
 			for (int i = 0; i < ctx.ELSEIF().size(); i++) {
-				Object elseifCondition = visit(ctx.expression(i)); // Evaluate elseif condition
+				Object elseifCondition = visit(ctx.expression(i + 1)); // Evaluate elseif condition
 				if (isTruthy(elseifCondition)) {
 					result = visit(ctx.block(i + 1)); // Execute the corresponding elseif block if condition is true
+					elseifConditionMatched = true;
 					break;
 				}
 			}
 
 			// If no elseif was true, execute the else block (if it exists)
-			if (hasChild(ctx.ELSE())) {
+			if (!elseifConditionMatched && hasChild(ctx.ELSE())) {
 				result = visit(ctx.block(ctx.ELSEIF().size() + 1)); // Execute the 'else' block if present
 			}
 		}
@@ -850,13 +924,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitForStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
 		Object result = null;
 		boolean loopInStack = false;
-		String label = currentLoopLabel(ctx.label(), depth);
+		String label = currentLoopLabel((String) (Objects.isNull(ctx.label()) ? null : visit(ctx.label())), depth);
 		currentContext.setLoopLabel(label);
 		// Initialization: ID := expression
 		String loopVar = ctx.ID().getText();
@@ -1054,7 +1131,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitExpressionStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1072,7 +1152,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBreakStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1115,7 +1198,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitContinueStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1159,7 +1245,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitReturnStatement(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1182,7 +1271,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBlock(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1211,7 +1303,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitObjectExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1229,7 +1324,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitObject(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1247,7 +1345,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitObjectFields(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1272,7 +1373,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitObjectAccessExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1290,7 +1394,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitCollectionExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1308,7 +1415,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitListValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1326,7 +1436,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitTupleValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1356,7 +1469,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitSetValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1374,7 +1490,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitMapValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1392,7 +1511,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitElements(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1462,7 +1584,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitKeyValuePairs(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1544,7 +1669,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitKeyValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1569,7 +1697,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitValueExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1606,7 +1737,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitMinusExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1634,7 +1768,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitParenthesisExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1652,7 +1789,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitModExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1680,7 +1820,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitDivExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1708,7 +1851,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitGreaterThanExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1735,7 +1881,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitLessThanEqualsExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1762,7 +1911,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitGreaterThanEqualsExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1788,7 +1940,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitNotEqualsExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1814,7 +1969,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitEqualsExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1840,7 +1998,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitLessThanExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1866,7 +2027,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitFunctionCallExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1884,7 +2048,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitPlusExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1912,7 +2079,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitMulExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1940,7 +2110,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitNumberValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1961,7 +2134,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitStringValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1979,7 +2155,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitStringValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -1998,7 +2177,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitTrueValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2015,7 +2197,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitFalseValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2032,7 +2217,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitNullValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2049,7 +2237,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitIdValue(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2071,7 +2262,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitVoidReturnType(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2089,7 +2283,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitTypeReturnType(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2107,7 +2304,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitVarType(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2125,11 +2325,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBuiltInType(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
-		var result = getJavaType(ctx);
+		var result = (Class<?>) visit(ctx.builtIn());
 		currentContext.markExecuted(ctx); // Mark as executed
 		return result;
 	}
@@ -2143,7 +2346,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBuiltIn(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2161,7 +2367,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitQualifiedNameType(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2180,7 +2389,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitQualifiedName(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2226,11 +2438,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext ctx) {
+	public String visitLabel(org.daiitech.naftah.parser.NaftahParser.LabelContext ctx) {
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitLabel(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2248,7 +2463,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBitwiseXorExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2274,7 +2492,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitNotExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2292,7 +2513,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitAndExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2312,7 +2536,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitOrExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2332,7 +2559,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitNegateExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2350,7 +2580,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitPreDecrementExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2376,7 +2609,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitPostDecrementExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2401,7 +2637,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBitwiseOrExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2427,7 +2666,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBitwiseNotExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2452,7 +2694,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitBitwiseAndExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2478,7 +2723,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitPreIncrementExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
@@ -2504,7 +2752,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitPostIncrementExpression(%s)"
-							.formatted(FORMATTER.formatted(ctx.getRuleIndex(), ctx.getText(), ctx.getPayload())));
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
 		}
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);

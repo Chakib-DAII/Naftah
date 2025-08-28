@@ -2,6 +2,7 @@ package org.daiitech.naftah.utils;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
 /**
@@ -37,7 +38,7 @@ public final class ConsoleLoader {
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private ConsoleLoader() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**

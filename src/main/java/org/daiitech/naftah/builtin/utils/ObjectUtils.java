@@ -27,10 +27,13 @@ import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_NUMBER_FORMAT;
 
 /**
  * Utility class providing various helper methods for working with Java objects in the context of the Naftah language
@@ -50,14 +53,12 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
  * @author Chakib Daii
  */
 public final class ObjectUtils {
-
-
 	/**
 	 * Private constructor to prevent instantiation.
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
 	private ObjectUtils() {
-		throw new NaftahBugError("استخدام غير مسموح به.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -339,7 +340,7 @@ public final class ObjectUtils {
 		Class<?> cls = obj.getClass();
 
 		return cls
-				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class;
+				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class || cls == Object.class;
 	}
 
 	/**
@@ -422,7 +423,7 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
 		if (left == null || right == null) {
-			throw new NaftahBugError("لا يمكن أن تكون الوسائط فارغة.");
+			throw newNaftahBugNullInputError(false, left, right);
 		}
 
 		// Number vs Number
@@ -434,17 +435,17 @@ public final class ObjectUtils {
 		if (left instanceof Number number) {
 			// Number vs Collection (scalar multiplication)
 			if (right instanceof Collection<?> collection) {
-				return CollectionUtils.applyOperation(collection, number, operation);
+				return CollectionUtils.applyOperation(collection, number, false, operation);
 			}
 
 			// Number vs Array (scalar multiplication)
 			if (right.getClass().isArray()) {
-				return CollectionUtils.applyOperation((Object[]) right, number, operation);
+				return CollectionUtils.applyOperation((Object[]) right, number, false, operation);
 			}
 
 			// Number vs Map (multiply all values by scalar)
 			if (right instanceof Map<?, ?> map) {
-				return CollectionUtils.applyOperation(map, number, operation);
+				return CollectionUtils.applyOperation(map, number, false, operation);
 			}
 
 			return operation.apply(number, right);
@@ -453,17 +454,17 @@ public final class ObjectUtils {
 		if (right instanceof Number number) {
 			// Collection vs Number (scalar multiplication)
 			if (left instanceof Collection<?> collection) {
-				return CollectionUtils.applyOperation(collection, number, operation);
+				return CollectionUtils.applyOperation(collection, number, true, operation);
 			}
 
 			// Array vs Number (scalar multiplication)
 			if (left.getClass().isArray()) {
-				return CollectionUtils.applyOperation((Object[]) left, number, operation);
+				return CollectionUtils.applyOperation((Object[]) left, number, true, operation);
 			}
 
 			// Map vs Number (multiply all values by scalar)
 			if (left instanceof Map<?, ?> map) {
-				return CollectionUtils.applyOperation(map, number, operation);
+				return CollectionUtils.applyOperation(map, number, true, operation);
 			}
 
 			return operation.apply(left, number);
@@ -517,7 +518,7 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object a, UnaryOperation operation) {
 		if (a == null) {
-			throw new NaftahBugError("لا يمكن أن يكون الوسيط فارغًا.");
+			throw newNaftahBugNullInputError(true, a);
 		}
 
 		// Number
@@ -645,6 +646,9 @@ public final class ObjectUtils {
 		if (o == null) {
 			return NULL;
 		}
+		if (o instanceof Number number) {
+			return numberToString(number);
+		}
 		if (o instanceof Boolean aBoolean) {
 			return booleanToString(aBoolean);
 		}
@@ -659,7 +663,7 @@ public final class ObjectUtils {
 
 		if (o instanceof Collection<?> collection) {
 			if (collection instanceof Tuple) {
-				return result;
+				return "تركيبة: " + result;
 			}
 			if (collection instanceof List<?>) {
 				return "قائمة: " + result;
@@ -680,22 +684,6 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Converts a Naftah value to its internal representation, with boolean values converted to localized strings.
-	 *
-	 * @param o the value to process
-	 * @return the processed value
-	 */
-	public static Object getNaftahValue(Object o) {
-		if (o == null) {
-			return NULL;
-		}
-		if (o instanceof Boolean aBoolean) {
-			return booleanToString(aBoolean);
-		}
-		return o;
-	}
-
-	/**
 	 * Replaces all "null" occurrences in the given string with the localized {@code NULL} constant.
 	 *
 	 * @param s the string to process
@@ -703,5 +691,27 @@ public final class ObjectUtils {
 	 */
 	public static String replaceAllNulls(String s) {
 		return s.replaceAll("null", NULL);
+	}
+
+	/**
+	 * Converts the given {@link Number} to a localized string representation
+	 * using Arabic locale formatting rules.
+	 * <p>
+	 * This includes Arabic-style grouping and decimal separators, and may use
+	 * Arabic-Indic digits depending on JVM configuration and font support.
+	 * <p>
+	 * The method is synchronized on {@link org.daiitech.naftah.utils.arabic.ArabicUtils#ARABIC_NUMBER_FORMAT} since
+	 * {@link java.text.NumberFormat} instances are not thread-safe.
+	 *
+	 * @param number the number to format; must not be {@code null}
+	 * @return a string representation of the number in Arabic locale formatting
+	 * @throws NullPointerException if {@code number} is {@code null}
+	 * @see java.text.NumberFormat#format(double)
+	 * @see java.util.Locale
+	 */
+	public static String numberToString(Number number) {
+		synchronized (ARABIC_NUMBER_FORMAT) {
+			return ARABIC_NUMBER_FORMAT.format(number);
+		}
 	}
 }

@@ -33,6 +33,7 @@ public final class DeclaredParameter {
 
 	/**
 	 * The declared type of the parameter.
+	 * TODO: use Class type
 	 */
 	private final Object type;
 
