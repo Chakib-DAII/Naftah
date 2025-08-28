@@ -107,7 +107,11 @@ DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
 NUMBER     : [٠-٩0-9]+ (COMMA [٠-٩0-9]+)?;
 CHARACTER  : (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkLeft) Character (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkRight);
 STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) String (DoubleQuotationMark | DoubleQuotationMarkRight);
-ID         : [أ-يڠ-ۿ٠-٩_0-9]* [ء-يڠ-ۿ_] [ء-يڠ-ۿ٠-٩_0-9]*;
+ID         : [ء-يڠ-ۿﹼ_٠-٩0-9\u064B-\u065F\uFE70-\uFEFF]*
+    [ء-يڠ-ۿﹼ_\u064B-\u065F\uFE70-\uFEFF]
+    [ء-يڠ-ۿﹼ_٠-٩0-9\u064B-\u065F\uFE70-\uFEFF]*
+  ;
+
 
 QuotationMark : '\'';
 DoubleQuotationMark : '"';
