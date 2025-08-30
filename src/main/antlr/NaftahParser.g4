@@ -108,7 +108,7 @@ breakStatement: BREAK ID?;
 continueStatement: CONTINUE ID?;
 
 // Return statement: 'return' followed by an optional expression
-returnStatement: RETURN expression?;
+returnStatement: RETURN expression? ((COMMA | SEMI) expression)*;
 
 // Block: A block of statements enclosed in curly braces
 block: LBRACE statement* RBRACE;
@@ -152,7 +152,7 @@ expression: functionCall #functionCallExpression
 
 // Object
 object: LBRACE objectFields? RBRACE;
-objectFields: assignment ((COMMA | SEMI) assignment )*;
+objectFields: assignment ((COMMA | SEMI) assignment)*;
 
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
@@ -161,10 +161,10 @@ collection: LBRACK elements? RBRACK #listValue
           | LBRACE keyValuePairs? RBRACE #mapValue;
 
 // single value elements
-elements: expression ((COMMA | SEMI) expression )*;
+elements: expression ((COMMA | SEMI) expression)*;
 
 // key=value value elements
-keyValuePairs: keyValue ((COMMA | SEMI) keyValue )*;
+keyValuePairs: keyValue ((COMMA | SEMI) keyValue)*;
 keyValue: expression COLON expression;
 
 // Value: Can be numbers, strings, ID
@@ -179,7 +179,7 @@ value: NUMBER #numberValue
 
 // Return type: Can be void, any, builtinType or qualifiedName
 returnType: VOID #voidReturnType
-          | type #typeReturnType
+          | type ((COMMA | SEMI) type)* #typeReturnType
           ;
 
 // Type: Can be any, builtinType or qualifiedName
