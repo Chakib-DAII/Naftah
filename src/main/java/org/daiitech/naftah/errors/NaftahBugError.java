@@ -106,6 +106,12 @@ public class NaftahBugError extends AssertionError {
 	@Override
 	public String getMessage() {
 		if (message != null) {
+			if (exception != null) {
+				return "خطأ برمجي! %s استثناء ملتقط: %s"
+						.formatted( message,
+									ExceptionLocalizer.localizeException(exception));
+			}
+
 			return "خطأ برمجي! " + message;
 		}
 		else {
