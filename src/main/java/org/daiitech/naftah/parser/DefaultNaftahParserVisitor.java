@@ -2150,12 +2150,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 				.convertArabicToLatinLetterByLetter(originalValue
 															.substring(0,
 																	   originalValue.length() - 2));
+
+		String originalRadix = ctx.BASE_DIGITS().getText();
 		int radix = Integer
-				.parseInt(ctx
-								  .BASE_RADIX()
-								  .getText()
-								  .substring(0,
-											 originalValue.length() - 1));
+				.parseInt(originalRadix.substring(0,
+												  originalRadix.length() - 1));
 		var result = NumberUtils.parseDynamicNumber(value, radix);
 		currentContext.markExecuted(ctx); // Mark as executed
 		return result;
