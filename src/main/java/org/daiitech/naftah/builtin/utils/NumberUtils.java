@@ -109,7 +109,7 @@ public final class NumberUtils {
 		// Replace all decimal-like characters with a dot
 		text = text.replaceAll("[,٫،٬]", ".");
 		try {
-			if (text.contains(".") || text.toLowerCase(Locale.ROOT).contains("e")) {
+			if (text.contains(".") || (radix == 10 && text.toLowerCase(Locale.ROOT).contains("e"))) {
 				if (radix != 10) {
 					throw newNaftahBugInvalidNumberValueError(text, radix);
 				}
