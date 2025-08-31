@@ -868,6 +868,45 @@ public class NumberUtilsTests {
 						);
 	}
 
+	static Stream<Arguments> parseDynamicNumberProvider() {
+		return Stream
+				.of(
+					Arguments.of(true, "1", 2, 1, null),
+					Arguments.of(true, "2", 3, 2, null),
+					Arguments.of(true, "3", 4, 3, null),
+					Arguments.of(true, "4", 5, 4, null),
+					Arguments.of(true, "5", 6, 5, null),
+					Arguments.of(true, "6", 7, 6, null),
+					Arguments.of(true, "7", 8, 7, null),
+					Arguments.of(true, "8", 9, 8, null),
+					Arguments.of(true, "9", 10, 9, null),
+					Arguments.of(true, "A", 11, 10, null),
+					Arguments.of(true, "B", 12, 11, null),
+					Arguments.of(true, "C", 13, 12, null),
+					Arguments.of(true, "D", 14, 13, null),
+					Arguments.of(true, "E", 15, 14, null),
+					Arguments.of(true, "F", 16, 15, null),
+					Arguments.of(true, "G", 17, 16, null),
+					Arguments.of(true, "H", 18, 17, null),
+					Arguments.of(true, "I", 19, 18, null),
+					Arguments.of(true, "J", 20, 19, null),
+					Arguments.of(true, "K", 21, 20, null),
+					Arguments.of(true, "L", 22, 21, null),
+					Arguments.of(true, "M", 23, 22, null),
+					Arguments.of(true, "N", 24, 23, null),
+					Arguments.of(true, "O", 25, 24, null),
+					Arguments.of(true, "P", 26, 25, null),
+					Arguments.of(true, "Q", 27, 26, null),
+					Arguments.of(true, "R", 28, 27, null),
+					Arguments.of(true, "S", 29, 28, null),
+					Arguments.of(true, "T", 30, 29, null),
+					Arguments.of(true, "U", 31, 30, null),
+					Arguments.of(true, "V", 32, 31, null),
+					Arguments.of(false, "2.2", 11, null, newNaftahBugInvalidNumberValueError("2.2", 11)),
+					Arguments.of(false, null, 10, null, newNaftahBugNullInputError(true, null))
+				);
+	}
+
 	@ParameterizedTest
 	@MethodSource("convertNumberToTargetClassProvider")
 	void convertNumberToTargetClass(boolean valid,
@@ -894,7 +933,6 @@ public class NumberUtilsTests {
 				expectedNaftahBugError);
 	}
 
-
 	@ParameterizedTest
 	@MethodSource("addProvider")
 	void add(   boolean valid,
@@ -907,7 +945,6 @@ public class NumberUtilsTests {
 				expectedResult,
 				expectedNaftahBugError);
 	}
-
 
 	@ParameterizedTest
 	@MethodSource("subtractProvider")
@@ -1146,7 +1183,6 @@ public class NumberUtilsTests {
 		runTest(valid, left, () -> NumberUtils.not(left), expectedResult, expectedNaftahBugError);
 	}
 
-
 	@ParameterizedTest
 	@MethodSource("shiftLeftProvider")
 	void shiftLeft( boolean valid,
@@ -1236,5 +1272,19 @@ public class NumberUtilsTests {
 				expectedResult,
 				expectedNaftahBugError);
 	}
+
+	@ParameterizedTest
+	@MethodSource("parseDynamicNumberProvider")
+	void parseDynamicNumber(boolean valid,
+							String text,
+							int radix,
+							Object expectedResult,
+							NaftahBugError expectedNaftahBugError) {
+		runTest(valid,
+				() -> NumberUtils.parseDynamicNumber(text, radix),
+				expectedResult,
+				expectedNaftahBugError);
+	}
+
 
 }
