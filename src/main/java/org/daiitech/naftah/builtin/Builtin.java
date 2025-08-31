@@ -685,4 +685,16 @@ public final class Builtin {
 	public static <T> Object postDecrement(T x) {
 		return applyOperation(x, UnaryOperation.POST_DECREMENT);
 	}
+
+	@NaftahFn(
+				name = "تحليل_رقم_بنظام_العد",
+				description = "دالة (تحليل_رقم_بنظام_العد) لتحليل رقم نصي وفقًا للنظام العددي المحدد وإرجاع النوع " + "المناسب" + " " + "من" + " الأعداد.",
+				usage = "تحليل_رقم_بنظام_العد(الرقم، قاعدة)",
+				parameterTypes = {String.class, int.class},
+				returnType = Number.class
+	)
+	public static Number parseDynamicNumber(String text, int radix) {
+		return NumberUtils.parseDynamicNumber(text, radix);
+	}
+
 }

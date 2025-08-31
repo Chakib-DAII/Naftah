@@ -81,13 +81,38 @@ public final class NumberUtils {
 	 * @throws RuntimeException if parsing fails or if value is NaN or infinite
 	 */
 	public static Number parseDynamicNumber(String text) {
+		return parseDynamicNumber(text, 10);
+	}
+
+	/**
+	 * Parses a string into the most appropriate {@link Number} type using the specified radix.
+	 * <p>
+	 * This method supports custom bases for whole numbers (e.g., base 2 to base 36),
+	 * while floating-point numbers are always treated as base-10 (radix is ignored).
+	 *
+	 * <ul>
+	 * <li>If the string represents a floating-point number (contains '.' or scientific notation),
+	 * it will be parsed as {@link Float}, {@link Double}, or {@link java.math.BigDecimal}.
+	 * <li>Otherwise, it is parsed using the given radix into {@link Byte}, {@link Short}, {@link Integer},
+	 * {@link Long}, or {@link java.math.BigInteger} depending on value range.
+	 * </ul>
+	 *
+	 * @param text  the numeric string to parse
+	 * @param radix the base to use for whole number parsing (from 2 to 36)
+	 * @return the parsed {@code Number} instance (type chosen dynamically)
+	 * @throws RuntimeException if parsing fails, the radix is invalid, or result is NaN/infinite
+	 */
+	public static Number parseDynamicNumber(String text, int radix) {
 		if (text == null) {
 			throw newNaftahBugNullInputError(true, text);
 		}
 		// Replace all decimal-like characters with a dot
 		text = text.replaceAll("[,٫،٬]", ".");
 		try {
-			if (text.contains(".") || text.toLowerCase(Locale.ROOT).contains("e")) {
+			if (text.contains(".") || (radix == 10 && text.toLowerCase(Locale.ROOT).contains("e"))) {
+				if (radix != 10) {
+					throw newNaftahBugInvalidNumberValueError(text, radix);
+				}
 				try {
 					// Try parsing as a float first
 					float f = Float.parseFloat(text);
@@ -127,25 +152,25 @@ public final class NumberUtils {
 			}
 			else {
 				try {
-					return Byte.parseByte(text);
+					return Byte.parseByte(text, radix);
 				}
 				catch (NumberFormatException e1) {
 					try {
-						return Short.parseShort(text);
+						return Short.parseShort(text, radix);
 					}
 					catch (NumberFormatException e2) {
 						try {
 							// Try parsing as a 32-bit integer
-							return Integer.parseInt(text);
+							return Integer.parseInt(text, radix);
 						}
 						catch (NumberFormatException e3) {
 							try {
 								// Try parsing as a 64-bit integer
-								return Long.parseLong(text);
+								return Long.parseLong(text, radix);
 							}
 							catch (NumberFormatException e4) {
 								// Fall back to arbitrary-precision integer
-								return new BigInteger(text);
+								return new BigInteger(text, radix);
 							}
 						}
 					}
@@ -153,7 +178,12 @@ public final class NumberUtils {
 			}
 		}
 		catch (NumberFormatException ex) {
-			throw newNaftahBugInvalidNumberValueError(text);
+			throw radix == 10 ?
+					newNaftahBugInvalidNumberValueError(text) :
+					newNaftahBugInvalidNumberValueError(text, radix);
+//			throw radix == 10 ?
+//				  newNaftahBugInvalidNumberValueError(text, ex) :
+//				  newNaftahBugInvalidNumberValueError(text, radix, ex);
 		}
 	}
 

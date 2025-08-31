@@ -27,6 +27,7 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
@@ -2125,6 +2126,37 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return result;
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitRadixNumberValue(org.daiitech.naftah.parser.NaftahParser.RadixNumberValueContext ctx) {
+		if (LOGGER.isLoggable(Level.FINE)) {
+			LOGGER
+					.fine("visitRadixNumberValue(%s)"
+							.formatted(FORMATTER
+									.formatted( ctx.getRuleIndex(),
+												ctx.getText(),
+												ctx.getPayload())));
+		}
+		logExecution(ctx);
+		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
+		String originalValue = ctx.BASE_DIGITS().getText();
+		String value = ArabicUtils
+				.convertArabicToLatinLetterByLetter(originalValue
+						.substring( 0,
+									originalValue.length() - 2));
+
+		String originalRadix = ctx.BASE_RADIX().getText();
+		int radix = Integer
+				.parseInt(originalRadix
+						.substring( 0,
+									originalRadix.length() - 1));
+		var result = NumberUtils.parseDynamicNumber(value, radix);
+		currentContext.markExecuted(ctx); // Mark as executed
+		return result;
+	}
 
 	/**
 	 * {@inheritDoc}

@@ -174,8 +174,54 @@ public final class ExceptionUtils {
 	 * @return a {@code NaftahBugError} describing the invalid number value error
 	 */
 	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object) {
-		return new NaftahBugError("قيمة رقمية غير صالحة: '%s'".formatted(object));
+		return newNaftahBugInvalidNumberValueError(object, null);
 	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for an invalid numeric value, with the cause.
+	 * <p>
+	 * This method provides more detail by attaching the underlying {@link Exception}
+	 * that caused the failure (e.g., {@code NumberFormatException}).
+	 *
+	 * @param object    the invalid numeric value
+	 * @param exception the underlying exception (may be {@code null})
+	 * @return a {@code NaftahBugError} describing the error with the given cause
+	 */
+	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object, Exception exception) {
+		return new NaftahBugError("قيمة رقمية غير صالحة: '%s'".formatted(object), exception);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for an invalid numeric value in a specific radix.
+	 * <p>
+	 * This is useful when parsing fails for a given base (e.g., base 16, base 10),
+	 * and you want to include the radix in the error message.
+	 *
+	 * @param object the invalid numeric value
+	 * @param radix  the number system base (e.g., 10 for decimal)
+	 * @return a {@code NaftahBugError} describing the error for the specified radix
+	 */
+	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object, int radix) {
+		return newNaftahBugInvalidNumberValueError(object, radix, null);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for an invalid numeric value in a specific radix,
+	 * including the underlying cause.
+	 * <p>
+	 * This is the most detailed version, allowing you to specify the erroneous value,
+	 * the radix used during parsing, and the original exception that triggered the failure.
+	 *
+	 * @param object    the invalid numeric value
+	 * @param radix     the number system base in which parsing was attempted
+	 * @param exception the root exception that caused the error (nullable)
+	 * @return a {@code NaftahBugError} describing the full error context
+	 */
+	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object, int radix, Exception exception) {
+		return new NaftahBugError(  "قيمة رقمية غير صالحة: '%s' في النظام العددي %d".formatted(object, radix),
+									exception);
+	}
+
 
 	/**
 	 * Creates a new {@link NaftahBugError} indicating that one or more
