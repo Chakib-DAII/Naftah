@@ -183,7 +183,8 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.FLOAT, org.daiitech.naftah.parser.NaftahLexer.DOUBLE ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.MAGENTA);
 			case org.daiitech.naftah.parser.NaftahLexer.CHARACTER, org.daiitech.naftah.parser.NaftahLexer.STRING,
-					org.daiitech.naftah.parser.NaftahLexer.NUMBER, org.daiitech.naftah.parser.NaftahLexer.TRUE,
+					org.daiitech.naftah.parser.NaftahLexer.NUMBER, org.daiitech.naftah.parser.NaftahLexer.BASE_DIGITS,
+					org.daiitech.naftah.parser.NaftahLexer.TRUE,
 					org.daiitech.naftah.parser.NaftahLexer.FALSE ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.GREEN);
 			case org.daiitech.naftah.parser.NaftahLexer.LINE_COMMENT,
@@ -204,7 +205,8 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MINUS,
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MUL,
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_DIV,
-					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MOD ->
+					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MOD,
+					org.daiitech.naftah.parser.NaftahLexer.BASE_RADIX ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.RED);
 			case org.daiitech.naftah.parser.NaftahLexer.LPAREN, org.daiitech.naftah.parser.NaftahLexer.RPAREN,
 					org.daiitech.naftah.parser.NaftahLexer.LBRACE, org.daiitech.naftah.parser.NaftahLexer.RBRACE,
