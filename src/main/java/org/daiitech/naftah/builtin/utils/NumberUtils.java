@@ -178,7 +178,9 @@ public final class NumberUtils {
 			}
 		}
 		catch (NumberFormatException ex) {
-			throw newNaftahBugInvalidNumberValueError(text);
+			throw radix == 10 ?
+					newNaftahBugInvalidNumberValueError(text) :
+					newNaftahBugInvalidNumberValueError(text, radix);
 //			throw radix == 10 ?
 //				  newNaftahBugInvalidNumberValueError(text, ex) :
 //				  newNaftahBugInvalidNumberValueError(text, radix, ex);
