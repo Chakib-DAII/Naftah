@@ -225,6 +225,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 */
 	@Override
 	public Object visitProgram(org.daiitech.naftah.parser.NaftahParser.ProgramContext ctx) {
+		// TODO: refactor all logs to 1 method that takes the method name using formatter: %s(%s)
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("visitProgram(%s)"
