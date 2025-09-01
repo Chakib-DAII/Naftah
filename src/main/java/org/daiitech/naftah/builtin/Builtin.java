@@ -6,6 +6,7 @@ import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
@@ -694,7 +695,9 @@ public final class Builtin {
 				returnType = Number.class
 	)
 	public static Number parseDynamicNumber(String text, int radix) {
-		return NumberUtils.parseDynamicNumber(text, radix);
+		String value = ArabicUtils
+				.convertArabicToLatinLetterByLetter(text);
+		return NumberUtils.parseDynamicNumber(value, radix, text);
 	}
 
 }

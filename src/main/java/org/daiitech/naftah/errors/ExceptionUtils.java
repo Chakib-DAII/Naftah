@@ -3,6 +3,7 @@ package org.daiitech.naftah.errors;
 import java.util.Arrays;
 
 import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
@@ -218,7 +219,15 @@ public final class ExceptionUtils {
 	 * @return a {@code NaftahBugError} describing the full error context
 	 */
 	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object, int radix, Exception exception) {
-		return new NaftahBugError(  "قيمة رقمية غير صالحة: '%s' في النظام العددي %d".formatted(object, radix),
+		return new NaftahBugError(  "قيمة رقمية غير صالحة: '%s' في النظام العددي %d"
+											.formatted(
+														object instanceof Pair<?, ?> pair ?
+																(!pair.b.equals(pair.a) ?
+																		"%s ← %s"
+																				.formatted(pair.b, pair.a) :
+																		pair.a) :
+																object,
+														radix),
 									exception);
 	}
 

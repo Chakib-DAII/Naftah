@@ -1281,7 +1281,7 @@ public class NumberUtilsTests {
 							Object expectedResult,
 							NaftahBugError expectedNaftahBugError) {
 		runTest(valid,
-				() -> NumberUtils.parseDynamicNumber(text, radix),
+				() -> NumberUtils.parseDynamicNumber(text, radix, null),
 				expectedResult,
 				expectedNaftahBugError);
 	}

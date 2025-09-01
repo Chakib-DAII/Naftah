@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.errors.NaftahBugError;
 
@@ -81,7 +82,7 @@ public final class NumberUtils {
 	 * @throws RuntimeException if parsing fails or if value is NaN or infinite
 	 */
 	public static Number parseDynamicNumber(String text) {
-		return parseDynamicNumber(text, 10);
+		return parseDynamicNumber(text, 10, null);
 	}
 
 	/**
@@ -97,12 +98,14 @@ public final class NumberUtils {
 	 * {@link Long}, or {@link java.math.BigInteger} depending on value range.
 	 * </ul>
 	 *
-	 * @param text  the numeric string to parse
-	 * @param radix the base to use for whole number parsing (from 2 to 36)
+	 * @param text         the numeric string to parse
+	 * @param radix        the base to use for whole number parsing (from 2 to 36)
+	 * @param originalText the original string (in case of base numbers after using
+	 * @{@link org.daiitech.naftah.utils.arabic.ArabicUtils#convertArabicToLatinLetterByLetter(String)})
 	 * @return the parsed {@code Number} instance (type chosen dynamically)
 	 * @throws RuntimeException if parsing fails, the radix is invalid, or result is NaN/infinite
 	 */
-	public static Number parseDynamicNumber(String text, int radix) {
+	public static Number parseDynamicNumber(String text, int radix, String originalText) {
 		if (text == null) {
 			throw newNaftahBugNullInputError(true, text);
 		}
@@ -180,7 +183,9 @@ public final class NumberUtils {
 		catch (NumberFormatException ex) {
 			throw radix == 10 ?
 					newNaftahBugInvalidNumberValueError(text) :
-					newNaftahBugInvalidNumberValueError(text, radix);
+					newNaftahBugInvalidNumberValueError(Objects.nonNull(originalText) ?
+							new Pair<>(text, originalText) :
+							text, radix);
 //			throw radix == 10 ?
 //				  newNaftahBugInvalidNumberValueError(text, ex) :
 //				  newNaftahBugInvalidNumberValueError(text, radix, ex);

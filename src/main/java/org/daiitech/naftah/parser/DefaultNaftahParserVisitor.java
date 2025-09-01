@@ -2144,17 +2144,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
 		String originalValue = ctx.BASE_DIGITS().getText();
+		String arabicValue = originalValue
+				.substring( 0,
+							originalValue.length() - 2);
 		String value = ArabicUtils
-				.convertArabicToLatinLetterByLetter(originalValue
-						.substring( 0,
-									originalValue.length() - 2));
-
+				.convertArabicToLatinLetterByLetter(arabicValue);
 		String originalRadix = ctx.BASE_RADIX().getText();
 		int radix = Integer
 				.parseInt(originalRadix
 						.substring( 0,
 									originalRadix.length() - 1));
-		var result = NumberUtils.parseDynamicNumber(value, radix);
+		var result = NumberUtils.parseDynamicNumber(value, radix, arabicValue);
 		currentContext.markExecuted(ctx); // Mark as executed
 		return result;
 	}
