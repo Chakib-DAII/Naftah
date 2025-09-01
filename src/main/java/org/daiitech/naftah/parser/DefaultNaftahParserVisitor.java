@@ -2198,15 +2198,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
 		String value = ctx.STRING().getText();
 		Object result;
-		if (Objects.nonNull(ctx.RAW())) {
-			result = StringInterpolator.cleanInput(value);
-		}
-		else if (Objects.nonNull(ctx.BYTE_ARRAY())) {
-			value = StringInterpolator.cleanInput(value);
-			result = value.getBytes(StandardCharsets.UTF_8);
+		if (Objects.isNull(ctx.RAW()) && Objects.isNull(ctx.BYTE_ARRAY())) {
+			result = StringInterpolator.process(value, currentContext);
 		}
 		else {
-			result = StringInterpolator.process(value, currentContext);
+			value = StringInterpolator.cleanInput(value);
+			if (Objects.nonNull(ctx.BYTE_ARRAY())) {
+				result = value.getBytes(StandardCharsets.UTF_8);
+			}
+			else {
+				result = value;
+			}
 		}
 		currentContext.markExecuted(ctx); // Mark as executed
 		return result;
