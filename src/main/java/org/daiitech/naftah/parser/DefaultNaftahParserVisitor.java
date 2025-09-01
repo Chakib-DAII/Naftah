@@ -1,6 +1,7 @@
 package org.daiitech.naftah.parser;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -2196,7 +2197,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		logExecution(ctx);
 		var currentContext = CONTEXT_BY_DEPTH_SUPPLIER.apply(depth);
 		String value = ctx.STRING().getText();
-		var result = StringInterpolator.process(value, currentContext);
+		Object result;
+		if (Objects.nonNull(ctx.RAW())) {
+			result = StringInterpolator.cleanInput(value);
+		}
+		else if (Objects.nonNull(ctx.BYTE_ARRAY())) {
+			value = StringInterpolator.cleanInput(value);
+			result = value.getBytes(StandardCharsets.UTF_8);
+		}
+		else {
+			result = StringInterpolator.process(value, currentContext);
+		}
 		currentContext.markExecuted(ctx); // Mark as executed
 		return result;
 	}
