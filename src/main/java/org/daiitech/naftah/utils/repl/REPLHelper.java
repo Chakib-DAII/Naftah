@@ -99,7 +99,7 @@ public final class REPLHelper {
 	/**
 	 * Quotation characters allowed in the REPL.
 	 */
-	public static char[] QUOTE_CHARS = new char[]{'\'', '"', '«', '»'};
+	public static char[] QUOTE_CHARS = new char[]{'"', '«', '»'};
 
 	/**
 	 * Private constructor to prevent instantiation.
