@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
@@ -58,6 +61,11 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
  */
 public final class NaftahParserHelper {
 
+	/**
+	 * Format string for debug or log messages that include
+	 * an index, text, and payload.
+	 */
+	public static final String FORMATTER = "index: %s, text: %s, payload: %s";
 	/**
 	 * Regex pattern for detecting placeholders in the form PLACEHOLDER(key).
 	 */
@@ -799,5 +807,34 @@ public final class NaftahParserHelper {
 																										org.daiitech.naftah.parser.NaftahParser.BreakStatementStatementContext.class) || currentContext
 																												.hasAnyExecutedChildOrSubChildOfType(   currentStatement,
 																																						org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext.class)));
+	}
+
+	/**
+	 * Logs detailed debug information about the current {@link ParserRuleContext}
+	 * if the logger is configured to log at {@code Level.FINE}.
+	 *
+	 * <p>This method formats and logs a message containing:
+	 * <ul>
+	 * <li>The name of the method invoking the debug (as provided in {@code methodName}).</li>
+	 * <li>The rule index, text, and payload of the current parse context ({@code ctx}).</li>
+	 * </ul>
+	 *
+	 * <p>Example log message format:
+	 * {@code methodName(ruleIndex: contextText : contextPayload)}
+	 *
+	 * @param logger     the {@link Logger} instance used for logging.
+	 * @param methodName the name of the method calling this logger (used for traceability).
+	 * @param ctx        the current {@link ParserRuleContext} to extract debugging information from.
+	 */
+	public static void debugCurrentContextVisit(Logger logger, String methodName, ParserRuleContext ctx) {
+		if (logger.isLoggable(Level.FINE)) {
+			logger
+					.fine("%s(%s)"
+							.formatted( methodName,
+										FORMATTER
+												.formatted( ctx.getRuleIndex(),
+															ctx.getText(),
+															ctx.getPayload())));
+		}
 	}
 }
