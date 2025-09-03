@@ -16,6 +16,7 @@ import java.util.Properties;
 import org.daiitech.naftah.Naftah;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.resolvePlaceholders;
 
 /**
@@ -34,7 +35,7 @@ public final class ResourceUtils {
 	 * Throws {@link NaftahBugError} if called.
 	 */
 	private ResourceUtils() {
-		throw new NaftahBugError("Usage not allowed.");
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
@@ -64,7 +65,7 @@ public final class ResourceUtils {
 			return jarFile.isFile() ? jarFile.getParentFile().toPath() : jarFile.toPath();
 		}
 		catch (URISyntaxException e) {
-			throw new NaftahBugError("Unable to determine JAR directory.", e);
+			throw new NaftahBugError("تعذّر تحديد مسار ملف JAR.", e);
 		}
 	}
 
