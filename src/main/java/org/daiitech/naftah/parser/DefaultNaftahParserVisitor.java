@@ -163,14 +163,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * Function to get the context by its depth in the parse tree.
 	 * Behavior is the same regardless of REPL mode currently.
 	 */
-	private static final Function<Integer, DefaultContext> CONTEXT_BY_DEPTH_SUPPLIER = (depth) -> {
-		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
-			return getContextByDepth(depth);
-		}
-		else {
-			return getContextByDepth(depth);
-		}
-	};
+	private static final Function<Integer, DefaultContext> CONTEXT_BY_DEPTH_SUPPLIER = DefaultContext::getContextByDepth;
 
 	/**
 	 * Function to deregister (remove) a context by depth.
@@ -223,7 +216,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	public Object visitProgram(org.daiitech.naftah.parser.NaftahParser.ProgramContext ctx) {
 		debugCurrentContextVisit(LOGGER, "visitProgram", ctx);
 		logExecution(ctx);
-		// TODO: add the functions (processed from classpath and provider annotations)
 		var rootContext = ROOT_CONTEXT_SUPPLIER.apply(ctx);
 		depth = rootContext.getDepth();
 		Object result = null;
