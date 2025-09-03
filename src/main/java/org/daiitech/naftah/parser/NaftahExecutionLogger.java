@@ -845,8 +845,10 @@ public final class NaftahExecutionLogger {
 	public static String logExecution(boolean doLog, NaftahParser.StringValueContext ctx) {
 		return Optional.ofNullable(ctx).map(context -> {
 			String result = """
+							StringValueContext::RAW -> %s
+							StringValueContext::BYTE_ARRAY -> %s
 							StringValueContext::STRING -> %s
-							""".formatted(context.STRING());
+							""".formatted(context.RAW(), context.BYTE_ARRAY(), context.STRING());
 			if (doLog && LOGGER.isLoggable(Level.FINEST)) {
 				LOGGER.finest(result);
 			}

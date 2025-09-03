@@ -22,9 +22,14 @@ public class StringInterpolatorProvider implements ArgumentsProvider {
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
 				.of(
-					Arguments.of(true, "مرحباً ${الاسم}", Map.of("الاسم", "علي"), "مرحباً علي", null),
 					Arguments.of(true, "مرحباً ${الاسم}", Map.of(), "مرحباً <فارغ>", null),
 					Arguments.of(true, "${الاسم}", Map.of(), NaftahParserHelper.NULL, null),
+					Arguments.of(true, "مرحباً ${الاسم}", Map.of("الاسم", "علي"), "مرحباً علي", null),
+					Arguments.of(true, "مرحباً {الاسم}$", Map.of("الاسم", "علي"), "مرحباً علي", null),
+					Arguments.of(true, "مرحباً {{الاسم}}", Map.of("الاسم", "علي"), "مرحباً علي", null),
+					Arguments.of(true, "مرحباً ${الاسم:علي}", Map.of(), "مرحباً علي", null),
+					Arguments.of(true, "مرحباً {الاسم:علي}$", Map.of(), "مرحباً علي", null),
+					Arguments.of(true, "مرحباً {{الاسم:علي}}", Map.of(), "مرحباً علي", null),
 					Arguments.of(true, "${عدد}", Map.of("عدد", 10000.006), "10_000٫006", null),
 					Arguments.of(true, "${منطقي}", Map.of("منطقي", true), "صحيح", null),
 					Arguments.of(true, "${منطقي}", Map.of("منطقي", false), "خطأ", null),
@@ -106,8 +111,18 @@ public class StringInterpolatorProvider implements ArgumentsProvider {
 								Map.of("قائمة", new Object[]{1, 2}),
 								"قائمة: " + Arrays.toString(new Object[]{1, 2}),
 								null),
-					Arguments.of(true, "${قائمة}", Map.of("قائمة", List.of(1, 2)), "قائمة: " + List.of(1, 2), null),
-					Arguments.of(true, "${مجموعة}", Map.of("مجموعة", Set.of(1, 2)), "مجموعة: " + Set.of(1, 2), null),
+					Arguments
+							.of(true,
+								"${قائمة}",
+								Map.of("قائمة", List.of(1, 2)),
+								"قائمة: " + List.of(1, 2),
+								null),
+					Arguments
+							.of(true,
+								"${مجموعة}",
+								Map.of("مجموعة", Set.of(1, 2)),
+								"مجموعة: " + Set.of(1, 2),
+								null),
 					Arguments
 							.of(true,
 								"${مصفوفة_ترابطية}",

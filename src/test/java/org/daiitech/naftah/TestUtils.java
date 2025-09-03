@@ -81,7 +81,12 @@ public final class TestUtils {
 		else if ((result != null && result.getClass().isArray()) && (expectedValue != null && expectedValue
 				.getClass()
 				.isArray())) {
-					Assertions.assertArrayEquals((Object[]) expectedValue, (Object[]) result);
+					if (expectedValue instanceof byte[] expectedValueAsBytes && result instanceof byte[] resultAsBytes) {
+						Assertions.assertArrayEquals(expectedValueAsBytes, resultAsBytes);
+					}
+					else {
+						Assertions.assertArrayEquals((Object[]) expectedValue, (Object[]) result);
+					}
 				}
 		else {
 			Assertions.assertEquals(expectedValue, result);

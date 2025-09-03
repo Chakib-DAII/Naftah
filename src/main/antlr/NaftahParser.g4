@@ -174,7 +174,7 @@ value: NUMBER #numberValue
      | FALSE #falseValue
      | NULL #nullValue
      | CHARACTER #characterValue
-     | STRING #stringValue
+     | (RAW | BYTE_ARRAY)? STRING #stringValue
      | ID #idValue
      ;
 
