@@ -11,7 +11,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
-import static org.daiitech.naftah.parser.DefaultContext.VARIABLE_GETTER;
+import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 
 /**
@@ -116,7 +116,7 @@ public final class StringInterpolator {
 	 * @return the interpolated result
 	 */
 	public static synchronized String interpolate(String template, DefaultContext context) {
-		Function<String, Object> replacementFunction = varName -> VARIABLE_GETTER.apply(varName, context).orElse(NULL);
+		Function<String, Object> replacementFunction = varName -> getVariable(varName, context).orElse(NULL);
 		return interpolate(template, replacementFunction);
 	}
 
