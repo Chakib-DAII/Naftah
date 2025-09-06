@@ -622,7 +622,10 @@ public final class ArabicUtils {
 	 */
 	public static String transliterateScript(Transliterator transliterator, boolean removeDiacritics, String word) {
 		// Apply transliteration
-		word = splitIdentifier(word).stream().map(transliterator::transliterate).collect(Collectors.joining());
+		word = splitIdentifier(word.toLowerCase(Locale.US))
+				.stream()
+				.map(transliterator::transliterate)
+				.collect(Collectors.joining());
 
 		// Remove the diacritics from the Arabic text
 		if (removeDiacritics) {
@@ -640,6 +643,7 @@ public final class ArabicUtils {
 	 * @return the transliterated text
 	 */
 	public static String transliterateScriptLetterByLetter(String transliteratorID, String textInput) {
+		textInput = textInput.toLowerCase(Locale.US);
 		Transliterator transliterator = Transliterator.getInstance(transliteratorID);
 		// Iterate over each character and apply transliteration
 		StringBuilder textOutput = new StringBuilder();
