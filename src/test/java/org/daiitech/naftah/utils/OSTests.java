@@ -1,6 +1,5 @@
 package org.daiitech.naftah.utils;
 
-import java.io.File;
 import java.util.Locale;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -40,11 +39,6 @@ public class OSTests {
 		@Test
 		void isFamilyUnixTest() {
 			boolean familyUnix = OS.isFamilyUnix();
-			System.out.println(osName);
-			System.out.println(osArch);
-			System.out.println(osVersion);
-			System.out.println(File.pathSeparator);
-			System.out.println(familyUnix);
 			if (osName.contains("unix") || osName.contains("linux")) {
 				assertTrue(familyUnix);
 			}
