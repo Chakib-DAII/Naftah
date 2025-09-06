@@ -259,7 +259,7 @@ public final class ArabicUtils {
 
 			stringBuilder.append("""
 									%s > %s;
-									""".formatted(key, value));
+									""".formatted(key.toLowerCase(Locale.US), value));
 		}
 		CUSTOM_RULES = stringBuilder + CUSTOM_RULES;
 
