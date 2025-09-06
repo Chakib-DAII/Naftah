@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
 
 /**
@@ -72,5 +75,40 @@ public record NaftahFunction(
 									returnType,
 									List.of(parameterTypes),
 									List.of(exceptionTypes));
+	}
+
+	@Override
+	public String toString() {
+		return """
+				دالـة نفطـه:
+					\t\t\t- الاسم: %s
+					\t\t\t- الأسماء المستعارة: %s
+					\t\t\t- الوصف: %s
+					\t\t\t- الاستخدام: %s
+					\t\t\t- نوع الإرجاع: %s
+					\t\t\t- أنواع المعاملات: %s
+					\t\t\t- أنواع الاستثناءات: %s"""
+				.formatted(
+							name,
+							String.join(", ", aliases),
+							description,
+							usage,
+							getNaftahType(  PARSER_VOCABULARY,
+											returnType),
+							parameterTypes.isEmpty() ?
+									"لا شيء" :
+									parameterTypes
+											.stream()
+											.map(aClass -> getNaftahType(   PARSER_VOCABULARY,
+																			aClass))
+											.collect(Collectors.joining(", ")),
+							exceptionTypes.isEmpty() ?
+									"لا شيء" :
+									exceptionTypes
+											.stream()
+											.map(aClass -> getNaftahType(   PARSER_VOCABULARY,
+																			aClass))
+											.collect(Collectors.joining(", "))
+				);
 	}
 }
