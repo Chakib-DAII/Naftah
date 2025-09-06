@@ -11,6 +11,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
  * Represents a function definition in the Naftah scripting language.
@@ -93,21 +94,27 @@ public record NaftahFunction(
 							String.join(", ", aliases),
 							description,
 							usage,
-							getNaftahType(  PARSER_VOCABULARY,
-											returnType),
+							Objects.isNull(PARSER_VOCABULARY) ?
+									getQualifiedName(returnType.getName()) :
+									getNaftahType(  PARSER_VOCABULARY,
+													returnType),
 							parameterTypes.isEmpty() ?
 									"لا شيء" :
 									parameterTypes
 											.stream()
-											.map(aClass -> getNaftahType(   PARSER_VOCABULARY,
-																			aClass))
+											.map(aClass -> Objects.isNull(PARSER_VOCABULARY) ?
+													getQualifiedName(aClass.getName()) :
+													getNaftahType(  PARSER_VOCABULARY,
+																	aClass))
 											.collect(Collectors.joining(", ")),
 							exceptionTypes.isEmpty() ?
 									"لا شيء" :
 									exceptionTypes
 											.stream()
-											.map(aClass -> getNaftahType(   PARSER_VOCABULARY,
-																			aClass))
+											.map(aClass -> Objects.isNull(PARSER_VOCABULARY) ?
+													getQualifiedName(aClass.getName()) :
+													getNaftahType(  PARSER_VOCABULARY,
+																	aClass))
 											.collect(Collectors.joining(", "))
 				);
 	}

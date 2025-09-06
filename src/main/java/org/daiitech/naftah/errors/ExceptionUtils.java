@@ -1,6 +1,7 @@
 package org.daiitech.naftah.errors;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.misc.Pair;
@@ -9,6 +10,7 @@ import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
  * Utility class for exception-related helper methods.
@@ -164,8 +166,12 @@ public final class ExceptionUtils {
 		return new NaftahBugError(
 									"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' %s."
 											.formatted( number,
-														getNaftahType(PARSER_VOCABULARY, number.getClass()),
-														getNaftahType(PARSER_VOCABULARY, targetClass),
+														Objects.isNull(PARSER_VOCABULARY) ?
+																getQualifiedName(number.getClass().getName()) :
+																getNaftahType(PARSER_VOCABULARY, number.getClass()),
+														Objects.isNull(PARSER_VOCABULARY) ?
+																getQualifiedName(targetClass.getName()) :
+																getNaftahType(PARSER_VOCABULARY, targetClass),
 														overflow ? "بسبب: تجاوز السعة" : ""));
 	}
 
@@ -245,7 +251,9 @@ public final class ExceptionUtils {
 	public static NaftahBugError newNaftahBugUnsupportedNumbersError(boolean singleInput, DynamicNumber... dn) {
 		String[] args = Arrays
 				.stream(dn)
-				.map(dynamicNumber -> getNaftahType(PARSER_VOCABULARY, dynamicNumber.get().getClass()))
+				.map(dynamicNumber -> Objects.isNull(PARSER_VOCABULARY) ?
+						getQualifiedName(dynamicNumber.get().getClass().getName()) :
+						getNaftahType(PARSER_VOCABULARY, dynamicNumber.get().getClass()))
 				.toArray(String[]::new);
 		return new NaftahBugError((singleInput ? "نوع الرقم غير مدعوم: '%s'" : "أنواع الأرقام غير مدعومة: '%s'، '%s'")
 				.formatted((Object[]) args));
