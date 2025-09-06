@@ -60,7 +60,7 @@ public class StringInterpolatorBenchmark {
 			// Simulated fallback / missing variable
 			"البيانات غير مكتملة: ${العمر} سنة، الحالة: ${الحالة}",
 
-			// Placeholder with a default/fallback (TODO: add support)
+			// Placeholder with a default/fallback
 			"اسم العميل: ${الاسم:غير معروف}",
 			// long text with variables (100 vars)
 			"""

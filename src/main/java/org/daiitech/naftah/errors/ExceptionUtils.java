@@ -6,6 +6,8 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 
 /**
@@ -159,12 +161,11 @@ public final class ExceptionUtils {
 	public static NaftahBugError newNaftahBugInvalidNumberConversionOverflowError(  boolean overflow,
 																					Number number,
 																					Class<?> targetClass) {
-		// TODO: classNames should be in arabic or transliterated or in naftah language types
 		return new NaftahBugError(
 									"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' %s."
 											.formatted( number,
-														number.getClass().getName(),
-														targetClass.getName(),
+														getNaftahType(PARSER_VOCABULARY, number.getClass()),
+														getNaftahType(PARSER_VOCABULARY, targetClass),
 														overflow ? "بسبب: تجاوز السعة" : ""));
 	}
 
@@ -242,9 +243,10 @@ public final class ExceptionUtils {
 	 * @return a {@code NaftahBugError} describing the unsupported number type(s) error
 	 */
 	public static NaftahBugError newNaftahBugUnsupportedNumbersError(boolean singleInput, DynamicNumber... dn) {
-		Class<?>[] args = Arrays.stream(dn).map(dynamicNumber -> dynamicNumber.get().getClass()).toArray(Class[]::new);
-		// Unknown or unsupported number types
-		// TODO: classNames should be in arabic or transliterated or in naftah language types
+		String[] args = Arrays
+				.stream(dn)
+				.map(dynamicNumber -> getNaftahType(PARSER_VOCABULARY, dynamicNumber.get().getClass()))
+				.toArray(String[]::new);
 		return new NaftahBugError((singleInput ? "نوع الرقم غير مدعوم: '%s'" : "أنواع الأرقام غير مدعومة: '%s'، '%s'")
 				.formatted((Object[]) args));
 	}
