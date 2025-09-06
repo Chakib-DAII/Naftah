@@ -45,7 +45,7 @@ public class OSTests {
 			System.out.println(osVersion);
 			System.out.println(File.pathSeparator);
 			System.out.println(familyUnix);
-			if (osName.contains("unix")) {
+			if (osName.contains("unix") || osName.contains("linux")) {
 				assertTrue(familyUnix);
 			}
 			else {
