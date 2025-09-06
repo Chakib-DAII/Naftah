@@ -708,15 +708,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										}
 										catch (IllegalArgumentException e) {
 											throw new NaftahBugError(   """
-																		عدد الوسيطات غير صحيح للدالة '%s' المقدمة من '%s'.
+																		عدد الوسائط غير صحيح للدالة '%s' المقدمة من '%s'.
 																		العدد المتوقع: %d،
 																		العدد الفعلي: %d.
 
-																		تفاصيل المزود:
-																		\t\t%s
-
-																		تفاصيل الدالة:
-																		\t\t%s
+																		%s
 																		"""
 																				.formatted( functionName,
 																							builtinFunction
@@ -727,14 +723,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																									.getParameterCount(),
 																							args.size(),
 																							builtinFunction
-																									.getProviderInfo(),
-																							builtinFunction
-																									.getFunctionInfo()
+																									.toDetailedString()
 																				),
 																		e);
 										}
 										catch (IllegalAccessException | InvocationTargetException e) {
-											throw new NaftahBugError(e);
+											throw new NaftahBugError("""
+																		.'%s' حدث خطأ أثناء استدعاء الدالة
+
+																		%s
+																		"""
+													.formatted( functionName,
+																builtinFunction.toDetailedString()), e);
 										}
 									}
 									else if (function instanceof JvmFunction jvmFunction) {
