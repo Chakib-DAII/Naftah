@@ -77,7 +77,7 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, Method method) {
 		return "%s::%s"
-				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefaultCustom(method.getName()));
+				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefaultCustom(method.getName())[0]);
 	}
 
 	/**
@@ -138,8 +138,8 @@ public final class ClassUtils {
 						.entry(
 								String
 										.join(  QUALIFIED_NAME_SEPARATOR,
-												ArabicUtils.transliterateToArabicScriptDefaultCustom(strings)),
-								String.join(QUALIFIED_NAME_SEPARATOR, strings)))
+												ArabicUtils.transliterateToArabicScriptDefaultCustom(strings.clone())),
+								String.join(QUALIFIED_NAME_SEPARATOR, strings.clone())))
 				.collect(Collectors
 						.toMap( Map.Entry::getKey,
 								Map.Entry::getValue,
