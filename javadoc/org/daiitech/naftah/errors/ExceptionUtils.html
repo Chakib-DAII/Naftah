@@ -189,38 +189,58 @@ loadScripts(document, 'script');</script>
  represents an invalid numeric value.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugInvalidUsageError()" class="member-name-link">newNaftahBugInvalidUsageError</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugInvalidNumberValueError(java.lang.Object,int)" class="member-name-link">newNaftahBugInvalidNumberValueError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object,
+ int&nbsp;radix)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that an invalid usage has occurred.</div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for an invalid numeric value in a specific radix.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugNullInputError(boolean,java.lang.Object...)" class="member-name-link">newNaftahBugNullInputError</a><wbr>(boolean&nbsp;singleInput,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugInvalidNumberValueError(java.lang.Object,int,java.lang.Exception)" class="member-name-link">newNaftahBugInvalidNumberValueError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object,
+ int&nbsp;radix,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;exception)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that a required input argument is null or missing.</div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for an invalid numeric value in a specific radix,
+ including the underlying cause.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugUnsupportedBitwiseDecimalError(boolean,org.daiitech.naftah.builtin.lang.DynamicNumber...)" class="member-name-link">newNaftahBugUnsupportedBitwiseDecimalError</a><wbr>(boolean&nbsp;singleInput,
- <a href="../builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a>...&nbsp;dn)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugInvalidNumberValueError(java.lang.Object,java.lang.Exception)" class="member-name-link">newNaftahBugInvalidNumberValueError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;exception)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a NaftahBugError indicating that bitwise operations on decimal numbers are unsupported.</div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for an invalid numeric value, with the cause.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugUnsupportedNumbersError(boolean,org.daiitech.naftah.builtin.lang.DynamicNumber...)" class="member-name-link">newNaftahBugUnsupportedNumbersError</a><wbr>(boolean&nbsp;singleInput,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugInvalidUsageError()" class="member-name-link">newNaftahBugInvalidUsageError</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that an invalid usage has occurred.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugNullInputError(boolean,java.lang.Object...)" class="member-name-link">newNaftahBugNullInputError</a><wbr>(boolean&nbsp;singleInput,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that a required input argument is null or missing.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugUnsupportedBitwiseDecimalError(boolean,org.daiitech.naftah.builtin.lang.DynamicNumber...)" class="member-name-link">newNaftahBugUnsupportedBitwiseDecimalError</a><wbr>(boolean&nbsp;singleInput,
  <a href="../builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a>...&nbsp;dn)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a NaftahBugError indicating that bitwise operations on decimal numbers are unsupported.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugUnsupportedNumbersError(boolean,org.daiitech.naftah.builtin.lang.DynamicNumber...)" class="member-name-link">newNaftahBugUnsupportedNumbersError</a><wbr>(boolean&nbsp;singleInput,
+ <a href="../builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a>...&nbsp;dn)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that one or more
  numeric types are unsupported.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahKeyNotFoundError(java.lang.Object)" class="member-name-link">newNaftahKeyNotFoundError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahKeyNotFoundError(java.lang.Object)" class="member-name-link">newNaftahKeyNotFoundError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that the specified key
  was not found in the associative array.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahNegativeNumberError()" class="member-name-link">newNaftahNegativeNumberError</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahNegativeNumberError()" class="member-name-link">newNaftahNegativeNumberError</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that negative numbers
  are not allowed.</div>
 </div>
@@ -457,6 +477,63 @@ loadScripts(document, 'script');</script>
 <dd><code>object</code> - the invalid numeric value</dd>
 <dt>Returns:</dt>
 <dd>a <code>NaftahBugError</code> describing the invalid number value error</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahBugInvalidNumberValueError(java.lang.Object,java.lang.Exception)">
+<h3>newNaftahBugInvalidNumberValueError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahBugInvalidNumberValueError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;exception)</span></div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for an invalid numeric value, with the cause.
+ <p>
+ This method provides more detail by attaching the underlying <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link"><code>Exception</code></a>
+ that caused the failure (e.g., <code>NumberFormatException</code>).</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>object</code> - the invalid numeric value</dd>
+<dd><code>exception</code> - the underlying exception (may be <code>null</code>)</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> describing the error with the given cause</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahBugInvalidNumberValueError(java.lang.Object,int)">
+<h3>newNaftahBugInvalidNumberValueError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahBugInvalidNumberValueError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object,
+ int&nbsp;radix)</span></div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for an invalid numeric value in a specific radix.
+ <p>
+ This is useful when parsing fails for a given base (e.g., base 16, base 10),
+ and you want to include the radix in the error message.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>object</code> - the invalid numeric value</dd>
+<dd><code>radix</code> - the number system base (e.g., 10 for decimal)</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> describing the error for the specified radix</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahBugInvalidNumberValueError(java.lang.Object,int,java.lang.Exception)">
+<h3>newNaftahBugInvalidNumberValueError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahBugInvalidNumberValueError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object,
+ int&nbsp;radix,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;exception)</span></div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for an invalid numeric value in a specific radix,
+ including the underlying cause.
+ <p>
+ This is the most detailed version, allowing you to specify the erroneous value,
+ the radix used during parsing, and the original exception that triggered the failure.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>object</code> - the invalid numeric value</dd>
+<dd><code>radix</code> - the number system base in which parsing was attempted</dd>
+<dd><code>exception</code> - the root exception that caused the error (nullable)</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> describing the full error context</dd>
 </dl>
 </section>
 </li>
