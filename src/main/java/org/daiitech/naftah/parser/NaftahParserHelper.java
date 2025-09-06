@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
@@ -35,13 +37,19 @@ import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.function.TriFunction;
 
 import com.ibm.icu.text.Normalizer2;
 
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
+import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
+import static org.daiitech.naftah.parser.DefaultContext.registerContext;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
+import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
@@ -58,6 +66,11 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
  */
 public final class NaftahParserHelper {
 
+	/**
+	 * Format string for debug or log messages that include
+	 * an index, text, and payload.
+	 */
+	public static final String FORMATTER = "index: %s, text: %s, payload: %s";
 	/**
 	 * Regex pattern for detecting placeholders in the form PLACEHOLDER(key).
 	 */
@@ -800,4 +813,147 @@ public final class NaftahParserHelper {
 																												.hasAnyExecutedChildOrSubChildOfType(   currentStatement,
 																																						org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext.class)));
 	}
+
+	/**
+	 * Logs detailed debug information about the current {@link ParserRuleContext}
+	 * if the logger is configured to log at {@code Level.FINE}.
+	 *
+	 * <p>This method formats and logs a message containing:
+	 * <ul>
+	 * <li>The name of the method invoking the debug (as provided in {@code methodName}).</li>
+	 * <li>The rule index, text, and payload of the current parse context ({@code ctx}).</li>
+	 * </ul>
+	 *
+	 * <p>Example log message format:
+	 * {@code methodName(ruleIndex: contextText : contextPayload)}
+	 *
+	 * @param methodName the name of the method calling this logger (used for traceability).
+	 * @param ctx        the current {@link ParserRuleContext} to extract debugging information from.
+	 */
+	public static void debugCurrentContextVisit(String methodName, ParserRuleContext ctx) {
+		if (LOGGER.isLoggable(Level.FINE)) {
+			LOGGER
+					.fine("%s(%s)"
+							.formatted( methodName,
+										FORMATTER
+												.formatted( ctx.getRuleIndex(),
+															ctx.getText(),
+															ctx.getPayload())));
+		}
+	}
+
+	/**
+	 * Visits a specific parser context by applying a custom {@link TriFunction} and handling
+	 * logging and context execution tracking uniformly.
+	 *
+	 * <p>This method:
+	 * <ul>
+	 * <li>Logs debugging information about the current rule context</li>
+	 * <li>Logs execution entry for the context</li>
+	 * <li>Applies the provided visit function using the current visitor and context</li>
+	 * <li>Marks the context as executed in the current context object</li>
+	 * </ul>
+	 *
+	 * @param defaultNaftahParserVisitor the visitor instance used to process the parse tree node
+	 * @param methodName                 the name of the calling method (for logging/debugging purposes)
+	 * @param currentContext             the current {@link DefaultContext} used during traversal
+	 * @param ctx                        the current {@link ParserRuleContext} being visited
+	 * @param visitFunction              a {@link TriFunction} that processes the visitor, context, and parse rule to
+	 *                                   return a result
+	 * @param <T>                        a subclass of {@link ParserRuleContext} representing the current rule context
+	 * @param <R>                        th return type of the parsed result
+	 * @return the result of applying the visit function
+	 */
+	public static <T extends ParserRuleContext, R> R visitContext(  DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+																	String methodName,
+																	DefaultContext currentContext,
+																	T ctx,
+																	TriFunction<DefaultNaftahParserVisitor, DefaultContext, T, Object> visitFunction,
+																	Class<R> returnType) {
+		debugCurrentContextVisit(methodName, ctx);
+		logExecution(ctx);
+		var result = visitFunction.apply(defaultNaftahParserVisitor, currentContext, ctx);
+		currentContext.markExecuted(ctx); // Mark as executed
+		return returnType.cast(result);
+	}
+
+
+	public static <T extends ParserRuleContext> Object visitContext(DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+																	String methodName,
+																	DefaultContext currentContext,
+																	T ctx,
+																	TriFunction<DefaultNaftahParserVisitor, DefaultContext, T, Object> visitFunction) {
+		return visitContext(defaultNaftahParserVisitor, methodName, currentContext, ctx, visitFunction, Object.class);
+	}
+
+	/**
+	 * Supplies the root {@link DefaultContext} for visiting a {@code Program} parse tree node.
+	 * <p>
+	 * Chooses between REPL and standard execution modes based on a system property
+	 * and the presence of any {@code FunctionCallStatement} within the parse tree.
+	 *
+	 * @param ctx the root {@code ProgramContext} from the parse tree
+	 * @return the initialized root context (REPL or standard)
+	 */
+	public static DefaultContext getRootContext(org.daiitech.naftah.parser.NaftahParser.ProgramContext ctx) {
+		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+			return hasChildOrSubChildOfType(ctx,
+											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
+													REPLContext.registerContext(new HashMap<>(), new HashMap<>()) :
+													REPLContext.registerContext();
+		}
+		else {
+			return hasChildOrSubChildOfType(ctx,
+											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
+													registerContext(new HashMap<>(), new HashMap<>()) :
+													registerContext();
+		}
+	}
+
+	/**
+	 * Supplies or updates the {@link DefaultContext} for a {@code Block} node.
+	 * <p>
+	 * Decides REPL or standard context registration based on the REPL mode
+	 * and whether the block contains function call statements or expressions.
+	 *
+	 * @param ctx            the block context in the parse tree
+	 * @param currentContext the currently active execution context
+	 * @return a new or updated execution context
+	 */
+	public static DefaultContext getBlockContext(   org.daiitech.naftah.parser.NaftahParser.BlockContext ctx,
+													DefaultContext currentContext) {
+		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+			return hasChildOrSubChildOfType(ctx,
+											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
+													registerContext(currentContext, new HashMap<>(), new HashMap<>()) :
+													REPLContext.registerContext(currentContext);
+		}
+		else {
+			return hasChildOrSubChildOfType(ctx,
+											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) || hasChildOrSubChildOfType(
+																																					ctx,
+																																					org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
+																																							registerContext(currentContext,
+																																											new HashMap<>(),
+																																											new HashMap<>()) :
+																																							registerContext(currentContext);
+		}
+	}
+
+	/**
+	 * Deregisters (removes) a context by its depth level.
+	 * <p>
+	 * Handles REPL mode or standard context cleanup depending on the system property.
+	 *
+	 * @param depth the depth level of the context to be deregistered
+	 */
+	public static void deregisterContextByDepth(int depth) {
+		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+			REPLContext.deregisterContext(depth);
+		}
+		else {
+			deregisterContext(depth);
+		}
+	}
+
 }

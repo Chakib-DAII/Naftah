@@ -1,11 +1,16 @@
 package org.daiitech.naftah.errors;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
  * Utility class for exception-related helper methods.
@@ -39,7 +44,8 @@ public final class ExceptionUtils {
 	 * Example message format: "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية: 'value'
 	 * operation،"
 	 */
-	public static final String UNSUPPORTED_BITWISE_DECIMAL_ERROR = "العمليات الثنائية (bitwise) غير مدعومة على " + "الأعداد" + " ذات الفاصلة العشرية:  '%s' %s،";
+	public static final String UNSUPPORTED_BITWISE_DECIMAL_ERROR = """
+																	العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s' %s،""";
 
 	/**
 	 * Error message indicating that a single argument is empty.
@@ -157,12 +163,15 @@ public final class ExceptionUtils {
 	public static NaftahBugError newNaftahBugInvalidNumberConversionOverflowError(  boolean overflow,
 																					Number number,
 																					Class<?> targetClass) {
-		// TODO: classNames should be in arabic or transliterated or in naftah language types
 		return new NaftahBugError(
 									"تعذر تحويل الرقم '%s' من النوع '%s' إلى فئة الهدف غير المدعومة '%s' %s."
 											.formatted( number,
-														number.getClass().getName(),
-														targetClass.getName(),
+														Objects.isNull(PARSER_VOCABULARY) ?
+																getQualifiedName(number.getClass().getName()) :
+																getNaftahType(PARSER_VOCABULARY, number.getClass()),
+														Objects.isNull(PARSER_VOCABULARY) ?
+																getQualifiedName(targetClass.getName()) :
+																getNaftahType(PARSER_VOCABULARY, targetClass),
 														overflow ? "بسبب: تجاوز السعة" : ""));
 	}
 
@@ -174,8 +183,62 @@ public final class ExceptionUtils {
 	 * @return a {@code NaftahBugError} describing the invalid number value error
 	 */
 	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object) {
-		return new NaftahBugError("قيمة رقمية غير صالحة: '%s'".formatted(object));
+		return newNaftahBugInvalidNumberValueError(object, null);
 	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for an invalid numeric value, with the cause.
+	 * <p>
+	 * This method provides more detail by attaching the underlying {@link Exception}
+	 * that caused the failure (e.g., {@code NumberFormatException}).
+	 *
+	 * @param object    the invalid numeric value
+	 * @param exception the underlying exception (may be {@code null})
+	 * @return a {@code NaftahBugError} describing the error with the given cause
+	 */
+	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object, Exception exception) {
+		return new NaftahBugError("قيمة رقمية غير صالحة: '%s'".formatted(object), exception);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for an invalid numeric value in a specific radix.
+	 * <p>
+	 * This is useful when parsing fails for a given base (e.g., base 16, base 10),
+	 * and you want to include the radix in the error message.
+	 *
+	 * @param object the invalid numeric value
+	 * @param radix  the number system base (e.g., 10 for decimal)
+	 * @return a {@code NaftahBugError} describing the error for the specified radix
+	 */
+	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object, int radix) {
+		return newNaftahBugInvalidNumberValueError(object, radix, null);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for an invalid numeric value in a specific radix,
+	 * including the underlying cause.
+	 * <p>
+	 * This is the most detailed version, allowing you to specify the erroneous value,
+	 * the radix used during parsing, and the original exception that triggered the failure.
+	 *
+	 * @param object    the invalid numeric value
+	 * @param radix     the number system base in which parsing was attempted
+	 * @param exception the root exception that caused the error (nullable)
+	 * @return a {@code NaftahBugError} describing the full error context
+	 */
+	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object, int radix, Exception exception) {
+		return new NaftahBugError(  "قيمة رقمية غير صالحة: '%s' في النظام العددي %d"
+											.formatted(
+														object instanceof Pair<?, ?> pair ?
+																(!pair.b.equals(pair.a) ?
+																		"%s ← %s"
+																				.formatted(pair.b, pair.a) :
+																		pair.a) :
+																object,
+														radix),
+									exception);
+	}
+
 
 	/**
 	 * Creates a new {@link NaftahBugError} indicating that one or more
@@ -186,9 +249,12 @@ public final class ExceptionUtils {
 	 * @return a {@code NaftahBugError} describing the unsupported number type(s) error
 	 */
 	public static NaftahBugError newNaftahBugUnsupportedNumbersError(boolean singleInput, DynamicNumber... dn) {
-		Class<?>[] args = Arrays.stream(dn).map(dynamicNumber -> dynamicNumber.get().getClass()).toArray(Class[]::new);
-		// Unknown or unsupported number types
-		// TODO: classNames should be in arabic or transliterated or in naftah language types
+		String[] args = Arrays
+				.stream(dn)
+				.map(dynamicNumber -> Objects.isNull(PARSER_VOCABULARY) ?
+						getQualifiedName(dynamicNumber.get().getClass().getName()) :
+						getNaftahType(PARSER_VOCABULARY, dynamicNumber.get().getClass()))
+				.toArray(String[]::new);
 		return new NaftahBugError((singleInput ? "نوع الرقم غير مدعوم: '%s'" : "أنواع الأرقام غير مدعومة: '%s'، '%s'")
 				.formatted((Object[]) args));
 	}

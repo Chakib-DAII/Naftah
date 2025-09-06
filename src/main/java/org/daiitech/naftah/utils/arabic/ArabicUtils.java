@@ -116,6 +116,94 @@ public final class ArabicUtils {
 	 */
 	private static final Map<String, Matcher> TEXT_MATCHER_CACHE = new HashMap<>();
 	/**
+	 * Arabic alphabet letters used for transliteration to Latin letters.
+	 * <p>
+	 * The characters are mapped positionally (index by index) to uppercase Latin letters.
+	 * This list includes 26 Arabic letters starting from 'ا' to 'ه', and is intended to be used
+	 * for character-by-character mapping to Latin base encoding (e.g., base 11 to base 36 systems).
+	 *
+	 * <p>Examples of mapping:
+	 * <ul>
+	 * <li>'ا' → 'A'</li>
+	 * <li>'ب' → 'B'</li>
+	 * <li>'ت' → 'C'</li>
+	 * ...
+	 * <li>'ه' → 'Z'</li>
+	 * </ul>
+	 */
+	private static final char[] ARABIC_LETTERS = {
+													'ا',
+													'ب',
+													'ت',
+													'ث',
+													'ج',
+													'ح',
+													'خ',
+													'د',
+													'ذ',
+													'ر',
+													'ز',
+													'س',
+													'ش',
+													'ص',
+													'ض',
+													'ط',
+													'ظ',
+													'ع',
+													'غ',
+													'ف',
+													'ق',
+													'ك',
+													'ل',
+													'م',
+													'ن',
+													'ه'
+	};
+	/**
+	 * Latin uppercase letters used as transliteration equivalents for Arabic letters.
+	 * <p>
+	 * Each letter corresponds to an Arabic letter by position in the {@code ARABIC_LETTERS} array.
+	 * This mapping supports systems like base-36 encodings or custom symbolic notations
+	 * using Arabic letters.
+	 *
+	 * <p>Examples of mapping:
+	 * <ul>
+	 * <li>'A' → 'ا'</li>
+	 * <li>'B' → 'ب'</li>
+	 * <li>'C' → 'ت'</li>
+	 * ...
+	 * <li>'Z' → 'ه'</li>
+	 * </ul>
+	 */
+	private static final char[] LATIN_LETTERS = {
+													'A',
+													'B',
+													'C',
+													'D',
+													'E',
+													'F',
+													'G',
+													'H',
+													'I',
+													'J',
+													'K',
+													'L',
+													'M',
+													'N',
+													'O',
+													'P',
+													'Q',
+													'R',
+													'S',
+													'T',
+													'U',
+													'V',
+													'W',
+													'X',
+													'Y',
+													'Z'
+	};
+	/**
 	 * A reusable {@link NumberFormat} instance configured for the Arabic locale.
 	 * <p>
 	 * This formatter uses Arabic locale conventions for decimal and grouping separators,
@@ -171,7 +259,7 @@ public final class ArabicUtils {
 
 			stringBuilder.append("""
 									%s > %s;
-									""".formatted(key, value));
+									""".formatted(key.toLowerCase(Locale.US), value));
 		}
 		CUSTOM_RULES = stringBuilder + CUSTOM_RULES;
 
@@ -534,7 +622,10 @@ public final class ArabicUtils {
 	 */
 	public static String transliterateScript(Transliterator transliterator, boolean removeDiacritics, String word) {
 		// Apply transliteration
-		word = splitIdentifier(word).stream().map(transliterator::transliterate).collect(Collectors.joining());
+		word = splitIdentifier(word.toLowerCase(Locale.US))
+				.stream()
+				.map(transliterator::transliterate)
+				.collect(Collectors.joining());
 
 		// Remove the diacritics from the Arabic text
 		if (removeDiacritics) {
@@ -552,6 +643,7 @@ public final class ArabicUtils {
 	 * @return the transliterated text
 	 */
 	public static String transliterateScriptLetterByLetter(String transliteratorID, String textInput) {
+		textInput = textInput.toLowerCase(Locale.US);
 		Transliterator transliterator = Transliterator.getInstance(transliteratorID);
 		// Iterate over each character and apply transliteration
 		StringBuilder textOutput = new StringBuilder();
@@ -772,4 +864,88 @@ public final class ArabicUtils {
 
 		return result;
 	}
+
+	/**
+	 * Converts an input string from Arabic characters and digits to their Latin equivalents.
+	 * <p>
+	 * This method supports:
+	 * <ul>
+	 * <li>Arabic letters mapped one-to-one to Latin uppercase letters (A-Z).</li>
+	 * <li>Arabic-Indic digits (٠-٩) mapped to Latin digits (0-9).</li>
+	 * <li>Latin letters (A-Z, a-z) and digits (0-9) passed through unchanged.</li>
+	 * </ul>
+	 * <p>
+	 * Any unsupported character will cause a {@code NaftahBugError} to be thrown.
+	 *
+	 * @param arabicText the input string containing Arabic characters and/or digits
+	 * @return the Latin-equivalent string after transliteration
+	 * @throws NaftahBugError if the input contains unsupported characters
+	 */
+	public static String convertArabicToLatinLetterByLetter(String arabicText) {
+		StringBuilder latinText = new StringBuilder();
+
+		for (int i = 0; i < arabicText.length(); i++) {
+			char maybeArabicChar = arabicText.charAt(i);
+
+			int index = -1;
+			for (int j = 0; j < ARABIC_LETTERS.length; j++) {
+				if (maybeArabicChar == ARABIC_LETTERS[j]) {
+					index = j;
+					break;
+				}
+			}
+
+			if (index != -1) {
+				latinText.append(LATIN_LETTERS[index]);
+			}
+			else if (isArabicDigit(maybeArabicChar)) {
+				// Arabic digit (٠ to ٩) maps to Latin digits (0 to 9)
+				char latinDigit = (char) ('0' + (maybeArabicChar - '٠'));
+				latinText.append(latinDigit);
+			}
+			else if (isLatinDigit(maybeArabicChar) || isLatinLetter(maybeArabicChar)) {
+				latinText.append(maybeArabicChar);
+			}
+			else {
+				throw new NaftahBugError(String
+						.format("""
+								الحرف '%c' في النص '%s' غير مدعوم. يرجى التأكد من أن جميع الأحرف المدخلة مدعومة.""",
+								maybeArabicChar,
+								arabicText));
+			}
+		}
+
+		return latinText.toString();
+	}
+
+	/**
+	 * Checks whether a character is a Latin letter (A-Z or a-z).
+	 *
+	 * @param ch the character to check
+	 * @return {@code true} if the character is a Latin letter; {@code false} otherwise
+	 */
+	public static boolean isLatinLetter(char ch) {
+		return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+	}
+
+	/**
+	 * Checks whether a character is a Latin digit (0-9).
+	 *
+	 * @param ch the character to check
+	 * @return {@code true} if the character is a Latin digit; {@code false} otherwise
+	 */
+	public static boolean isLatinDigit(char ch) {
+		return (ch >= '0' && ch <= '9');
+	}
+
+	/**
+	 * Checks whether a character is an Arabic-Indic digit (٠ to ٩).
+	 *
+	 * @param ch the character to check
+	 * @return {@code true} if the character is an Arabic digit; {@code false} otherwise
+	 */
+	public static boolean isArabicDigit(char ch) {
+		return (ch >= '٠' && ch <= '٩');
+	}
+
 }

@@ -270,14 +270,21 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Converts a Java class into its corresponding Naftah type token string.
+	 * Maps a given Java type to its equivalent Naftah language type keyword,
+	 * using the provided ANTLR {@link Vocabulary}.
+	 * <p>
+	 * This method checks the Java class and returns a string representation of
+	 * the corresponding type in the Naftah language, such as {@code int}, {@code boolean},
+	 * {@code string}, etc., based on token types defined in {@code NaftahLexer}.
+	 * <p>
+	 * If the Java type is {@code null} or not explicitly recognized, the default
+	 * type {@code var} is returned.
 	 *
-	 * @param parser   the parser instance used for vocabulary lookup
-	 * @param javaType the Java class
-	 * @return the Naftah language representation of the type
+	 * @param vocabulary the ANTLR {@link Vocabulary} used to resolve token names
+	 * @param javaType   the Java {@link Class} to map (e.g. {@code Integer.class}, {@code String.class})
+	 * @return the formatted Naftah type token as a {@link String}
 	 */
-	public static String getNaftahType(Parser parser, Class<?> javaType) {
-		Vocabulary vocabulary = parser.getVocabulary();
+	public static String getNaftahType(Vocabulary vocabulary, Class<?> javaType) {
 		if (Objects.isNull(javaType)) {
 			return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
 		}
@@ -311,6 +318,21 @@ public final class ObjectUtils {
 			}
 		}
 		return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
+	}
+
+	/**
+	 * Resolves a Java type to its corresponding Naftah language type using a parser's vocabulary.
+	 * <p>
+	 * This is a convenience method that internally retrieves the {@link Vocabulary} from
+	 * the given {@link Parser} and delegates to {@link #getNaftahType(Vocabulary, Class)}.
+	 *
+	 * @param parser   the ANTLR {@link Parser} instance
+	 * @param javaType the Java type to convert
+	 * @return the Naftah language type token as a {@link String}
+	 */
+	public static String getNaftahType(Parser parser, Class<?> javaType) {
+		Vocabulary vocabulary = parser.getVocabulary();
+		return getNaftahType(vocabulary, javaType);
 	}
 
 	/**

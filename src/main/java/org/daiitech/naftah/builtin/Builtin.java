@@ -6,6 +6,7 @@ import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
@@ -28,8 +29,45 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
  * @author Chakib Daii
  */
 @NaftahFnProvider(  name = "مزوّد دوال مدمجة",
-					description = "يحتوي هذا الموفر على دوال مدمجة تُستخدم ضمن لغة نفطه لأداء عمليات حسابية ومنطقية " + "مختلفة بدقة وكفاءة.",
-					functionNames = {"جمع", "طرح", "ضرب", "قسمة", "باقي_القسمة", "إطبع"})
+					description = """
+									يحتوي هذا الموفر على دوال مدمجة تُستخدم ضمن لغة نفطه لأداء عمليات حسابية ومنطقية مختلفة بدقة وكفاءة.""",
+					functionNames = {
+										"هل_أكبر_من",
+										"هل_لا_يساوي",
+										"تحليل_رقم_بنظام_العد",
+										"إزاحة_إلى_اليمين_غير_موقعة",
+										"الأكبر",
+										"إنفي",
+										"إقسم",
+										"إزاحة_إلى_اليسار",
+										"هل_يساوي",
+										"و_بتي",
+										"باقي_القسمة",
+										"إجمع",
+										"هل_أصغر_من",
+										"أو_بتي",
+										"نقصان_قبلي",
+										"القيمة_المطلقة",
+										"إطبع",
+										"أرضي",
+										"إرفع",
+										"الأصغر",
+										"هل_صفر",
+										"سقف",
+										"هل_أكبر_أو_يساوي",
+										"إضرب",
+										"إطرح",
+										"إشارة",
+										"نقصان_بعدي",
+										"ليس_بتي",
+										"زيادة_بعدية",
+										"هل_أصغر_أو_يساوي",
+										"حصري_أو_بتي",
+										"إزاحة_إلى_اليمين",
+										"تقريب",
+										"جذر",
+										"زيادة_قبلية"
+					})
 public final class Builtin {
 
 	/**
@@ -48,7 +86,8 @@ public final class Builtin {
 	 */
 	@NaftahFn(  name = "إطبع",
 				aliases = {"ڨول", "قول", "قل", "ڨلي", "ڨلّي", "قلي", "قلّي", "إكتب"},
-				description = "تعليمة الطباعة (إطبع) هي التعليمة التي تُستخدم في البرمجة لإظهار نص معين على الشاشة، مثل " + "إظهار رسالة ترحيبية للمستخدم.",
+				description = """
+								تعليمة الطباعة (إطبع) هي التعليمة التي تُستخدم في البرمجة لإظهار نص معين على الشاشة، مثل إظهار رسالة ترحيبية للمستخدم.""",
 				usage = "إطبع(ش)",
 				parameterTypes = {Object.class})
 	public static void print(Object o) {
@@ -69,7 +108,8 @@ public final class Builtin {
 	 * @return the sum of x and y
 	 */
 	@NaftahFn(  name = "إجمع",
-				description = "إضافة الأعداد معًا للحصول على مجموع. هو العملية الأساسية التي تُستخدم في الرياضيات " + "لتحديد" + " القيمة الإجمالية من خلال جمع عدة أرقام.",
+				description = """
+								إضافة الأعداد معًا للحصول على مجموع. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة الإجمالية من خلال جمع عدة أرقام.""",
 				usage = "إجمع(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -86,7 +126,8 @@ public final class Builtin {
 	 * @return the difference between x and y
 	 */
 	@NaftahFn(  name = "إطرح",
-				description = "طرح الأعداد للحصول على الفرق. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد " + "القيمة" + " المتبقية عند إزالة قيمة عدد من عدد آخر.",
+				description = """
+								طرح الأعداد للحصول على الفرق. هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة المتبقية عند إزالة قيمة عدد من عدد آخر.""",
 				usage = "إطرح(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -103,7 +144,8 @@ public final class Builtin {
 	 * @return the product of x and y
 	 */
 	@NaftahFn(  name = "إضرب",
-				description = "ضرب الأعداد للحصول على الناتج هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد " + "القيمة" + " الإجمالية عند تكرار جمع عدد معين عدة مرات.",
+				description = """
+								ضرب الأعداد للحصول على الناتج هو العملية الأساسية التي تُستخدم في الرياضيات لتحديد القيمة الإجمالية عند تكرار جمع عدد معين عدة مرات.""",
 				usage = "إضرب(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -120,7 +162,8 @@ public final class Builtin {
 	 * @return the quotient of x divided by y
 	 */
 	@NaftahFn(  name = "إقسم",
-				description = "قسمة الأعداد للحصول على خارج القسمة هي العملية الأساسية التي تُستخدم في الرياضيات لتحديد " + "كم مرة يمكن تقسيم عدد إلى أجزاء متساوية.",
+				description = """
+								قسمة الأعداد للحصول على خارج القسمة هي العملية الأساسية التي تُستخدم في الرياضيات لتحديد كم مرة يمكن تقسيم عدد إلى أجزاء متساوية.""",
 				usage = "إقسم(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -137,7 +180,8 @@ public final class Builtin {
 	 * @return the remainder after dividing x by y
 	 */
 	@NaftahFn(  name = "باقي_القسمة",
-				description = "عملية باقي القسمة (المودولو) هي العملية التي تُستخدم في الرياضيات لتحديد الباقي المتبقي " + "بعد قسمة عدد على عدد آخر.",
+				description = """
+								عملية باقي القسمة (المودولو) هي العملية التي تُستخدم في الرياضيات لتحديد الباقي المتبقي بعد قسمة عدد على عدد آخر.""",
 				usage = "باقي_القسمة(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -156,7 +200,8 @@ public final class Builtin {
 	 * @usage max(x, y)
 	 */
 	@NaftahFn(  name = "الأكبر",
-				description = "دالة (الأكبر) تُستخدم لمقارنة عددين وإرجاع العدد الأكبر بينهما. تُفيد هذه العملية في " + "تحديد القيمة العليا عند المفاضلة بين قيمتين عدديتين.",
+				description = """
+								دالة (الأكبر) تُستخدم لمقارنة عددين وإرجاع العدد الأكبر بينهما. تُفيد هذه العملية في تحديد القيمة العليا عند المفاضلة بين قيمتين عدديتين.""",
 				usage = "الأكبر(ش ، ي)",
 				parameterTypes = {Number.class, Number.class},
 				returnType = Number.class)
@@ -176,7 +221,8 @@ public final class Builtin {
 	 * @usage min(x, y)
 	 */
 	@NaftahFn(  name = "الأصغر",
-				description = "دالة (الأصغر) تُستخدم لمقارنة عددين وإرجاع العدد الأصغر بينهما. تُفيد هذه العملية في " + "تحديد القيمة الدنيا عند المفاضلة بين قيمتين عدديتين.",
+				description = """
+								دالة (الأصغر) تُستخدم لمقارنة عددين وإرجاع العدد الأصغر بينهما. تُفيد هذه العملية في تحديد القيمة الدنيا عند المفاضلة بين قيمتين عدديتين.""",
 				usage = "الأصغر(ش ، ي)",
 				parameterTypes = {Number.class, Number.class},
 				returnType = Number.class)
@@ -196,7 +242,8 @@ public final class Builtin {
 	 * @usage pow(base, exponent)
 	 */
 	@NaftahFn(  name = "إرفع",
-				description = "دالة (إرفع) تُستخدم لرفع عدد (الأساس) إلى قوة عدد صحيح (الأس). تُفيد هذه العملية في " + "الحسابات الرياضية التي تتطلب التكرار الأسي مثل حساب المربعات أو المكعبات.",
+				description = """
+								دالة (إرفع) تُستخدم لرفع عدد (الأساس) إلى قوة عدد صحيح (الأس). تُفيد هذه العملية في الحسابات الرياضية التي تتطلب التكرار الأسي مثل حساب المربعات أو المكعبات.""",
 				usage = "إرفع(الأساس ، الأس)",
 				parameterTypes = {Number.class, int.class},
 				returnType = Number.class)
@@ -215,7 +262,8 @@ public final class Builtin {
 	 * @usage round(x)
 	 */
 	@NaftahFn(  name = "تقريب",
-				description = "دالة (تقريب) تُستخدم لتقريب عدد عشري إلى أقرب عدد صحيح. تُفيد هذه العملية في العمليات " + "الحسابية التي تتطلب أعدادًا صحيحة دقيقة.",
+				description = """
+								دالة (تقريب) تُستخدم لتقريب عدد عشري إلى أقرب عدد صحيح. تُفيد هذه العملية في العمليات الحسابية التي تتطلب أعدادًا صحيحة دقيقة.""",
 				usage = "تقريب(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -234,7 +282,8 @@ public final class Builtin {
 	 * @usage floor(x)
 	 */
 	@NaftahFn(  name = "أرضي",
-				description = "دالة (أرضي) تُستخدم لإرجاع أكبر عدد صحيح أصغر من أو يساوي العدد المعطى. تُفيد هذه " + "العملية" + " في العمليات الحسابية التي تتطلب تقريب الأعداد إلى الأسفل.",
+				description = """
+								دالة (أرضي) تُستخدم لإرجاع أكبر عدد صحيح أصغر من أو يساوي العدد المعطى. تُفيد هذه العملية في العمليات الحسابية التي تتطلب تقريب الأعداد إلى الأسفل.""",
 				usage = "أرضي(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -253,7 +302,8 @@ public final class Builtin {
 	 * @usage ceil(x)
 	 */
 	@NaftahFn(  name = "سقف",
-				description = "دالة (سقف) تُستخدم لإرجاع أصغر عدد صحيح أكبر من أو يساوي العدد المعطى. تُفيد هذه العملية " + "في العمليات الحسابية التي تتطلب تقريب الأعداد إلى الأعلى.",
+				description = """
+								دالة (سقف) تُستخدم لإرجاع أصغر عدد صحيح أكبر من أو يساوي العدد المعطى. تُفيد هذه العملية في العمليات الحسابية التي تتطلب تقريب الأعداد إلى الأعلى.""",
 				usage = "سقف(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -272,7 +322,8 @@ public final class Builtin {
 	 * @usage negate(x)
 	 */
 	@NaftahFn(  name = "إنفي",
-				description = "دالة (إنفي) تُستخدم لإرجاع العدد المعطى بعد تغييره إلى قيمته السالبة. تُفيد هذه العملية " + "في" + " العمليات الحسابية التي تتطلب عكس الإشارة العددية.",
+				description = """
+								دالة (إنفي) تُستخدم لإرجاع العدد المعطى بعد تغييره إلى قيمته السالبة. تُفيد هذه العملية في العمليات الحسابية التي تتطلب عكس الإشارة العددية.""",
 				usage = "إنفي(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -290,7 +341,8 @@ public final class Builtin {
 	 * @usage sqrt(x)
 	 */
 	@NaftahFn(  name = "جذر",
-				description = "دالة (جذر) تُستخدم لحساب الجذر التربيعي للعدد المعطى. تُفيد هذه العملية في العمليات " + "الحسابية التي تتطلب إيجاد قيمة العدد الذي مربعه يساوي العدد الأصلي.",
+				description = """
+								دالة (جذر) تُستخدم لحساب الجذر التربيعي للعدد المعطى. تُفيد هذه العملية في العمليات الحسابية التي تتطلب إيجاد قيمة العدد الذي مربعه يساوي العدد الأصلي.""",
 				usage = "جذر(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -310,7 +362,8 @@ public final class Builtin {
 	 * @usage abs(x)
 	 */
 	@NaftahFn(  name = "القيمة_المطلقة",
-				description = "دالة (القيمة_المطلقة) تُستخدم لحساب القيمة المطلقة للعدد المعطى، أي إزالة إشارة السالب " + "إن" + " وجدت. تُفيد هذه العملية في الحسابات التي تتطلب قيمة موجبة دائمًا.",
+				description = """
+								دالة (القيمة_المطلقة) تُستخدم لحساب القيمة المطلقة للعدد المعطى، أي إزالة إشارة السالب إن وجدت. تُفيد هذه العملية في الحسابات التي تتطلب قيمة موجبة دائمًا.""",
 				usage = "القيمة_المطلقة(ش)",
 				parameterTypes = {Number.class},
 				returnType = Number.class)
@@ -329,7 +382,8 @@ public final class Builtin {
 	 * @usage signum(x)
 	 */
 	@NaftahFn(  name = "إشارة",
-				description = "دالة (إشارة) تُستخدم لتحديد إشارة العدد المعطى: ترجع -1 إذا كان العدد سالبًا، 0 إذا كان " + "صفرًا، و1 إذا كان موجبًا.",
+				description = """
+								دالة (إشارة) تُستخدم لتحديد إشارة العدد المعطى: ترجع -1 إذا كان العدد سالبًا، 0 إذا كان صفرًا، و1 إذا كان موجبًا.""",
 				usage = "إشارة(ش)",
 				parameterTypes = {Number.class},
 				returnType = int.class)
@@ -347,7 +401,8 @@ public final class Builtin {
 	 * @usage isZero(x)
 	 */
 	@NaftahFn(  name = "هل_صفر",
-				description = "دالة (هل_صفر) تُستخدم للتحقق مما إذا كان العدد المعطى يساوي صفرًا. تُرجع صحيح إذا كان " + "العدد صفرًا، وخطأ خلاف ذلك.",
+				description = """
+								دالة (هل_صفر) تُستخدم للتحقق مما إذا كان العدد المعطى يساوي صفرًا. تُرجع صحيح إذا كان العدد صفرًا، وخطأ خلاف ذلك.""",
 				usage = "هل_صفر(ش)",
 				parameterTypes = {Number.class},
 				returnType = boolean.class)
@@ -366,7 +421,8 @@ public final class Builtin {
 	 * @usage equals(x, y)
 	 */
 	@NaftahFn(  name = "هل_يساوي",
-				description = "دالة (هل_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا متساويين في القيمة. تُرجع " + "صحيح" + " إذا كان العددان متساويين، وخطأ خلاف ذلك.",
+				description = """
+								دالة (هل_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا متساويين في القيمة. تُرجع صحيح إذا كان العددان متساويين، وخطأ خلاف ذلك.""",
 				usage = "هل_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -393,7 +449,8 @@ public final class Builtin {
 	 * @usage notEquals(x, y)
 	 */
 	@NaftahFn(  name = "هل_لا_يساوي",
-				description = "دالة (هل_لا_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا غير متساويين في القيمة. " + "تُرجع صحيح إذا كان العددان غير متساويين، وخطأ خلاف ذلك.",
+				description = """
+								دالة (هل_لا_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا غير متساويين في القيمة. تُرجع صحيح إذا كان العددان غير متساويين، وخطأ خلاف ذلك.""",
 				usage = "هل_لا_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -420,7 +477,8 @@ public final class Builtin {
 	 * @usage lessThan(x, y)
 	 */
 	@NaftahFn(  name = "هل_أصغر_من",
-				description = "دالة (هل_أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد " + "الثاني. تُرجع صحيح إذا كان الأول أصغر، وخطأ خلاف ذلك.",
+				description = """
+								دالة (هل_أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد الثاني. تُرجع صحيح إذا كان الأول أصغر، وخطأ خلاف ذلك.""",
 				usage = "هل_أصغر_من(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -439,7 +497,8 @@ public final class Builtin {
 	 * @usage lessThanEquals(x, y)
 	 */
 	@NaftahFn(  name = "هل_أصغر_أو_يساوي",
-				description = "دالة (هل_أصغر_أو_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر أو " + "يساوي العدد الثاني. تُرجع صحيح إذا كان الأول أصغر أو يساوي، وخطأ خلاف ذلك.",
+				description = """
+								دالة (هل_أصغر_أو_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر أو يساوي العدد الثاني. تُرجع صحيح إذا كان الأول أصغر أو يساوي، وخطأ خلاف ذلك.""",
 				usage = "هل_أصغر_أو_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -458,7 +517,8 @@ public final class Builtin {
 	 * @usage greaterThan(x, y)
 	 */
 	@NaftahFn(  name = "هل_أكبر_من",
-				description = "دالة (هل_أكبر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر من العدد " + "الثاني. تُرجع صحيح إذا كان الأول أكبر، وخطأ خلاف ذلك.",
+				description = """
+								دالة (هل_أكبر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر من العدد الثاني. تُرجع صحيح إذا كان الأول أكبر، وخطأ خلاف ذلك.""",
 				usage = "هل_أكبر_من(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -477,7 +537,8 @@ public final class Builtin {
 	 * @usage greaterThanEquals(x, y)
 	 */
 	@NaftahFn(  name = "هل_أكبر_أو_يساوي",
-				description = "دالة (هل_أكبر_أو_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر أو " + "يساوي العدد الثاني. تُرجع صحيح إذا كان الأول أكبر أو يساوي، وخطأ خلاف ذلك.",
+				description = """
+								دالة (هل_أكبر_أو_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر أو يساوي العدد الثاني. تُرجع صحيح إذا كان الأول أكبر أو يساوي، وخطأ خلاف ذلك.""",
 				usage = "هل_أكبر_أو_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -496,7 +557,8 @@ public final class Builtin {
 	 * @usage and(x, y)
 	 */
 	@NaftahFn(  name = "و_بتي",
-				description = "دالة (و_بتي) تُنفذ عملية 'AND' على الأعداد الثنائية (bitwise) المعطاة. تُرجع العدد " + "الناتج" + " عن العملية الثنائية بين العددين.",
+				description = """
+								دالة (و_بتي) تُنفذ عملية 'AND' على الأعداد الثنائية (bitwise) المعطاة. تُرجع العدد الناتج عن العملية الثنائية بين العددين.""",
 				usage = "و_بتي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -515,7 +577,8 @@ public final class Builtin {
 	 * @usage or(x, y)
 	 */
 	@NaftahFn(  name = "أو_بتي",
-				description = "دالة (أو_بتي) تُنفذ عملية 'OR' الثنائية على الأعداد المعطاة. تُرجع العدد الناتج عن تطبيق " + "العملية الثنائية بين العددين.",
+				description = """
+								دالة (أو_بتي) تُنفذ عملية 'OR' الثنائية على الأعداد المعطاة. تُرجع العدد الناتج عن تطبيق العملية الثنائية بين العددين.""",
 				usage = "أو_بتي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -534,7 +597,8 @@ public final class Builtin {
 	 * @usage xor(x, y)
 	 */
 	@NaftahFn(  name = "حصري_أو_بتي",
-				description = "دالة (حصري_أو_بتي) تُنفذ عملية 'XOR' الثنائية على الأعداد المعطاة. تُرجع العدد الناتج عن " + "تطبيق العملية الثنائية الحصرية بين العددين.",
+				description = """
+								دالة (حصري_أو_بتي) تُنفذ عملية 'XOR' الثنائية على الأعداد المعطاة. تُرجع العدد الناتج عن تطبيق العملية الثنائية الحصرية بين العددين.""",
 				usage = "حصري_أو_بتي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -552,7 +616,8 @@ public final class Builtin {
 	 * @usage not(x)
 	 */
 	@NaftahFn(  name = "ليس_بتي",
-				description = "دالة (ليس_بتي) تُنفذ عملية النفي الثنائي (bitwise NOT) على العدد المعطى. تُرجع العدد " + "الناتج عن عكس كل بت في العدد.",
+				description = """
+								دالة (ليس_بتي) تُنفذ عملية النفي الثنائي (bitwise NOT) على العدد المعطى. تُرجع العدد الناتج عن عكس كل بت في العدد.""",
 				usage = "ليس_بتي(ش)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
@@ -571,7 +636,8 @@ public final class Builtin {
 	 * @usage shiftLeft(x, positions)
 	 */
 	@NaftahFn(  name = "إزاحة_إلى_اليسار",
-				description = "دالة (إزاحة_إلى_اليسار) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليسار بعدد المواقع " + "المحدد. تُستخدم هذه العملية في الحسابات الثنائية لتعظيم القيمة.",
+				description = """
+								دالة (إزاحة_إلى_اليسار) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليسار بعدد المواقع المحدد. تُستخدم هذه العملية في الحسابات الثنائية لتعظيم القيمة.""",
 				usage = "إزاحة_إلى_اليسار(ش ، مواقِع)",
 				parameterTypes = {Number.class, int.class},
 				returnType = Number.class)
@@ -590,7 +656,8 @@ public final class Builtin {
 	 * @usage shiftRight(x, positions)
 	 */
 	@NaftahFn(  name = "إزاحة_إلى_اليمين",
-				description = "دالة (إزاحة_إلى_اليمين) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بعدد المواقع " + "المحدد. تُستخدم هذه العملية في الحسابات الثنائية لتقليل القيمة.",
+				description = """
+								دالة (إزاحة_إلى_اليمين) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بعدد المواقع المحدد. تُستخدم هذه العملية في الحسابات الثنائية لتقليل القيمة.""",
 				usage = "إزاحة_إلى_اليمين(ش ، مواقِع)",
 				parameterTypes = {Number.class, int.class},
 				returnType = Number.class)
@@ -610,7 +677,8 @@ public final class Builtin {
 	 * @usage unsignedShiftRight(x, positions)
 	 */
 	@NaftahFn(  name = "إزاحة_إلى_اليمين_غير_موقعة",
-				description = "دالة (إزاحة_إلى_اليمين_غير_موقعة) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بدون " + "اعتبار الإشارة، بعدد المواقع المحدد. تُستخدم هذه العملية لمعالجة الأعداد بدون تأثير " + "الإشارة " + "السالبة.",
+				description = """
+								دالة (إزاحة_إلى_اليمين_غير_موقعة) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بدون اعتبار الإشارة، بعدد المواقع المحدد. تُستخدم هذه العملية لمعالجة الأعداد بدون تأثير الإشارة السالبة.""",
 				usage = "إزاحة_إلى_اليمين_غير_موقعة(ش ، مواقِع)",
 				parameterTypes = {Number.class, int.class},
 				returnType = Number.class)
@@ -685,4 +753,19 @@ public final class Builtin {
 	public static <T> Object postDecrement(T x) {
 		return applyOperation(x, UnaryOperation.POST_DECREMENT);
 	}
+
+	@NaftahFn(
+				name = "تحليل_رقم_بنظام_العد",
+				description = """
+								دالة (تحليل_رقم_بنظام_العد) لتحليل رقم نصي وفقًا للنظام العددي المحدد وإرجاع النوع المناسب من الأعداد.""",
+				usage = "تحليل_رقم_بنظام_العد(الرقم، قاعدة)",
+				parameterTypes = {String.class, int.class},
+				returnType = Number.class
+	)
+	public static Number parseDynamicNumber(String text, int radix) {
+		String value = ArabicUtils
+				.convertArabicToLatinLetterByLetter(text);
+		return NumberUtils.parseDynamicNumber(value, radix, text);
+	}
+
 }

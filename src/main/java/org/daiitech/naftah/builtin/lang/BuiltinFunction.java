@@ -146,6 +146,18 @@ public class BuiltinFunction implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "<%s %s>".formatted("دالة", this.getFunctionInfo().name());
+		return "<%s %s>".formatted("دالة", functionInfo.name());
+	}
+
+	public String toDetailedString() {
+		return """
+				تفاصيل المزود:
+				\t\t%s
+
+				تفاصيل الدالة:
+				\t\t%s"""
+				.formatted(
+							providerInfo,
+							functionInfo);
 	}
 }

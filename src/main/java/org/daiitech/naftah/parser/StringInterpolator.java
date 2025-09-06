@@ -11,7 +11,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
-import static org.daiitech.naftah.parser.DefaultContext.VARIABLE_GETTER;
+import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 
 /**
@@ -37,9 +37,32 @@ public final class StringInterpolator {
 
 	/**
 	 * Regular expression pattern used to match interpolation variables
-	 * in the format <code>${variable}</code> or <code>{variable}$</code>.
+	 * in the following formats (Left-to-Right only):
+	 * <ul>
+	 * <li><code>{{المتغير}}</code></li>
+	 * <li><code>{{المتغير:القيمة_الافتراضية}}</code></li>
+	 * <li><code>{المتغير}$</code></li>
+	 * <li><code>{المتغير:القيمة_الافتراضية}$</code></li>
+	 * <li><code>${المتغير}</code></li>
+	 * <li><code>${المتغير:القيمة_الافتراضية}</code></li>
+	 * </ul>
+	 *
+	 * <p>
+	 * Each format may optionally include a default value before the variable name,
+	 * separated by a colon (<code>:</code>), e.g., <code>{{العنوان:بدون_عنوان}}</code>.
+	 * </p>
 	 */
-	private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("(?:\\$\\{([^}]+)}|\\{([^}]+)}\\$)");
+	private static final Pattern INTERPOLATION_PATTERN = Pattern
+			.compile(
+						"""
+						\\{\\{([^}:]+):([^}]+)}} # matching {{المتغير:القيمة_الافتراضية}}
+						|\\{\\{([^}]+)}} # matching {{المتغير}}
+						|\\{([^}:]+):([^}]+)}\\$ # matching {المتغير:القيمة_الافتراضية}$
+						|\\{([^}]+)}\\$ # matching {المتغير}$
+						|\\$\\{([^}:]+):([^}]+)} # matching ${المتغير:القيمة_الافتراضية}
+						|\\$\\{([^}]+)} # matching ${المتغير}
+						""",
+						Pattern.COMMENTS);
 
 	/**
 	 * Cache of compiled matchers for given input strings to improve performance
@@ -69,8 +92,7 @@ public final class StringInterpolator {
 	 * @throws NaftahBugError if the context type is unsupported
 	 */
 	public static String process(String input, Object context) {
-		// Replace all string delimiter characters from original parsed
-		input = input.replaceAll("[\"«»]", "");
+		input = cleanInput(input);
 		if (!hasInterpolation(input)) {
 			return input; // Static string, return as-is
 		}
@@ -94,7 +116,7 @@ public final class StringInterpolator {
 	 * @return the interpolated result
 	 */
 	public static synchronized String interpolate(String template, DefaultContext context) {
-		Function<String, Object> replacementFunction = varName -> VARIABLE_GETTER.apply(varName, context).orElse(NULL);
+		Function<String, Object> replacementFunction = varName -> getVariable(varName, context).orElse(NULL);
 		return interpolate(template, replacementFunction);
 	}
 
@@ -125,8 +147,33 @@ public final class StringInterpolator {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
 		while (matcher.find()) {
-			String varName = matcher.group(1);
-			Object replacement = getNaftahValueToString(replacementFunction.apply(varName));
+			String defaultValue = null;
+			String varName = null;
+
+			for (int i = 1; i <= 10; i += 3) {
+				// handling group variable with default (index 1-2, 4-5 and 7-8)
+				varName = (i + 1 <= 9) ? matcher.group(i) : null;
+				defaultValue = (i + 2 <= 9) ? matcher.group(i + 1) : null;
+
+				if (varName != null) {
+					break;
+				}
+
+				// handling single group variable without default (index 3, 6 and 9)
+				varName = (i - 1 > 0) ? matcher.group(i - 1) : null;
+				if (varName != null) {
+					break;
+				}
+			}
+
+			Object replacement = replacementFunction.apply(varName);
+
+			// Use default if value is null
+			if ((replacement == null || replacement.equals(NULL)) && defaultValue != null) {
+				replacement = defaultValue;
+			}
+
+			replacement = getNaftahValueToString(replacement);
 			matcher.appendReplacement(result.get(), Matcher.quoteReplacement(replacement.toString()));
 		}
 		matcher.appendTail(result.get());
@@ -141,6 +188,26 @@ public final class StringInterpolator {
 	 */
 	public static boolean hasInterpolation(String input) {
 		return getMatcher(input).find();
+	}
+
+	/**
+	 * Cleans the input string by removing common string delimiter characters.
+	 * <p>
+	 * This method removes the following characters from the input:
+	 * <ul>
+	 * <li>Double quotes: {@code "}</li>
+	 * <li>Left angle quote: {@code «}</li>
+	 * <li>Right angle quote: {@code »}</li>
+	 * </ul>
+	 * This is useful for sanitizing strings that may have been enclosed in different
+	 * types of quotation marks during parsing or user input.
+	 *
+	 * @param input the original string potentially containing delimiters
+	 * @return a new string with all delimiter characters removed
+	 */
+	public static String cleanInput(String input) {
+		// Replace all string delimiter characters from original parsed
+		return input.replaceAll("[\"«»]", "");
 	}
 
 	/**

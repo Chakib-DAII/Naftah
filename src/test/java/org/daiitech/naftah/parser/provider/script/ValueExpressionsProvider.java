@@ -83,6 +83,56 @@ public class ValueExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, "«ص»", 'ص', null),
 					Arguments.of(true, "\"اسم\"", "اسم", null),
 					Arguments.of(true, "«اسم»", "اسم", null),
+					Arguments.of(true, "ثمانية_بت «اسم»", new byte[]{-40, -89, -40, -77, -39, -123}, null),
+					Arguments.of(true, "بايتات «اسم»", new byte[]{-40, -89, -40, -77, -39, -123}, null),
+					Arguments.of(true, "سلسلة_ثمانية_بت «اسم»", new byte[]{-40, -89, -40, -77, -39, -123}, null),
+					Arguments.of(true, "مصفوفة_ثمانية_بت «اسم»", new byte[]{-40, -89, -40, -77, -39, -123}, null),
+					Arguments.of(true, "سلسلة_بايتات «اسم»", new byte[]{-40, -89, -40, -77, -39, -123}, null),
+					Arguments.of(true, "مصفوفة_بايتات «اسم»", new byte[]{-40, -89, -40, -77, -39, -123}, null),
+					Arguments.of(true, """
+										ثابت ت تعيين 2
+										متغير ش
+										ش تعيين ١
+										متغير ع تعيين 15
+										ثابت ي تعيين ١
+										"ت = ${ت}، ش = ${ش}، ع = ${ع}، ي = ${ي}"
+										""", "ت = 2، ش = 1، ع = 15، ي = 1", null),
+					Arguments.of(true, """
+										ثابت ت تعيين 2
+										متغير ش
+										ش تعيين ١
+										متغير ع تعيين 15
+										ثابت ي تعيين ١
+										"ت = ${ت:ت_فارغ}، ش = ${ش:ش_فارغ}، ع = ${ع:ع_فارغ}، ي = ${ي:ي_فارغ}"
+										""", "ت = 2، ش = 1، ع = 15، ي = 1", null),
+					Arguments.of(true, """
+										ثابت ت تعيين 2
+										متغير ش
+										ش تعيين ١
+										متغير ع تعيين 15
+										ثابت ي تعيين ١
+										"ت = {ت}$، ش = {ش}$، ع = {ع}$، ي = {ي}$"
+										""", "ت = 2، ش = 1، ع = 15، ي = 1", null),
+					Arguments.of(true, """
+										ثابت ت تعيين 2
+										متغير ش
+										ش تعيين ١
+										متغير ع تعيين 15
+										ثابت ي تعيين ١
+										"ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+										""", "ت = 2، ش = 1، ع = 15، ي = 1", null),
+					Arguments.of(true, """
+										خام "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+										""", "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}", null),
+					Arguments.of(true, """
+										نص_خام "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+										""", "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}", null),
+					Arguments.of(true, """
+										سلسلة_خام "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+										""", "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}", null),
+					Arguments.of(true, """
+										"ت = {{ت:ت_فارغ}}، ش = {{ش:ش_فارغ}}، ع = {{ع:ع_فارغ}}، ي = {{ي:ي_فارغ}}"
+										""", "ت = ت_فارغ، ش = ش_فارغ، ع = ع_فارغ، ي = ي_فارغ", null),
 					Arguments.of(true, """
 										متغير أ تعيين {متغير أ تعيين ١ , متغير ب تعيين 4}
 										أ
@@ -94,6 +144,74 @@ public class ValueExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, """
 										متغير أ تعيين {متغير أ تعيين ١ , متغير ب تعيين 4}
 										أ:ب
-										""", 4, null));
+										""", 4, null),
+					Arguments.of(true, "1''2'", 1, null),
+					Arguments.of(true, "10''2'", 2, null),
+					Arguments.of(true, "100''2'", 4, null),
+					Arguments.of(true, "1000''2'", 8, null),
+					Arguments.of(true, "10000''2'", 16, null),
+					Arguments.of(true, "100000''2'", 32, null),
+					Arguments.of(true, "1000000''2'", 64, null),
+					Arguments.of(true, "10000000''2'", 128, null),
+					Arguments.of(true, "100000000''2'", 256, null),
+					Arguments.of(true, "1000000000''2'", 512, null),
+					Arguments.of(true, "10000000000''2'", 1024, null),
+					Arguments.of(true, "100000000000''2'", 2048, null),
+					Arguments.of(true, "1000000000000''2'", 4096, null),
+					Arguments.of(true, "10000000000000''2'", 8192, null),
+					Arguments.of(true, "100000000000000''2'", 16384, null),
+					Arguments.of(true, "1000000000000000''2'", 32768, null),
+					Arguments.of(true, "3000000000000000''4'", 3221225472L, null),
+					Arguments.of(true, "4000000000000000''5'", 122070312500L, null),
+					Arguments.of(true, "5000000000000000''6'", 2350924922880L, null),
+					Arguments.of(true, "6000000000000000''7'", 28485369059658L, null),
+					Arguments.of(true, "7000000000000000''8'", 246290604621824L, null),
+					Arguments.of(true, "8000000000000000''9'", 1647129056757192L, null),
+					Arguments.of(true, "9000000000000000''10'", 9000000000000000L, null),
+					Arguments.of(true, "ا٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١١'", 459497298635721610L, null),
+					Arguments.of(true, "A0000000000000000''11'", 459497298635721610L, null),
+					Arguments.of(true, "ب٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١٢'", 2033726847845400576L, null),
+					Arguments.of(true, "B0000000000000000''12'", 2033726847845400576L, null),
+					Arguments.of(true, "ت٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١٣'", 7984999310198158092L, null),
+					Arguments.of(true, "C0000000000000000''13'", 7984999310198158092L, null),
+					Arguments.of(true, "ث٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١٤'", new BigInteger("28313393391521824768"), null),
+					Arguments.of(true, "D0000000000000000''14'", new BigInteger("28313393391521824768"), null),
+					Arguments.of(true, "ج٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١٥'", new BigInteger("91957716979980468750"), null),
+					Arguments.of(true, "E0000000000000000''15'", new BigInteger("91957716979980468750"), null),
+					Arguments.of(true, "ح٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١٦'", new BigInteger("276701161105643274240"), null),
+					Arguments.of(true, "F0000000000000000''16'", new BigInteger("276701161105643274240"), null),
+					Arguments.of(true, "خ٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١٧'", new BigInteger("778579070010669895696"), null),
+					Arguments.of(true, "G0000000000000000''17'", new BigInteger("778579070010669895696"), null),
+					Arguments.of(true, "د٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١٨'", new BigInteger("2064472028642102280192"), null),
+					Arguments.of(true, "H0000000000000000''18'", new BigInteger("2064472028642102280192"), null),
+					Arguments.of(true, "ذ٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''١٩'", new BigInteger("5191945444217181018258"), null),
+					Arguments.of(true, "I0000000000000000''19'", new BigInteger("5191945444217181018258"), null),
+					Arguments.of(true, "ر٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٠'", new BigInteger("12451840000000000000000"), null),
+					Arguments.of(true, "J0000000000000000''20'", new BigInteger("12451840000000000000000"), null),
+					Arguments.of(true, "ز٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢١'", new BigInteger("28611373804839706566420"), null),
+					Arguments.of(true, "K0000000000000000''21'", new BigInteger("28611373804839706566420"), null),
+					Arguments.of(true, "س٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٢'", new BigInteger("63238591423120368009216"), null),
+					Arguments.of(true, "L0000000000000000''22'", new BigInteger("63238591423120368009216"), null),
+					Arguments.of(true, "ش٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٣'", new BigInteger("134917429144981970277142"), null),
+					Arguments.of(true, "M0000000000000000''23'", new BigInteger("134917429144981970277142"), null),
+					Arguments.of(true, "ص٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٤'", new BigInteger("278681220191737450856448"), null),
+					Arguments.of(true, "N0000000000000000''24'", new BigInteger("278681220191737450856448"), null),
+					Arguments.of(true, "ض٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٥'", new BigInteger("558793544769287109375000"), null),
+					Arguments.of(true, "O0000000000000000''25'", new BigInteger("558793544769287109375000"), null),
+					Arguments.of(true, "ط٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٦'", new BigInteger("1090218572485721851494400"), null),
+					Arguments.of(true, "P0000000000000000''26'", new BigInteger("1090218572485721851494400"), null),
+					Arguments.of(true, "ظ٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٧'", new BigInteger("2073927519998685256447386"), null),
+					Arguments.of(true, "Q0000000000000000''27'", new BigInteger("2073927519998685256447386"), null),
+					Arguments.of(true, "ع٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٨'", new BigInteger("3853827448560223562760192"), null),
+					Arguments.of(true, "R0000000000000000''28'", new BigInteger("3853827448560223562760192"), null),
+					Arguments.of(true, "غ٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٢٩'", new BigInteger("7006901263049725766050588"), null),
+					Arguments.of(true, "S0000000000000000''29'", new BigInteger("7006901263049725766050588"), null),
+					Arguments.of(true, "ف٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٣٠'", new BigInteger("12483549090000000000000000"), null),
+					Arguments.of(true, "T0000000000000000''30'", new BigInteger("12483549090000000000000000"), null),
+					Arguments.of(true, "ق٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٣١'", new BigInteger("21822693652415557914854430"), null),
+					Arguments.of(true, "U0000000000000000''31'", new BigInteger("21822693652415557914854430"), null),
+					Arguments.of(true, "ك٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠''٣٢'", new BigInteger("37476700408053504415891456"), null),
+					Arguments.of(true, "V0000000000000000''32'", new BigInteger("37476700408053504415891456"), null)
+				);
 	}
 }

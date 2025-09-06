@@ -104,17 +104,21 @@ FLOAT   : 'عدد_عائم' | 'عائم';
 DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
 
 // Literals
-NUMBER     : [٠-٩0-9]+ (COMMA [٠-٩0-9]+)?;
-CHARACTER  : (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkLeft) Character (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkRight);
-STRING     : (DoubleQuotationMark | DoubleQuotationMarkLeft) String (DoubleQuotationMark | DoubleQuotationMarkRight);
-ID         : [ء-يڠ-ۿﹼ_٠-٩0-9\u064B-\u065F]* [ء-يڠ-ۿﹼ_\u064B-\u065F] [ء-يڠ-ۿﹼ_٠-٩0-9\u064B-\u065F]*;
+BASE_DIGITS	: (Digit | Character)+ QuotationMark QuotationMark;  // Digits for base up to 36 (including a-z for bases > 10)
+BASE_RADIX	: ([2-9٢-٩] | ([1-3١-٣] [0-9٠-٩])) QuotationMark; // base 2 to 36 radices
+NUMBER      : Digit+ (COMMA Digit+)?;
+CHARACTER   : (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkLeft) Character (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkRight);
+RAW		    : 'خام' | 'نص_خام'| 'سلسلة_خام';
+BYTE_ARRAY	: 'ثمانية_بت' | 'بايتات' |'سلسلة_ثمانية_بت' |'مصفوفة_ثمانية_بت' | 'سلسلة_بايتات'| 'مصفوفة_بايتات';
+STRING      : (DoubleQuotationMark | DoubleQuotationMarkLeft) String (DoubleQuotationMark | DoubleQuotationMarkRight);
+ID          : [ء-يڠ-ۿﹼ_٠-٩0-9\u064B-\u065F]* [ء-يڠ-ۿﹼ_\u064B-\u065F] [ء-يڠ-ۿﹼ_٠-٩0-9\u064B-\u065F]*;
 
-
-QuotationMark : '\'';
+QuotationMark : '\'' | '’';
 DoubleQuotationMark : '"';
 DoubleQuotationMarkLeft : '«';
 DoubleQuotationMarkRight : '»';
 
+fragment Digit: [٠-٩0-9];
 fragment Character: (~["«»\r\n]);
 fragment String: Character* ESC* EMOJI* PUNCTUATION* .*?;
 fragment ESC: '\\' ["\\n];

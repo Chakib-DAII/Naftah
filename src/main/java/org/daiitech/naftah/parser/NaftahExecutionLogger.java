@@ -167,6 +167,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof NaftahParser.NumberValueContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof NaftahParser.RadixNumberValueContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof NaftahParser.CharacterValueContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -814,6 +817,19 @@ public final class NaftahExecutionLogger {
 		}).orElse("");
 	}
 
+	public static String logExecution(boolean doLog, NaftahParser.RadixNumberValueContext ctx) {
+		return Optional.ofNullable(ctx).map(context -> {
+			String result = """
+							RadixNumberValueContext::BASE_DIGITS -> %s
+							RadixNumberValueContext::BASE_RADIX -> %s
+							""".formatted(context.BASE_DIGITS(), context.BASE_RADIX());
+			if (doLog && LOGGER.isLoggable(Level.FINEST)) {
+				LOGGER.finest(result);
+			}
+			return result;
+		}).orElse("");
+	}
+
 	public static String logExecution(boolean doLog, NaftahParser.CharacterValueContext ctx) {
 		return Optional.ofNullable(ctx).map(context -> {
 			String result = """
@@ -829,8 +845,10 @@ public final class NaftahExecutionLogger {
 	public static String logExecution(boolean doLog, NaftahParser.StringValueContext ctx) {
 		return Optional.ofNullable(ctx).map(context -> {
 			String result = """
+							StringValueContext::RAW -> %s
+							StringValueContext::BYTE_ARRAY -> %s
 							StringValueContext::STRING -> %s
-							""".formatted(context.STRING());
+							""".formatted(context.RAW(), context.BYTE_ARRAY(), context.STRING());
 			if (doLog && LOGGER.isLoggable(Level.FINEST)) {
 				LOGGER.finest(result);
 			}

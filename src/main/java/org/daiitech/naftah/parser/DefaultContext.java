@@ -22,8 +22,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -94,87 +92,18 @@ public class DefaultContext {
 	public static final Path CACHE_PATH = Paths.get("bin/.naftah_cache");
 
 	/**
-	 * Generates unique function call IDs based on the depth, function name, and a random UUID.
-	 */
-	public static final BiFunction<Integer, String, String> FUNCTION_CALL_ID_GENERATOR = (  depth,
-																							functionName) -> ("%s-%s-%s")
-																									.formatted(
-																												depth,
-																												functionName,
-																												UUID
-																														.randomUUID());
-
-	/**
-	 * Generates unique parameter names based on the function name and parameter name
-	 * and unique argument names based on the function call ID and argument name.
-	 */
-	public static final BiFunction<String, String, String> PARAMETER_ARGUMENT_NAME_GENERATOR = "%s-%s"::formatted;
-
-	/**
-	 * Generates unique loop labels for unlabeled loops based on depth and a UUID.
-	 */
-	public static final Function<Integer, String> LOOP_ID_GENERATOR = (depth) -> "%s-loop-%s"
-			.formatted( depth,
-						UUID.randomUUID());
-
-	/**
 	 * Global map holding contexts indexed by their depth.
 	 */
 	protected static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
-
 	/**
 	 * Stack representing the call stack containing pairs of function and argument maps,
 	 * along with the returned value.
 	 */
 	protected static final Stack<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>> CALL_STACK = new Stack<>();
-
 	/**
 	 * Stack representing loop labels and their associated parser rule contexts.
 	 */
 	protected static final Deque<Pair<String, ? extends ParserRuleContext>> LOOP_STACK = new ArrayDeque<>();
-
-	/**
-	 * Function to resolve variable values given a variable name and context.
-	 * searching in loop variables, function arguments, function parameters, and declared variables.
-	 */
-	public static final BiFunction<String, DefaultContext, VariableLookupResult<Object>> VARIABLE_GETTER = (varName,
-																											context) -> Optional
-																													.ofNullable(context
-																															.getLoopVariable(   varName,
-																																				true))
-																													.flatMap(functionArgument -> Optional
-																															.of(VariableLookupResult
-																																	.of(varName,
-																																		functionArgument.b)))
-																													.orElseGet(() -> Optional
-																															.ofNullable(context
-																																	.getFunctionArgument(   varName,
-																																							true))
-																															.flatMap(functionArgument -> Optional
-																																	.of(VariableLookupResult
-																																			.of(varName,
-																																				functionArgument.b)))
-																															.orElseGet(() -> Optional
-																																	.ofNullable(context
-																																			.getFunctionParameter(  varName,
-																																									true))
-																																	.flatMap(functionParameter -> Optional
-																																			.of(VariableLookupResult
-																																					.of(varName,
-																																						functionParameter.b
-																																								.getValue())))
-																																	.orElseGet(() -> Optional
-																																			.ofNullable(context
-																																					.getVariable(   varName,
-																																									true))
-																																			.flatMap(declaredVariable -> Optional
-																																					.of(VariableLookupResult
-																																							.of(varName,
-																																								declaredVariable.b
-																																										.getValue())))
-																																			.orElse(VariableLookupResult
-																																					.notFound(varName)))));
-
 	/**
 	 * A supplier task to perform class scanning, loading, filtering, and extraction of JVM and builtin functions
 	 * asynchronously.
@@ -271,6 +200,7 @@ public class DefaultContext {
 			serializeClassScanningResult(result);
 		}
 	};
+
 	// instance
 	protected final DefaultContext parent;
 	protected final int depth;
@@ -326,6 +256,93 @@ public class DefaultContext {
 		this.arguments = arguments;
 		this.parameters = parameters;
 		CONTEXTS.put(depth, this);
+	}
+
+	/**
+	 * Generates a unique loop identifier string based on the loop's depth and a random UUID.
+	 *
+	 * <p>This is used to create unique labels for unnamed loops,
+	 * helping to distinguish nested or recursive loops during parsing or execution.
+	 *
+	 * @param depth the depth level of the current loop
+	 * @return a unique loop ID in the format {@code <depth>-loop-<uuid>}
+	 */
+	public static String generateLoopId(int depth) {
+		return "%s-loop-%s".formatted(depth, UUID.randomUUID());
+	}
+
+	/**
+	 * Generates a unique name for a function parameter or argument by combining the
+	 * function name with the parameter or argument name.
+	 *
+	 * <p>Useful for creating internally consistent identifiers across contexts
+	 * such as code generation, interpretation, or debugging.
+	 *
+	 * @param functionName the name of the function
+	 * @param name         the name of the parameter or argument
+	 * @return a unique identifier in the format {@code <functionName>-<name>}
+	 */
+	public static String generateParameterOrArgumentName(String functionName, String name) {
+		return "%s-%s".formatted(functionName, name);
+	}
+
+	/**
+	 * Resolves a variable's value from the given context using the variable name.
+	 *
+	 * <p>The lookup order is:
+	 * <ol>
+	 * <li>Loop variables</li>
+	 * <li>Function arguments</li>
+	 * <li>Function parameters</li>
+	 * <li>Declared variables</li>
+	 * </ol>
+	 *
+	 * <p>If the variable is not found in any of these, a {@code notFound} result is returned.
+	 *
+	 * @param varName the name of the variable to look up
+	 * @param context the current execution context in which to resolve the variable
+	 * @return a {@link VariableLookupResult} containing the variable name and its resolved value,
+	 *         or a not-found result if the variable does not exist in the context
+	 */
+	public static VariableLookupResult<Object> getVariable( String varName,
+															DefaultContext context) {
+		return Optional
+				.ofNullable(context.getLoopVariable(varName, true))
+				.flatMap(functionArgument -> Optional
+						.of(VariableLookupResult.of(varName, functionArgument.b)))
+				.orElseGet(() -> Optional
+						.ofNullable(context.getFunctionArgument(varName, true))
+						.flatMap(functionArgument -> Optional
+								.of(VariableLookupResult.of(varName, functionArgument.b)))
+						.orElseGet(() -> Optional
+								.ofNullable(context.getFunctionParameter(varName, true))
+								.flatMap(functionParameter -> Optional
+										.of(VariableLookupResult
+												.of(
+													varName,
+													functionParameter.b.getValue())))
+								.orElseGet(() -> Optional
+										.ofNullable(context.getVariable(varName, true))
+										.flatMap(declaredVariable -> Optional
+												.of(VariableLookupResult
+														.of(varName,
+															declaredVariable.b.getValue())))
+										.orElse(VariableLookupResult.notFound(varName)))));
+	}
+
+	/**
+	 * Generates a unique function call identifier string based on the call's depth,
+	 * the function name, and a random UUID.
+	 *
+	 * <p>This is typically used to track or label function calls uniquely during
+	 * parsing or execution, especially in recursive or nested calls.
+	 *
+	 * @param depth        the current call depth
+	 * @param functionName the name of the function being called
+	 * @return a unique call ID in the format {@code <depth>-<functionName>-<uuid>}
+	 */
+	public static String generateCallId(int depth, String functionName) {
+		return "%s-%s-%s".formatted(depth, functionName, UUID.randomUUID());
 	}
 
 	/**
@@ -441,7 +458,7 @@ public class DefaultContext {
 	 * @return the current loop label as a string
 	 */
 	public static String currentLoopLabel(String label, int depth) {
-		return Objects.nonNull(label) ? label : LOOP_ID_GENERATOR.apply(depth);
+		return Objects.nonNull(label) ? label : generateLoopId(depth);
 	}
 
 	/**
@@ -527,8 +544,9 @@ public class DefaultContext {
 			ClassScanningResult classScanningResult = null;
 			Throwable thr = null;
 			try {
-				startLoader(
-							"تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد " + "يستغرق الأمر عدة دقائق حسب الإعدادات");
+				startLoader("""
+							تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد يستغرق الأمر عدة دقائق حسب الإعدادات."""
+				);
 				classScanningResult = LOADER_TASK.get();
 				stopLoader();
 			}
@@ -862,7 +880,7 @@ public class DefaultContext {
 		}
 		if (functionCallId != null) {
 			String functionName = functionCallId.split("-")[1];
-			name = DefaultContext.PARAMETER_ARGUMENT_NAME_GENERATOR.apply(functionName, name);
+			name = DefaultContext.generateParameterOrArgumentName(functionName, name);
 		}
 		return name;
 	}
@@ -985,7 +1003,7 @@ public class DefaultContext {
 			arguments = new HashMap<>();
 		}
 		if (functionCallId != null) {
-			name = DefaultContext.PARAMETER_ARGUMENT_NAME_GENERATOR.apply(functionCallId, name);
+			name = DefaultContext.generateParameterOrArgumentName(functionCallId, name);
 		}
 		return name;
 	}

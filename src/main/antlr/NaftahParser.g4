@@ -169,11 +169,12 @@ keyValue: expression COLON expression;
 
 // Value: Can be numbers, strings, ID
 value: NUMBER #numberValue
+     | BASE_DIGITS BASE_RADIX #radixNumberValue
      | TRUE #trueValue
      | FALSE #falseValue
      | NULL #nullValue
      | CHARACTER #characterValue
-     | STRING #stringValue
+     | (RAW | BYTE_ARRAY)? STRING #stringValue
      | ID #idValue
      ;
 
@@ -200,7 +201,7 @@ builtIn: BOOLEAN
     ;
 
 // QualifiedName: ID separated by COLONs
-qualifiedName: ID (COLON ID)*;
+qualifiedName: ID (COLON ID)+;
 
 qualifiedCall: qualifiedName COLON COLON ID;
 

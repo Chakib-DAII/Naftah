@@ -1,11 +1,16 @@
 package org.daiitech.naftah.builtin.utils.op;
 
+import java.util.Objects;
+
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.booleanToInt;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.intToBoolean;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
  * Represents all unary operations supported by the Naftah language.
@@ -161,7 +166,12 @@ public enum UnaryOperation implements Operation {
 	 * @return a {@code NaftahBugError} with a descriptive error message
 	 */
 	public static NaftahBugError newNaftahBugError(Operation unaryOperation, Object o) {
-		return new NaftahBugError("العملية '%s' غير مدعومة للنوع: '%s'".formatted(unaryOperation, o.getClass()));
+		return new NaftahBugError("العملية '%s' غير مدعومة للنوع: '%s'"
+				.formatted( unaryOperation,
+							Objects.isNull(PARSER_VOCABULARY) ?
+									getQualifiedName(o.getClass().getName()) :
+									getNaftahType(  PARSER_VOCABULARY,
+													o.getClass())));
 	}
 
 	// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating

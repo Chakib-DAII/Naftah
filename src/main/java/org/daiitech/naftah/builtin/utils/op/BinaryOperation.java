@@ -1,13 +1,18 @@
 package org.daiitech.naftah.builtin.utils.op;
 
+import java.util.Objects;
+
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.booleanToInt;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.intToBoolean;
 import static org.daiitech.naftah.builtin.utils.StringUtils.charWiseModulo;
 import static org.daiitech.naftah.builtin.utils.StringUtils.stringToInt;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
  * Represents binary operations in the Naftah language.
@@ -1187,7 +1192,13 @@ public enum BinaryOperation implements Operation {
 	 */
 	public static NaftahBugError newNaftahBugError(Operation binaryOperation, Object left, Object right) {
 		return new NaftahBugError("العملية '%s' غير مدعومة للنوعين: '%s' و'%s'."
-				.formatted(binaryOperation, left.getClass(), right.getClass()));
+				.formatted( binaryOperation,
+							Objects.isNull(PARSER_VOCABULARY) ?
+									getQualifiedName(left.getClass().getName()) :
+									getNaftahType(PARSER_VOCABULARY, left.getClass()),
+							Objects.isNull(PARSER_VOCABULARY) ?
+									getQualifiedName(right.getClass().getName()) :
+									getNaftahType(PARSER_VOCABULARY, right.getClass())));
 	}
 
 	/**
