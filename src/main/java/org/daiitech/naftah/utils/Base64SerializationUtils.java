@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Base64;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+
 /**
  * Utility class for serializing and deserializing Java objects to and from Base64 strings.
  * <p>
@@ -35,6 +37,7 @@ public final class Base64SerializationUtils {
 	 * Private constructor to prevent instantiation.
 	 */
 	private Base64SerializationUtils() {
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
