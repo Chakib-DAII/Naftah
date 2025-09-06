@@ -32,4 +32,13 @@ public record NaftahFunctionProvider(
 	public static NaftahFunctionProvider of(String name, String description, String[] functionNames) {
 		return new NaftahFunctionProvider(name, description, List.of(functionNames));
 	}
+
+	@Override
+	public String toString() {
+		return """
+				مزود دوال نفطـه:
+				\t\t\t- الاسم: %s
+				\t\t\t- الوصف: %s
+				\t\t\t- الدوال: %s""".formatted(name, description, String.join(", ", functionNames));
+	}
 }
