@@ -539,9 +539,10 @@ public final class Naftah {
 		 */
 		@Command(   name = InitCommand.NAME,
 					customSynopsis = "naftah init [options] [filename] [args]",
-					description = {
-									"The Naftah init command. it prepares the classpath classes (java classpath) and process " + "them" + " to reuse inside naftah script.",
-									"أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها " + "داخل سكربت نفطة."},
+					description = { """
+									The Naftah init command. it prepares the classpath classes (java classpath) and process them to reuse inside naftah script.""",
+									"""
+									أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة."""},
 					sortOptions = false)
 		private static final class InitCommand extends NaftahCommand {
 			private static final String NAME = "init";
@@ -559,9 +560,11 @@ public final class Naftah {
 		 */
 		@Command(   name = ShellCommand.NAME,
 					customSynopsis = "naftah shell [options] [filename] [args]",
-					description = {
-									"The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive " + "programming environment where you can enter single lines of naftah code",
-									"يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال " + "أسطر مفردة من كود نفطح وتنفيذها فورًا."},
+					description = { """
+									The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code.""",
+									"""
+									يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا.""",
+					},
 					sortOptions = false)
 		private static final class ShellCommand extends NaftahCommand {
 			private static final String NAME = "shell";

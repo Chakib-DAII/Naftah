@@ -40,7 +40,8 @@ public final class ExceptionUtils {
 	 * Example message format: "العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية: 'value'
 	 * operation،"
 	 */
-	public static final String UNSUPPORTED_BITWISE_DECIMAL_ERROR = "العمليات الثنائية (bitwise) غير مدعومة على " + "الأعداد" + " ذات الفاصلة العشرية:  '%s' %s،";
+	public static final String UNSUPPORTED_BITWISE_DECIMAL_ERROR = """
+																	العمليات الثنائية (bitwise) غير مدعومة على الأعداد ذات الفاصلة العشرية:  '%s' %s،""";
 
 	/**
 	 * Error message indicating that a single argument is empty.

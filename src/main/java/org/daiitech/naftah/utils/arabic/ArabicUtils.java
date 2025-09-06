@@ -908,8 +908,8 @@ public final class ArabicUtils {
 			}
 			else {
 				throw new NaftahBugError(String
-						.format(
-								"الحرف '%c' في النص '%s' غير مدعوم. يرجى التأكد من أن جميع " + "الأحرف المدخلة مدعومة.",
+						.format("""
+								الحرف '%c' في النص '%s' غير مدعوم. يرجى التأكد من أن جميع الأحرف المدخلة مدعومة.""",
 								maybeArabicChar,
 								arabicText));
 			}

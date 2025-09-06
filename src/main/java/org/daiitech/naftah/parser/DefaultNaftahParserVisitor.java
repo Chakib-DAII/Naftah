@@ -462,7 +462,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												.visit(declarationContext.type());
 										if (Objects.nonNull(type) && !Object.class.equals(type)) {
 											throw new NaftahBugError(
-																		("لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع " + "الأنواع (%s).")
+																		("""
+																			لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع الأنواع (%s).""")
 																				.formatted( variableName,
 																							getNaftahType(  defaultNaftahParserVisitor.parser,
 																											type),
@@ -840,7 +841,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								Object initValue = defaultNaftahParserVisitor.visit(forStatementContext.expression(0));
 								if (Objects.isNull(initValue)) {
 									throw new NaftahBugError(String
-											.format("القيمة الابتدائية للمتغير '%s' لا يمكن أن تكون " + "فارغة.",
+											.format("""
+													القيمة الابتدائية للمتغير '%s' لا يمكن أن تكون فارغة.""",
 													loopVar));
 								}
 								// End value
@@ -855,7 +857,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.isAssignableFrom(endValue.getClass())) {
 									throw new NaftahBugError(
 																String
-																		.format("يجب أن تكون القيمتين الابتدائية والنهائية للمتغير '%s' من النوع " + "الرقمي.",
+																		.format("""
+																				يجب أن تكون القيمتين الابتدائية والنهائية للمتغير '%s' من النوع الرقمي.""",
 																				loopVar));
 								}
 
@@ -880,8 +883,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									currentContext.defineLoopVariable(loopVar, initValue, false);
 									if (isAscending) {
 										if (Boolean.TRUE.equals(applyOperation(endValue, initValue, LESS_THAN))) {
-											throw new NaftahBugError(
-																		"القيمة النهائية يجب أن تكون أكبر أو تساوي القيمة الابتدائية في الحلقات " + "التصاعدية");
+											throw new NaftahBugError("""
+																		القيمة النهائية يجب أن تكون أكبر أو تساوي القيمة الابتدائية في الحلقات التصاعدية."""
+											);
 										}
 
 										for (;  Boolean.TRUE
@@ -930,8 +934,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 									else {
 										if (Boolean.TRUE.equals(applyOperation(initValue, endValue, LESS_THAN))) {
-											throw new NaftahBugError(
-																		"القيمة الابتدائية يجب أن تكون أكبر أو تساوي القيمة النهائية في الحلقات " + "التنازلية");
+											throw new NaftahBugError("""
+																		القيمة الابتدائية يجب أن تكون أكبر أو تساوي القيمة النهائية في الحلقات التنازلية."""
+											);
 										}
 
 										for (;  Boolean.TRUE
@@ -1124,7 +1129,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								if (targetLabel != null) {
 									if (!loopContainsLabel(targetLabel)) {
 										throw new NaftahBugError(String
-												.format("لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' " + "معها.",
+												.format("""
+														لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
 														targetLabel,
 														getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
 																							.getVocabulary(),
@@ -1172,7 +1178,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								if (targetLabel != null) {
 									if (!loopContainsLabel(targetLabel)) {
 										throw new NaftahBugError(String
-												.format("لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' " + "معها.",
+												.format("""
+														لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
 														targetLabel,
 														getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
 																							.getVocabulary(),
@@ -1382,7 +1389,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									if (Objects.nonNull(currentDeclarationType) && !Object.class
 											.equals(currentDeclarationType)) {
 										throw new NaftahBugError(
-																	("لا يُسمح بأن تحتوي التركيبة (tuple) '%s' على عناصر من النوع %s. التركيبة يجب " + "أن" + " " + "تكون عامة " + "لجميع الأنواع (%s).")
+																	("""
+																		لا يُسمح بأن تحتوي التركيبة (tuple) '%s' على عناصر من النوع %s. التركيبة يجب أن تكون عامة لجميع الأنواع (%s).""")
 																			.formatted( currentDeclarationName,
 																						getNaftahType(  defaultNaftahParserVisitor.parser,
 																										currentDeclarationType),
@@ -1477,7 +1485,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																						.anyMatch(aClass -> typeMismatch(   aClass,
 																															elementType))) {
 											throw new NaftahBugError(
-																		("لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر" + " " + "من نفس النوع" + " " + "%s.")
+																		("""
+																			لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
 																				.formatted( creatingList ?
 																									"القائمة (List)" :
 																									"المجموعة (Set)",
@@ -1499,7 +1508,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 													.filter(Objects::nonNull)
 													.anyMatch(o -> o.equals(elementValue))) {
 												throw new NaftahBugError(
-																			("تحتوي المجموعة %s على عناصر مكرّرة، وهذا غير مسموح في المجموعات (Set) " + "التي يجب أن " + "تحتوي على عناصر فريدة فقط.")
+																			("""
+																				تحتوي المجموعة %s على عناصر مكرّرة، وهذا غير مسموح في المجموعات (Set) التي يجب أن تحتوي على عناصر فريدة فقط.""")
 																					.formatted(parsingAssignment ?
 																							"'%s'"
 																									.formatted(currentDeclarationName) :
@@ -1559,7 +1569,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										// validating null keys
 										if (Objects.isNull(key)) {
 											throw new NaftahBugError(
-																		("لا يمكن أن يكون أحد المفاتيح في المصفوفة الترابطية (Map) %s فارغًا (null)." + " " + "يجب أن تكون " + "جميع المفاتيح معرّفة بشكل صحيح.")
+																		("""
+																			لا يمكن أن يكون أحد المفاتيح في المصفوفة الترابطية (Map) %s فارغًا (null). يجب أن تكون جميع المفاتيح معرّفة بشكل صحيح.""")
 																				.formatted(parsingAssignment ?
 																						"'%s'"
 																								.formatted(currentDeclarationName) :
@@ -1573,7 +1584,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																						.anyMatch(aClass -> typeMismatch(   aClass,
 																															keyType))) {
 											throw new NaftahBugError(
-																		("لا يمكن أن تحتوي المصفوفة الترابطية (Map) %s على عناصر من أنواع مختلفة. " + "يجب" + " " + "أن تكون " + "جميع" + " العناصر من نفس النوع %s.")
+																		("""
+																			لا يمكن أن تحتوي المصفوفة الترابطية (Map) %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
 																				.formatted( parsingAssignment ?
 																									"'%s'"
 																											.formatted(currentDeclarationName) :
@@ -1588,7 +1600,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										// validating keySet has no duplicates
 										if (map.containsKey(key)) {
 											throw new NaftahBugError(
-																		("تحتوي مجموعة المفاتيح للمصفوفة الترابطية %s على مفاتيح مكرّرة، وهذا غير " + "مسموح في " + "المصفوفة الترابطية (Map) التي يجب أن تحتوي على مفاتيح" + " " + "فريدة فقط.")
+																		("""
+																			تحتوي مجموعة المفاتيح للمصفوفة الترابطية %s على مفاتيح مكرّرة، وهذا غير مسموح في المصفوفة الترابطية (Map) التي يجب أن تحتوي على مفاتيح فريدة فقط.""")
 																				.formatted(parsingAssignment ?
 																						"'%s'"
 																								.formatted(currentDeclarationName) :

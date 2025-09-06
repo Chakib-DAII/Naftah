@@ -544,8 +544,9 @@ public class DefaultContext {
 			ClassScanningResult classScanningResult = null;
 			Throwable thr = null;
 			try {
-				startLoader(
-							"تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد " + "يستغرق الأمر عدة دقائق حسب الإعدادات");
+				startLoader("""
+							تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد يستغرق الأمر عدة دقائق حسب الإعدادات."""
+				);
 				classScanningResult = LOADER_TASK.get();
 				stopLoader();
 			}
