@@ -790,8 +790,7 @@ public final class NaftahParserHelper {
 									List
 											.of(org.daiitech.naftah.parser.NaftahParser.ForStatementContext.class,
 												org.daiitech.naftah.parser.NaftahParser.WhileStatementContext.class,
-												org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext.class,
-												org.daiitech.naftah.parser.NaftahParser.CaseStatementContext.class));
+												org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext.class));
 	}
 
 	/**
