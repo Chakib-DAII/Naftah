@@ -479,7 +479,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																							getNaftahType(  defaultNaftahParserVisitor.parser,
 																											type),
 																							getNaftahType(  defaultNaftahParserVisitor.parser,
-																											Object.class)));
+																											Object.class)),
+																		declarationContext.getStart().getLine(),
+																		declarationContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 									}
 									declaredVariable = createDeclaredVariable(  defaultNaftahParserVisitor,
@@ -725,32 +729,53 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																							builtinFunction
 																									.toDetailedString()
 																				),
-																		e);
+																		e,
+																		functionCallContext.getStart().getLine(),
+																		functionCallContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 										catch (IllegalAccessException | InvocationTargetException e) {
-											throw new NaftahBugError("""
+											throw new NaftahBugError(   """
 																		.'%s' حدث خطأ أثناء استدعاء الدالة
 
 																		%s
 																		"""
-													.formatted( functionName,
-																builtinFunction.toDetailedString()), e);
+																				.formatted( functionName,
+																							builtinFunction
+																									.toDetailedString()),
+																		e,
+																		functionCallContext.getStart().getLine(),
+																		functionCallContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 									}
 									else if (function instanceof JvmFunction jvmFunction) {
-										throw new NaftahBugError("الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
-												.formatted(functionName, JvmFunction.class.getName()));
+										throw new NaftahBugError(   "الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
+																			.formatted( functionName,
+																						JvmFunction.class.getName()),
+																	functionCallContext.getStart().getLine(),
+																	functionCallContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 									else if (function instanceof Collection<?> functions) {
-										throw new NaftahBugError("الدالة '%s' : '%s' من النوع: '%s' غير مدعومة حالياً"
-												.formatted( functionName,
-															functions,
-															List.class.getName()));
+										throw new NaftahBugError(   "الدالة '%s' : '%s' من النوع: '%s' غير مدعومة حالياً"
+																			.formatted( functionName,
+																						functions,
+																						List.class.getName()),
+																	functionCallContext.getStart().getLine(),
+																	functionCallContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 								}
 								else {
-									throw new NaftahBugError("الدالة '%s' غير موجودة في السياق الحالي."
-											.formatted(functionName));
+									throw new NaftahBugError(   "الدالة '%s' غير موجودة في السياق الحالي."
+																		.formatted(functionName),
+																functionCallContext.getStart().getLine(),
+																functionCallContext.getStart().getCharPositionInLine());
 								}
 								currentContext.setFunctionCallId(null);
 								// TODO: add support for all kind of functions using the qualifiedName
@@ -878,17 +903,21 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								String loopVar = forStatementContext.ID().getText();
 								Object initValue = defaultNaftahParserVisitor.visit(forStatementContext.expression(0));
 								if (Objects.isNull(initValue)) {
-									throw new NaftahBugError(String
-											.format("""
-													القيمة الابتدائية للمتغير '%s' لا يمكن أن تكون فارغة.""",
-													loopVar));
+									throw new NaftahBugError(   String
+																		.format("""
+																				القيمة الابتدائية للمتغير '%s' لا يمكن أن تكون فارغة.""",
+																				loopVar),
+																forStatementContext.getStart().getLine(),
+																forStatementContext.getStart().getCharPositionInLine());
 								}
 								// End value
 								Object endValue = defaultNaftahParserVisitor.visit(forStatementContext.expression(1));
 								if (Objects.isNull(endValue)) {
-									throw new NaftahBugError(String
-											.format("القيمة النهائية للمتغير '%s' لا يمكن أن تكون فارغة.",
-													loopVar));
+									throw new NaftahBugError(   String
+																		.format("القيمة النهائية للمتغير '%s' لا يمكن أن تكون فارغة.",
+																				loopVar),
+																forStatementContext.getStart().getLine(),
+																forStatementContext.getStart().getCharPositionInLine());
 								}
 
 								if (!Number.class.isAssignableFrom(initValue.getClass()) || !Number.class
@@ -897,7 +926,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																String
 																		.format("""
 																				يجب أن تكون القيمتين الابتدائية والنهائية للمتغير '%s' من النوع الرقمي.""",
-																				loopVar));
+																				loopVar),
+																forStatementContext.getStart().getLine(),
+																forStatementContext.getStart().getCharPositionInLine());
 								}
 
 								// Direction (TO or DOWNTO)
@@ -921,9 +952,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									currentContext.defineLoopVariable(loopVar, initValue, false);
 									if (isAscending) {
 										if (Boolean.TRUE.equals(applyOperation(endValue, initValue, LESS_THAN))) {
-											throw new NaftahBugError("""
-																		القيمة النهائية يجب أن تكون أكبر أو تساوي القيمة الابتدائية في الحلقات التصاعدية."""
-											);
+											throw new NaftahBugError(   """
+																		القيمة النهائية يجب أن تكون أكبر أو تساوي القيمة الابتدائية في الحلقات التصاعدية.""",
+																		forStatementContext.getStart().getLine(),
+																		forStatementContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										for (;  Boolean.TRUE
@@ -972,9 +1006,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 									else {
 										if (Boolean.TRUE.equals(applyOperation(initValue, endValue, LESS_THAN))) {
-											throw new NaftahBugError("""
-																		القيمة الابتدائية يجب أن تكون أكبر أو تساوي القيمة النهائية في الحلقات التنازلية."""
-											);
+											throw new NaftahBugError(   """
+																		القيمة الابتدائية يجب أن تكون أكبر أو تساوي القيمة النهائية في الحلقات التنازلية.""",
+																		forStatementContext.getStart().getLine(),
+																		forStatementContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										for (;  Boolean.TRUE
@@ -1151,13 +1188,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, breakStatementContext) -> {
 								if (LOOP_STACK.isEmpty() || !checkInsideLoop(breakStatementContext)) {
-									throw new NaftahBugError(String
-											.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
-													getFormattedTokenSymbols(
-																				defaultNaftahParserVisitor.parser
-																						.getVocabulary(),
-																				org.daiitech.naftah.parser.NaftahLexer.BREAK,
-																				false)));
+									throw new NaftahBugError(   String
+																		.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
+																				getFormattedTokenSymbols(
+																											defaultNaftahParserVisitor.parser
+																													.getVocabulary(),
+																											org.daiitech.naftah.parser.NaftahLexer.BREAK,
+																											false)),
+																breakStatementContext.getStart().getLine(),
+																breakStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 								String currentLoopLabel = currentContext.getLoopLabel();
 								String targetLabel = null;
@@ -1166,18 +1207,28 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								}
 								if (targetLabel != null) {
 									if (!loopContainsLabel(targetLabel)) {
-										throw new NaftahBugError(String
-												.format("""
-														لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
-														targetLabel,
-														getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
-																							.getVocabulary(),
-																					org.daiitech.naftah.parser.NaftahLexer.BREAK,
-																					false)));
+										throw new NaftahBugError(   String
+																			.format("""
+																					لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
+																					targetLabel,
+																					getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
+																														.getVocabulary(),
+																												org.daiitech.naftah.parser.NaftahLexer.BREAK,
+																												false)),
+																	breakStatementContext.getStart().getLine(),
+																	breakStatementContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 									else if (targetLabel.equals(currentLoopLabel)) {
 										throw newNaftahBugInvalidLoopLabelError(currentLoopLabel,
-																				defaultNaftahParserVisitor.parser);
+																				defaultNaftahParserVisitor.parser,
+																				breakStatementContext
+																						.getStart()
+																						.getLine(),
+																				breakStatementContext
+																						.getStart()
+																						.getCharPositionInLine());
 									}
 								}
 
@@ -1199,13 +1250,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, continueStatementContext) -> {
 								if (LOOP_STACK.isEmpty() || !checkInsideLoop(continueStatementContext)) {
-									throw new NaftahBugError(String
-											.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
-													getFormattedTokenSymbols(
-																				defaultNaftahParserVisitor.parser
-																						.getVocabulary(),
-																				org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
-																				false)));
+									throw new NaftahBugError(   String
+																		.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
+																				getFormattedTokenSymbols(
+																											defaultNaftahParserVisitor.parser
+																													.getVocabulary(),
+																											org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
+																											false)),
+																continueStatementContext.getStart().getLine(),
+																continueStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 								String currentLoopLabel = currentContext.getLoopLabel();
 								String targetLabel = null;
@@ -1215,18 +1270,28 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								if (targetLabel != null) {
 									if (!loopContainsLabel(targetLabel)) {
-										throw new NaftahBugError(String
-												.format("""
-														لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
-														targetLabel,
-														getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
-																							.getVocabulary(),
-																					org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
-																					false)));
+										throw new NaftahBugError(   String
+																			.format("""
+																					لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
+																					targetLabel,
+																					getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
+																														.getVocabulary(),
+																												org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
+																												false)),
+																	continueStatementContext.getStart().getLine(),
+																	continueStatementContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 									else if (targetLabel.equals(currentLoopLabel)) {
 										throw newNaftahBugInvalidLoopLabelError(currentLoopLabel,
-																				defaultNaftahParserVisitor.parser);
+																				defaultNaftahParserVisitor.parser,
+																				continueStatementContext
+																						.getStart()
+																						.getLine(),
+																				continueStatementContext
+																						.getStart()
+																						.getCharPositionInLine());
 									}
 								}
 
@@ -1433,7 +1498,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																						getNaftahType(  defaultNaftahParserVisitor.parser,
 																										currentDeclarationType),
 																						getNaftahType(  defaultNaftahParserVisitor.parser,
-																										Object.class)));
+																										Object.class)),
+																	tupleValueContext.getStart().getLine(),
+																	tupleValueContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 								}
 								return Tuple
@@ -1536,7 +1605,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																									"(%s)"
 																											.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
 																																		currentDeclarationType)) :
-																									""));
+																									""),
+																		elementsContext.getStart().getLine(),
+																		elementsContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										if (creatingSet) {
@@ -1551,7 +1624,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																					.formatted(parsingAssignment ?
 																							"'%s'"
 																									.formatted(currentDeclarationName) :
-																							""));
+																							""),
+																			elementsContext.getStart().getLine(),
+																			elementsContext
+																					.getStart()
+																					.getCharPositionInLine());
 											}
 										}
 									}
@@ -1612,7 +1689,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																				.formatted(parsingAssignment ?
 																						"'%s'"
 																								.formatted(currentDeclarationName) :
-																						""));
+																						""),
+																		keyValuePairsContext.getStart().getLine(),
+																		keyValuePairsContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										if (parsingAssignment && typeMismatch(  value,
@@ -1632,7 +1713,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																									"(%s)"
 																											.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
 																																		currentDeclarationType)) :
-																									""));
+																									""),
+																		keyValuePairsContext.getStart().getLine(),
+																		keyValuePairsContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										// validating keySet has no duplicates
@@ -1643,7 +1728,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																				.formatted(parsingAssignment ?
 																						"'%s'"
 																								.formatted(currentDeclarationName) :
-																						""));
+																						""),
+																		keyValuePairsContext.getStart().getLine(),
+																		keyValuePairsContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 									}
 									map.put(key, value);
@@ -1680,7 +1769,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								boolean creatingMap = hasAnyParentOfType(   keyValueContext,
 																			org.daiitech.naftah.parser.NaftahParser.MapValueContext.class);
 								if (!creatingMap && Objects.isNull(key)) {
-									throw newNaftahBugNullError();
+									throw newNaftahBugNullError(
+																keyValueContext.getStart().getLine(),
+																keyValueContext.getStart().getCharPositionInLine());
 								}
 								return new AbstractMap.SimpleEntry<>(key, value);
 							},
@@ -1714,10 +1805,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									Class<?> resultType = Objects.nonNull(result) ? result.getClass() : Object.class;
 									String currentDeclarationName = currentDeclaration.a.getName();
 									if (typeMismatch(result, resultType, currentDeclarationType)) {
-										throw new NaftahBugError("القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
-												.formatted( currentDeclarationName,
-															getNaftahType(  defaultNaftahParserVisitor.parser,
-																			currentDeclarationType)));
+										throw new NaftahBugError(   "القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
+																			.formatted( currentDeclarationName,
+																						getNaftahType(  defaultNaftahParserVisitor.parser,
+																										currentDeclarationType)),
+																	valueExpressionContext.getStart().getLine(),
+																	valueExpressionContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 								}
 
