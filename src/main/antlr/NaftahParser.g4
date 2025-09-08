@@ -114,17 +114,17 @@ block: LBRACE statement* RBRACE;
 // Expressions: Can be value, binary operations
 expression: logicalExpression;
 
-logicalExpression: bitwiseExpression ( (AND | OR) bitwiseExpression)*;
+logicalExpression: bitwiseExpression ((AND | OR) bitwiseExpression)*;
 
-bitwiseExpression: equalityExpression ( (BITWISE_AND | BITWISE_OR | BITWISE_XOR) equalityExpression)*;
+bitwiseExpression: equalityExpression ((BITWISE_AND | BITWISE_OR | BITWISE_XOR) equalityExpression)*;
 
-equalityExpression: relationalExpression ( (EQ | NEQ) relationalExpression)*;
+equalityExpression: relationalExpression ((EQ | NEQ) relationalExpression)*;
 
-relationalExpression: additiveExpression ( (LT | LE | GT | GE) additiveExpression)*;
+relationalExpression: additiveExpression ((LT | LE | GT | GE) additiveExpression)*;
 
-additiveExpression: multiplicativeExpression ( (PLUS | MINUS | ELEMENTWISE_PLUS | ELEMENTWISE_MINUS) multiplicativeExpression)*;
+additiveExpression: multiplicativeExpression ((PLUS | MINUS | ELEMENTWISE_PLUS | ELEMENTWISE_MINUS) multiplicativeExpression)*;
 
-multiplicativeExpression: unaryExpression ( (MUL | DIV | MOD | ELEMENTWISE_MUL | ELEMENTWISE_DIV | ELEMENTWISE_MOD) unaryExpression)*;
+multiplicativeExpression: unaryExpression ((MUL | DIV | MOD | ELEMENTWISE_MUL | ELEMENTWISE_DIV | ELEMENTWISE_MOD) unaryExpression)*;
 
 unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression
     		   | postfixExpression;
