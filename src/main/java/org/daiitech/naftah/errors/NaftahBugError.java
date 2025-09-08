@@ -49,6 +49,16 @@ public class NaftahBugError extends AssertionError {
 	private final Throwable exception;
 
 	/**
+	 * The line number on which the 1st character of this token was matched, line=1..n
+	 */
+	private final int line;
+
+	/**
+	 * The index of the first character of this token relative to the beginning of the line at which it occurs, 0..n-1
+	 */
+	private final int column;
+
+	/**
 	 * The descriptive message text for the bug error.
 	 */
 	private String message;
@@ -60,6 +70,18 @@ public class NaftahBugError extends AssertionError {
 	 */
 	public NaftahBugError(String message) {
 		this(message, null);
+	}
+
+	/**
+	 * Constructs a {@code NaftahBugError} using a descriptive message and the line number along with the column.
+	 *
+	 * @param msg    the error message describing the bug
+	 * @param line   The line number on which the 1st character of this token was matched
+	 * @param column The index of the first character of this token relative to the beginning of the line at which
+	 *               it occurs
+	 */
+	public NaftahBugError(String msg, int line, int column) {
+		this(msg, null, line, column);
 	}
 
 	/**
@@ -79,8 +101,24 @@ public class NaftahBugError extends AssertionError {
 	 * @param exception the underlying cause of this error
 	 */
 	public NaftahBugError(String msg, Throwable exception) {
+		this(msg, exception, -1, -1);
+	}
+
+	/**
+	 * Constructs a {@code NaftahBugError} using a descriptive message
+	 * and an underlying exception cause and the line number along with the column.
+	 *
+	 * @param msg       the error message describing the bug
+	 * @param exception the underlying cause of this error
+	 * @param line      The line number on which the 1st character of this token was matched
+	 * @param column    The index of the first character of this token relative to the beginning of the line at which
+	 *                  it occurs
+	 */
+	public NaftahBugError(String msg, Throwable exception, int line, int column) {
 		this.exception = exception;
 		this.message = msg;
+		this.line = line;
+		this.column = column;
 	}
 
 	/**
@@ -105,18 +143,34 @@ public class NaftahBugError extends AssertionError {
 	 */
 	@Override
 	public String getMessage() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("💥 خطأ برمجي!\n");
+
+		if (line != -1 && column != -1) {
+			builder.append("📍 السطر: %d، العمود: %d%n".formatted(line, column));
+		}
+
+		builder.append(doGetMessage());
+
+		return builder.toString();
+	}
+
+	/**
+	 * Constructs the internal message based on the presence of a user-defined message
+	 * and an optional exception.
+	 *
+	 * @return the constructed error detail string
+	 */
+	private String doGetMessage() {
 		if (message != null) {
 			if (exception != null) {
-				return "خطأ برمجي! %s استثناء ملتقط: %s"
-						.formatted( message,
-									ExceptionLocalizer.localizeException(exception));
+				return "%s استثناء ملتقط: %s"
+						.formatted(message, ExceptionLocalizer.localizeException(exception));
 			}
+			return message;
+		}
 
-			return "خطأ برمجي! " + message;
-		}
-		else {
-			return "خطأ برمجي! استثناء غير ملتقط: " + ExceptionLocalizer.localizeException(exception);
-		}
+		return "استثناء غير ملتقط: " + ExceptionLocalizer.localizeException(exception);
 	}
 
 	/**
