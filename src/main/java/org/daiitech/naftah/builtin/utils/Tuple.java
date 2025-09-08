@@ -73,12 +73,29 @@ public final class Tuple implements List<Object>, Serializable {
 	}
 
 	/**
-	 * Creates a new {@link NaftahBugError} indicating null values are not allowed.
+	 * Creates a new {@link NaftahBugError} indicating that null values are not allowed.
+	 * <p>
+	 * This is a convenience method that uses default values of -1 for both the line and column.
+	 * The error message is provided in Arabic: "القيم لا يجب أن تكون null"
 	 *
-	 * @return a new {@code NaftahBugError} with an Arabic error message
+	 * @return a new {@code NaftahBugError} instance with an Arabic error message
 	 */
 	public static NaftahBugError newNaftahBugNullError() {
-		return new NaftahBugError("القيم لا يجب أن تكون null");
+		return newNaftahBugNullError(-1, -1);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} indicating that null values are not allowed,
+	 * and includes the specified line and column information.
+	 * <p>
+	 * The error message is in Arabic: "القيم لا يجب أن تكون null"
+	 *
+	 * @param line   the line number where the error occurred, or -1 if unknown
+	 * @param column the column number where the error occurred, or -1 if unknown
+	 * @return a new {@code NaftahBugError} instance with an Arabic error message and location data
+	 */
+	public static NaftahBugError newNaftahBugNullError(int line, int column) {
+		return new NaftahBugError("القيم لا يجب أن تكون null", line, column);
 	}
 
 	/**
