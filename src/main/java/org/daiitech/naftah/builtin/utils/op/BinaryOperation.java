@@ -9,6 +9,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.booleanToInt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.intToBoolean;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.builtin.utils.StringUtils.charWiseModulo;
 import static org.daiitech.naftah.builtin.utils.StringUtils.stringToInt;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
@@ -34,18 +35,117 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
  * @author Chakib Daii
  */
 public enum BinaryOperation implements Operation {
+	// Logical
+	/**
+	 * Logical AND operation.
+	 * <p>
+	 * Applies short-circuit evaluation:
+	 * <ul>
+	 *     <li>If the left operand is "truthy", returns the right operand.</li>
+	 *     <li>If the left operand is "falsy", returns the left operand.</li>
+	 * </ul>
+	 * <p>
+	 * Supports numbers, booleans, characters, and strings.
+	 * Treats values using custom "truthy" rules via {@code isTruthy()}.
+	 */
+	AND("AND") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Number right) {
+			return isTruthy(left) ? right : left;
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Number left, Object right) {
+			return applyLogical(left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Object left, Number right) {
+			return applyLogical(left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected String apply(String left, String right) {
+			return isTruthy(left) ? right : left;
+		}
+	},
+
+	/**
+	 * Logical OR operation.
+	 * <p>
+	 * Applies short-circuit evaluation:
+	 * <ul>
+	 *     <li>If the left operand is "truthy", returns the left operand.</li>
+	 *     <li>If the left operand is "falsy", returns the right operand.</li>
+	 * </ul>
+	 * <p>
+	 * Supports numbers, booleans, characters, and strings.
+	 * Treats values using custom "truthy" rules via {@code isTruthy()}.
+	 */
+	OR("OR") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Number right) {
+			return isTruthy(left) ? left : right;
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Number left, Object right) {
+			return applyLogical(left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Object left, Number right) {
+			return applyLogical(left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected String apply(String left, String right) {
+			return isTruthy(left) ? left : right;
+		}
+	},
+
 	// Arithmetic
 	/**
 	 * Represents the addition operation (+).
 	 * Supports adding numbers, concatenating strings, and converting
 	 * booleans and characters appropriately during addition.
 	 */
-	ADD {
+	ADD("PLUS") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.add(left, right);
 		}
 
@@ -54,17 +154,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -72,17 +163,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -90,7 +172,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.add(left, right);
 		}
 	},
@@ -100,12 +182,12 @@ public enum BinaryOperation implements Operation {
 	 * Supports subtracting numbers and converting booleans and characters
 	 * appropriately during subtraction.
 	 */
-	SUBTRACT {
+	SUBTRACT("MINUS") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.subtract(left, right);
 		}
 
@@ -114,17 +196,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -132,17 +205,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -150,7 +214,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.subtract(left, right);
 		}
 	},
@@ -160,12 +224,12 @@ public enum BinaryOperation implements Operation {
 	 * Supports multiplying numbers and converting booleans and characters
 	 * appropriately during multiplication.
 	 */
-	MULTIPLY {
+	MULTIPLY("MUL") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.multiply(left, right);
 		}
 
@@ -174,17 +238,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -192,7 +247,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
+		protected Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
 				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
 			}
@@ -210,7 +265,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.charWiseMultiply(left, right);
 		}
 	},
@@ -220,12 +275,12 @@ public enum BinaryOperation implements Operation {
 	 * Supports dividing numbers and converting booleans and characters
 	 * appropriately during division.
 	 */
-	DIVIDE {
+	DIVIDE("DIV") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.divide(left, right);
 		}
 
@@ -234,17 +289,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -252,7 +298,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
+		protected Object apply(Object left, Number right) {
 			if (left instanceof Boolean aBoolean) {
 				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
 			}
@@ -270,7 +316,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String[] apply(String left, String right) {
+		protected String[] apply(String left, String right) {
 			return StringUtils.divide(left, right);
 		}
 	},
@@ -280,12 +326,12 @@ public enum BinaryOperation implements Operation {
 	 * Calculates the remainder of division between two numeric operands.
 	 * Supports conversion of booleans and characters to numbers for the operation.
 	 */
-	MODULO {
+	MODULO("MOD") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.modulo(left, right);
 		}
 
@@ -294,17 +340,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -312,17 +349,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -330,7 +358,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(String left, String right) {
+		protected Object apply(String left, String right) {
 			return charWiseModulo(left, right);
 		}
 	},
@@ -342,12 +370,12 @@ public enum BinaryOperation implements Operation {
 	 * whether the left operand is greater than the right operand.
 	 * Supports conversions from boolean and character types to numbers.
 	 */
-	GREATER_THAN {
+	GREATER_THAN("GT") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Number right) {
+		protected Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) > 0;
 		}
 
@@ -356,17 +384,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return (Boolean) apply(left, (boolean) aBoolean);
-			}
-			else if (right instanceof Character character) {
-				return (Boolean) apply(left, (char) character);
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -374,17 +393,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return (Boolean) apply((boolean) aBoolean, right);
-			}
-			else if (left instanceof Character character) {
-				return (Boolean) apply((char) character, right);
-			}
-			else if (left instanceof String string) {
-				return apply(stringToInt(string), right);
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -392,7 +402,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(String left, String right) {
+		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) > 0;
 		}
 	},
@@ -403,12 +413,12 @@ public enum BinaryOperation implements Operation {
 	 * whether the left operand is greater than or equal to the right operand.
 	 * Supports conversions from boolean and character types to numbers.
 	 */
-	GREATER_THAN_EQUALS {
+	GREATER_THAN_EQUALS("GE") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Number right) {
+		protected Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) >= 0;
 		}
 
@@ -417,17 +427,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return (Boolean) apply(left, (boolean) aBoolean);
-			}
-			else if (right instanceof Character character) {
-				return (Boolean) apply(left, (char) character);
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -435,17 +436,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return (Boolean) apply((boolean) aBoolean, right);
-			}
-			else if (left instanceof Character character) {
-				return (Boolean) apply((char) character, right);
-			}
-			else if (left instanceof String string) {
-				return apply(stringToInt(string), right);
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -453,7 +445,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(String left, String right) {
+		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) >= 0;
 		}
 	},
@@ -464,12 +456,12 @@ public enum BinaryOperation implements Operation {
 	 * whether the left operand is less than the right operand.
 	 * Supports conversions from boolean and character types to numbers.
 	 */
-	LESS_THAN {
+	LESS_THAN("LT") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Number right) {
+		protected Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) < 0;
 		}
 
@@ -478,17 +470,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return (Boolean) apply(left, (boolean) aBoolean);
-			}
-			else if (right instanceof Character character) {
-				return (Boolean) apply(left, (char) character);
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -496,17 +479,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return (Boolean) apply((boolean) aBoolean, right);
-			}
-			else if (left instanceof Character character) {
-				return (Boolean) apply((char) character, right);
-			}
-			else if (left instanceof String string) {
-				return apply(stringToInt(string), right);
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -514,7 +488,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(String left, String right) {
+		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) < 0;
 		}
 	},
@@ -525,12 +499,12 @@ public enum BinaryOperation implements Operation {
 	 * whether the left operand is less than or equal to the right operand.
 	 * Supports conversions from boolean and character types to numbers.
 	 */
-	LESS_THAN_EQUALS {
+	LESS_THAN_EQUALS("LE") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Number right) {
+		protected Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) <= 0;
 		}
 
@@ -539,17 +513,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return (Boolean) apply(left, (boolean) aBoolean);
-			}
-			else if (right instanceof Character character) {
-				return (Boolean) apply(left, (char) character);
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -557,17 +522,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return (Boolean) apply((boolean) aBoolean, right);
-			}
-			else if (left instanceof Character character) {
-				return (Boolean) apply((char) character, right);
-			}
-			else if (left instanceof String string) {
-				return apply(stringToInt(string), right);
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -575,7 +531,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(String left, String right) {
+		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) <= 0;
 		}
 	},
@@ -585,12 +541,12 @@ public enum BinaryOperation implements Operation {
 	 * Compares two operands for equality and returns a boolean result.
 	 * Supports numeric, boolean, character, and string comparisons with necessary conversions.
 	 */
-	EQUALS {
+	EQUALS("EQ") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Number right) {
+		protected Boolean apply(Number left, Number right) {
 			return NumberUtils.equals(left, right);
 		}
 
@@ -599,17 +555,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return (Boolean) apply(left, (boolean) aBoolean);
-			}
-			else if (right instanceof Character character) {
-				return (Boolean) apply(left, (char) character);
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -617,17 +564,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return (Boolean) apply((boolean) aBoolean, right);
-			}
-			else if (left instanceof Character character) {
-				return (Boolean) apply((char) character, right);
-			}
-			else if (left instanceof String string) {
-				return apply(stringToInt(string), right);
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -635,7 +573,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(String left, String right) {
+		protected Boolean apply(String left, String right) {
 			return StringUtils.equals(left, right);
 		}
 	},
@@ -645,12 +583,12 @@ public enum BinaryOperation implements Operation {
 	 * Compares two operands for inequality and returns a boolean result.
 	 * Supports numeric, boolean, character, and string comparisons with necessary conversions.
 	 */
-	NOT_EQUALS {
+	NOT_EQUALS("NEQ") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Number right) {
+		protected Boolean apply(Number left, Number right) {
 			return NumberUtils.compare(left, right) != 0;
 		}
 
@@ -659,17 +597,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return (Boolean) apply(left, (boolean) aBoolean);
-			}
-			else if (right instanceof Character character) {
-				return (Boolean) apply(left, (char) character);
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -677,17 +606,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return (Boolean) apply((boolean) aBoolean, right);
-			}
-			else if (left instanceof Character character) {
-				return (Boolean) apply((char) character, right);
-			}
-			else if (left instanceof String string) {
-				return apply(stringToInt(string), right);
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyLogical(left, right);
 		}
 
 
@@ -695,7 +615,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Boolean apply(String left, String right) {
+		protected Boolean apply(String left, String right) {
 			return !StringUtils.equals(left, right);
 		}
 	},
@@ -706,12 +626,12 @@ public enum BinaryOperation implements Operation {
 	 * Performs a bitwise AND between two operands.
 	 * Supports numeric and character operands with appropriate conversions.
 	 */
-	BITWISE_AND {
+	BITWISE_AND("BITWISE_AND") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.and(left, right);
 		}
 
@@ -720,17 +640,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -738,17 +649,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -756,7 +658,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.and(left, right);
 		}
 	},
@@ -766,12 +668,12 @@ public enum BinaryOperation implements Operation {
 	 * Performs a bitwise OR between two operands.
 	 * Supports numeric and character operands with appropriate conversions.
 	 */
-	BITWISE_OR {
+	BITWISE_OR("BITWISE_OR") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.or(left, right);
 		}
 
@@ -780,17 +682,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -798,17 +691,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -816,7 +700,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.or(left, right);
 		}
 	},
@@ -826,12 +710,12 @@ public enum BinaryOperation implements Operation {
 	 * Performs a bitwise exclusive OR between two operands.
 	 * Supports numeric and character operands with appropriate conversions.
 	 */
-	BITWISE_XOR {
+	BITWISE_XOR("BITWISE_XOR") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.xor(left, right);
 		}
 
@@ -840,17 +724,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -858,17 +733,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -876,7 +742,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.xor(left, right);
 		}
 	},
@@ -886,12 +752,12 @@ public enum BinaryOperation implements Operation {
 	 * Applies addition operation to each corresponding element in collections or arrays.
 	 * Supports element-wise combination of compatible data structures.
 	 */
-	ELEMENTWISE_ADD {
+	ELEMENTWISE_ADD("ELEMENTWISE_PLUS") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.xor(left, right);
 		}
 
@@ -900,17 +766,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -918,17 +775,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -936,7 +784,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.charWiseAdd(left, right);
 		}
 	},
@@ -946,12 +794,12 @@ public enum BinaryOperation implements Operation {
 	 * Performs subtraction on corresponding elements in collections or arrays.
 	 * Supports element-wise operations on compatible data structures.
 	 */
-	ELEMENTWISE_SUBTRACT {
+	ELEMENTWISE_SUBTRACT("ELEMENTWISE_MINUS") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.xor(left, NumberUtils.not(right));
 		}
 
@@ -960,17 +808,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -978,17 +817,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -996,7 +826,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.charWiseSubtract(left, right);
 		}
 	},
@@ -1006,12 +836,12 @@ public enum BinaryOperation implements Operation {
 	 * Performs multiplication on corresponding elements in collections or arrays.
 	 * Supports element-wise operations on compatible data structures.
 	 */
-	ELEMENTWISE_MULTIPLY {
+	ELEMENTWISE_MULTIPLY("ELEMENTWISE_MUL") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.and(left, right);
 		}
 
@@ -1020,17 +850,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -1038,17 +859,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -1056,7 +868,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.charWiseMultiply(left, right);
 		}
 	},
@@ -1066,12 +878,12 @@ public enum BinaryOperation implements Operation {
 	 * Performs division on corresponding elements in collections or arrays.
 	 * Supports element-wise operations on compatible data structures.
 	 */
-	ELEMENTWISE_DIVIDE {
+	ELEMENTWISE_DIVIDE("ELEMENTWISE_DIV") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.shiftRight(left, right.intValue());
 		}
 
@@ -1080,17 +892,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -1098,17 +901,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -1116,7 +910,7 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.charWiseDivide(left, right);
 		}
 	},
@@ -1126,12 +920,12 @@ public enum BinaryOperation implements Operation {
 	 * Performs modulo on corresponding elements in collections or arrays.
 	 * Supports element-wise operations on compatible data structures.
 	 */
-	ELEMENTWISE_MODULO {
+	ELEMENTWISE_MODULO("ELEMENTWISE_MOD") {
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Number apply(Number left, Number right) {
+		protected Number apply(Number left, Number right) {
 			return NumberUtils.and(left, NumberUtils.subtract(right, 1));
 		}
 
@@ -1140,17 +934,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Number left, Object right) {
-			if (right instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
-			}
-			else if (right instanceof Character character) {
-				return (char) ((Number) apply(left, (char) character)).intValue();
-			}
-			else if (right instanceof String string) {
-				return apply(left, stringToInt(string));
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Number left, Object right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -1158,17 +943,8 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public Object apply(Object left, Number right) {
-			if (left instanceof Boolean aBoolean) {
-				return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
-			}
-			else if (left instanceof Character character) {
-				return (char) ((Number) apply((char) character, right)).intValue();
-			}
-			else if (left instanceof String string) {
-				return apply(string, right.toString());
-			}
-			throw BinaryOperation.newNaftahBugError(this, left, right);
+		protected Object apply(Object left, Number right) {
+			return applyArithmetic(left, right);
 		}
 
 
@@ -1176,10 +952,24 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public String apply(String left, String right) {
+		protected String apply(String left, String right) {
 			return StringUtils.charWiseModulo(left, right);
 		}
 	};
+
+	/**
+	 * The symbolic representation of the binary operator,
+	 */
+	private final String op;
+
+	/**
+	 * Constructs a {@code BinaryOperation} enum constant with its symbolic operator.
+	 *
+	 * @param op the operator symbol (e.g., "+", "-", "*")
+	 */
+	BinaryOperation(String op) {
+		this.op = op;
+	}
 
 	/**
 	 * Creates a new {@link NaftahBugError} indicating that the given binary operation
@@ -1192,13 +982,112 @@ public enum BinaryOperation implements Operation {
 	 */
 	public static NaftahBugError newNaftahBugError(Operation binaryOperation, Object left, Object right) {
 		return new NaftahBugError("العملية '%s' غير مدعومة للنوعين: '%s' و'%s'."
-				.formatted( binaryOperation,
-							Objects.isNull(PARSER_VOCABULARY) ?
-									getQualifiedName(left.getClass().getName()) :
-									getNaftahType(PARSER_VOCABULARY, left.getClass()),
-							Objects.isNull(PARSER_VOCABULARY) ?
-									getQualifiedName(right.getClass().getName()) :
-									getNaftahType(PARSER_VOCABULARY, right.getClass())));
+										  .formatted(binaryOperation,
+													 Objects.isNull(PARSER_VOCABULARY) ?
+													 getQualifiedName(left.getClass().getName()) :
+													 getNaftahType(PARSER_VOCABULARY, left.getClass()),
+													 Objects.isNull(PARSER_VOCABULARY) ?
+													 getQualifiedName(right.getClass().getName()) :
+													 getNaftahType(PARSER_VOCABULARY, right.getClass())));
+	}
+
+	/**
+	 * Returns the {@code BinaryOperation} enum constant corresponding to the given operator symbol.
+	 *
+	 * @param op the operator symbol
+	 * @return the matching {@code BinaryOperation}
+	 * @throws NaftahBugError if no matching enum constant is found
+	 */
+	public static BinaryOperation of(String op) {
+		for (BinaryOperation operator : BinaryOperation.values()) {
+			if (operator.op.equals(op)) {
+				return operator;
+			}
+		}
+
+		throw Operation
+				.newNaftahBugNoEnumValueError(
+						BinaryOperation.class,
+						op);
+	}
+
+	/**
+	 * Applies the binary operation to two dynamic operands.
+	 * <p>
+	 * Supports combinations of the following types:
+	 * <ul>
+	 *     <li>Number, Boolean, Character, String</li>
+	 *     <li>Cross-type operations (e.g., Number + String, Boolean + Number, etc.)</li>
+	 * </ul>
+	 * If the operand types are not supported, throws a {@link NaftahBugError}.
+	 *
+	 * @param left  the left operand
+	 * @param right the right operand
+	 * @return the result of applying the operation
+	 * @throws NaftahBugError if the operand types are unsupported
+	 */
+	public Object apply(Object left, Object right) {
+		// Number vs Number
+		if (left instanceof Number number && right instanceof Number number1) {
+			return apply(number, number1);
+		}
+
+		// Number vs Boolean
+		if (left instanceof Number number && right instanceof Boolean aBoolean) {
+			return apply(number, aBoolean);
+		}
+
+		// Number vs Character
+		if (left instanceof Number number && right instanceof Character character) {
+			return apply(number, character);
+		}
+
+		// Number vs String
+		if (left instanceof Number number && right instanceof String string) {
+			return apply(number, string);
+		}
+
+		// Boolean vs Number
+		if (left instanceof Boolean aBoolean && right instanceof Number number) {
+			return apply(aBoolean, number);
+		}
+
+		// Character vs Number
+		if (left instanceof Character character && right instanceof Number number) {
+			return apply(character, number);
+		}
+
+		// String vs Number
+		if (left instanceof String string && right instanceof Number number) {
+			return apply(string, number);
+		}
+
+		// Boolean vs Boolean
+		if (left instanceof Boolean aBoolean && right instanceof Boolean aBoolean1) {
+			return apply(aBoolean.booleanValue(), aBoolean1.booleanValue());
+		}
+
+		// Character vs Character
+		if (left instanceof Character character && right instanceof Character character1) {
+			return apply(character.charValue(), character1.charValue());
+		}
+
+		// String vs String
+		if (left instanceof String s && right instanceof String s1) {
+			return apply(s, s1);
+		}
+
+		// String vs Character
+		if (left instanceof String s && right instanceof Character character) {
+			return apply(s, String.valueOf(character));
+		}
+
+		// Character vs String
+		if (left instanceof Character character && right instanceof String s) {
+			return apply(String.valueOf(character), s);
+		}
+
+		throw BinaryOperation.newNaftahBugError(this, left, right);
 	}
 
 	/**
@@ -1210,7 +1099,7 @@ public enum BinaryOperation implements Operation {
 	 */
 	// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating
 	//  and using dynamic number
-	public abstract Object apply(Number left, Number right);
+	protected abstract Object apply(Number left, Number right);
 
 	/**
 	 * Applies the operation to a {@link Number} left operand and a {@code char} right operand.
@@ -1219,7 +1108,7 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right operand as char
 	 * @return the result of the operation
 	 */
-	public Object apply(Number left, char right) {
+	protected Object apply(Number left, char right) {
 		return apply(left, (int) right);
 	}
 
@@ -1230,7 +1119,7 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right operand
 	 * @return the result of the operation
 	 */
-	public Object apply(char left, Number right) {
+	protected Object apply(char left, Number right) {
 		return apply((int) left, right);
 	}
 
@@ -1241,7 +1130,7 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right operand as boolean
 	 * @return the result of the operation
 	 */
-	public Object apply(Number left, boolean right) {
+	protected Object apply(Number left, boolean right) {
 		return apply(left, booleanToInt(right));
 	}
 
@@ -1252,7 +1141,7 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right operand
 	 * @return the result of the operation
 	 */
-	public Object apply(boolean left, Number right) {
+	protected Object apply(boolean left, Number right) {
 		return apply(booleanToInt(left), right);
 	}
 
@@ -1263,7 +1152,7 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right operand
 	 * @return the result of the operation
 	 */
-	public abstract Object apply(Number left, Object right);
+	protected abstract Object apply(Number left, Object right);
 
 	/**
 	 * Applies the operation to a generic {@link Object} left operand and a {@link Number} right operand.
@@ -1272,7 +1161,7 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right operand
 	 * @return the result of the operation
 	 */
-	public abstract Object apply(Object left, Number right);
+	protected abstract Object apply(Object left, Number right);
 
 	/**
 	 * Applies the operation to two {@code char} operands.
@@ -1285,7 +1174,7 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right char operand
 	 * @return the result of the operation
 	 */
-	public Object apply(char left, char right) {
+	protected Object apply(char left, char right) {
 		var result = apply((int) left, (int) right);
 		if (result instanceof Number number) {
 			return (char) number.intValue();
@@ -1307,7 +1196,7 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right boolean operand
 	 * @return the result of the operation
 	 */
-	public Object apply(boolean left, boolean right) {
+	protected Object apply(boolean left, boolean right) {
 		var result = apply(booleanToInt(left), booleanToInt(right));
 		if (result instanceof Number number) {
 			return intToBoolean(number.intValue());
@@ -1325,5 +1214,103 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right string operand
 	 * @return the result of the operation
 	 */
-	public abstract Object apply(String left, String right);
+	protected abstract Object apply(String left, String right);
+
+	/**
+	 * Applies a logical operation where the left operand is a {@link Number}.
+	 * Supports logical interaction with Boolean, Character, and String.
+	 *
+	 * @param left  the left operand (Number)
+	 * @param right the right operand (Boolean, Character, or String)
+	 * @return the result of the logical operation
+	 * @throws NaftahBugError if the operand types are unsupported
+	 */
+	protected Object applyLogical(Number left, Object right) {
+		if (right instanceof Boolean aBoolean) {
+			return apply(left, (boolean) aBoolean);
+		}
+		else if (right instanceof Character character) {
+			return apply(left, (char) character);
+		}
+		else if (right instanceof String string) {
+			return apply(left, stringToInt(string));
+		}
+		throw BinaryOperation.newNaftahBugError(this, left, right);
+	}
+
+	/**
+	 * Applies a logical operation where the right operand is a {@link Number}.
+	 * Supports logical interaction with Boolean, Character, and String.
+	 *
+	 * @param left  the left operand (Boolean, Character, or String)
+	 * @param right the right operand (Number)
+	 * @return the result of the logical operation
+	 * @throws NaftahBugError if the operand types are unsupported
+	 */
+	protected Object applyLogical(Object left, Number right) {
+		if (left instanceof Boolean aBoolean) {
+			return apply((boolean) aBoolean, right);
+		}
+		else if (left instanceof Character character) {
+			return apply((char) character, right);
+		}
+		else if (left instanceof String string) {
+			return apply(stringToInt(string), right);
+		}
+		throw BinaryOperation.newNaftahBugError(this, left, right);
+	}
+
+	/**
+	 * Applies an arithmetic operation where the left operand is a {@link Number}.
+	 * Casts the result back to appropriate logical type if necessary.
+	 *
+	 * @param left  the left operand (Number)
+	 * @param right the right operand (Boolean, Character, or String)
+	 * @return the result of the arithmetic operation
+	 * @throws NaftahBugError if the operand types are unsupported
+	 */
+	protected Object applyArithmetic(Number left, Object right) {
+		if (right instanceof Boolean aBoolean) {
+			return intToBoolean(((Number) apply(left, (boolean) aBoolean)).intValue());
+		}
+		else if (right instanceof Character character) {
+			return (char) ((Number) apply(left, (char) character)).intValue();
+		}
+		else if (right instanceof String string) {
+			return apply(left, stringToInt(string));
+		}
+		throw BinaryOperation.newNaftahBugError(this, left, right);
+	}
+
+	/**
+	 * Applies an arithmetic operation where the right operand is a {@link Number}.
+	 * Casts the result back to appropriate logical type if necessary.
+	 *
+	 * @param left  the left operand (Boolean, Character, or String)
+	 * @param right the right operand (Number)
+	 * @return the result of the arithmetic operation
+	 * @throws NaftahBugError if the operand types are unsupported
+	 */
+	protected Object applyArithmetic(Object left, Number right) {
+		if (left instanceof Boolean aBoolean) {
+			return intToBoolean(((Number) apply((boolean) aBoolean, right)).intValue());
+		}
+		else if (left instanceof Character character) {
+			return (char) ((Number) apply((char) character, right)).intValue();
+		}
+		else if (left instanceof String string) {
+			return apply(string, right.toString());
+		}
+		throw BinaryOperation.newNaftahBugError(this, left, right);
+	}
+
+	/**
+	 * Returns the string representation of the binary operator symbol.
+	 *
+	 * @return the operator symbol as a string
+	 */
+	@Override
+	public String toString() {
+		return op;
+	}
 }
