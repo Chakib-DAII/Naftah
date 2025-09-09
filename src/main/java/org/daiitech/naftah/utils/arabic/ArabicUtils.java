@@ -217,7 +217,7 @@ public final class ArabicUtils {
 	 * @see Locale#forLanguageTag(String)
 	 * @see NumberFormat#getNumberInstance(Locale)
 	 */
-	public static NumberFormat ARABIC_NUMBER_FORMAT;
+	public static volatile NumberFormat ARABIC_NUMBER_FORMAT;
 	/**
 	 * Custom transliteration rules defined as a multi-line string.
 	 * Each rule maps Latin script sequences to their corresponding Arabic script sequences.
