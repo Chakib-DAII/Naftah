@@ -20,6 +20,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -112,8 +113,7 @@ public final class ObjectUtils {
 			return isTruthy(entry.getKey()) && isTruthy(entry.getValue());
 		}
 
-		// Other objects (non-null) are truthy
-		return true;
+		return !NaN.isNaN(obj);
 	}
 
 	/**
@@ -181,8 +181,7 @@ public final class ObjectUtils {
 					.allMatch(entry -> Objects.isNull(entry.getKey()) || Objects.isNull(entry.getValue()));
 		}
 
-		// else
-		return false;
+		return NaN.isNaN(obj);
 	}
 
 	/**
@@ -359,6 +358,11 @@ public final class ObjectUtils {
 		if (obj == null) {
 			return false;
 		}
+
+		if (NaN.isNaN(obj)) {
+			return true;
+		}
+
 		Class<?> cls = obj.getClass();
 
 		return cls
@@ -445,12 +449,16 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
 		if (left == null || right == null) {
+			if (NaN.isNaN(left) || NaN.isNaN(right)) {
+				return NaN.get();
+			}
+			// TODO: think about maybe treating null as 0
 			throw newNaftahBugNullInputError(false, left, right);
 		}
 
-		// Number vs Number
-		if (left instanceof Number number && right instanceof Number number1) {
-			return operation.apply(number, number1);
+		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
+		if ((left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String)) {
+			return operation.apply(left, right);
 		}
 
 		// Number vs Boolean/Character/String/collection
@@ -492,26 +500,6 @@ public final class ObjectUtils {
 			return operation.apply(left, number);
 		}
 
-		// Boolean vs Boolean
-		if (left instanceof Boolean aBoolean && right instanceof Boolean aBoolean1) {
-			return operation.apply(aBoolean, aBoolean1);
-		}
-
-		// Character vs Character
-		if (left instanceof Character character && right instanceof Character character1) {
-			return operation.apply(character, character1);
-		}
-
-		// String vs String
-		if (left instanceof String s && right instanceof String s1) {
-			return operation.apply(s, s1);
-		}
-
-		// String vs Character
-		if (left instanceof String s && right instanceof Character character) {
-			return operation.apply(s, String.valueOf(character));
-		}
-
 		// Collection vs Collection (element-wise)
 		if (left instanceof Collection<?> collection1 && right instanceof Collection<?> collection2) {
 			return CollectionUtils.applyOperation(collection1, collection2, operation);
@@ -540,27 +528,17 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object a, UnaryOperation operation) {
 		if (a == null) {
+			// TODO: think about maybe treating null as 0
 			throw newNaftahBugNullInputError(true, a);
 		}
 
-		// Number
-		if (a instanceof Number number) {
-			return operation.apply(number);
+		if (NaN.isNaN(a)) {
+			return a;
 		}
 
-		// Boolean
-		if (a instanceof Boolean aBoolean) {
-			return operation.apply(aBoolean);
-		}
-
-		// Character
-		if (a instanceof Character character) {
-			return operation.apply(character);
-		}
-
-		// String
-		if (a instanceof String s) {
-			return operation.apply(s);
+		// Number or Boolean or Character or String
+		if (a instanceof Number || a instanceof Boolean || a instanceof Character || a instanceof String) {
+			return operation.apply(a);
 		}
 
 		// Collection
