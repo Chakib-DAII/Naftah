@@ -165,6 +165,7 @@ value: NUMBER #numberValue
      | NULL #nullValue
      | CHARACTER #characterValue
      | (RAW | BYTE_ARRAY)? STRING #stringValue
+     | NAN #nanValue
      | ID #idValue
      ;
 
