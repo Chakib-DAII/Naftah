@@ -1,9 +1,5 @@
 package org.daiitech.naftah.builtin.lang;
 
-import org.daiitech.naftah.errors.NaftahBugError;
-
-import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
-
 /**
  * Represents a singleton instance of a non-numeric value (NaN).
  * <p>
@@ -25,15 +21,7 @@ public final class NaN {
 	 */
 	private static final NaN INSTANCE = new NaN();
 
-	/**
-	 * Private constructor to prevent instantiation.
-	 * Always throws {@link NaftahBugError} to indicate misuse.
-	 * <p>
-	 * المُنشئ خاص لمنع إنشاء كائنات جديدة من {@code NaN}.
-	 * في حال تم استدعاؤه بطريقة غير صحيحة، سيتم رمي استثناء {@code NaftahBugError}.
-	 */
 	private NaN() {
-		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
