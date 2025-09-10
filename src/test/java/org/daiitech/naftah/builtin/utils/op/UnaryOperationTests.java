@@ -11,7 +11,7 @@ public class UnaryOperationTests {
 
 	@Test
 	void bitwiseNotIntegerTest() {
-		assertEquals(~5, UnaryOperation.BITWISE_NOT.apply(5).intValue());
+		assertEquals(~5, ((Number) UnaryOperation.BITWISE_NOT.apply(5)).intValue());
 	}
 
 	@Test
@@ -23,28 +23,28 @@ public class UnaryOperationTests {
 
 	@Test
 	void bitwiseNotBooleanTest() {
-		assertFalse(UnaryOperation.BITWISE_NOT.apply(true));
-		assertTrue(UnaryOperation.BITWISE_NOT.apply(false));
+		assertFalse((Boolean) UnaryOperation.BITWISE_NOT.apply(true));
+		assertTrue((Boolean) UnaryOperation.BITWISE_NOT.apply(false));
 	}
 
 	@Test
 	void preIncrementIntegerTest() {
-		assertEquals(6, UnaryOperation.PRE_INCREMENT.apply(5).intValue());
+		assertEquals(6, ((Number) UnaryOperation.PRE_INCREMENT.apply(5)).intValue());
 	}
 
 	@Test
 	void postIncrementIntegerTest() {
-		assertEquals(5, UnaryOperation.POST_INCREMENT.apply(5).intValue());
+		assertEquals(5, ((Number) UnaryOperation.POST_INCREMENT.apply(5)).intValue());
 	}
 
 	@Test
 	void preDecrementIntegerTest() {
-		assertEquals(4, UnaryOperation.PRE_DECREMENT.apply(5).intValue());
+		assertEquals(4, ((Number) UnaryOperation.PRE_DECREMENT.apply(5)).intValue());
 	}
 
 	@Test
 	void postDecrementIntegerTest() {
-		assertEquals(5, UnaryOperation.POST_DECREMENT.apply(5).intValue());
+		assertEquals(5, ((Number) UnaryOperation.POST_DECREMENT.apply(5)).intValue());
 	}
 
 	@Test
@@ -63,25 +63,25 @@ public class UnaryOperationTests {
 
 	@Test
 	void preIncrementBooleanTest() {
-		assertFalse(UnaryOperation.PRE_INCREMENT.apply(true));
+		assertFalse((Boolean) UnaryOperation.PRE_INCREMENT.apply(true));
 	}
 
 	@Test
 	void postDecrementBooleanTest() {
-		assertTrue(UnaryOperation.POST_DECREMENT.apply(true));
+		assertTrue((Boolean) UnaryOperation.POST_DECREMENT.apply(true));
 	}
 
 	@Test
 	void bitwiseNotStringTest() {
 		String input = "test";
-		String result = UnaryOperation.BITWISE_NOT.apply(input);
+		String result = (String) UnaryOperation.BITWISE_NOT.apply(input);
 		assertNotNull(result);
 	}
 
 	@Test
 	void preIncrementStringTest() {
 		String input = "value";
-		String result = UnaryOperation.PRE_INCREMENT.apply(input);
+		String result = (String) UnaryOperation.PRE_INCREMENT.apply(input);
 		assertNotNull(result);
 	}
 }
