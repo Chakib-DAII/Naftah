@@ -126,8 +126,9 @@ additiveExpression: multiplicativeExpression ((PLUS | MINUS | ELEMENTWISE_PLUS |
 
 multiplicativeExpression: unaryExpression ((MUL | DIV | MOD | ELEMENTWISE_MUL | ELEMENTWISE_DIV | ELEMENTWISE_MOD) unaryExpression)*;
 
-unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression
-    		   | postfixExpression;
+unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression #prefixUnaryExpression
+    		   | postfixExpression #postfixUnaryExpression
+     		   ;
 
 postfixExpression: primary (INCREMENT | DECREMENT)?;
 
