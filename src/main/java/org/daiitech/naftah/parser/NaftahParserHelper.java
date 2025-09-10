@@ -715,13 +715,13 @@ public final class NaftahParserHelper {
 	 * @return the display name of the token (e.g., '+', 'IDENTIFIER', etc.)
 	 * @throws NaftahBugError if the node or token is null
 	 */
-	public static String getDisplayName(TerminalNode node, Vocabulary vocabulary) {
-		if (node == null || node.getSymbol() == null) {
-			throw new NaftahBugError("الرمز (token) غير صالح أو مفقود.");
+	public static String getDisplayName(ParseTree node, Vocabulary vocabulary) {
+		if (node instanceof TerminalNode terminal && terminal.getSymbol() != null) {
+			int type = terminal.getSymbol().getType();
+			return vocabulary.getSymbolicName(type);
 		}
+		throw new NaftahBugError("الرمز (token) غير صالح أو مفقود.");
 
-		int tokenType = node.getSymbol().getType();
-		return vocabulary.getDisplayName(tokenType);
 	}
 
 	/**
