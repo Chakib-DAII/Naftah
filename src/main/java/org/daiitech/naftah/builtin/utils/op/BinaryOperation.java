@@ -41,8 +41,8 @@ public enum BinaryOperation implements Operation {
 	 * <p>
 	 * Applies short-circuit evaluation:
 	 * <ul>
-	 *     <li>If the left operand is "truthy", returns the right operand.</li>
-	 *     <li>If the left operand is "falsy", returns the left operand.</li>
+	 * <li>If the left operand is "truthy", returns the right operand.</li>
+	 * <li>If the left operand is "falsy", returns the left operand.</li>
 	 * </ul>
 	 * <p>
 	 * Supports numbers, booleans, characters, and strings.
@@ -90,8 +90,8 @@ public enum BinaryOperation implements Operation {
 	 * <p>
 	 * Applies short-circuit evaluation:
 	 * <ul>
-	 *     <li>If the left operand is "truthy", returns the left operand.</li>
-	 *     <li>If the left operand is "falsy", returns the right operand.</li>
+	 * <li>If the left operand is "truthy", returns the left operand.</li>
+	 * <li>If the left operand is "falsy", returns the right operand.</li>
 	 * </ul>
 	 * <p>
 	 * Supports numbers, booleans, characters, and strings.
@@ -982,13 +982,13 @@ public enum BinaryOperation implements Operation {
 	 */
 	public static NaftahBugError newNaftahBugError(Operation binaryOperation, Object left, Object right) {
 		return new NaftahBugError("العملية '%s' غير مدعومة للنوعين: '%s' و'%s'."
-										  .formatted(binaryOperation,
-													 Objects.isNull(PARSER_VOCABULARY) ?
-													 getQualifiedName(left.getClass().getName()) :
-													 getNaftahType(PARSER_VOCABULARY, left.getClass()),
-													 Objects.isNull(PARSER_VOCABULARY) ?
-													 getQualifiedName(right.getClass().getName()) :
-													 getNaftahType(PARSER_VOCABULARY, right.getClass())));
+				.formatted( binaryOperation,
+							Objects.isNull(PARSER_VOCABULARY) ?
+									getQualifiedName(left.getClass().getName()) :
+									getNaftahType(PARSER_VOCABULARY, left.getClass()),
+							Objects.isNull(PARSER_VOCABULARY) ?
+									getQualifiedName(right.getClass().getName()) :
+									getNaftahType(PARSER_VOCABULARY, right.getClass())));
 	}
 
 	/**
@@ -1007,8 +1007,8 @@ public enum BinaryOperation implements Operation {
 
 		throw Operation
 				.newNaftahBugNoEnumValueError(
-						BinaryOperation.class,
-						op);
+												BinaryOperation.class,
+												op);
 	}
 
 	/**
@@ -1016,8 +1016,8 @@ public enum BinaryOperation implements Operation {
 	 * <p>
 	 * Supports combinations of the following types:
 	 * <ul>
-	 *     <li>Number, Boolean, Character, String</li>
-	 *     <li>Cross-type operations (e.g., Number + String, Boolean + Number, etc.)</li>
+	 * <li>Number, Boolean, Character, String</li>
+	 * <li>Cross-type operations (e.g., Number + String, Boolean + Number, etc.)</li>
 	 * </ul>
 	 * If the operand types are not supported, throws a {@link NaftahBugError}.
 	 *

@@ -23,11 +23,11 @@ public sealed interface Operation permits UnaryOperation, BinaryOperation {
 	 */
 	static NaftahBugError newNaftahBugNoEnumValueError(Class<? extends Operation> operation, String op) {
 		return new NaftahBugError(String
-										  .format(
-												  "لا يوجد ثابت في التعداد %s بالرمز '%s'.",
-												  operation.getName(),
-												  op
-										  ));
+				.format(
+						"لا يوجد ثابت في التعداد %s بالرمز '%s'.",
+						operation.getName(),
+						op
+				));
 	}
 
 }

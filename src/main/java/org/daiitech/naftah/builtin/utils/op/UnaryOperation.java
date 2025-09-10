@@ -269,11 +269,11 @@ public enum UnaryOperation implements Operation {
 	 */
 	public static NaftahBugError newNaftahBugError(Operation unaryOperation, Object o) {
 		return new NaftahBugError("العملية '%s' غير مدعومة للنوع: '%s'"
-										  .formatted(unaryOperation,
-													 Objects.isNull(PARSER_VOCABULARY) ?
-													 getQualifiedName(o.getClass().getName()) :
-													 getNaftahType(PARSER_VOCABULARY,
-																   o.getClass())));
+				.formatted( unaryOperation,
+							Objects.isNull(PARSER_VOCABULARY) ?
+									getQualifiedName(o.getClass().getName()) :
+									getNaftahType(  PARSER_VOCABULARY,
+													o.getClass())));
 	}
 
 	/**
@@ -295,8 +295,8 @@ public enum UnaryOperation implements Operation {
 
 		throw Operation
 				.newNaftahBugNoEnumValueError(
-						UnaryOperation.class,
-						op);
+												UnaryOperation.class,
+												op);
 	}
 
 	/**
