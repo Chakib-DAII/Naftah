@@ -1062,12 +1062,13 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) ?
-										Optional
-												.ofNullable((LoopSignal.LoopSignalDetails) result)
-												.map(LoopSignal.LoopSignalDetails::result)
-												.orElse(null) :
-										result;
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
 							}
 		);
 	}
@@ -1541,10 +1542,69 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<?> visitElements(org.daiitech.naftah.parser.NaftahParser.ElementsContext ctx) {
+	public Object visitSingleElement(org.daiitech.naftah.parser.NaftahParser.SingleElementContext ctx) {
 		return visitContext(
 							this,
-							"visitElements",
+							"visitSingleElement",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, elementContext) -> {
+								// prepare validations
+								boolean creatingList = hasParentOfType( elementContext,
+																		org.daiitech.naftah.parser.NaftahParser.ListValueContext.class);
+								boolean creatingTuple = hasParentOfType(elementContext,
+																		org.daiitech.naftah.parser.NaftahParser.TupleValueContext.class);
+								boolean parsingAssignment = currentContext.isParsingAssignment();
+								Class<?> currentDeclarationType = null;
+								String currentDeclarationName = null;
+								if (parsingAssignment) {
+									var currentDeclaration = currentContext.getDeclarationOfAssignment();
+									currentDeclarationType = currentDeclaration.a.getType();
+									currentDeclarationName = currentDeclaration.a.getName();
+								}
+								// process elements
+								var elementValue = defaultNaftahParserVisitor.visit(elementContext.expression());
+								var elementType = Objects.nonNull(elementValue) ?
+										elementValue.getClass() :
+										Object.class;
+
+								if (!creatingTuple) {
+									// validating list has all the same type
+									if (parsingAssignment && typeMismatch(  elementValue,
+																			elementType,
+																			currentDeclarationType)) {
+										throw new NaftahBugError(
+																	("""
+																		لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
+																			.formatted( creatingList ?
+																								"القائمة (List)" :
+																								"المجموعة (Set)",
+																						"'%s'"
+																								.formatted(currentDeclarationName),
+																						"(%s)"
+																								.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
+																															currentDeclarationType))),
+																	elementContext.getStart().getLine(),
+																	elementContext
+																			.getStart()
+																			.getCharPositionInLine());
+									}
+								}
+
+								return List.of(elementValue);
+							},
+							List.class
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitMultipleElements(org.daiitech.naftah.parser.NaftahParser.MultipleElementsContext ctx) {
+		return visitContext(
+							this,
+							"visitMultipleElements",
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, elementsContext) -> {
@@ -1632,7 +1692,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							List.class
 		);
 	}
-
 
 	/**
 	 * {@inheritDoc}
