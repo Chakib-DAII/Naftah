@@ -43,6 +43,7 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 																																			1))))))))),
 								null),
 					Arguments.of(true, "(٣٢، ٤٥)", Tuple.of(32, 45), null),
+					Arguments.of(true, "(٣٢،)", Tuple.of(32), null),
 					Arguments
 							.of(true,
 								"(١٠، (٩، (٨، (٧، (٦، (٥، (٤، (٣، (٢، ١)))))))))",
