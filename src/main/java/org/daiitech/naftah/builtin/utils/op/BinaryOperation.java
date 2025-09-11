@@ -2,6 +2,8 @@ package org.daiitech.naftah.builtin.utils.op;
 
 import java.util.Objects;
 
+import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -83,6 +85,14 @@ public enum BinaryOperation implements Operation {
 		protected String apply(String left, String right) {
 			return isTruthy(left) ? right : left;
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return isTruthy(left) ? right : left;
+		}
 	},
 
 	/**
@@ -132,6 +142,14 @@ public enum BinaryOperation implements Operation {
 		protected String apply(String left, String right) {
 			return isTruthy(left) ? left : right;
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return isTruthy(left) ? left : right;
+		}
 	},
 
 	// Arithmetic
@@ -175,6 +193,17 @@ public enum BinaryOperation implements Operation {
 		protected String apply(String left, String right) {
 			return StringUtils.add(left, right);
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			if (left instanceof String || right instanceof String) {
+				return String.valueOf(left) + right;
+			}
+			return handleFalsyArithmetic(left, right);
+		}
 	},
 
 	/**
@@ -216,6 +245,14 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected String apply(String left, String right) {
 			return StringUtils.subtract(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyArithmetic(left, right);
 		}
 	},
 
@@ -268,6 +305,14 @@ public enum BinaryOperation implements Operation {
 		protected String apply(String left, String right) {
 			return StringUtils.charWiseMultiply(left, right);
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyArithmetic(left, right);
+		}
 	},
 
 	/**
@@ -319,6 +364,14 @@ public enum BinaryOperation implements Operation {
 		protected String[] apply(String left, String right) {
 			return StringUtils.divide(left, right);
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyArithmetic(left, right);
+		}
 	},
 
 	/**
@@ -360,6 +413,14 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected Object apply(String left, String right) {
 			return charWiseModulo(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyArithmetic(left, right);
 		}
 	},
 
@@ -405,6 +466,14 @@ public enum BinaryOperation implements Operation {
 		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) > 0;
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return isTruthy(left);
+		}
 	},
 
 	/**
@@ -447,6 +516,14 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) >= 0;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return isTruthy(left);
 		}
 	},
 
@@ -491,6 +568,14 @@ public enum BinaryOperation implements Operation {
 		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) < 0;
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return isTruthy(right);
+		}
 	},
 
 	/**
@@ -534,6 +619,14 @@ public enum BinaryOperation implements Operation {
 		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) <= 0;
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return isTruthy(right);
+		}
 	},
 
 	/**
@@ -576,6 +669,23 @@ public enum BinaryOperation implements Operation {
 		protected Boolean apply(String left, String right) {
 			return StringUtils.equals(left, right);
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			if (NaN.isNaN(left) || NaN.isNaN(right)) {
+				return false;
+			}
+			if (None.isNone(left) && None.isNone(right)) {
+				return true;
+			}
+			if (None.isNone(left) || None.isNone(right)) {
+				return false;
+			}
+			return apply(left, right);
+		}
 	},
 
 	/**
@@ -617,6 +727,14 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected Boolean apply(String left, String right) {
 			return !StringUtils.equals(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return !(boolean) EQUALS.apply(left, right);
 		}
 	},
 
@@ -661,6 +779,15 @@ public enum BinaryOperation implements Operation {
 		protected String apply(String left, String right) {
 			return StringUtils.and(left, right);
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyBitOrElementWiseArithmetic(left, right);
+		}
+
 	},
 
 	/**
@@ -702,6 +829,14 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected String apply(String left, String right) {
 			return StringUtils.or(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyBitOrElementWiseArithmetic(left, right);
 		}
 	},
 
@@ -745,6 +880,14 @@ public enum BinaryOperation implements Operation {
 		protected String apply(String left, String right) {
 			return StringUtils.xor(left, right);
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyBitOrElementWiseArithmetic(left, right);
+		}
 	},
 
 	/**
@@ -786,6 +929,14 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected String apply(String left, String right) {
 			return StringUtils.charWiseAdd(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyBitOrElementWiseArithmetic(left, right);
 		}
 	},
 
@@ -829,6 +980,14 @@ public enum BinaryOperation implements Operation {
 		protected String apply(String left, String right) {
 			return StringUtils.charWiseSubtract(left, right);
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyBitOrElementWiseArithmetic(left, right);
+		}
 	},
 
 	/**
@@ -870,6 +1029,14 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected String apply(String left, String right) {
 			return StringUtils.charWiseMultiply(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyBitOrElementWiseArithmetic(left, right);
 		}
 	},
 
@@ -913,6 +1080,14 @@ public enum BinaryOperation implements Operation {
 		protected String apply(String left, String right) {
 			return StringUtils.charWiseDivide(left, right);
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyBitOrElementWiseArithmetic(left, right);
+		}
 	},
 
 	/**
@@ -954,6 +1129,14 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected String apply(String left, String right) {
 			return StringUtils.charWiseModulo(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyBitOrElementWiseArithmetic(left, right);
 		}
 	};
 
@@ -1027,6 +1210,9 @@ public enum BinaryOperation implements Operation {
 	 * @throws NaftahBugError if the operand types are unsupported
 	 */
 	public Object apply(Object left, Object right) {
+		if ((NaN.isNaN(left) || NaN.isNaN(right)) || (None.isNone(left) || None.isNone(right))) {
+			return handleFalsy(left, right);
+		}
 		// Number vs Number
 		if (left instanceof Number number && right instanceof Number number1) {
 			return apply(number, number1);
@@ -1088,6 +1274,59 @@ public enum BinaryOperation implements Operation {
 		}
 
 		throw BinaryOperation.newNaftahBugError(this, left, right);
+	}
+
+	/**
+	 * Handles the case where one or both operands are "falsy" (e.g., {@code null}, {@code None}, or {@code NaN}).
+	 * <p>
+	 * This method must be implemented by each binary operation to define custom handling logic for falsy values.
+	 *
+	 * @param left  the left operand
+	 * @param right the right operand
+	 * @return the result of the operation after handling falsy values
+	 */
+	protected abstract Object handleFalsy(Object left, Object right);
+
+	/**
+	 * Default handler for falsy values in bitwise or element-wise arithmetic operations.
+	 * <p>
+	 * If either operand is {@code NaN} or {@code None}, it is treated as zero.
+	 *
+	 * @param left  the left operand
+	 * @param right the right operand
+	 * @return the result of applying the operation with normalized values
+	 */
+	protected Object handleFalsyBitOrElementWiseArithmetic(Object left, Object right) {
+		if (None.isNone(left) || NaN.isNaN(left)) {
+			left = 0;
+		}
+		if (None.isNone(right) || NaN.isNaN(right)) {
+			right = 0;
+		}
+		return apply(left, right);
+	}
+
+	/**
+	 * Default handler for falsy values in basic arithmetic operations.
+	 * <p>
+	 * - If either operand is {@code NaN}, the result is {@code NaN}.
+	 * - If either operand is {@code None}, it is treated as zero.
+	 *
+	 * @param left  the left operand
+	 * @param right the right operand
+	 * @return the result of the arithmetic operation or {@code NaN}
+	 */
+	protected Object handleFalsyArithmetic(Object left, Object right) {
+		if (NaN.isNaN(left) || NaN.isNaN(right)) {
+			return NaN.get();
+		}
+		if (None.isNone(left)) {
+			left = 0;
+		}
+		if (None.isNone(right)) {
+			right = 0;
+		}
+		return apply(left, right);
 	}
 
 	/**
