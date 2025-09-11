@@ -151,7 +151,8 @@ collection: LBRACK elements? RBRACK #listValue
           | LBRACE keyValuePairs? RBRACE #mapValue;
 
 // single value elements
-elements: expression ((COMMA | SEMI) expression)* (COMMA | SEMI)?;
+elements: expression (COMMA | SEMI) #singleElement
+        | expression ((COMMA | SEMI) expression)+ (COMMA | SEMI)? #multipleElements;
 
 
 // key=value value elements
