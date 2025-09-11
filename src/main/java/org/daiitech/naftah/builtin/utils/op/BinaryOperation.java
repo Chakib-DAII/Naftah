@@ -56,7 +56,7 @@ public enum BinaryOperation implements Operation {
 		 */
 		@Override
 		protected Number apply(Number left, Number right) {
-			return isTruthy(left) ? right : left;
+			return isTruthy(left) ? (NumberUtils.compare(right, 0) > 0 ? right : left) : left;
 		}
 
 
@@ -113,7 +113,7 @@ public enum BinaryOperation implements Operation {
 		 */
 		@Override
 		protected Number apply(Number left, Number right) {
-			return isTruthy(left) ? left : right;
+			return isTruthy(left) ? (NumberUtils.compare(left, 0) > 0 ? left : right) : right;
 		}
 
 
