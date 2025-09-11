@@ -3,6 +3,7 @@ package org.daiitech.naftah.builtin.utils.op;
 import java.util.Objects;
 
 import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -46,6 +47,14 @@ public enum UnaryOperation implements Operation {
 		@Override
 		protected String apply(String string) {
 			return StringUtils.not(string);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object object) {
+			return apply(0);
 		}
 	},
 
@@ -181,6 +190,17 @@ public enum UnaryOperation implements Operation {
 		protected Object apply(String string) {
 			return NaN.get();
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object object) {
+			if (NaN.isNaN(object)) {
+				return object;
+			}
+			return 0;
+		}
 	},
 
 	/**
@@ -206,6 +226,17 @@ public enum UnaryOperation implements Operation {
 		protected Object apply(String string) {
 			return NaN.get();
 		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object object) {
+			if (NaN.isNaN(object)) {
+				return object;
+			}
+			return -0;
+		}
 	},
 
 	/**
@@ -228,8 +259,25 @@ public enum UnaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
+		protected Object apply(boolean b) {
+			return !b;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		protected Object apply(String string) {
 			return not(string);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object object) {
+			return true;
 		}
 	};
 
@@ -244,6 +292,16 @@ public enum UnaryOperation implements Operation {
 	 * Used to indicate that the operator comes before the operand.
 	 */
 	public static final String PRE = "PRE_";
+	/**
+	 * The string representation of the increment operation.
+	 * Typically used to represent {@code ++} in the language grammar or runtime logic.
+	 */
+	public static final String INCREMENT = "INCREMENT";
+	/**
+	 * The string representation of the decrement operation.
+	 * Typically used to represent {@code --} in the language grammar or runtime logic.
+	 */
+	public static final String DECREMENT = "DECREMENT";
 
 	/**
 	 * The symbolic name of the unary operator (e.g., "PLUS", "MINUS", "NOT").
@@ -288,7 +346,7 @@ public enum UnaryOperation implements Operation {
 	 */
 	public static UnaryOperation of(String op) {
 		for (UnaryOperation operator : UnaryOperation.values()) {
-			if (operator.op.equals(op) || operator.op.equals(PRE + op) || operator.op.equals(POST + op)) {
+			if (operator.op.equals(op)) {
 				return operator;
 			}
 		}
@@ -298,6 +356,10 @@ public enum UnaryOperation implements Operation {
 												UnaryOperation.class,
 												op);
 	}
+
+
+	// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating
+	//  and using dynamic number
 
 	/**
 	 * Applies this unary operation to a dynamically typed operand.
@@ -310,8 +372,8 @@ public enum UnaryOperation implements Operation {
 	 * @throws NaftahBugError if the operand type is unsupported
 	 */
 	public Object apply(Object object) {
-		if (NaN.isNaN(object)) {
-			return object;
+		if (NaN.isNaN(object) || None.isNone(object)) {
+			return handleFalsy(object);
 		}
 		else if (object instanceof Number number) {
 			return apply(number);
@@ -328,8 +390,21 @@ public enum UnaryOperation implements Operation {
 		throw UnaryOperation.newNaftahBugError(this, object);
 	}
 
-	// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating
-	//  and using dynamic number
+	/**
+	 * Handles the application of this unary operation to a "falsy" value,
+	 * such as {@code null}, {@code NaN}, or {@code None}.
+	 * <p>
+	 * By default, this method throws a {@link NaftahBugError} to indicate
+	 * that the operation is not supported for the given falsy input.
+	 * Subclasses or enum constants may override this to provide custom behavior.
+	 *
+	 * @param object the input object considered "falsy"
+	 * @return the result of applying the operation, if overridden
+	 * @throws NaftahBugError if the operation is not valid for the input
+	 */
+	protected Object handleFalsy(Object object) {
+		throw UnaryOperation.newNaftahBugError(this, object);
+	}
 
 	/**
 	 * Applies the unary operation to a {@link Number} operand.
