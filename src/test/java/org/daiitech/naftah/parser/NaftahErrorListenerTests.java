@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -84,7 +85,7 @@ class NaftahErrorListenerTests {
 		});
 
 		// Assert Arabic translation
-		assertTrue(exception.getMessage().contains("مفقود"));
+		assertEquals("خطأ في بناء الجملة. تم إيقاف التنفيذ.", exception.getMessage());
 	}
 
 	@Test
@@ -106,7 +107,7 @@ class NaftahErrorListenerTests {
 					);
 		});
 
-		assertTrue(exception.getMessage().contains("خطأ في التعرف على الرمز"));
+		assertEquals("خطأ في بناء الجملة. تم إيقاف التنفيذ.", exception.getMessage());
 	}
 
 	private Token createMockToken(String text) {

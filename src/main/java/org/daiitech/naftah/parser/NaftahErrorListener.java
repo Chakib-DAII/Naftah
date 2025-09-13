@@ -1,7 +1,5 @@
 package org.daiitech.naftah.parser;
 
-import java.util.Objects;
-
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.BaseErrorListener;
@@ -126,15 +124,7 @@ public class NaftahErrorListener extends BaseErrorListener {
 		}
 
 		// Stop execution
-		throw new ParseCancellationException(
-												"""
-															%s
-												تم إيقاف التنفيذ.
-												"""
-														.formatted(
-																	Objects.nonNull(fullMessage) ?
-																			fullMessage :
-																			"خطأ في بناء الجملة."));
+		throw new ParseCancellationException("خطأ في بناء الجملة. تم إيقاف التنفيذ.");
 	}
 
 	/**
