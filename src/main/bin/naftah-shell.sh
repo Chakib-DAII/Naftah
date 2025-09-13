@@ -125,7 +125,20 @@ JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector --add-opens=java.base/j
 IFS=" " read -r -a javaOpts <<< "$JAVA_OPTS"
 
 if [[ "${DEBUG}" == "true" ]]; then
-  exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" -cp "$CLASSPATH" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah "$@" -d
+  # Check if "-d" is already present in the arguments
+  has_d=false
+  for arg in "$@"; do
+    if [[ "$arg" == "-d" ]]; then
+      has_d=true
+      break
+    fi
+  done
+
+  if [[ "$has_d" == "true" ]]; then
+    exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" -cp "$CLASSPATH" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah "$@"
+  else
+    exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" -cp "$CLASSPATH" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah "$@" -d
+  fi
 else
   exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" -cp "$CLASSPATH" -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah "$@"
 fi
