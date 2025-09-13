@@ -156,7 +156,7 @@ elements: expression (COMMA | SEMI) #singleElement
 
 
 // key=value value elements
-keyValuePairs: keyValue ((COMMA | SEMI) keyValue)*;
+keyValuePairs: keyValue ((COMMA | SEMI) keyValue)* (COMMA | SEMI)?;
 keyValue: expression COLON expression;
 
 // Value: Can be numbers, strings, ID
