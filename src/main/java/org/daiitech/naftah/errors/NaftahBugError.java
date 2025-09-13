@@ -49,12 +49,12 @@ public class NaftahBugError extends AssertionError {
 	private final Throwable exception;
 
 	/**
-	 * The line number on which the 1st character of this token was matched, line=1..n
+	 * The line number on which the 1st character of this token was matched, line=1..n.
 	 */
 	private final int line;
 
 	/**
-	 * The index of the first character of this token relative to the beginning of the line at which it occurs, 0..n-1
+	 * The index of the first character of this token relative to the beginning of the line at which it occurs, 0..n-1.
 	 */
 	private final int column;
 
