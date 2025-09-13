@@ -31,6 +31,7 @@ import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
@@ -704,6 +705,23 @@ public final class NaftahParserHelper {
 		return tokenSymbols == null ? null : (ln ? """
 													- %s
 													""" : "%s").formatted(tokenSymbols.replaceAll(",", " أو"));
+	}
+
+	/**
+	 * Returns the display name of a token using the given ANTLR vocabulary.
+	 *
+	 * @param node       the terminal node (token) to analyze
+	 * @param vocabulary the ANTLR vocabulary (usually from the lexer)
+	 * @return the display name of the token (e.g., '+', 'IDENTIFIER', etc.)
+	 * @throws NaftahBugError if the node or token is null
+	 */
+	public static String getDisplayName(ParseTree node, Vocabulary vocabulary) {
+		if (node instanceof TerminalNode terminal && terminal.getSymbol() != null) {
+			int type = terminal.getSymbol().getType();
+			return vocabulary.getSymbolicName(type);
+		}
+		throw new NaftahBugError("الرمز (token) غير صالح أو مفقود.");
+
 	}
 
 	/**

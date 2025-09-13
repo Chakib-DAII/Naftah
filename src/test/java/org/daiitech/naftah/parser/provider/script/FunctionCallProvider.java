@@ -5,12 +5,12 @@ import java.math.BigInteger;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugUnsupportedBitwiseDecimalError;
 
 
@@ -19,15 +19,15 @@ public class FunctionCallProvider implements ArgumentsProvider {
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
 				.of(
-					Arguments.of(true, "إطبع(\"مرحباً أيها العالم!\")", null, null),
-					Arguments.of(true, "ڨول(\"مرحباً أيها العالم!\")", null, null),
-					Arguments.of(true, "قول(\"مرحباً أيها العالم!\")", null, null),
-					Arguments.of(true, "قل(\"مرحباً أيها العالم!\")", null, null),
-					Arguments.of(true, "ڨلي(\"مرحباً أيها العالم!\")", null, null),
-					Arguments.of(true, "ڨلّي(\"مرحباً أيها العالم!\")", null, null),
-					Arguments.of(true, "قلي(\"مرحباً أيها العالم!\")", null, null),
-					Arguments.of(true, "قلّي(\"مرحباً أيها العالم!\")", null, null),
-					Arguments.of(true, "إكتب(\"مرحباً أيها العالم!\")", null, null),
+					Arguments.of(true, "إطبع(\"مرحباً أيها العالم!\")", None.get(), null),
+					Arguments.of(true, "ڨول(\"مرحباً أيها العالم!\")", None.get(), null),
+					Arguments.of(true, "قول(\"مرحباً أيها العالم!\")", None.get(), null),
+					Arguments.of(true, "قل(\"مرحباً أيها العالم!\")", None.get(), null),
+					Arguments.of(true, "ڨلي(\"مرحباً أيها العالم!\")", None.get(), null),
+					Arguments.of(true, "ڨلّي(\"مرحباً أيها العالم!\")", None.get(), null),
+					Arguments.of(true, "قلي(\"مرحباً أيها العالم!\")", None.get(), null),
+					Arguments.of(true, "قلّي(\"مرحباً أيها العالم!\")", None.get(), null),
+					Arguments.of(true, "إكتب(\"مرحباً أيها العالم!\")", None.get(), null),
 					Arguments.of(true, "إجمع(127 ، 1)", 128, null),
 					Arguments.of(true, "إجمع(32767 ، 1)", 32768, null),
 					Arguments.of(true, "إجمع(2147483647 ، 1)", 2147483648L, null),
@@ -119,12 +119,12 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								null),
 					Arguments.of(true, "الأكبر(1 ، 2)", 2, null),
 					Arguments.of(true, "الأكبر(2 ، 1)", 2, null),
-					Arguments.of(true, "الأكبر(1- ، 2)", 2, null),
-					Arguments.of(true, "الأكبر(1 ، 2-)", 1, null),
+					Arguments.of(true, "الأكبر(-1 ، 2)", 2, null),
+					Arguments.of(true, "الأكبر(1 ، -2)", 1, null),
 					Arguments.of(true, "الأصغر(1 ، 2)", 1, null),
 					Arguments.of(true, "الأصغر(2 ، 1)", 1, null),
-					Arguments.of(true, "الأصغر(1- ، 2)", -1, null),
-					Arguments.of(true, "الأصغر(1 ، 2-)", -2, null),
+					Arguments.of(true, "الأصغر(-1 ، 2)", -1, null),
+					Arguments.of(true, "الأصغر(1 ، -2)", -2, null),
 					Arguments.of(true, "إرفع(6 ، 3)", 216, null),
 					Arguments.of(true, "إرفع(200 ، 2)", 40000, null),
 					Arguments.of(true, "إرفع(50000 ، 2)", 2500000000L, null),
@@ -139,30 +139,30 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "تقريب(2،5)", 3, null),
 					Arguments.of(true, "تقريب(2،3)", 2, null),
 					Arguments.of(true, "تقريب(2،0)", 2, null),
-					Arguments.of(true, "تقريب(2،5-)", -2, null),
-					Arguments.of(true, "تقريب(2،3-)", -2, null),
-					Arguments.of(true, "تقريب(2،0-)", -2, null),
-					Arguments.of(true, "تقريب(2،7-)", -3, null),
+					Arguments.of(true, "تقريب(-2،5)", -2, null),
+					Arguments.of(true, "تقريب(-2،3)", -2, null),
+					Arguments.of(true, "تقريب(-2،0)", -2, null),
+					Arguments.of(true, "تقريب(-2،7)", -3, null),
 					Arguments.of(true, "أرضي(3،7)", 3.0, null),
 					Arguments.of(true, "أرضي(3،0)", 3.0, null),
-					Arguments.of(true, "أرضي(3،7-)", -4.0, null),
-					Arguments.of(true, "أرضي(3،0-)", -3.0, null),
+					Arguments.of(true, "أرضي(-3،7)", -4.0, null),
+					Arguments.of(true, "أرضي(-3،0)", -3.0, null),
 					Arguments.of(true, "سقف(3،7)", 4.0, null),
 					Arguments.of(true, "سقف(3،0)", 3.0, null),
-					Arguments.of(true, "سقف(3،7-)", -3.0, null),
-					Arguments.of(true, "سقف(3،0-)", -3.0, null),
-					Arguments.of(true, "إنفي(127-)", 127, null),
-					Arguments.of(true, "إنفي(32767-)", 32767, null),
-					Arguments.of(true, "إنفي(2147483647-)", 2147483647, null),
-					Arguments.of(true, "إنفي(9223372036854775807-)", 9223372036854775807L, null),
+					Arguments.of(true, "سقف(-3،7)", -3.0, null),
+					Arguments.of(true, "سقف(-3،0)", -3.0, null),
+					Arguments.of(true, "إنفي(-127)", 127, null),
+					Arguments.of(true, "إنفي(-32767)", 32767, null),
+					Arguments.of(true, "إنفي(-2147483647)", 2147483647, null),
+					Arguments.of(true, "إنفي(-9223372036854775807)", 9223372036854775807L, null),
 					Arguments
 							.of(true,
-								"إنفي(340282346638528859811704183484516925440,000000-)",
+								"إنفي(-340282346638528859811704183484516925440,000000)",
 								new BigDecimal("340282346638528859811704183484516925440.000000"),
 								null),
 					Arguments
 							.of(true,
-								"إنفي(179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,000000-)",
+								"إنفي(-179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,000000)",
 								new BigDecimal(
 												"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.000000"),
 								null),
@@ -181,52 +181,52 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								13407807929942596324916056014015670000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0,
 								null),
 					Arguments.of(true, "القيمة_المطلقة(2)", 2, null),
-					Arguments.of(true, "القيمة_المطلقة(2-)", 2, null),
+					Arguments.of(true, "القيمة_المطلقة(-2)", 2, null),
 					Arguments.of(true, "القيمة_المطلقة(2،0)", 2.0, null),
-					Arguments.of(true, "القيمة_المطلقة(2،0-)", 2.0, null),
+					Arguments.of(true, "القيمة_المطلقة(-2،0)", 2.0, null),
 					Arguments.of(true, "إشارة(2)", 1, null),
 					Arguments.of(true, "إشارة(0)", 0, null),
-					Arguments.of(true, "إشارة(2-)", -1, null),
+					Arguments.of(true, "إشارة(-2)", -1, null),
 					Arguments.of(true, "إشارة(2،0)", 1, null),
 					Arguments.of(true, "إشارة(0،0)", 0, null),
-					Arguments.of(true, "إشارة(2،0-)", -1, null),
+					Arguments.of(true, "إشارة(-2،0)", -1, null),
 					Arguments.of(true, "هل_صفر(2)", false, null),
 					Arguments.of(true, "هل_صفر(0)", true, null),
-					Arguments.of(true, "هل_صفر(2-)", false, null),
+					Arguments.of(true, "هل_صفر(-2)", false, null),
 					Arguments.of(true, "هل_صفر(2،0)", false, null),
 					Arguments.of(true, "هل_صفر(0،0)", true, null),
-					Arguments.of(true, "هل_صفر(2،0-)", false, null),
+					Arguments.of(true, "هل_صفر(-2،0)", false, null),
 					Arguments.of(true, "هل_يساوي(2 ، 2)", true, null),
-					Arguments.of(false, "هل_يساوي(فارغ ، 2)", null, newNaftahBugNullInputError(false, null, 2)),
-					Arguments.of(false, "هل_يساوي(2 ، فارغ)", null, newNaftahBugNullInputError(false, 2, null)),
-					Arguments.of(true, "هل_يساوي(2- ، 2)", false, null),
-					Arguments.of(true, "هل_يساوي(2 ، 2-)", false, null),
+					Arguments.of(true, "هل_يساوي(فارغ ، 2)", false, null),
+					Arguments.of(true, "هل_يساوي(2 ، فارغ)", false, null),
+					Arguments.of(true, "هل_يساوي(-2 ، 2)", false, null),
+					Arguments.of(true, "هل_يساوي(2 ، -2)", false, null),
 					Arguments.of(true, "هل_يساوي(1 ، 2)", false, null),
-					Arguments.of(false, "هل_لا_يساوي(فارغ ، 2)", null, newNaftahBugNullInputError(false, null, 2)),
-					Arguments.of(false, "هل_لا_يساوي(2 ، فارغ)", null, newNaftahBugNullInputError(false, 2, null)),
+					Arguments.of(true, "هل_لا_يساوي(فارغ ، 2)", true, null),
+					Arguments.of(true, "هل_لا_يساوي(2 ، فارغ)", true, null),
 					Arguments.of(true, "هل_لا_يساوي(2 ، 2)", false, null),
-					Arguments.of(true, "هل_لا_يساوي(2- ، 2)", true, null),
-					Arguments.of(true, "هل_لا_يساوي(2 ، 2-)", true, null),
+					Arguments.of(true, "هل_لا_يساوي(-2 ، 2)", true, null),
+					Arguments.of(true, "هل_لا_يساوي(2 ، -2)", true, null),
 					Arguments.of(true, "هل_لا_يساوي(1 ، 2)", true, null),
 					Arguments.of(true, "هل_أصغر_من(1 ، 2)", true, null),
 					Arguments.of(true, "هل_أصغر_من(2 ، 1)", false, null),
-					Arguments.of(true, "هل_أصغر_من(2 ، 2-)", false, null),
-					Arguments.of(true, "هل_أصغر_من(2- ، 2)", true, null),
+					Arguments.of(true, "هل_أصغر_من(2 ، -2)", false, null),
+					Arguments.of(true, "هل_أصغر_من(-2 ، 2)", true, null),
 					Arguments.of(true, "هل_أصغر_من(2 ، 2)", false, null),
 					Arguments.of(true, "هل_أصغر_أو_يساوي(1 ، 2)", true, null),
 					Arguments.of(true, "هل_أصغر_أو_يساوي(2 ، 1)", false, null),
-					Arguments.of(true, "هل_أصغر_أو_يساوي(2 ، 2-)", false, null),
-					Arguments.of(true, "هل_أصغر_أو_يساوي(2- ، 2)", true, null),
+					Arguments.of(true, "هل_أصغر_أو_يساوي(2 ، -2)", false, null),
+					Arguments.of(true, "هل_أصغر_أو_يساوي(-2 ، 2)", true, null),
 					Arguments.of(true, "هل_أصغر_أو_يساوي(2 ، 2)", true, null),
 					Arguments.of(true, "هل_أكبر_من(1 ، 2)", false, null),
 					Arguments.of(true, "هل_أكبر_من(2 ، 1)", true, null),
-					Arguments.of(true, "هل_أكبر_من(2 ، 2-)", true, null),
-					Arguments.of(true, "هل_أكبر_من(2- ، 2)", false, null),
+					Arguments.of(true, "هل_أكبر_من(2 ، -2)", true, null),
+					Arguments.of(true, "هل_أكبر_من(-2 ، 2)", false, null),
 					Arguments.of(true, "هل_أكبر_من(2 ، 2)", false, null),
 					Arguments.of(true, "هل_أكبر_أو_يساوي(1 ، 2)", false, null),
 					Arguments.of(true, "هل_أكبر_أو_يساوي(2 ، 1)", true, null),
-					Arguments.of(true, "هل_أكبر_أو_يساوي(2 ، 2-)", true, null),
-					Arguments.of(true, "هل_أكبر_أو_يساوي(2- ، 2)", false, null),
+					Arguments.of(true, "هل_أكبر_أو_يساوي(2 ، -2)", true, null),
+					Arguments.of(true, "هل_أكبر_أو_يساوي(-2 ، 2)", false, null),
 					Arguments.of(true, "هل_أكبر_أو_يساوي(2 ، 2)", true, null),
 					Arguments.of(true, "و_بتي(6 ، 3)", 2, null),
 					Arguments.of(true, "و_بتي(0 ، 2)", 0, null),
@@ -391,6 +391,217 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								نقصان_بعدي(179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,000000)""",
 								new BigDecimal(
 												"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.000000"),
+								null),
+					Arguments.of(true, """
+										تحليل_رقم_بنظام_العد("1000000000000000"؛2)
+										""", 32768, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("2000000000000000"؛3)
+											"""
+
+
+									, 28697814, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("3000000000000000"؛4)
+											"""
+
+									, 3221225472L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("4000000000000000"؛5)
+											"""
+
+
+									, 122070312500L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("5000000000000000"؛6)
+											"""
+
+									, 2350924922880L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("6000000000000000"؛7)
+											"""
+
+
+									, 28485369059658L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("7000000000000000"؛8)
+											"""
+
+									, 246290604621824L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("8000000000000000"؛9)
+											"""
+
+									, 1647129056757192L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("9000000000000000"؛10)
+											"""
+
+									, 9000000000000000L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ا٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١١)
+											"""
+
+									, 459497298635721610L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ب٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١٢)
+											"""
+
+									, 2033726847845400576L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ت٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١٣)
+											"""
+
+									, 7984999310198158092L, null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ث٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١٤)
+											"""
+
+
+									,
+									new BigInteger("28313393391521824768"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ج٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١٥)
+											"""
+
+
+									,
+									new BigInteger("91957716979980468750"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ح٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١٦)
+											"""
+
+									,
+									new BigInteger("276701161105643274240"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("خ٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١٧)
+											"""
+
+
+									,
+									new BigInteger("778579070010669895696"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("د٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١٨)
+											"""
+
+
+									,
+									new BigInteger("2064472028642102280192"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ذ٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛١٩)
+											"""
+
+
+									,
+									new BigInteger("5191945444217181018258"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ر٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٠)
+											"""
+
+
+									,
+									new BigInteger("12451840000000000000000"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ز٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢١)
+											"""
+
+
+									,
+									new BigInteger("28611373804839706566420"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("س٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٢)
+											"""
+
+
+									,
+									new BigInteger("63238591423120368009216"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ش٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٣)
+											"""
+
+
+									,
+									new BigInteger("134917429144981970277142"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ص٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٤)
+											"""
+
+
+									,
+									new BigInteger("278681220191737450856448"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ض٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٥)
+											"""
+
+
+									,
+									new BigInteger("558793544769287109375000"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ط٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٦)
+											"""
+
+
+									,
+									new BigInteger("1090218572485721851494400"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ظ٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٧)
+											"""
+
+
+									,
+									new BigInteger("2073927519998685256447386"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ع٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٨)
+											"""
+
+
+									,
+									new BigInteger("3853827448560223562760192"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("غ٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٢٩)
+											"""
+
+
+									,
+									new BigInteger("7006901263049725766050588"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ف٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٣٠)
+											"""
+
+
+									,
+									new BigInteger("12483549090000000000000000"),
+									null),
+					Arguments.of(   true, """
+											تحليل_رقم_بنظام_العد("ق٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٣١)
+											"""
+
+
+									,
+									new BigInteger("21822693652415557914854430"),
+									null),
+					Arguments
+							.of(true,
+								"""
+								تحليل_رقم_بنظام_العد("ك٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٣٢)
+								""",
+								new BigInteger("37476700408053504415891456"),
 								null)
 				);
 	}

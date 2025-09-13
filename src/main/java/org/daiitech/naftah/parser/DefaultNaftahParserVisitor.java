@@ -23,8 +23,12 @@ import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
+import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
@@ -33,30 +37,14 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.getJavaType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isTruthy;
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.not;
 import static org.daiitech.naftah.builtin.utils.Tuple.newNaftahBugNullError;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_AND;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_OR;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_XOR;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.DIVIDE;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_ADD;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_DIVIDE;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_MODULO;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_MULTIPLY;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_SUBTRACT;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.EQUALS;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.GREATER_THAN;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.GREATER_THAN_EQUALS;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.LESS_THAN;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.LESS_THAN_EQUALS;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.MODULO;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.MULTIPLY;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.NOT_EQUALS;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.SUBTRACT;
-import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.BITWISE_NOT;
-import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST_DECREMENT;
-import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST_INCREMENT;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.DECREMENT;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.INCREMENT;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_DECREMENT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_INCREMENT;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidLoopLabelError;
@@ -161,7 +149,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, programContext) -> {
 								defaultNaftahParserVisitor.depth = currentContext.getDepth();
-								Object result = null;
+								Object result = None.get();
 								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
 										.statement()) {
 									result = defaultNaftahParserVisitor.visit(statement); // Visit each statement in the program
@@ -638,7 +626,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, functionCallContext) -> {
-								Object result = null;
+								Object result = None.get();
 								// TODO: add extra vars to context to get the function called and so on, it can
 								// be a free map
 								// TODO: and using an Enum as key of predefined ids to get values
@@ -842,7 +830,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, ifStatementContext) -> {
-								Object result = null;
+								Object result = None.get();
 								// Evaluate the condition expression
 								Object condition = defaultNaftahParserVisitor.visit(ifStatementContext.expression(0));
 								if (isTruthy(condition)) {
@@ -892,7 +880,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, forStatementContext) -> {
-								Object result = null;
+								Object result = None.get();
 								boolean loopInStack = false;
 								String label = currentLoopLabel((String) (Objects.isNull(forStatementContext.label()) ?
 										null :
@@ -1074,12 +1062,13 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) ?
-										Optional
-												.ofNullable((LoopSignal.LoopSignalDetails) result)
-												.map(LoopSignal.LoopSignalDetails::result)
-												.orElse(null) :
-										result;
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
 							}
 		);
 	}
@@ -1313,7 +1302,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, returnStatementContext) -> {
 								boolean insideLoop = !LOOP_STACK.isEmpty() || checkInsideLoop(returnStatementContext);
-								Object result = null;
+								Object result = None.get();
 								if (hasChild(returnStatementContext.expression())) {
 									// Evaluate and return the result
 									result = defaultNaftahParserVisitor.visit(returnStatementContext.expression());
@@ -1336,7 +1325,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, nextContext, blockContext) -> {
 								defaultNaftahParserVisitor.depth = nextContext.getDepth();
-								Object result = null;
+								Object result = None.get();
 								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : blockContext
 										.statement()) {
 									// Visit each statement in the block
@@ -1553,10 +1542,69 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<?> visitElements(org.daiitech.naftah.parser.NaftahParser.ElementsContext ctx) {
+	public Object visitSingleElement(org.daiitech.naftah.parser.NaftahParser.SingleElementContext ctx) {
 		return visitContext(
 							this,
-							"visitElements",
+							"visitSingleElement",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, elementContext) -> {
+								// prepare validations
+								boolean creatingList = hasParentOfType( elementContext,
+																		org.daiitech.naftah.parser.NaftahParser.ListValueContext.class);
+								boolean creatingTuple = hasParentOfType(elementContext,
+																		org.daiitech.naftah.parser.NaftahParser.TupleValueContext.class);
+								boolean parsingAssignment = currentContext.isParsingAssignment();
+								Class<?> currentDeclarationType = null;
+								String currentDeclarationName = null;
+								if (parsingAssignment) {
+									var currentDeclaration = currentContext.getDeclarationOfAssignment();
+									currentDeclarationType = currentDeclaration.a.getType();
+									currentDeclarationName = currentDeclaration.a.getName();
+								}
+								// process elements
+								var elementValue = defaultNaftahParserVisitor.visit(elementContext.expression());
+								var elementType = Objects.nonNull(elementValue) ?
+										elementValue.getClass() :
+										Object.class;
+
+								if (!creatingTuple) {
+									// validating list has all the same type
+									if (parsingAssignment && typeMismatch(  elementValue,
+																			elementType,
+																			currentDeclarationType)) {
+										throw new NaftahBugError(
+																	("""
+																		لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
+																			.formatted( creatingList ?
+																								"القائمة (List)" :
+																								"المجموعة (Set)",
+																						"'%s'"
+																								.formatted(currentDeclarationName),
+																						"(%s)"
+																								.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
+																															currentDeclarationType))),
+																	elementContext.getStart().getLine(),
+																	elementContext
+																			.getStart()
+																			.getCharPositionInLine());
+									}
+								}
+
+								return List.of(elementValue);
+							},
+							List.class
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitMultipleElements(org.daiitech.naftah.parser.NaftahParser.MultipleElementsContext ctx) {
+		return visitContext(
+							this,
+							"visitMultipleElements",
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, elementsContext) -> {
@@ -1644,7 +1692,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							List.class
 		);
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -1826,35 +1873,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitMinusExpression(org.daiitech.naftah.parser.NaftahParser.MinusExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitMinusExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, minusExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(minusExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(minusExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(minusExpressionContext.MINUS()) ?
-											applyOperation(left, right, SUBTRACT) :
-											applyOperation(left, right, ELEMENTWISE_SUBTRACT);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Object visitParenthesisExpression(org.daiitech.naftah.parser.NaftahParser.ParenthesisExpressionContext ctx) {
 		return visitContext(
 							this,
@@ -1868,238 +1886,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												parenthesisExpressionContext.expression())
 		);
 	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitModExpression(org.daiitech.naftah.parser.NaftahParser.ModExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitModExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, modExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(modExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(modExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(modExpressionContext.MOD()) ?
-											applyOperation(left, right, MODULO) :
-											applyOperation(left, right, ELEMENTWISE_MODULO);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitDivExpression(org.daiitech.naftah.parser.NaftahParser.DivExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitDivExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, divExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(divExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(divExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(divExpressionContext.DIV()) ?
-											applyOperation(left, right, DIVIDE) :
-											applyOperation(left, right, ELEMENTWISE_DIVIDE);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitGreaterThanExpression(org.daiitech.naftah.parser.NaftahParser.GreaterThanExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitGreaterThanExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, greaterThanExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor
-										.visit(greaterThanExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(greaterThanExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, GREATER_THAN);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitLessThanEqualsExpression(
-												org.daiitech.naftah.parser.NaftahParser.LessThanEqualsExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitLessThanEqualsExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, lessThanEqualsExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor
-										.visit(lessThanEqualsExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(lessThanEqualsExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, LESS_THAN_EQUALS);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitGreaterThanEqualsExpression(
-													org.daiitech.naftah.parser.NaftahParser.GreaterThanEqualsExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitGreaterThanEqualsExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, greaterThanEqualsExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor
-										.visit(greaterThanEqualsExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(greaterThanEqualsExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, GREATER_THAN_EQUALS);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitNotEqualsExpression(org.daiitech.naftah.parser.NaftahParser.NotEqualsExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitNotEqualsExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, notEqualsExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor
-										.visit(notEqualsExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(notEqualsExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, NOT_EQUALS);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitEqualsExpression(org.daiitech.naftah.parser.NaftahParser.EqualsExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitEqualsExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, equalsExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(equalsExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(equalsExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, EQUALS);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitLessThanExpression(org.daiitech.naftah.parser.NaftahParser.LessThanExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitLessThanExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, lessThanExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(lessThanExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(lessThanExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, LESS_THAN);
-								}
-
-								return result;
-							}
-		);
-	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -2116,64 +1902,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								functionCallExpressionContext) -> defaultNaftahParserVisitor
 										.visit(
 												functionCallExpressionContext.functionCall())
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitPlusExpression(org.daiitech.naftah.parser.NaftahParser.PlusExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitPlusExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, plusExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(plusExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(plusExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(plusExpressionContext.PLUS()) ?
-											applyOperation(left, right, ADD) :
-											applyOperation(left, right, ELEMENTWISE_ADD);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitMulExpression(org.daiitech.naftah.parser.NaftahParser.MulExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitMulExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, mulExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(mulExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(mulExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(mulExpressionContext.MUL()) ?
-											applyOperation(left, right, MULTIPLY) :
-											applyOperation(left, right, ELEMENTWISE_MULTIPLY);
-								}
-
-								return result;
-							}
 		);
 	}
 
@@ -2317,7 +2045,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							"visitNullValue",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, nullValueContext) -> null
+							(defaultNaftahParserVisitor, currentContext, nullValueContext) -> None.get()
 		);
 	}
 
@@ -2342,7 +2070,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								return creatingMap || creatingObject ?
 										id :
-										getVariable(id, currentContext).orElse(null);
+										getVariable(id, currentContext).orElse(None.get());
 							}
 		);
 	}
@@ -2521,303 +2249,288 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitExpression(org.daiitech.naftah.parser.NaftahParser.ExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitExpression",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								expressionContext) -> defaultNaftahParserVisitor
+										.visit(expressionContext
+												.logicalExpression()));
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitBitwiseXorExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseXorExpressionContext ctx) {
+	public Object visitLogicalExpression(org.daiitech.naftah.parser.NaftahParser.LogicalExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitBitwiseXorExpression",
+							"visitLogicalExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, bitwiseXorExpressionContext) -> {
+							(defaultNaftahParserVisitor, currentContext, logicalExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
-										.visit(bitwiseXorExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(bitwiseXorExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, BITWISE_XOR);
-								}
+										.visit(logicalExpressionContext.bitwiseExpression(0));
 
-								return result;
-							}
-		);
-	}
+								for (int i = 1; i < logicalExpressionContext.bitwiseExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(logicalExpressionContext
+													.bitwiseExpression(
+																		i));
 
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitNotExpression(org.daiitech.naftah.parser.NaftahParser.NotExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitNotExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, notExpressionContext) -> not(
-																										defaultNaftahParserVisitor
-																												.visit(
-																														notExpressionContext
-																																.expression()))
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitAndExpression(org.daiitech.naftah.parser.NaftahParser.AndExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitAndExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, andExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(andExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(andExpressionContext.expression(1));
-
-								return isTruthy(left) && isTruthy(right);
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitOrExpression(org.daiitech.naftah.parser.NaftahParser.OrExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitOrExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, orExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(orExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(orExpressionContext.expression(1));
-
-								return isTruthy(left) || isTruthy(right);
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitNegateExpression(org.daiitech.naftah.parser.NaftahParser.NegateExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitNegateExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, negateExpressionContext) -> not(visit(
-																												negateExpressionContext
-																														.expression()))
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitPreDecrementExpression(org.daiitech.naftah.parser.NaftahParser.PreDecrementExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitPreDecrementExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, preDecrementExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(preDecrementExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(value, PRE_DECREMENT);
+									String op = NaftahParserHelper
+											.getDisplayName(logicalExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
 								}
 
-								return result;
-							}
-		);
+								return left;
+							});
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitPostDecrementExpression(
-												org.daiitech.naftah.parser.NaftahParser.PostDecrementExpressionContext ctx) {
+	public Object visitBitwiseExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitPostDecrementExpression",
+							"visitBitwiseExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, postDecrementExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(postDecrementExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(value, POST_DECREMENT);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitBitwiseOrExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseOrExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitBitwiseOrExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, bitwiseOrExpressionContext) -> {
+							(defaultNaftahParserVisitor, currentContext, bitwiseExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
-										.visit(bitwiseOrExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(bitwiseOrExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, BITWISE_OR);
+										.visit(bitwiseExpressionContext.equalityExpression(0));
+
+								for (int i = 1; i < bitwiseExpressionContext.equalityExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(bitwiseExpressionContext
+													.equalityExpression(
+																		i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(bitwiseExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
 								}
 
-								return result;
-							}
-		);
+								return left;
+							});
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitBitwiseNotExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseNotExpressionContext ctx) {
+	public Object visitEqualityExpression(org.daiitech.naftah.parser.NaftahParser.EqualityExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitBitwiseNotExpression",
+							"visitEqualityExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, bitwiseNotExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(bitwiseNotExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(value, BITWISE_NOT);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitBitwiseAndExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseAndExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitBitwiseAndExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, bitwiseAndExpressionContext) -> {
+							(defaultNaftahParserVisitor, currentContext, equalityExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
-										.visit(bitwiseAndExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(bitwiseAndExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, BITWISE_AND);
+										.visit(equalityExpressionContext.relationalExpression(0));
+
+								for (int i = 1; i < equalityExpressionContext.relationalExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(equalityExpressionContext
+													.relationalExpression(
+																			i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(equalityExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
 								}
 
-								return result;
-							}
-		);
+								return left;
+							});
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitPreIncrementExpression(org.daiitech.naftah.parser.NaftahParser.PreIncrementExpressionContext ctx) {
+	public Object visitRelationalExpression(org.daiitech.naftah.parser.NaftahParser.RelationalExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitPreIncrementExpression",
+							"visitRelationalExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, preIncrementExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(preIncrementExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(value, PRE_INCREMENT);
+							(defaultNaftahParserVisitor, currentContext, relationalExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(relationalExpressionContext.additiveExpression(0));
+
+								for (int i = 1; i < relationalExpressionContext.additiveExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(relationalExpressionContext
+													.additiveExpression(
+																		i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(relationalExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
 								}
 
-								return result;
-							}
-		);
+								return left;
+							});
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitPostIncrementExpression(
-												org.daiitech.naftah.parser.NaftahParser.PostIncrementExpressionContext ctx) {
+	public Object visitAdditiveExpression(org.daiitech.naftah.parser.NaftahParser.AdditiveExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitPostIncrementExpression",
+							"visitAdditiveExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, postIncrementExpressionContext) -> {
+							(defaultNaftahParserVisitor, currentContext, additiveExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(additiveExpressionContext.multiplicativeExpression(0));
+
+								for (int i = 1; i < additiveExpressionContext.multiplicativeExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(additiveExpressionContext
+													.multiplicativeExpression(
+																				i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(additiveExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
+								}
+
+								return left;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitMultiplicativeExpression(org.daiitech.naftah.parser.NaftahParser.MultiplicativeExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitMultiplicativeExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, multiplicativeExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(multiplicativeExpressionContext.unaryExpression(0));
+
+								for (int i = 1; i < multiplicativeExpressionContext.unaryExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(multiplicativeExpressionContext
+													.unaryExpression(
+																		i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(multiplicativeExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
+								}
+
+								return left;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitPrefixUnaryExpression(org.daiitech.naftah.parser.NaftahParser.PrefixUnaryExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitPrefixUnaryExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, prefixUnaryExpressionContext) -> {
 								Object value = defaultNaftahParserVisitor
-										.visit(postIncrementExpressionContext.expression());
+										.visit(prefixUnaryExpressionContext.unaryExpression());
 								Object result;
-								if (value == null) {
-									result = null;
+
+								String op = NaftahParserHelper
+										.getDisplayName(prefixUnaryExpressionContext.getChild(0),
+														defaultNaftahParserVisitor.parser.getVocabulary());
+								if (INCREMENT.equals(op) || DECREMENT.equals(op)) {
+									op = PRE + op;
+								}
+								result = applyOperation(value, UnaryOperation.of(op));
+
+								return result;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitPostfixUnaryExpression(org.daiitech.naftah.parser.NaftahParser.PostfixUnaryExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitPostfixUnaryExpression",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								postfixUnaryExpressionContext) -> defaultNaftahParserVisitor
+										.visit(postfixUnaryExpressionContext.postfixExpression()));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitPostfixExpression(org.daiitech.naftah.parser.NaftahParser.PostfixExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitPostfixExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, postfixExpressionContext) -> {
+								Object value = defaultNaftahParserVisitor
+										.visit(postfixExpressionContext.primary());
+								Object result;
+								if (postfixExpressionContext.getChildCount() == 2) {
+									String op = NaftahParserHelper
+											.getDisplayName(postfixExpressionContext.getChild(1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									if (INCREMENT.equals(op) || DECREMENT.equals(op)) {
+										op = POST + op;
+									}
+									result = applyOperation(value, UnaryOperation.of(op));
 								}
 								else {
-									result = applyOperation(value, POST_INCREMENT);
+									result = value;
 								}
 
 								return result;
-							}
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitNanValue(org.daiitech.naftah.parser.NaftahParser.NanValueContext ctx) {
+		return visitContext(
+							this,
+							"visitNanValue",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, nanValueContext) -> NaN.get()
 		);
 	}
 }
