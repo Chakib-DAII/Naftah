@@ -44,7 +44,7 @@ public class SyntaxHighlighterTests {
 	void testEscapedNewlineThrowsEOFError() {
 		String buffer = """
 						كرر_حلقة أ تعيين 1 إلى 5 إفعل { #
-						    إطبع(أ) #
+							إطبع(أ) #
 						""";
 
 		assertThrows(EOFError.class, () -> {
@@ -86,4 +86,3 @@ public class SyntaxHighlighterTests {
 		assertTrue(lines.length > 1);
 	}
 }
-

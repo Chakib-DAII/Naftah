@@ -122,10 +122,10 @@ public final class NaftahSystem {
 		if (OS.isFamilyWindows()) {
 			ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 			executor
-					.scheduleAtFixedRate(() -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
-										 0,
-										 500,
-										 TimeUnit.MILLISECONDS);
+					.scheduleAtFixedRate(   () -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
+											0,
+											500,
+											TimeUnit.MILLISECONDS);
 		}
 		else {
 			AtomicBoolean winchTriggered = new AtomicBoolean(false);
@@ -148,12 +148,13 @@ public final class NaftahSystem {
 				if (sizeChanged && !winchTriggered.get()) {
 					// WINCH didn't fire, but terminal resized — use fallback executor
 					ScheduledExecutorService fallbackExecutor = Executors.newSingleThreadScheduledExecutor();
-					fallbackExecutor.scheduleAtFixedRate(
-							() -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
-							0,
-							500,
-							TimeUnit.MILLISECONDS
-					);
+					fallbackExecutor
+							.scheduleAtFixedRate(
+													() -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
+													0,
+													500,
+													TimeUnit.MILLISECONDS
+							);
 					resizeChecker.shutdown();  // Stop monitoring
 				}
 				else if (winchTriggered.get()) {

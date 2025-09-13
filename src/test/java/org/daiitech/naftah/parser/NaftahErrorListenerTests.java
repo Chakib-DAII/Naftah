@@ -26,14 +26,15 @@ class NaftahErrorListenerTests {
 		String msg = "mismatched input 'if' expecting {'else', 'while'}";
 
 		ParseCancellationException exception = assertThrows(ParseCancellationException.class, () -> {
-			listener.syntaxError(
-					createMockRecognizer(),  // can be mock or null
-					offendingToken,
-					3,
-					5,
-					msg,
-					null
-			);
+			listener
+					.syntaxError(
+									createMockRecognizer(),  // can be mock or null
+									offendingToken,
+									3,
+									5,
+									msg,
+									null
+					);
 		});
 
 		assertTrue(exception.getMessage().contains("خطأ في بناء الجملة")); // Arabic message
@@ -49,14 +50,15 @@ class NaftahErrorListenerTests {
 		String msg = "no viable alternative at input '<EOF>'";
 
 		ParseCancellationException exception = assertThrows(ParseCancellationException.class, () -> {
-			listener.syntaxError(
-					parser,
-					eofToken,
-					10,
-					0,
-					msg,
-					null
-			);
+			listener
+					.syntaxError(
+									parser,
+									eofToken,
+									10,
+									0,
+									msg,
+									null
+					);
 		});
 
 		assertTrue(exception.getMessage().contains("تم إيقاف التنفيذ"));
@@ -70,14 +72,15 @@ class NaftahErrorListenerTests {
 		String msg = "missing ';' at '}'";
 
 		ParseCancellationException exception = assertThrows(ParseCancellationException.class, () -> {
-			listener.syntaxError(
-					createMockRecognizer(),
-					offendingToken,
-					5,
-					12,
-					msg,
-					null
-			);
+			listener
+					.syntaxError(
+									createMockRecognizer(),
+									offendingToken,
+									5,
+									12,
+									msg,
+									null
+					);
 		});
 
 		// Assert Arabic translation
@@ -92,14 +95,15 @@ class NaftahErrorListenerTests {
 		String msg = "token recognition error at: '@'";
 
 		ParseCancellationException exception = assertThrows(ParseCancellationException.class, () -> {
-			listener.syntaxError(
-					createMockRecognizer(),
-					offendingToken,
-					1,
-					1,
-					msg,
-					null
-			);
+			listener
+					.syntaxError(
+									createMockRecognizer(),
+									offendingToken,
+									1,
+									1,
+									msg,
+									null
+					);
 		});
 
 		assertTrue(exception.getMessage().contains("خطأ في التعرف على الرمز"));
@@ -116,7 +120,8 @@ class NaftahErrorListenerTests {
 				return new String[0];
 			}
 
-			@Override public String[] getRuleNames() {
+			@Override
+			public String[] getRuleNames() {
 				return new String[0];
 			}
 
@@ -125,27 +130,33 @@ class NaftahErrorListenerTests {
 				return VocabularyImpl.EMPTY_VOCABULARY;
 			}
 
-			@Override public String getGrammarFileName() {
+			@Override
+			public String getGrammarFileName() {
 				return null;
 			}
 
-			@Override public ATN getATN() {
+			@Override
+			public ATN getATN() {
 				return null;
 			}
 
-			@Override public IntStream getInputStream() {
+			@Override
+			public IntStream getInputStream() {
 				return null;
 			}
 
-			@Override public void setInputStream(IntStream input) {
+			@Override
+			public void setInputStream(IntStream input) {
 
 			}
 
-			@Override public TokenFactory<?> getTokenFactory() {
+			@Override
+			public TokenFactory<?> getTokenFactory() {
 				return null;
 			}
 
-			@Override public void setTokenFactory(TokenFactory<?> input) {
+			@Override
+			public void setTokenFactory(TokenFactory<?> input) {
 
 			}
 		};
@@ -159,11 +170,13 @@ class NaftahErrorListenerTests {
 			super(null);
 		}
 
-		@Override public String[] getTokenNames() {
+		@Override
+		public String[] getTokenNames() {
 			return new String[0];
 		}
 
-		@Override public String[] getRuleNames() {
+		@Override
+		public String[] getRuleNames() {
 			return new String[0];
 		}
 
@@ -208,11 +221,13 @@ class NaftahErrorListenerTests {
 			};
 		}
 
-		@Override public String getGrammarFileName() {
+		@Override
+		public String getGrammarFileName() {
 			return null;
 		}
 
-		@Override public ATN getATN() {
+		@Override
+		public ATN getATN() {
 			return null;
 		}
 	}
@@ -225,4 +240,3 @@ class NaftahErrorListenerTests {
 		public static final int WHILE = 2;
 	}
 }
-

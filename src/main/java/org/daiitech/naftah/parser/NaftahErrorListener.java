@@ -96,9 +96,9 @@ public class NaftahErrorListener extends BaseErrorListener {
 				}
 
 				translatedMessage = String.format("""
-												  📄 نهاية غير متوقعة للملف. المتوقع:
-												  %s
-												  """, expected);
+													📄 نهاية غير متوقعة للملف. المتوقع:
+													%s
+													""", expected);
 			}
 			else {
 				translatedMessage = "📄 نهاية غير متوقعة للملف.";
@@ -127,13 +127,14 @@ public class NaftahErrorListener extends BaseErrorListener {
 
 		// Stop execution
 		throw new ParseCancellationException(
-				"""
-				 			%s
-				 تم إيقاف التنفيذ.
-				""".formatted(
-						Objects.nonNull(fullMessage) ?
-						fullMessage :
-						"خطأ في بناء الجملة."));
+												"""
+															%s
+												تم إيقاف التنفيذ.
+												"""
+														.formatted(
+																	Objects.nonNull(fullMessage) ?
+																			fullMessage :
+																			"خطأ في بناء الجملة."));
 	}
 
 	/**
