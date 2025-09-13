@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.None;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -75,9 +77,14 @@ public class ValueExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, "خطأ", false, null),
 					Arguments.of(true, "خاطئ", false, null),
 					Arguments.of(true, "زائف", false, null),
-					Arguments.of(true, "فارغ", null, null),
-					Arguments.of(true, "باطل", null, null),
-					Arguments.of(true, "لاشيء", null, null),
+					Arguments.of(true, "فارغ", None.get(), null),
+					Arguments.of(true, "باطل", None.get(), null),
+					Arguments.of(true, "لاشيء", None.get(), null),
+					Arguments.of(true, "ليس_رقم", NaN.get(), null),
+					Arguments.of(true, "قيمة_غير_رقمية", NaN.get(), null),
+					Arguments.of(true, "رقم_غير_صالح", NaN.get(), null),
+					Arguments.of(true, "غير_عددي", NaN.get(), null),
+					Arguments.of(true, "ليس_عددي", NaN.get(), null),
 					Arguments.of(true, "'ص'", 'ص', null),
 					Arguments.of(true, "\"ص\"", 'ص', null),
 					Arguments.of(true, "«ص»", 'ص', null),

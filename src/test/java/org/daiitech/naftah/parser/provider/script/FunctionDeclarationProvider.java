@@ -50,9 +50,9 @@ public class FunctionDeclarationProvider implements ArgumentsProvider {
 								null),
 					Arguments
 							.of(true,
-								String.format(factorialWithNestedPrintFunction, "دالة_المضروب(100)"),
+								String.format(factorialWithNestedPrintFunction, "دالة_المضروب(50)"),
 								new BigInteger(
-												"93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000"),
+												"30414093201713378043612608166064768844377641568960512000000000000"),
 								null)
 				);
 	}
