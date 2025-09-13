@@ -1136,7 +1136,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 															i);
 
 									for (org.daiitech.naftah.parser.NaftahParser.ExpressionContext expression : labels
-											.elements()
 											.expression()) {
 										Object labelValue = defaultNaftahParserVisitor.visit(expression);
 

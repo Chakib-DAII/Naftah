@@ -97,7 +97,7 @@ caseStatement:
         (ELSE block)?;                         // Optional default case if no labels match
 
 // A list of labels for a 'case' option (e.g., 1, 2, 3)
-caseLabelList: elements;                // One or more comma or semicolon separated expressions
+caseLabelList: expression ((COMMA | SEMI) expression)*;                // One or more comma or semicolon separated expressions
 
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;
