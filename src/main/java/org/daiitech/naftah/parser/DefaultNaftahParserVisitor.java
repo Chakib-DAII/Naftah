@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
@@ -1122,26 +1123,47 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								caseStatementContext) -> super.visitCaseStatement(
-																					caseStatementContext)
-		);
-	}
+								caseStatementContext) -> {
+								Object controlValue = defaultNaftahParserVisitor
+										.visit(caseStatementContext.expression());
 
+								boolean matched = false;
+								Object result = null;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitCaseLabelList(org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext ctx) {
-		return visitContext(
-							this,
-							"visitCaseLabelList",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								caseLabelListContext) -> super.visitCaseLabelList(
-																					caseLabelListContext)
+								for (int i = 0; i < caseStatementContext.caseLabelList().size(); i++) {
+									org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext labels = caseStatementContext
+											.caseLabelList(
+															i);
+
+									for (org.daiitech.naftah.parser.NaftahParser.ExpressionContext expression : labels
+											.expression()) {
+										Object labelValue = defaultNaftahParserVisitor.visit(expression);
+
+										if (Builtin.equals(labelValue, controlValue)) {
+											org.daiitech.naftah.parser.NaftahParser.BlockContext block = caseStatementContext
+													.block(i);
+											result = defaultNaftahParserVisitor.visit(block);
+											matched = true;
+											break;
+										}
+									}
+
+									if (matched) {
+										break;
+									}
+								}
+
+								if (!matched && caseStatementContext.ELSE() != null) {
+									org.daiitech.naftah.parser.NaftahParser.BlockContext elseBlock = caseStatementContext
+											.block(
+													caseStatementContext
+															.block()
+															.size() - 1);
+									result = defaultNaftahParserVisitor.visit(elseBlock);
+								}
+
+								return result;
+							}
 		);
 	}
 
