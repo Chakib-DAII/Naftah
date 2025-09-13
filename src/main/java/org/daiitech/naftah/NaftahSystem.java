@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -121,16 +122,48 @@ public final class NaftahSystem {
 		if (OS.isFamilyWindows()) {
 			ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 			executor
-					.scheduleAtFixedRate(   () -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
-											0,
-											500,
-											TimeUnit.MILLISECONDS);
+					.scheduleAtFixedRate(() -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
+										 0,
+										 500,
+										 TimeUnit.MILLISECONDS);
 		}
 		else {
-			// TODO: check support for Linux systems (didn't work for a ubuntu Virtual machine)
+			AtomicBoolean winchTriggered = new AtomicBoolean(false);
+			int[] lastSize = {-1, -1};
+
 			terminal
 					.handle(Terminal.Signal.WINCH,
-							signal -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)));
+							signal -> {
+								winchTriggered.set(true);  // mark signal was received
+								setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal));
+							});
+
+			// Poll terminal size every 1s to check for manual window resize
+			ScheduledExecutorService resizeChecker = Executors.newSingleThreadScheduledExecutor();
+
+			resizeChecker.scheduleAtFixedRate(() -> {
+				int[] currentSize = getTerminalWidthAndHeight(terminal);
+				boolean sizeChanged = currentSize[0] != lastSize[0] || currentSize[1] != lastSize[1];
+
+				if (sizeChanged && !winchTriggered.get()) {
+					// WINCH didn't fire, but terminal resized — use fallback executor
+					ScheduledExecutorService fallbackExecutor = Executors.newSingleThreadScheduledExecutor();
+					fallbackExecutor.scheduleAtFixedRate(
+							() -> setupTerminalWidthAndHeight(() -> getTerminalWidthAndHeight(terminal)),
+							0,
+							500,
+							TimeUnit.MILLISECONDS
+					);
+					resizeChecker.shutdown();  // Stop monitoring
+				}
+				else if (winchTriggered.get()) {
+					resizeChecker.shutdown();  // Stop monitoring
+				}
+
+				lastSize[0] = currentSize[0];
+				lastSize[1] = currentSize[1];
+
+			}, 1, 1, TimeUnit.SECONDS);
 		}
 	}
 
