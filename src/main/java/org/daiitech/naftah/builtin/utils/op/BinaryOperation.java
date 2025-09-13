@@ -1141,7 +1141,7 @@ public enum BinaryOperation implements Operation {
 	};
 
 	/**
-	 * The symbolic representation of the binary operator,
+	 * The symbolic representation of the binary operator.
 	 */
 	private final String op;
 
