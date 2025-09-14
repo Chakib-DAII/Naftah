@@ -85,9 +85,7 @@ public final class ObjectUtils {
 
 		// Number (includes Integer, Double, etc.)
 		if (obj instanceof Number num) {
-			// TODO: enhance to support all kind of numbers (using DynamicNumber)
-			double value = num.doubleValue();
-			return value != 0.0 && !Double.isNaN(value);
+			return !(DynamicNumber.isNaN(num) || NumberUtils.isZero(num));
 		}
 
 		// String
@@ -114,7 +112,7 @@ public final class ObjectUtils {
 			return isTruthy(entry.getKey()) && isTruthy(entry.getValue());
 		}
 
-		return !NaN.isNaN(obj) && !None.isNone(obj);
+		return !(NaN.isNaN(obj) || None.isNone(obj));
 	}
 
 	/**
@@ -453,7 +451,6 @@ public final class ObjectUtils {
 			if (NaN.isNaN(left) || NaN.isNaN(right)) {
 				return NaN.get();
 			}
-			// TODO: think about maybe treating null as 0
 			throw newNaftahBugNullInputError(false, left, right);
 		}
 
@@ -530,7 +527,6 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object a, UnaryOperation operation) {
 		if (a == null) {
-			// TODO: think about maybe treating null as 0
 			throw newNaftahBugNullInputError(true, a);
 		}
 
