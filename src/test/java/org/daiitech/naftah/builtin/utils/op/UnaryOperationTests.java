@@ -2,6 +2,7 @@ package org.daiitech.naftah.builtin.utils.op;
 
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -122,7 +123,7 @@ public class UnaryOperationTests {
 		result = UnaryOperation.NOT.apply(NaN.get());
 		assertTrue((Boolean) result);
 		result = UnaryOperation.BITWISE_NOT.apply(NaN.get());
-		assertEquals(-1, result);
+		assertTrue(NumberUtils.equals(-1, result));
 	}
 
 	@Test
@@ -138,6 +139,6 @@ public class UnaryOperationTests {
 		result = UnaryOperation.NOT.apply(None.get());
 		assertTrue((Boolean) result);
 		result = UnaryOperation.BITWISE_NOT.apply(None.get());
-		assertEquals(-1, result);
+		assertTrue(NumberUtils.equals(-1, result));
 	}
 }
