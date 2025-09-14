@@ -1105,8 +1105,79 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								repeatStatementContext) -> super.visitRepeatStatement(
-																						repeatStatementContext)
+								repeatStatementContext) -> {
+								Object result = None.get();
+								boolean loopInStack = false;
+								String label = currentLoopLabel((String) (Objects
+										.isNull(repeatStatementContext.label()) ?
+												null :
+												defaultNaftahParserVisitor.visit(repeatStatementContext.label())),
+																defaultNaftahParserVisitor.depth);
+								currentContext.setLoopLabel(label);
+
+								boolean loopSignal = false;
+								boolean propagateLoopSignal = false;
+
+								try {
+									pushLoop(label, repeatStatementContext);
+									loopInStack = true;
+
+									do {
+										visit(repeatStatementContext.block());
+
+										if (checkLoopSignal(result).equals(CONTINUE)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												continue;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												break;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+											loopSignal = true;
+											break;
+										}
+
+										// force current loop label
+										currentContext.setLoopLabel(label);
+									}
+									while (!isTruthy(visit(repeatStatementContext.expression())));
+
+								}
+								finally {
+									currentContext.setLoopLabel(null);
+									if (loopInStack) {
+										popLoop();
+									}
+								}
+
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
+
+							}
 		);
 	}
 
