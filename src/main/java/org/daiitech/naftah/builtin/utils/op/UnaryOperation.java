@@ -357,10 +357,6 @@ public enum UnaryOperation implements Operation {
 												op);
 	}
 
-
-	// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating
-	//  and using dynamic number
-
 	/**
 	 * Applies this unary operation to a dynamically typed operand.
 	 * <p>

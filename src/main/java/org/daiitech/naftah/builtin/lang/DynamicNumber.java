@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 
@@ -22,7 +23,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputErr
  *
  * @author Chakib Daii
  */
-public class DynamicNumber {
+public class DynamicNumber extends Number implements Cloneable {
 	/**
 	 * The underlying numeric value.
 	 */
@@ -35,10 +36,7 @@ public class DynamicNumber {
 	 * @throws org.daiitech.naftah.errors.NaftahBugError if the value is null
 	 */
 	public DynamicNumber(Number value) {
-		if (value == null) {
-			throw newNaftahBugNullInputError(true, value);
-		}
-		this.value = value;
+		set(value);
 	}
 
 	/**
@@ -50,10 +48,15 @@ public class DynamicNumber {
 	 * @see NumberUtils#parseDynamicNumber(Object)
 	 */
 	public DynamicNumber(Object value) {
-		if (value == null) {
+		if (value == null || None.isNone(value)) {
 			throw newNaftahBugNullInputError(true, value);
 		}
-		this.value = NumberUtils.parseDynamicNumber(value);
+		else if (NaN.isNaN(value)) {
+			this.value = Double.NaN;
+		}
+		else {
+			this.value = NumberUtils.parseDynamicNumber(value);
+		}
 	}
 
 	/**
@@ -63,7 +66,7 @@ public class DynamicNumber {
 	 * @return a new {@code DynamicNumber} wrapping the given value
 	 */
 	public static DynamicNumber of(Number value) {
-		return new DynamicNumber(value);
+		return value instanceof DynamicNumber dynamicNumber ? dynamicNumber.clone() : new DynamicNumber(value);
 	}
 
 	/**
@@ -73,7 +76,47 @@ public class DynamicNumber {
 	 * @return a new {@code DynamicNumber} representing the parsed value
 	 */
 	public static DynamicNumber of(Object value) {
-		return new DynamicNumber(value);
+		return value instanceof DynamicNumber dynamicNumber ? dynamicNumber.clone() : new DynamicNumber(value);
+	}
+
+	/**
+	 * Checks if the given number is NaN (Not-a-Number).
+	 * <p>
+	 * Only applies to {@link Float} and {@link Double} values.
+	 * If the number is an instance of {@code DynamicNumber}, it will be unwrapped first.
+	 *
+	 * @param number the number to check
+	 * @return {@code true} if the number is {@code NaN}, {@code false} otherwise
+	 */
+	public static boolean isNaN(Number number) {
+		number = number instanceof DynamicNumber dynamicNumber ? dynamicNumber.value : number;
+		if (number instanceof Double d) {
+			return Double.isNaN(d);
+		}
+		if (number instanceof Float f) {
+			return Float.isNaN(f);
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if the given number is positive or negative infinity.
+	 * <p>
+	 * Only applies to {@link Float} and {@link Double} values.
+	 * If the number is an instance of {@code DynamicNumber}, it will be unwrapped first.
+	 *
+	 * @param number the number to check
+	 * @return {@code true} if the number is {@code Infinity} or {@code -Infinity}, {@code false} otherwise
+	 */
+	public static boolean isInfinite(Number number) {
+		number = number instanceof DynamicNumber dynamicNumber ? dynamicNumber.value : number;
+		if (number instanceof Double d) {
+			return Double.isInfinite(d);
+		}
+		if (number instanceof Float f) {
+			return Float.isInfinite(f);
+		}
+		return false;
 	}
 
 	/**
@@ -82,7 +125,7 @@ public class DynamicNumber {
 	 * @return true if the underlying value is a Byte
 	 */
 	public boolean isByte() {
-		return value instanceof Byte;
+		return !isNaN() && value instanceof Byte;
 	}
 
 	/**
@@ -91,7 +134,7 @@ public class DynamicNumber {
 	 * @return true if the underlying value is a Short
 	 */
 	public boolean isShort() {
-		return value instanceof Short;
+		return !isNaN() && value instanceof Short;
 	}
 
 	/**
@@ -100,7 +143,7 @@ public class DynamicNumber {
 	 * @return true if the underlying value is an Integer
 	 */
 	public boolean isInt() {
-		return value instanceof Integer;
+		return !isNaN() && value instanceof Integer;
 	}
 
 	/**
@@ -109,7 +152,7 @@ public class DynamicNumber {
 	 * @return true if the underlying value is a Long
 	 */
 	public boolean isLong() {
-		return value instanceof Long;
+		return !isNaN() && value instanceof Long;
 	}
 
 	/**
@@ -118,7 +161,7 @@ public class DynamicNumber {
 	 * @return true if the underlying value is a BigInteger
 	 */
 	public boolean isBigInteger() {
-		return value instanceof BigInteger;
+		return !isNaN() && value instanceof BigInteger;
 	}
 
 	/**
@@ -128,7 +171,7 @@ public class DynamicNumber {
 	 * @return true if the value is an integral number
 	 */
 	public boolean isInteger() {
-		return isByte() || isShort() || isInt() || isLong() || isBigInteger();
+		return !isNaN() && (isByte() || isShort() || isInt() || isLong() || isBigInteger());
 	}
 
 	/**
@@ -137,7 +180,7 @@ public class DynamicNumber {
 	 * @return true if the underlying value is a Float
 	 */
 	public boolean isFloat() {
-		return value instanceof Float;
+		return !isNaN() && value instanceof Float;
 	}
 
 	/**
@@ -146,7 +189,7 @@ public class DynamicNumber {
 	 * @return true if the underlying value is a Double
 	 */
 	public boolean isDouble() {
-		return value instanceof Double;
+		return !isNaN() && value instanceof Double;
 	}
 
 	/**
@@ -155,7 +198,7 @@ public class DynamicNumber {
 	 * @return true if the underlying value is a BigDecimal
 	 */
 	public boolean isBigDecimal() {
-		return value instanceof BigDecimal;
+		return !isNaN() && value instanceof BigDecimal;
 	}
 
 	/**
@@ -165,25 +208,7 @@ public class DynamicNumber {
 	 * @return true if the value is a decimal number
 	 */
 	public boolean isDecimal() {
-		return isFloat() || isDouble() || isBigDecimal();
-	}
-
-	/**
-	 * Returns the value as a byte.
-	 *
-	 * @return the byte value
-	 */
-	public byte asByte() {
-		return value.byteValue();
-	}
-
-	/**
-	 * Returns the value as a short.
-	 *
-	 * @return the short value
-	 */
-	public short asShort() {
-		return value.shortValue();
+		return !isNaN() && (isFloat() || isDouble() || isBigDecimal());
 	}
 
 	/**
@@ -191,7 +216,8 @@ public class DynamicNumber {
 	 *
 	 * @return the int value
 	 */
-	public int asInt() {
+	@Override
+	public int intValue() {
 		return value.intValue();
 	}
 
@@ -200,7 +226,8 @@ public class DynamicNumber {
 	 *
 	 * @return the long value
 	 */
-	public long asLong() {
+	@Override
+	public long longValue() {
 		return value.longValue();
 	}
 
@@ -209,7 +236,8 @@ public class DynamicNumber {
 	 *
 	 * @return the float value
 	 */
-	public float asFloat() {
+	@Override
+	public float floatValue() {
 		return value.floatValue();
 	}
 
@@ -218,7 +246,8 @@ public class DynamicNumber {
 	 *
 	 * @return the double value
 	 */
-	public double asDouble() {
+	@Override
+	public double doubleValue() {
 		return value.doubleValue();
 	}
 
@@ -270,6 +299,9 @@ public class DynamicNumber {
 	 * @return this {@code DynamicNumber} instance for chaining
 	 */
 	public DynamicNumber set(Number value) {
+		if (value == null) {
+			throw newNaftahBugNullInputError(true, value);
+		}
 		this.value = value;
 		return this;
 	}
@@ -290,84 +322,134 @@ public class DynamicNumber {
 	 */
 	public DynamicNumber promote() {
 		if (isByte()) {
-			return new DynamicNumber(asShort()); // Byte -> Short
+			set(shortValue()); // Byte -> Short
 		}
 		else if (isShort()) {
-			return new DynamicNumber(asInt()); // Short -> Int
+			set(intValue()); // Short -> Int
 		}
 		else if (isInt()) {
-			return new DynamicNumber(asLong()); // Int -> Long
+			set(longValue()); // Int -> Long
 		}
 		else if (isLong()) {
-			return new DynamicNumber(asBigInteger()); // Long -> BigInteger
+			set(asBigInteger()); // Long -> BigInteger
 		}
 		else if (isFloat()) {
-			return new DynamicNumber(asDouble()); // Float -> Double
+			set(doubleValue()); // Float -> Double
 		}
 		else if (isDouble()) {
-			return new DynamicNumber(asBigDecimal()); // Double -> BigDecimal
+			set(asBigDecimal()); // Double -> BigDecimal
 		}
-		else {
-			// BigInteger, BigDecimal or unknown: no promotion possible
-			return this;
-		}
+		return this;
 	}
 
 	/**
-	 * Normalizes the number to the smallest suitable numeric type.
+	 * Normalizes the internal number value to the smallest suitable numeric type.
 	 * <p>
-	 * For example, it will convert BigDecimal without fractional part to BigInteger,
-	 * BigInteger values that fit into a long down to long, and long values down to
-	 * int, short, or byte if possible.
+	 * This method simplifies the internal representation of the number when possible:
+	 * <ul>
+	 * <li>Converts a {@code BigDecimal} with no fractional part to a {@code BigInteger}</li>
+	 * <li>Downcasts a {@code BigInteger} to {@code long} if it fits</li>
+	 * <li>Downcasts integral {@code long} values to {@code int}, {@code short}, or {@code byte} if within range</li>
+	 * <li>If floating point support is enabled via {@link #normalize(boolean)}, it also tries to:
+	 * <ul>
+	 * <li>Convert {@code Double} values to {@code Float} if within precision range</li>
+	 * <li>Convert whole {@code Float} or {@code Double} values to integral types</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
 	 *
-	 * @return a new {@code DynamicNumber} with the normalized value
+	 * @return {@code this}, after normalizing the value in place
+	 * @see #normalize(boolean)
 	 */
 	public DynamicNumber normalize() {
+		return normalize(false);
+	}
+
+	/**
+	 * Normalizes the internal number to the most compact numeric type possible,
+	 * optionally including support for floating point number simplification.
+	 * <p>
+	 * The normalization process works as follows:
+	 * <ul>
+	 * <li><b>{@code BigDecimal}:</b> If it has no fractional part, it's converted to {@code BigInteger}</li>
+	 * <li><b>{@code BigInteger}:</b> Downcast to {@code long} if it fits (bit length ≤ 63)</li>
+	 * <li><b>{@code long}:</b> Downcast to {@code int}, {@code short}, or {@code byte} if within range</li>
+	 * <li><b>{@code Double}/{@code Float}:</b> If {@code processFloatingNumbers} is {@code true}, and:
+	 * <ul>
+	 * <li>It's a finite, whole number → convert to {@code long} and then normalize further</li>
+	 * <li>{@code Double} fits in {@code Float} range → convert to {@code Float}</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * <p>
+	 * Special floating-point values like {@code NaN} or {@code Infinity} are preserved and skipped.
+	 *
+	 * @param processFloatingNumbers whether to process and simplify {@code Float} / {@code Double} types
+	 * @return {@code this}, after normalizing the value in place
+	 */
+	public DynamicNumber normalize(boolean processFloatingNumbers) {
 		Number val = this.value;
-
-		if (val instanceof BigDecimal bd) {
-			try {
-				// Try to convert BigDecimal to BigInteger if no decimal part
-				if (bd.stripTrailingZeros().scale() <= 0) {
-					BigInteger bi = bd.toBigIntegerExact();
-					return new DynamicNumber(bi).normalize();
+		if (!isNaN()) {
+			if (val instanceof BigDecimal bd) {
+				try {
+					// Try to convert BigDecimal to BigInteger if no decimal part
+					if (bd.stripTrailingZeros().scale() <= 0) {
+						BigInteger bi = bd.toBigIntegerExact();
+						set(bi).normalize();
+					}
+				}
+				catch (ArithmeticException e) {
+					// Can't convert exactly to BigInteger, keep as BigDecimal
 				}
 			}
-			catch (ArithmeticException e) {
-				// Can't convert exactly to BigInteger, keep as BigDecimal
-				return this;
+			else if (processFloatingNumbers && val instanceof Double d && !(isNaN(d) || isInfinite(d))) {
+				if (d >= Float.MIN_VALUE && d <= Float.MAX_VALUE) {
+					set(d.floatValue()).normalize();
+				}
+				else if (d == Math.rint(d)) { // has no fractional part
+					set(d.longValue()).normalize(); // downcast via long
+				}
 			}
-			return this; // keep BigDecimal as is if decimal part exists
-		}
-
-		if (val instanceof BigInteger bi) {
-			// Try to downcast BigInteger to Long if fits
-			if (bi.bitLength() <= 63) {
+			else if (processFloatingNumbers && val instanceof Float f && !(Float.isNaN(f) || Float
+					.isInfinite(f)) && f == Math
+							.rint(
+									f)) {
+										set(f.longValue()).normalize();
+									}
+			else if (val instanceof BigInteger bi && bi.bitLength() <= 63) {
+				// downcast BigInteger to Long if fits
 				long l = bi.longValue();
-				return new DynamicNumber(l).normalize();
+				set(l).normalize();
 			}
-			return this; // keep BigInteger if too big
-		}
+			else if (isInteger() && !isBigInteger()) {
+				long longVal = val.longValue();
 
-		long longVal = val.longValue();
+				// Check fits in int?
+				if (longVal >= Integer.MIN_VALUE && longVal <= Integer.MAX_VALUE) {
+					int intVal = (int) longVal;
 
-		// Check fits in int?
-		if (longVal >= Integer.MIN_VALUE && longVal <= Integer.MAX_VALUE) {
-			int intVal = (int) longVal;
+					// Check fits in short?
+					if (intVal >= Short.MIN_VALUE && intVal <= Short.MAX_VALUE) {
+						short shortVal = (short) intVal;
 
-			// Check fits in short?
-			if (intVal >= Short.MIN_VALUE && intVal <= Short.MAX_VALUE) {
-				short shortVal = (short) intVal;
-
-				// Check fits in byte?
-				if (shortVal >= Byte.MIN_VALUE && shortVal <= Byte.MAX_VALUE) {
-					return new DynamicNumber((byte) shortVal);
+						// Check fits in byte?
+						if (shortVal >= Byte.MIN_VALUE && shortVal <= Byte.MAX_VALUE) {
+							set((byte) shortVal);
+						}
+						else {
+							set(shortVal);
+						}
+					}
+					else {
+						set(intVal);
+					}
 				}
-				return new DynamicNumber(shortVal);
+				else {
+					set(longVal); // keep as long
+				}
 			}
-			return new DynamicNumber(intVal);
 		}
-		return new DynamicNumber(longVal); // keep as long
+		return this;
 	}
 
 	/**
@@ -389,7 +471,7 @@ public class DynamicNumber {
 
 		DynamicNumber that = (DynamicNumber) o;
 
-		return NumberUtils.equals(this, that);
+		return !isNaN() && NumberUtils.equals(this, that);
 	}
 
 	/**
@@ -399,7 +481,7 @@ public class DynamicNumber {
 	 */
 	@Override
 	public int hashCode() {
-		return value.hashCode();
+		return isNaN() ? NaN.get().hashCode() : value.hashCode();
 	}
 
 	/**
@@ -409,17 +491,64 @@ public class DynamicNumber {
 	 */
 	@Override
 	public String toString() {
-		if (value instanceof BigDecimal bd) {
-			return bd.toPlainString();
+		String result;
+		if (isNaN()) {
+			result = NaN.get().toString();
+		}
+		else if (value == null || None.isNone(value)) {
+			result = None.get().toString();
+		}
+		else if (value instanceof BigDecimal bd) {
+			result = bd.toPlainString();
 		}
 		else if (value instanceof BigInteger bi) {
-			return bi.toString();
+			result = bi.toString();
 		}
 		else if (value instanceof Float || value instanceof Double) {
-			return new BigDecimal(value.toString()).toPlainString();
+			result = new BigDecimal(value.toString()).toPlainString();
 		}
 		else {
-			return value.toString();
+			result = value.toString();
+		}
+		return result;
+	}
+
+	/**
+	 * Checks if the internal value is a floating-point NaN (Not-a-Number).
+	 *
+	 * @return {@code true} if the value is NaN, otherwise {@code false}
+	 * @see #isNaN(Number)
+	 */
+	public boolean isNaN() {
+		return isNaN(value);
+	}
+
+	/**
+	 * Checks if the internal value is positive or negative infinity.
+	 *
+	 * @return {@code true} if the value is {@code Infinity} or {@code -Infinity}, otherwise {@code false}
+	 * @see #isInfinite(Number)
+	 */
+	public boolean isInfinite() {
+		return isInfinite(value);
+	}
+
+	/**
+	 * Creates and returns a copy of this {@code DynamicNumber}.
+	 * <p>
+	 * This performs a shallow clone. If your subclass adds mutable fields,
+	 * ensure they are also copied to prevent shared state.
+	 *
+	 * @return a cloned copy of this instance
+	 * @throws NaftahBugError if cloning fails unexpectedly
+	 */
+	@Override
+	public DynamicNumber clone() {
+		try {
+			return (DynamicNumber) super.clone();
+		}
+		catch (CloneNotSupportedException e) {
+			throw new NaftahBugError("فشل الاستنساخ بشكل غير متوقع.", e);
 		}
 	}
 }

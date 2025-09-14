@@ -101,9 +101,9 @@ public final class NumberUtils {
 	 * @param text         the numeric string to parse
 	 * @param radix        the base to use for whole number parsing (from 2 to 36)
 	 * @param originalText the original string (in case of base numbers after using
-	 * @{@link org.daiitech.naftah.utils.arabic.ArabicUtils#convertArabicToLatinLetterByLetter(String)})
 	 * @return the parsed {@code Number} instance (type chosen dynamically)
 	 * @throws RuntimeException if parsing fails, the radix is invalid, or result is NaN/infinite
+	 * @{@link org.daiitech.naftah.utils.arabic.ArabicUtils#convertArabicToLatinLetterByLetter(String)})
 	 */
 	public static Number parseDynamicNumber(String text, int radix, String originalText) {
 		if (text == null) {
@@ -316,8 +316,8 @@ public final class NumberUtils {
 	 * @return the result of addition
 	 */
 	public static Number add(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return add(dx, dy);
 	}
 
@@ -329,72 +329,71 @@ public final class NumberUtils {
 	 * @return the result of addition
 	 */
 	public static Number add(DynamicNumber dx, DynamicNumber dy) {
-		Number result;
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().add(dy.asBigDecimal());
+				dx.set(dx.asBigDecimal().add(dy.asBigDecimal()));
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				double res = dx.asDouble() + dy.asDouble();
+				double res = dx.doubleValue() + dy.doubleValue();
 				if (Double.isInfinite(res) || Double.isNaN(res)) {
 					// Promote to BigDecimal
-					result = dx.promote().asBigDecimal().add(dy.promote().asBigDecimal());
+					dx.set(dx.promote().asBigDecimal().add(dy.promote().asBigDecimal()));
 				}
 				else {
 					BigDecimal expected = dx.asBigDecimal().add(dy.asBigDecimal());
-					result = checkPrecision(expected, res);
+					dx.set(checkPrecision(expected, res));
 				}
 			}
 			else {
-				float res = dx.asFloat() + dy.asFloat();
+				float res = dx.floatValue() + dy.floatValue();
 				if (Float.isInfinite(res) || Float.isNaN(res)) {
-					result = dx.promote().asDouble() + dy.promote().asDouble();
+					dx.set(dx.promote().doubleValue() + dy.promote().doubleValue());
 				}
 				else {
 					BigDecimal expected = dx.asBigDecimal().add(dy.asBigDecimal());
-					result = checkPrecision(expected, res);
+					dx.set(checkPrecision(expected, res));
 				}
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
 			if (dx.isBigInteger() || dy.isBigInteger()) {
-				result = dx.asBigInteger().add(dy.asBigInteger());
+				dx.set(dx.asBigInteger().add(dy.asBigInteger()));
 			}
 			else if (dx.isLong() || dy.isLong()) {
-				long a = dx.asLong();
-				long b = dy.asLong();
+				long a = dx.longValue();
+				long b = dy.longValue();
 				try {
-					result = Math.addExact(a, b);
+					dx.set(Math.addExact(a, b));
 				}
 				catch (ArithmeticException e) {
-					result = BigInteger.valueOf(a).add(BigInteger.valueOf(b));
+					dx.set(BigInteger.valueOf(a).add(BigInteger.valueOf(b)));
 				}
 			}
 			else if (dx.isInt() || dy.isInt()) {
-				int a = dx.asInt();
-				int b = dy.asInt();
+				int a = dx.intValue();
+				int b = dy.intValue();
 				try {
-					result = Math.addExact(a, b);
+					dx.set(Math.addExact(a, b));
 				}
 				catch (ArithmeticException e) {
-					result = (long) a + b;
+					dx.set((long) a + b);
 				}
 			}
 			else if (dx.isShort() || dy.isShort()) {
-				short a = dx.asShort();
-				short b = dy.asShort();
-				result = a + b; // promotes to int
+				short a = dx.shortValue();
+				short b = dy.shortValue();
+				dx.set(a + b); // promotes to int
 			}
 			else {
-				byte a = dx.asByte();
-				byte b = dy.asByte();
-				result = a + b; // promotes to int
+				byte a = dx.byteValue();
+				byte b = dy.byteValue();
+				dx.set(a + b); // promotes to int
 			}
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
-		return result;
+		return dx.normalize();
 	}
 
 	/**
@@ -419,8 +418,8 @@ public final class NumberUtils {
 	 * @return the result of subtraction
 	 */
 	public static Number subtract(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return subtract(dx, dy);
 	}
 
@@ -432,75 +431,68 @@ public final class NumberUtils {
 	 * @return the result of subtraction
 	 */
 	public static Number subtract(DynamicNumber dx, DynamicNumber dy) {
-		Number result;
-
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.set(dx.asBigDecimal().subtract(dy.asBigDecimal())).normalize().get();
+				dx.set(dx.asBigDecimal().subtract(dy.asBigDecimal()));
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				double res = dx.asDouble() - dy.asDouble();
+				double res = dx.doubleValue() - dy.doubleValue();
 				if (Double.isInfinite(res) || Double.isNaN(res)) {
-					result = dx
-							.set(dx.promote().asBigDecimal().subtract(dy.promote().asBigDecimal()))
-							.normalize()
-							.get();
+					dx.set(dx.promote().asBigDecimal().subtract(dy.promote().asBigDecimal()));
 				}
 				else {
-					result = res;
+					dx.set(res);
 				}
 			}
 			else {
-				float res = dx.asFloat() - dy.asFloat();
+				float res = dx.floatValue() - dy.floatValue();
 				if (Float.isInfinite(res) || Float.isNaN(res)) {
-					result = dx.promote().asDouble() - dy.promote().asDouble();
+					dx.set(dx.promote().doubleValue() - dy.promote().doubleValue());
 				}
 				else {
-					result = res;
+					dx.set(res);
 				}
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
 			if (dx.isBigInteger() || dy.isBigInteger()) {
-				result = dx.asBigInteger().subtract(dy.asBigInteger());
+				dx.set(dx.asBigInteger().subtract(dy.asBigInteger()));
 			}
 			else if (dx.isLong() || dy.isLong()) {
-				long a = dx.asLong();
-				long b = dy.asLong();
+				long a = dx.longValue();
+				long b = dy.longValue();
 				try {
-					result = Math.subtractExact(a, b);
+					dx.set(Math.subtractExact(a, b));
 				}
 				catch (ArithmeticException e) {
-					result = BigInteger.valueOf(a).subtract(BigInteger.valueOf(b));
+					dx.set(BigInteger.valueOf(a).subtract(BigInteger.valueOf(b)));
 				}
 			}
 			else if (dx.isInt() || dy.isInt()) {
-				int a = dx.asInt();
-				int b = dy.asInt();
+				int a = dx.intValue();
+				int b = dy.intValue();
 				try {
-					result = Math.subtractExact(a, b);
+					dx.set(Math.subtractExact(a, b));
 				}
 				catch (ArithmeticException e) {
-					result = (long) a - b;
+					dx.set((long) a - b);
 				}
 			}
 			else if (dx.isShort() || dy.isShort()) {
-				short a = dx.asShort();
-				short b = dy.asShort();
-				result = a - b;
+				short a = dx.shortValue();
+				short b = dy.shortValue();
+				dx.set(a - b);
 			}
 			else {
-				byte a = dx.asByte();
-				byte b = dy.asByte();
-				result = a - b;
+				byte a = dx.byteValue();
+				byte b = dy.byteValue();
+				dx.set(a - b);
 			}
-			// Normalize for all integer results
-			result = dx.set(result).normalize().get();
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
-		return result;
+		return dx.normalize();
 	}
 
 	/**
@@ -525,8 +517,8 @@ public final class NumberUtils {
 	 * @return the result of multiplication
 	 */
 	public static Number multiply(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return multiply(dx, dy);
 	}
 
@@ -538,81 +530,80 @@ public final class NumberUtils {
 	 * @return the result of multiplication
 	 */
 	public static Number multiply(DynamicNumber dx, DynamicNumber dy) {
-		Number result;
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().multiply(dy.asBigDecimal());
+				dx.set(dx.asBigDecimal().multiply(dy.asBigDecimal()));
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				double res = dx.asDouble() * dy.asDouble();
+				double res = dx.doubleValue() * dy.doubleValue();
 
 				// Check for overflow or infinity
 				if (Double.isInfinite(res) || Double.isNaN(res)) {
-					result = dx.promote().asBigDecimal().multiply(dy.promote().asBigDecimal());
+					dx.set(dx.promote().asBigDecimal().multiply(dy.promote().asBigDecimal()));
 				}
 				else {
-					result = res;
+					dx.set(res);
 				}
 			}
 			else {
-				float res = dx.asFloat() * dy.asFloat();
+				float res = dx.floatValue() * dy.floatValue();
 				if (Float.isInfinite(res) || Float.isNaN(res)) {
-					result = dx.promote().asDouble() * dy.promote().asDouble();
+					dx.set(dx.promote().doubleValue() * dy.promote().doubleValue());
 				}
 				else {
-					result = res;
+					dx.set(res);
 				}
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
 			// If either is BigInteger, use BigInteger multiplication
 			if (dx.isBigInteger() || dy.isBigInteger()) {
-				result = dx.asBigInteger().multiply(dy.asBigInteger());
+				dx.set(dx.asBigInteger().multiply(dy.asBigInteger()));
 			}
 
-			// Handle long carefully (to avoid overflow)
 			else if (dx.isLong() || dy.isLong()) {
-				long a = dx.asLong();
-				long b = dy.asLong();
+				// Handle long carefully (to avoid overflow)
+				long a = dx.longValue();
+				long b = dy.longValue();
 
 				// Check for overflow using Math.multiplyExact
 				try {
-					result = Math.multiplyExact(a, b);
+					dx.set(Math.multiplyExact(a, b));
 				}
 				catch (ArithmeticException e) {
 					// Promote to BigInteger
-					result = BigInteger.valueOf(a).multiply(BigInteger.valueOf(b));
+					dx.set(BigInteger.valueOf(a).multiply(BigInteger.valueOf(b)));
 				}
 			}
 
-			// Handle int (with promotion on overflow)
 			else if (dx.isInt() || dy.isInt()) {
-				int a = dx.asInt();
-				int b = dy.asInt();
+				// Handle int (with promotion on overflow)
+				int a = dx.intValue();
+				int b = dy.intValue();
 				try {
-					result = Math.multiplyExact(a, b);
+					dx.set(Math.multiplyExact(a, b));
 				}
 				catch (ArithmeticException e) {
-					result = (long) a * b;
+					dx.set((long) a * b);
 				}
 			}
 
-			// Handle short and byte with safe promotion
 			else if (dx.isShort() || dy.isShort()) {
-				short a = dx.asShort();
-				short b = dy.asShort();
-				result = a * b;
+				// Handle short and byte with safe promotion
+				short a = dx.shortValue();
+				short b = dy.shortValue();
+				dx.set(a * b);
 			}
 			else {
-				byte a = dx.asByte();
-				byte b = dy.asByte();
-				result = a * b;
+				byte a = dx.byteValue();
+				byte b = dy.byteValue();
+				dx.set(a * b);
 			}
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
-		return result;
+		return dx.normalize();
 	}
 
 	/**
@@ -637,8 +628,8 @@ public final class NumberUtils {
 	 * @return the result of division
 	 */
 	public static Number divide(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return divide(dx, dy);
 	}
 
@@ -650,39 +641,38 @@ public final class NumberUtils {
 	 * @return the result of division
 	 */
 	public static Number divide(DynamicNumber dx, DynamicNumber dy) {
-		Number result;
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().divide(dy.asBigDecimal(), MathContext.UNLIMITED);
+				dx.set(dx.asBigDecimal().divide(dy.asBigDecimal(), MathContext.UNLIMITED));
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				result = dx.asDouble() / dy.asDouble();
+				dx.set(dx.doubleValue() / dy.doubleValue());
 			}
 			else {
-				result = dx.asFloat() / dy.asFloat();
+				dx.set(dx.floatValue() / dy.floatValue());
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
 			if (dx.isBigInteger() || dy.isBigInteger()) {
-				result = dx.asBigInteger().divide(dy.asBigInteger());
+				dx.set(dx.asBigInteger().divide(dy.asBigInteger()));
 			}
 			else if (dx.isLong() || dy.isLong()) {
-				result = dx.asLong() / dy.asLong();
+				dx.set(dx.longValue() / dy.longValue());
 			}
 			else if (dx.isInt() || dy.isInt()) {
-				result = dx.asInt() / dy.asInt();
+				dx.set(dx.intValue() / dy.intValue());
 			}
 			else if (dx.isShort() || dy.isShort()) {
-				result = dx.asShort() / dy.asShort();
+				dx.set(dx.shortValue() / dy.shortValue());
 			}
 			else {
-				result = dx.asByte() / dy.asByte();
+				dx.set(dx.byteValue() / dy.byteValue());
 			}
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
-		return result;
+		return dx.normalize();
 	}
 
 	/**
@@ -707,8 +697,8 @@ public final class NumberUtils {
 	 * @return the result of division
 	 */
 	public static Number modulo(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return modulo(dx, dy);
 	}
 
@@ -721,39 +711,38 @@ public final class NumberUtils {
 	 * @return the result of division
 	 */
 	public static Number modulo(DynamicNumber dx, DynamicNumber dy) {
-		Number result;
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().remainder(dy.asBigDecimal());
+				dx.set(dx.asBigDecimal().remainder(dy.asBigDecimal()));
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				result = dx.asDouble() % dy.asDouble();
+				dx.set(dx.doubleValue() % dy.doubleValue());
 			}
 			else {
-				result = dx.asFloat() % dy.asFloat();
+				dx.set(dx.floatValue() % dy.floatValue());
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
 			if (dx.isBigInteger() || dy.isBigInteger()) {
-				result = dx.asBigInteger().remainder(dy.asBigInteger());
+				dx.set(dx.asBigInteger().remainder(dy.asBigInteger()));
 			}
 			else if (dx.isLong() || dy.isLong()) {
-				result = dx.asLong() % dy.asLong();
+				dx.set(dx.longValue() % dy.longValue());
 			}
 			else if (dx.isInt() || dy.isInt()) {
-				result = dx.asInt() % dy.asInt();
+				dx.set(dx.intValue() % dy.intValue());
 			}
 			else if (dx.isShort() || dy.isShort()) {
-				result = dx.asShort() % dy.asShort();
+				dx.set(dx.shortValue() % dy.shortValue());
 			}
 			else {
-				result = dx.asByte() % dy.asByte();
+				dx.set(dx.byteValue() % dy.byteValue());
 			}
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
-		return result;
+		return dx.normalize();
 	}
 
 	/**
@@ -778,8 +767,8 @@ public final class NumberUtils {
 	 * @return the greatest of {@code x} and {@code y}, as a {@code Number}
 	 */
 	public static Number max(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return max(dx, dy);
 	}
 
@@ -792,33 +781,32 @@ public final class NumberUtils {
 	 * @return the greatest of {@code dx} and {@code dy}, as a {@code Number}
 	 */
 	public static Number max(DynamicNumber dx, DynamicNumber dy) {
-		Number result;
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().max(dy.asBigDecimal());
+				dx.set(dx.asBigDecimal().max(dy.asBigDecimal()));
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				result = Math.max(dx.asDouble(), dy.asDouble());
+				dx.set(Math.max(dx.doubleValue(), dy.doubleValue()));
 			}
 			else {
-				result = Math.max(dx.asFloat(), dy.asFloat());
+				dx.set(Math.max(dx.floatValue(), dy.floatValue()));
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
 			if (dx.isBigInteger() || dy.isBigInteger()) {
-				result = dx.asBigInteger().max(dy.asBigInteger());
+				dx.set(dx.asBigInteger().max(dy.asBigInteger()));
 			}
 			else if (dx.isLong() || dy.isLong()) {
-				result = Math.max(dx.asLong(), dy.asLong());
+				dx.set(Math.max(dx.longValue(), dy.longValue()));
 			}
 			else {
-				result = Math.max(dx.asInt(), dy.asInt());
+				dx.set(Math.max(dx.intValue(), dy.intValue()));
 			}
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
-		return result;
+		return dx.normalize();
 	}
 
 	/**
@@ -843,8 +831,8 @@ public final class NumberUtils {
 	 * @return the least of {@code x} and {@code y}, as a {@code Number}
 	 */
 	public static Number min(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return min(dx, dy);
 	}
 
@@ -857,33 +845,32 @@ public final class NumberUtils {
 	 * @return the least of {@code dx} and {@code dy}, as a {@code Number}
 	 */
 	public static Number min(DynamicNumber dx, DynamicNumber dy) {
-		Number result;
 		if (dx.isDecimal() || dy.isDecimal()) {
 			if (dx.isBigDecimal() || dy.isBigDecimal()) {
-				result = dx.asBigDecimal().min(dy.asBigDecimal());
+				dx.set(dx.asBigDecimal().min(dy.asBigDecimal()));
 			}
 			else if (dx.isDouble() || dy.isDouble()) {
-				result = Math.min(dx.asDouble(), dy.asDouble());
+				dx.set(Math.min(dx.doubleValue(), dy.doubleValue()));
 			}
 			else {
-				result = Math.min(dx.asFloat(), dy.asFloat());
+				dx.set(Math.min(dx.floatValue(), dy.floatValue()));
 			}
 		}
 		else if (dx.isInteger() || dy.isInteger()) {
 			if (dx.isBigInteger() || dy.isBigInteger()) {
-				result = dx.asBigInteger().min(dy.asBigInteger());
+				dx.set(dx.asBigInteger().min(dy.asBigInteger()));
 			}
 			else if (dx.isLong() || dy.isLong()) {
-				result = Math.min(dx.asLong(), dy.asLong());
+				dx.set(Math.min(dx.longValue(), dy.longValue()));
 			}
 			else {
-				result = Math.min(dx.asInt(), dy.asInt());
+				dx.set(Math.min(dx.intValue(), dy.intValue()));
 			}
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
 		}
-		return result;
+		return dx.normalize();
 	}
 
 	/**
@@ -911,7 +898,7 @@ public final class NumberUtils {
 	 * Number}
 	 */
 	public static Number pow(Object base, int exponent) {
-		DynamicNumber dx = base instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(base);
+		DynamicNumber dx = DynamicNumber.of(base);
 		return pow(dx, exponent);
 	}
 
@@ -932,27 +919,27 @@ public final class NumberUtils {
 					BigDecimal result = BigDecimal.ONE
 							.divide(base.asBigDecimal().pow(-exponent),
 									RoundingMode.HALF_UP);
-					return base.set(result).normalize().get();
+					base.set(result);
 				}
 				else {
-					return base.set(base.asBigDecimal().pow(exponent)).normalize().get();
+					base.set(base.asBigDecimal().pow(exponent));
 				}
 			}
 			else {
-				double res = Math.pow(base.asDouble(), exponent);
+				double res = Math.pow(base.doubleValue(), exponent);
 				if (Double.isInfinite(res) || Double.isNaN(res)) {
 					// Promote to BigDecimal for better precision and large values
 					BigDecimal bdBase = base.promote().asBigDecimal();
-					BigDecimal result;
 					if (exponent < 0) {
-						result = BigDecimal.ONE.divide(bdBase.pow(-exponent), RoundingMode.HALF_UP);
+						base.set(BigDecimal.ONE.divide(bdBase.pow(-exponent), RoundingMode.HALF_UP));
 					}
 					else {
-						result = bdBase.pow(exponent);
+						base.set(bdBase.pow(exponent));
 					}
-					return base.set(result).normalize().get();
 				}
-				return res;
+				else {
+					base.set(res);
+				}
 			}
 		}
 		else if (base.isInteger()) {
@@ -960,32 +947,32 @@ public final class NumberUtils {
 				if (exponent < 0) {
 					// Promote to BigDecimal for negative exponent
 					BigDecimal bdBase = new BigDecimal(base.asBigInteger());
-					BigDecimal result = BigDecimal.ONE.divide(bdBase.pow(-exponent));
-					return base.set(result).normalize().get();
+					base.set(BigDecimal.ONE.divide(bdBase.pow(-exponent)));
 				}
 				else {
-					return base.set(base.asBigInteger().pow(exponent)).normalize().get();
+					base.set(base.asBigInteger().pow(exponent));
 				}
 			}
 			else {
 				try {
 					long result = 1;
-					long b = base.asLong();
+					long b = base.longValue();
 					for (int i = 0; i < exponent; i++) {
 						result = Math.multiplyExact(result, b);
 					}
-					return base.set(result).normalize().get();
+					base.set(result);
 				}
 				catch (ArithmeticException e) {
 					// Overflow, promote to BigInteger and recurse
-					BigInteger bigBase = BigInteger.valueOf(base.asLong());
-					return base.set(bigBase.pow(exponent)).normalize().get();
+					BigInteger bigBase = BigInteger.valueOf(base.longValue());
+					base.set(bigBase.pow(exponent));
 				}
 			}
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, base);
 		}
+		return base.normalize();
 	}
 
 	/**
@@ -1007,7 +994,7 @@ public final class NumberUtils {
 	 * @return the rounded number
 	 */
 	public static Number round(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return round(dx);
 	}
 
@@ -1028,12 +1015,15 @@ public final class NumberUtils {
 													signum >= 0 ?
 															RoundingMode.HALF_UP :
 															RoundingMode.HALF_DOWN);
-			return bd.round(context);
+			dx.set(bd.round(context));
 		}
-		if (dx.isDouble() || dx.isLong()) {
-			return Math.round(dx.asDouble());
+		else if (dx.isDouble() || dx.isLong()) {
+			dx.set(Math.round(dx.doubleValue()));
 		}
-		return Math.round(dx.asFloat());
+		else {
+			dx.set(Math.round(dx.floatValue()));
+		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1057,7 +1047,7 @@ public final class NumberUtils {
 	 * @return the rounded number
 	 */
 	public static Number floor(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return floor(dx);
 	}
 
@@ -1070,29 +1060,30 @@ public final class NumberUtils {
 	 */
 	public static Number floor(DynamicNumber dx) {
 		if (dx.isBigDecimal()) {
-			return dx.asBigDecimal().setScale(0, RoundingMode.FLOOR);
+			dx.set(dx.asBigDecimal().setScale(0, RoundingMode.FLOOR));
 		}
 		else if (dx.isBigInteger()) {
-			return dx.asBigInteger(); // floor is identity for BigInteger
+			dx.set(dx.asBigInteger()); // floor is identity for BigInteger
 		}
 		else if (dx.isDouble() || dx.isFloat()) {
-			return Math.floor(dx.asDouble());
+			dx.set(Math.floor(dx.doubleValue()));
 		}
 		else if (dx.isLong()) {
-			return dx.asLong();
+			dx.set(dx.longValue());
 		}
 		else if (dx.isInt()) {
-			return dx.asInt();
+			dx.set(dx.intValue());
 		}
 		else if (dx.isShort()) {
-			return dx.asShort();
+			dx.set(dx.shortValue());
 		}
 		else if (dx.isByte()) {
-			return dx.asByte();
+			dx.set(dx.byteValue());
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1116,7 +1107,7 @@ public final class NumberUtils {
 	 * @return the ceiling value
 	 */
 	public static Number ceil(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return ceil(dx);
 	}
 
@@ -1129,29 +1120,30 @@ public final class NumberUtils {
 	 */
 	public static Number ceil(DynamicNumber dx) {
 		if (dx.isBigDecimal()) {
-			return dx.asBigDecimal().setScale(0, RoundingMode.CEILING);
+			dx.set(dx.asBigDecimal().setScale(0, RoundingMode.CEILING));
 		}
 		else if (dx.isBigInteger()) {
-			return dx.asBigInteger(); // floor is identity for BigInteger
+			dx.set(dx.asBigInteger()); // floor is identity for BigInteger
 		}
 		else if (dx.isDouble() || dx.isFloat()) {
-			return Math.ceil(dx.asDouble());
+			dx.set(Math.ceil(dx.doubleValue()));
 		}
 		else if (dx.isLong()) {
-			return dx.asLong();
+			dx.set(dx.longValue());
 		}
 		else if (dx.isInt()) {
-			return dx.asInt();
+			dx.set(dx.intValue());
 		}
 		else if (dx.isShort()) {
-			return dx.asShort();
+			dx.set(dx.shortValue());
 		}
 		else if (dx.isByte()) {
-			return dx.asByte();
+			dx.set(dx.byteValue());
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1173,7 +1165,7 @@ public final class NumberUtils {
 	 * @return the negated number
 	 */
 	public static Number negate(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return negate(dx);
 	}
 
@@ -1184,35 +1176,34 @@ public final class NumberUtils {
 	 * @return the negated number
 	 */
 	public static Number negate(DynamicNumber dx) {
-		Number result;
 		if (dx.isBigDecimal()) {
-			result = dx.asBigDecimal().negate();
+			dx.set(dx.asBigDecimal().negate());
 		}
 		else if (dx.isDouble()) {
-			result = -dx.asDouble();
+			dx.set(-dx.doubleValue());
 		}
 		else if (dx.isFloat()) {
-			result = -dx.asFloat();
+			dx.set(-dx.floatValue());
 		}
 		else if (dx.isBigInteger()) {
-			result = dx.asBigInteger().negate();
+			dx.set(dx.asBigInteger().negate());
 		}
 		else if (dx.isLong()) {
-			result = -dx.asLong();
+			dx.set(-dx.longValue());
 		}
 		else if (dx.isInt()) {
-			result = -dx.asInt();
+			dx.set(-dx.intValue());
 		}
 		else if (dx.isShort()) {
-			result = -dx.asShort();
+			dx.set(-dx.shortValue());
 		}
 		else if (dx.isByte()) {
-			result = -dx.asByte();
+			dx.set(-dx.byteValue());
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
-		return result;
+		return dx.normalize();
 	}
 
 	/**
@@ -1234,7 +1225,7 @@ public final class NumberUtils {
 	 * @return the square root of the number
 	 */
 	public static Number sqrt(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return sqrt(dx);
 	}
 
@@ -1248,13 +1239,16 @@ public final class NumberUtils {
 		if (compare(dx, 0) < 0) {
 			throw newNaftahNegativeNumberError();
 		}
-		if (dx.isBigDecimal()) {
-			return dx.asBigDecimal().sqrt(DECIMAL128);
+		else if (dx.isBigDecimal()) {
+			dx.set(dx.asBigDecimal().sqrt(DECIMAL128));
 		}
-		if (dx.isBigInteger()) {
-			return dx.asBigInteger().sqrt();
+		else if (dx.isBigInteger()) {
+			dx.set(dx.asBigInteger().sqrt());
 		}
-		return Math.sqrt(dx.asDouble());
+		else {
+			dx.set(Math.sqrt(dx.doubleValue()));
+		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1276,7 +1270,7 @@ public final class NumberUtils {
 	 * @return the absolute value of the number
 	 */
 	public static Number abs(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return abs(dx);
 	}
 
@@ -1288,12 +1282,15 @@ public final class NumberUtils {
 	 */
 	public static Number abs(DynamicNumber dx) {
 		if (dx.isDecimal()) {
-			return dx.asBigDecimal().abs();
+			dx.set(dx.asBigDecimal().abs());
 		}
-		if (dx.isBigInteger()) {
-			return dx.asBigInteger().abs();
+		else if (dx.isBigInteger()) {
+			dx.set(dx.asBigInteger().abs());
 		}
-		return Math.abs(dx.asDouble());
+		else {
+			dx.set(Math.abs(dx.doubleValue()));
+		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1315,7 +1312,7 @@ public final class NumberUtils {
 	 * @return -1 if the number is negative, 0 if zero, and 1 if positive
 	 */
 	public static int signum(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return signum(dx);
 	}
 
@@ -1326,13 +1323,17 @@ public final class NumberUtils {
 	 * @return -1 if the number is negative, 0 if zero, and 1 if positive
 	 */
 	public static int signum(DynamicNumber dx) {
+		int signum;
 		if (dx.isDecimal()) {
-			return dx.asBigDecimal().signum();
+			signum = dx.asBigDecimal().signum();
 		}
-		if (dx.isInteger()) {
-			return dx.asBigInteger().signum();
+		else if (dx.isInteger()) {
+			signum = dx.asBigInteger().signum();
 		}
-		return Double.compare(dx.asDouble(), 0);
+		else {
+			signum = Double.compare(dx.doubleValue(), 0);
+		}
+		return signum;
 	}
 
 	/**
@@ -1354,7 +1355,7 @@ public final class NumberUtils {
 	 * @return {@code true} if the number is zero; {@code false} otherwise
 	 */
 	public static boolean isZero(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return isZero(dx);
 	}
 
@@ -1392,8 +1393,8 @@ public final class NumberUtils {
 	 *         {@code false} otherwise
 	 */
 	public static boolean equals(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return equals(dx, dy);
 	}
 
@@ -1433,8 +1434,8 @@ public final class NumberUtils {
 	 *         positive integer if {@code x > y}
 	 */
 	public static int compare(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return compare(dx, dy);
 	}
 
@@ -1498,8 +1499,8 @@ public final class NumberUtils {
 	 * @see #and(DynamicNumber, DynamicNumber)
 	 */
 	public static Number and(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return and(dx, dy);
 	}
 
@@ -1515,23 +1516,24 @@ public final class NumberUtils {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(false, dx, dy);
 		}
 		else if (dx.isBigInteger()) {
-			return dx.asBigInteger().and(dy.asBigInteger());
+			dx.set(dx.asBigInteger().and(dy.asBigInteger()));
 		}
 		else if (dx.isLong()) {
-			return dx.asLong() & dy.asLong();
+			dx.set(dx.longValue() & dy.longValue());
 		}
 		else if (dx.isInt()) {
-			return dx.asInt() & dy.asInt();
+			dx.set(dx.intValue() & dy.intValue());
 		}
 		else if (dx.isShort()) {
-			return dx.asShort() & dy.asShort();
+			dx.set(dx.shortValue() & dy.shortValue());
 		}
 		else if (dx.isByte()) {
-			return dx.asByte() & dy.asByte();
+			dx.set(dx.byteValue() & dy.byteValue());
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1572,8 +1574,8 @@ public final class NumberUtils {
 	 * @see #or(DynamicNumber, DynamicNumber)
 	 */
 	public static Number or(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return or(dx, dy);
 	}
 
@@ -1589,23 +1591,24 @@ public final class NumberUtils {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(false, dx, dy);
 		}
 		else if (dx.isBigInteger()) {
-			return dx.asBigInteger().or(dy.asBigInteger());
+			dx.set(dx.asBigInteger().or(dy.asBigInteger()));
 		}
 		else if (dx.isLong()) {
-			return dx.asLong() | dy.asLong();
+			dx.set(dx.longValue() | dy.longValue());
 		}
 		else if (dx.isInt()) {
-			return dx.asInt() | dy.asInt();
+			dx.set(dx.intValue() | dy.intValue());
 		}
 		else if (dx.isShort()) {
-			return dx.asShort() | dy.asShort();
+			dx.set(dx.shortValue() | dy.shortValue());
 		}
 		else if (dx.isByte()) {
-			return dx.asByte() | dy.asByte();
+			dx.set(dx.byteValue() | dy.byteValue());
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1646,8 +1649,8 @@ public final class NumberUtils {
 	 * @see #xor(DynamicNumber, DynamicNumber)
 	 */
 	public static Number xor(Object x, Object y) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
-		DynamicNumber dy = y instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(y);
+		DynamicNumber dx = DynamicNumber.of(x);
+		DynamicNumber dy = DynamicNumber.of(y);
 		return xor(dx, dy);
 	}
 
@@ -1663,23 +1666,24 @@ public final class NumberUtils {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(false, dx, dy);
 		}
 		else if (dx.isBigInteger()) {
-			return dx.asBigInteger().xor(dy.asBigInteger());
+			dx.set(dx.asBigInteger().xor(dy.asBigInteger()));
 		}
 		else if (dx.isLong()) {
-			return dx.asLong() ^ dy.asLong();
+			dx.set(dx.longValue() ^ dy.longValue());
 		}
 		else if (dx.isInt()) {
-			return dx.asInt() ^ dy.asInt();
+			dx.set(dx.intValue() ^ dy.intValue());
 		}
 		else if (dx.isShort()) {
-			return dx.asShort() ^ dy.asShort();
+			dx.set(dx.shortValue() ^ dy.shortValue());
 		}
 		else if (dx.isByte()) {
-			return dx.asByte() ^ dy.asByte();
+			dx.set(dx.byteValue() ^ dy.byteValue());
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1717,7 +1721,7 @@ public final class NumberUtils {
 	 * @see #not(DynamicNumber)
 	 */
 	public static Number not(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return not(dx);
 	}
 
@@ -1732,23 +1736,24 @@ public final class NumberUtils {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(true, dx);
 		}
 		else if (dx.isBigInteger()) {
-			return dx.asBigInteger().not();
+			dx.set(dx.asBigInteger().not());
 		}
 		else if (dx.isLong()) {
-			return ~dx.asLong();
+			dx.set(~dx.longValue());
 		}
 		else if (dx.isInt()) {
-			return ~dx.asInt();
+			dx.set(~dx.intValue());
 		}
 		else if (dx.isShort()) {
-			return ~dx.asShort();
+			dx.set(~dx.shortValue());
 		}
 		else if (dx.isByte()) {
-			return ~dx.asByte();
+			dx.set(~dx.byteValue());
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1791,7 +1796,7 @@ public final class NumberUtils {
 	 * @see #shiftLeft(DynamicNumber, int)
 	 */
 	public static Number shiftLeft(Object x, int positions) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return shiftLeft(dx, positions);
 	}
 
@@ -1809,59 +1814,59 @@ public final class NumberUtils {
 		if (dx.isDecimal()) {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(true, dx);
 		}
-		else if (isZero(dx)) {
-			return 0;
+		else if (!isZero(dx)) {
+			if (dx.isBigInteger()) {
+				dx.set(shiftLeft(dx.asBigInteger(), positions));
+			}
+			else if (dx.isLong()) {
+				try {
+					checkLeftShiftOverflow(Long.SIZE, Long.MAX_VALUE, Long.MIN_VALUE, dx.asBigInteger(), positions);
+					dx.set(dx.longValue() << positions);
+				}
+				catch (ArithmeticException ignored) {
+					dx.set(shiftLeft(dx.asBigInteger(), positions));
+				}
+			}
+			else if (dx.isInt()) {
+				try {
+					checkLeftShiftOverflow( Integer.SIZE,
+											Integer.MAX_VALUE,
+											Integer.MIN_VALUE,
+											dx.asBigInteger(),
+											positions);
+					dx.set(dx.intValue() << positions);
+				}
+				catch (ArithmeticException ignored) {
+					dx.set(shiftLeft(dx.asBigInteger(), positions));
+				}
+			}
+			else if (dx.isShort()) {
+				try {
+					checkLeftShiftOverflow( Short.SIZE,
+											Short.MAX_VALUE,
+											Short.MIN_VALUE,
+											dx.asBigInteger(),
+											positions);
+					dx.set(dx.shortValue() << positions);
+				}
+				catch (ArithmeticException ignored) {
+					dx.set(shiftLeft(dx.asBigInteger(), positions));
+				}
+			}
+			else if (dx.isByte()) {
+				try {
+					checkLeftShiftOverflow(Byte.SIZE, Byte.MAX_VALUE, Byte.MIN_VALUE, dx.asBigInteger(), positions);
+					dx.set(dx.byteValue() << positions);
+				}
+				catch (ArithmeticException ignored) {
+					dx.set(shiftLeft(dx.asBigInteger(), positions));
+				}
+			}
+			else {
+				throw newNaftahBugUnsupportedNumbersError(true, dx);
+			}
 		}
-		else if (dx.isBigInteger()) {
-			return shiftLeft(dx.asBigInteger(), positions);
-		}
-		else if (dx.isLong()) {
-			try {
-				checkLeftShiftOverflow(Long.SIZE, Long.MAX_VALUE, Long.MIN_VALUE, dx.asBigInteger(), positions);
-				return dx.asLong() << positions;
-			}
-			catch (ArithmeticException ignored) {
-				return shiftLeft(dx.asBigInteger(), positions);
-			}
-		}
-		else if (dx.isInt()) {
-			try {
-				checkLeftShiftOverflow( Integer.SIZE,
-										Integer.MAX_VALUE,
-										Integer.MIN_VALUE,
-										dx.asBigInteger(),
-										positions);
-				return dx.asInt() << positions;
-			}
-			catch (ArithmeticException ignored) {
-				return shiftLeft(dx.asBigInteger(), positions);
-			}
-		}
-		else if (dx.isShort()) {
-			try {
-				checkLeftShiftOverflow( Short.SIZE,
-										Short.MAX_VALUE,
-										Short.MIN_VALUE,
-										dx.asBigInteger(),
-										positions);
-				return dx.asShort() << positions;
-			}
-			catch (ArithmeticException ignored) {
-				return shiftLeft(dx.asBigInteger(), positions);
-			}
-		}
-		else if (dx.isByte()) {
-			try {
-				checkLeftShiftOverflow(Byte.SIZE, Byte.MAX_VALUE, Byte.MIN_VALUE, dx.asBigInteger(), positions);
-				return dx.asByte() << positions;
-			}
-			catch (ArithmeticException ignored) {
-				return shiftLeft(dx.asBigInteger(), positions);
-			}
-		}
-		else {
-			throw newNaftahBugUnsupportedNumbersError(true, dx);
-		}
+		return dx.normalize();
 	}
 
 	/**
@@ -1924,7 +1929,7 @@ public final class NumberUtils {
 	 * @see #shiftRight(DynamicNumber, int)
 	 */
 	public static Number shiftRight(Object x, int positions) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return shiftRight(dx, positions);
 	}
 
@@ -1942,33 +1947,33 @@ public final class NumberUtils {
 		if (dx.isDecimal()) {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(true, dx);
 		}
-		else if (isZero(dx)) {
-			return 0;
+		else if (!isZero(dx)) {
+			if (dx.isBigInteger()) {
+				var bigInteger = dx.asBigInteger();
+				checkShiftPositions(bigInteger.bitLength(), positions);
+				dx.set(bigInteger.shiftRight(positions));
+			}
+			else if (dx.isLong()) {
+				checkShiftPositions(Long.SIZE, positions);
+				dx.set(dx.longValue() >> positions);
+			}
+			else if (dx.isInt()) {
+				checkShiftPositions(Integer.SIZE, positions);
+				dx.set(dx.intValue() >> positions);
+			}
+			else if (dx.isShort()) {
+				checkShiftPositions(Short.SIZE, positions);
+				dx.set(dx.shortValue() >> positions);
+			}
+			else if (dx.isByte()) {
+				checkShiftPositions(Byte.SIZE, positions);
+				dx.set(dx.byteValue() >> positions);
+			}
+			else {
+				throw newNaftahBugUnsupportedNumbersError(true, dx);
+			}
 		}
-		else if (dx.isBigInteger()) {
-			var bigInteger = dx.asBigInteger();
-			checkShiftPositions(bigInteger.bitLength(), positions);
-			return bigInteger.shiftRight(positions);
-		}
-		else if (dx.isLong()) {
-			checkShiftPositions(Long.SIZE, positions);
-			return dx.asLong() >> positions;
-		}
-		else if (dx.isInt()) {
-			checkShiftPositions(Integer.SIZE, positions);
-			return dx.asInt() >> positions;
-		}
-		else if (dx.isShort()) {
-			checkShiftPositions(Short.SIZE, positions);
-			return dx.asShort() >> positions;
-		}
-		else if (dx.isByte()) {
-			checkShiftPositions(Byte.SIZE, positions);
-			return dx.asByte() >> positions;
-		}
-		else {
-			throw newNaftahBugUnsupportedNumbersError(true, dx);
-		}
+		return dx.normalize();
 	}
 
 	/**
@@ -2010,7 +2015,7 @@ public final class NumberUtils {
 	 * @see #unsignedShiftRight(DynamicNumber, int)
 	 */
 	public static Number unsignedShiftRight(Object x, int positions) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return unsignedShiftRight(dx, positions);
 	}
 
@@ -2029,33 +2034,33 @@ public final class NumberUtils {
 		if (dx.isDecimal()) {
 			throw newNaftahBugUnsupportedBitwiseDecimalError(true, dx);
 		}
-		else if (isZero(dx)) {
-			return 0;
+		else if (!isZero(dx)) {
+			if (dx.isBigInteger()) {
+				var bigInteger = dx.asBigInteger();
+				checkShiftPositions(bigInteger.bitLength(), positions);
+				dx.set(unsignedShiftRight(bigInteger, positions));
+			}
+			else if (dx.isLong()) {
+				checkShiftPositions(Long.SIZE, positions);
+				dx.set(dx.longValue() >>> positions);
+			}
+			else if (dx.isInt()) {
+				checkShiftPositions(Integer.SIZE, positions);
+				dx.set(dx.intValue() >>> positions);
+			}
+			else if (dx.isShort()) {
+				checkShiftPositions(Short.SIZE, positions);
+				dx.set(dx.shortValue() >>> positions);
+			}
+			else if (dx.isByte()) {
+				checkShiftPositions(Byte.SIZE, positions);
+				dx.set(dx.byteValue() >>> positions);
+			}
+			else {
+				throw newNaftahBugUnsupportedNumbersError(true, dx);
+			}
 		}
-		else if (dx.isBigInteger()) {
-			var bigInteger = dx.asBigInteger();
-			checkShiftPositions(bigInteger.bitLength(), positions);
-			return unsignedShiftRight(bigInteger, positions);
-		}
-		else if (dx.isLong()) {
-			checkShiftPositions(Long.SIZE, positions);
-			return dx.asLong() >>> positions;
-		}
-		else if (dx.isInt()) {
-			checkShiftPositions(Integer.SIZE, positions);
-			return dx.asInt() >>> positions;
-		}
-		else if (dx.isShort()) {
-			checkShiftPositions(Short.SIZE, positions);
-			return dx.asShort() >>> positions;
-		}
-		else if (dx.isByte()) {
-			checkShiftPositions(Byte.SIZE, positions);
-			return dx.asByte() >>> positions;
-		}
-		else {
-			throw newNaftahBugUnsupportedNumbersError(true, dx);
-		}
+		return dx.normalize();
 	}
 
 	/**
@@ -2091,7 +2096,7 @@ public final class NumberUtils {
 	 * @see #preIncrement(DynamicNumber)
 	 */
 	public static Number preIncrement(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return preIncrement(dx);
 	}
 
@@ -2117,57 +2122,52 @@ public final class NumberUtils {
 	 * @throws NaftahBugError if the underlying numeric type is not supported.
 	 */
 	public static Number preIncrement(DynamicNumber dx) {
-		Number val = dx.get();
-
-		if (dx.isByte() && val.byteValue() == Byte.MAX_VALUE) {
-			return dx.promote().set(dx.promote().get().intValue() + 1).get();
+		if (dx.isByte() && dx.byteValue() == Byte.MAX_VALUE) {
+			dx.promote().set(dx.promote().shortValue() + 1);
 		}
-		if (dx.isShort() && val.shortValue() == Short.MAX_VALUE) {
-			return dx.promote().set(dx.promote().get().intValue() + 1).get();
+		else if (dx.isShort() && dx.shortValue() == Short.MAX_VALUE) {
+			dx.promote().set(dx.promote().intValue() + 1);
 		}
-		if (dx.isInt() && val.intValue() == Integer.MAX_VALUE) {
-			return dx.promote().set(dx.promote().get().longValue() + 1L).get();
+		else if (dx.isInt() && dx.intValue() == Integer.MAX_VALUE) {
+			dx.promote().set(dx.promote().longValue() + 1L);
 		}
-		if (dx.isLong() && val.longValue() == Long.MAX_VALUE) {
-			return dx.promote().set(((BigInteger) dx.promote().get()).add(BigInteger.ONE)).get();
+		else if (dx.isLong() && dx.longValue() == Long.MAX_VALUE) {
+			dx.promote().set(((BigInteger) dx.promote().get()).add(BigInteger.ONE));
 		}
-		if (dx.isFloat() && (val.floatValue() == Float.MAX_VALUE || Float.isNaN(val.floatValue()) || Float
-				.isInfinite(val.floatValue()))) {
-			return dx.promote().set(dx.promote().get().doubleValue() + 1d).get();
+		else if (dx.isFloat() && (dx.floatValue() == Float.MAX_VALUE || dx.isNaN() || dx.isInfinite())) {
+			dx.promote().set(dx.promote().doubleValue() + 1d);
 		}
-		if (dx.isDouble() && (val.doubleValue() == Double.MAX_VALUE || Double.isNaN(val.doubleValue()) || Double
-				.isInfinite(val.doubleValue()))) {
-			return dx.promote().set(((BigDecimal) dx.promote().get()).add(BigDecimal.ONE)).get();
+		else if (dx.isDouble() && (dx.doubleValue() == Double.MAX_VALUE || dx.isNaN() || dx.isInfinite())) {
+			dx.promote().set(((BigDecimal) dx.promote().get()).add(BigDecimal.ONE));
 		}
-
-		// For BigInteger, BigDecimal or normal increment
-		if (dx.isBigInteger()) {
-			return dx.set(dx.asBigInteger().add(BigInteger.ONE)).get();
+		else if (dx.isBigInteger()) {
+			dx.set(dx.asBigInteger().add(BigInteger.ONE));
 		}
-		if (dx.isBigDecimal()) {
-			return dx.set(dx.asBigDecimal().add(BigDecimal.ONE)).get();
+		else if (dx.isBigDecimal()) {
+			dx.set(dx.asBigDecimal().add(BigDecimal.ONE));
 		}
-
-		// Normal increment for smaller types without overflow
-		if (dx.isByte()) {
-			return dx.set(val.byteValue() + 1).get();
+		else if (dx.isByte()) {
+			dx.set(dx.byteValue() + 1);
 		}
-		if (dx.isShort()) {
-			return dx.set(val.shortValue() + 1).get();
+		else if (dx.isShort()) {
+			dx.set(dx.shortValue() + 1);
 		}
-		if (dx.isInt()) {
-			return dx.set(val.intValue() + 1).get();
+		else if (dx.isInt()) {
+			dx.set(dx.intValue() + 1);
 		}
-		if (dx.isLong()) {
-			return dx.set(val.longValue() + 1L).get();
+		else if (dx.isLong()) {
+			dx.set(dx.longValue() + 1L);
 		}
-		if (dx.isFloat()) {
-			return dx.set(val.floatValue() + 1f).get();
+		else if (dx.isFloat()) {
+			dx.set(dx.floatValue() + 1f);
 		}
-		if (dx.isDouble()) {
-			return dx.set(val.doubleValue() + 1d).get();
+		else if (dx.isDouble()) {
+			dx.set(dx.doubleValue() + 1d);
 		}
-		throw newNaftahBugUnsupportedNumbersError(true, dx);
+		else {
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
+		}
+		return dx.normalize();
 	}
 
 	/**
@@ -2205,7 +2205,7 @@ public final class NumberUtils {
 	 * @see #postIncrement(DynamicNumber)
 	 */
 	public static Number postIncrement(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return postIncrement(dx);
 	}
 
@@ -2231,107 +2231,66 @@ public final class NumberUtils {
 	 * @throws NaftahBugError if the number type is unsupported.
 	 */
 	public static Number postIncrement(DynamicNumber dx) {
-		Number val = dx.get();
+		DynamicNumber current = dx.clone();
 
-		// Helper to update and return old value
-		Number oldValue;
-
-		// Handle overflow and promotion for integer types
 		if (dx.isByte()) {
-			oldValue = val.byteValue();
-			if (val.byteValue() == Byte.MAX_VALUE) {
-				DynamicNumber promoted = dx.promote();
-				promoted.set(promoted.get().intValue() + 1);
-				dx.set(promoted.get());
+			if (current.byteValue() == Byte.MAX_VALUE) {
+				dx.set(dx.promote().shortValue() + 1);
 			}
 			else {
-				dx.set(val.byteValue() + 1);
+				dx.set(dx.byteValue() + 1);
 			}
-			return oldValue;
 		}
-
-		if (dx.isShort()) {
-			oldValue = val.shortValue();
-			if (val.shortValue() == Short.MAX_VALUE) {
-				DynamicNumber promoted = dx.promote();
-				promoted.set(promoted.get().intValue() + 1);
-				dx.set(promoted.get());
+		else if (dx.isShort()) {
+			if (current.shortValue() == Short.MAX_VALUE) {
+				dx.set(dx.promote().intValue() + 1);
 			}
 			else {
-				dx.set(val.shortValue() + 1);
+				dx.set(dx.shortValue() + 1);
 			}
-			return oldValue;
 		}
-
-		if (dx.isInt()) {
-			oldValue = val.intValue();
-			if (val.intValue() == Integer.MAX_VALUE) {
-				DynamicNumber promoted = dx.promote();
-				promoted.set(promoted.get().longValue() + 1L);
-				dx.set(promoted.get());
+		else if (dx.isInt()) {
+			if (current.intValue() == Integer.MAX_VALUE) {
+				dx.set(dx.promote().longValue() + 1L);
 			}
 			else {
-				dx.set(val.intValue() + 1);
+				dx.set(dx.intValue() + 1);
 			}
-			return oldValue;
 		}
-
-		if (dx.isLong()) {
-			oldValue = val.longValue();
-			if (val.longValue() == Long.MAX_VALUE) {
-				DynamicNumber promoted = dx.promote();
-				promoted.set(((BigInteger) promoted.get()).add(BigInteger.ONE));
-				dx.set(promoted.get());
+		else if (dx.isLong()) {
+			if (current.longValue() == Long.MAX_VALUE) {
+				dx.set(((BigInteger) dx.promote().get()).add(BigInteger.ONE));
 			}
 			else {
-				dx.set(val.longValue() + 1L);
+				dx.set(dx.longValue() + 1L);
 			}
-			return oldValue;
 		}
-
-		// Handle overflow and promotion for floating types
-		if (dx.isFloat()) {
-			oldValue = val.floatValue();
-			if (oldValue.equals(Float.MAX_VALUE) || Float.isNaN(oldValue.floatValue()) || Float
-					.isInfinite(oldValue.floatValue())) {
-				DynamicNumber promoted = dx.promote();
-				promoted.set(promoted.get().doubleValue() + 1d);
-				dx.set(promoted.get());
+		else if (dx.isFloat()) {
+			if (current.floatValue() == Float.MAX_VALUE || current.isNaN() || current.isInfinite()) {
+				dx.set(dx.promote().doubleValue() + 1d);
 			}
 			else {
-				dx.set(val.floatValue() + 1f);
+				dx.set(dx.floatValue() + 1f);
 			}
-			return oldValue;
 		}
-
-		if (dx.isDouble()) {
-			oldValue = val.doubleValue();
-			if (oldValue.equals(Double.MAX_VALUE) || Double.isNaN(oldValue.doubleValue()) || Double
-					.isInfinite(oldValue.doubleValue())) {
-				DynamicNumber promoted = dx.promote();
-				promoted.set(((BigDecimal) promoted.get()).add(BigDecimal.ONE));
-				dx.set(promoted.get());
+		else if (dx.isDouble()) {
+			if (current.doubleValue() == Double.MAX_VALUE || current.isNaN() || current.isInfinite()) {
+				dx.set(((BigDecimal) dx.promote().get()).add(BigDecimal.ONE));
 			}
 			else {
-				dx.set(val.doubleValue() + 1d);
+				dx.set(dx.doubleValue() + 1d);
 			}
-			return oldValue;
 		}
-
-		// For BigInteger and BigDecimal, no overflow, just increment
-		if (dx.isBigInteger()) {
-			oldValue = dx.asBigInteger();
+		else if (dx.isBigInteger()) {
 			dx.set(dx.asBigInteger().add(BigInteger.ONE));
-			return oldValue;
 		}
-
-		if (dx.isBigDecimal()) {
-			oldValue = dx.asBigDecimal();
+		else if (dx.isBigDecimal()) {
 			dx.set(dx.asBigDecimal().add(BigDecimal.ONE));
-			return oldValue;
 		}
-
-		throw newNaftahBugUnsupportedNumbersError(true, dx);
+		else {
+			throw newNaftahBugUnsupportedNumbersError(true, dx);
+		}
+		return current.normalize();
 	}
 
 	/**
@@ -2367,7 +2326,7 @@ public final class NumberUtils {
 	 * @see #preDecrement(DynamicNumber)
 	 */
 	public static Number preDecrement(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return preDecrement(dx);
 	}
 
@@ -2395,39 +2354,32 @@ public final class NumberUtils {
 	public static Number preDecrement(DynamicNumber dx) {
 		if (dx.isBigDecimal()) {
 			dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE));
-			return dx.normalize().get();
 		}
 		else if (dx.isBigInteger()) {
 			dx.set(dx.asBigInteger().subtract(BigInteger.ONE));
-			return dx.normalize().get();
 		}
 		else if (dx.isDouble()) {
-			dx.set(dx.asDouble() - 1);
-			return dx.get();
+			dx.set(dx.doubleValue() - 1);
 		}
 		else if (dx.isFloat()) {
-			dx.set(dx.asFloat() - 1);
-			return dx.get();
+			dx.set(dx.floatValue() - 1);
 		}
 		else if (dx.isLong()) {
-			dx.set(dx.asLong() - 1);
-			return dx.normalize().get();
+			dx.set(dx.longValue() - 1);
 		}
 		else if (dx.isInt()) {
-			dx.set(dx.asInt() - 1);
-			return dx.normalize().get();
+			dx.set(dx.intValue() - 1);
 		}
 		else if (dx.isShort()) {
-			dx.set(dx.asShort() - 1);
-			return dx.normalize().get();
+			dx.set(dx.shortValue() - 1);
 		}
 		else if (dx.isByte()) {
-			dx.set(dx.asByte() - 1);
-			return dx.get();
+			dx.set(dx.byteValue() - 1);
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
+		return dx.normalize();
 	}
 
 	/**
@@ -2465,7 +2417,7 @@ public final class NumberUtils {
 	 * @see #postDecrement(DynamicNumber)
 	 */
 	public static Number postDecrement(Object x) {
-		DynamicNumber dx = x instanceof DynamicNumber dynamicNumber ? dynamicNumber : DynamicNumber.of(x);
+		DynamicNumber dx = DynamicNumber.of(x);
 		return postDecrement(dx);
 	}
 
@@ -2490,49 +2442,41 @@ public final class NumberUtils {
 	 * @throws NaftahBugError if the number type is unsupported.
 	 */
 	public static Number postDecrement(DynamicNumber dx) {
-		Number current;
+		DynamicNumber current = dx.clone();
 
 		if (dx.isBigDecimal()) {
-			current = dx.asBigDecimal();
 			dx.set(dx.asBigDecimal().subtract(BigDecimal.ONE));
 		}
 		else if (dx.isBigInteger()) {
-			current = dx.asBigInteger();
 			dx.set(dx.asBigInteger().subtract(BigInteger.ONE));
 		}
 		else if (dx.isDouble()) {
-			current = dx.asDouble();
-			dx.set(dx.asDouble() - 1);
+			dx.set(dx.doubleValue() - 1);
 		}
 		else if (dx.isFloat()) {
-			current = dx.asFloat();
-			dx.set(dx.asFloat() - 1);
+			dx.set(dx.floatValue() - 1);
 		}
 		else if (dx.isLong()) {
-			current = dx.asLong();
-			dx.set(dx.asLong() - 1);
+			dx.set(dx.longValue() - 1);
 		}
 		else if (dx.isInt()) {
-			current = dx.asInt();
-			dx.set(dx.asInt() - 1);
+			dx.set(dx.intValue() - 1);
 		}
 		else if (dx.isShort()) {
-			current = dx.asShort();
-			dx.set(dx.asShort() - 1);
+			dx.set(dx.shortValue() - 1);
 		}
 		else if (dx.isByte()) {
-			current = dx.asByte();
-			dx.set(dx.asByte() - 1);
+			dx.set(dx.byteValue() - 1);
 		}
 		else {
 			throw newNaftahBugUnsupportedNumbersError(true, dx);
 		}
 
 		// Normalize the updated value inside dx after decrement
-		dx.set(dx.normalize().get());
+		dx.normalize();
 
 		// Return the old value, no normalization
-		return current;
+		return current.normalize();
 	}
 
 	/**

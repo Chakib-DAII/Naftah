@@ -1336,8 +1336,6 @@ public enum BinaryOperation implements Operation {
 	 * @param right the right operand
 	 * @return the result of the operation
 	 */
-	// TODO : minimize the overhead of creating dynamic number from number everytime we perform operation by creating
-	//  and using dynamic number
 	protected abstract Object apply(Number left, Number right);
 
 	/**
