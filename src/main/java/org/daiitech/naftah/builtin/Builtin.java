@@ -2,6 +2,7 @@ package org.daiitech.naftah.builtin;
 
 import java.util.Objects;
 
+import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
@@ -245,9 +246,9 @@ public final class Builtin {
 				description = """
 								دالة (إرفع) تُستخدم لرفع عدد (الأساس) إلى قوة عدد صحيح (الأس). تُفيد هذه العملية في الحسابات الرياضية التي تتطلب التكرار الأسي مثل حساب المربعات أو المكعبات.""",
 				usage = "إرفع(الأساس ، الأس)",
-				parameterTypes = {Number.class, int.class},
+				parameterTypes = {Number.class, Number.class},
 				returnType = Number.class)
-	public static <T extends Number> Number pow(T base, int exponent) {
+	public static <T extends Number> Number pow(T base, T exponent) {
 		return NumberUtils.pow(base, exponent);
 	}
 
@@ -639,9 +640,9 @@ public final class Builtin {
 				description = """
 								دالة (إزاحة_إلى_اليسار) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليسار بعدد المواقع المحدد. تُستخدم هذه العملية في الحسابات الثنائية لتعظيم القيمة.""",
 				usage = "إزاحة_إلى_اليسار(ش ، مواقِع)",
-				parameterTypes = {Number.class, int.class},
+				parameterTypes = {Number.class, Number.class},
 				returnType = Number.class)
-	public static <T extends Number> Number shiftLeft(T x, int positions) {
+	public static <T extends Number> Number shiftLeft(T x, T positions) {
 		return NumberUtils.shiftLeft(x, positions);
 	}
 
@@ -659,9 +660,9 @@ public final class Builtin {
 				description = """
 								دالة (إزاحة_إلى_اليمين) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بعدد المواقع المحدد. تُستخدم هذه العملية في الحسابات الثنائية لتقليل القيمة.""",
 				usage = "إزاحة_إلى_اليمين(ش ، مواقِع)",
-				parameterTypes = {Number.class, int.class},
+				parameterTypes = {Number.class, Number.class},
 				returnType = Number.class)
-	public static <T extends Number> Number shiftRight(T x, int positions) {
+	public static <T extends Number> Number shiftRight(T x, T positions) {
 		return NumberUtils.shiftRight(x, positions);
 	}
 
@@ -680,9 +681,9 @@ public final class Builtin {
 				description = """
 								دالة (إزاحة_إلى_اليمين_غير_موقعة) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بدون اعتبار الإشارة، بعدد المواقع المحدد. تُستخدم هذه العملية لمعالجة الأعداد بدون تأثير الإشارة السالبة.""",
 				usage = "إزاحة_إلى_اليمين_غير_موقعة(ش ، مواقِع)",
-				parameterTypes = {Number.class, int.class},
+				parameterTypes = {Number.class, Number.class},
 				returnType = Number.class)
-	public static <T extends Number> Number unsignedShiftRight(T x, int positions) {
+	public static <T extends Number> Number unsignedShiftRight(T x, T positions) {
 		return NumberUtils.unsignedShiftRight(x, positions);
 	}
 
@@ -759,10 +760,10 @@ public final class Builtin {
 				description = """
 								دالة (تحليل_رقم_بنظام_العد) لتحليل رقم نصي وفقًا للنظام العددي المحدد وإرجاع النوع المناسب من الأعداد.""",
 				usage = "تحليل_رقم_بنظام_العد(الرقم، قاعدة)",
-				parameterTypes = {String.class, int.class},
+				parameterTypes = {String.class, Number.class},
 				returnType = Number.class
 	)
-	public static Number parseDynamicNumber(String text, int radix) {
+	public static Number parseDynamicNumber(String text, DynamicNumber radix) {
 		String value = ArabicUtils
 				.convertArabicToLatinLetterByLetter(text);
 		return NumberUtils.parseDynamicNumber(value, radix, text);
