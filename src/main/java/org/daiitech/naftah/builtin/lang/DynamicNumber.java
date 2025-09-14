@@ -55,7 +55,8 @@ public class DynamicNumber extends Number implements Cloneable {
 			this.value = Double.NaN;
 		}
 		else {
-			this.value = NumberUtils.parseDynamicNumber(value);
+			Number parsedNumber = NumberUtils.parseDynamicNumber(value);
+			this.value = parsedNumber instanceof DynamicNumber dynamicNumber ? dynamicNumber.value : parsedNumber;
 		}
 	}
 
@@ -66,7 +67,7 @@ public class DynamicNumber extends Number implements Cloneable {
 	 * @return a new {@code DynamicNumber} wrapping the given value
 	 */
 	public static DynamicNumber of(Number value) {
-		return value instanceof DynamicNumber dynamicNumber ? dynamicNumber.clone() : new DynamicNumber(value);
+		return value instanceof DynamicNumber dynamicNumber ? dynamicNumber : new DynamicNumber(value);
 	}
 
 	/**
@@ -76,7 +77,7 @@ public class DynamicNumber extends Number implements Cloneable {
 	 * @return a new {@code DynamicNumber} representing the parsed value
 	 */
 	public static DynamicNumber of(Object value) {
-		return value instanceof DynamicNumber dynamicNumber ? dynamicNumber.clone() : new DynamicNumber(value);
+		return value instanceof DynamicNumber dynamicNumber ? dynamicNumber : new DynamicNumber(value);
 	}
 
 	/**
@@ -302,7 +303,7 @@ public class DynamicNumber extends Number implements Cloneable {
 		if (value == null) {
 			throw newNaftahBugNullInputError(true, value);
 		}
-		this.value = value;
+		this.value = value instanceof DynamicNumber dynamicNumber ? dynamicNumber.value : value;
 		return this;
 	}
 
