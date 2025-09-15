@@ -2081,8 +2081,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, numberValueContext) -> {
 								Object value = numberValueContext.NUMBER().getText();
-								// TODO : minimize the overhead of creating dynamic number from number
-								//  everytime we perform operation by creating and using dynamic number
 								return NumberUtils.parseDynamicNumber(value);
 							}
 		);

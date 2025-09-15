@@ -71,13 +71,9 @@ public class LogicalExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, "بت_ليس فارغ", -1, null),
 					Arguments.of(true, "بت_ليس باطل", -1, null),
 					Arguments.of(true, "بت_ليس لاشيء", -1, null),
-					Arguments.of(true, "بت_ليس 'ص'", '流', null), // TODO:
-					// check
-					// incubator
-					// vector
-					// module
-					// Arguments.of(true, "بت_ليس «»", true, null),
-					// Arguments.of(true, "بت_ليس «اسم»", false, null),
+					Arguments.of(true, "بت_ليس 'ص'", '流', null),
+					Arguments.of(true, "بت_ليس «»", "", null),
+					Arguments.of(true, "بت_ليس «اسم»", "律琉了", null),
 					Arguments.of(true, "بت_ليس 2", -3, null),
 					Arguments.of(true, "~2", -3, null),
 					Arguments.of(true, "2 بت_ايضا 2", 2, null),
