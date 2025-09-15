@@ -1087,8 +1087,78 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								whileStatementContext) -> super.visitWhileStatement(
-																					whileStatementContext)
+								whileStatementContext) -> {
+								Object result = None.get();
+								boolean loopInStack = false;
+								String label = currentLoopLabel((String) (Objects
+										.isNull(whileStatementContext.label()) ?
+												null :
+												defaultNaftahParserVisitor.visit(whileStatementContext.label())),
+																defaultNaftahParserVisitor.depth);
+								currentContext.setLoopLabel(label);
+
+								boolean loopSignal = false;
+								boolean propagateLoopSignal = false;
+
+								try {
+									pushLoop(label, whileStatementContext);
+									loopInStack = true;
+
+									while (isTruthy(visit(whileStatementContext.expression()))) {
+										visit(whileStatementContext.block());
+
+										if (checkLoopSignal(result).equals(CONTINUE)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												continue;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												break;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+											loopSignal = true;
+											break;
+										}
+
+										// force current loop label
+										currentContext.setLoopLabel(label);
+									}
+
+								}
+								finally {
+									currentContext.setLoopLabel(null);
+									if (loopInStack) {
+										popLoop();
+									}
+								}
+
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
+
+							}
 		);
 	}
 
@@ -2011,8 +2081,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, numberValueContext) -> {
 								Object value = numberValueContext.NUMBER().getText();
-								// TODO : minimize the overhead of creating dynamic number from number
-								//  everytime we perform operation by creating and using dynamic number
 								return NumberUtils.parseDynamicNumber(value);
 							}
 		);
