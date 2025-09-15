@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahErrorListener;
@@ -526,7 +527,7 @@ public final class Naftah {
 				var parser = prepareRun(input, NaftahErrorListener.INSTANCE);
 				var result = doRun(parser);
 
-				if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) {
+				if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)) {
 					printPaddedToString(result);
 				}
 
@@ -616,7 +617,7 @@ public final class Naftah {
 
 						var result = doRun(parser);
 
-						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result)) {
+						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)) {
 							printPaddedToString(result);
 						}
 						System.out.println();
