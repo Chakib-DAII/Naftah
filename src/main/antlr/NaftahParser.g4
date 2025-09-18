@@ -112,7 +112,11 @@ returnStatement: RETURN expression?;
 block: LBRACE statement* RBRACE;
 
 // Expressions: Can be value, binary operations
-expression: logicalExpression;
+expression: ternaryExpression;
+
+ternaryExpression: nullishExpression (QUESTION expression COLON ternaryExpression)?;
+
+nullishExpression: logicalExpression (QUESTION QUESTION logicalExpression)*;
 
 logicalExpression: bitwiseExpression ((AND | OR) bitwiseExpression)*;
 
@@ -194,7 +198,7 @@ builtIn: BOOLEAN
     ;
 
 // QualifiedName: ID separated by COLONs
-qualifiedName: ID (COLON ID)+;
+qualifiedName: ID (QUESTION? COLON ID)+;
 
 qualifiedCall: qualifiedName COLON COLON ID;
 
