@@ -297,6 +297,12 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedNameContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TernaryExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.NullishExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedCallContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -1097,13 +1103,61 @@ public final class NaftahExecutionLogger {
 
 	public static String logExecution(  boolean doLog,
 										org.daiitech.naftah.parser.NaftahParser.QualifiedNameContext ctx) {
-		return doLogExecution(doLog, ctx, context -> """
-														QualifiedNameContext::ID -> %s
-														QualifiedNameContext::COLON -> %s
-														""".formatted(join(context.ID()), context.COLON()));
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											QualifiedNameContext::ID -> %s
+											QualifiedNameContext::QUESTION -> %s
+											QualifiedNameContext::COLON -> %s
+											"""
+										.formatted( join(context.ID()),
+													join(context.QUESTION()),
+													join(context.COLON())));
 
 	}
 
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.NullishExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											NullishExpressionContext::logicalExpression -> %s
+											NullishExpressionContext::QUESTION -> %s
+											"""
+										.formatted( join(context.logicalExpression()),
+													join(context.QUESTION()))
+		);
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.TernaryExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											TernaryExpressionContext::nullishExpression -> %s
+											TernaryExpressionContext::QUESTION -> %s
+											TernaryExpressionContext::expression -> %s
+											TernaryExpressionContext::COLON -> %s
+											TernaryExpressionContext::ternaryExpression -> %s
+											"""
+										.formatted( Objects.nonNull(context.nullishExpression()) ?
+															context.nullishExpression().getText() :
+															null,
+													Objects.nonNull(context.QUESTION()) ?
+															context.QUESTION().getText() :
+															null,
+													Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null,
+													Objects.nonNull(context.COLON()) ?
+															context.COLON().getText() :
+															null,
+													Objects.nonNull(context.ternaryExpression()) ?
+															context.ternaryExpression().getText() :
+															null)
+		);
+	}
 
 	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.ExpressionContext ctx) {
 		return doLogExecution(  doLog,
@@ -1111,8 +1165,8 @@ public final class NaftahExecutionLogger {
 								context -> """
 											ExpressionContext::logicalExpression -> %s
 											"""
-										.formatted(Objects.nonNull(context.logicalExpression()) ?
-												context.logicalExpression().getText() :
+										.formatted(Objects.nonNull(context.ternaryExpression()) ?
+												context.ternaryExpression().getText() :
 												null));
 	}
 
