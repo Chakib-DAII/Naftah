@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
@@ -55,6 +56,7 @@ import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getContextByDepth;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.loopContainsLabel;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
 import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.popLoop;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
@@ -2354,7 +2356,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, qualifiedNameContext) -> {
-								Object result;
+								Object result = None.get();
 								boolean accessingObjectField = hasAnyParentOfType(  qualifiedNameContext,
 																					org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext.class) || hasAnyParentOfType(
 																																														qualifiedNameContext,
@@ -2362,18 +2364,77 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								if (accessingObjectField) {
 									var qualifiedName = getQualifiedName(qualifiedNameContext);
 									var accessArray = qualifiedName.split(":");
+									boolean[] optional = new boolean[accessArray.length - 1];
+
+									if (accessArray[0].endsWith("؟")) {
+										optional[0] = true;
+										accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
+									}
+
+									boolean found = false;
+									boolean safeChaining = false;
 									if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
 											.get() instanceof Map<?, ?> map) {
 										var object = (Map<String, DeclaredVariable>) map;
-										result = object;
-										for (int i = 1; i < accessArray.length; i++) {
+										int i = 1;
+										for (; i < accessArray.length; i++) {
 											if (i < accessArray.length - 1) {
-												object = (Map<String, DeclaredVariable>) object
-														.get(accessArray[i])
-														.getValue();
+
+												if (accessArray[i].endsWith("؟")) {
+													optional[i] = true;
+													accessArray[i] = accessArray[i]
+															.substring(0, accessArray[i].length() - 1);
+												}
+
+												DeclaredVariable declaredVariable = object.get(accessArray[i]);
+												if (Objects.isNull(declaredVariable)) {
+													safeChaining = IntStream
+															.range(0, optional.length)
+															.mapToObj(index -> optional[index])
+															.allMatch(Boolean.TRUE::equals);
+													found = false;
+													break;
+												}
+												else {
+													found = true;
+													object = (Map<String, DeclaredVariable>) declaredVariable
+															.getValue();
+												}
+											}
+											else if (Objects.nonNull(object)) {
+												DeclaredVariable declaredVariable = object.get(accessArray[i]);
+												if (Objects.nonNull(declaredVariable)) {
+													found = true;
+													result = declaredVariable;
+												}
+												else {
+													found = false;
+												}
 											}
 											else {
-												result = object.get(accessArray[i]);
+												safeChaining = IntStream
+														.range(0, optional.length)
+														.mapToObj(index -> optional[index])
+														.allMatch(Boolean.TRUE::equals);
+											}
+										}
+
+										if (!found) {
+											if (safeChaining) {
+												result = None.get();
+											}
+											else {
+												int finalI = i;
+												String traversedQualifiedName = IntStream
+														.range(0, accessArray.length)
+														.filter(index -> index <= finalI)
+														.mapToObj(index -> accessArray[index] + (index < optional.length ?
+																(optional[index] ?
+																		"؟" :
+																		"") :
+																""))
+														.collect(Collectors.joining(":"));
+												throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
 											}
 										}
 									}
@@ -2424,7 +2485,58 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext,
 								expressionContext) -> defaultNaftahParserVisitor
 										.visit(expressionContext
-												.logicalExpression()));
+												.ternaryExpression()));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitTernaryExpression(org.daiitech.naftah.parser.NaftahParser.TernaryExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitTernaryExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, ternaryExpressionContext) -> {
+								if (Objects.nonNull(ternaryExpressionContext.QUESTION())) {
+									// ternary expression: condition ? thenExpression : elseExpression
+									Object condition = visit(ternaryExpressionContext.nullishExpression());
+									return isTruthy(condition) ?
+											visit(ternaryExpressionContext.expression()) :
+											visit(ternaryExpressionContext.ternaryExpression());
+								}
+								else {
+									return visit(ternaryExpressionContext.nullishExpression());
+								}
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitNullishExpression(org.daiitech.naftah.parser.NaftahParser.NullishExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitLogicalExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, nullishExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(nullishExpressionContext.logicalExpression(0));
+
+								for (int i = 1; i < nullishExpressionContext.logicalExpression().size(); i++) {
+									left = isTruthy(left) ?
+											left :
+											defaultNaftahParserVisitor
+													.visit(nullishExpressionContext
+															.logicalExpression(
+																				i));
+								}
+
+								return left;
+							});
 	}
 
 	/**

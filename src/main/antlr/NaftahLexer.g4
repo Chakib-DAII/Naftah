@@ -89,6 +89,8 @@ SEMI       : '؛';
 COLON      : ':';
 DOT        : '.';
 COMMA      : ',' | '٫' | '،' | '٬';
+QUESTION   : '؟';
+
 
 // Types
 VAR              : 'أي_نوع' | 'أي_نمط';

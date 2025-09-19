@@ -428,10 +428,14 @@ public final class NaftahParserHelper {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
 		for (int i = 0; i < ctx.ID().size(); i++) {
-			result.get().append(ctx.ID(i));
+			String id = ctx.ID(i).getText();
+			result.get().append(id);
+
 			if (i != ctx.ID().size() - 1) {
-				// if not the last
-				result.get().append(ctx.COLON(i));
+				String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
+						ctx.QUESTION(i).getText() + ctx.COLON(i).getText() :
+						ctx.COLON(i).getText();
+				result.get().append(qualifier);
 			}
 		}
 		return result.get().toString();
