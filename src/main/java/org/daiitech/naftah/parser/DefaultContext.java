@@ -434,6 +434,7 @@ public class DefaultContext {
 	 * @param returnedValue the returned value from the function call
 	 */
 	public static void updateCall(DeclaredFunction function, Map<String, Object> arguments, Object returnedValue) {
+		System.out.println("sdfsdf");
 		CALL_STACK.set(CALL_STACK.size() - 1, new Pair<>(new Pair<>(function, arguments), returnedValue));
 	}
 
@@ -984,13 +985,6 @@ public class DefaultContext {
 		}
 		this.parameters.putAll(parameters); // force local
 	}
-
-	/**
-	 * Checks if a function argument with the given name exists in the current or parent contexts.
-	 *
-	 * @param name the argument name
-	 * @return true if the function argument exists, false otherwise
-	 */
 
 	/**
 	 * Generates the canonical name for a function argument based on the current function call ID.
