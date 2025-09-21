@@ -74,6 +74,7 @@ forStatement:
     label?
     FOR ID ASSIGN expression                      // Initialization (e.g., i := 1)
     (TO | DOWNTO) expression                      // Direction of loop (e.g., TO 10 or DOWNTO 1)
+    (STEP expression)?
     DO block                                      // Loop body
     (ELSE block)?;                                 // Optional 'else' block if no break occurred
 
