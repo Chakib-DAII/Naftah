@@ -24,6 +24,7 @@ import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
@@ -40,9 +41,11 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.builtin.utils.Tuple.newNaftahBugNullError;
+import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.GREATER_THAN_EQUALS;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.LESS_THAN;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.LESS_THAN_EQUALS;
+import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.SUBTRACT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.DECREMENT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.INCREMENT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST;
@@ -910,13 +913,26 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																forStatementContext.getStart().getLine(),
 																forStatementContext.getStart().getCharPositionInLine());
 								}
+								// step value
+								Object stepValue = forStatementContext.STEP() != null ?
+										defaultNaftahParserVisitor.visit(forStatementContext.expression(2)) :
+										DynamicNumber.of(1);
+								if (Boolean.TRUE
+										.equals(applyOperation(stepValue, 0, LESS_THAN_EQUALS))) {
+									throw new NaftahBugError(   String
+																		.format("قيمة الخطوة للمتغير '%s' لا يمكن أن تكون أقل من أو " + "يساوي 0.",
+																				loopVar),
+																forStatementContext.getStart().getLine(),
+																forStatementContext.getStart().getCharPositionInLine());
+								}
 
 								if (!Number.class.isAssignableFrom(initValue.getClass()) || !Number.class
-										.isAssignableFrom(endValue.getClass())) {
+										.isAssignableFrom(endValue.getClass()) || !Number.class
+												.isAssignableFrom(stepValue.getClass())) {
 									throw new NaftahBugError(
 																String
 																		.format("""
-																				يجب أن تكون القيمتين الابتدائية والنهائية للمتغير '%s' من النوع الرقمي.""",
+																				يجب أن تكون القيمتين الابتدائية والنهائية و الخطوة للمتغير '%s' من النوع الرقمي.""",
 																				loopVar),
 																forStatementContext.getStart().getLine(),
 																forStatementContext.getStart().getCharPositionInLine());
@@ -955,7 +971,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 														.equals(applyOperation(initValue, endValue, LESS_THAN_EQUALS));
 												initValue = currentContext
 														.setLoopVariable(   loopVar,
-																			applyOperation(initValue, PRE_INCREMENT))) {
+																			stepValue.equals(1) ?
+																					applyOperation( initValue,
+																									PRE_INCREMENT) :
+																					applyOperation( initValue,
+																									stepValue,
+																									ADD))) {
 											result = defaultNaftahParserVisitor.visit(loopBlock);
 
 											if (checkLoopSignal(result).equals(CONTINUE)) {
@@ -1011,7 +1032,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																				GREATER_THAN_EQUALS));
 												initValue = currentContext
 														.setLoopVariable(   loopVar,
-																			applyOperation(initValue, PRE_DECREMENT))) {
+																			stepValue.equals(1) ?
+																					applyOperation( initValue,
+																									PRE_DECREMENT) :
+																					applyOperation( initValue,
+																									stepValue,
+																									SUBTRACT))) {
 											result = defaultNaftahParserVisitor.visit(loopBlock);
 
 											if (checkLoopSignal(result).equals(CONTINUE)) {
