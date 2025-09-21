@@ -1661,6 +1661,8 @@ public final class NaftahExecutionLogger {
 											ForStatementContext::TO -> %s
 											ForStatementContext::DOWNTO -> %s
 											ForStatementContext::expression -> %s
+											ForStatementContext::STEP -> %s
+											ForStatementContext::expression -> %s
 											ForStatementContext::DO -> %s
 											ForStatementContext::block -> %s
 											ForStatementContext::ELSE -> %s
@@ -1682,6 +1684,12 @@ public final class NaftahExecutionLogger {
 															null,
 													Objects.nonNull(context.expression(1)) ?
 															context.expression(1).getText() :
+															null,
+													Objects.nonNull(context.STEP()) ?
+															context.STEP().getText() :
+															null,
+													Objects.nonNull(context.expression(2)) ?
+															context.expression(2).getText() :
 															null,
 													Objects.nonNull(context.DO()) ? context.DO().getText() : null,
 													Objects.nonNull(context.block(0)) ?
