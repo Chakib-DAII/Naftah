@@ -2,6 +2,7 @@ package org.daiitech.naftah.parser.provider.script;
 
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.lang.None;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -106,7 +107,29 @@ public class ForStatementProvider implements ArgumentsProvider {
 								""",
 								null,
 								null
-							)
+							),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ تعيين 1 إلى 500 خطوة 10 إفعل {
+									إطبع(أ)
+								}
+								أنهي
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ تعيين 1 إلى 83647 خطوة 1000 إفعل {
+									إطبع(أ)
+								}
+								أنهي
+								""",
+								None.get(),
+								null)
 				);
 	}
 }
