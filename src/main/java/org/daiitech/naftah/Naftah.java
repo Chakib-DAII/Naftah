@@ -145,6 +145,8 @@ public final class Naftah {
 	 * Property to enable Arabic-Indic digit formatting in Naftah.
 	 */
 	public static final String ARABIC_INDIC_PROPERTY = "naftah.arabic.indic.active";
+	public static final String MULTILINE_CACHE_PROPERTY = "naftah.cache.multiline.active";
+	public static final String INTERPOLATION_CACHE_PROPERTY = "naftah.cache.interpolation.active";
 
 	/**
 	 * The recognized standard file extensions for Naftah scripts.
@@ -374,6 +376,21 @@ public final class Naftah {
 		private final Map<String, String> systemProperties = new LinkedHashMap<>();
 		@Unmatched
 		List<String> arguments = new ArrayList<>();
+
+		@Option(
+				names = "--enable-cache",
+				split = ",",
+				description = {
+								"""
+								Enable specific caches (disabled by default). M for multiline and I for string interpolation.
+								""",
+								"""
+								تمكين أنواع محددة من الكاش (وهي معطلة بشكل افتراضي). M للنصوص متعددة الأسطر و I للاستيفاء النصي.
+								"""
+				}
+		)
+		List<String> enabledCaches = new ArrayList<>();
+
 		@Option(names = {"-cp", "-classpath", "--classpath"},
 				paramLabel = "<path>",
 				description = { "Specify where to find the class files - must be first argument",
@@ -496,6 +513,15 @@ public final class Naftah {
 
 			if (matchedCommand.useArabicIndic) {
 				System.setProperty(ARABIC_INDIC_PROPERTY, Boolean.toString(true));
+			}
+
+			if (!matchedCommand.enabledCaches.isEmpty()) {
+				System
+						.setProperty(   MULTILINE_CACHE_PROPERTY,
+										Boolean.toString(matchedCommand.enabledCaches.contains("M")));
+				System
+						.setProperty(   INTERPOLATION_CACHE_PROPERTY,
+										Boolean.toString(matchedCommand.enabledCaches.contains("I")));
 			}
 
 			main.args = matchedCommand.arguments;
