@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -81,6 +82,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasChildOrSubChildOf
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunction;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunctionArguments;
+import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.typeMismatch;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitContext;
@@ -874,56 +876,67 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitForStatement(org.daiitech.naftah.parser.NaftahParser.ForStatementContext ctx) {
+	public Object visitIndexBasedForLoopStatement(org.daiitech.naftah.parser.NaftahParser.IndexBasedForLoopStatementContext ctx) {
 		return visitContext(
 							this,
-							"visitForStatement",
+							"visitIndexBasedForLoopStatement",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, forStatementContext) -> {
+							(defaultNaftahParserVisitor, currentContext, indexBasedForLoopStatementContext) -> {
 								Object result = None.get();
 								boolean loopInStack = false;
-								String label = currentLoopLabel((String) (Objects.isNull(forStatementContext.label()) ?
-										null :
-										defaultNaftahParserVisitor.visit(forStatementContext.label())),
+								String label = currentLoopLabel((String) (Objects
+										.isNull(indexBasedForLoopStatementContext.label()) ?
+												null :
+												defaultNaftahParserVisitor
+														.visit(
+																indexBasedForLoopStatementContext.label())),
 																depth);
 								currentContext.setLoopLabel(label);
 								// Initialization: ID := expression
-								String loopVar = forStatementContext.ID().getText();
-								Object initValue = defaultNaftahParserVisitor.visit(forStatementContext.expression(0));
+								String loopVar = indexBasedForLoopStatementContext.ID().getText();
+								Object initValue = defaultNaftahParserVisitor
+										.visit(indexBasedForLoopStatementContext.expression(0));
 								if (Objects.isNull(initValue)) {
 									throw new NaftahBugError(   String
 																		.format("""
 																				القيمة الابتدائية للمتغير '%s' لا يمكن أن تكون فارغة.""",
 																				loopVar),
-																forStatementContext.getStart().getLine(),
-																forStatementContext.getStart().getCharPositionInLine());
+																indexBasedForLoopStatementContext.getStart().getLine(),
+																indexBasedForLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 								// End value
-								Object endValue = defaultNaftahParserVisitor.visit(forStatementContext.expression(1));
+								Object endValue = defaultNaftahParserVisitor
+										.visit(indexBasedForLoopStatementContext.expression(1));
 								if (Objects.isNull(endValue)) {
 									throw new NaftahBugError(   String
 																		.format("القيمة النهائية للمتغير '%s' لا يمكن أن تكون فارغة.",
 																				loopVar),
-																forStatementContext.getStart().getLine(),
-																forStatementContext.getStart().getCharPositionInLine());
+																indexBasedForLoopStatementContext.getStart().getLine(),
+																indexBasedForLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 								// step value
-								Object stepValue = forStatementContext.STEP() != null ?
-										defaultNaftahParserVisitor.visit(forStatementContext.expression(2)) :
+								Object stepValue = indexBasedForLoopStatementContext.STEP() != null ?
+										defaultNaftahParserVisitor
+												.visit(indexBasedForLoopStatementContext.expression(2)) :
 										DynamicNumber.of(1);
 								if (Boolean.TRUE
 										.equals(applyOperation(stepValue, 0, LESS_THAN_EQUALS))) {
 									throw new NaftahBugError(   String
 																		.format("قيمة الخطوة للمتغير '%s' لا يمكن أن تكون أقل من أو " + "يساوي 0.",
 																				loopVar),
-																forStatementContext.getStart().getLine(),
-																forStatementContext.getStart().getCharPositionInLine());
+																indexBasedForLoopStatementContext.getStart().getLine(),
+																indexBasedForLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 
 								if (!Number.class.isAssignableFrom(initValue.getClass()) || !Number.class
@@ -934,19 +947,21 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																		.format("""
 																				يجب أن تكون القيمتين الابتدائية والنهائية و الخطوة للمتغير '%s' من النوع الرقمي.""",
 																				loopVar),
-																forStatementContext.getStart().getLine(),
-																forStatementContext.getStart().getCharPositionInLine());
+																indexBasedForLoopStatementContext.getStart().getLine(),
+																indexBasedForLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 
 								// Direction (TO or DOWNTO)
-								boolean isAscending = forStatementContext.TO() != null;
+								boolean isAscending = indexBasedForLoopStatementContext.TO() != null;
 								// Loop block
-								org.daiitech.naftah.parser.NaftahParser.BlockContext loopBlock = forStatementContext
+								org.daiitech.naftah.parser.NaftahParser.BlockContext loopBlock = indexBasedForLoopStatementContext
 										.block(0);
 								// Optional ELSE block
 								org.daiitech.naftah.parser.NaftahParser.BlockContext elseBlock = null;
-								if (forStatementContext.block().size() > 1) {
-									elseBlock = forStatementContext.block(1);
+								if (indexBasedForLoopStatementContext.block().size() > 1) {
+									elseBlock = indexBasedForLoopStatementContext.block(1);
 								}
 
 								boolean brokeEarly = false;
@@ -954,15 +969,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								boolean propagateLoopSignal = false;
 
 								try {
-									pushLoop(label, ctx);
+									pushLoop(label, indexBasedForLoopStatementContext);
 									loopInStack = true;
 									currentContext.defineLoopVariable(loopVar, initValue, false);
 									if (isAscending) {
 										if (Boolean.TRUE.equals(applyOperation(endValue, initValue, LESS_THAN))) {
 											throw new NaftahBugError(   """
 																		القيمة النهائية يجب أن تكون أكبر أو تساوي القيمة الابتدائية في الحلقات التصاعدية.""",
-																		forStatementContext.getStart().getLine(),
-																		forStatementContext
+																		indexBasedForLoopStatementContext
+																				.getStart()
+																				.getLine(),
+																		indexBasedForLoopStatementContext
 																				.getStart()
 																				.getCharPositionInLine());
 										}
@@ -1020,8 +1037,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										if (Boolean.TRUE.equals(applyOperation(initValue, endValue, LESS_THAN))) {
 											throw new NaftahBugError(   """
 																		القيمة الابتدائية يجب أن تكون أكبر أو تساوي القيمة النهائية في الحلقات التنازلية.""",
-																		forStatementContext.getStart().getLine(),
-																		forStatementContext
+																		indexBasedForLoopStatementContext
+																				.getStart()
+																				.getLine(),
+																		indexBasedForLoopStatementContext
 																				.getStart()
 																				.getCharPositionInLine());
 										}
@@ -1102,6 +1121,227 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitForEachLoopStatement(org.daiitech.naftah.parser.NaftahParser.ForEachLoopStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitForEachLoopStatement",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, forEachLoopStatementContext) -> {
+								Object result = None.get();
+								boolean loopInStack = false;
+								String label = currentLoopLabel((String) (Objects
+										.isNull(forEachLoopStatementContext.label()) ?
+												null :
+												defaultNaftahParserVisitor
+														.visit(
+																forEachLoopStatementContext.label())),
+																depth);
+								currentContext.setLoopLabel(label);
+
+								// Loop target
+								org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext foreachTarget = forEachLoopStatementContext
+										.foreachTarget();
+								Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass = foreachTarget
+										.getClass();
+								Tuple target;
+								Tuple targetValues;
+
+								// Loop expression. should be an iterable or Map
+								Object collection = defaultNaftahParserVisitor
+										.visit(forEachLoopStatementContext.expression());
+								Iterator<?> iterator;
+								boolean isMap = false;
+
+								if (collection instanceof Iterable<?> iterable) {
+									if (foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext || foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext) {
+										throw new NaftahBugError(   "key value not supported for collection.",
+																	forEachLoopStatementContext.getStart().getLine(),
+																	forEachLoopStatementContext
+																			.getStart()
+																			.getCharPositionInLine());
+									}
+									target = (Tuple) defaultNaftahParserVisitor.visit(foreachTarget);
+									iterator = iterable.iterator();
+								}
+								else if (collection instanceof Map<?, ?> map) {
+									isMap = true;
+									target = (Tuple) defaultNaftahParserVisitor.visit(foreachTarget);
+									iterator = map.entrySet().iterator();
+								}
+								else {
+									throw new NaftahBugError(   "not an iterable",
+																forEachLoopStatementContext.getStart().getLine(),
+																forEachLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
+								}
+
+
+								// Loop block
+								org.daiitech.naftah.parser.NaftahParser.BlockContext loopBlock = forEachLoopStatementContext
+										.block(0);
+								// Optional ELSE block
+								org.daiitech.naftah.parser.NaftahParser.BlockContext elseBlock = null;
+								if (forEachLoopStatementContext.block().size() > 1) {
+									elseBlock = forEachLoopStatementContext.block(1);
+								}
+
+								DynamicNumber index = DynamicNumber.of(0);
+								boolean brokeEarly = false;
+								boolean loopSignal = false;
+								boolean propagateLoopSignal = false;
+
+								try {
+									pushLoop(label, forEachLoopStatementContext);
+									loopInStack = true;
+
+									while (iterator.hasNext()) {
+										if (isMap) {
+											Map.Entry<?, ?> entry = (Map.Entry<?, ?>) iterator.next();
+											targetValues = Tuple.of(index, entry.getKey(), entry.getValue());
+										}
+										else {
+											Object value = iterator.next();
+											targetValues = Tuple.of(index, value);
+										}
+
+										setForeachVariables(currentContext, foreachTargetClass, target, targetValues);
+
+										defaultNaftahParserVisitor.visit(loopBlock);
+
+										if (checkLoopSignal(result).equals(CONTINUE)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												continue;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												break;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+											loopSignal = true;
+											break;
+										}
+										// increment index
+										NumberUtils.preIncrement(index);
+
+										// force current loop label
+										currentContext.setLoopLabel(label);
+									}
+
+									// Run ELSE block only if loop did not break early
+									if (!brokeEarly && elseBlock != null) {
+										result = defaultNaftahParserVisitor.visit(elseBlock);
+									}
+								}
+								finally {
+									currentContext.setLoopLabel(null);
+									if (loopInStack) {
+										popLoop();
+									}
+								}
+
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+
+	@Override
+	public Tuple visitValueForeachTarget(org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext ctx) {
+		return visitContext(
+							this,
+							"visitValueForeachTarget",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, valueForeachTargetContext) -> Tuple
+									.of(valueForeachTargetContext.ID().getText()),
+							Tuple.class
+		);
+	}
+
+	@Override
+	public Tuple visitIndexAndValueForeachTarget(org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext ctx) {
+		return visitContext(
+							this,
+							"visitIndexAndValueForeachTarget",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, indexAndValueForeachTargetContext) -> {
+								String index = indexAndValueForeachTargetContext.ID(0).getText();
+								String value = indexAndValueForeachTargetContext.ID(1).getText();
+								return Tuple.of(index, value);
+							},
+							Tuple.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitKeyValueForeachTarget(org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext ctx) {
+		return visitContext(
+							this,
+							"visitKeyValueForeachTarget",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, indexAndValueForeachTargetContext) -> {
+								String key = indexAndValueForeachTargetContext.ID(0).getText();
+								String value = indexAndValueForeachTargetContext.ID(1).getText();
+								return Tuple.of(key, value);
+							},
+							Tuple.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitIndexAndKeyValueForeachTarget(org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext ctx) {
+		return visitContext(
+							this,
+							"visitIndexAndKeyValueForeachTarget",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, indexAndValueForeachTargetContext) -> {
+								String index = indexAndValueForeachTargetContext.ID(0).getText();
+								String key = indexAndValueForeachTargetContext.ID(1).getText();
+								String value = indexAndValueForeachTargetContext.ID(2).getText();
+								return Tuple.of(index, key, value);
+							},
+							Tuple.class);
+	}
 
 	/**
 	 * {@inheritDoc}
