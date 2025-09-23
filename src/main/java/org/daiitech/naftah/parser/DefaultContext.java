@@ -136,8 +136,8 @@ public class DefaultContext {
 																							ClassUtils::isAccessibleClass);
 			var accessibleClassFuture = internalExecutor.submit(accessibleClassLoaderTask);
 
-			Callable<Map<String, Class<?>>> instantiableClassLoaderTask = () -> filterClasses(result.getClasses(),
-																							  ClassUtils::isInstantiableClass);
+			Callable<Map<String, Class<?>>> instantiableClassLoaderTask = () -> filterClasses(  result.getClasses(),
+																								ClassUtils::isInstantiableClass);
 			var instantiableClassFuture = internalExecutor.submit(instantiableClassLoaderTask);
 
 			result.setAccessibleClasses(accessibleClassFuture.get());
@@ -150,11 +150,11 @@ public class DefaultContext {
 			};
 
 			Callable<Map<String, List<JvmFunction>>> jvmFunctionsLoaderTask = () -> getClassMethods(
-					accessibleAndInstantiable);
+																									accessibleAndInstantiable);
 			var jvmFunctionsFuture = internalExecutor.submit(jvmFunctionsLoaderTask);
 
 			Callable<Map<String, List<BuiltinFunction>>> builtinFunctionsLoaderTask = () -> getBuiltinMethods(
-					accessibleAndInstantiable);
+																												accessibleAndInstantiable);
 			var builtinFunctionsFuture = internalExecutor.submit(builtinFunctionsLoaderTask);
 
 			result.setJvmFunctions(jvmFunctionsFuture.get());
@@ -189,8 +189,8 @@ public class DefaultContext {
 	/**
 	 * Consumer to handle the result or error from class scanning and loading.
 	 */
-	protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (result,
-																										 throwable) -> {
+	protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (   result,
+																											throwable) -> {
 		if (Objects.nonNull(throwable)) {
 			defaultBootstrap();
 			BOOT_STRAP_FAILED = true;
@@ -244,9 +244,9 @@ public class DefaultContext {
 	 * @param parameters function parameters map
 	 * @param arguments  function arguments map
 	 */
-	protected DefaultContext(DefaultContext parent,
-							 Map<String, DeclaredParameter> parameters,
-							 Map<String, Object> arguments) {
+	protected DefaultContext(   DefaultContext parent,
+								Map<String, DeclaredParameter> parameters,
+								Map<String, Object> arguments) {
 		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS
 				.size() != 0)) {
 			throw newNaftahBugInvalidUsageError();
@@ -302,10 +302,10 @@ public class DefaultContext {
 	 * @param varName the name of the variable to look up
 	 * @param context the current execution context in which to resolve the variable
 	 * @return a {@link VariableLookupResult} containing the variable name and its resolved value,
-	 * or a not-found result if the variable does not exist in the context
+	 *         or a not-found result if the variable does not exist in the context
 	 */
-	public static VariableLookupResult<Object> getVariable(String varName,
-														   DefaultContext context) {
+	public static VariableLookupResult<Object> getVariable( String varName,
+															DefaultContext context) {
 		return Optional
 				.ofNullable(context.getLoopVariable(varName, true))
 				.flatMap(functionArgument -> Optional
@@ -318,15 +318,15 @@ public class DefaultContext {
 								.ofNullable(context.getFunctionParameter(varName, true))
 								.flatMap(functionParameter -> Optional
 										.of(VariableLookupResult
-													.of(
-															varName,
-															functionParameter.b.getValue())))
+												.of(
+													varName,
+													functionParameter.b.getValue())))
 								.orElseGet(() -> Optional
 										.ofNullable(context.getVariable(varName, true))
 										.flatMap(declaredVariable -> Optional
 												.of(VariableLookupResult
-															.of(varName,
-																declaredVariable.b.getValue())))
+														.of(varName,
+															declaredVariable.b.getValue())))
 										.orElse(VariableLookupResult.notFound(varName)))));
 	}
 
@@ -361,8 +361,8 @@ public class DefaultContext {
 	 * @param arguments  the function arguments map
 	 * @return a new {@link DefaultContext} instance
 	 */
-	public static DefaultContext registerContext(Map<String, DeclaredParameter> parameters,
-												 Map<String, Object> arguments) {
+	public static DefaultContext registerContext(   Map<String, DeclaredParameter> parameters,
+													Map<String, Object> arguments) {
 		return new DefaultContext(parameters, arguments);
 	}
 
@@ -384,9 +384,9 @@ public class DefaultContext {
 	 * @param arguments  the function arguments map
 	 * @return a new {@link DefaultContext} instance
 	 */
-	public static DefaultContext registerContext(DefaultContext parent,
-												 Map<String, DeclaredParameter> parameters,
-												 Map<String, Object> arguments) {
+	public static DefaultContext registerContext(   DefaultContext parent,
+													Map<String, DeclaredParameter> parameters,
+													Map<String, Object> arguments) {
 		return new DefaultContext(parent, parameters, arguments);
 	}
 
@@ -679,8 +679,8 @@ public class DefaultContext {
 		if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
 			while (!BOOT_STRAPPED && (Objects.isNull(INSTANTIABLE_CLASSES) || Objects
 					.isNull(ACCESSIBLE_CLASSES) || Objects
-					.isNull(
-							CLASSES))) {
+							.isNull(
+									CLASSES))) {
 				// block the execution until bootstrapped
 				if (BOOT_STRAP_FAILED) {
 					return Object.class;
@@ -785,9 +785,9 @@ public class DefaultContext {
 	public boolean containsFunction(String name) {
 		return functions.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name
 				.matches(
-						QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS
-				.containsKey(
-						name))) || parent != null && parent.containsFunction(name);
+							QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS
+									.containsKey(
+													name))) || parent != null && parent.containsFunction(name);
 	}
 
 	/**
@@ -956,8 +956,8 @@ public class DefaultContext {
 			}
 
 			throw new NaftahBugError(
-					"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
-							.formatted(name));
+										"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
+												.formatted(name));
 		}
 		parameters.put(name, value); // force local
 	}
@@ -1066,8 +1066,8 @@ public class DefaultContext {
 		name = getFunctionArgumentName(name);
 		if (arguments.containsKey(name)) {
 			throw new NaftahBugError(
-					"الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
-							.formatted(name));
+										"الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
+												.formatted(name));
 		}
 		arguments.put(name, value); // force local
 	}
@@ -1131,8 +1131,8 @@ public class DefaultContext {
 		return loopVariableNames
 				.stream()
 				.anyMatch(loopVariableName -> loopVariables.containsKey(loopVariableName)) || (parent != null && parent
-				.containsLoopVariable(
-						name));
+						.containsLoopVariable(
+												name));
 	}
 
 	/**
@@ -1206,8 +1206,8 @@ public class DefaultContext {
 			}
 
 			throw new NaftahBugError(
-					"المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه."
-							.formatted(name));
+										"المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه."
+												.formatted(name));
 		}
 		loopVariables.put(name, value); // force local
 	}
@@ -1265,9 +1265,9 @@ public class DefaultContext {
 		return prepareParseTreeExecution() && getChildren(true)
 				.stream()
 				.anyMatch(currentContext -> NaftahParserHelper
-						.hasAnyExecutedChildOrSubChildOfType(node,
-															 type,
-															 currentContext.parseTreeExecution));
+						.hasAnyExecutedChildOrSubChildOfType(   node,
+																type,
+																currentContext.parseTreeExecution));
 	}
 
 	/**
