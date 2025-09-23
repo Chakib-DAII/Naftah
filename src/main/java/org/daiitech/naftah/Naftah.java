@@ -145,7 +145,13 @@ public final class Naftah {
 	 * Property to enable Arabic-Indic digit formatting in Naftah.
 	 */
 	public static final String ARABIC_INDIC_PROPERTY = "naftah.arabic.indic.active";
+	/**
+	 * Property to enable caching of multiline text processing in Naftah.
+	 */
 	public static final String MULTILINE_CACHE_PROPERTY = "naftah.cache.multiline.active";
+	/**
+	 * Property to enable caching of string interpolation text processing in Naftah.
+	 */
 	public static final String INTERPOLATION_CACHE_PROPERTY = "naftah.cache.interpolation.active";
 
 	/**
