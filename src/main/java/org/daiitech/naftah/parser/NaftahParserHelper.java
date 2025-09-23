@@ -37,6 +37,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
 
@@ -977,4 +978,48 @@ public final class NaftahParserHelper {
 		}
 	}
 
+	public static void setForeachVariables( DefaultContext currentContext,
+											Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass,
+											Tuple variableNames,
+											Tuple targetValues) {
+		if (org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext.class
+				.isAssignableFrom(foreachTargetClass)) {
+			String valueVar = (String) variableNames.get(0);
+			var value = targetValues.get(1);
+			currentContext.setLoopVariable(valueVar, value);
+		}
+		else if (org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext.class
+				.isAssignableFrom(
+									foreachTargetClass)) {
+										String keyVar = (String) variableNames.get(0);
+										var key = targetValues.get(1);
+										currentContext.setLoopVariable(keyVar, key);
+										String valueVar = (String) variableNames.get(1);
+										var value = targetValues.get(2);
+										currentContext.setLoopVariable(valueVar, value);
+									}
+		else if (org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext.class
+				.isAssignableFrom(
+									foreachTargetClass)) {
+										String indexVar = (String) variableNames.get(0);
+										var index = targetValues.get(0);
+										currentContext.setLoopVariable(indexVar, index);
+										String valueVar = (String) variableNames.get(1);
+										var value = targetValues.get(1);
+										currentContext.setLoopVariable(valueVar, value);
+									}
+		else if (org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext.class
+				.isAssignableFrom(
+									foreachTargetClass)) {
+										String indexVar = (String) variableNames.get(0);
+										var index = targetValues.get(0);
+										currentContext.setLoopVariable(indexVar, index);
+										String keyVar = (String) variableNames.get(1);
+										var key = targetValues.get(1);
+										currentContext.setLoopVariable(keyVar, key);
+										String valueVar = (String) variableNames.get(2);
+										var value = targetValues.get(2);
+										currentContext.setLoopVariable(valueVar, value);
+									}
+	}
 }
