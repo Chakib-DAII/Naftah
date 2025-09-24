@@ -705,7 +705,6 @@ public final class ObjectUtils {
 	 * @see java.util.Locale
 	 */
 	public static String numberToString(Number number) {
-		// TODO: fix Formatting. it flips the digits in case of decimals
 		synchronized (ARABIC_NUMBER_FORMAT) {
 			return ARABIC_NUMBER_FORMAT.format(number);
 		}

@@ -293,8 +293,8 @@ public final class ArabicUtils {
 		}
 
 		symbols.setDecimalSeparator('٫'); // Arabic decimal separator
-		symbols.setGroupingSeparator('_'); // Arabic grouping separator
-		ARABIC_NUMBER_FORMAT = new DecimalFormat("#,##0.###", symbols);
+		symbols.setGroupingSeparator('_'); // Arabic grouping separator  (in use if the pattern is "#,##0.###")
+		ARABIC_NUMBER_FORMAT = new DecimalFormat("###0.###", symbols);
 	}
 
 	/**
@@ -633,8 +633,9 @@ public final class ArabicUtils {
 	 */
 	public static String transliterateScript(Transliterator transliterator, boolean removeDiacritics, String word) {
 		// Apply transliteration
-		word = splitIdentifier(word.toLowerCase(Locale.US))
+		word = splitIdentifier(word)
 				.stream()
+				.map(s -> s.toLowerCase(Locale.US))
 				.map(transliterator::transliterate)
 				.collect(Collectors.joining());
 
