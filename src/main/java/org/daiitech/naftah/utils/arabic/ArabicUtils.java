@@ -28,6 +28,7 @@ import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.Transliterator;
 
 import static org.daiitech.naftah.Naftah.ARABIC_INDIC_PROPERTY;
+import static org.daiitech.naftah.Naftah.INTERPOLATION_CACHE_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
@@ -109,12 +110,6 @@ public final class ArabicUtils {
 					"|(?<=[^A-Z])(?=[A-Z])" + // IPv6 → IPv, 6
 					"|(?<=[A-Za-z])(?=\\d)" + // 6Parser → 6, Parser
 					"|(?<=\\d)(?=[A-Za-z])";
-	/**
-	 * Cache of precompiled {@link Matcher} instances for text processing, keyed by the input text string.
-	 * Used to improve performance by avoiding
-	 * repeated compilation of patterns.
-	 */
-	private static final Map<String, Matcher> TEXT_MATCHER_CACHE = new HashMap<>();
 	/**
 	 * Arabic alphabet letters used for transliteration to Latin letters.
 	 * <p>
@@ -235,6 +230,18 @@ public final class ArabicUtils {
 										t > ت;
 										ii > عي;
 										""";
+	/**
+	 * Cache of precompiled {@link Matcher} instances for text processing, keyed by the input text string.
+	 * Used to improve performance by avoiding
+	 * repeated compilation of patterns.
+	 */
+	private static Map<String, Matcher> TEXT_MATCHER_CACHE;
+
+	static {
+		if (Boolean.getBoolean(INTERPOLATION_CACHE_PROPERTY)) {
+			TEXT_MATCHER_CACHE = new HashMap<>();
+		}
+	}
 
 	static {
 		Set<String> keys = CUSTOM_RULES_BUNDLE.keySet();
@@ -321,12 +328,16 @@ public final class ArabicUtils {
 	 * @return a reset {@link Matcher} instance ready for matching against the input
 	 */
 	private static Matcher getTextMatcher(String input) {
-		if (TEXT_MATCHER_CACHE.containsKey(input)) {
+		if (Objects.nonNull(TEXT_MATCHER_CACHE) && TEXT_MATCHER_CACHE.containsKey(input)) {
 			return TEXT_MATCHER_CACHE.get(input).reset();
 		}
 
 		Matcher matcher = TEXT_MULTILINE_PATTERN.matcher(input);
-		TEXT_MATCHER_CACHE.put(input, matcher);
+
+		if (Objects.nonNull(TEXT_MATCHER_CACHE)) {
+			TEXT_MATCHER_CACHE.put(input, matcher);
+		}
+
 		return matcher.reset();
 	}
 

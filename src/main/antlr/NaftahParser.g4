@@ -71,11 +71,28 @@ ifStatement: IF expression THEN block (ELSEIF expression THEN block)* (ELSE bloc
 
 // A 'for' loop: iterates from a starting value to an end value (ascending or descending)
 forStatement:
-    label?
-    FOR ID ASSIGN expression                      // Initialization (e.g., i := 1)
-    (TO | DOWNTO) expression                      // Direction of loop (e.g., TO 10 or DOWNTO 1)
-    DO block                                      // Loop body
-    (ELSE block)?;                                 // Optional 'else' block if no break occurred
+    label? FOR
+    ID ASSIGN expression					// Initialization (e.g., i := 1)
+    (TO | DOWNTO) expression				// Direction of loop (e.g., TO 10 or DOWNTO 1)
+    (STEP expression)?						// Loop step
+    DO block								// Loop body
+    (ELSE block)?							// Optional 'else' block if no break occurred
+    #indexBasedForLoopStatement
+    |
+    label? FOR
+    foreachTarget IN expression				// Loop elements initialization
+    DO block								// Loop body
+    (ELSE block)?							// Optional 'else' block if no break occurred
+	#forEachLoopStatement
+    ;
+
+// 'foreach' loop target definition
+foreachTarget
+	: ID #valueForeachTarget												// value only
+	| ID COLON ID #keyValueForeachTarget									// key : value
+    | ID (COMMA | SEMI) ID #indexAndValueForeachTarget						// index, value
+    | ID (COMMA | SEMI) ID COLON ID #indexAndKeyValueForeachTarget			// index, key : value
+    ;
 
 // A 'while' loop: repeats as long as the condition is true
 whileStatement:

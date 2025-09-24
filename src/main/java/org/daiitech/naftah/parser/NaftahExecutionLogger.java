@@ -144,7 +144,22 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.IfStatementContext context) {
 			result = logExecution(doLog, context);
 		}
-		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ForStatementContext context) {
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.IndexBasedForLoopStatementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ForEachLoopStatementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.WhileStatementContext context) {
@@ -1649,22 +1664,25 @@ public final class NaftahExecutionLogger {
 										));
 	}
 
-	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.ForStatementContext ctx) {
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.IndexBasedForLoopStatementContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											ForStatementContext::label -> %s
-											ForStatementContext::FOR -> %s
-											ForStatementContext::ID -> %s
-											ForStatementContext::ASSIGN -> %s
-											ForStatementContext::expression -> %s
-											ForStatementContext::TO -> %s
-											ForStatementContext::DOWNTO -> %s
-											ForStatementContext::expression -> %s
-											ForStatementContext::DO -> %s
-											ForStatementContext::block -> %s
-											ForStatementContext::ELSE -> %s
-											ForStatementContext::block -> %s
+											IndexBasedforLoopStatementContext::label -> %s
+											IndexBasedforLoopStatementContext::FOR -> %s
+											IndexBasedforLoopStatementContext::ID -> %s
+											IndexBasedforLoopStatementContext::ASSIGN -> %s
+											IndexBasedforLoopStatementContext::expression -> %s
+											IndexBasedforLoopStatementContext::TO -> %s
+											IndexBasedforLoopStatementContext::DOWNTO -> %s
+											IndexBasedforLoopStatementContext::expression -> %s
+											IndexBasedforLoopStatementContext::STEP -> %s
+											IndexBasedforLoopStatementContext::expression -> %s
+											IndexBasedforLoopStatementContext::DO -> %s
+											IndexBasedforLoopStatementContext::block -> %s
+											IndexBasedforLoopStatementContext::ELSE -> %s
+											IndexBasedforLoopStatementContext::block -> %s
 											"""
 										.formatted(
 													Objects.nonNull(context.label()) ? context.label().getText() : null,
@@ -1683,6 +1701,12 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.expression(1)) ?
 															context.expression(1).getText() :
 															null,
+													Objects.nonNull(context.STEP()) ?
+															context.STEP().getText() :
+															null,
+													Objects.nonNull(context.expression(2)) ?
+															context.expression(2).getText() :
+															null,
 													Objects.nonNull(context.DO()) ? context.DO().getText() : null,
 													Objects.nonNull(context.block(0)) ?
 															context.block(0).getText() :
@@ -1692,6 +1716,104 @@ public final class NaftahExecutionLogger {
 															context.block(1).getText() :
 															null
 
+										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ForEachLoopStatementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ForEachLoopStatementContext::label -> %s
+											ForEachLoopStatementContext::FOR -> %s
+											ForEachLoopStatementContext::foreachTarget -> %s
+											ForEachLoopStatementContext::IN -> %s
+											ForEachLoopStatementContext::expression -> %s
+											ForEachLoopStatementContext::DO -> %s
+											ForEachLoopStatementContext::block -> %s
+											ForEachLoopStatementContext::ELSE -> %s
+											ForEachLoopStatementContext::block -> %s
+											"""
+										.formatted(
+													Objects.nonNull(context.label()) ? context.label().getText() : null,
+													Objects.nonNull(context.FOR()) ? context.FOR().getText() : null,
+													Objects.nonNull(context.foreachTarget()) ?
+															context.foreachTarget().getText() :
+															null,
+													Objects.nonNull(context.IN()) ?
+															context.IN().getText() :
+															null,
+													Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null,
+													Objects.nonNull(context.DO()) ? context.DO().getText() : null,
+													Objects.nonNull(context.block(0)) ?
+															context.block(0).getText() :
+															null,
+													Objects.nonNull(context.ELSE()) ? context.ELSE().getText() : null,
+													Objects.nonNull(context.block(1)) ?
+															context.block(1).getText() :
+															null
+										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ValueForeachTargetContext::ID -> %s
+											"""
+										.formatted(
+													Objects.nonNull(context.ID()) ? context.ID().getText() : null
+										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											KeyValueForeachTargetContext::ID -> %s
+											KeyValueForeachTargetContext::COLON -> %s
+											"""
+										.formatted(
+													join(context.ID()),
+													Objects.nonNull(context.COLON()) ? context.COLON().getText() : null
+										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											IndexAndValueForeachTargetContext::ID -> %s
+											IndexAndValueForeachTargetContext::COMMA -> %s
+											IndexAndValueForeachTargetContext::SEMI -> %s
+											"""
+										.formatted(
+													join(context.ID()),
+													Objects.nonNull(context.COMMA()) ? context.COMMA().getText() : null,
+													Objects.nonNull(context.SEMI()) ? context.SEMI().getText() : null
+										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											IndexAndKeyValueForeachTargetContext::ID -> %s
+											IndexAndKeyValueForeachTargetContext::COMMA -> %s
+											IndexAndKeyValueForeachTargetContext::SEMI -> %s
+											IndexAndKeyValueForeachTargetContext::COLON -> %s
+											"""
+										.formatted(
+													join(context.ID()),
+													Objects.nonNull(context.COMMA()) ? context.COMMA().getText() : null,
+													Objects.nonNull(context.SEMI()) ? context.SEMI().getText() : null,
+													Objects.nonNull(context.COLON()) ? context.COLON().getText() : null
 										));
 	}
 
