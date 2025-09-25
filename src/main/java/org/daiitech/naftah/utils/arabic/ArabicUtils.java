@@ -199,6 +199,52 @@ public final class ArabicUtils {
 													'Z'
 	};
 	/**
+	 * A set of reserved words used by the ICU (International Components for Unicode)
+	 * transliteration and normalization APIs. These words have special meaning in
+	 * ICU transliteration rules and Unicode transformations.
+	 *
+	 * <p>Examples of usage contexts include:
+	 * <ul>
+	 * <li>Transliteration rule syntax (e.g., "::NFD;" or "::Latin-ASCII;")</li>
+	 * <li>Normalization forms (e.g., "NFC", "NFD", "NFKC", "NFKD")</li>
+	 * <li>Unicode script and block identifiers (e.g., "Latin", "Greek", "Han")</li>
+	 * <li>Keywords in rule definitions (e.g., "use", "import", "function")</li>
+	 * </ul>
+	 *
+	 * <p>This set can be used to:
+	 * <ul>
+	 * <li>Validate user-defined transliteration rules</li>
+	 * <li>Highlight or flag reserved words in editors or tools</li>
+	 * <li>Prevent conflicts in custom ICU rule definitions</li>
+	 * </ul>
+	 *
+	 * @see com.ibm.icu.text.Transliterator
+	 * @see com.ibm.icu.text.Normalizer2
+	 * @see <a href="https://unicode-org.github.io/icu/userguide/transforms/general/">ICU Transliteration Guide</a>
+	 */
+	private static final Set<String> ICU_RESERVED_WORDS = Set
+			.of(
+				"::",
+				"use",
+				"import",
+				"function",
+				"Null",
+				"NFD",
+				"NFC",
+				"NFKD",
+				"NFKC",
+				"Any",
+				"Latin",
+				"Greek",
+				"Cyrillic",
+				"Han",
+				"Kana",
+				"Hiragana",
+				"Katakana",
+				"Common",
+				"Inherited"
+			);
+	/**
 	 * A reusable {@link NumberFormat} instance configured for the Arabic locale.
 	 * <p>
 	 * This formatter uses Arabic locale conventions for decimal and grouping separators,
@@ -241,10 +287,10 @@ public final class ArabicUtils {
 		if (Boolean.getBoolean(INTERPOLATION_CACHE_PROPERTY)) {
 			TEXT_MATCHER_CACHE = new HashMap<>();
 		}
-	}
+		Map<String, String> existentCustomRules = parseRules(CUSTOM_RULES);
 
-	static {
 		Set<String> keys = CUSTOM_RULES_BUNDLE.keySet();
+		keys.addAll(existentCustomRules.keySet());
 
 		// Convert to List
 		List<String> keylist = new ArrayList<>(keys);
@@ -254,10 +300,14 @@ public final class ArabicUtils {
 
 		StringBuilder stringBuilder = new StringBuilder();
 		for (String key : keylist) {
-			String value = CUSTOM_RULES_BUNDLE.getString(key);
+			String value = CUSTOM_RULES_BUNDLE.containsKey(key) ?
+					CUSTOM_RULES_BUNDLE.getString(key) :
+					existentCustomRules.get(key);
 			// If s contains underscore or spaces or any special char, quote it
 			String regex = ".*[ _\\t\\r\\n].*";
-			if (key.matches(regex)) { // underscore or space or whitespace
+			if (key.matches(regex) || ICU_RESERVED_WORDS.contains(key.trim()) || key
+					.trim()
+					.startsWith("::")) { // underscore or space or whitespace
 				key = "'" + key + "'";
 			}
 			if (value.matches(regex)) { // underscore or space or whitespace
@@ -268,7 +318,7 @@ public final class ArabicUtils {
 									%s > %s;
 									""".formatted(key.toLowerCase(Locale.US), value));
 		}
-		CUSTOM_RULES = stringBuilder + CUSTOM_RULES;
+		CUSTOM_RULES = stringBuilder.toString();
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(ARABIC);
 
@@ -303,6 +353,60 @@ public final class ArabicUtils {
 	 */
 	private ArabicUtils() {
 		throw newNaftahBugInvalidUsageError();
+	}
+
+	/**
+	 * Parses a set of transformation rules from a string into a map.
+	 *
+	 * <p>The input string should contain one rule per line in the format:
+	 * <pre>{@code
+	 * source > target;
+	 * }</pre>
+	 *
+	 * <p>Each line:
+	 * <ul>
+	 * <li>Is stripped of leading/trailing whitespace</li>
+	 * <li>Ignores empty lines</li>
+	 * <li>Removes trailing semicolons</li>
+	 * <li>Splits on the first occurrence of the {@code '>'} character</li>
+	 * </ul>
+	 *
+	 * <p>Example input:
+	 * <pre>{@code
+	 * a > b;
+	 * c > d;
+	 * }</pre>
+	 *
+	 * <p>Will result in a map:
+	 * <pre>{@code
+	 * {
+	 *   "a" -> "b",
+	 *   "c" -> "d"
+	 * }
+	 * }</pre>
+	 *
+	 * @param rules A string containing one or more transformation rules separated by newlines
+	 * @return A map of source-to-target transformations
+	 */
+	public static Map<String, String> parseRules(String rules) {
+		Map<String, String> map = new HashMap<>();
+		String[] lines = rules.strip().split("\n");
+
+		for (String line : lines) {
+			line = line.strip();
+			if (line.isEmpty()) {
+				continue;
+			}
+			line = line.replace(";", "");
+			String[] parts = line.split(">", 2);
+			if (parts.length == 2) {
+				String key = parts[0].strip();
+				String value = parts[1].strip();
+				map.put(key, value);
+			}
+		}
+
+		return map;
 	}
 
 	/**
