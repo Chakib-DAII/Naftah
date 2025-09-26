@@ -36,7 +36,8 @@ statement: block END? #blockStatement
          | caseStatement END? #caseStatementStatement
          | functionDeclaration END? #functionDeclarationStatement
          | functionCall END? #functionCallStatement
-         | qualifiedName END? #objectAccessStatement
+         | objectAccess END? #objectAccessStatement
+         | collectionAccess END? #collectionAccessStatement
          | declaration END? #declarationStatement
          | assignment END? #assignmentStatement
          | returnStatement END? #returnStatementStatement
@@ -62,6 +63,9 @@ parameterDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 
 // Function call: Can have arguments and return values
 functionCall: (ID | qualifiedCall) LPAREN argumentList? RPAREN;
+
+// constructor call: Can have arguments and return the created object
+initCall: qualifiedName LPAREN argumentList? RPAREN;
 
 // Argument list: Expressions separated by commas or semicolons
 argumentList: (ID ASSIGN)? expression ((COMMA | SEMI) (ID ASSIGN)? expression)*;
@@ -156,7 +160,8 @@ postfixExpression: primary (INCREMENT | DECREMENT)?;
 primary: functionCall #functionCallExpression
        | object #objectExpression
        | collection #collectionExpression
-       | qualifiedName #objectAccessExpression
+       | objectAccess #objectAccessExpression
+       | collectionAccess #collectionAccessExpression
        | value #valueExpression
        | LPAREN expression RPAREN #parenthesisExpression
        ;
@@ -164,6 +169,9 @@ primary: functionCall #functionCallExpression
 // Object
 object: LBRACE objectFields? RBRACE;
 objectFields: assignment ((COMMA | SEMI) assignment)*;
+
+objectAccess: qualifiedName
+		    | qualifiedObjectAccess;
 
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
@@ -218,6 +226,10 @@ builtIn: BOOLEAN
 qualifiedName: ID (QUESTION? COLON ID)+;
 
 qualifiedCall: qualifiedName COLON COLON ID;
+
+qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK)))+;
+
+collectionAccess: ID (QUESTION? LBRACK NUMBER RBRACK)+;
 
 // A label is an identifier followed by a colon for loops
 label: ID COLON;
