@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
@@ -60,7 +59,6 @@ import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getContextByDepth;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.loopContainsLabel;
-import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
 import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.popLoop;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
@@ -68,6 +66,7 @@ import static org.daiitech.naftah.parser.DefaultContext.pushLoop;
 import static org.daiitech.naftah.parser.LoopSignal.BREAK;
 import static org.daiitech.naftah.parser.LoopSignal.CONTINUE;
 import static org.daiitech.naftah.parser.LoopSignal.RETURN;
+import static org.daiitech.naftah.parser.NaftahParserHelper.accessObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkInsideLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkLoopSignal;
 import static org.daiitech.naftah.parser.NaftahParserHelper.createDeclaredVariable;
@@ -185,7 +184,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(   defaultNaftahParserVisitor,
 								currentContext,
 								objectAccessStatementContext) -> defaultNaftahParserVisitor
-										.visit(objectAccessStatementContext.qualifiedName())
+										.visit(objectAccessStatementContext.objectAccess())
 		);
 	}
 
@@ -1852,10 +1851,55 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext,
 								objectAccessExpressionContext) -> defaultNaftahParserVisitor
 										.visit(
-												objectAccessExpressionContext.qualifiedName())
+												objectAccessExpressionContext.objectAccess())
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitObjectAccess(org.daiitech.naftah.parser.NaftahParser.ObjectAccessContext ctx) {
+		return visitContext(
+							this,
+							"visitObjectAccess",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								objectAccessContext) -> {
+								if (Objects.nonNull(objectAccessContext.qualifiedName())) {
+									return defaultNaftahParserVisitor
+											.visit(
+													objectAccessContext.qualifiedName());
+								}
+								else {
+									return defaultNaftahParserVisitor
+											.visit(
+													objectAccessContext.qualifiedObjectAccess());
+								}
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitQualifiedObjectAccess(org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext ctx) {
+		return visitContext(
+							this,
+							"visitQualifiedObjectAccess",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								qualifiedObjectAccessContext) -> {
+								var qualifiedName = getQualifiedName(qualifiedObjectAccessContext);
+								return accessObjectUsingQualifiedName(qualifiedName, currentContext);
+							}
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -2622,91 +2666,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, qualifiedNameContext) -> {
-								Object result = None.get();
+								Object result;
 								boolean accessingObjectField = hasAnyParentOfType(  qualifiedNameContext,
 																					org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext.class) || hasAnyParentOfType(
 																																														qualifiedNameContext,
 																																														org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
 								if (accessingObjectField) {
 									var qualifiedName = getQualifiedName(qualifiedNameContext);
-									var accessArray = qualifiedName.split(":");
-									boolean[] optional = new boolean[accessArray.length - 1];
-
-									if (accessArray[0].endsWith("؟")) {
-										optional[0] = true;
-										accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
-									}
-
-									boolean found = false;
-									boolean safeChaining = false;
-									if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
-											.get() instanceof Map<?, ?> map) {
-										var object = (Map<String, DeclaredVariable>) map;
-										int i = 1;
-										for (; i < accessArray.length; i++) {
-											if (i < accessArray.length - 1) {
-
-												if (accessArray[i].endsWith("؟")) {
-													optional[i] = true;
-													accessArray[i] = accessArray[i]
-															.substring(0, accessArray[i].length() - 1);
-												}
-
-												DeclaredVariable declaredVariable = object.get(accessArray[i]);
-												if (Objects.isNull(declaredVariable)) {
-													safeChaining = IntStream
-															.range(0, optional.length)
-															.mapToObj(index -> optional[index])
-															.allMatch(Boolean.TRUE::equals);
-													found = false;
-													break;
-												}
-												else {
-													found = true;
-													object = (Map<String, DeclaredVariable>) declaredVariable
-															.getValue();
-												}
-											}
-											else if (Objects.nonNull(object)) {
-												DeclaredVariable declaredVariable = object.get(accessArray[i]);
-												if (Objects.nonNull(declaredVariable)) {
-													found = true;
-													result = declaredVariable;
-												}
-												else {
-													found = false;
-												}
-											}
-											else {
-												safeChaining = IntStream
-														.range(0, optional.length)
-														.mapToObj(index -> optional[index])
-														.allMatch(Boolean.TRUE::equals);
-											}
-										}
-
-										if (!found) {
-											if (safeChaining) {
-												result = None.get();
-											}
-											else {
-												int finalI = i;
-												String traversedQualifiedName = IntStream
-														.range(0, accessArray.length)
-														.filter(index -> index <= finalI)
-														.mapToObj(index -> accessArray[index] + (index < optional.length ?
-																(optional[index] ?
-																		"؟" :
-																		"") :
-																""))
-														.collect(Collectors.joining(":"));
-												throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
-											}
-										}
-									}
-									else {
-										result = getVariable(accessArray[0], currentContext).get();
-									}
+									result = accessObjectUsingQualifiedName(qualifiedName, currentContext);
 								}
 								else if (currentContext.isParsingFunctionCallId()) {
 									result = getQualifiedName(qualifiedNameContext);
