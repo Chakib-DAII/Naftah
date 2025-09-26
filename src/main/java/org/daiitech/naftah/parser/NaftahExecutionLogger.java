@@ -102,6 +102,12 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectAccessContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.DeclarationStatementContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -340,13 +346,49 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											ObjectAccessStatementContext::qualifiedName -> {
+											ObjectAccessStatementContext::objectAccess -> {
 												%s
 											}
 											"""
-										.formatted(Objects.nonNull(context.qualifiedName()) ?
-												context.qualifiedName().getText() :
+										.formatted(Objects.nonNull(context.objectAccess()) ?
+												context.objectAccess().getText() :
 												null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ObjectAccessContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ObjectAccessContext::qualifiedName -> %s
+											ObjectAccessContext::qualifiedObjectAccess -> %s
+											"""
+										.formatted( Objects.nonNull(context.qualifiedName()) ?
+															context.qualifiedName().getText() :
+															null,
+													Objects.nonNull(context.qualifiedObjectAccess()) ?
+															context.qualifiedObjectAccess().getText() :
+															null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											QualifiedObjectAccessContext::ID -> %s
+											QualifiedObjectAccessContext::QUESTION -> %s
+											QualifiedObjectAccessContext::COLON -> %s
+											QualifiedObjectAccessContext::LBRACK -> %s
+											QualifiedObjectAccessContext::RBRACK -> %s
+											"""
+										.formatted( join(context.ID()),
+													join(context.QUESTION()),
+													join(context.COLON()),
+													join(context.LBRACK()),
+													join(context.RBRACK())));
 
 	}
 
@@ -1416,12 +1458,12 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											ObjectAccessExpressionContext::qualifiedName -> {
+											ObjectAccessExpressionContext::objectAccess -> {
 											%s
 											}
 														"""
-										.formatted(Objects.nonNull(context.qualifiedName()) ?
-												context.qualifiedName().getText() :
+										.formatted(Objects.nonNull(context.objectAccess()) ?
+												context.objectAccess().getText() :
 												null));
 	}
 
