@@ -6,8 +6,9 @@
 
 As a **Tunisian** and an **Arabic speaker** passionate about programming, I was always searching for a programming
 language that uses **Arabic naturally** — not just in keywords, but in structure, logic, and **support for dialects**,
-including my own Tunisian dialect. I wanted something that makes programming feel **familiar, intuitive, and accessible
-**, especially for those of us who **don’t speak English fluently**.
+including my own Tunisian dialect.
+I wanted something that makes programming feel **familiar, intuitive, and accessible**,
+especially for those of us who **don’t speak English fluently**.
 
 But after years of searching, I found that **no existing Arabic programming language truly met those needs**. Most were
 limited, overly simplistic, or not designed with real-world learning and development in mind. None of them made me feel
@@ -24,10 +25,9 @@ That’s why I created **Naftah** — a modern, expressive, and educational prog
 Arabic**, with built-in support for **dialects**, including **Tunisian Arabic**. Naftah allows people to write code in a
 way that feels close to how they speak, think, and understand the world around them.
 
-I built Naftah using the **best ideas and syntax patterns from popular programming languages**, blending them with the *
-*richness of the Arabic language**
-and the **diversity of dialects**. My goal is to make programming accessible to **everyone**, regardless of their level
-of English.
+I built Naftah using the **best ideas and syntax patterns from popular programming languages**,
+blending them with the **richness of the Arabic language**and the **diversity of dialects**.
+My goal is to make programming accessible to **everyone**, regardless of their level of English.
 
 > **Naftah is not just a language. It’s an invitation to learn, explore, and build — in our own words.**
 
