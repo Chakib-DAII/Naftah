@@ -79,7 +79,9 @@ public class CollectionAccessProvider implements ArgumentsProvider {
 								newNaftahIndexOutOfBoundsBugError(  4,
 																	4,
 																	new IndexOutOfBoundsException(
-																									"Index 4 out of bounds for length 4"))
+																									"Index 4 out of bounds for length 4"),
+																	-1,
+																	-1)
 							),
 					Arguments
 							.of(false,
