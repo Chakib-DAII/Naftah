@@ -14,6 +14,9 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.CUSTOM_RULES_BUNDLE;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.splitIdentifier;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.CLASS_SEPARATORS_REGEX;
@@ -49,7 +52,7 @@ import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanCLasses;
  *
  * @author Chakib Daii
  */
-public class TransliterationGenerator {
+public final class TransliterationGenerator {
 	/**
 	 * The base URL for the translation API.
 	 * This should point to a service accepting POST requests with
@@ -68,7 +71,16 @@ public class TransliterationGenerator {
 	private static final String TARGET_LANG = "ar";
 
 	/**
-	 * Main entry point that:
+	 * Private constructor to prevent instantiation.
+	 * Always throws a {@link NaftahBugError} when called.
+	 */
+	private TransliterationGenerator() {
+		throw newNaftahBugInvalidUsageError();
+	}
+
+	/**
+	 * Main entry point.
+	 * it
 	 * <ol>
 	 * <li>Scans Java class names in the project</li>
 	 * <li>Splits class names into individual words</li>
