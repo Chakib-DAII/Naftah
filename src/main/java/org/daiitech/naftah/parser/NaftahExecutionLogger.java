@@ -695,6 +695,18 @@ public final class NaftahExecutionLogger {
 											AssignmentContext::declaration -> {
 												%s
 											}
+											AssignmentContext::ID -> {
+												%s
+											}
+											AssignmentContext::qualifiedName -> {
+												%s
+											}
+											AssignmentContext::qualifiedObjectAccess -> {
+												%s
+											}
+											AssignmentContext::collectionAccess -> {
+												%s
+											}
 											AssignmentContext::ASSIGN -> %s
 											AssignmentContext::expression -> {
 												%s
@@ -702,6 +714,18 @@ public final class NaftahExecutionLogger {
 											"""
 										.formatted( Objects.nonNull(context.declaration()) ?
 															context.declaration().getText() :
+															null,
+													Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
+													Objects.nonNull(context.qualifiedName()) ?
+															context.qualifiedName().getText() :
+															null,
+													Objects.nonNull(context.qualifiedObjectAccess()) ?
+															context.qualifiedObjectAccess().getText() :
+															null,
+													Objects.nonNull(context.collectionAccess()) ?
+															context.collectionAccess().getText() :
 															null,
 													Objects.nonNull(context.ASSIGN()) ?
 															context.ASSIGN().getText() :
