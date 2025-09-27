@@ -37,6 +37,7 @@ import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.newNaftahIndexOutOfBoundsBugError;
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.setElementAt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getJavaType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
@@ -84,6 +85,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunction;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunctionArguments;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
+import static org.daiitech.naftah.parser.NaftahParserHelper.setObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.typeMismatch;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitContext;
@@ -523,33 +525,112 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, assignmentContext) -> {
-								currentContext.setParsingAssignment(true);
-								boolean creatingObjectField = hasAnyParentOfType(   assignmentContext,
-																					org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
-								Pair<DeclaredVariable, Boolean> declaredVariable = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
-										.visit(assignmentContext.declaration());
-								currentContext.setDeclarationOfAssignment(declaredVariable);
-								// TODO: check if inside function to check if it matches any argument /
-								// parameter or previously
-								if (declaredVariable.b) {
-									declaredVariable = new Pair<>(  DeclaredVariable
-																			.of(assignmentContext,
-																				declaredVariable.a.getName(),
-																				declaredVariable.a.isConstant(),
-																				declaredVariable.a.getType(),
-																				visit(assignmentContext.expression())),
-																	declaredVariable.b);
+								Object result;
+								if (Objects.nonNull(assignmentContext.ID())) {
+									DeclaredVariable variable = currentContext
+											.getVariable(   assignmentContext.ID().getText(),
+															false).b;
+									var newValue = defaultNaftahParserVisitor.visit(assignmentContext.expression());
+									variable.setValue(newValue);
+									result = variable;
+								}
+								else if (Objects.nonNull(assignmentContext.declaration())) {
+									currentContext.setParsingAssignment(true);
+									boolean creatingObjectField = hasAnyParentOfType(   assignmentContext,
+																						org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
+									Pair<DeclaredVariable, Boolean> declaredVariable = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
+											.visit(assignmentContext.declaration());
+									currentContext.setDeclarationOfAssignment(declaredVariable);
+									// TODO: check if inside function to check if it matches any argument /
+									// parameter or previously
+									if (declaredVariable.b) {
+										declaredVariable = new Pair<>(  DeclaredVariable
+																				.of(assignmentContext,
+																					declaredVariable.a.getName(),
+																					declaredVariable.a.isConstant(),
+																					declaredVariable.a.getType(),
+																					visit(assignmentContext
+																							.expression())),
+																		declaredVariable.b);
+									}
+									else {
+										declaredVariable.a.setOriginalContext(assignmentContext);
+										declaredVariable.a.setValue(visit(assignmentContext.expression()));
+									}
+									// declared and update if possible
+									if (!creatingObjectField) {
+										currentContext.setVariable(declaredVariable.a.getName(), declaredVariable.a);
+									}
+									currentContext.setParsingAssignment(false);
+									result = declaredVariable;
+								}
+								else if (Objects.nonNull(assignmentContext.qualifiedName())) {
+									var qualifiedName = getQualifiedName(assignmentContext.qualifiedName());
+									var newValue = defaultNaftahParserVisitor.visit(assignmentContext.expression());
+									result = setObjectUsingQualifiedName(qualifiedName, currentContext, newValue);
+								}
+								else if (Objects.nonNull(assignmentContext.qualifiedObjectAccess())) {
+									var qualifiedName = getQualifiedName(assignmentContext.qualifiedObjectAccess());
+									var newValue = defaultNaftahParserVisitor.visit(assignmentContext.expression());
+									result = setObjectUsingQualifiedName(qualifiedName, currentContext, newValue);
 								}
 								else {
-									declaredVariable.a.setOriginalContext(assignmentContext);
-									declaredVariable.a.setValue(visit(assignmentContext.expression()));
+									org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext collectionAccessContext = assignmentContext
+											.collectionAccess();
+									var newValue = defaultNaftahParserVisitor.visit(assignmentContext.expression());
+									Object variable = result = getVariable( collectionAccessContext.ID().getText(),
+																			currentContext).get();
+									Number number = -1;
+									int size = collectionAccessContext.NUMBER().size();
+									try {
+										for (int i = 0; i < size; i++) {
+											Object numberStr = collectionAccessContext.NUMBER(i).getText();
+											number = NumberUtils.parseDynamicNumber(numberStr);
+											if (variable instanceof List && !(variable instanceof Tuple)) {
+												List<Object> list = (List<Object>) variable;
+												if (i < size - 1) {
+													variable = list.get(number.intValue());
+												}
+												else {
+													list.set(number.intValue(), newValue);
+												}
+											}
+											else if (variable instanceof Set) {
+												Set<Object> set = (Set<Object>) variable;
+												if (i < size - 1) {
+													variable = getElementAt(set, number.intValue());
+												}
+												else {
+													setElementAt(set, number.intValue(), newValue);
+												}
+											}
+											else {
+												throw new NaftahBugError(
+																			"""
+																			لا يمكن استخدام الفهرسة إلا مع الأنواع التالية: قائمة أو مجموعة.
+																			""",
+																			collectionAccessContext
+																					.getStart()
+																					.getLine(),
+																			collectionAccessContext
+																					.getStart()
+																					.getCharPositionInLine());
+											}
+										}
+									}
+									catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+										throw newNaftahIndexOutOfBoundsBugError(number.intValue(),
+																				((Collection<?>) variable).size(),
+																				indexOutOfBoundsException,
+																				collectionAccessContext
+																						.getStart()
+																						.getLine(),
+																				collectionAccessContext
+																						.getStart()
+																						.getCharPositionInLine());
+									}
 								}
-								// declared and update if possible
-								if (!creatingObjectField) {
-									currentContext.setVariable(declaredVariable.a.getName(), declaredVariable.a);
-								}
-								currentContext.setParsingAssignment(false);
-								return declaredVariable;
+								return result;
 							}
 		);
 	}
