@@ -2001,7 +2001,13 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								catch (IndexOutOfBoundsException indexOutOfBoundsException) {
 									throw newNaftahIndexOutOfBoundsBugError(number.intValue(),
 																			((Collection<?>) result).size(),
-																			indexOutOfBoundsException);
+																			indexOutOfBoundsException,
+																			collectionAccessContext
+																					.getStart()
+																					.getLine(),
+																			collectionAccessContext
+																					.getStart()
+																					.getCharPositionInLine());
 								}
 								return result;
 							}

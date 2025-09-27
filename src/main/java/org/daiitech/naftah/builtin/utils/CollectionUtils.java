@@ -287,7 +287,7 @@ public final class CollectionUtils {
 	 * @return a {@code NaftahBugError} with a detailed Arabic error message
 	 */
 	public static NaftahBugError newNaftahIndexOutOfBoundsBugError(int targetIndex, int size) {
-		return newNaftahIndexOutOfBoundsBugError(targetIndex, size, null);
+		return newNaftahIndexOutOfBoundsBugError(targetIndex, size, null, -1, -1);
 	}
 
 	/**
@@ -297,11 +297,18 @@ public final class CollectionUtils {
 	 * @param targetIndex the index that was attempted to be accessed
 	 * @param size        the size of the collection at the time of access
 	 * @param e           an optional cause of the error (can be {@code null})
+	 * @param line        The line number on which the 1st character of this token was matched
+	 * @param column      The index of the first character of this token relative to the beginning of the line at which
+	 *                    it occurs
 	 * @return a {@code NaftahBugError} with a detailed Arabic error message and optional cause
 	 */
-	public static NaftahBugError newNaftahIndexOutOfBoundsBugError(int targetIndex, int size, Exception e) {
+	public static NaftahBugError newNaftahIndexOutOfBoundsBugError( int targetIndex,
+																	int size,
+																	Exception e,
+																	int line,
+																	int column) {
 		return new NaftahBugError(String.format("""
 												المؤشر المطلوب (%d) خارج حدود المجموعة. عدد العناصر الحالية هو %d.
-												""", targetIndex, size), e);
+												""", targetIndex, size), e, line, column);
 	}
 }
