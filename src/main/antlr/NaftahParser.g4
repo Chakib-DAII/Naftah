@@ -47,10 +47,10 @@ statement: block END? #blockStatement
          ;
 
 // Declaration: variable or constant declaration
-declaration: (VARIABLE | CONSTANT)? ID (COLON type)?;
+declaration: (VARIABLE | CONSTANT) ID (COLON type)?;
 
-// Assignment: variable or constant assignment
-assignment: declaration ASSIGN expression;
+// Assignment: variable or constant assignment, object field or collection element
+assignment: (declaration | ID | qualifiedName | qualifiedObjectAccess | collectionAccess) ASSIGN expression;
 
 // Function declaration: Can have parameters and return values
 functionDeclaration: FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
@@ -228,6 +228,8 @@ qualifiedName: ID (QUESTION? COLON ID)+;
 qualifiedCall: qualifiedName COLON COLON ID;
 
 qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK)))+;
+
+//qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK) | collectionAccess))+;
 
 collectionAccess: ID (QUESTION? LBRACK NUMBER RBRACK)+;
 
