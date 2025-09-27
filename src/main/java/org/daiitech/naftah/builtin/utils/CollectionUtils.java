@@ -1,11 +1,15 @@
 package org.daiitech.naftah.builtin.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -243,6 +247,76 @@ public final class CollectionUtils {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Replaces the element at the specified index in a {@link Collection} with a new value.
+	 * <p>
+	 * This method iterates through the collection using an {@link Iterator},
+	 * and rebuilds the collection with the replacement applied. It preserves
+	 * insertion order for collections like {@link LinkedHashSet} and {@link List}.
+	 * </p>
+	 *
+	 * @param collection  the collection to modify
+	 * @param targetIndex the zero-based index to replace
+	 * @param newValue    the new value to insert at the given index
+	 * @param <T>         the element type of the collection
+	 * @throws IndexOutOfBoundsException     if the target index is out of bounds
+	 * @throws UnsupportedOperationException if the collection cannot be cleared or modified
+	 */
+	public static <T> void setElementAt(Collection<T> collection, int targetIndex, T newValue) {
+		if (collection.size() <= targetIndex) {
+			throw newNaftahIndexOutOfBoundsBugError(targetIndex, collection.size());
+		}
+
+		Iterator<T> iterator = collection.iterator();
+		Collection<T> updated = createCompatibleCollection(collection);
+
+		int currentIndex = 0;
+		while (iterator.hasNext()) {
+			T element = iterator.next();
+			if (currentIndex == targetIndex) {
+				updated.add(newValue);
+			}
+			else {
+				updated.add(element);
+			}
+			currentIndex++;
+		}
+
+		collection.clear();
+		collection.addAll(updated);
+	}
+
+	/**
+	 * Creates a new, empty collection that is compatible with the given original collection,
+	 * in order to preserve its iteration order and general behavior.
+	 * <p>
+	 * This is used internally to rebuild collections (e.g., when modifying an element by index),
+	 * while maintaining the same ordering semantics:
+	 * </p>
+	 * <ul>
+	 * <li>If the original is a {@link LinkedHashSet}, returns a new {@code LinkedHashSet}.</li>
+	 * <li>If the original is a {@link List}, returns a new {@code ArrayList}.</li>
+	 * <li>If the original is a {@link Set}, returns a new {@code HashSet}.</li>
+	 * <li>Otherwise, defaults to a new {@code ArrayList} as a general-purpose fallback.</li>
+	 * </ul>
+	 *
+	 * @param original the original collection to match
+	 * @param <T>      the element type of the collection
+	 * @return a new empty collection with behavior compatible to the original
+	 */
+	private static <T> Collection<T> createCompatibleCollection(Collection<T> original) {
+		if (original instanceof LinkedHashSet<T>) {
+			return new LinkedHashSet<>();
+		}
+		if (original instanceof List) {
+			return new ArrayList<>();
+		}
+		if (original instanceof Set<T>) {
+			return new HashSet<>();
+		}
+		return new ArrayList<>();
 	}
 
 	/**
