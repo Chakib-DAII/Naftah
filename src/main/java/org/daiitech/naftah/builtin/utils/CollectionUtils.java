@@ -3,11 +3,13 @@ package org.daiitech.naftah.builtin.utils;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -206,6 +208,44 @@ public final class CollectionUtils {
 	}
 
 	/**
+	 * Retrieves the element at the specified index from a {@link Collection}.
+	 * <p>
+	 * Since {@code Collection} does not support direct index-based access, this method
+	 * iterates through the elements in the order defined by the collection's iterator.
+	 * </p>
+	 * <p>
+	 * If the index is out of bounds (i.e., {@code targetIndex >= collection.size()}),
+	 * a {@code NaftahBugError} is thrown with a detailed Arabic error message.
+	 * </p>
+	 *
+	 * @param collection  the collection to retrieve the element from
+	 * @param targetIndex the zero-based index of the desired element
+	 * @return the element at the specified index
+	 * @throws NaftahBugError if the index is greater than or equal to the collection size
+	 */
+	public static Object getElementAt(Collection<?> collection, int targetIndex) {
+		if (collection.size() <= targetIndex) {
+			throw newNaftahIndexOutOfBoundsBugError(targetIndex, collection.size());
+		}
+
+		Iterator<?> iterator = collection.iterator();
+
+		int currentIndex = 0;
+		Object result = None.get();
+
+		while (iterator.hasNext()) {
+			Object item = iterator.next();
+			if (currentIndex == targetIndex) {
+				result = item;
+				break;
+			}
+			currentIndex++;
+		}
+
+		return result;
+	}
+
+	/**
 	 * Constructs a new {@link NaftahBugError} indicating that the sizes of the two arrays do not match.
 	 *
 	 * @param left  the first array
@@ -234,5 +274,34 @@ public final class CollectionUtils {
 									'%s'
 									'%s'
 									""".formatted(left, right));
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an index is out of bounds for a collection.
+	 * <p>
+	 * This version does not include a cause (exception).
+	 * </p>
+	 *
+	 * @param targetIndex the index that was attempted to be accessed
+	 * @param size        the size of the collection at the time of access
+	 * @return a {@code NaftahBugError} with a detailed Arabic error message
+	 */
+	public static NaftahBugError newNaftahIndexOutOfBoundsBugError(int targetIndex, int size) {
+		return newNaftahIndexOutOfBoundsBugError(targetIndex, size, null);
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an index is out of bounds for a collection,
+	 * and optionally includes a cause (wrapped exception).
+	 *
+	 * @param targetIndex the index that was attempted to be accessed
+	 * @param size        the size of the collection at the time of access
+	 * @param e           an optional cause of the error (can be {@code null})
+	 * @return a {@code NaftahBugError} with a detailed Arabic error message and optional cause
+	 */
+	public static NaftahBugError newNaftahIndexOutOfBoundsBugError(int targetIndex, int size, Exception e) {
+		return new NaftahBugError(String.format("""
+												المؤشر المطلوب (%d) خارج حدود المجموعة. عدد العناصر الحالية هو %d.
+												""", targetIndex, size), e);
 	}
 }
