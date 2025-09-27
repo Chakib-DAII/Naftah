@@ -231,6 +231,15 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CollectionExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CollectionAccessStatementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CollectionAccessExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -1451,6 +1460,54 @@ public final class NaftahExecutionLogger {
 										.formatted(Objects.nonNull(context.collection()) ?
 												context.collection().getText() :
 												null));
+	}
+
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.CollectionAccessStatementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											CollectionAccessStatementContext::collectionAccess -> {
+											%s
+											}
+														"""
+										.formatted(Objects.nonNull(context.collectionAccess()) ?
+												context.collectionAccess().getText() :
+												null));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.CollectionAccessExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											CollectionAccessExpressionContext::collectionAccess -> {
+											%s
+											}
+														"""
+										.formatted(Objects.nonNull(context.collectionAccess()) ?
+												context.collectionAccess().getText() :
+												null));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											CollectionAccessContext::ID -> %s
+											CollectionAccessContext::QUESTION -> %s
+											CollectionAccessContext::LBRACK -> %s
+											CollectionAccessContext::NUMBER -> %s
+											CollectionAccessContext::RBRACK -> %s"""
+										.formatted( Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
+													join(context.QUESTION()),
+													join(context.LBRACK()),
+													join(context.NUMBER()),
+													join(context.RBRACK())));
 	}
 
 	public static String logExecution(  boolean doLog,
