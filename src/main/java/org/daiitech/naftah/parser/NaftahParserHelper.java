@@ -1158,4 +1158,111 @@ public final class NaftahParserHelper {
 		}
 		return result;
 	}
+
+	/**
+	 * Sets the value of a variable or nested property based on a qualified name string.
+	 * <p>
+	 * The qualified name is a colon-separated path (e.g., {@code user:profile:name}) that
+	 * may represent a deeply nested structure, where each intermediate level is a {@code Map<String,
+	 * DeclaredVariable>}.
+	 * <br>
+	 * The method supports optional safe-chaining by appending the Arabic question mark character ({@code ؟})
+	 * to any segment (e.g., {@code user؟:profile؟:name}) to avoid exceptions if intermediate keys are missing.
+	 * </p>
+	 *
+	 * <h3>Behavior:</h3>
+	 * <ul>
+	 * <li>If the qualified name has only one part, the method sets the top-level variable.</li>
+	 * <li>If the qualified name represents a nested structure, the method traverses the map hierarchy,
+	 * updating the final declared variable's value if found.</li>
+	 * <li>If any non-optional segment is missing, it throws a {@code NaftahBugError} using {@code
+	 *   newNaftahBugVariableNotFoundError()}.</li>
+	 * </ul>
+	 *
+	 * @param qualifiedName  the colon-separated qualified name (e.g., {@code user:address؟:city})
+	 * @param currentContext the current evaluation context that holds top-level variables
+	 * @param newValue       the new value to assign to the final declared variable
+	 * @return the top-level {@link DeclaredVariable} (even if nested values were updated)
+	 * @throws NaftahBugError if a non-optional intermediate or final variable is not found
+	 */
+	public static Object setObjectUsingQualifiedName(   String qualifiedName,
+														DefaultContext currentContext,
+														Object newValue) {
+		var accessArray = qualifiedName.split(":");
+		boolean[] optional = new boolean[accessArray.length - 1];
+
+		if (accessArray[0].endsWith("؟")) {
+			optional[0] = true;
+			accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
+		}
+
+		boolean found = false;
+		boolean safeChaining = false;
+
+		DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).b;
+
+		if (accessArray.length > 1 && objectVariable.getValue() instanceof Map<?, ?> map) {
+			var object = (Map<String, DeclaredVariable>) map;
+			int i = 1;
+			for (; i < accessArray.length; i++) {
+				if (i < accessArray.length - 1) {
+
+					if (accessArray[i].endsWith("؟")) {
+						optional[i] = true;
+						accessArray[i] = accessArray[i]
+								.substring(0, accessArray[i].length() - 1);
+					}
+
+					DeclaredVariable declaredVariable = object.get(accessArray[i]);
+					if (Objects.isNull(declaredVariable)) {
+						safeChaining = IntStream
+								.range(0, optional.length)
+								.mapToObj(index -> optional[index])
+								.allMatch(Boolean.TRUE::equals);
+						found = false;
+						break;
+					}
+					else {
+						found = true;
+						object = (Map<String, DeclaredVariable>) declaredVariable
+								.getValue();
+					}
+				}
+				else if (Objects.nonNull(object)) {
+					DeclaredVariable declaredVariable = object.get(accessArray[i]);
+					if (Objects.nonNull(declaredVariable)) {
+						found = true;
+						declaredVariable.setValue(newValue);
+					}
+					else {
+						found = false;
+					}
+				}
+				else {
+					safeChaining = IntStream
+							.range(0, optional.length)
+							.mapToObj(index -> optional[index])
+							.allMatch(Boolean.TRUE::equals);
+				}
+			}
+
+			if (!found && !safeChaining) {
+				int finalI = i;
+				String traversedQualifiedName = IntStream
+						.range(0, accessArray.length)
+						.filter(index -> index <= finalI)
+						.mapToObj(index -> accessArray[index] + (index < optional.length ?
+								(optional[index] ?
+										"؟" :
+										"") :
+								""))
+						.collect(Collectors.joining(":"));
+				throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
+			}
+		}
+		else {
+			objectVariable.setValue(newValue);
+		}
+		return objectVariable;
+	}
 }
