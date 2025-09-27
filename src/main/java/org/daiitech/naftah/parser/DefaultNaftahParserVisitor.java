@@ -549,13 +549,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																					declaredVariable.a.getName(),
 																					declaredVariable.a.isConstant(),
 																					declaredVariable.a.getType(),
-																					visit(assignmentContext
-																							.expression())),
+																					defaultNaftahParserVisitor
+																							.visit(assignmentContext
+																									.expression())),
 																		declaredVariable.b);
 									}
 									else {
 										declaredVariable.a.setOriginalContext(assignmentContext);
-										declaredVariable.a.setValue(visit(assignmentContext.expression()));
+										declaredVariable.a
+												.setValue(defaultNaftahParserVisitor
+														.visit(assignmentContext.expression()));
 									}
 									// declared and update if possible
 									if (!creatingObjectField) {
