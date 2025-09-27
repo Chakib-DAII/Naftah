@@ -44,7 +44,6 @@ public class RuntimeClassScannerTests {
 		assertNotNull(accessibleClasses);
 		assertNotNull(allClasses);
 		assertNotEquals(accessibleClasses.size(), allClasses.size());
-
 	}
 
 }
