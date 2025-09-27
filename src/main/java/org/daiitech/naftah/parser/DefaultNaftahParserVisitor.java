@@ -35,6 +35,8 @@ import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.newNaftahIndexOutOfBoundsBugError;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getJavaType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
@@ -1919,6 +1921,92 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitCollectionAccessStatement(org.daiitech.naftah.parser.NaftahParser.CollectionAccessStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitCollectionAccessStatement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								collectionAccessStatementContext) -> defaultNaftahParserVisitor
+										.visit(
+												collectionAccessStatementContext.collectionAccess())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitCollectionAccessExpression(org.daiitech.naftah.parser.NaftahParser.CollectionAccessExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitCollectionAccessExpression",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								collectionAccessExpressionContext) -> defaultNaftahParserVisitor
+										.visit(
+												collectionAccessExpressionContext.collectionAccess())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitCollectionAccess(org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext ctx) {
+		return visitContext(
+							this,
+							"visitCollectionAccess",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								collectionAccessContext) -> {
+								Object result = getVariable(collectionAccessContext.ID().getText(), currentContext)
+										.get();
+								Number number = -1;
+								try {
+									for (int i = 0; i < collectionAccessContext.NUMBER().size(); i++) {
+										Object value = collectionAccessContext.NUMBER(i).getText();
+										number = NumberUtils.parseDynamicNumber(value);
+										if (result instanceof Tuple tuple) {
+											result = tuple.get(number.intValue());
+										}
+										else if (result instanceof List<?> list) {
+											result = list.get(number.intValue());
+										}
+										else if (result instanceof Set<?> set) {
+											result = getElementAt(set, number.intValue());
+										}
+										else {
+											throw new NaftahBugError(
+																		"""
+																		لا يمكن استخدام الفهرسة إلا مع الأنواع التالية: تركيبة , قائمة أو مجموعة.
+																		""",
+																		collectionAccessContext.getStart().getLine(),
+																		collectionAccessContext
+																				.getStart()
+																				.getCharPositionInLine());
+										}
+									}
+								}
+								catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+									throw newNaftahIndexOutOfBoundsBugError(number.intValue(),
+																			((Collection<?>) result).size(),
+																			indexOutOfBoundsException);
+								}
+								return result;
+							}
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
