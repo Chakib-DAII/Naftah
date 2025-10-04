@@ -60,6 +60,7 @@ INCREMENT  : '++' | 'زد';
 MINUS      : '-' | 'ناقص';
 DECREMENT  : '--' | 'نقص';
 MUL        : '*' | 'ضارب';
+POW        : MUL MUL | 'رفع';
 DIV        : '/' | 'قسمة';
 MOD        : '%' | 'باقي';
 ASSIGN     : '=' | 'تعيين';
