@@ -29,6 +29,7 @@ import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
 
+import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
@@ -36,6 +37,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSym
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_NUMBER_FORMAT;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.latinNumberToArabicString;
 
 /**
  * Utility class providing various helper methods for working with Java objects in the context of the Naftah language
@@ -689,24 +691,33 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Converts the given {@link Number} to a localized string representation
-	 * using Arabic locale formatting rules.
+	 * Converts the given {@link Number} into a localized string representation using Arabic locale formatting rules.
 	 * <p>
-	 * This includes Arabic-style grouping and decimal separators, and may use
-	 * Arabic-Indic digits depending on JVM configuration and font support.
+	 * When the system property {@code arabic.number.format} is {@code true}, this method uses a preconfigured
+	 * {@link java.text.NumberFormat} instance for the Arabic locale. This includes Arabic-style decimal and grouping
+	 * separators and may render digits in Arabic-Indic form, depending on JVM and font support.
 	 * <p>
-	 * The method is synchronized on {@link org.daiitech.naftah.utils.arabic.ArabicUtils#ARABIC_NUMBER_FORMAT} since
-	 * {@link java.text.NumberFormat} instances are not thread-safe.
+	 * The method synchronizes on {@link org.daiitech.naftah.utils.arabic.ArabicUtils#ARABIC_NUMBER_FORMAT}
+	 * since {@code NumberFormat} is not thread-safe.
+	 * <p>
+	 * If the system property is not set to {@code true}, the method falls back to a custom digit conversion
+	 * via {@link org.daiitech.naftah.utils.arabic.ArabicUtils#latinNumberToArabicString(Number)}.
 	 *
 	 * @param number the number to format; must not be {@code null}
-	 * @return a string representation of the number in Arabic locale formatting
+	 * @return the number formatted as a string using Arabic locale or Arabic digits
 	 * @throws NullPointerException if {@code number} is {@code null}
 	 * @see java.text.NumberFormat#format(double)
 	 * @see java.util.Locale
+	 * @see org.daiitech.naftah.utils.arabic.ArabicUtils#latinNumberToArabicString(Number)
 	 */
 	public static String numberToString(Number number) {
-		synchronized (ARABIC_NUMBER_FORMAT) {
-			return ARABIC_NUMBER_FORMAT.format(number);
+		if (Boolean.getBoolean(ARABIC_NUMBER_FORMATTER_PROPERTY)) {
+			synchronized (ARABIC_NUMBER_FORMAT) {
+				return ARABIC_NUMBER_FORMAT.format(number);
+			}
+		}
+		else {
+			return latinNumberToArabicString(number);
 		}
 	}
 }
