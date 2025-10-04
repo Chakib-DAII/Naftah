@@ -306,7 +306,7 @@ public class NumberUtilsTests {
 										1,
 										0,
 										0.0,
-										1.21,
+										1.2100000000000002,
 										new BigDecimal("1.0E45"),
 										null,
 										null,

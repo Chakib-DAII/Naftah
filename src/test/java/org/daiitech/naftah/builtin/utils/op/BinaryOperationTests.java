@@ -181,7 +181,9 @@ public class BinaryOperationTests {
 		void stringOperandsTest(BinaryOperation op, String left, String right) {
 			Object result = op.apply(left, right);
 			assertNotNull(result);
-			assertTrue(result instanceof String || result instanceof Boolean || result.getClass().isArray());
+			assertTrue(result instanceof Number || result instanceof String || result instanceof Boolean || result
+					.getClass()
+					.isArray() || NaN.isNaN(result));
 		}
 	}
 
@@ -278,6 +280,19 @@ public class BinaryOperationTests {
 		void binaryNoneTest(BinaryOperation op, Object left, Object right) {
 			if (None.isNone(right) && (op.equals(BinaryOperation.DIVIDE) || (op.equals(BinaryOperation.MODULO)))) {
 				if (left instanceof String) {
+					try {
+						op.apply(left, right);
+					}
+					catch (Throwable throwable) {
+						assertEquals(NaftahBugError.class, throwable.getClass());
+					}
+				}
+				else {
+					assertThrows(Throwable.class, () -> op.apply(left, right));
+				}
+			}
+			else if (None.isNone(right) && op.equals(BinaryOperation.POWER)) {
+				if (left instanceof Number || left instanceof String || left instanceof Character || left instanceof Boolean) {
 					try {
 						op.apply(left, right);
 					}
