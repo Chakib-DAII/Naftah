@@ -2,6 +2,7 @@ package org.daiitech.naftah.builtin.utils.op;
 
 import java.util.Objects;
 
+import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
@@ -304,6 +305,78 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected String apply(String left, String right) {
 			return StringUtils.charWiseMultiply(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return handleFalsyArithmetic(left, right);
+		}
+	},
+
+
+	/**
+	 * Represents the power operation (**).
+	 * Supports power of numbers and converting booleans and characters
+	 * appropriately during applying power.
+	 */
+	POWER("POW") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Number right) {
+			return NumberUtils.pow(left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Number left, Object right) {
+			if (right instanceof Character character) {
+				return apply(   left,
+								Character.isWhitespace(character) ?
+										0 :
+										Character.isDigit(character) ?
+												Character.getNumericValue(character) :
+										(int) character);
+			}
+			else {
+				return applyArithmetic(left, right);
+			}
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Object left, Number right) {
+			if (left instanceof Character character) {
+				return apply(Character.isWhitespace(character) ?
+						0 :
+						Character.isDigit(character) ?
+								Character.getNumericValue(character) :
+						(int) character, right);
+			}
+			else {
+				return applyArithmetic(left, right);
+			}
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(String left, String right) {
+			Number leftNumber = NumberUtils.tryParseDynamicNumber(left);
+			Number rightNumber = NumberUtils.tryParseDynamicNumber(right);
+			return handleFalsy(leftNumber, rightNumber);
 		}
 
 		/**
@@ -1215,37 +1288,75 @@ public enum BinaryOperation implements Operation {
 		}
 		// Number vs Number
 		if (left instanceof Number number && right instanceof Number number1) {
-			return apply(number, number1);
+			if (DynamicNumber.isNaN(number)) {
+				return handleFalsy(NaN.get(), number1);
+			}
+			else if (DynamicNumber.isNaN(number1)) {
+				return handleFalsy(number, NaN.get());
+			}
+			else {
+				return apply(number, number1);
+			}
 		}
 
 		// Number vs Boolean
 		if (left instanceof Number number && right instanceof Boolean aBoolean) {
-			return apply(number, aBoolean);
+			if (DynamicNumber.isNaN(number)) {
+				return handleFalsy(NaN.get(), aBoolean);
+			}
+			else {
+				return apply(number, aBoolean);
+			}
 		}
 
 		// Number vs Character
 		if (left instanceof Number number && right instanceof Character character) {
-			return apply(number, character);
+			if (DynamicNumber.isNaN(number)) {
+				return handleFalsy(NaN.get(), character);
+			}
+			else {
+				return apply(number, character);
+			}
 		}
 
 		// Number vs String
 		if (left instanceof Number number && right instanceof String string) {
-			return apply(number, string);
+			if (DynamicNumber.isNaN(number)) {
+				return handleFalsy(NaN.get(), string);
+			}
+			else {
+				return apply(number, string);
+			}
 		}
 
 		// Boolean vs Number
 		if (left instanceof Boolean aBoolean && right instanceof Number number) {
-			return apply(aBoolean, number);
+			if (DynamicNumber.isNaN(number)) {
+				return handleFalsy(aBoolean, NaN.get());
+			}
+			else {
+				return apply(aBoolean, number);
+			}
 		}
 
 		// Character vs Number
 		if (left instanceof Character character && right instanceof Number number) {
-			return apply(character, number);
+			if (DynamicNumber.isNaN(number)) {
+				return handleFalsy(character, NaN.get());
+			}
+			else {
+				return apply(character, number);
+			}
 		}
 
 		// String vs Number
 		if (left instanceof String string && right instanceof Number number) {
-			return apply(string, number);
+			if (DynamicNumber.isNaN(number)) {
+				return handleFalsy(string, NaN.get());
+			}
+			else {
+				return apply(string, number);
+			}
 		}
 
 		// Boolean vs Boolean
