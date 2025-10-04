@@ -2,6 +2,7 @@ package org.daiitech.naftah.builtin.utils.op;
 
 import java.util.Objects;
 
+import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
@@ -372,7 +373,12 @@ public enum UnaryOperation implements Operation {
 			return handleFalsy(object);
 		}
 		else if (object instanceof Number number) {
-			return apply(number);
+			if (DynamicNumber.isNaN(number)) {
+				return handleFalsy(NaN.get());
+			}
+			else {
+				return apply(number);
+			}
 		}
 		else if (object instanceof Boolean aBoolean) {
 			return apply(aBoolean.booleanValue());
