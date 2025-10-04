@@ -142,6 +142,10 @@ public final class Naftah {
 	public static final String VECTOR_API_PROPERTY = "naftah.vector.api.active";
 
 	/**
+	 * Property to enable Arabic formatter in Naftah.
+	 */
+	public static final String ARABIC_NUMBER_FORMATTER_PROPERTY = "naftah.arabic.formatter.active";
+	/**
 	 * Property to enable Arabic-Indic digit formatting in Naftah.
 	 */
 	public static final String ARABIC_INDIC_PROPERTY = "naftah.arabic.indic.active";
@@ -376,10 +380,12 @@ public final class Naftah {
 		 * The main command name.
 		 */
 		private static final String NAME = "naftah";
+
 		@Option(names = {"-D", "--define"},
 				paramLabel = "<property=value>",
 				description = {"Define a system property", "تعريف خاصية نظام"})
 		private final Map<String, String> systemProperties = new LinkedHashMap<>();
+
 		@Unmatched
 		List<String> arguments = new ArrayList<>();
 
@@ -402,40 +408,56 @@ public final class Naftah {
 				description = { "Specify where to find the class files - must be first argument",
 								"حدّد مكان ملفات الفئات (class files) — يجب أن يكون هو الوسيط الأول"})
 		private String classpath;
+
 		@Option(names = {"-d", "--debug"},
 				description = { "Debug mode will print out full stack traces",
 								"في وضع التصحيح، سيتم طباعة تتبع الأخطاء الكامل."})
 		private boolean debug;
+
 		@Option(names = {"-c", "--encoding"},
 				paramLabel = "<charset>",
 				description = {"Specify the encoding of the files", "تحديد ترميز الملفات"})
 		private String encoding;
+
 		@Option(names = {"-scp", "--scan-classpath"},
 				paramLabel = "<charset>",
 				description = { "Specify if the classpath classes should be reused as nafta types",
 								"حدد ما إذا كان يجب إعادة استخدام فئات المسار (classpath) كأنواع في نفطح."})
 		private boolean scanClasspath;
+
 		@Option(names = {"-f", "--force-scan-classpath"},
 				paramLabel = "<charset>",
 				description = { "Force scanning the classpath when (-scp, --scan-classpath) is provided.",
 								"فرض فحص مسار الأصناف (classpath) عند توفير الخيار (-scp, --scan-classpath)."})
 		private boolean forceScanClasspath;
+
 		@Option(names = {"-e"},
 				paramLabel = "<script>",
 				description = {"Specify a command line script", "تحديد سكربت لسطر الأوامر"})
 		private String script;
+
 		@Option(names = {"-h", "--help"},
 				usageHelp = true,
 				description = {"Show this help message and exit", "عرض رسالة المساعدة هذه ثم الخروج"})
 		private boolean helpRequested;
+
 		@Option(names = {"-v", "--version"},
 				versionHelp = true,
 				description = {"Print version information and exit", "طباعة معلومات الإصدار والخروج"})
 		private boolean versionRequested;
+
 		@Option(names = {"-vec", "--vector"},
 				description = { "Enable Vector API optimizations for performance",
 								"تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"})
 		private boolean useVectorApi;
+
+		@Option(names = {"-ar_f", "--arabic_formatting"},
+				description = {
+								"Use Arabic numerals and formatting symbols (e.g., decimal separator, digit shapes).",
+								"استخدام الأرقام العربية ورموز التنسيق (مثل الفاصلة العشرية وأشكال الأرقام)."
+				})
+		private boolean useArabicFormatter;
+
 		@Option(names = {"-ar_ind", "--arabic_indic"},
 				description = {
 								"Display numbers using Arabic-Indic digits (٠١٢٣٤٥٦٧٨٩)",
@@ -515,6 +537,10 @@ public final class Naftah {
 
 			if (matchedCommand.useVectorApi) {
 				System.setProperty(VECTOR_API_PROPERTY, Boolean.toString(true));
+			}
+
+			if (matchedCommand.useArabicFormatter) {
+				System.setProperty(ARABIC_NUMBER_FORMATTER_PROPERTY, Boolean.toString(true));
 			}
 
 			if (matchedCommand.useArabicIndic) {
