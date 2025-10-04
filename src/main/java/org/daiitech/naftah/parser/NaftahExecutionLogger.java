@@ -213,6 +213,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.MultiplicativeExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.PowerExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.PrefixUnaryExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -1366,7 +1369,7 @@ public final class NaftahExecutionLogger {
 											MultiplicativeExpressionContext::ELEMENTWISE_DIV -> %s
 											MultiplicativeExpressionContext::ELEMENTWISE_MOD -> %s
 											"""
-										.formatted( join(context.unaryExpression()),
+										.formatted( join(context.powerExpression()),
 													join(context.MUL()),
 													join(context.DIV()),
 													join(context.MOD()),
@@ -1374,6 +1377,31 @@ public final class NaftahExecutionLogger {
 													join(context.ELEMENTWISE_DIV()),
 													join(context.ELEMENTWISE_MOD())
 										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.PowerExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											MultiplicativeExpressionContext::unaryExpression -> {
+											%s
+											}
+											MultiplicativeExpressionContext::POW -> %s
+											MultiplicativeExpressionContext::powerExpression -> {
+											%s
+											}
+											"""
+										.formatted( Objects.nonNull(context.unaryExpression()) ?
+															context.unaryExpression().getText() :
+															null,
+													Objects.nonNull(context.POW()) ?
+															context.POW().getText() :
+															null,
+													Objects.nonNull(context.powerExpression()) ?
+															context.powerExpression().getText() :
+															null)
+		);
 	}
 
 	public static String logExecution(  boolean doLog,
