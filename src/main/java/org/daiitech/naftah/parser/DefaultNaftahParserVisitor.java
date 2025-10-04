@@ -3112,12 +3112,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multiplicativeExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
-										.visit(multiplicativeExpressionContext.unaryExpression(0));
+										.visit(multiplicativeExpressionContext.powerExpression(0));
 
-								for (int i = 1; i < multiplicativeExpressionContext.unaryExpression().size(); i++) {
+								for (int i = 1; i < multiplicativeExpressionContext.powerExpression().size(); i++) {
 									Object right = defaultNaftahParserVisitor
 											.visit(multiplicativeExpressionContext
-													.unaryExpression(
+													.powerExpression(
 																		i));
 
 									String op = NaftahParserHelper
@@ -3127,6 +3127,32 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								}
 
 								return left;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitPowerExpression(org.daiitech.naftah.parser.NaftahParser.PowerExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitPowerExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, powerExpressionContext) -> {
+								if (Objects.nonNull(powerExpressionContext.POW())) {
+									Object left = visit(powerExpressionContext.unaryExpression());
+									Object right = visit(powerExpressionContext.powerExpression());
+
+									String op = NaftahParserHelper
+											.getDisplayName(powerExpressionContext.POW(),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									return applyOperation(left, right, BinaryOperation.of(op));
+								}
+								else {
+									return visit(powerExpressionContext.unaryExpression());
+								}
 							});
 	}
 
