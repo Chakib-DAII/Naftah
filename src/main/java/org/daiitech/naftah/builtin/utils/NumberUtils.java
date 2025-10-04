@@ -86,6 +86,32 @@ public final class NumberUtils {
 	}
 
 	/**
+	 * Attempts to parse a given text into a {@link Number} using dynamic number parsing logic.
+	 * <p>
+	 * This method first checks if the input text is "truthy" (i.e., not null, empty, or false-like).
+	 * If the text is not truthy, it returns a dynamic number with value {@code 0}.
+	 * <p>
+	 * If the text is truthy, it tries to parse it using {@link #parseDynamicNumber(String, int, String)}.
+	 * If parsing fails due to any exception or {@link NaftahBugError}, it returns a dynamic number with value {@code
+	 * Double.NaN}.
+	 *
+	 * @param text the string to be parsed
+	 * @return a {@link Number} parsed from the input text, or {@code 0} if the text is not truthy,
+	 *         or {@code Double.NaN} if parsing fails
+	 */
+	public static Number tryParseDynamicNumber(String text) {
+		if (!ObjectUtils.isTruthy(text)) {
+			return DynamicNumber.of(0);
+		}
+		try {
+			return parseDynamicNumber(text, 10, null);
+		}
+		catch (Exception | NaftahBugError ignored) {
+			return DynamicNumber.of(Double.NaN);
+		}
+	}
+
+	/**
 	 * Parses a string into the most appropriate {@link Number} type using the specified radix.
 	 * <p>
 	 * This method supports custom bases for whole numbers (e.g., base 2 to base 36),
@@ -918,7 +944,7 @@ public final class NumberUtils {
 	 */
 	public static <T extends Number> Number pow(T base, T exponent) {
 		DynamicNumber dx = DynamicNumber.of(base);
-		return pow(dx, exponent.intValue());
+		return pow(dx, exponent.doubleValue());
 	}
 
 	/**
@@ -930,7 +956,7 @@ public final class NumberUtils {
 	 *         as a {@code
 	 * Number}
 	 */
-	public static Number pow(Object base, int exponent) {
+	public static Number pow(Object base, double exponent) {
 		DynamicNumber dx = DynamicNumber.of(base);
 		return pow(dx, exponent);
 	}
@@ -944,19 +970,19 @@ public final class NumberUtils {
 	 *         as a {@code
 	 * Number}
 	 */
-	public static Number pow(DynamicNumber base, int exponent) {
+	public static Number pow(DynamicNumber base, double exponent) {
 		DynamicNumber dr = base.clone();
 		if (base.isDecimal()) {
 			if (base.isBigDecimal()) {
 				// BigDecimal.pow only supports non-negative exponents
 				if (exponent < 0) {
+					BigDecimal pow = DynamicNumber.of(doPow(base.asBigDecimal(), -exponent)).asBigDecimal();
 					BigDecimal result = BigDecimal.ONE
-							.divide(base.asBigDecimal().pow(-exponent),
-									RoundingMode.HALF_UP);
+							.divide(pow, RoundingMode.HALF_UP);
 					dr.set(result);
 				}
 				else {
-					dr.set(base.asBigDecimal().pow(exponent));
+					dr.set(doPow(base.asBigDecimal(), exponent));
 				}
 			}
 			else {
@@ -965,10 +991,11 @@ public final class NumberUtils {
 					// Promote to BigDecimal for better precision and large values
 					BigDecimal bdBase = base.promote().asBigDecimal();
 					if (exponent < 0) {
-						dr.set(BigDecimal.ONE.divide(bdBase.pow(-exponent), RoundingMode.HALF_UP));
+						BigDecimal pow = DynamicNumber.of(doPow(bdBase, -exponent)).asBigDecimal();
+						dr.set(BigDecimal.ONE.divide(pow, RoundingMode.HALF_UP));
 					}
 					else {
-						dr.set(bdBase.pow(exponent));
+						dr.set(doPow(bdBase, exponent));
 					}
 				}
 				else {
@@ -981,25 +1008,35 @@ public final class NumberUtils {
 				if (exponent < 0) {
 					// Promote to BigDecimal for negative exponent
 					BigDecimal bdBase = new BigDecimal(base.asBigInteger());
-					dr.set(BigDecimal.ONE.divide(bdBase.pow(-exponent)));
+					BigDecimal pow = DynamicNumber.of(doPow(bdBase, -exponent)).asBigDecimal();
+					dr.set(BigDecimal.ONE.divide(pow));
 				}
 				else {
-					dr.set(base.asBigInteger().pow(exponent));
+					dr.set(doPow(base.asBigInteger(), exponent));
 				}
 			}
 			else {
 				try {
-					long result = 1;
-					long b = base.longValue();
-					for (int i = 0; i < exponent; i++) {
-						result = Math.multiplyExact(result, b);
+					double res = Math.pow(base.doubleValue(), exponent);
+					if (Double.isInfinite(res) || Double.isNaN(res)) {
+						if (exponent < 0) {
+							// Promote to BigDecimal for negative exponent
+							BigDecimal bdBase = new BigDecimal(base.asBigInteger());
+							BigDecimal pow = DynamicNumber.of(doPow(bdBase, -exponent)).asBigDecimal();
+							dr.set(BigDecimal.ONE.divide(pow));
+						}
+						else {
+							dr.set(doPow(base.asBigInteger(), exponent));
+						}
 					}
-					dr.set(result);
+					else {
+						dr.set(res);
+					}
 				}
 				catch (ArithmeticException e) {
 					// Overflow, promote to BigInteger and recurse
 					BigInteger bigBase = BigInteger.valueOf(base.longValue());
-					dr.set(bigBase.pow(exponent));
+					dr.set(doPow(bigBase, exponent));
 				}
 			}
 		}
@@ -1007,6 +1044,63 @@ public final class NumberUtils {
 			throw newNaftahBugUnsupportedNumbersError(true, base);
 		}
 		return dr.normalize();
+	}
+
+	/**
+	 * Performs exponentiation on a given {@link Number} base and a {@code double} exponent.
+	 * <p>
+	 * This method converts the base to a {@code double} and uses {@link Math#pow(double, double)}.
+	 * If the result or base is {@code NaN} or {@code Infinity}, it falls back to
+	 * {@link #powInvalidDouble(Number, double, double)}.
+	 *
+	 * @param base     the numeric base (can be {@link Integer}, {@link Double}, {@link BigInteger}, etc.)
+	 * @param exponent the exponent to raise the base to
+	 * @return the result of {@code base ^ exponent}, or a fallback value if the operation is invalid
+	 */
+	private static Number doPow(Number base, double exponent) {
+		double baseDouble = base.doubleValue();
+		if (Double.isNaN(baseDouble) || Double.isInfinite(baseDouble)) {
+			return powInvalidDouble(base, baseDouble, exponent);
+		}
+		else {
+			double res = Math.pow(base.doubleValue(), exponent);
+			if (Double.isNaN(res) || Double.isInfinite(res)) {
+				return powInvalidDouble(base, baseDouble, exponent);
+			}
+			else {
+				return res;
+			}
+		}
+	}
+
+	/**
+	 * Fallback method for exponentiation when {@link Math#pow(double, double)} returns
+	 * {@code NaN} or {@code Infinity}.
+	 * <p>
+	 * Attempts to use type-specific power operations for {@link BigInteger} and {@link BigDecimal}.
+	 * If the base is neither of those, or an exception occurs, returns a {@link DynamicNumber}
+	 * containing the {@code double} representation of the base.
+	 *
+	 * @param base       the original numeric base
+	 * @param baseDouble the {@code double} representation of the base
+	 * @param exponent   the exponent used in the operation
+	 * @return a fallback {@link Number} result for the invalid power operation
+	 */
+	private static Number powInvalidDouble(Number base, double baseDouble, double exponent) {
+		try {
+			if (base instanceof BigInteger bigInteger) {
+				return bigInteger.pow((int) exponent);
+			}
+			else if (base instanceof BigDecimal bigDecimal) {
+				return bigDecimal.pow((int) exponent);
+			}
+			else {
+				return DynamicNumber.of(baseDouble);
+			}
+		}
+		catch (Exception ignored) {
+			return DynamicNumber.of(baseDouble);
+		}
 	}
 
 	/**
@@ -1447,6 +1541,9 @@ public final class NumberUtils {
 	 *         {@code false} otherwise
 	 */
 	public static boolean equals(DynamicNumber dx, DynamicNumber dy) {
+		if (dx.isNaN() || dy.isNaN()) {
+			return false;
+		}
 		return compare(dx, dy) == 0;
 	}
 
@@ -1488,14 +1585,36 @@ public final class NumberUtils {
 	 *         positive integer if {@code dx > dy}
 	 */
 	public static int compare(DynamicNumber dx, DynamicNumber dy) {
-		if (dx.isDecimal() || dy.isDecimal()) {
-			return dx.asBigDecimal().compareTo(dy.asBigDecimal());
+		// Handle NaN or Infinite values first
+		if (dx.isNaN()) {
+			if (dy.isNaN()) {
+				return 0; // Both NaN: consider equal or define your own logic
+			}
+			return -1; // NaN is considered less than any number, or define as needed
 		}
-		else if (dx.isInteger() || dy.isInteger()) {
-			return dx.asBigInteger().compareTo(dy.asBigInteger());
+		else if (dy.isNaN()) {
+			return 1;  // dx is a number, dy is NaN
+		}
+		else if (dx.isInfinite()) {
+			if (dy.isInfinite()) {
+				// Compare sign or treat equal
+				return 0; // or define logic if you have positive/negative infinity
+			}
+			return 1; // Infinite considered greater than any finite number
+		}
+		else if (dy.isInfinite()) {
+			return -1;
 		}
 		else {
-			throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
+			if (dx.isDecimal() || dy.isDecimal()) {
+				return dx.asBigDecimal().compareTo(dy.asBigDecimal());
+			}
+			else if (dx.isInteger() || dy.isInteger()) {
+				return dx.asBigInteger().compareTo(dy.asBigInteger());
+			}
+			else {
+				throw newNaftahBugUnsupportedNumbersError(false, dx, dy);
+			}
 		}
 	}
 
