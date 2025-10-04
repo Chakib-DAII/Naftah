@@ -149,7 +149,9 @@ relationalExpression: additiveExpression ((LT | LE | GT | GE) additiveExpression
 
 additiveExpression: multiplicativeExpression ((PLUS | MINUS | ELEMENTWISE_PLUS | ELEMENTWISE_MINUS) multiplicativeExpression)*;
 
-multiplicativeExpression: unaryExpression ((MUL | DIV | MOD | ELEMENTWISE_MUL | ELEMENTWISE_DIV | ELEMENTWISE_MOD) unaryExpression)*;
+multiplicativeExpression: powerExpression ((MUL | DIV | MOD | ELEMENTWISE_MUL | ELEMENTWISE_DIV | ELEMENTWISE_MOD) powerExpression)*;
+
+powerExpression: unaryExpression (POW powerExpression)?;
 
 unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression #prefixUnaryExpression
     		   | postfixExpression #postfixUnaryExpression
