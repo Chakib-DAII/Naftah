@@ -43,13 +43,13 @@ loadScripts(document, 'script');</script>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method-detail">Method</a></li>
 </ul>
 </div>
 <div class="nav-list-search"><label for="search-input">SEARCH:</label>
@@ -84,6 +84,59 @@ loadScripts(document, 'script');</script>
 <dt>Author:</dt>
 <dd>Chakib Daii</dd>
 </dl>
+</section>
+<section class="summary">
+<ul class="summary-list">
+<!-- ========== METHOD SUMMARY =========== -->
+<li>
+<section class="method-summary" id="method-summary">
+<h2>Method Summary</h2>
+<div id="method-summary-table">
+<div class="caption"><span>Static Methods</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Method</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="../../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#newNaftahBugNoEnumValueError(java.lang.Class,java.lang.String)" class="member-name-link">newNaftahBugNoEnumValueError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="Operation.html" title="interface in org.daiitech.naftah.builtin.utils.op">Operation</a>&gt;&nbsp;operation,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;op)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a <a href="../../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that no enum constant was found
+ for the given operator symbol in the specified <code>Operation</code> enum class.</div>
+</div>
+</div>
+</div>
+</section>
+</li>
+</ul>
+</section>
+<section class="details">
+<ul class="details-list">
+<!-- ============ METHOD DETAIL ========== -->
+<li>
+<section class="method-details" id="method-detail">
+<h2>Method Details</h2>
+<ul class="member-list">
+<li>
+<section class="detail" id="newNaftahBugNoEnumValueError(java.lang.Class,java.lang.String)">
+<h3>newNaftahBugNoEnumValueError</h3>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="../../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahBugNoEnumValueError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="Operation.html" title="interface in org.daiitech.naftah.builtin.utils.op">Operation</a>&gt;&nbsp;operation,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;op)</span></div>
+<div class="block">Creates a <a href="../../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that no enum constant was found
+ for the given operator symbol in the specified <code>Operation</code> enum class.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>operation</code> - the enum class where the operator was expected</dd>
+<dd><code>op</code> - the operator symbol (e.g., "+", "AND", etc.)</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> with an Arabic error message</dd>
+</dl>
+</section>
+</li>
+</ul>
+</section>
+</li>
+</ul>
 </section>
 <!-- ========= END OF CLASS DATA ========= -->
 </main>

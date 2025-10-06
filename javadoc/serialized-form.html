@@ -183,6 +183,26 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.DynamicNumber">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.DynamicNumber</a></h3>
+<div class="type-signature">class DynamicNumber extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<ul class="block-list">
+<li>
+<section class="detail">
+<h4>Serialized Fields</h4>
+<ul class="block-list">
+<li class="block-list">
+<h5>value</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a> value</pre>
+<div class="block">The underlying numeric value.</div>
+</li>
+</ul>
+</section>
+</li>
+</ul>
+</section>
+</li>
+<li>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.JvmFunction">
 <h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.JvmFunction</a></h3>
 <div class="type-signature">class JvmFunction extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
@@ -404,9 +424,19 @@ loadScripts(document, 'script');</script>
 <h4>Serialized Fields</h4>
 <ul class="block-list">
 <li class="block-list">
+<h5>column</h5>
+<pre>int column</pre>
+<div class="block">The index of the first character of this token relative to the beginning of the line at which it occurs, 0..n-1.</div>
+</li>
+<li class="block-list">
 <h5>exception</h5>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a> exception</pre>
 <div class="block">The underlying exception that caused this error, if any.</div>
+</li>
+<li class="block-list">
+<h5>line</h5>
+<pre>int line</pre>
+<div class="block">The line number on which the 1st character of this token was matched, line=1..n.</div>
 </li>
 <li class="block-list">
 <h5>message</h5>

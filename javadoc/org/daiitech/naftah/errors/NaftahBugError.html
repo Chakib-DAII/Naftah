@@ -121,10 +121,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a></code></div>
-<div class="col-second even-row-color"><code><a href="#exception" class="member-name-link">exception</a></code></div>
+<div class="col-first even-row-color"><code>private final int</code></div>
+<div class="col-second even-row-color"><code><a href="#column" class="member-name-link">column</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">The index of the first character of this token relative to the beginning of the line at which it occurs, 0..n-1.</div>
+</div>
+<div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#exception" class="member-name-link">exception</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The underlying exception that caused this error, if any.</div>
+</div>
+<div class="col-first even-row-color"><code>private final int</code></div>
+<div class="col-second even-row-color"><code><a href="#line" class="member-name-link">line</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The line number on which the 1st character of this token was matched, line=1..n.</div>
 </div>
 <div class="col-first odd-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#message" class="member-name-link">message</a></code></div>
@@ -151,11 +161,25 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Constructs a <code>NaftahBugError</code> using the given message text.</div>
 </div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,java.lang.Throwable)" class="member-name-link">NaftahBugError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;exception)</code></div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,int,int)" class="member-name-link">NaftahBugError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
 <div class="col-last odd-row-color">
+<div class="block">Constructs a <code>NaftahBugError</code> using a descriptive message and the line number along with the column.</div>
+</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,java.lang.Throwable)" class="member-name-link">NaftahBugError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;exception)</code></div>
+<div class="col-last even-row-color">
 <div class="block">Constructs a <code>NaftahBugError</code> using both a descriptive message
  and an underlying exception cause.</div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,java.lang.Throwable,int,int)" class="member-name-link">NaftahBugError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;exception,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Constructs a <code>NaftahBugError</code> using a descriptive message
+ and an underlying exception cause and the line number along with the column.</div>
 </div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.Throwable)" class="member-name-link">NaftahBugError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;exception)</code></div>
 <div class="col-last even-row-color">
@@ -175,29 +199,35 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getBugText()" class="member-name-link">getBugText</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#doGetMessage()" class="member-name-link">doGetMessage</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Constructs the internal message based on the presence of a user-defined message
+ and an optional exception.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getBugText()" class="member-name-link">getBugText</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the raw bug message text without formatting or localization.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCause()" class="member-name-link">getCause</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCause()" class="member-name-link">getCause</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the underlying cause of this bug error, if available.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessage()" class="member-name-link">getMessage</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMessage()" class="member-name-link">getMessage</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the detailed error message.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBugText(java.lang.String)" class="member-name-link">setBugText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setBugText(java.lang.String)" class="member-name-link">setBugText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates the descriptive bug message.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the string representation of this error,
  which delegates to <a href="#getMessage()"><code>getMessage()</code></a>.</div>
 </div>
@@ -244,6 +274,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="line">
+<h3>line</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">line</span></div>
+<div class="block">The line number on which the 1st character of this token was matched, line=1..n.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="column">
+<h3>column</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">column</span></div>
+<div class="block">The index of the first character of this token relative to the beginning of the line at which it occurs, 0..n-1.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="message">
 <h3>message</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">message</span></div>
@@ -270,6 +314,22 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="&lt;init&gt;(java.lang.String,int,int)">
+<h3>NaftahBugError</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">NaftahBugError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Constructs a <code>NaftahBugError</code> using a descriptive message and the line number along with the column.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>msg</code> - the error message describing the bug</dd>
+<dd><code>line</code> - The line number on which the 1st character of this token was matched</dd>
+<dd><code>column</code> - The index of the first character of this token relative to the beginning of the line at which
+               it occurs</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="&lt;init&gt;(java.lang.Throwable)">
 <h3>NaftahBugError</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">NaftahBugError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;exception)</span></div>
@@ -291,6 +351,25 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>msg</code> - the error message describing the bug</dd>
 <dd><code>exception</code> - the underlying cause of this error</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(java.lang.String,java.lang.Throwable,int,int)">
+<h3>NaftahBugError</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">NaftahBugError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;msg,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;exception,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Constructs a <code>NaftahBugError</code> using a descriptive message
+ and an underlying exception cause and the line number along with the column.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>msg</code> - the error message describing the bug</dd>
+<dd><code>exception</code> - the underlying cause of this error</dd>
+<dd><code>line</code> - The line number on which the 1st character of this token was matched</dd>
+<dd><code>column</code> - The index of the first character of this token relative to the beginning of the line at which
+                  it occurs</dd>
 </dl>
 </section>
 </li>
@@ -330,6 +409,18 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html#getMessage()" title="class or interface in java.lang" class="external-link">getMessage</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a></code></dd>
 <dt>Returns:</dt>
 <dd>the formatted bug message</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="doGetMessage()">
+<h3>doGetMessage</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">doGetMessage</span>()</div>
+<div class="block">Constructs the internal message based on the presence of a user-defined message
+ and an optional exception.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the constructed error detail string</dd>
 </dl>
 </section>
 </li>

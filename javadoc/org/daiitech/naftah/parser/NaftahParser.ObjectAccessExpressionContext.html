@@ -74,7 +74,7 @@ loadScripts(document, 'script');</script>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance">org.antlr.v4.runtime.RuleContext
 <div class="inheritance">org.antlr.v4.runtime.ParserRuleContext
-<div class="inheritance"><a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">org.daiitech.naftah.parser.NaftahParser.ExpressionContext</a>
+<div class="inheritance"><a href="NaftahParser.PrimaryContext.html" title="class in org.daiitech.naftah.parser">org.daiitech.naftah.parser.NaftahParser.PrimaryContext</a>
 <div class="inheritance">org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext</div>
 </div>
 </div>
@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public static class </span><span class="element-name type-name-label">NaftahParser.ObjectAccessExpressionContext</span>
-<span class="extends-implements">extends <a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a></span></div>
+<span class="extends-implements">extends <a href="NaftahParser.PrimaryContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.PrimaryContext</a></span></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -115,7 +115,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)" class="member-name-link">ObjectAccessExpressionContext</a><wbr>(<a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a>&nbsp;ctx)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.PrimaryContext)" class="member-name-link">ObjectAccessExpressionContext</a><wbr>(<a href="NaftahParser.PrimaryContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.PrimaryContext</a>&nbsp;ctx)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -134,15 +134,15 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#accept(org.antlr.v4.runtime.tree.ParseTreeVisitor)" class="member-name-link">accept</a><wbr>(org.antlr.v4.runtime.tree.ParseTreeVisitor&lt;? extends T&gt;&nbsp;visitor)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="NaftahParser.QualifiedNameContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#qualifiedName()" class="member-name-link">qualifiedName</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="NaftahParser.ObjectAccessContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectAccessContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#objectAccess()" class="member-name-link">objectAccess</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
-<h3 id="methods-inherited-from-class-org.daiitech.naftah.parser.NaftahParser.ExpressionContext">Methods inherited from class&nbsp;org.daiitech.naftah.parser.<a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a></h3>
-<code><a href="NaftahParser.ExpressionContext.html#copyFrom(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)">copyFrom</a>, <a href="NaftahParser.ExpressionContext.html#getRuleIndex()">getRuleIndex</a></code></div>
+<h3 id="methods-inherited-from-class-org.daiitech.naftah.parser.NaftahParser.PrimaryContext">Methods inherited from class&nbsp;org.daiitech.naftah.parser.<a href="NaftahParser.PrimaryContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.PrimaryContext</a></h3>
+<code><a href="NaftahParser.PrimaryContext.html#copyFrom(org.daiitech.naftah.parser.NaftahParser.PrimaryContext)">copyFrom</a>, <a href="NaftahParser.PrimaryContext.html#getRuleIndex()">getRuleIndex</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.antlr.v4.runtime.ParserRuleContext">Methods inherited from class&nbsp;org.antlr.v4.runtime.ParserRuleContext</h3>
 <code>addAnyChild, addChild, addChild, addChild, addErrorNode, addErrorNode, copyFrom, enterRule, exitRule, getChild, getChild, getChildCount, getParent, getRuleContext, getRuleContexts, getSourceInterval, getStart, getStop, getToken, getTokens, removeLastChild, toInfoString</code></div>
@@ -164,9 +164,9 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)">
+<section class="detail" id="&lt;init&gt;(org.daiitech.naftah.parser.NaftahParser.PrimaryContext)">
 <h3>ObjectAccessExpressionContext</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ObjectAccessExpressionContext</span><wbr><span class="parameters">(<a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a>&nbsp;ctx)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ObjectAccessExpressionContext</span><wbr><span class="parameters">(<a href="NaftahParser.PrimaryContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.PrimaryContext</a>&nbsp;ctx)</span></div>
 </section>
 </li>
 </ul>
@@ -178,9 +178,9 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="qualifiedName()">
-<h3>qualifiedName</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="NaftahParser.QualifiedNameContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameContext</a></span>&nbsp;<span class="element-name">qualifiedName</span>()</div>
+<section class="detail" id="objectAccess()">
+<h3>objectAccess</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="NaftahParser.ObjectAccessContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectAccessContext</a></span>&nbsp;<span class="element-name">objectAccess</span>()</div>
 </section>
 </li>
 <li>

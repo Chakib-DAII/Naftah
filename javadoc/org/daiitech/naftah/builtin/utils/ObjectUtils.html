@@ -220,8 +220,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#numberToString(java.lang.Number)" class="member-name-link">numberToString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;number)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> to a localized string representation
- using Arabic locale formatting rules.</div>
+<div class="block">Converts the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> into a localized string representation using Arabic locale formatting rules.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAllNulls(java.lang.String)" class="member-name-link">replaceAllNulls</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
@@ -546,26 +545,30 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="numberToString(java.lang.Number)">
 <h3>numberToString</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">numberToString</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;number)</span></div>
-<div class="block">Converts the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> to a localized string representation
- using Arabic locale formatting rules.
+<div class="block">Converts the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> into a localized string representation using Arabic locale formatting rules.
  <p>
- This includes Arabic-style grouping and decimal separators, and may use
- Arabic-Indic digits depending on JVM configuration and font support.
+ When the system property <code>arabic.number.format</code> is <code>true</code>, this method uses a preconfigured
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/NumberFormat.html" title="class or interface in java.text" class="external-link"><code>NumberFormat</code></a> instance for the Arabic locale. This includes Arabic-style decimal and grouping
+ separators and may render digits in Arabic-Indic form, depending on JVM and font support.
  <p>
- The method is synchronized on <a href="../../utils/arabic/ArabicUtils.html#ARABIC_NUMBER_FORMAT"><code>ArabicUtils.ARABIC_NUMBER_FORMAT</code></a> since
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/NumberFormat.html" title="class or interface in java.text" class="external-link"><code>NumberFormat</code></a> instances are not thread-safe.</div>
+ The method synchronizes on <a href="../../utils/arabic/ArabicUtils.html#ARABIC_NUMBER_FORMAT"><code>ArabicUtils.ARABIC_NUMBER_FORMAT</code></a>
+ since <code>NumberFormat</code> is not thread-safe.
+ <p>
+ If the system property is not set to <code>true</code>, the method falls back to a custom digit conversion
+ via <a href="../../utils/arabic/ArabicUtils.html#latinNumberToArabicString(java.lang.Number)"><code>ArabicUtils.latinNumberToArabicString(Number)</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>number</code> - the number to format; must not be <code>null</code></dd>
 <dt>Returns:</dt>
-<dd>a string representation of the number in Arabic locale formatting</dd>
+<dd>the number formatted as a string using Arabic locale or Arabic digits</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>number</code> is <code>null</code></dd>
 <dt>See Also:</dt>
 <dd>
-<ul class="see-list">
+<ul class="see-list-long">
 <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/NumberFormat.html#format(double)" title="class or interface in java.text" class="external-link"><code>NumberFormat.format(double)</code></a></li>
 <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link"><code>Locale</code></a></li>
+<li><a href="../../utils/arabic/ArabicUtils.html#latinNumberToArabicString(java.lang.Number)"><code>ArabicUtils.latinNumberToArabicString(Number)</code></a></li>
 </ul>
 </dd>
 </dl>

@@ -170,8 +170,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the root cause of the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link"><code>Throwable</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugInvalidLoopLabelError(java.lang.String,org.antlr.v4.runtime.Parser)" class="member-name-link">newNaftahBugInvalidLoopLabelError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;label,
- org.antlr.v4.runtime.Parser&nbsp;parser)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahBugInvalidLoopLabelError(java.lang.String,org.antlr.v4.runtime.Parser,int,int)" class="member-name-link">newNaftahBugInvalidLoopLabelError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;label,
+ org.antlr.v4.runtime.Parser&nbsp;parser,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating an invalid reuse of a loop label.</div>
 </div>
@@ -403,10 +405,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="newNaftahBugInvalidLoopLabelError(java.lang.String,org.antlr.v4.runtime.Parser)">
+<section class="detail" id="newNaftahBugInvalidLoopLabelError(java.lang.String,org.antlr.v4.runtime.Parser,int,int)">
 <h3>newNaftahBugInvalidLoopLabelError</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahBugInvalidLoopLabelError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;label,
- org.antlr.v4.runtime.Parser&nbsp;parser)</span></div>
+ org.antlr.v4.runtime.Parser&nbsp;parser,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
 <div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating an invalid reuse of a loop label.
  <p>
  Constructs an error message in Arabic describing that the same loop label cannot be

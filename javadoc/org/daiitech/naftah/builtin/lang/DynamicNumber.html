@@ -72,12 +72,19 @@ loadScripts(document, 'script');</script>
 <h1 title="Class DynamicNumber" class="title">Class DynamicNumber</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
+<div class="inheritance"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">java.lang.Number</a>
 <div class="inheritance">org.daiitech.naftah.builtin.lang.DynamicNumber</div>
 </div>
+</div>
 <section class="class-description" id="class-description">
+<dl class="notes">
+<dt>All Implemented Interfaces:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Cloneable.html" title="class or interface in java.lang" class="external-link">Cloneable</a></code></dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">DynamicNumber</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>
+implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Cloneable.html" title="class or interface in java.lang" class="external-link">Cloneable</a></span></div>
 <div class="block">A wrapper class for numeric values that supports dynamic typing and
  provides utility methods for type checking, conversion, promotion,
  and normalization of numbers.
@@ -92,6 +99,12 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Author:</dt>
 <dd>Chakib Daii</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../serialized-form.html#org.daiitech.naftah.builtin.lang.DynamicNumber">Serialized Form</a></li>
+</ul>
+</dd>
 </dl>
 </section>
 <section class="summary">
@@ -154,50 +167,40 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value as a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/math/BigInteger.html" title="class or interface in java.math" class="external-link"><code>BigInteger</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>byte</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#asByte()" class="member-name-link">asByte</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clone()" class="member-name-link">clone</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value as a byte.</div>
+<div class="block">Creates and returns a copy of this <code>DynamicNumber</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#asDouble()" class="member-name-link">asDouble</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#doubleValue()" class="member-name-link">doubleValue</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value as a double.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#asFloat()" class="member-name-link">asFloat</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value as a float.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#asInt()" class="member-name-link">asInt</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value as an int.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#asLong()" class="member-name-link">asLong</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value as a long.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>short</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#asShort()" class="member-name-link">asShort</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value as a short.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Compares this <code>DynamicNumber</code> to another object for equality.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get()" class="member-name-link">get</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#floatValue()" class="member-name-link">floatValue</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value as a float.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get()" class="member-name-link">get</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the underlying <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> value.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the hash code of the underlying numeric value.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#intValue()" class="member-name-link">intValue</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value as an int.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBigDecimal()" class="member-name-link">isBigDecimal</a>()</code></div>
@@ -231,6 +234,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks if the value is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Float.html" title="class or interface in java.lang" class="external-link"><code>Float</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isInfinite()" class="member-name-link">isInfinite</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Checks if the internal value is positive or negative infinity.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isInfinite(java.lang.Number)" class="member-name-link">isInfinite</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;number)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks if the given number is positive or negative infinity.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isInt()" class="member-name-link">isInt</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Checks if the value is an <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link"><code>Integer</code></a>.</div>
@@ -247,14 +260,35 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks if the value is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Long.html" title="class or interface in java.lang" class="external-link"><code>Long</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNaN()" class="member-name-link">isNaN</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Checks if the internal value is a floating-point NaN (Not-a-Number).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isNaN(java.lang.Number)" class="member-name-link">isNaN</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;number)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks if the given number is NaN (Not-a-Number).</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isShort()" class="member-name-link">isShort</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Checks if the value is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Short.html" title="class or interface in java.lang" class="external-link"><code>Short</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#normalize()" class="member-name-link">normalize</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#longValue()" class="member-name-link">longValue</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Normalizes the number to the smallest suitable numeric type.</div>
+<div class="block">Returns the value as a long.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#normalize()" class="member-name-link">normalize</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Normalizes the internal number value to the smallest suitable numeric type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#normalize(boolean)" class="member-name-link">normalize</a><wbr>(boolean&nbsp;processFloatingNumbers)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Normalizes the internal number to the most compact numeric type possible,
+ optionally including support for floating point number simplification.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.Number)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;value)</code></div>
@@ -285,8 +319,11 @@ loadScripts(document, 'script');</script>
 </div>
 </div>
 <div class="inherited-list">
+<h3 id="methods-inherited-from-class-java.lang.Number">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></h3>
+<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html#byteValue()" title="class or interface in java.lang" class="external-link">byteValue</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html#shortValue()" title="class or interface in java.lang" class="external-link">shortValue</a></code></div>
+<div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
-<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 </section>
 </li>
 </ul>
@@ -377,6 +414,38 @@ loadScripts(document, 'script');</script>
 <dd><code>value</code> - the value to parse</dd>
 <dt>Returns:</dt>
 <dd>a new <code>DynamicNumber</code> representing the parsed value</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isNaN(java.lang.Number)">
+<h3>isNaN</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isNaN</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;number)</span></div>
+<div class="block">Checks if the given number is NaN (Not-a-Number).
+ <p>
+ Only applies to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Float.html" title="class or interface in java.lang" class="external-link"><code>Float</code></a> and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link"><code>Double</code></a> values.
+ If the number is an instance of <code>DynamicNumber</code>, it will be unwrapped first.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>number</code> - the number to check</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if the number is <code>NaN</code>, <code>false</code> otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isInfinite(java.lang.Number)">
+<h3>isInfinite</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isInfinite</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;number)</span></div>
+<div class="block">Checks if the given number is positive or negative infinity.
+ <p>
+ Only applies to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Float.html" title="class or interface in java.lang" class="external-link"><code>Float</code></a> and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Double.html" title="class or interface in java.lang" class="external-link"><code>Double</code></a> values.
+ If the number is an instance of <code>DynamicNumber</code>, it will be unwrapped first.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>number</code> - the number to check</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if the number is <code>Infinity</code> or <code>-Infinity</code>, <code>false</code> otherwise</dd>
 </dl>
 </section>
 </li>
@@ -493,66 +562,52 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="asByte()">
-<h3>asByte</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">byte</span>&nbsp;<span class="element-name">asByte</span>()</div>
-<div class="block">Returns the value as a byte.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the byte value</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="asShort()">
-<h3>asShort</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">short</span>&nbsp;<span class="element-name">asShort</span>()</div>
-<div class="block">Returns the value as a short.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the short value</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="asInt()">
-<h3>asInt</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">asInt</span>()</div>
+<section class="detail" id="intValue()">
+<h3>intValue</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">intValue</span>()</div>
 <div class="block">Returns the value as an int.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html#intValue()" title="class or interface in java.lang" class="external-link">intValue</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></code></dd>
 <dt>Returns:</dt>
 <dd>the int value</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="asLong()">
-<h3>asLong</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">asLong</span>()</div>
+<section class="detail" id="longValue()">
+<h3>longValue</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">longValue</span>()</div>
 <div class="block">Returns the value as a long.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html#longValue()" title="class or interface in java.lang" class="external-link">longValue</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></code></dd>
 <dt>Returns:</dt>
 <dd>the long value</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="asFloat()">
-<h3>asFloat</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">asFloat</span>()</div>
+<section class="detail" id="floatValue()">
+<h3>floatValue</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">floatValue</span>()</div>
 <div class="block">Returns the value as a float.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html#floatValue()" title="class or interface in java.lang" class="external-link">floatValue</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></code></dd>
 <dt>Returns:</dt>
 <dd>the float value</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="asDouble()">
-<h3>asDouble</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">asDouble</span>()</div>
+<section class="detail" id="doubleValue()">
+<h3>doubleValue</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">doubleValue</span>()</div>
 <div class="block">Returns the value as a double.</div>
 <dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html#doubleValue()" title="class or interface in java.lang" class="external-link">doubleValue</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></code></dd>
 <dt>Returns:</dt>
 <dd>the double value</dd>
 </dl>
@@ -633,14 +688,58 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="normalize()">
 <h3>normalize</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a></span>&nbsp;<span class="element-name">normalize</span>()</div>
-<div class="block">Normalizes the number to the smallest suitable numeric type.
+<div class="block">Normalizes the internal number value to the smallest suitable numeric type.
  <p>
- For example, it will convert BigDecimal without fractional part to BigInteger,
- BigInteger values that fit into a long down to long, and long values down to
- int, short, or byte if possible.</div>
+ This method simplifies the internal representation of the number when possible:
+ <ul>
+ <li>Converts a <code>BigDecimal</code> with no fractional part to a <code>BigInteger</code></li>
+ <li>Downcasts a <code>BigInteger</code> to <code>long</code> if it fits</li>
+ <li>Downcasts integral <code>long</code> values to <code>int</code>, <code>short</code>, or <code>byte</code> if within range</li>
+ <li>If floating point support is enabled via <a href="#normalize(boolean)"><code>normalize(boolean)</code></a>, it also tries to:
+ <ul>
+ <li>Convert <code>Double</code> values to <code>Float</code> if within precision range</li>
+ <li>Convert whole <code>Float</code> or <code>Double</code> values to integral types</li>
+ </ul>
+ </li>
+ </ul></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>a new <code>DynamicNumber</code> with the normalized value</dd>
+<dd><code>this</code>, after normalizing the value in place</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="#normalize(boolean)"><code>normalize(boolean)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="normalize(boolean)">
+<h3>normalize</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a></span>&nbsp;<span class="element-name">normalize</span><wbr><span class="parameters">(boolean&nbsp;processFloatingNumbers)</span></div>
+<div class="block">Normalizes the internal number to the most compact numeric type possible,
+ optionally including support for floating point number simplification.
+ <p>
+ The normalization process works as follows:
+ <ul>
+ <li><b><code>BigDecimal</code>:</b> If it has no fractional part, it's converted to <code>BigInteger</code></li>
+ <li><b><code>BigInteger</code>:</b> Downcast to <code>long</code> if it fits (bit length ≤ 63)</li>
+ <li><b><code>long</code>:</b> Downcast to <code>int</code>, <code>short</code>, or <code>byte</code> if within range</li>
+ <li><b><code>Double</code>/<code>Float</code>:</b> If <code>processFloatingNumbers</code> is <code>true</code>, and:
+ <ul>
+ <li>It's a finite, whole number → convert to <code>long</code> and then normalize further</li>
+ <li><code>Double</code> fits in <code>Float</code> range → convert to <code>Float</code></li>
+ </ul>
+ </li>
+ </ul>
+ <p>
+ Special floating-point values like <code>NaN</code> or <code>Infinity</code> are preserved and skipped.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>processFloatingNumbers</code> - whether to process and simplify <code>Float</code> / <code>Double</code> types</dd>
+<dt>Returns:</dt>
+<dd><code>this</code>, after normalizing the value in place</dd>
 </dl>
 </section>
 </li>
@@ -684,6 +783,58 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
 <dt>Returns:</dt>
 <dd>the string form of the wrapped number</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isNaN()">
+<h3>isNaN</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isNaN</span>()</div>
+<div class="block">Checks if the internal value is a floating-point NaN (Not-a-Number).</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><code>true</code> if the value is NaN, otherwise <code>false</code></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="#isNaN(java.lang.Number)"><code>isNaN(Number)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isInfinite()">
+<h3>isInfinite</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isInfinite</span>()</div>
+<div class="block">Checks if the internal value is positive or negative infinity.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><code>true</code> if the value is <code>Infinity</code> or <code>-Infinity</code>, otherwise <code>false</code></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="#isInfinite(java.lang.Number)"><code>isInfinite(Number)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="clone()">
+<h3>clone</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">DynamicNumber</a></span>&nbsp;<span class="element-name">clone</span>()</div>
+<div class="block">Creates and returns a copy of this <code>DynamicNumber</code>.
+ <p>
+ This performs a shallow clone. If your subclass adds mutable fields,
+ ensure they are also copied to prevent shared state.</div>
+<dl class="notes">
+<dt>Overrides:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
+<dt>Returns:</dt>
+<dd>a cloned copy of this instance</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if cloning fails unexpectedly</dd>
 </dl>
 </section>
 </li>

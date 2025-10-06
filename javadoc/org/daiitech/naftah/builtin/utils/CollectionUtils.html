@@ -180,6 +180,34 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Applies a unary operation to each value in a map.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static &lt;T&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createCompatibleCollection(java.util.Collection)" class="member-name-link">createCompatibleCollection</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;original)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new, empty collection that is compatible with the given original collection,
+ in order to preserve its iteration order and general behavior.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getElementAt(java.util.Collection,int)" class="member-name-link">getElementAt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;?&gt;&nbsp;collection,
+ int&nbsp;targetIndex)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves the element at the specified index from a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahIndexOutOfBoundsBugError(int,int)" class="member-name-link">newNaftahIndexOutOfBoundsBugError</a><wbr>(int&nbsp;targetIndex,
+ int&nbsp;size)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that an index is out of bounds for a collection.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahIndexOutOfBoundsBugError(int,int,java.lang.Exception,int,int)" class="member-name-link">newNaftahIndexOutOfBoundsBugError</a><wbr>(int&nbsp;targetIndex,
+ int&nbsp;size,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;e,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that an index is out of bounds for a collection,
+ and optionally includes a cause (wrapped exception).</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahSizeBugError(java.lang.Object%5B%5D,java.lang.Object%5B%5D)" class="member-name-link">newNaftahSizeBugError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;left,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;right)</code></div>
@@ -192,6 +220,13 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Constructs a new <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that the sizes of the two associative arrays (maps) do not
  match.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setElementAt(java.util.Collection,int,T)" class="member-name-link">setElementAt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;collection,
+ int&nbsp;targetIndex,
+ T&nbsp;newValue)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Replaces the element at the specified index in a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a> with a new value.</div>
 </div>
 </div>
 </div>
@@ -387,6 +422,82 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getElementAt(java.util.Collection,int)">
+<h3>getElementAt</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">getElementAt</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;?&gt;&nbsp;collection,
+ int&nbsp;targetIndex)</span></div>
+<div class="block">Retrieves the element at the specified index from a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a>.
+ <p>
+ Since <code>Collection</code> does not support direct index-based access, this method
+ iterates through the elements in the order defined by the collection's iterator.
+ </p>
+ <p>
+ If the index is out of bounds (i.e., <code>targetIndex &gt;= collection.size()</code>),
+ a <code>NaftahBugError</code> is thrown with a detailed Arabic error message.
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>collection</code> - the collection to retrieve the element from</dd>
+<dd><code>targetIndex</code> - the zero-based index of the desired element</dd>
+<dt>Returns:</dt>
+<dd>the element at the specified index</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the index is greater than or equal to the collection size</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setElementAt(java.util.Collection,int,T)">
+<h3 id="setElementAt(java.util.Collection,int,java.lang.Object)">setElementAt</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setElementAt</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;collection,
+ int&nbsp;targetIndex,
+ T&nbsp;newValue)</span></div>
+<div class="block">Replaces the element at the specified index in a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a> with a new value.
+ <p>
+ This method iterates through the collection using an <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Iterator.html" title="class or interface in java.util" class="external-link"><code>Iterator</code></a>,
+ and rebuilds the collection with the replacement applied. It preserves
+ insertion order for collections like <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/LinkedHashSet.html" title="class or interface in java.util" class="external-link"><code>LinkedHashSet</code></a> and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a>.
+ </p></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the element type of the collection</dd>
+<dt>Parameters:</dt>
+<dd><code>collection</code> - the collection to modify</dd>
+<dd><code>targetIndex</code> - the zero-based index to replace</dd>
+<dd><code>newValue</code> - the new value to insert at the given index</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IndexOutOfBoundsException.html" title="class or interface in java.lang" class="external-link">IndexOutOfBoundsException</a></code> - if the target index is out of bounds</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - if the collection cannot be cleared or modified</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createCompatibleCollection(java.util.Collection)">
+<h3>createCompatibleCollection</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;</span>&nbsp;<span class="element-name">createCompatibleCollection</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;original)</span></div>
+<div class="block">Creates a new, empty collection that is compatible with the given original collection,
+ in order to preserve its iteration order and general behavior.
+ <p>
+ This is used internally to rebuild collections (e.g., when modifying an element by index),
+ while maintaining the same ordering semantics:
+ </p>
+ <ul>
+ <li>If the original is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/LinkedHashSet.html" title="class or interface in java.util" class="external-link"><code>LinkedHashSet</code></a>, returns a new <code>LinkedHashSet</code>.</li>
+ <li>If the original is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a>, returns a new <code>ArrayList</code>.</li>
+ <li>If the original is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link"><code>Set</code></a>, returns a new <code>HashSet</code>.</li>
+ <li>Otherwise, defaults to a new <code>ArrayList</code> as a general-purpose fallback.</li>
+ </ul></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the element type of the collection</dd>
+<dt>Parameters:</dt>
+<dd><code>original</code> - the original collection to match</dd>
+<dt>Returns:</dt>
+<dd>a new empty collection with behavior compatible to the original</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="newNaftahSizeBugError(java.lang.Object[],java.lang.Object[])">
 <h3>newNaftahSizeBugError</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahSizeBugError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;left,
@@ -414,6 +525,47 @@ loadScripts(document, 'script');</script>
 <dd><code>right</code> - the second associative array (map)</dd>
 <dt>Returns:</dt>
 <dd>a new NaftahBugError with a descriptive message in Arabic showing both maps</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahIndexOutOfBoundsBugError(int,int)">
+<h3>newNaftahIndexOutOfBoundsBugError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahIndexOutOfBoundsBugError</span><wbr><span class="parameters">(int&nbsp;targetIndex,
+ int&nbsp;size)</span></div>
+<div class="block">Creates a <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that an index is out of bounds for a collection.
+ <p>
+ This version does not include a cause (exception).
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>targetIndex</code> - the index that was attempted to be accessed</dd>
+<dd><code>size</code> - the size of the collection at the time of access</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> with a detailed Arabic error message</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahIndexOutOfBoundsBugError(int,int,java.lang.Exception,int,int)">
+<h3>newNaftahIndexOutOfBoundsBugError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahIndexOutOfBoundsBugError</span><wbr><span class="parameters">(int&nbsp;targetIndex,
+ int&nbsp;size,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;e,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Creates a <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that an index is out of bounds for a collection,
+ and optionally includes a cause (wrapped exception).</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>targetIndex</code> - the index that was attempted to be accessed</dd>
+<dd><code>size</code> - the size of the collection at the time of access</dd>
+<dd><code>e</code> - an optional cause of the error (can be <code>null</code>)</dd>
+<dd><code>line</code> - The line number on which the 1st character of this token was matched</dd>
+<dd><code>column</code> - The index of the first character of this token relative to the beginning of the line at which
+                    it occurs</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> with a detailed Arabic error message and optional cause</dd>
 </dl>
 </section>
 </li>
