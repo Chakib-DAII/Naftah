@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,45 +19,40 @@ import java.util.stream.Collectors;
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
+import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.newNaftahIndexOutOfBoundsBugError;
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.setElementAt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getJavaType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isTruthy;
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.not;
 import static org.daiitech.naftah.builtin.utils.Tuple.newNaftahBugNullError;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_AND;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_OR;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_XOR;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.DIVIDE;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_ADD;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_DIVIDE;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_MODULO;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_MULTIPLY;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ELEMENTWISE_SUBTRACT;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.EQUALS;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.GREATER_THAN;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.GREATER_THAN_EQUALS;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.LESS_THAN;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.LESS_THAN_EQUALS;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.MODULO;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.MULTIPLY;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.NOT_EQUALS;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.SUBTRACT;
-import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.BITWISE_NOT;
-import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST_DECREMENT;
-import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST_INCREMENT;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.DECREMENT;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.INCREMENT;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_DECREMENT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_INCREMENT;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidLoopLabelError;
@@ -73,6 +69,7 @@ import static org.daiitech.naftah.parser.DefaultContext.pushLoop;
 import static org.daiitech.naftah.parser.LoopSignal.BREAK;
 import static org.daiitech.naftah.parser.LoopSignal.CONTINUE;
 import static org.daiitech.naftah.parser.LoopSignal.RETURN;
+import static org.daiitech.naftah.parser.NaftahParserHelper.accessObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkInsideLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkLoopSignal;
 import static org.daiitech.naftah.parser.NaftahParserHelper.createDeclaredVariable;
@@ -87,6 +84,8 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasChildOrSubChildOf
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunction;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunctionArguments;
+import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
+import static org.daiitech.naftah.parser.NaftahParserHelper.setObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.typeMismatch;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitContext;
@@ -161,7 +160,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, programContext) -> {
 								defaultNaftahParserVisitor.depth = currentContext.getDepth();
-								Object result = null;
+								Object result = None.get();
 								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
 										.statement()) {
 									result = defaultNaftahParserVisitor.visit(statement); // Visit each statement in the program
@@ -189,7 +188,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(   defaultNaftahParserVisitor,
 								currentContext,
 								objectAccessStatementContext) -> defaultNaftahParserVisitor
-										.visit(objectAccessStatementContext.qualifiedName())
+										.visit(objectAccessStatementContext.objectAccess())
 		);
 	}
 
@@ -479,7 +478,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																							getNaftahType(  defaultNaftahParserVisitor.parser,
 																											type),
 																							getNaftahType(  defaultNaftahParserVisitor.parser,
-																											Object.class)));
+																											Object.class)),
+																		declarationContext.getStart().getLine(),
+																		declarationContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 									}
 									declaredVariable = createDeclaredVariable(  defaultNaftahParserVisitor,
@@ -522,33 +525,115 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, assignmentContext) -> {
-								currentContext.setParsingAssignment(true);
-								boolean creatingObjectField = hasAnyParentOfType(   assignmentContext,
-																					org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
-								Pair<DeclaredVariable, Boolean> declaredVariable = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
-										.visit(assignmentContext.declaration());
-								currentContext.setDeclarationOfAssignment(declaredVariable);
-								// TODO: check if inside function to check if it matches any argument /
-								// parameter or previously
-								if (declaredVariable.b) {
-									declaredVariable = new Pair<>(  DeclaredVariable
-																			.of(assignmentContext,
-																				declaredVariable.a.getName(),
-																				declaredVariable.a.isConstant(),
-																				declaredVariable.a.getType(),
-																				visit(assignmentContext.expression())),
-																	declaredVariable.b);
+								Object result;
+								if (Objects.nonNull(assignmentContext.ID())) {
+									DeclaredVariable variable = currentContext
+											.getVariable(   assignmentContext.ID().getText(),
+															false).b;
+									var newValue = defaultNaftahParserVisitor.visit(assignmentContext.expression());
+									variable.setValue(newValue);
+									result = variable;
+								}
+								else if (Objects.nonNull(assignmentContext.declaration())) {
+									currentContext.setParsingAssignment(true);
+									boolean creatingObjectField = hasAnyParentOfType(   assignmentContext,
+																						org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
+									Pair<DeclaredVariable, Boolean> declaredVariable = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
+											.visit(assignmentContext.declaration());
+									currentContext.setDeclarationOfAssignment(declaredVariable);
+									// TODO: check if inside function to check if it matches any argument /
+									// parameter or previously
+									if (declaredVariable.b) {
+										declaredVariable = new Pair<>(  DeclaredVariable
+																				.of(assignmentContext,
+																					declaredVariable.a.getName(),
+																					declaredVariable.a.isConstant(),
+																					declaredVariable.a.getType(),
+																					defaultNaftahParserVisitor
+																							.visit(assignmentContext
+																									.expression())),
+																		declaredVariable.b);
+									}
+									else {
+										declaredVariable.a.setOriginalContext(assignmentContext);
+										declaredVariable.a
+												.setValue(defaultNaftahParserVisitor
+														.visit(assignmentContext.expression()));
+									}
+									// declared and update if possible
+									if (!creatingObjectField) {
+										currentContext.setVariable(declaredVariable.a.getName(), declaredVariable.a);
+									}
+									currentContext.setParsingAssignment(false);
+									result = declaredVariable;
+								}
+								else if (Objects.nonNull(assignmentContext.qualifiedName())) {
+									var qualifiedName = getQualifiedName(assignmentContext.qualifiedName());
+									var newValue = defaultNaftahParserVisitor.visit(assignmentContext.expression());
+									result = setObjectUsingQualifiedName(qualifiedName, currentContext, newValue);
+								}
+								else if (Objects.nonNull(assignmentContext.qualifiedObjectAccess())) {
+									var qualifiedName = getQualifiedName(assignmentContext.qualifiedObjectAccess());
+									var newValue = defaultNaftahParserVisitor.visit(assignmentContext.expression());
+									result = setObjectUsingQualifiedName(qualifiedName, currentContext, newValue);
 								}
 								else {
-									declaredVariable.a.setOriginalContext(assignmentContext);
-									declaredVariable.a.setValue(visit(assignmentContext.expression()));
+									org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext collectionAccessContext = assignmentContext
+											.collectionAccess();
+									var newValue = defaultNaftahParserVisitor.visit(assignmentContext.expression());
+									Object variable = result = getVariable( collectionAccessContext.ID().getText(),
+																			currentContext).get();
+									Number number = -1;
+									int size = collectionAccessContext.NUMBER().size();
+									try {
+										for (int i = 0; i < size; i++) {
+											Object numberStr = collectionAccessContext.NUMBER(i).getText();
+											number = NumberUtils.parseDynamicNumber(numberStr);
+											if (variable instanceof List && !(variable instanceof Tuple)) {
+												List<Object> list = (List<Object>) variable;
+												if (i < size - 1) {
+													variable = list.get(number.intValue());
+												}
+												else {
+													list.set(number.intValue(), newValue);
+												}
+											}
+											else if (variable instanceof Set) {
+												Set<Object> set = (Set<Object>) variable;
+												if (i < size - 1) {
+													variable = getElementAt(set, number.intValue());
+												}
+												else {
+													setElementAt(set, number.intValue(), newValue);
+												}
+											}
+											else {
+												throw new NaftahBugError(
+																			"""
+																			لا يمكن استخدام الفهرسة إلا مع الأنواع التالية: قائمة أو مجموعة.
+																			""",
+																			collectionAccessContext
+																					.getStart()
+																					.getLine(),
+																			collectionAccessContext
+																					.getStart()
+																					.getCharPositionInLine());
+											}
+										}
+									}
+									catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+										throw newNaftahIndexOutOfBoundsBugError(number.intValue(),
+																				((Collection<?>) variable).size(),
+																				indexOutOfBoundsException,
+																				collectionAccessContext
+																						.getStart()
+																						.getLine(),
+																				collectionAccessContext
+																						.getStart()
+																						.getCharPositionInLine());
+									}
 								}
-								// declared and update if possible
-								if (!creatingObjectField) {
-									currentContext.setVariable(declaredVariable.a.getName(), declaredVariable.a);
-								}
-								currentContext.setParsingAssignment(false);
-								return declaredVariable;
+								return result;
 							}
 		);
 	}
@@ -634,7 +719,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, functionCallContext) -> {
-								Object result = null;
+								Object result = None.get();
 								// TODO: add extra vars to context to get the function called and so on, it can
 								// be a free map
 								// TODO: and using an Enum as key of predefined ids to get values
@@ -725,32 +810,53 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																							builtinFunction
 																									.toDetailedString()
 																				),
-																		e);
+																		e,
+																		functionCallContext.getStart().getLine(),
+																		functionCallContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 										catch (IllegalAccessException | InvocationTargetException e) {
-											throw new NaftahBugError("""
+											throw new NaftahBugError(   """
 																		.'%s' حدث خطأ أثناء استدعاء الدالة
 
 																		%s
 																		"""
-													.formatted( functionName,
-																builtinFunction.toDetailedString()), e);
+																				.formatted( functionName,
+																							builtinFunction
+																									.toDetailedString()),
+																		e,
+																		functionCallContext.getStart().getLine(),
+																		functionCallContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 									}
 									else if (function instanceof JvmFunction jvmFunction) {
-										throw new NaftahBugError("الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
-												.formatted(functionName, JvmFunction.class.getName()));
+										throw new NaftahBugError(   "الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
+																			.formatted( functionName,
+																						JvmFunction.class.getName()),
+																	functionCallContext.getStart().getLine(),
+																	functionCallContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 									else if (function instanceof Collection<?> functions) {
-										throw new NaftahBugError("الدالة '%s' : '%s' من النوع: '%s' غير مدعومة حالياً"
-												.formatted( functionName,
-															functions,
-															List.class.getName()));
+										throw new NaftahBugError(   "الدالة '%s' : '%s' من النوع: '%s' غير مدعومة حالياً"
+																			.formatted( functionName,
+																						functions,
+																						List.class.getName()),
+																	functionCallContext.getStart().getLine(),
+																	functionCallContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 								}
 								else {
-									throw new NaftahBugError("الدالة '%s' غير موجودة في السياق الحالي."
-											.formatted(functionName));
+									throw new NaftahBugError(   "الدالة '%s' غير موجودة في السياق الحالي."
+																		.formatted(functionName),
+																functionCallContext.getStart().getLine(),
+																functionCallContext.getStart().getCharPositionInLine());
 								}
 								currentContext.setFunctionCallId(null);
 								// TODO: add support for all kind of functions using the qualifiedName
@@ -817,7 +923,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, ifStatementContext) -> {
-								Object result = null;
+								Object result = None.get();
 								// Evaluate the condition expression
 								Object condition = defaultNaftahParserVisitor.visit(ifStatementContext.expression(0));
 								if (isTruthy(condition)) {
@@ -855,60 +961,92 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitForStatement(org.daiitech.naftah.parser.NaftahParser.ForStatementContext ctx) {
+	public Object visitIndexBasedForLoopStatement(org.daiitech.naftah.parser.NaftahParser.IndexBasedForLoopStatementContext ctx) {
 		return visitContext(
 							this,
-							"visitForStatement",
+							"visitIndexBasedForLoopStatement",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, forStatementContext) -> {
-								Object result = null;
+							(defaultNaftahParserVisitor, currentContext, indexBasedForLoopStatementContext) -> {
+								Object result = None.get();
 								boolean loopInStack = false;
-								String label = currentLoopLabel((String) (Objects.isNull(forStatementContext.label()) ?
-										null :
-										defaultNaftahParserVisitor.visit(forStatementContext.label())),
+								String label = currentLoopLabel((String) (Objects
+										.isNull(indexBasedForLoopStatementContext.label()) ?
+												null :
+												defaultNaftahParserVisitor
+														.visit(
+																indexBasedForLoopStatementContext.label())),
 																depth);
 								currentContext.setLoopLabel(label);
 								// Initialization: ID := expression
-								String loopVar = forStatementContext.ID().getText();
-								Object initValue = defaultNaftahParserVisitor.visit(forStatementContext.expression(0));
+								String loopVar = indexBasedForLoopStatementContext.ID().getText();
+								Object initValue = defaultNaftahParserVisitor
+										.visit(indexBasedForLoopStatementContext.expression(0));
 								if (Objects.isNull(initValue)) {
-									throw new NaftahBugError(String
-											.format("""
-													القيمة الابتدائية للمتغير '%s' لا يمكن أن تكون فارغة.""",
-													loopVar));
+									throw new NaftahBugError(   String
+																		.format("""
+																				القيمة الابتدائية للمتغير '%s' لا يمكن أن تكون فارغة.""",
+																				loopVar),
+																indexBasedForLoopStatementContext.getStart().getLine(),
+																indexBasedForLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 								// End value
-								Object endValue = defaultNaftahParserVisitor.visit(forStatementContext.expression(1));
+								Object endValue = defaultNaftahParserVisitor
+										.visit(indexBasedForLoopStatementContext.expression(1));
 								if (Objects.isNull(endValue)) {
-									throw new NaftahBugError(String
-											.format("القيمة النهائية للمتغير '%s' لا يمكن أن تكون فارغة.",
-													loopVar));
+									throw new NaftahBugError(   String
+																		.format("القيمة النهائية للمتغير '%s' لا يمكن أن تكون فارغة.",
+																				loopVar),
+																indexBasedForLoopStatementContext.getStart().getLine(),
+																indexBasedForLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
+								}
+								// step value
+								Object stepValue = indexBasedForLoopStatementContext.STEP() != null ?
+										defaultNaftahParserVisitor
+												.visit(indexBasedForLoopStatementContext.expression(2)) :
+										DynamicNumber.of(1);
+								if (Boolean.TRUE
+										.equals(applyOperation(stepValue, 0, LESS_THAN_EQUALS))) {
+									throw new NaftahBugError(   String
+																		.format("قيمة الخطوة للمتغير '%s' لا يمكن أن تكون أقل من أو " + "يساوي 0.",
+																				loopVar),
+																indexBasedForLoopStatementContext.getStart().getLine(),
+																indexBasedForLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 
 								if (!Number.class.isAssignableFrom(initValue.getClass()) || !Number.class
-										.isAssignableFrom(endValue.getClass())) {
+										.isAssignableFrom(endValue.getClass()) || !Number.class
+												.isAssignableFrom(stepValue.getClass())) {
 									throw new NaftahBugError(
 																String
 																		.format("""
-																				يجب أن تكون القيمتين الابتدائية والنهائية للمتغير '%s' من النوع الرقمي.""",
-																				loopVar));
+																				يجب أن تكون القيمتين الابتدائية والنهائية و الخطوة للمتغير '%s' من النوع الرقمي.""",
+																				loopVar),
+																indexBasedForLoopStatementContext.getStart().getLine(),
+																indexBasedForLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 
 								// Direction (TO or DOWNTO)
-								boolean isAscending = forStatementContext.TO() != null;
+								boolean isAscending = indexBasedForLoopStatementContext.TO() != null;
 								// Loop block
-								org.daiitech.naftah.parser.NaftahParser.BlockContext loopBlock = forStatementContext
+								org.daiitech.naftah.parser.NaftahParser.BlockContext loopBlock = indexBasedForLoopStatementContext
 										.block(0);
 								// Optional ELSE block
 								org.daiitech.naftah.parser.NaftahParser.BlockContext elseBlock = null;
-								if (forStatementContext.block().size() > 1) {
-									elseBlock = forStatementContext.block(1);
+								if (indexBasedForLoopStatementContext.block().size() > 1) {
+									elseBlock = indexBasedForLoopStatementContext.block(1);
 								}
 
 								boolean brokeEarly = false;
@@ -916,21 +1054,31 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								boolean propagateLoopSignal = false;
 
 								try {
-									pushLoop(label, ctx);
+									pushLoop(label, indexBasedForLoopStatementContext);
 									loopInStack = true;
 									currentContext.defineLoopVariable(loopVar, initValue, false);
 									if (isAscending) {
 										if (Boolean.TRUE.equals(applyOperation(endValue, initValue, LESS_THAN))) {
-											throw new NaftahBugError("""
-																		القيمة النهائية يجب أن تكون أكبر أو تساوي القيمة الابتدائية في الحلقات التصاعدية."""
-											);
+											throw new NaftahBugError(   """
+																		القيمة النهائية يجب أن تكون أكبر أو تساوي القيمة الابتدائية في الحلقات التصاعدية.""",
+																		indexBasedForLoopStatementContext
+																				.getStart()
+																				.getLine(),
+																		indexBasedForLoopStatementContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										for (;  Boolean.TRUE
 														.equals(applyOperation(initValue, endValue, LESS_THAN_EQUALS));
 												initValue = currentContext
 														.setLoopVariable(   loopVar,
-																			applyOperation(initValue, PRE_INCREMENT))) {
+																			stepValue.equals(1) ?
+																					applyOperation( initValue,
+																									PRE_INCREMENT) :
+																					applyOperation( initValue,
+																									stepValue,
+																									ADD))) {
 											result = defaultNaftahParserVisitor.visit(loopBlock);
 
 											if (checkLoopSignal(result).equals(CONTINUE)) {
@@ -972,9 +1120,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 									else {
 										if (Boolean.TRUE.equals(applyOperation(initValue, endValue, LESS_THAN))) {
-											throw new NaftahBugError("""
-																		القيمة الابتدائية يجب أن تكون أكبر أو تساوي القيمة النهائية في الحلقات التنازلية."""
-											);
+											throw new NaftahBugError(   """
+																		القيمة الابتدائية يجب أن تكون أكبر أو تساوي القيمة النهائية في الحلقات التنازلية.""",
+																		indexBasedForLoopStatementContext
+																				.getStart()
+																				.getLine(),
+																		indexBasedForLoopStatementContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										for (;  Boolean.TRUE
@@ -983,7 +1136,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																				GREATER_THAN_EQUALS));
 												initValue = currentContext
 														.setLoopVariable(   loopVar,
-																			applyOperation(initValue, PRE_DECREMENT))) {
+																			stepValue.equals(1) ?
+																					applyOperation( initValue,
+																									PRE_DECREMENT) :
+																					applyOperation( initValue,
+																									stepValue,
+																									SUBTRACT))) {
 											result = defaultNaftahParserVisitor.visit(loopBlock);
 
 											if (checkLoopSignal(result).equals(CONTINUE)) {
@@ -1037,16 +1195,238 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) ?
-										Optional
-												.ofNullable((LoopSignal.LoopSignalDetails) result)
-												.map(LoopSignal.LoopSignalDetails::result)
-												.orElse(null) :
-										result;
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
 							}
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitForEachLoopStatement(org.daiitech.naftah.parser.NaftahParser.ForEachLoopStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitForEachLoopStatement",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, forEachLoopStatementContext) -> {
+								Object result = None.get();
+								boolean loopInStack = false;
+								String label = currentLoopLabel((String) (Objects
+										.isNull(forEachLoopStatementContext.label()) ?
+												null :
+												defaultNaftahParserVisitor
+														.visit(
+																forEachLoopStatementContext.label())),
+																depth);
+								currentContext.setLoopLabel(label);
+
+								// Loop target
+								org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext foreachTarget = forEachLoopStatementContext
+										.foreachTarget();
+								Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass = foreachTarget
+										.getClass();
+								Tuple target;
+								Tuple targetValues;
+
+								// Loop expression. should be an iterable or Map
+								Object collection = defaultNaftahParserVisitor
+										.visit(forEachLoopStatementContext.expression());
+								Iterator<?> iterator;
+								boolean isMap = false;
+
+								if (collection instanceof Iterable<?> iterable) {
+									if (foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext || foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext) {
+										throw new NaftahBugError(   "key value not supported for collection.",
+																	forEachLoopStatementContext.getStart().getLine(),
+																	forEachLoopStatementContext
+																			.getStart()
+																			.getCharPositionInLine());
+									}
+									target = (Tuple) defaultNaftahParserVisitor.visit(foreachTarget);
+									iterator = iterable.iterator();
+								}
+								else if (collection instanceof Map<?, ?> map) {
+									isMap = true;
+									target = (Tuple) defaultNaftahParserVisitor.visit(foreachTarget);
+									iterator = map.entrySet().iterator();
+								}
+								else {
+									throw new NaftahBugError(   "not an iterable",
+																forEachLoopStatementContext.getStart().getLine(),
+																forEachLoopStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
+								}
+
+
+								// Loop block
+								org.daiitech.naftah.parser.NaftahParser.BlockContext loopBlock = forEachLoopStatementContext
+										.block(0);
+								// Optional ELSE block
+								org.daiitech.naftah.parser.NaftahParser.BlockContext elseBlock = null;
+								if (forEachLoopStatementContext.block().size() > 1) {
+									elseBlock = forEachLoopStatementContext.block(1);
+								}
+
+								DynamicNumber index = DynamicNumber.of(0);
+								boolean brokeEarly = false;
+								boolean loopSignal = false;
+								boolean propagateLoopSignal = false;
+
+								try {
+									pushLoop(label, forEachLoopStatementContext);
+									loopInStack = true;
+
+									while (iterator.hasNext()) {
+										if (isMap) {
+											Map.Entry<?, ?> entry = (Map.Entry<?, ?>) iterator.next();
+											targetValues = Tuple.of(index, entry.getKey(), entry.getValue());
+										}
+										else {
+											Object value = iterator.next();
+											targetValues = Tuple.of(index, value);
+										}
+
+										setForeachVariables(currentContext, foreachTargetClass, target, targetValues);
+
+										defaultNaftahParserVisitor.visit(loopBlock);
+
+										if (checkLoopSignal(result).equals(CONTINUE)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												continue;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												break;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+											loopSignal = true;
+											break;
+										}
+										// increment index
+										NumberUtils.preIncrement(index);
+
+										// force current loop label
+										currentContext.setLoopLabel(label);
+									}
+
+									// Run ELSE block only if loop did not break early
+									if (!brokeEarly && elseBlock != null) {
+										result = defaultNaftahParserVisitor.visit(elseBlock);
+									}
+								}
+								finally {
+									currentContext.setLoopLabel(null);
+									if (loopInStack) {
+										popLoop();
+									}
+								}
+
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+
+	@Override
+	public Tuple visitValueForeachTarget(org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext ctx) {
+		return visitContext(
+							this,
+							"visitValueForeachTarget",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, valueForeachTargetContext) -> Tuple
+									.of(valueForeachTargetContext.ID().getText()),
+							Tuple.class
+		);
+	}
+
+	@Override
+	public Tuple visitIndexAndValueForeachTarget(org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext ctx) {
+		return visitContext(
+							this,
+							"visitIndexAndValueForeachTarget",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, indexAndValueForeachTargetContext) -> {
+								String index = indexAndValueForeachTargetContext.ID(0).getText();
+								String value = indexAndValueForeachTargetContext.ID(1).getText();
+								return Tuple.of(index, value);
+							},
+							Tuple.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitKeyValueForeachTarget(org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext ctx) {
+		return visitContext(
+							this,
+							"visitKeyValueForeachTarget",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, indexAndValueForeachTargetContext) -> {
+								String key = indexAndValueForeachTargetContext.ID(0).getText();
+								String value = indexAndValueForeachTargetContext.ID(1).getText();
+								return Tuple.of(key, value);
+							},
+							Tuple.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitIndexAndKeyValueForeachTarget(org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext ctx) {
+		return visitContext(
+							this,
+							"visitIndexAndKeyValueForeachTarget",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, indexAndValueForeachTargetContext) -> {
+								String index = indexAndValueForeachTargetContext.ID(0).getText();
+								String key = indexAndValueForeachTargetContext.ID(1).getText();
+								String value = indexAndValueForeachTargetContext.ID(2).getText();
+								return Tuple.of(index, key, value);
+							},
+							Tuple.class);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -1060,8 +1440,78 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								whileStatementContext) -> super.visitWhileStatement(
-																					whileStatementContext)
+								whileStatementContext) -> {
+								Object result = None.get();
+								boolean loopInStack = false;
+								String label = currentLoopLabel((String) (Objects
+										.isNull(whileStatementContext.label()) ?
+												null :
+												defaultNaftahParserVisitor.visit(whileStatementContext.label())),
+																defaultNaftahParserVisitor.depth);
+								currentContext.setLoopLabel(label);
+
+								boolean loopSignal = false;
+								boolean propagateLoopSignal = false;
+
+								try {
+									pushLoop(label, whileStatementContext);
+									loopInStack = true;
+
+									while (isTruthy(visit(whileStatementContext.expression()))) {
+										visit(whileStatementContext.block());
+
+										if (checkLoopSignal(result).equals(CONTINUE)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												continue;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												break;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+											loopSignal = true;
+											break;
+										}
+
+										// force current loop label
+										currentContext.setLoopLabel(label);
+									}
+
+								}
+								finally {
+									currentContext.setLoopLabel(null);
+									if (loopInStack) {
+										popLoop();
+									}
+								}
+
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
+
+							}
 		);
 	}
 
@@ -1078,8 +1528,79 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								repeatStatementContext) -> super.visitRepeatStatement(
-																						repeatStatementContext)
+								repeatStatementContext) -> {
+								Object result = None.get();
+								boolean loopInStack = false;
+								String label = currentLoopLabel((String) (Objects
+										.isNull(repeatStatementContext.label()) ?
+												null :
+												defaultNaftahParserVisitor.visit(repeatStatementContext.label())),
+																defaultNaftahParserVisitor.depth);
+								currentContext.setLoopLabel(label);
+
+								boolean loopSignal = false;
+								boolean propagateLoopSignal = false;
+
+								try {
+									pushLoop(label, repeatStatementContext);
+									loopInStack = true;
+
+									do {
+										visit(repeatStatementContext.block());
+
+										if (checkLoopSignal(result).equals(CONTINUE)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												continue;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.BREAK)) {
+											loopSignal = true;
+											String targetLabel = ((LoopSignal.LoopSignalDetails) result)
+													.targetLabel();
+											if (Objects.isNull(targetLabel) || targetLabel.equals(label)) {
+												break;
+											}
+											else {
+												propagateLoopSignal = true;
+												break;
+											}
+										}
+
+										if (checkLoopSignal(result).equals(LoopSignal.RETURN)) {
+											loopSignal = true;
+											break;
+										}
+
+										// force current loop label
+										currentContext.setLoopLabel(label);
+									}
+									while (!isTruthy(visit(repeatStatementContext.expression())));
+
+								}
+								finally {
+									currentContext.setLoopLabel(null);
+									if (loopInStack) {
+										popLoop();
+									}
+								}
+
+								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+										.isNone(result) ?
+												Optional
+														.ofNullable((LoopSignal.LoopSignalDetails) result)
+														.map(LoopSignal.LoopSignalDetails::result)
+														.orElse(null) :
+												result;
+
+							}
 		);
 	}
 
@@ -1096,26 +1617,47 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								caseStatementContext) -> super.visitCaseStatement(
-																					caseStatementContext)
-		);
-	}
+								caseStatementContext) -> {
+								Object controlValue = defaultNaftahParserVisitor
+										.visit(caseStatementContext.expression());
 
+								boolean matched = false;
+								Object result = null;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitCaseLabelList(org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext ctx) {
-		return visitContext(
-							this,
-							"visitCaseLabelList",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								caseLabelListContext) -> super.visitCaseLabelList(
-																					caseLabelListContext)
+								for (int i = 0; i < caseStatementContext.caseLabelList().size(); i++) {
+									org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext labels = caseStatementContext
+											.caseLabelList(
+															i);
+
+									for (org.daiitech.naftah.parser.NaftahParser.ExpressionContext expression : labels
+											.expression()) {
+										Object labelValue = defaultNaftahParserVisitor.visit(expression);
+
+										if (Builtin.equals(labelValue, controlValue)) {
+											org.daiitech.naftah.parser.NaftahParser.BlockContext block = caseStatementContext
+													.block(i);
+											result = defaultNaftahParserVisitor.visit(block);
+											matched = true;
+											break;
+										}
+									}
+
+									if (matched) {
+										break;
+									}
+								}
+
+								if (!matched && caseStatementContext.ELSE() != null) {
+									org.daiitech.naftah.parser.NaftahParser.BlockContext elseBlock = caseStatementContext
+											.block(
+													caseStatementContext
+															.block()
+															.size() - 1);
+									result = defaultNaftahParserVisitor.visit(elseBlock);
+								}
+
+								return result;
+							}
 		);
 	}
 
@@ -1151,13 +1693,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, breakStatementContext) -> {
 								if (LOOP_STACK.isEmpty() || !checkInsideLoop(breakStatementContext)) {
-									throw new NaftahBugError(String
-											.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
-													getFormattedTokenSymbols(
-																				defaultNaftahParserVisitor.parser
-																						.getVocabulary(),
-																				org.daiitech.naftah.parser.NaftahLexer.BREAK,
-																				false)));
+									throw new NaftahBugError(   String
+																		.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
+																				getFormattedTokenSymbols(
+																											defaultNaftahParserVisitor.parser
+																													.getVocabulary(),
+																											org.daiitech.naftah.parser.NaftahLexer.BREAK,
+																											false)),
+																breakStatementContext.getStart().getLine(),
+																breakStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 								String currentLoopLabel = currentContext.getLoopLabel();
 								String targetLabel = null;
@@ -1166,18 +1712,28 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								}
 								if (targetLabel != null) {
 									if (!loopContainsLabel(targetLabel)) {
-										throw new NaftahBugError(String
-												.format("""
-														لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
-														targetLabel,
-														getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
-																							.getVocabulary(),
-																					org.daiitech.naftah.parser.NaftahLexer.BREAK,
-																					false)));
+										throw new NaftahBugError(   String
+																			.format("""
+																					لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
+																					targetLabel,
+																					getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
+																														.getVocabulary(),
+																												org.daiitech.naftah.parser.NaftahLexer.BREAK,
+																												false)),
+																	breakStatementContext.getStart().getLine(),
+																	breakStatementContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 									else if (targetLabel.equals(currentLoopLabel)) {
 										throw newNaftahBugInvalidLoopLabelError(currentLoopLabel,
-																				defaultNaftahParserVisitor.parser);
+																				defaultNaftahParserVisitor.parser,
+																				breakStatementContext
+																						.getStart()
+																						.getLine(),
+																				breakStatementContext
+																						.getStart()
+																						.getCharPositionInLine());
 									}
 								}
 
@@ -1199,13 +1755,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, continueStatementContext) -> {
 								if (LOOP_STACK.isEmpty() || !checkInsideLoop(continueStatementContext)) {
-									throw new NaftahBugError(String
-											.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
-													getFormattedTokenSymbols(
-																				defaultNaftahParserVisitor.parser
-																						.getVocabulary(),
-																				org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
-																				false)));
+									throw new NaftahBugError(   String
+																		.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
+																				getFormattedTokenSymbols(
+																											defaultNaftahParserVisitor.parser
+																													.getVocabulary(),
+																											org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
+																											false)),
+																continueStatementContext.getStart().getLine(),
+																continueStatementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 								String currentLoopLabel = currentContext.getLoopLabel();
 								String targetLabel = null;
@@ -1215,18 +1775,28 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								if (targetLabel != null) {
 									if (!loopContainsLabel(targetLabel)) {
-										throw new NaftahBugError(String
-												.format("""
-														لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
-														targetLabel,
-														getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
-																							.getVocabulary(),
-																					org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
-																					false)));
+										throw new NaftahBugError(   String
+																			.format("""
+																					لا توجد حلقة تحمل التسمية '%s' لاستخدام '%s' معها.""",
+																					targetLabel,
+																					getFormattedTokenSymbols(   defaultNaftahParserVisitor.parser
+																														.getVocabulary(),
+																												org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
+																												false)),
+																	continueStatementContext.getStart().getLine(),
+																	continueStatementContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 									else if (targetLabel.equals(currentLoopLabel)) {
 										throw newNaftahBugInvalidLoopLabelError(currentLoopLabel,
-																				defaultNaftahParserVisitor.parser);
+																				defaultNaftahParserVisitor.parser,
+																				continueStatementContext
+																						.getStart()
+																						.getLine(),
+																				continueStatementContext
+																						.getStart()
+																						.getCharPositionInLine());
 									}
 								}
 
@@ -1248,7 +1818,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, returnStatementContext) -> {
 								boolean insideLoop = !LOOP_STACK.isEmpty() || checkInsideLoop(returnStatementContext);
-								Object result = null;
+								Object result = None.get();
 								if (hasChild(returnStatementContext.expression())) {
 									// Evaluate and return the result
 									result = defaultNaftahParserVisitor.visit(returnStatementContext.expression());
@@ -1271,7 +1841,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, nextContext, blockContext) -> {
 								defaultNaftahParserVisitor.depth = nextContext.getDepth();
-								Object result = null;
+								Object result = None.get();
 								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : blockContext
 										.statement()) {
 									// Visit each statement in the block
@@ -1367,10 +1937,55 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext,
 								objectAccessExpressionContext) -> defaultNaftahParserVisitor
 										.visit(
-												objectAccessExpressionContext.qualifiedName())
+												objectAccessExpressionContext.objectAccess())
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitObjectAccess(org.daiitech.naftah.parser.NaftahParser.ObjectAccessContext ctx) {
+		return visitContext(
+							this,
+							"visitObjectAccess",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								objectAccessContext) -> {
+								if (Objects.nonNull(objectAccessContext.qualifiedName())) {
+									return defaultNaftahParserVisitor
+											.visit(
+													objectAccessContext.qualifiedName());
+								}
+								else {
+									return defaultNaftahParserVisitor
+											.visit(
+													objectAccessContext.qualifiedObjectAccess());
+								}
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitQualifiedObjectAccess(org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext ctx) {
+		return visitContext(
+							this,
+							"visitQualifiedObjectAccess",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								qualifiedObjectAccessContext) -> {
+								var qualifiedName = getQualifiedName(qualifiedObjectAccessContext);
+								return accessObjectUsingQualifiedName(qualifiedName, currentContext);
+							}
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -1390,6 +2005,98 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitCollectionAccessStatement(org.daiitech.naftah.parser.NaftahParser.CollectionAccessStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitCollectionAccessStatement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								collectionAccessStatementContext) -> defaultNaftahParserVisitor
+										.visit(
+												collectionAccessStatementContext.collectionAccess())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitCollectionAccessExpression(org.daiitech.naftah.parser.NaftahParser.CollectionAccessExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitCollectionAccessExpression",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								collectionAccessExpressionContext) -> defaultNaftahParserVisitor
+										.visit(
+												collectionAccessExpressionContext.collectionAccess())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitCollectionAccess(org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext ctx) {
+		return visitContext(
+							this,
+							"visitCollectionAccess",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								collectionAccessContext) -> {
+								Object result = getVariable(collectionAccessContext.ID().getText(), currentContext)
+										.get();
+								Number number = -1;
+								try {
+									for (int i = 0; i < collectionAccessContext.NUMBER().size(); i++) {
+										Object value = collectionAccessContext.NUMBER(i).getText();
+										number = NumberUtils.parseDynamicNumber(value);
+										if (result instanceof Tuple tuple) {
+											result = tuple.get(number.intValue());
+										}
+										else if (result instanceof List<?> list) {
+											result = list.get(number.intValue());
+										}
+										else if (result instanceof Set<?> set) {
+											result = getElementAt(set, number.intValue());
+										}
+										else {
+											throw new NaftahBugError(
+																		"""
+																		لا يمكن استخدام الفهرسة إلا مع الأنواع التالية: تركيبة , قائمة أو مجموعة.
+																		""",
+																		collectionAccessContext.getStart().getLine(),
+																		collectionAccessContext
+																				.getStart()
+																				.getCharPositionInLine());
+										}
+									}
+								}
+								catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+									throw newNaftahIndexOutOfBoundsBugError(number.intValue(),
+																			((Collection<?>) result).size(),
+																			indexOutOfBoundsException,
+																			collectionAccessContext
+																					.getStart()
+																					.getLine(),
+																			collectionAccessContext
+																					.getStart()
+																					.getCharPositionInLine());
+								}
+								return result;
+							}
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -1433,7 +2140,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																						getNaftahType(  defaultNaftahParserVisitor.parser,
 																										currentDeclarationType),
 																						getNaftahType(  defaultNaftahParserVisitor.parser,
-																										Object.class)));
+																										Object.class)),
+																	tupleValueContext.getStart().getLine(),
+																	tupleValueContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
 								}
 								return Tuple
@@ -1484,10 +2195,69 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<?> visitElements(org.daiitech.naftah.parser.NaftahParser.ElementsContext ctx) {
+	public Object visitSingleElement(org.daiitech.naftah.parser.NaftahParser.SingleElementContext ctx) {
 		return visitContext(
 							this,
-							"visitElements",
+							"visitSingleElement",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, elementContext) -> {
+								// prepare validations
+								boolean creatingList = hasParentOfType( elementContext,
+																		org.daiitech.naftah.parser.NaftahParser.ListValueContext.class);
+								boolean creatingTuple = hasParentOfType(elementContext,
+																		org.daiitech.naftah.parser.NaftahParser.TupleValueContext.class);
+								boolean parsingAssignment = currentContext.isParsingAssignment();
+								Class<?> currentDeclarationType = null;
+								String currentDeclarationName = null;
+								if (parsingAssignment) {
+									var currentDeclaration = currentContext.getDeclarationOfAssignment();
+									currentDeclarationType = currentDeclaration.a.getType();
+									currentDeclarationName = currentDeclaration.a.getName();
+								}
+								// process elements
+								var elementValue = defaultNaftahParserVisitor.visit(elementContext.expression());
+								var elementType = Objects.nonNull(elementValue) ?
+										elementValue.getClass() :
+										Object.class;
+
+								if (!creatingTuple) {
+									// validating list has all the same type
+									if (parsingAssignment && typeMismatch(  elementValue,
+																			elementType,
+																			currentDeclarationType)) {
+										throw new NaftahBugError(
+																	("""
+																		لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
+																			.formatted( creatingList ?
+																								"القائمة (List)" :
+																								"المجموعة (Set)",
+																						"'%s'"
+																								.formatted(currentDeclarationName),
+																						"(%s)"
+																								.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
+																															currentDeclarationType))),
+																	elementContext.getStart().getLine(),
+																	elementContext
+																			.getStart()
+																			.getCharPositionInLine());
+									}
+								}
+
+								return List.of(elementValue);
+							},
+							List.class
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitMultipleElements(org.daiitech.naftah.parser.NaftahParser.MultipleElementsContext ctx) {
+		return visitContext(
+							this,
+							"visitMultipleElements",
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, elementsContext) -> {
@@ -1536,7 +2306,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																									"(%s)"
 																											.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
 																																		currentDeclarationType)) :
-																									""));
+																									""),
+																		elementsContext.getStart().getLine(),
+																		elementsContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										if (creatingSet) {
@@ -1551,7 +2325,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																					.formatted(parsingAssignment ?
 																							"'%s'"
 																									.formatted(currentDeclarationName) :
-																							""));
+																							""),
+																			elementsContext.getStart().getLine(),
+																			elementsContext
+																					.getStart()
+																					.getCharPositionInLine());
 											}
 										}
 									}
@@ -1567,7 +2345,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							List.class
 		);
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -1612,7 +2389,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																				.formatted(parsingAssignment ?
 																						"'%s'"
 																								.formatted(currentDeclarationName) :
-																						""));
+																						""),
+																		keyValuePairsContext.getStart().getLine(),
+																		keyValuePairsContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										if (parsingAssignment && typeMismatch(  value,
@@ -1632,7 +2413,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																									"(%s)"
 																											.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
 																																		currentDeclarationType)) :
-																									""));
+																									""),
+																		keyValuePairsContext.getStart().getLine(),
+																		keyValuePairsContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 
 										// validating keySet has no duplicates
@@ -1643,7 +2428,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																				.formatted(parsingAssignment ?
 																						"'%s'"
 																								.formatted(currentDeclarationName) :
-																						""));
+																						""),
+																		keyValuePairsContext.getStart().getLine(),
+																		keyValuePairsContext
+																				.getStart()
+																				.getCharPositionInLine());
 										}
 									}
 									map.put(key, value);
@@ -1680,7 +2469,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								boolean creatingMap = hasAnyParentOfType(   keyValueContext,
 																			org.daiitech.naftah.parser.NaftahParser.MapValueContext.class);
 								if (!creatingMap && Objects.isNull(key)) {
-									throw newNaftahBugNullError();
+									throw newNaftahBugNullError(
+																keyValueContext.getStart().getLine(),
+																keyValueContext.getStart().getCharPositionInLine());
 								}
 								return new AbstractMap.SimpleEntry<>(key, value);
 							},
@@ -1714,40 +2505,15 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									Class<?> resultType = Objects.nonNull(result) ? result.getClass() : Object.class;
 									String currentDeclarationName = currentDeclaration.a.getName();
 									if (typeMismatch(result, resultType, currentDeclarationType)) {
-										throw new NaftahBugError("القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
-												.formatted( currentDeclarationName,
-															getNaftahType(  defaultNaftahParserVisitor.parser,
-																			currentDeclarationType)));
+										throw new NaftahBugError(   "القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
+																			.formatted( currentDeclarationName,
+																						getNaftahType(  defaultNaftahParserVisitor.parser,
+																										currentDeclarationType)),
+																	valueExpressionContext.getStart().getLine(),
+																	valueExpressionContext
+																			.getStart()
+																			.getCharPositionInLine());
 									}
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitMinusExpression(org.daiitech.naftah.parser.NaftahParser.MinusExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitMinusExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, minusExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(minusExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(minusExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(minusExpressionContext.MINUS()) ?
-											applyOperation(left, right, SUBTRACT) :
-											applyOperation(left, right, ELEMENTWISE_SUBTRACT);
 								}
 
 								return result;
@@ -1774,238 +2540,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitModExpression(org.daiitech.naftah.parser.NaftahParser.ModExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitModExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, modExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(modExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(modExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(modExpressionContext.MOD()) ?
-											applyOperation(left, right, MODULO) :
-											applyOperation(left, right, ELEMENTWISE_MODULO);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitDivExpression(org.daiitech.naftah.parser.NaftahParser.DivExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitDivExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, divExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(divExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(divExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(divExpressionContext.DIV()) ?
-											applyOperation(left, right, DIVIDE) :
-											applyOperation(left, right, ELEMENTWISE_DIVIDE);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitGreaterThanExpression(org.daiitech.naftah.parser.NaftahParser.GreaterThanExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitGreaterThanExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, greaterThanExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor
-										.visit(greaterThanExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(greaterThanExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, GREATER_THAN);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitLessThanEqualsExpression(
-												org.daiitech.naftah.parser.NaftahParser.LessThanEqualsExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitLessThanEqualsExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, lessThanEqualsExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor
-										.visit(lessThanEqualsExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(lessThanEqualsExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, LESS_THAN_EQUALS);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitGreaterThanEqualsExpression(
-													org.daiitech.naftah.parser.NaftahParser.GreaterThanEqualsExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitGreaterThanEqualsExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, greaterThanEqualsExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor
-										.visit(greaterThanEqualsExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(greaterThanEqualsExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, GREATER_THAN_EQUALS);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitNotEqualsExpression(org.daiitech.naftah.parser.NaftahParser.NotEqualsExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitNotEqualsExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, notEqualsExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor
-										.visit(notEqualsExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(notEqualsExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, NOT_EQUALS);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitEqualsExpression(org.daiitech.naftah.parser.NaftahParser.EqualsExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitEqualsExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, equalsExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(equalsExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(equalsExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, EQUALS);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitLessThanExpression(org.daiitech.naftah.parser.NaftahParser.LessThanExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitLessThanExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, lessThanExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(lessThanExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(lessThanExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, LESS_THAN);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -2029,64 +2563,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitPlusExpression(org.daiitech.naftah.parser.NaftahParser.PlusExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitPlusExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, plusExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(plusExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(plusExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(plusExpressionContext.PLUS()) ?
-											applyOperation(left, right, ADD) :
-											applyOperation(left, right, ELEMENTWISE_ADD);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitMulExpression(org.daiitech.naftah.parser.NaftahParser.MulExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitMulExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, mulExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(mulExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(mulExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = hasChild(mulExpressionContext.MUL()) ?
-											applyOperation(left, right, MULTIPLY) :
-											applyOperation(left, right, ELEMENTWISE_MULTIPLY);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Object visitNumberValue(org.daiitech.naftah.parser.NaftahParser.NumberValueContext ctx) {
 		return visitContext(
 							this,
@@ -2095,8 +2571,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, numberValueContext) -> {
 								Object value = numberValueContext.NUMBER().getText();
-								// TODO : minimize the overhead of creating dynamic number from number
-								//  everytime we perform operation by creating and using dynamic number
 								return NumberUtils.parseDynamicNumber(value);
 							}
 		);
@@ -2222,7 +2696,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							"visitNullValue",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, nullValueContext) -> null
+							(defaultNaftahParserVisitor, currentContext, nullValueContext) -> None.get()
 		);
 	}
 
@@ -2247,7 +2721,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								return creatingMap || creatingObject ?
 										id :
-										getVariable(id, currentContext).orElse(null);
+										getVariable(id, currentContext).orElse(None.get());
 							}
 		);
 	}
@@ -2377,25 +2851,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																																														org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
 								if (accessingObjectField) {
 									var qualifiedName = getQualifiedName(qualifiedNameContext);
-									var accessArray = qualifiedName.split(":");
-									if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
-											.get() instanceof Map<?, ?> map) {
-										var object = (Map<String, DeclaredVariable>) map;
-										result = object;
-										for (int i = 1; i < accessArray.length; i++) {
-											if (i < accessArray.length - 1) {
-												object = (Map<String, DeclaredVariable>) object
-														.get(accessArray[i])
-														.getValue();
-											}
-											else {
-												result = object.get(accessArray[i]);
-											}
-										}
-									}
-									else {
-										result = getVariable(accessArray[0], currentContext).get();
-									}
+									result = accessObjectUsingQualifiedName(qualifiedName, currentContext);
 								}
 								else if (currentContext.isParsingFunctionCallId()) {
 									result = getQualifiedName(qualifiedNameContext);
@@ -2426,303 +2882,365 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitExpression(org.daiitech.naftah.parser.NaftahParser.ExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitExpression",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								expressionContext) -> defaultNaftahParserVisitor
+										.visit(expressionContext
+												.ternaryExpression()));
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitBitwiseXorExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseXorExpressionContext ctx) {
+	public Object visitTernaryExpression(org.daiitech.naftah.parser.NaftahParser.TernaryExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitBitwiseXorExpression",
+							"visitTernaryExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, bitwiseXorExpressionContext) -> {
+							(defaultNaftahParserVisitor, currentContext, ternaryExpressionContext) -> {
+								if (Objects.nonNull(ternaryExpressionContext.QUESTION())) {
+									// ternary expression: condition ? thenExpression : elseExpression
+									Object condition = visit(ternaryExpressionContext.nullishExpression());
+									return isTruthy(condition) ?
+											visit(ternaryExpressionContext.expression()) :
+											visit(ternaryExpressionContext.ternaryExpression());
+								}
+								else {
+									return visit(ternaryExpressionContext.nullishExpression());
+								}
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitNullishExpression(org.daiitech.naftah.parser.NaftahParser.NullishExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitLogicalExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, nullishExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
-										.visit(bitwiseXorExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(bitwiseXorExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, BITWISE_XOR);
-								}
+										.visit(nullishExpressionContext.logicalExpression(0));
 
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitNotExpression(org.daiitech.naftah.parser.NaftahParser.NotExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitNotExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, notExpressionContext) -> not(
-																										defaultNaftahParserVisitor
-																												.visit(
-																														notExpressionContext
-																																.expression()))
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitAndExpression(org.daiitech.naftah.parser.NaftahParser.AndExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitAndExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, andExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(andExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(andExpressionContext.expression(1));
-
-								return isTruthy(left) && isTruthy(right);
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitOrExpression(org.daiitech.naftah.parser.NaftahParser.OrExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitOrExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, orExpressionContext) -> {
-								Object left = defaultNaftahParserVisitor.visit(orExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor.visit(orExpressionContext.expression(1));
-
-								return isTruthy(left) || isTruthy(right);
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitNegateExpression(org.daiitech.naftah.parser.NaftahParser.NegateExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitNegateExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, negateExpressionContext) -> not(visit(
-																												negateExpressionContext
-																														.expression()))
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitPreDecrementExpression(org.daiitech.naftah.parser.NaftahParser.PreDecrementExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitPreDecrementExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, preDecrementExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(preDecrementExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(value, PRE_DECREMENT);
+								for (int i = 1; i < nullishExpressionContext.logicalExpression().size(); i++) {
+									left = isTruthy(left) ?
+											left :
+											defaultNaftahParserVisitor
+													.visit(nullishExpressionContext
+															.logicalExpression(
+																				i));
 								}
 
-								return result;
-							}
-		);
+								return left;
+							});
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitPostDecrementExpression(
-												org.daiitech.naftah.parser.NaftahParser.PostDecrementExpressionContext ctx) {
+	public Object visitLogicalExpression(org.daiitech.naftah.parser.NaftahParser.LogicalExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitPostDecrementExpression",
+							"visitLogicalExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, postDecrementExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(postDecrementExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(value, POST_DECREMENT);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitBitwiseOrExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseOrExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitBitwiseOrExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, bitwiseOrExpressionContext) -> {
+							(defaultNaftahParserVisitor, currentContext, logicalExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
-										.visit(bitwiseOrExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(bitwiseOrExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, BITWISE_OR);
+										.visit(logicalExpressionContext.bitwiseExpression(0));
+
+								for (int i = 1; i < logicalExpressionContext.bitwiseExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(logicalExpressionContext
+													.bitwiseExpression(
+																		i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(logicalExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
 								}
 
-								return result;
-							}
-		);
+								return left;
+							});
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitBitwiseNotExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseNotExpressionContext ctx) {
+	public Object visitBitwiseExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitBitwiseNotExpression",
+							"visitBitwiseExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, bitwiseNotExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(bitwiseNotExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(value, BITWISE_NOT);
-								}
-
-								return result;
-							}
-		);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitBitwiseAndExpression(org.daiitech.naftah.parser.NaftahParser.BitwiseAndExpressionContext ctx) {
-		return visitContext(
-							this,
-							"visitBitwiseAndExpression",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, bitwiseAndExpressionContext) -> {
+							(defaultNaftahParserVisitor, currentContext, bitwiseExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
-										.visit(bitwiseAndExpressionContext.expression(0));
-								Object right = defaultNaftahParserVisitor
-										.visit(bitwiseAndExpressionContext.expression(1));
-								Object result;
-								if (left == null || right == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(left, right, BITWISE_AND);
+										.visit(bitwiseExpressionContext.equalityExpression(0));
+
+								for (int i = 1; i < bitwiseExpressionContext.equalityExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(bitwiseExpressionContext
+													.equalityExpression(
+																		i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(bitwiseExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
 								}
 
-								return result;
-							}
-		);
+								return left;
+							});
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitPreIncrementExpression(org.daiitech.naftah.parser.NaftahParser.PreIncrementExpressionContext ctx) {
+	public Object visitEqualityExpression(org.daiitech.naftah.parser.NaftahParser.EqualityExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitPreIncrementExpression",
+							"visitEqualityExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, preIncrementExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(preIncrementExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
-								}
-								else {
-									result = applyOperation(value, PRE_INCREMENT);
+							(defaultNaftahParserVisitor, currentContext, equalityExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(equalityExpressionContext.relationalExpression(0));
+
+								for (int i = 1; i < equalityExpressionContext.relationalExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(equalityExpressionContext
+													.relationalExpression(
+																			i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(equalityExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
 								}
 
-								return result;
-							}
-		);
+								return left;
+							});
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitPostIncrementExpression(
-												org.daiitech.naftah.parser.NaftahParser.PostIncrementExpressionContext ctx) {
+	public Object visitRelationalExpression(org.daiitech.naftah.parser.NaftahParser.RelationalExpressionContext ctx) {
 		return visitContext(
 							this,
-							"visitPostIncrementExpression",
+							"visitRelationalExpression",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, postIncrementExpressionContext) -> {
-								Object value = defaultNaftahParserVisitor
-										.visit(postIncrementExpressionContext.expression());
-								Object result;
-								if (value == null) {
-									result = null;
+							(defaultNaftahParserVisitor, currentContext, relationalExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(relationalExpressionContext.additiveExpression(0));
+
+								for (int i = 1; i < relationalExpressionContext.additiveExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(relationalExpressionContext
+													.additiveExpression(
+																		i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(relationalExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
+								}
+
+								return left;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitAdditiveExpression(org.daiitech.naftah.parser.NaftahParser.AdditiveExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitAdditiveExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, additiveExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(additiveExpressionContext.multiplicativeExpression(0));
+
+								for (int i = 1; i < additiveExpressionContext.multiplicativeExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(additiveExpressionContext
+													.multiplicativeExpression(
+																				i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(additiveExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
+								}
+
+								return left;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitMultiplicativeExpression(org.daiitech.naftah.parser.NaftahParser.MultiplicativeExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitMultiplicativeExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, multiplicativeExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(multiplicativeExpressionContext.powerExpression(0));
+
+								for (int i = 1; i < multiplicativeExpressionContext.powerExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(multiplicativeExpressionContext
+													.powerExpression(
+																		i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(multiplicativeExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									left = applyOperation(left, right, BinaryOperation.of(op));
+								}
+
+								return left;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitPowerExpression(org.daiitech.naftah.parser.NaftahParser.PowerExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitPowerExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, powerExpressionContext) -> {
+								if (Objects.nonNull(powerExpressionContext.POW())) {
+									Object left = visit(powerExpressionContext.unaryExpression());
+									Object right = visit(powerExpressionContext.powerExpression());
+
+									String op = NaftahParserHelper
+											.getDisplayName(powerExpressionContext.POW(),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									return applyOperation(left, right, BinaryOperation.of(op));
 								}
 								else {
-									result = applyOperation(value, POST_INCREMENT);
+									return visit(powerExpressionContext.unaryExpression());
+								}
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitPrefixUnaryExpression(org.daiitech.naftah.parser.NaftahParser.PrefixUnaryExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitPrefixUnaryExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, prefixUnaryExpressionContext) -> {
+								Object value = defaultNaftahParserVisitor
+										.visit(prefixUnaryExpressionContext.unaryExpression());
+								Object result;
+
+								String op = NaftahParserHelper
+										.getDisplayName(prefixUnaryExpressionContext.getChild(0),
+														defaultNaftahParserVisitor.parser.getVocabulary());
+								if (INCREMENT.equals(op) || DECREMENT.equals(op)) {
+									op = PRE + op;
+								}
+								result = applyOperation(value, UnaryOperation.of(op));
+
+								return result;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitPostfixUnaryExpression(org.daiitech.naftah.parser.NaftahParser.PostfixUnaryExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitPostfixUnaryExpression",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								postfixUnaryExpressionContext) -> defaultNaftahParserVisitor
+										.visit(postfixUnaryExpressionContext.postfixExpression()));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitPostfixExpression(org.daiitech.naftah.parser.NaftahParser.PostfixExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitPostfixExpression",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, postfixExpressionContext) -> {
+								Object value = defaultNaftahParserVisitor
+										.visit(postfixExpressionContext.primary());
+								Object result;
+								if (postfixExpressionContext.getChildCount() == 2) {
+									String op = NaftahParserHelper
+											.getDisplayName(postfixExpressionContext.getChild(1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									if (INCREMENT.equals(op) || DECREMENT.equals(op)) {
+										op = POST + op;
+									}
+									result = applyOperation(value, UnaryOperation.of(op));
+								}
+								else {
+									result = value;
 								}
 
 								return result;
-							}
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitNanValue(org.daiitech.naftah.parser.NaftahParser.NanValueContext ctx) {
+		return visitContext(
+							this,
+							"visitNanValue",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, nanValueContext) -> NaN.get()
 		);
 	}
 }

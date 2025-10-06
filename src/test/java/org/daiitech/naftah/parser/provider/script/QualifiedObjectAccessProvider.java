@@ -9,20 +9,12 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
 
-public class QualifiedNameProvider implements ArgumentsProvider {
+public class QualifiedObjectAccessProvider implements ArgumentsProvider {
+
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
 				.of(
-					Arguments.of(true, """
-										ثابت ت : جڤ:لنگ:لنگ تعيين 2
-										ت
-										""", 2, null),
-//				Arguments.of(true, "جڤ:لنگ:سيستم::گك()", null, null), TODO: fix
-					Arguments.of(true, """
-										متغير أ تعيين {متغير أ تعيين ١ , متغير ب تعيين 4}
-										أ:أ
-										""", 1, null),
 					Arguments.of(true, """
 										متغير المدينة تعيين {
 										متغير الاسم تعيين "قبلي",
@@ -32,7 +24,7 @@ public class QualifiedNameProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة:البلدة:عدد_البيوت
+										المدينة[البلدة][عدد_البيوت]
 										""", 400, null),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -43,7 +35,7 @@ public class QualifiedNameProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟:ء:عدد_البيوت
+										المدينة؟[ء]:عدد_البيوت
 										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء")),
 					Arguments.of(true, """
 										متغير المدينة تعيين {
@@ -54,7 +46,7 @@ public class QualifiedNameProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟:ء؟:عدد_البيوت
+										المدينة؟[ء]؟[عدد_البيوت]
 										""", None.get(), null),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -65,7 +57,7 @@ public class QualifiedNameProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدي؟:البلدة؟:عدد_البيوت
+										المدي؟:البلدة؟[عدد_البيوت]
 										""", null, newNaftahBugVariableNotFoundError("المدي")),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -76,7 +68,62 @@ public class QualifiedNameProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟:البلدة؟:عددت
+										المدينة؟[البلدة]؟:عددت
+										""", null, newNaftahBugVariableNotFoundError("المدينة؟:البلدة؟:عددت")),
+					Arguments.of(true, """
+										متغير المدينة تعيين {
+										متغير الاسم تعيين "قبلي",
+										متغير عدد_السكان تعيين 50000,
+										متغير البلدة تعيين {
+											متغير الاسم تعيين "سوق الأحد",
+											متغير عدد_البيوت تعيين 400
+										}
+										}
+										المدينة[البلدة][عدد_البيوت]
+										""", 400, null),
+					Arguments.of(false, """
+										متغير المدينة تعيين {
+										متغير الاسم تعيين "قبلي",
+										متغير عدد_السكان تعيين 50000,
+										متغير البلدة تعيين {
+											متغير الاسم تعيين "سوق الأحد",
+											متغير عدد_البيوت تعيين 400
+										}
+										}
+										المدينة؟[ء][عدد_البيوت]
+										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء")),
+					Arguments.of(true, """
+										متغير المدينة تعيين {
+										متغير الاسم تعيين "قبلي",
+										متغير عدد_السكان تعيين 50000,
+										متغير البلدة تعيين {
+											متغير الاسم تعيين "سوق الأحد",
+											متغير عدد_البيوت تعيين 400
+										}
+										}
+										المدينة؟[ء]؟[عدد_البيوت]
+										""", None.get(), null),
+					Arguments.of(false, """
+										متغير المدينة تعيين {
+										متغير الاسم تعيين "قبلي",
+										متغير عدد_السكان تعيين 50000,
+										متغير البلدة تعيين {
+											متغير الاسم تعيين "سوق الأحد",
+											متغير عدد_البيوت تعيين 400
+										}
+										}
+										المدي؟[البلدة]؟[عدد_البيوت]
+										""", null, newNaftahBugVariableNotFoundError("المدي")),
+					Arguments.of(false, """
+										متغير المدينة تعيين {
+										متغير الاسم تعيين "قبلي",
+										متغير عدد_السكان تعيين 50000,
+										متغير البلدة تعيين {
+											متغير الاسم تعيين "سوق الأحد",
+											متغير عدد_البيوت تعيين 400
+										}
+										}
+										المدينة؟[البلدة]؟[عددت]
 										""", null, newNaftahBugVariableNotFoundError("المدينة؟:البلدة؟:عددت"))
 				);
 	}

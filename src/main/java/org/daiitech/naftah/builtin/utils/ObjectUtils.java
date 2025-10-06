@@ -20,6 +20,8 @@ import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -27,6 +29,7 @@ import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
 
+import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
@@ -34,6 +37,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSym
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_NUMBER_FORMAT;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.latinNumberToArabicString;
 
 /**
  * Utility class providing various helper methods for working with Java objects in the context of the Naftah language
@@ -83,9 +87,7 @@ public final class ObjectUtils {
 
 		// Number (includes Integer, Double, etc.)
 		if (obj instanceof Number num) {
-			// TODO: enhance to support all kind of numbers (using DynamicNumber)
-			double value = num.doubleValue();
-			return value != 0.0 && !Double.isNaN(value);
+			return !(DynamicNumber.isNaN(num) || NumberUtils.isZero(num));
 		}
 
 		// String
@@ -112,8 +114,7 @@ public final class ObjectUtils {
 			return isTruthy(entry.getKey()) && isTruthy(entry.getValue());
 		}
 
-		// Other objects (non-null) are truthy
-		return true;
+		return !(NaN.isNaN(obj) || None.isNone(obj));
 	}
 
 	/**
@@ -181,8 +182,7 @@ public final class ObjectUtils {
 					.allMatch(entry -> Objects.isNull(entry.getKey()) || Objects.isNull(entry.getValue()));
 		}
 
-		// else
-		return false;
+		return NaN.isNaN(obj) || None.isNone(obj);
 	}
 
 	/**
@@ -359,6 +359,11 @@ public final class ObjectUtils {
 		if (obj == null) {
 			return false;
 		}
+
+		if (NaN.isNaN(obj) || None.isNone(obj)) {
+			return true;
+		}
+
 		Class<?> cls = obj.getClass();
 
 		return cls
@@ -445,12 +450,16 @@ public final class ObjectUtils {
 	 */
 	public static Object applyOperation(Object left, Object right, BinaryOperation operation) {
 		if (left == null || right == null) {
+			if (NaN.isNaN(left) || NaN.isNaN(right)) {
+				return NaN.get();
+			}
 			throw newNaftahBugNullInputError(false, left, right);
 		}
 
-		// Number vs Number
-		if (left instanceof Number number && right instanceof Number number1) {
-			return operation.apply(number, number1);
+		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
+		if ((NaN.isNaN(left) || NaN.isNaN(right)) || (None.isNone(left) || None
+				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String)) {
+			return operation.apply(left, right);
 		}
 
 		// Number vs Boolean/Character/String/collection
@@ -492,26 +501,6 @@ public final class ObjectUtils {
 			return operation.apply(left, number);
 		}
 
-		// Boolean vs Boolean
-		if (left instanceof Boolean aBoolean && right instanceof Boolean aBoolean1) {
-			return operation.apply(aBoolean, aBoolean1);
-		}
-
-		// Character vs Character
-		if (left instanceof Character character && right instanceof Character character1) {
-			return operation.apply(character, character1);
-		}
-
-		// String vs String
-		if (left instanceof String s && right instanceof String s1) {
-			return operation.apply(s, s1);
-		}
-
-		// String vs Character
-		if (left instanceof String s && right instanceof Character character) {
-			return operation.apply(s, String.valueOf(character));
-		}
-
 		// Collection vs Collection (element-wise)
 		if (left instanceof Collection<?> collection1 && right instanceof Collection<?> collection2) {
 			return CollectionUtils.applyOperation(collection1, collection2, operation);
@@ -543,24 +532,10 @@ public final class ObjectUtils {
 			throw newNaftahBugNullInputError(true, a);
 		}
 
-		// Number
-		if (a instanceof Number number) {
-			return operation.apply(number);
-		}
-
-		// Boolean
-		if (a instanceof Boolean aBoolean) {
-			return operation.apply(aBoolean);
-		}
-
-		// Character
-		if (a instanceof Character character) {
-			return operation.apply(character);
-		}
-
-		// String
-		if (a instanceof String s) {
-			return operation.apply(s);
+		// Number or Boolean or Character or String
+		if (NaN.isNaN(a) || None
+				.isNone(a) || a instanceof Number || a instanceof Boolean || a instanceof Character || a instanceof String) {
+			return operation.apply(a);
 		}
 
 		// Collection
@@ -716,24 +691,33 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Converts the given {@link Number} to a localized string representation
-	 * using Arabic locale formatting rules.
+	 * Converts the given {@link Number} into a localized string representation using Arabic locale formatting rules.
 	 * <p>
-	 * This includes Arabic-style grouping and decimal separators, and may use
-	 * Arabic-Indic digits depending on JVM configuration and font support.
+	 * When the system property {@code arabic.number.format} is {@code true}, this method uses a preconfigured
+	 * {@link java.text.NumberFormat} instance for the Arabic locale. This includes Arabic-style decimal and grouping
+	 * separators and may render digits in Arabic-Indic form, depending on JVM and font support.
 	 * <p>
-	 * The method is synchronized on {@link org.daiitech.naftah.utils.arabic.ArabicUtils#ARABIC_NUMBER_FORMAT} since
-	 * {@link java.text.NumberFormat} instances are not thread-safe.
+	 * The method synchronizes on {@link org.daiitech.naftah.utils.arabic.ArabicUtils#ARABIC_NUMBER_FORMAT}
+	 * since {@code NumberFormat} is not thread-safe.
+	 * <p>
+	 * If the system property is not set to {@code true}, the method falls back to a custom digit conversion
+	 * via {@link org.daiitech.naftah.utils.arabic.ArabicUtils#latinNumberToArabicString(Number)}.
 	 *
 	 * @param number the number to format; must not be {@code null}
-	 * @return a string representation of the number in Arabic locale formatting
+	 * @return the number formatted as a string using Arabic locale or Arabic digits
 	 * @throws NullPointerException if {@code number} is {@code null}
 	 * @see java.text.NumberFormat#format(double)
 	 * @see java.util.Locale
+	 * @see org.daiitech.naftah.utils.arabic.ArabicUtils#latinNumberToArabicString(Number)
 	 */
 	public static String numberToString(Number number) {
-		synchronized (ARABIC_NUMBER_FORMAT) {
-			return ARABIC_NUMBER_FORMAT.format(number);
+		if (Boolean.getBoolean(ARABIC_NUMBER_FORMATTER_PROPERTY)) {
+			synchronized (ARABIC_NUMBER_FORMAT) {
+				return ARABIC_NUMBER_FORMAT.format(number);
+			}
+		}
+		else {
+			return latinNumberToArabicString(number);
 		}
 	}
 }

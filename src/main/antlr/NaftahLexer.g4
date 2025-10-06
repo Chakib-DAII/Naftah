@@ -31,11 +31,13 @@ CONTINUE   : 'تابع';
 DO         : 'إفعل' | 'افعل';
 TO         : 'إلى';
 DOWNTO     : 'تنازليا';
+STEP       : 'خطوة';
 IF         : 'إذا' | 'إذا_كان' | 'اذا' | 'اذا_كان';
 ELSEIF     : 'غير_ذلك_إذا' | 'غير_ذلك_إذا_كان' | 'غير_ذلك_اذا_كان' | 'غير_ذلك_اذا';
 ELSE       : 'غير_ذلك';
 END        : 'أنهي' | 'انهي' | 'نهاية';
 FOR        : 'كرر_حلقة';
+IN         : 'من' | 'ضمن' | 'من_بين' | 'داخل';
 FUNCTION   : 'دالة';
 VARIABLE   : 'متغير';
 CONSTANT   : 'ثابت';
@@ -58,6 +60,7 @@ INCREMENT  : '++' | 'زد';
 MINUS      : '-' | 'ناقص';
 DECREMENT  : '--' | 'نقص';
 MUL        : '*' | 'ضارب';
+POW        : MUL MUL | 'رفع';
 DIV        : '/' | 'قسمة';
 MOD        : '%' | 'باقي';
 ASSIGN     : '=' | 'تعيين';
@@ -89,6 +92,8 @@ SEMI       : '؛';
 COLON      : ':';
 DOT        : '.';
 COMMA      : ',' | '٫' | '،' | '٬';
+QUESTION   : '؟';
+
 
 // Types
 VAR              : 'أي_نوع' | 'أي_نمط';
@@ -107,6 +112,7 @@ DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
 BASE_DIGITS	: (Digit | Character)+ QuotationMark QuotationMark;  // Digits for base up to 36 (including a-z for bases > 10)
 BASE_RADIX	: ([2-9٢-٩] | ([1-3١-٣] [0-9٠-٩])) QuotationMark; // base 2 to 36 radices
 NUMBER      : Digit+ (COMMA Digit+)?;
+NAN			: 'ليس_رقم' | 'قيمة_غير_رقمية' | 'رقم_غير_صالح' | 'غير_عددي' | 'ليس_عددي';
 CHARACTER   : (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkLeft) Character (QuotationMark | DoubleQuotationMark | DoubleQuotationMarkRight);
 RAW		    : 'خام' | 'نص_خام'| 'سلسلة_خام';
 BYTE_ARRAY	: 'ثمانية_بت' | 'بايتات' |'سلسلة_ثمانية_بت' |'مصفوفة_ثمانية_بت' | 'سلسلة_بايتات'| 'مصفوفة_بايتات';

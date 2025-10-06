@@ -7,14 +7,24 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-public class ReturnStatementProvider implements ArgumentsProvider {
+public class RepeatStatementProvider implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
-				.of(
-					Arguments.of(true, "أرجع", None.get(), null),
-					Arguments.of(true, "أرجع 2", 2, null),
-					Arguments.of(true, "اعد 2", 2, null),
-					Arguments.of(true, "أعد 2", 2, null));
+				.of(Arguments
+						.of(
+							true,
+							"""
+							متغير أ تعيين ١
+
+							كرر {
+								إطبع(أ)
+								زد أ
+							}
+							حتى أ أكبر_من 9
+							أنهي
+							""",
+							None.get(),
+							null));
 	}
 }

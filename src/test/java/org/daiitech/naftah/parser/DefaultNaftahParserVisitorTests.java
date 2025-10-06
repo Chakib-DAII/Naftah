@@ -9,6 +9,8 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.provider.script.ArithmeticExpressionsProvider;
 import org.daiitech.naftah.parser.provider.script.AssignmentProvider;
 import org.daiitech.naftah.parser.provider.script.BlockProvider;
+import org.daiitech.naftah.parser.provider.script.CaseStatementProvider;
+import org.daiitech.naftah.parser.provider.script.CollectionAccessProvider;
 import org.daiitech.naftah.parser.provider.script.CollectionExpressionProvider;
 import org.daiitech.naftah.parser.provider.script.DeclarationProvider;
 import org.daiitech.naftah.parser.provider.script.ForStatementProvider;
@@ -17,8 +19,11 @@ import org.daiitech.naftah.parser.provider.script.FunctionDeclarationProvider;
 import org.daiitech.naftah.parser.provider.script.IfStatementProvider;
 import org.daiitech.naftah.parser.provider.script.LogicalExpressionsProvider;
 import org.daiitech.naftah.parser.provider.script.QualifiedNameProvider;
+import org.daiitech.naftah.parser.provider.script.QualifiedObjectAccessProvider;
+import org.daiitech.naftah.parser.provider.script.RepeatStatementProvider;
 import org.daiitech.naftah.parser.provider.script.ReturnStatementProvider;
 import org.daiitech.naftah.parser.provider.script.ValueExpressionsProvider;
+import org.daiitech.naftah.parser.provider.script.WhileStatementProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -165,6 +170,24 @@ public class DefaultNaftahParserVisitorTests {
 	}
 
 	@ParameterizedTest
+	@ArgumentsSource(QualifiedObjectAccessProvider.class)
+	void qualifiedObjectAccessTests(boolean validScript,
+									String script,
+									Object expectedValue,
+									NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(CollectionAccessProvider.class)
+	void collectionAccessTests( boolean validScript,
+								String script,
+								Object expectedValue,
+								NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
 	@ArgumentsSource(ReturnStatementProvider.class)
 	void returnTests(   boolean validScript,
 						String script,
@@ -185,6 +208,33 @@ public class DefaultNaftahParserVisitorTests {
 	@ParameterizedTest
 	@ArgumentsSource(ForStatementProvider.class)
 	void forStatementTests( boolean validScript,
+							String script,
+							Object expectedValue,
+							NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(RepeatStatementProvider.class)
+	void repeatStatementTests(  boolean validScript,
+								String script,
+								Object expectedValue,
+								NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(WhileStatementProvider.class)
+	void whileStatementTests(   boolean validScript,
+								String script,
+								Object expectedValue,
+								NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(CaseStatementProvider.class)
+	void caseStatementTests(boolean validScript,
 							String script,
 							Object expectedValue,
 							NaftahBugError expectedNaftahBugError) throws Exception {

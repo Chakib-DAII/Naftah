@@ -986,13 +986,6 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Checks if a function argument with the given name exists in the current or parent contexts.
-	 *
-	 * @param name the argument name
-	 * @return true if the function argument exists, false otherwise
-	 */
-
-	/**
 	 * Generates the canonical name for a function argument based on the current function call ID.
 	 *
 	 * @param name the original argument name

@@ -2,6 +2,7 @@ package org.daiitech.naftah.parser.provider.script;
 
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.lang.None;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -106,7 +107,89 @@ public class ForStatementProvider implements ArgumentsProvider {
 								""",
 								null,
 								null
-							)
+							),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ تعيين 1 إلى 500 خطوة 10 إفعل {
+									إطبع(أ)
+								}
+								أنهي
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ تعيين 1 إلى 83647 خطوة 1000 إفعل {
+									إطبع(أ)
+								}
+								أنهي
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ؛ب:ت داخل  {
+													متغير الماركة تعيين "بيجو",
+													متغير الموديل تعيين 2021,
+													متغير اللون تعيين "أبيض"
+													} إفعل {
+									إطبع("${أ} - ${ب} - ${ت}")
+								}
+								أنهي
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ من (1؛"نخيل"؛3،2؛'س'؛خاطئ؛حقيقي؛لاشيء؛(سلسلة_ثمانية_بت "سراب")؛ليس_عددي) إفعل {
+									إطبع(أ)
+								}
+								أنهي
+
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ داخل [1؛2؛3؛4] إفعل {
+									إطبع(أ)
+								}
+								أنهي
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ؛ب ضمن {"واحة"،"نخيل"،"ينبوع"،"ظل"،"سراب"،"خضرة"،"نسيم"،"قافلة"} إفعل {
+									إطبع("${أ} - ${ب}")
+								}
+								أنهي
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(
+								true,
+								"""
+								كرر_حلقة أ:ب من_بين {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} إفعل {
+									إطبع("${أ} - ${ب}")
+								}
+								أنهي
+								""",
+								None.get(),
+								null)
 				);
 	}
 }

@@ -28,6 +28,8 @@ import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.Transliterator;
 
 import static org.daiitech.naftah.Naftah.ARABIC_INDIC_PROPERTY;
+import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
+import static org.daiitech.naftah.Naftah.INTERPOLATION_CACHE_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
@@ -109,12 +111,6 @@ public final class ArabicUtils {
 					"|(?<=[^A-Z])(?=[A-Z])" + // IPv6 → IPv, 6
 					"|(?<=[A-Za-z])(?=\\d)" + // 6Parser → 6, Parser
 					"|(?<=\\d)(?=[A-Za-z])";
-	/**
-	 * Cache of precompiled {@link Matcher} instances for text processing, keyed by the input text string.
-	 * Used to improve performance by avoiding
-	 * repeated compilation of patterns.
-	 */
-	private static final Map<String, Matcher> TEXT_MATCHER_CACHE = new HashMap<>();
 	/**
 	 * Arabic alphabet letters used for transliteration to Latin letters.
 	 * <p>
@@ -204,6 +200,52 @@ public final class ArabicUtils {
 													'Z'
 	};
 	/**
+	 * A set of reserved words used by the ICU (International Components for Unicode)
+	 * transliteration and normalization APIs. These words have special meaning in
+	 * ICU transliteration rules and Unicode transformations.
+	 *
+	 * <p>Examples of usage contexts include:
+	 * <ul>
+	 * <li>Transliteration rule syntax (e.g., "::NFD;" or "::Latin-ASCII;")</li>
+	 * <li>Normalization forms (e.g., "NFC", "NFD", "NFKC", "NFKD")</li>
+	 * <li>Unicode script and block identifiers (e.g., "Latin", "Greek", "Han")</li>
+	 * <li>Keywords in rule definitions (e.g., "use", "import", "function")</li>
+	 * </ul>
+	 *
+	 * <p>This set can be used to:
+	 * <ul>
+	 * <li>Validate user-defined transliteration rules</li>
+	 * <li>Highlight or flag reserved words in editors or tools</li>
+	 * <li>Prevent conflicts in custom ICU rule definitions</li>
+	 * </ul>
+	 *
+	 * @see com.ibm.icu.text.Transliterator
+	 * @see com.ibm.icu.text.Normalizer2
+	 * @see <a href="https://unicode-org.github.io/icu/userguide/transforms/general/">ICU Transliteration Guide</a>
+	 */
+	private static final Set<String> ICU_RESERVED_WORDS = Set
+			.of(
+				"::",
+				"use",
+				"import",
+				"function",
+				"Null",
+				"NFD",
+				"NFC",
+				"NFKD",
+				"NFKC",
+				"Any",
+				"Latin",
+				"Greek",
+				"Cyrillic",
+				"Han",
+				"Kana",
+				"Hiragana",
+				"Katakana",
+				"Common",
+				"Inherited"
+			);
+	/**
 	 * A reusable {@link NumberFormat} instance configured for the Arabic locale.
 	 * <p>
 	 * This formatter uses Arabic locale conventions for decimal and grouping separators,
@@ -217,7 +259,7 @@ public final class ArabicUtils {
 	 * @see Locale#forLanguageTag(String)
 	 * @see NumberFormat#getNumberInstance(Locale)
 	 */
-	public static NumberFormat ARABIC_NUMBER_FORMAT;
+	public static volatile NumberFormat ARABIC_NUMBER_FORMAT;
 	/**
 	 * Custom transliteration rules defined as a multi-line string.
 	 * Each rule maps Latin script sequences to their corresponding Arabic script sequences.
@@ -235,9 +277,21 @@ public final class ArabicUtils {
 										t > ت;
 										ii > عي;
 										""";
+	/**
+	 * Cache of precompiled {@link Matcher} instances for text processing, keyed by the input text string.
+	 * Used to improve performance by avoiding
+	 * repeated compilation of patterns.
+	 */
+	private static Map<String, Matcher> TEXT_MATCHER_CACHE;
 
 	static {
+		if (Boolean.getBoolean(INTERPOLATION_CACHE_PROPERTY)) {
+			TEXT_MATCHER_CACHE = new HashMap<>();
+		}
+		Map<String, String> existentCustomRules = parseRules(CUSTOM_RULES);
+
 		Set<String> keys = CUSTOM_RULES_BUNDLE.keySet();
+		keys.addAll(existentCustomRules.keySet());
 
 		// Convert to List
 		List<String> keylist = new ArrayList<>(keys);
@@ -247,10 +301,14 @@ public final class ArabicUtils {
 
 		StringBuilder stringBuilder = new StringBuilder();
 		for (String key : keylist) {
-			String value = CUSTOM_RULES_BUNDLE.getString(key);
+			String value = CUSTOM_RULES_BUNDLE.containsKey(key) ?
+					CUSTOM_RULES_BUNDLE.getString(key) :
+					existentCustomRules.get(key);
 			// If s contains underscore or spaces or any special char, quote it
 			String regex = ".*[ _\\t\\r\\n].*";
-			if (key.matches(regex)) { // underscore or space or whitespace
+			if (key.matches(regex) || ICU_RESERVED_WORDS.contains(key.trim()) || key
+					.trim()
+					.startsWith("::")) { // underscore or space or whitespace
 				key = "'" + key + "'";
 			}
 			if (value.matches(regex)) { // underscore or space or whitespace
@@ -261,33 +319,35 @@ public final class ArabicUtils {
 									%s > %s;
 									""".formatted(key.toLowerCase(Locale.US), value));
 		}
-		CUSTOM_RULES = stringBuilder + CUSTOM_RULES;
+		CUSTOM_RULES = stringBuilder.toString();
 
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols(ARABIC);
+		if (Boolean.getBoolean(ARABIC_NUMBER_FORMATTER_PROPERTY)) {
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(ARABIC);
 
-		if (Boolean.getBoolean(ARABIC_INDIC_PROPERTY)) {
+			if (Boolean.getBoolean(ARABIC_INDIC_PROPERTY)) {
 //			TODO : not working; check it
-			symbols
-					.setDigitStrings(new String[]{
-													"٠",
-													"١",
-													"٢",
-													"٣",
-													"٤",
-													"٥",
-													"٦",
-													"٧",
-													"٨",
-													"٩"
-					}); // Arabic-Indic zero
-		}
-		else {
-			symbols.setZeroDigit('0'); // Latin digits
-		}
+				symbols
+						.setDigitStrings(new String[]{
+														"٠",
+														"١",
+														"٢",
+														"٣",
+														"٤",
+														"٥",
+														"٦",
+														"٧",
+														"٨",
+														"٩"
+						}); // Arabic-Indic zero
+			}
+			else {
+				symbols.setZeroDigit('0'); // Latin digits
+			}
 
-		symbols.setDecimalSeparator('٫'); // Arabic decimal separator
-		symbols.setGroupingSeparator('_'); // Arabic grouping separator
-		ARABIC_NUMBER_FORMAT = new DecimalFormat("#,##0.###", symbols);
+			symbols.setDecimalSeparator('٫'); // Arabic decimal separator
+			symbols.setGroupingSeparator('_'); // Arabic grouping separator  (in use if the pattern is "#,##0.###")
+			ARABIC_NUMBER_FORMAT = new DecimalFormat("###0.###", symbols);
+		}
 	}
 
 	/**
@@ -296,6 +356,60 @@ public final class ArabicUtils {
 	 */
 	private ArabicUtils() {
 		throw newNaftahBugInvalidUsageError();
+	}
+
+	/**
+	 * Parses a set of transformation rules from a string into a map.
+	 *
+	 * <p>The input string should contain one rule per line in the format:
+	 * <pre>{@code
+	 * source > target;
+	 * }</pre>
+	 *
+	 * <p>Each line:
+	 * <ul>
+	 * <li>Is stripped of leading/trailing whitespace</li>
+	 * <li>Ignores empty lines</li>
+	 * <li>Removes trailing semicolons</li>
+	 * <li>Splits on the first occurrence of the {@code '>'} character</li>
+	 * </ul>
+	 *
+	 * <p>Example input:
+	 * <pre>{@code
+	 * a > b;
+	 * c > d;
+	 * }</pre>
+	 *
+	 * <p>Will result in a map:
+	 * <pre>{@code
+	 * {
+	 *   "a" -> "b",
+	 *   "c" -> "d"
+	 * }
+	 * }</pre>
+	 *
+	 * @param rules A string containing one or more transformation rules separated by newlines
+	 * @return A map of source-to-target transformations
+	 */
+	public static Map<String, String> parseRules(String rules) {
+		Map<String, String> map = new HashMap<>();
+		String[] lines = rules.strip().split("\n");
+
+		for (String line : lines) {
+			line = line.strip();
+			if (line.isEmpty()) {
+				continue;
+			}
+			line = line.replace(";", "");
+			String[] parts = line.split(">", 2);
+			if (parts.length == 2) {
+				String key = parts[0].strip();
+				String value = parts[1].strip();
+				map.put(key, value);
+			}
+		}
+
+		return map;
 	}
 
 	/**
@@ -321,12 +435,16 @@ public final class ArabicUtils {
 	 * @return a reset {@link Matcher} instance ready for matching against the input
 	 */
 	private static Matcher getTextMatcher(String input) {
-		if (TEXT_MATCHER_CACHE.containsKey(input)) {
+		if (Objects.nonNull(TEXT_MATCHER_CACHE) && TEXT_MATCHER_CACHE.containsKey(input)) {
 			return TEXT_MATCHER_CACHE.get(input).reset();
 		}
 
 		Matcher matcher = TEXT_MULTILINE_PATTERN.matcher(input);
-		TEXT_MATCHER_CACHE.put(input, matcher);
+
+		if (Objects.nonNull(TEXT_MATCHER_CACHE)) {
+			TEXT_MATCHER_CACHE.put(input, matcher);
+		}
+
 		return matcher.reset();
 	}
 
@@ -622,8 +740,9 @@ public final class ArabicUtils {
 	 */
 	public static String transliterateScript(Transliterator transliterator, boolean removeDiacritics, String word) {
 		// Apply transliteration
-		word = splitIdentifier(word.toLowerCase(Locale.US))
+		word = splitIdentifier(word)
 				.stream()
+				.map(s -> s.toLowerCase(Locale.US))
 				.map(transliterator::transliterate)
 				.collect(Collectors.joining());
 
@@ -934,7 +1053,7 @@ public final class ArabicUtils {
 	 * @param ch the character to check
 	 * @return {@code true} if the character is a Latin digit; {@code false} otherwise
 	 */
-	public static boolean isLatinDigit(char ch) {
+	public static boolean isLatinDigit(int ch) {
 		return (ch >= '0' && ch <= '9');
 	}
 
@@ -948,4 +1067,37 @@ public final class ArabicUtils {
 		return (ch >= '٠' && ch <= '٩');
 	}
 
+	/**
+	 * Converts a {@link Number} into a string using Arabic formatting rules, replacing the
+	 * standard Latin decimal separator with an Arabic comma (U+066C), and optionally converting
+	 * Latin digits (0–9) to Arabic-Indic digits (٠–٩).
+	 * <p>
+	 * If the system property {@code arabic.indic.digits} is set to {@code true}, this method
+	 * will convert each Latin digit to its Arabic-Indic equivalent. Otherwise, digits remain unchanged.
+	 * <p>
+	 * This method does not use locale-aware formatting; it operates directly on the string representation
+	 * of the number returned by {@link Number#toString()}.
+	 *
+	 * @param number the number to convert; must not be {@code null}
+	 * @return a string representing the number with an Arabic decimal separator, and optionally Arabic-Indic digits
+	 * @throws NullPointerException if {@code number} is {@code null}
+	 * @see org.daiitech.naftah.utils.arabic.ArabicUtils#isLatinDigit(int)
+	 */
+	public static String latinNumberToArabicString(Number number) {
+		String result = number.toString().replace(".", "٬");
+		if (Boolean.getBoolean(ARABIC_INDIC_PROPERTY)) {
+			result = result
+					.chars()
+					.mapToObj(c -> {
+						if (ArabicUtils.isLatinDigit(c)) {
+							return String.valueOf((char) ('٠' + (c - '0')));
+						}
+						else {
+							return String.valueOf((char) c);
+						}
+					})
+					.collect(Collectors.joining());
+		}
+		return result;
+	}
 }

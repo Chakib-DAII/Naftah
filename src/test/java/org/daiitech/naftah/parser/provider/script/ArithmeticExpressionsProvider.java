@@ -3,6 +3,7 @@ package org.daiitech.naftah.parser.provider.script;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.lang.NaN;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -72,6 +73,18 @@ public class ArithmeticExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, "127 زد", 127, null),
 					Arguments.of(true, "32767 زد", 32767, null),
 					Arguments.of(true, "2147483647 زد", 2147483647, null),
-					Arguments.of(true, "9223372036854775807 زد", 9223372036854775807L, null));
+					Arguments.of(true, "9223372036854775807 زد", 9223372036854775807L, null),
+					Arguments.of(true, "2 ** 3 ** 2", 512, null),
+					Arguments.of(true, "\"2\" ** 3", 8, null),
+					Arguments.of(true, "\"4\" ** \"0.5\"", 2.0, null),
+					Arguments.of(true, "\"10\" ** \"-1\"", 0.1, null),
+					Arguments.of(true, "\"3.14\" ** 2", 9.859600658798229, null),
+					Arguments.of(true, "\"\" ** 2", 0.0, null),
+					Arguments.of(true, "\" \" ** 2", 0, null),
+					Arguments.of(true, "' ' ** 2", 0, null),
+					Arguments.of(true, "\"   \" ** 2", 0.0, null),
+					Arguments.of(true, "\"مرحبا\" ** 2", NaN.get(), null),
+					Arguments.of(true, "\"مرحبا12312\" ** 2", NaN.get(), null)
+				);
 	}
 }

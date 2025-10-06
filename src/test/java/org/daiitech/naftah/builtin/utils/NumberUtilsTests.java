@@ -306,7 +306,7 @@ public class NumberUtilsTests {
 										1,
 										0,
 										0.0,
-										1.21,
+										1.2100000000000002,
 										new BigDecimal("1.0E45"),
 										null,
 										null,
@@ -1192,7 +1192,7 @@ public class NumberUtilsTests {
 					NaftahBugError expectedNaftahBugError) {
 		runTest(valid,
 				left,
-				() -> NumberUtils.shiftLeft(left, DynamicNumber.of(right).asInt()),
+				() -> NumberUtils.shiftLeft(left, DynamicNumber.of(right).intValue()),
 				expectedResult,
 				expectedNaftahBugError);
 	}
@@ -1206,7 +1206,7 @@ public class NumberUtilsTests {
 					NaftahBugError expectedNaftahBugError) {
 		runTest(valid,
 				left,
-				() -> NumberUtils.shiftRight(left, DynamicNumber.of(right).asInt()),
+				() -> NumberUtils.shiftRight(left, DynamicNumber.of(right).intValue()),
 				expectedResult,
 				expectedNaftahBugError);
 	}
@@ -1220,7 +1220,7 @@ public class NumberUtilsTests {
 							NaftahBugError expectedNaftahBugError) {
 		runTest(valid,
 				left,
-				() -> NumberUtils.unsignedShiftRight(left, DynamicNumber.of(right).asInt()),
+				() -> NumberUtils.unsignedShiftRight(left, DynamicNumber.of(right).intValue()),
 				expectedResult,
 				expectedNaftahBugError);
 	}

@@ -71,7 +71,14 @@ set JAVA_OPTS=%JAVA_OPTS% --add-modules=jdk.incubator.vector --add-opens=java.ba
 @if /I not "%DEBUG%" == "true" goto executeNoDebug
 
 :executeDebug
-"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS% -d
+:: Check if -d already exists in CMD_LINE_ARGS
+echo %CMD_LINE_ARGS% | findstr /i "\-d" >nul
+
+if errorlevel 1 (
+    set CMD_LINE_ARGS=%CMD_LINE_ARGS% -d
+)
+
+"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS%
 goto end
 
 :executeNoDebug

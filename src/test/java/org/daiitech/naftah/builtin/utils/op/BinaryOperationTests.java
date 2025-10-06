@@ -2,12 +2,15 @@ package org.daiitech.naftah.builtin.utils.op;
 
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -178,7 +181,9 @@ public class BinaryOperationTests {
 		void stringOperandsTest(BinaryOperation op, String left, String right) {
 			Object result = op.apply(left, right);
 			assertNotNull(result);
-			assertTrue(result instanceof String || result instanceof Boolean || result.getClass().isArray());
+			assertTrue(result instanceof Number || result instanceof String || result instanceof Boolean || result
+					.getClass()
+					.isArray() || NaN.isNaN(result));
 		}
 	}
 
@@ -230,4 +235,84 @@ public class BinaryOperationTests {
 			}
 		}
 	}
+
+	@Nested
+	class FalsyOperationTests {
+		static Stream<Arguments> falsyOperationProvider(boolean isNaN) {
+			return Stream
+					.of(BinaryOperation.values())
+					.flatMap(op -> Stream
+							.of(
+								Arguments.of(op, 3, isNaN ? NaN.get() : None.get()),
+								Arguments.of(op, "abc", isNaN ? NaN.get() : None.get()),
+								Arguments.of(op, true, isNaN ? NaN.get() : None.get()),
+								Arguments.of(op, 'Z', isNaN ? NaN.get() : None.get()),
+								Arguments.of(op, isNaN ? NaN.get() : None.get(), 3),
+								Arguments.of(op, isNaN ? NaN.get() : None.get(), "abc"),
+								Arguments.of(op, isNaN ? NaN.get() : None.get(), true),
+								Arguments.of(op, isNaN ? NaN.get() : None.get(), 'Z')
+							));
+		}
+
+
+		static Stream<Arguments> falsyNaNOperationProvider() {
+			return falsyOperationProvider(true);
+		}
+
+		static Stream<Arguments> falsyNoneOperationProvider() {
+			return falsyOperationProvider(false);
+		}
+
+		@ParameterizedTest
+		@MethodSource("falsyNaNOperationProvider")
+		void binaryNaNTest(BinaryOperation op, Object left, Object right) {
+			Object result = op.apply(left, right);
+			assertNotNull(result);
+			assertTrue(NaN
+					.isNaN(result) || result instanceof Number || result instanceof Character || result instanceof String || result instanceof Boolean || result
+							.getClass()
+							.isArray());
+		}
+
+
+		@ParameterizedTest
+		@MethodSource("falsyNoneOperationProvider")
+		void binaryNoneTest(BinaryOperation op, Object left, Object right) {
+			if (None.isNone(right) && (op.equals(BinaryOperation.DIVIDE) || (op.equals(BinaryOperation.MODULO)))) {
+				if (left instanceof String) {
+					try {
+						op.apply(left, right);
+					}
+					catch (Throwable throwable) {
+						assertEquals(NaftahBugError.class, throwable.getClass());
+					}
+				}
+				else {
+					assertThrows(Throwable.class, () -> op.apply(left, right));
+				}
+			}
+			else if (None.isNone(right) && op.equals(BinaryOperation.POWER)) {
+				if (left instanceof Number || left instanceof String || left instanceof Character || left instanceof Boolean) {
+					try {
+						op.apply(left, right);
+					}
+					catch (Throwable throwable) {
+						assertEquals(NaftahBugError.class, throwable.getClass());
+					}
+				}
+				else {
+					assertThrows(Throwable.class, () -> op.apply(left, right));
+				}
+			}
+			else {
+				Object result = op.apply(left, right);
+				assertNotNull(result);
+				assertTrue(None
+						.isNone(result) || result instanceof Number || result instanceof Character || result instanceof String || result instanceof Boolean || result
+								.getClass()
+								.isArray());
+			}
+		}
+	}
+
 }

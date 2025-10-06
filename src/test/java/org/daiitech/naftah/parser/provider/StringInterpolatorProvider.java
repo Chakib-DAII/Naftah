@@ -30,7 +30,7 @@ public class StringInterpolatorProvider implements ArgumentsProvider {
 					Arguments.of(true, "مرحباً ${الاسم:علي}", Map.of(), "مرحباً علي", null),
 					Arguments.of(true, "مرحباً {الاسم:علي}$", Map.of(), "مرحباً علي", null),
 					Arguments.of(true, "مرحباً {{الاسم:علي}}", Map.of(), "مرحباً علي", null),
-					Arguments.of(true, "${عدد}", Map.of("عدد", 10000.006), "10_000٫006", null),
+					Arguments.of(true, "${عدد}", Map.of("عدد", 10000.006), "10000٬006", null),
 					Arguments.of(true, "${منطقي}", Map.of("منطقي", true), "صحيح", null),
 					Arguments.of(true, "${منطقي}", Map.of("منطقي", false), "خطأ", null),
 					Arguments
@@ -49,7 +49,7 @@ public class StringInterpolatorProvider implements ArgumentsProvider {
 							.of(true,
 								"${إشارة_حلقة}",
 								Map.of("إشارة_حلقة", LoopSignal.LoopSignalDetails.of(BREAK, 10000.006)),
-								"10_000٫006",
+								"10000٬006",
 								null),
 					Arguments
 							.of(true,

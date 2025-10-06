@@ -2,6 +2,7 @@ package org.daiitech.naftah.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -9,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.Naftah.MULTILINE_CACHE_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
@@ -68,7 +70,13 @@ public final class StringInterpolator {
 	 * Cache of compiled matchers for given input strings to improve performance
 	 * on repeated interpolation calls.
 	 */
-	private static final Map<String, Matcher> MATCHER_CACHE = new HashMap<>();
+	private static Map<String, Matcher> MATCHER_CACHE;
+
+	static {
+		if (Boolean.getBoolean(MULTILINE_CACHE_PROPERTY)) {
+			MATCHER_CACHE = new HashMap<>();
+		}
+	}
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -217,12 +225,16 @@ public final class StringInterpolator {
 	 * @return a reset {@link Matcher} ready to be used
 	 */
 	private static Matcher getMatcher(String input) {
-		if (MATCHER_CACHE.containsKey(input)) {
+		if (Objects.nonNull(MATCHER_CACHE) && MATCHER_CACHE.containsKey(input)) {
 			return MATCHER_CACHE.get(input).reset();
 		}
 
 		Matcher matcher = INTERPOLATION_PATTERN.matcher(input);
-		MATCHER_CACHE.put(input, matcher);
+
+		if (Objects.nonNull(MATCHER_CACHE)) {
+			MATCHER_CACHE.put(input, matcher);
+		}
+
 		return matcher.reset();
 	}
 }

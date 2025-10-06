@@ -1,13 +1,19 @@
 package org.daiitech.naftah.builtin.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -206,6 +212,114 @@ public final class CollectionUtils {
 	}
 
 	/**
+	 * Retrieves the element at the specified index from a {@link Collection}.
+	 * <p>
+	 * Since {@code Collection} does not support direct index-based access, this method
+	 * iterates through the elements in the order defined by the collection's iterator.
+	 * </p>
+	 * <p>
+	 * If the index is out of bounds (i.e., {@code targetIndex >= collection.size()}),
+	 * a {@code NaftahBugError} is thrown with a detailed Arabic error message.
+	 * </p>
+	 *
+	 * @param collection  the collection to retrieve the element from
+	 * @param targetIndex the zero-based index of the desired element
+	 * @return the element at the specified index
+	 * @throws NaftahBugError if the index is greater than or equal to the collection size
+	 */
+	public static Object getElementAt(Collection<?> collection, int targetIndex) {
+		if (collection.size() <= targetIndex) {
+			throw newNaftahIndexOutOfBoundsBugError(targetIndex, collection.size());
+		}
+
+		Iterator<?> iterator = collection.iterator();
+
+		int currentIndex = 0;
+		Object result = None.get();
+
+		while (iterator.hasNext()) {
+			Object item = iterator.next();
+			if (currentIndex == targetIndex) {
+				result = item;
+				break;
+			}
+			currentIndex++;
+		}
+
+		return result;
+	}
+
+	/**
+	 * Replaces the element at the specified index in a {@link Collection} with a new value.
+	 * <p>
+	 * This method iterates through the collection using an {@link Iterator},
+	 * and rebuilds the collection with the replacement applied. It preserves
+	 * insertion order for collections like {@link LinkedHashSet} and {@link List}.
+	 * </p>
+	 *
+	 * @param collection  the collection to modify
+	 * @param targetIndex the zero-based index to replace
+	 * @param newValue    the new value to insert at the given index
+	 * @param <T>         the element type of the collection
+	 * @throws IndexOutOfBoundsException     if the target index is out of bounds
+	 * @throws UnsupportedOperationException if the collection cannot be cleared or modified
+	 */
+	public static <T> void setElementAt(Collection<T> collection, int targetIndex, T newValue) {
+		if (collection.size() <= targetIndex) {
+			throw newNaftahIndexOutOfBoundsBugError(targetIndex, collection.size());
+		}
+
+		Iterator<T> iterator = collection.iterator();
+		Collection<T> updated = createCompatibleCollection(collection);
+
+		int currentIndex = 0;
+		while (iterator.hasNext()) {
+			T element = iterator.next();
+			if (currentIndex == targetIndex) {
+				updated.add(newValue);
+			}
+			else {
+				updated.add(element);
+			}
+			currentIndex++;
+		}
+
+		collection.clear();
+		collection.addAll(updated);
+	}
+
+	/**
+	 * Creates a new, empty collection that is compatible with the given original collection,
+	 * in order to preserve its iteration order and general behavior.
+	 * <p>
+	 * This is used internally to rebuild collections (e.g., when modifying an element by index),
+	 * while maintaining the same ordering semantics:
+	 * </p>
+	 * <ul>
+	 * <li>If the original is a {@link LinkedHashSet}, returns a new {@code LinkedHashSet}.</li>
+	 * <li>If the original is a {@link List}, returns a new {@code ArrayList}.</li>
+	 * <li>If the original is a {@link Set}, returns a new {@code HashSet}.</li>
+	 * <li>Otherwise, defaults to a new {@code ArrayList} as a general-purpose fallback.</li>
+	 * </ul>
+	 *
+	 * @param original the original collection to match
+	 * @param <T>      the element type of the collection
+	 * @return a new empty collection with behavior compatible to the original
+	 */
+	private static <T> Collection<T> createCompatibleCollection(Collection<T> original) {
+		if (original instanceof LinkedHashSet<T>) {
+			return new LinkedHashSet<>();
+		}
+		if (original instanceof List) {
+			return new ArrayList<>();
+		}
+		if (original instanceof Set<T>) {
+			return new HashSet<>();
+		}
+		return new ArrayList<>();
+	}
+
+	/**
 	 * Constructs a new {@link NaftahBugError} indicating that the sizes of the two arrays do not match.
 	 *
 	 * @param left  the first array
@@ -234,5 +348,41 @@ public final class CollectionUtils {
 									'%s'
 									'%s'
 									""".formatted(left, right));
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an index is out of bounds for a collection.
+	 * <p>
+	 * This version does not include a cause (exception).
+	 * </p>
+	 *
+	 * @param targetIndex the index that was attempted to be accessed
+	 * @param size        the size of the collection at the time of access
+	 * @return a {@code NaftahBugError} with a detailed Arabic error message
+	 */
+	public static NaftahBugError newNaftahIndexOutOfBoundsBugError(int targetIndex, int size) {
+		return newNaftahIndexOutOfBoundsBugError(targetIndex, size, null, -1, -1);
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an index is out of bounds for a collection,
+	 * and optionally includes a cause (wrapped exception).
+	 *
+	 * @param targetIndex the index that was attempted to be accessed
+	 * @param size        the size of the collection at the time of access
+	 * @param e           an optional cause of the error (can be {@code null})
+	 * @param line        The line number on which the 1st character of this token was matched
+	 * @param column      The index of the first character of this token relative to the beginning of the line at which
+	 *                    it occurs
+	 * @return a {@code NaftahBugError} with a detailed Arabic error message and optional cause
+	 */
+	public static NaftahBugError newNaftahIndexOutOfBoundsBugError( int targetIndex,
+																	int size,
+																	Exception e,
+																	int line,
+																	int column) {
+		return new NaftahBugError(String.format("""
+												المؤشر المطلوب (%d) خارج حدود المجموعة. عدد العناصر الحالية هو %d.
+												""", targetIndex, size), e, line, column);
 	}
 }
