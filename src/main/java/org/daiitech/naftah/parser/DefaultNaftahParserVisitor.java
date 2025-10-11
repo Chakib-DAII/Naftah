@@ -28,6 +28,7 @@ import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
@@ -366,6 +367,24 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitTryStatementStatement(org.daiitech.naftah.parser.NaftahParser.TryStatementStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitTryStatementStatement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								tryStatementStatementContext) -> defaultNaftahParserVisitor
+										.visit(
+												tryStatementStatementContext.tryStatement())
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -1661,6 +1680,164 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitTryStatement(org.daiitech.naftah.parser.NaftahParser.TryStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitTryStatement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								tryStatementContext) -> {
+								Result<Object, NaftahBugError> result = null;
+								String okVariableName = null;
+								String errorVariableName = null;
+								DeclaredVariable previousOkVariable = null;
+								DeclaredVariable previousErrorVariable = null;
+
+								var tryCases = tryStatementContext.tryCases();
+								try {
+									Object expressionResult = null;
+									try {
+										expressionResult = defaultNaftahParserVisitor
+												.visit(tryStatementContext.expression());
+									}
+									catch (Throwable th) {
+										var errorCase = tryCases.errorCase();
+
+										if (Objects.nonNull(errorCase)) {
+											errorVariableName = errorCase.ID().getText();
+
+											result = Result.Error
+													.of(th instanceof NaftahBugError naftahBugError ?
+															naftahBugError :
+															new NaftahBugError(th));
+
+											var declaredVariable = DeclaredVariable
+													.of(tryStatementContext,
+														errorVariableName,
+														true,
+														Result.Error.class,
+														result);
+
+											boolean errorVarExists = currentContext.containsVariable(errorVariableName);
+											if (errorVarExists) {
+												previousErrorVariable = currentContext
+														.setVariable(   errorVariableName,
+																		declaredVariable);
+											}
+											else {
+												currentContext.defineVariable(errorVariableName, declaredVariable);
+											}
+
+											return defaultNaftahParserVisitor.visit(errorCase);
+										}
+										else {
+											throw th;
+										}
+									}
+
+									var okCase = tryCases.okCase();
+
+									if (Objects.nonNull(okCase) && Objects.nonNull(expressionResult)) {
+										okVariableName = okCase.ID().getText();
+
+										result = Result.Ok.of(expressionResult);
+
+										var declaredVariable = DeclaredVariable
+												.of(tryStatementContext,
+													okVariableName,
+													true,
+													Result.Ok.class,
+													result);
+
+										boolean okVarExists = currentContext.containsVariable(okVariableName);
+										if (okVarExists) {
+											previousOkVariable = currentContext
+													.setVariable(okVariableName, declaredVariable);
+										}
+										else {
+											currentContext.defineVariable(okVariableName, declaredVariable);
+										}
+
+										return defaultNaftahParserVisitor.visit(okCase);
+									}
+								}
+								finally {
+									if (Objects.nonNull(okVariableName)) {
+										if (Objects.nonNull(previousOkVariable)) {
+											currentContext
+													.setVariable(   okVariableName,
+																	previousOkVariable);
+										}
+										else {
+											currentContext.removeVariable(okVariableName, true);
+										}
+									}
+									if (Objects.nonNull(errorVariableName)) {
+										if (Objects.nonNull(previousErrorVariable)) {
+											currentContext
+													.setVariable(   errorVariableName,
+																	previousErrorVariable);
+										}
+										else {
+											currentContext.removeVariable(errorVariableName, true);
+										}
+									}
+								}
+								return Objects.nonNull(result) ? result : None.get();
+							}
+		);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitOkCase(org.daiitech.naftah.parser.NaftahParser.OkCaseContext ctx) {
+		return visitContext(
+							this,
+							"visitOkCase",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								okCaseContext) -> Objects.nonNull(okCaseContext.expression()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														okCaseContext.expression()) :
+										defaultNaftahParserVisitor
+												.visit(
+														okCaseContext.block())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitErrorCase(org.daiitech.naftah.parser.NaftahParser.ErrorCaseContext ctx) {
+		return visitContext(
+							this,
+							"visitErrorCase",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								errorCaseContext) -> Objects.nonNull(errorCaseContext.expression()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														errorCaseContext.expression()) :
+										defaultNaftahParserVisitor
+												.visit(
+														errorCaseContext.block())
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
