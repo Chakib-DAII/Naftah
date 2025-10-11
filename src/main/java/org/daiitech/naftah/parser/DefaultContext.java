@@ -36,6 +36,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
@@ -323,10 +324,22 @@ public class DefaultContext {
 													functionParameter.b.getValue())))
 								.orElseGet(() -> Optional
 										.ofNullable(context.getVariable(varName, true))
-										.flatMap(declaredVariable -> Optional
-												.of(VariableLookupResult
-														.of(varName,
-															declaredVariable.b.getValue())))
+										.flatMap(declaredVariable -> {
+											var value = declaredVariable.b.getValue();
+
+											if (value instanceof Result<?, ?> result) {
+												if (result.isOk()) {
+													value = result.unwrap();
+												}
+												else if (result.isError()) {
+													value = result.unwrapError();
+												}
+											}
+
+											return Optional
+													.of(VariableLookupResult
+															.of(varName, value));
+										})
 										.orElse(VariableLookupResult.notFound(varName)))));
 	}
 
@@ -736,15 +749,15 @@ public class DefaultContext {
 	 * @param name  the variable name
 	 * @param value the new DeclaredVariable value
 	 */
-	public void setVariable(String name, DeclaredVariable value) {
+	public DeclaredVariable setVariable(String name, DeclaredVariable value) {
 		if (variables.containsKey(name)) {
-			variables.put(name, value);
+			return variables.put(name, value);
 		}
 		else if (parent != null && parent.containsVariable(name)) {
-			parent.setVariable(name, value);
+			return parent.setVariable(name, value);
 		}
 		else {
-			variables.put(name, value); // define new in current context
+			return variables.put(name, value); // define new in current context
 		}
 	}
 
@@ -773,6 +786,29 @@ public class DefaultContext {
 			throw new NaftahBugError("المتغير موجود في السياق الحالي. لا يمكن إعادة إعلانه.");
 		}
 		this.variables.putAll(variables); // force local
+	}
+
+	/**
+	 * Removes a variable from the current context.
+	 * <p>
+	 * If the variable does not exist and {@code lenient} is {@code false},
+	 * an error is thrown. If {@code lenient} is {@code true}, the method
+	 * will silently do nothing.
+	 * </p>
+	 *
+	 * @param name    the name of the variable to remove
+	 * @param lenient whether to suppress errors when the variable is not found
+	 * @throws NaftahBugError if the variable does not exist and lenient is {@code false}
+	 */
+	public void removeVariable(String name, boolean lenient) {
+		if (!variables.containsKey(name)) {
+			if (lenient) {
+				return;
+			}
+
+			throw new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي. لا يمكن إزالته.".formatted(name));
+		}
+		variables.remove(name);
 	}
 
 	/**
@@ -1222,12 +1258,12 @@ public class DefaultContext {
 	 */
 	public void removeLoopVariable(String name, boolean lenient) {
 		name = getLoopVariableName(name);
-		if (loopVariables.containsKey(name)) {
+		if (!loopVariables.containsKey(name)) {
 			if (lenient) {
 				return;
 			}
 
-			throw new NaftahBugError("المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إزالته.".formatted(name));
+			throw new NaftahBugError("المعامل '%s' غير موجود في السياق الحالي للحلقة. لا يمكن إزالته.".formatted(name));
 		}
 		loopVariables.remove(name); // force local
 	}
