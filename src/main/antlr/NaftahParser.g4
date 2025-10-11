@@ -34,6 +34,7 @@ statement: block END? #blockStatement
          | whileStatement END? #whileStatementStatement
          | repeatStatement END? #repeatStatementStatement
          | caseStatement END? #caseStatementStatement
+         | tryStatement END? #tryStatementStatement
          | functionDeclaration END? #functionDeclarationStatement
          | functionCall END? #functionCallStatement
          | objectAccess END? #objectAccessStatement
@@ -119,6 +120,18 @@ caseStatement:
 
 // A list of labels for a 'case' option (e.g., 1, 2, 3)
 caseLabelList: expression ((COMMA | SEMI) expression)*;                // One or more comma or semicolon separated expressions
+
+tryStatement: TRY LPAREN expression RPAREN LBRACE tryCases RBRACE;
+
+tryCases
+  : okCase errorCase?
+  | errorCase okCase?
+  ;
+
+okCase: OK LPAREN ID RPAREN (DO | ARROW) (block | expression);
+
+errorCase: ERROR LPAREN ID RPAREN (DO | ARROW) (block | expression);
+
 
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;

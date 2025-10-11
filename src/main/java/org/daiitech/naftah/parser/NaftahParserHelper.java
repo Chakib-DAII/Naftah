@@ -1156,7 +1156,7 @@ public final class NaftahParserHelper {
 		else {
 			result = getVariable(accessArray[0], currentContext).get();
 		}
-		return result;
+		return result instanceof DeclaredVariable declaredVariable ? declaredVariable.getValue() : result;
 	}
 
 	/**

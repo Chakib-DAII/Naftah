@@ -100,6 +100,34 @@ public final class Builtin {
 		}
 	}
 
+
+	/**
+	 * Returns the string representation of the given object.
+	 * If the object is {@code null}, returns a predefined NULL string.
+	 *
+	 * @param o the object to convert to string
+	 * @return a string representation of the object, or a NULL representation if the object is null
+	 */
+	@NaftahFn(
+				name = "إلى_نص",
+				aliases = {"كنص", "نص", "سلسلة"},
+				description = """
+								تُحوّل أي قيمة إلى تمثيلها النصي (سلسلة من الحروف).
+								تُستخدم عندما تحتاج إلى طباعة أو تنسيق القيم داخل سلاسل نصية.
+								""",
+				usage = "إلى_نص(قيمة)",
+				parameterTypes = {Object.class},
+				returnType = String.class
+	)
+	public static String toString(Object o) {
+		if (Objects.nonNull(o)) {
+			return getNaftahValueToString(o);
+		}
+		else {
+			return NULL;
+		}
+	}
+
 	/**
 	 * Adds two values and returns their sum.
 	 *
