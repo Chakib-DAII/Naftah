@@ -201,8 +201,8 @@ objectAccess: qualifiedName
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
           | LPAREN elements? RPAREN #tupleValue
-          | LBRACE elements? RBRACE #setValue
-          | LBRACE keyValuePairs? RBRACE #mapValue;
+          | ORDERED? LBRACE elements? RBRACE #setValue
+          | ORDERED? LBRACE keyValuePairs? RBRACE #mapValue;
 
 // single value elements
 elements: expression (COMMA | SEMI) #singleElement
