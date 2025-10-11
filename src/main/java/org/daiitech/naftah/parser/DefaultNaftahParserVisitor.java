@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -2194,7 +2196,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, objectFieldsContext) -> {
-								var result = new HashMap<String, DeclaredVariable>();
+								var result = new LinkedHashMap<String, DeclaredVariable>();
 
 								for (int i = 0; i < objectFieldsContext.assignment().size(); i++) {
 									var field = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
@@ -2454,10 +2456,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							"visitSetValue",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, setValueContext) -> new HashSet<>(
-																											(List<?>) defaultNaftahParserVisitor
-																													.visit(setValueContext
-																															.elements())),
+							(defaultNaftahParserVisitor, currentContext, setValueContext) -> {
+								var value = (List<?>) defaultNaftahParserVisitor
+										.visit(setValueContext
+												.elements());
+								return Objects.nonNull(setValueContext.ORDERED()) ?
+										new LinkedHashSet<>(value) :
+										new HashSet<>(value);
+							},
 							Set.class
 		);
 	}
@@ -2658,7 +2664,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									currentDeclarationName = currentDeclaration.a.getName();
 								}
 								// process entries
-								Map<Object, Object> map = new HashMap<>();
+								org.daiitech.naftah.parser.NaftahParser.MapValueContext mapValueContext = (org.daiitech.naftah.parser.NaftahParser.MapValueContext) keyValuePairsContext
+										.getParent();
+								Map<Object, Object> map = Objects.nonNull(mapValueContext.ORDERED()) ?
+										new LinkedHashMap<>() :
+										new HashMap<>();
 								Set<Class<?>> keyTypes = new HashSet<>();
 								Set<Class<?>> valueTypes = new HashSet<>();
 								for (int i = 0; i < keyValuePairsContext.keyValue().size(); i++) {
