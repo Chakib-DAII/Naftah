@@ -1684,10 +1684,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitTryStatement(org.daiitech.naftah.parser.NaftahParser.TryStatementContext ctx) {
+	public Object visitTryStatementWithTryCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithTryCasesContext ctx) {
 		return visitContext(
 							this,
-							"visitTryStatement",
+							"visitTryStatementWithTryCases",
 							getContextByDepth(depth),
 							ctx,
 							(   defaultNaftahParserVisitor,
@@ -1794,6 +1794,74 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	@Override
+	public Object visitTryStatementWithOptionCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext ctx) {
+		return visitContext(
+							this,
+							"visitTryStatementWithOptionCases",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								tryStatementContext) -> {
+								var result = defaultNaftahParserVisitor
+										.visit(tryStatementContext.expression());
+
+								String someVariableName = null;
+								DeclaredVariable previousSomeVariable = null;
+
+								var tryCases = tryStatementContext.optionCases();
+
+								try {
+									if (Objects.isNull(result) || None
+											.isNone(result) || (result instanceof Optional<?> optional && (optional
+													.isEmpty() || None.isNone(optional.get())))) {
+										var noneCase = tryCases.noneCase();
+
+										result = defaultNaftahParserVisitor.visit(noneCase);
+									}
+									else {
+										var someCase = tryCases.someCase();
+										someVariableName = someCase.ID().getText();
+
+										var declaredVariable = DeclaredVariable
+												.of(tryStatementContext,
+													someVariableName,
+													true,
+													result.getClass(),
+													result instanceof Optional<?> optional ?
+															optional.get() :
+															result);
+
+										boolean okVarExists = currentContext.containsVariable(someVariableName);
+										if (okVarExists) {
+											previousSomeVariable = currentContext
+													.setVariable(someVariableName, declaredVariable);
+										}
+										else {
+											currentContext.defineVariable(someVariableName, declaredVariable);
+										}
+
+										return defaultNaftahParserVisitor.visit(someCase);
+									}
+
+								}
+								finally {
+									if (Objects.nonNull(someVariableName)) {
+										if (Objects.nonNull(previousSomeVariable)) {
+											currentContext
+													.setVariable(   someVariableName,
+																	previousSomeVariable);
+										}
+										else {
+											currentContext.removeVariable(someVariableName, true);
+										}
+									}
+								}
+								return result;
+							}
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -1836,6 +1904,50 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										defaultNaftahParserVisitor
 												.visit(
 														errorCaseContext.block())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitSomeCase(org.daiitech.naftah.parser.NaftahParser.SomeCaseContext ctx) {
+		return visitContext(
+							this,
+							"visitSomeCase",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								someCaseContext) -> Objects.nonNull(someCaseContext.expression()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														someCaseContext.expression()) :
+										defaultNaftahParserVisitor
+												.visit(
+														someCaseContext.block())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitNoneCase(org.daiitech.naftah.parser.NaftahParser.NoneCaseContext ctx) {
+		return visitContext(
+							this,
+							"visitNoneCase",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								noneCaseContext) -> Objects.nonNull(noneCaseContext.expression()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														noneCaseContext.expression()) :
+										defaultNaftahParserVisitor
+												.visit(
+														noneCaseContext.block())
 		);
 	}
 

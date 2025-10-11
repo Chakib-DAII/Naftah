@@ -211,7 +211,8 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MOD,
 					org.daiitech.naftah.parser.NaftahLexer.BASE_RADIX,
 					org.daiitech.naftah.parser.NaftahLexer.RAW, org.daiitech.naftah.parser.NaftahLexer.BYTE_ARRAY,
-					org.daiitech.naftah.parser.NaftahLexer.OK, org.daiitech.naftah.parser.NaftahLexer.ERROR ->
+					org.daiitech.naftah.parser.NaftahLexer.OK, org.daiitech.naftah.parser.NaftahLexer.ERROR,
+					org.daiitech.naftah.parser.NaftahLexer.SOME, org.daiitech.naftah.parser.NaftahLexer.NONE ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.RED);
 			case org.daiitech.naftah.parser.NaftahLexer.LPAREN, org.daiitech.naftah.parser.NaftahLexer.RPAREN,
 					org.daiitech.naftah.parser.NaftahLexer.LBRACE, org.daiitech.naftah.parser.NaftahLexer.RBRACE,

@@ -93,6 +93,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CaseStatementStatementContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TryStatementStatementContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationStatementContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -178,6 +181,24 @@ public final class NaftahExecutionLogger {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TryStatementWithTryCasesContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.OkCaseContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ErrorCaseContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SomeCaseContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.NoneCaseContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.BreakStatementContext context) {
@@ -2065,6 +2086,247 @@ public final class NaftahExecutionLogger {
 													join(context.expression()),
 													join(context.COMMA()),
 													join(context.SEMI())
+										));
+	}
+
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.TryStatementStatementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											TryStatementStatementContext::tryStatement -> {
+											%s
+											}
+											TryStatementStatementContext::END -> %s
+													"""
+										.formatted(
+													Objects.nonNull(context.tryStatement()) ?
+															context.tryStatement().getText() :
+															null,
+													Objects.nonNull(context.END()) ?
+															context.END().getText() :
+															null
+										));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.TryStatementWithTryCasesContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											TryStatementWithTryCasesContext::TRY -> %s
+											TryStatementWithTryCasesContext::LPAREN -> %s
+											TryStatementWithTryCasesContext::expression -> {
+											%s
+											}
+											TryStatementWithTryCasesContext::RPAREN -> %s
+											TryStatementWithTryCasesContext::LBRACE -> %s
+											TryStatementWithTryCasesContext::tryCases -> {
+											%s
+											}
+											TryStatementWithTryCasesContext::RBRACE -> %s
+													"""
+										.formatted(
+													Objects.nonNull(context.TRY()) ? context.TRY().getText() : null,
+													Objects.nonNull(context.LPAREN()) ?
+															context.LPAREN().getText() :
+															null,
+													Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null,
+													Objects.nonNull(context.RPAREN()) ?
+															context.RPAREN().getText() :
+															null,
+													Objects.nonNull(context.LBRACE()) ?
+															context.LBRACE().getText() :
+															null,
+													Objects.nonNull(context.tryCases()) ?
+															context.tryCases().getText() :
+															null,
+													Objects.nonNull(context.RBRACE()) ?
+															context.RBRACE().getText() :
+															null
+										));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.OkCaseContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											OkCaseContext::OK -> %s
+											OkCaseContext::LPAREN -> %s
+											OkCaseContext::ID -> %s
+											OkCaseContext::RPAREN -> %s
+											OkCaseContext::DO -> %s
+											OkCaseContext::ARROW -> %s
+											OkCaseContext::block -> {
+											%s
+											}
+											OkCaseContext::expression -> {
+											%s
+											}
+													"""
+										.formatted(
+													Objects.nonNull(context.OK()) ? context.OK().getText() : null,
+													Objects.nonNull(context.LPAREN()) ?
+															context.LPAREN().getText() :
+															null,
+													Objects.nonNull(context.ID()) ? context.ID().getText() : null,
+													Objects.nonNull(context.RPAREN()) ?
+															context.RPAREN().getText() :
+															null,
+													Objects.nonNull(context.DO()) ? context.DO().getText() : null,
+													Objects.nonNull(context.ARROW()) ? context.ARROW().getText() : null,
+													Objects.nonNull(context.block()) ? context.block().getText() : null,
+													Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null
+										));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ErrorCaseContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ErrorCaseContext::ERROR -> %s
+											ErrorCaseContext::LPAREN -> %s
+											ErrorCaseContext::ID -> %s
+											ErrorCaseContext::RPAREN -> %s
+											ErrorCaseContext::DO -> %s
+											ErrorCaseContext::ARROW -> %s
+											ErrorCaseContext::block -> {
+											%s
+											}
+											ErrorCaseContext::expression -> {
+											%s
+											}
+													"""
+										.formatted(
+													Objects.nonNull(context.ERROR()) ? context.ERROR().getText() : null,
+													Objects.nonNull(context.LPAREN()) ?
+															context.LPAREN().getText() :
+															null,
+													Objects.nonNull(context.ID()) ? context.ID().getText() : null,
+													Objects.nonNull(context.RPAREN()) ?
+															context.RPAREN().getText() :
+															null,
+													Objects.nonNull(context.DO()) ? context.DO().getText() : null,
+													Objects.nonNull(context.ARROW()) ? context.ARROW().getText() : null,
+													Objects.nonNull(context.block()) ? context.block().getText() : null,
+													Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null
+										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											TryStatementWithOptionCasesContext::TRY -> %s
+											TryStatementWithOptionCasesContext::LPAREN -> %s
+											TryStatementWithOptionCasesContext::expression -> {
+											%s
+											}
+											TryStatementWithOptionCasesContext::RPAREN -> %s
+											TryStatementWithOptionCasesContext::LBRACE -> %s
+											TryStatementWithOptionCasesContext::optionCases -> {
+											%s
+											}
+											TryStatementWithOptionCasesContext::RBRACE -> %s
+													"""
+										.formatted(
+													Objects.nonNull(context.TRY()) ? context.TRY().getText() : null,
+													Objects.nonNull(context.LPAREN()) ?
+															context.LPAREN().getText() :
+															null,
+													Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null,
+													Objects.nonNull(context.RPAREN()) ?
+															context.RPAREN().getText() :
+															null,
+													Objects.nonNull(context.LBRACE()) ?
+															context.LBRACE().getText() :
+															null,
+													Objects.nonNull(context.optionCases()) ?
+															context.optionCases().getText() :
+															null,
+													Objects.nonNull(context.RBRACE()) ?
+															context.RBRACE().getText() :
+															null
+										));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.SomeCaseContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											SomeCaseContext::SOME -> %s
+											SomeCaseContext::LPAREN -> %s
+											SomeCaseContext::ID -> %s
+											SomeCaseContext::RPAREN -> %s
+											SomeCaseContext::DO -> %s
+											SomeCaseContext::ARROW -> %s
+											SomeCaseContext::block -> {
+											%s
+											}
+											SomeCaseContext::expression -> {
+											%s
+											}
+													"""
+										.formatted(
+													Objects.nonNull(context.SOME()) ? context.SOME().getText() : null,
+													Objects.nonNull(context.LPAREN()) ?
+															context.LPAREN().getText() :
+															null,
+													Objects.nonNull(context.ID()) ? context.ID().getText() : null,
+													Objects.nonNull(context.RPAREN()) ?
+															context.RPAREN().getText() :
+															null,
+													Objects.nonNull(context.DO()) ? context.DO().getText() : null,
+													Objects.nonNull(context.ARROW()) ? context.ARROW().getText() : null,
+													Objects.nonNull(context.block()) ? context.block().getText() : null,
+													Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null
+										));
+
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.NoneCaseContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											OkCaseContext::NONE -> %s
+											OkCaseContext::DO -> %s
+											OkCaseContext::ARROW -> %s
+											OkCaseContext::block -> {
+											%s
+											}
+											OkCaseContext::expression -> {
+											%s
+											}
+													"""
+										.formatted(
+													Objects.nonNull(context.NONE()) ? context.NONE().getText() : null,
+													Objects.nonNull(context.DO()) ? context.DO().getText() : null,
+													Objects.nonNull(context.ARROW()) ? context.ARROW().getText() : null,
+													Objects.nonNull(context.block()) ? context.block().getText() : null,
+													Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null
 										));
 	}
 

@@ -121,7 +121,9 @@ caseStatement:
 // A list of labels for a 'case' option (e.g., 1, 2, 3)
 caseLabelList: expression ((COMMA | SEMI) expression)*;                // One or more comma or semicolon separated expressions
 
-tryStatement: TRY LPAREN expression RPAREN LBRACE tryCases RBRACE;
+tryStatement: TRY LPAREN expression RPAREN LBRACE tryCases RBRACE #tryStatementWithTryCases
+  | TRY LPAREN expression RPAREN LBRACE optionCases RBRACE #tryStatementWithOptionCases
+  ;
 
 tryCases
   : okCase errorCase?
@@ -132,6 +134,14 @@ okCase: OK LPAREN ID RPAREN (DO | ARROW) (block | expression);
 
 errorCase: ERROR LPAREN ID RPAREN (DO | ARROW) (block | expression);
 
+optionCases
+  : someCase noneCase?
+  | noneCase someCase?
+  ;
+
+someCase: SOME LPAREN ID RPAREN (DO | ARROW) (block | expression);
+
+noneCase: NONE (DO | ARROW) (block | expression);
 
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;
