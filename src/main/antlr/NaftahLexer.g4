@@ -99,6 +99,7 @@ DOT        : '.';
 COMMA      : ',' | '٫' | '،' | '٬';
 QUESTION   : '؟';
 ARROW      : '->';
+ORDERED    : 'مرتب';
 
 
 // Types
