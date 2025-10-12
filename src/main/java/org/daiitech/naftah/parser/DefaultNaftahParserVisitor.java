@@ -1480,8 +1480,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									pushLoop(label, whileStatementContext);
 									loopInStack = true;
 
-									while (isTruthy(visit(whileStatementContext.expression()))) {
-										visit(whileStatementContext.block());
+									while (isTruthy(defaultNaftahParserVisitor
+											.visit(whileStatementContext.expression()))) {
+										defaultNaftahParserVisitor.visit(whileStatementContext.block());
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -1569,7 +1570,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									loopInStack = true;
 
 									do {
-										visit(repeatStatementContext.block());
+										defaultNaftahParserVisitor.visit(repeatStatementContext.block());
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -1605,7 +1606,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										// force current loop label
 										currentContext.setLoopLabel(label);
 									}
-									while (!isTruthy(visit(repeatStatementContext.expression())));
+									while (!isTruthy(defaultNaftahParserVisitor
+											.visit(repeatStatementContext.expression())));
 
 								}
 								finally {
@@ -3213,13 +3215,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, ternaryExpressionContext) -> {
 								if (Objects.nonNull(ternaryExpressionContext.QUESTION())) {
 									// ternary expression: condition ? thenExpression : elseExpression
-									Object condition = visit(ternaryExpressionContext.nullishExpression());
+									Object condition = defaultNaftahParserVisitor
+											.visit(ternaryExpressionContext.nullishExpression());
 									return isTruthy(condition) ?
-											visit(ternaryExpressionContext.expression()) :
-											visit(ternaryExpressionContext.ternaryExpression());
+											defaultNaftahParserVisitor.visit(ternaryExpressionContext.expression()) :
+											defaultNaftahParserVisitor
+													.visit(ternaryExpressionContext.ternaryExpression());
 								}
 								else {
-									return visit(ternaryExpressionContext.nullishExpression());
+									return defaultNaftahParserVisitor
+											.visit(ternaryExpressionContext.nullishExpression());
 								}
 							});
 	}
@@ -3443,8 +3448,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, powerExpressionContext) -> {
 								if (Objects.nonNull(powerExpressionContext.POW())) {
-									Object left = visit(powerExpressionContext.unaryExpression());
-									Object right = visit(powerExpressionContext.powerExpression());
+									Object left = defaultNaftahParserVisitor
+											.visit(powerExpressionContext.unaryExpression());
+									Object right = defaultNaftahParserVisitor
+											.visit(powerExpressionContext.powerExpression());
 
 									String op = NaftahParserHelper
 											.getDisplayName(powerExpressionContext.POW(),
@@ -3452,7 +3459,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									return applyOperation(left, right, BinaryOperation.of(op));
 								}
 								else {
-									return visit(powerExpressionContext.unaryExpression());
+									return defaultNaftahParserVisitor.visit(powerExpressionContext.unaryExpression());
 								}
 							});
 	}
