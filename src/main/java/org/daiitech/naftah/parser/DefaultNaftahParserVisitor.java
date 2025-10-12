@@ -720,10 +720,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											argumentName,
 											hasChild(parameterDeclarationContext.CONSTANT()),
 											hasChild(parameterDeclarationContext.type()) ?
-													visit(parameterDeclarationContext.type()) :
+													(Class<?>) defaultNaftahParserVisitor
+															.visit(parameterDeclarationContext.type()) :
 													Object.class,
 											hasChild(parameterDeclarationContext.value()) ?
-													visit(parameterDeclarationContext.value()) :
+													defaultNaftahParserVisitor
+															.visit(parameterDeclarationContext.value()) :
 													null);
 							});
 	}
