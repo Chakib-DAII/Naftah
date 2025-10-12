@@ -156,10 +156,10 @@ public final class NumberUtils {
 	 * @{@link org.daiitech.naftah.utils.arabic.ArabicUtils#convertArabicToLatinLetterByLetter(String)})
 	 */
 	public static Number parseDynamicNumber(String text, int radix, String originalText) {
-		DynamicNumber dx = DynamicNumber.of(Double.NaN);
 		if (text == null) {
 			throw newNaftahBugNullInputError(true, text);
 		}
+		DynamicNumber dx = DynamicNumber.of(Double.NaN);
 		// Replace all decimal-like characters with a dot
 		text = text.replaceAll("[,٫،٬]", ".");
 		try {
