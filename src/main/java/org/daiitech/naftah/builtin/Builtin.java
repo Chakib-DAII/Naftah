@@ -50,6 +50,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 										"نقصان_قبلي",
 										"القيمة_المطلقة",
 										"إطبع",
+										"إلى_نص",
 										"أرضي",
 										"إرفع",
 										"الأصغر",
