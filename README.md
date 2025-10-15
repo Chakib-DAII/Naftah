@@ -993,7 +993,8 @@ Or explore by topic:
 
 | Topic                                                         | Description                               |
 |---------------------------------------------------------------|-------------------------------------------|
-| 📘 [Primitives](./docs-site/language/01_primitives.md)        | Numbers, strings, booleans, Arabic digits |
+| 📘 [Keywords](./docs-site/language/01_keywords.md)            | Keywords                                  |
+| 📘 [Primitives](./docs-site/language/02_primitives.md)        | Numbers, strings, booleans, Arabic digits |
 | 📗 [Variables](./docs-site/language/02_variables.md)          | `ثابت` vs `متغير`, typing, assignment     |
 | 📙 [Functions](./docs-site/language/03_functions.md)          | Parameters, default values, recursion     |
 | 📕 [Control Flow](./docs-site/language/04_control_flow.md)    | `إذا`, `بينما`, `كرر`, `اختر` (switch)    |

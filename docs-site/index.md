@@ -14,6 +14,7 @@ title: Naftah Programming Language
 
 ## 📚 Documentation
 
+- [Language Reference](./language/01_keywords.md)
 - [Javadoc](./javadoc/index.html)
 - [Benchmarks](./benchmarks.md)
 - [About](./about.md)
