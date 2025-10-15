@@ -32,3 +32,11 @@
 
 ### StringInterpolatorLargeInputsBenchmark comparison
 ![StringInterpolatorLargeInputsBenchmark comparison](static/benchmark-graphs/org.daiitech.naftah.benchmarks.parser.StringInterpolatorLargeInputsBenchmark_comparison.png)
+
+---
+
+## 📁 ملفات مرتبطة
+
+* [Home - الرئيسية](./index.md)
+
+---

@@ -125,6 +125,17 @@ for img_path in graph_paths:
 	lines.append(f"![{title}](static/benchmark-graphs/{img_path.name})")
 	lines.append("")  # newline
 
+lines.append("""
+
+---
+
+## 📁 ملفات مرتبطة
+
+* [Home - الرئيسية](./index.md)
+
+---
+""")
+
 # Write to file
 output_file.parent.mkdir(parents=True, exist_ok=True)
 output_file.write_text("\n".join(lines), encoding="utf-8")

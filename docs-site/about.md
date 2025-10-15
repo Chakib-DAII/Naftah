@@ -17,3 +17,11 @@ natural and expressive for Arabic-speaking developers.
 - Write code entirely in Arabic
 - Support natural language-inspired syntax
 - Integrate seamlessly with the JVM
+
+---
+
+## 📁 ملفات مرتبطة
+
+* [Home - الرئيسية](./index.md)
+
+---
