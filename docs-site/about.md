@@ -1,5 +1,8 @@
 ---
 title: About Naftah
+description: TODO
+layout: default
+permalink: /about/
 ---
 
 # About نفطه

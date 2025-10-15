@@ -1,5 +1,8 @@
 ---
 title: Naftah Radix Numbers
+description: TODO
+layout: default
+permalink: /language/radix-numbers
 ---
 
 # 🔢 الأعداد بأنظمة العد المختلفة في لغة نفطة

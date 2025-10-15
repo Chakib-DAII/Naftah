@@ -1,5 +1,8 @@
 ---
 title: Naftah Programming Language
+description: TODO
+layout: default
+permalink: /
 ---
 
 # Naftah Programming Language

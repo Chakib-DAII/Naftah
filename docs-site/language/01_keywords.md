@@ -1,5 +1,8 @@
 ---
 title: Naftah Keywords
+description: TODO
+layout: default
+permalink: /language/keywords
 ---
 
 # 🔑 الكلمات المفتاحية في لغة نفطة (Nafṭah Keywords)

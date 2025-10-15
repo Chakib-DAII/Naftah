@@ -1,5 +1,8 @@
 ---
 title: Naftah Control Flow
+description: TODO
+layout: default
+permalink: /language/control-flow
 ---
 
 # 🌀 التحكم في تدفق البرنامج في لغة نفطة (Control Flow)

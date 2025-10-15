@@ -1,5 +1,8 @@
 ---
 title: Naftah Objects
+description: TODO
+layout: default
+permalink: /language/objects
 ---
 
 ## 📦 تعريف الكائنات (Objects) في لغة نفطة

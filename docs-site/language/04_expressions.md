@@ -1,5 +1,8 @@
 ---
 title: Naftah Expressions
+description: TODO
+layout: default
+permalink: /language/expressions
 ---
 
 # 🧮 التعبيرات (Expressions) في لغة نفطة

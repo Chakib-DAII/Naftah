@@ -1,5 +1,8 @@
 ---
 title: Naftah Primitive Types
+description: TODO
+layout: default
+permalink: /language/primitives-and-variables
 ---
 
 # 🧱 الأنواع الأولية (Primitive Types) في لغة نفطة

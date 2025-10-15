@@ -1,5 +1,8 @@
 ---
 title: Naftah Collections
+description: TODO
+layout: default
+permalink: /language/collections
 ---
 
 # 📚 بُنى المعطيات (Collections) في لغة نفطة

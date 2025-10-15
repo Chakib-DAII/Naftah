@@ -30,6 +30,15 @@ def fmt(val):
 
 # Markdown header
 lines = [
+	"""
+	---
+	title: About Benchmarks
+	description: TODO
+	layout: default
+	permalink: /benchmarks/
+	---
+	
+	""",
 	"# 🧪 Benchmark Results",
 	"",
 	"| Benchmark | Params | Mode | Score | Error | Units | Percentiles |",
