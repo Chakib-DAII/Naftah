@@ -1,5 +1,5 @@
-رائع! بناءً على كل ما قدمته، إليك ملفًا شاملًا ومنسقًا بعنوان:
-
+---
+title: Naftah Primitive Types
 ---
 
 # 🧱 الأنواع الأولية (Primitive Types) في لغة نفطة
@@ -161,6 +161,11 @@ It provides practical examples of using various **primitive types**. It also inc
 
 * [Home - الرئيسية](./../index.md)
 * [🔑 الكلمات المفتاحية - Keywords](./01_keywords.md)
+* [📚 بُنى المعطيات - Collections](./03_collections.md)
+* [🧮 التعبيرات - Expressions](./04_expressions.md)
+* [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
+* [📦 تعريف الكائنات - Objects](./06_objects.md)
+* [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
 
 ---
 
