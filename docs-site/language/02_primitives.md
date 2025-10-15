@@ -160,7 +160,7 @@ It provides practical examples of using various **primitive types**. It also inc
 ## 📁 ملفات مرتبطة
 
 * [Home - الرئيسية](./../index.md)
-* [🧱 الكلمات المفتاحية - Keywords](./01_keywords.md)
+* [🔑 الكلمات المفتاحية - Keywords](./01_keywords.md)
 
 ---
 

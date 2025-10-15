@@ -103,6 +103,6 @@ in the lexer.
 ## 📁 ملفات مرتبطة
 
 * [Home - الرئيسية](./../index.md)
-* [الأنواع الأولية - Primitive Types](./02_primitives.md)
+* [🧱 الأنواع الأولية - Primitive Types](./02_primitives.md)
 
 ---
