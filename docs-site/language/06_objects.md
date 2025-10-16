@@ -1,6 +1,6 @@
 ---
 title: Naftah Objects
-description: TODO
+description: Documentation of how to define and use objects in Naftah, including fields, explicit typing, nested objects, and dot-notation property access.
 layout: default
 permalink: /language/objects
 ---

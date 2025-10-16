@@ -1,6 +1,6 @@
 ---
 title: Naftah Functions
-description: TODO
+description: Guide to defining and calling functions in Naftah, including typed parameters, default values, void functions, and complex function structures.
 layout: default
 permalink: /language/functions
 ---

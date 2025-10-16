@@ -1,6 +1,6 @@
 ---
 title: Naftah Control Flow
-description: TODO
+description: Comprehensive guide to control flow structures in Naftah, including conditionals, loops, switch-case statements, and option/error handling with try.
 layout: default
 permalink: /language/control-flow
 ---

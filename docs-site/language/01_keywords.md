@@ -1,6 +1,6 @@
 ---
 title: Naftah Keywords
-description: TODO
+description: A comprehensive list of all reserved keywords in the Nafṭah programming language, including their functional roles and supported synonyms as defined in the language lexer. These keywords form the core syntax of writing code in Nafṭah.
 layout: default
 permalink: /language/keywords
 ---

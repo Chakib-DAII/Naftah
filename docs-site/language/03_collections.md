@@ -1,6 +1,6 @@
 ---
 title: Naftah Collections
-description: TODO
+description: How to define and work with lists, tuples, sets, and associative arrays in Naftah, including element-wise arithmetic and logical operations.
 layout: default
 permalink: /language/collections
 ---
