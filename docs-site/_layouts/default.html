@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+	<meta charset="UTF-8"/>
+	<meta content="width=device-width, initial-scale=1" name="viewport"/>
+	<title>{{ page.title }} | {{ site.title }}</title>
+	<link href="{{ '/assets/css/main.css' | relative_url }}" rel="stylesheet">
+	{{ seo }}  <!-- used by jekyll-seo-tag plugin -->
+</head>
+<body>
+<header class="site-header">
+	<h1><a href="{{ site.baseurl | prepend: site.url }}/">{{ site.title }}</a></h1>
+</header>
+
+<main class="site-content">
+	{% include nav.html %}
+	{{ content }}
+</main>
+
+<footer class="site-footer">
+	&copy; {{ "now" | date: "%Y" }} Nafṭah Project
+</footer>
+</body>
+</html>
