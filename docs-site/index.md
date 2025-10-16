@@ -4,7 +4,7 @@ layout: default
 permalink: /
 ---
 
-# Naftah Programming Language
+# Naftah Programming Language - مستندات لغة نفطه
 
 **Let's write programs in Arabic, like living in Naftah.**
 
@@ -17,7 +17,8 @@ permalink: /
 ## 📚 Documentation
 
 - [Language Reference](./language/keywords)
-- [Javadoc](./javadoc/index.html)
+- [Javadoc (Embedded View)](./java-doc)
+- [Javadoc (Open in New Tab)](./javadoc/index.html){:target="_blank"}
 - [Benchmarks](./benchmarks)
 - [About](./about)
 
