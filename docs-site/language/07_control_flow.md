@@ -875,5 +875,6 @@ It provides detailed definitions and illustrative examples.
 * [🧮 التعبيرات - Expressions](./04_expressions.md)
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [📦 تعريف الكائنات - Objects](./06_objects.md)
+* [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
 
 ---

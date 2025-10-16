@@ -153,5 +153,6 @@ It also shows how to perform element-wise arithmetic and logical operations with
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [📦 تعريف الكائنات - Objects](./06_objects.md)
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
+* [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
 
 ---

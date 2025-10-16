@@ -126,5 +126,6 @@ define a simple object or explicitly specify its type.
 * [🧮 التعبيرات - Expressions](./04_expressions.md)
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
+* [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
 
 ---
