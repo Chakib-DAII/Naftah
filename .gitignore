@@ -43,3 +43,6 @@ out/
 /src/main/gen/
 /logs/
 /node_modules/
+/docs-site/.jekyll-cache/
+/docs-site/_site/
+/docs-site/.jekyll-metadata
