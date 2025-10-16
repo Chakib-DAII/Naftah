@@ -9,7 +9,13 @@
 </head>
 <body>
 <header class="site-header">
-	<h1><a href="{{ site.baseurl | prepend: site.url }}/">{{ site.title }}</a></h1>
+	<img alt="NaftahLang" src="{{ '/assets/images/logo.png' | relative_url }}"
+		 style="height: 40px; vertical-align: middle; margin-right: 10px;">
+	<h1>
+		<a href="{{ site.baseurl | prepend: site.url }}/">
+			{{ site.title }}
+		</a>
+	</h1>
 </header>
 
 <main class="site-content">
@@ -18,7 +24,7 @@
 </main>
 
 <footer class="site-footer">
-	&copy; {{ "now" | date: "%Y" }} Nafṭah Project
+	&copy; {{ "now" | date: "%Y" }} Naftah Project
 </footer>
 </body>
 </html>
