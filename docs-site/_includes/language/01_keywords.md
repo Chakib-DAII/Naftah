@@ -1,10 +1,9 @@
-
-# 🔑 الكلمات المفتاحية في لغة نفطة (Nafṭah Keywords)
+# 🔑 الكلمات المفتاحية في لغة نفطة (Naftah Keywords)
 
 هذا الملف يوثّق جميع الكلمات المفتاحية (Keywords) المدعومة في لغة **نفطة**، بما في ذلك مرادفاتها المختلفة، كما تم
 تعريفها في ملف الـ lexer. تُستخدم هذه الكلمات لتحديد البُنى الأساسية في اللغة، مثل الحلقات، الشروط، التعاريف، وغيرها.
 
-The file documents all the **keywords** supported by the **Nafṭah** language, including their **synonyms**, as defined
+The file documents all the **keywords** supported by the **Naftah** language, including their **synonyms**, as defined
 in the lexer.
 
 ---

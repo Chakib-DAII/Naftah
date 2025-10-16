@@ -46,3 +46,4 @@ out/
 /docs-site/.jekyll-cache/
 /docs-site/_site/
 /docs-site/.jekyll-metadata
+/docs-site/javadoc/
