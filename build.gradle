@@ -92,6 +92,12 @@ idea {
 	}
 }
 
+tasks.register('copyJavadoc', Copy) {
+	dependsOn javadoc
+	from javadoc.destinationDir
+	into "$rootDir/docs-site/javadoc"
+}
+
 tasks.register('extractLexerLiterals') {
 	description = 'Extracts all literal strings from lexer grammar rules.'
 
