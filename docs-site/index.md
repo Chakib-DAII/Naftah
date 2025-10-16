@@ -1,6 +1,5 @@
 ---
 title: Naftah Programming Language
-description: TODO
 layout: default
 permalink: /
 ---
@@ -17,10 +16,10 @@ permalink: /
 
 ## 📚 Documentation
 
-- [Language Reference](./language/01_keywords.md)
+- [Language Reference](./language/keywords)
 - [Javadoc](./javadoc/index.html)
-- [Benchmarks](./benchmarks.md)
-- [About](./about.md)
+- [Benchmarks](./benchmarks)
+- [About](./about)
 
 ---
 
