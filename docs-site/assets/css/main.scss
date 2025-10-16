@@ -4,11 +4,22 @@
 
 @use "minima" as *;
 
+// 🌙 Oasis Dark Theme Colors
+$bg-color: #1f2a30;         // Desert night sky
+$text-color: #e8e3d3;       // Warm sand
+$accent-color: #ffb347;     // Sunset orange
+$link-color: #66c2a5;       // Oasis teal
+$header-bg: #263238;        // Slightly darker header
+$border-color: #3c4f53;     // Desert stone
+$code-bg: #2d3a3e;          // Code background
+$footer-bg: #2a353a;
+$code-text: #ffdfb6;        // Slightly brighter for code
+
 body {
   direction: rtl;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fafafa;
-  color: #2e2e2e;
+  background-color: $bg-color !important;
+  color: $text-color !important;
   line-height: 1.6;
   margin: 0;
   padding: 0 1rem;
@@ -17,11 +28,11 @@ body {
 }
 
 .site-header {
-  background-color: #00509e;
-  color: #fff;
+  background-color: $header-bg !important;
+  color: $accent-color !important;
   padding: 1.25rem 1rem;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(0,80,158,0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 
   h1 {
     margin: 0;
@@ -36,7 +47,7 @@ body {
 
     &:hover,
     &:focus {
-      color: #ffd166;
+      color: lighten($accent-color, 10%) !important;
       outline: none;
     }
   }
@@ -56,12 +67,12 @@ nav ul {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 1rem;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid $border-color !important;
 
   li {
     a {
       font-weight: 600;
-      color: #0077cc;
+      color: $link-color !important;
       padding: 0.4rem 0.8rem;
       border-radius: 4px;
       transition: background-color 0.25s ease, color 0.25s ease;
@@ -69,8 +80,8 @@ nav ul {
 
       &:hover,
       &:focus {
-        background-color: #0077cc;
-        color: #fff;
+        background-color: $link-color !important;
+        color: $bg-color !important;
         outline: none;
       }
     }
@@ -78,7 +89,7 @@ nav ul {
 }
 
 h1, h2, h3 {
-  color: #003366;
+  color: $accent-color !important;
   margin-top: 2rem;
   margin-bottom: 1rem;
   line-height: 1.25;
@@ -92,7 +103,7 @@ h1 {
 h2 {
   font-size: 1.75rem;
   font-weight: 600;
-  border-bottom: 2px solid #0077cc;
+  border-bottom: 2px solid $link-color !important;
   padding-bottom: 0.25rem;
 }
 
@@ -109,7 +120,7 @@ p {
 
 hr {
   border: none;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid $border-color !important;
   margin: 2rem 0;
 }
 
@@ -118,43 +129,58 @@ table {
   border-collapse: collapse;
   margin-bottom: 2rem;
   font-size: 1rem;
+  color: #fff;
 
   thead {
-    background-color: #0077cc;
-    color: #fff;
+    background-color: darken($link-color, 25%) !important;
+    color: #000;
   }
 
   th, td {
-    border: 1px solid #ccc;
+    border: 1px solid $border-color !important;
     padding: 0.6rem 0.8rem;
     text-align: right;
   }
 
   tbody tr:nth-child(even) {
-    background-color: #f3f9ff;
+    background-color: lighten($bg-color, 4%) !important;
   }
 
   code {
-    font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
-    background-color: #e9f1ff;
+    font-family: Consolas, Monaco, monospace;
+    background-color: $code-bg !important;
+    color: $code-text !important;
     padding: 0.15rem 0.3rem;
     border-radius: 3px;
     font-size: 0.9rem;
   }
 }
 
+// 🟨 Preformatted Code Blocks
 pre {
-  background-color: #f0f4f8;
+  background-color: $code-bg !important;
+  color: $code-text !important;
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-size: 1rem;
   padding: 1rem;
   border-radius: 6px;
   overflow-x: auto;
-  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
-  font-size: 1rem;
-  line-height: 1.4;
   margin-bottom: 2rem;
-  box-shadow: inset 0 0 5px #d6e4ff;
+  line-height: 1.5;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
 }
 
+// 🟩 Inline Code (outside tables)
+code {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: $code-text !important;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: Consolas, Monaco, monospace;
+}
+
+// Lists
 ul {
   list-style: disc inside;
   margin-left: 0;
@@ -165,25 +191,27 @@ ul {
   }
 }
 
+// Links
 a {
-  color: #00509e;
+  color: $link-color !important;
   text-decoration: none;
   transition: color 0.3s ease;
 
   &:hover,
   &:focus {
-    color: #ffb703;
+    color: $accent-color !important;
     outline: none;
   }
 }
 
+// Footer
 footer.site-footer {
-  background-color: #e9ecef;
+  background-color: $footer-bg !important;
   padding: 1.25rem 0;
   text-align: center;
   font-size: 0.9rem;
-  color: #555;
-  border-top: 1px solid #ccc;
+  color: lighten($text-color, 20%) !important;
+  border-top: 1px solid $border-color !important;
   margin-top: 4rem;
 }
 
@@ -191,7 +219,7 @@ footer.site-footer {
   display: none;
 }
 
-/* Responsive tweaks */
+// 📱 Responsive Adjustments
 @media (max-width: 600px) {
   nav ul {
     flex-direction: column;
