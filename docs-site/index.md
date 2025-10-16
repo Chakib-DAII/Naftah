@@ -4,7 +4,7 @@ layout: default
 permalink: /
 ---
 
-# Naftah Programming Language - مستندات لغة نفطه
+# Naftah Programming Language
 
 **Let's write programs in Arabic, like living in Naftah.**
 

@@ -129,7 +129,7 @@ table {
   border-collapse: collapse;
   margin-bottom: 2rem;
   font-size: 1rem;
-  color: #fff;
+  color: $text-color !important;
 
   thead {
     background-color: darken($link-color, 25%) !important;
