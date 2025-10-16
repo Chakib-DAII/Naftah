@@ -104,7 +104,7 @@ in the lexer.
 
 ## 📁 ملفات مرتبطة
 
-* [Home - الرئيسية](./../index.md)
+* [Home - الرئيسية](./../../../README.md)
 * [🧱 الأنواع الأولية و الثوابت و المتغيرات - Primitive Types And Variables](./02_primitives_and_variables.md)
 * [📚 بُنى المعطيات - Collections](./03_collections.md)
 * [🧮 التعبيرات - Expressions](./04_expressions.md)
