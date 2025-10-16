@@ -252,6 +252,6 @@ Please include:
 ## 📬 Questions?
 
 Open an issue or start a discussion on GitHub:
-👉 [Naftah on GitHub](https://github.com/Chakib-DAII/Naftah)
+👉 [Naftah on GitHub](https://github.com/Chakib-DAII/Naftah/issues)
 
 ---
