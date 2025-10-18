@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
-import static org.daiitech.naftah.Naftah.MULTILINE_CACHE_PROPERTY;
+import static org.daiitech.naftah.Naftah.INTERPOLATION_CACHE_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
@@ -73,7 +73,7 @@ public final class StringInterpolator {
 	private static Map<String, Matcher> MATCHER_CACHE;
 
 	static {
-		if (Boolean.getBoolean(MULTILINE_CACHE_PROPERTY)) {
+		if (Boolean.getBoolean(INTERPOLATION_CACHE_PROPERTY)) {
 			MATCHER_CACHE = new HashMap<>();
 		}
 	}

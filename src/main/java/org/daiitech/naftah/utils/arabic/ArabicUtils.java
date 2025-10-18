@@ -29,7 +29,7 @@ import com.ibm.icu.text.Transliterator;
 
 import static org.daiitech.naftah.Naftah.ARABIC_INDIC_PROPERTY;
 import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
-import static org.daiitech.naftah.Naftah.INTERPOLATION_CACHE_PROPERTY;
+import static org.daiitech.naftah.Naftah.MULTILINE_CACHE_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
@@ -285,7 +285,7 @@ public final class ArabicUtils {
 	private static Map<String, Matcher> TEXT_MATCHER_CACHE;
 
 	static {
-		if (Boolean.getBoolean(INTERPOLATION_CACHE_PROPERTY)) {
+		if (Boolean.getBoolean(MULTILINE_CACHE_PROPERTY)) {
 			TEXT_MATCHER_CACHE = new HashMap<>();
 		}
 		Map<String, String> existentCustomRules = parseRules(CUSTOM_RULES);
