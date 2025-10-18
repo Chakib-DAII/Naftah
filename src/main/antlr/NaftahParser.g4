@@ -252,11 +252,21 @@ qualifiedName: ID (QUESTION? COLON ID)+;
 
 qualifiedCall: qualifiedName COLON COLON ID;
 
-qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK)))+;
+qualifiedObjectAccess: ID (QUESTION? propertyAccess)+;
 
 //qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK) | collectionAccess))+;
 
-collectionAccess: ID (QUESTION? LBRACK NUMBER RBRACK)+;
+collectionAccess: ID (QUESTION? LBRACK collectionAccessIndex RBRACK)+;
+
+propertyAccess
+    : COLON ID
+    | LBRACK (DoubleQuotationMark | QuotationMark) ID (DoubleQuotationMark | QuotationMark) RBRACK
+    ;
+
+collectionAccessIndex
+    : NUMBER
+    | ID
+    ;
 
 // A label is an identifier followed by a colon for loops
 label: ID COLON;
