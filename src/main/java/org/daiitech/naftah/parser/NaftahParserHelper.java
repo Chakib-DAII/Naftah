@@ -732,6 +732,23 @@ public final class NaftahParserHelper {
 	 */
 	public static String getFormattedTokenSymbols(Vocabulary vocabulary, int tokenType, boolean ln) {
 		String tokenName = vocabulary.getDisplayName(tokenType);
+		return getFormattedTokenSymbols(tokenName, ln);
+	}
+
+	/**
+	 * Returns a formatted string of token symbols based on the token name.
+	 * <p>
+	 * This method looks up the token name in a {@code TOKENS_SYMBOLS} map (assumed to be a
+	 * {@link java.util.Properties} object). If a match is found, the associated value is used
+	 * as the base symbol string. Commas in the value are replaced with " أو" (Arabic "or").
+	 * <p>
+	 * If {@code ln} is {@code true}, the formatted string will include a line break and bullet point.
+	 *
+	 * @param tokenName The name of the token.
+	 * @param ln        If {@code true}, output is formatted with a line break and bullet.
+	 * @return A formatted string representing the token symbols, or {@code null} if not found.
+	 */
+	public static String getFormattedTokenSymbols(String tokenName, boolean ln) {
 		String tokenSymbols = Objects.isNull(TOKENS_SYMBOLS) ? tokenName : TOKENS_SYMBOLS.getProperty(tokenName);
 		return tokenSymbols == null ? null : (ln ? """
 													- %s
