@@ -2,6 +2,7 @@ package org.daiitech.naftah;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
@@ -21,7 +22,7 @@ public final class TestUtils {
 
 		var parser = prepareRun(input, NaftahErrorListener.INSTANCE);
 
-		return doRun(parser);
+		return doRun(parser, List.of());
 	}
 
 	public static void assertEquals(Object result, Object expectedValue) {
