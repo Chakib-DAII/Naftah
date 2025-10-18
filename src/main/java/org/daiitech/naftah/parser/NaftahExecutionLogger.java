@@ -111,6 +111,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.PropertyAccessContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.DeclarationStatementContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -264,6 +267,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CollectionAccessIndexContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -413,15 +419,44 @@ public final class NaftahExecutionLogger {
 								context -> """
 											QualifiedObjectAccessContext::ID -> %s
 											QualifiedObjectAccessContext::QUESTION -> %s
-											QualifiedObjectAccessContext::COLON -> %s
-											QualifiedObjectAccessContext::LBRACK -> %s
-											QualifiedObjectAccessContext::RBRACK -> %s
+											QualifiedObjectAccessContext::propertyAccess -> %s
 											"""
-										.formatted( join(context.ID()),
+										.formatted(
+													Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
 													join(context.QUESTION()),
-													join(context.COLON()),
-													join(context.LBRACK()),
-													join(context.RBRACK())));
+													join(context.propertyAccess())));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.PropertyAccessContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											PropertyAccessContext::ID -> %s
+											PropertyAccessContext::COLON -> %s
+											PropertyAccessContext::LBRACK -> %s
+											PropertyAccessContext::DoubleQuotationMark -> %s
+											PropertyAccessContext::QuotationMark -> %s
+											PropertyAccessContext::RBRACK -> %s
+											"""
+										.formatted(
+													Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
+													Objects.nonNull(context.COLON()) ?
+															context.COLON().getText() :
+															null,
+													Objects.nonNull(context.LBRACK()) ?
+															context.LBRACK().getText() :
+															null,
+													join(context.DoubleQuotationMark()),
+													join(context.QuotationMark()),
+													Objects.nonNull(context.RBRACK()) ?
+															context.RBRACK().getText() :
+															null));
 
 	}
 
@@ -1572,15 +1607,30 @@ public final class NaftahExecutionLogger {
 											CollectionAccessContext::ID -> %s
 											CollectionAccessContext::QUESTION -> %s
 											CollectionAccessContext::LBRACK -> %s
-											CollectionAccessContext::NUMBER -> %s
+											CollectionAccessContext::collectionAccessIndex -> %s
 											CollectionAccessContext::RBRACK -> %s"""
 										.formatted( Objects.nonNull(context.ID()) ?
 															context.ID().getText() :
 															null,
 													join(context.QUESTION()),
 													join(context.LBRACK()),
-													join(context.NUMBER()),
+													join(context.collectionAccessIndex()),
 													join(context.RBRACK())));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.CollectionAccessIndexContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											CollectionAccessIndexContext::NUMBER -> %s
+											CollectionAccessIndexContext::ID -> %s"""
+										.formatted( Objects.nonNull(context.NUMBER()) ?
+															context.NUMBER().getText() :
+															null,
+													Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null));
 	}
 
 	public static String logExecution(  boolean doLog,
