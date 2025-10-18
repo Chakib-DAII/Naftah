@@ -454,11 +454,11 @@ public final class NaftahParserHelper {
 	public static String getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext ctx) {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
-		for (int i = 0; i < ctx.ID().size(); i++) {
-			String id = ctx.ID(i).getText();
+		for (int i = 0; i < ctx.propertyAccess().size(); i++) {
+			String id = ctx.propertyAccess(i).ID().getText();
 			result.get().append(id);
 
-			if (i != ctx.ID().size() - 1) {
+			if (i != ctx.propertyAccess().size() - 1) {
 				String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
 						ctx.QUESTION(i).getText() + ":" :
 						":";
@@ -525,9 +525,9 @@ public final class NaftahParserHelper {
 	 * @param parser The parser instance.
 	 * @return The result of visiting the parse tree.
 	 */
-	public static Object doRun(org.daiitech.naftah.parser.NaftahParser parser) {
+	public static Object doRun(org.daiitech.naftah.parser.NaftahParser parser, List<String> args) {
 		// Create a visitor and visit the parse tree
-		DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor(parser);
+		DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor(parser, args);
 		// Parse the input and get the parse tree
 		return visitor.visit();
 	}
