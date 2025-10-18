@@ -626,11 +626,13 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									Object variable = result = getVariable( collectionAccessContext.ID().getText(),
 																			currentContext).get();
 									Number number = -1;
-									int size = collectionAccessContext.NUMBER().size();
+									int size = collectionAccessContext.collectionAccessIndex().size();
 									try {
 										for (int i = 0; i < size; i++) {
-											Object numberStr = collectionAccessContext.NUMBER(i).getText();
-											number = NumberUtils.parseDynamicNumber(numberStr);
+											number = (Number) defaultNaftahParserVisitor
+													.visit(collectionAccessContext
+															.collectionAccessIndex(
+																					i));
 											if (variable instanceof List && !(variable instanceof Tuple)) {
 												List<Object> list = (List<Object>) variable;
 												if (i < size - 1) {
@@ -2374,9 +2376,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.get();
 								Number number = -1;
 								try {
-									for (int i = 0; i < collectionAccessContext.NUMBER().size(); i++) {
-										Object value = collectionAccessContext.NUMBER(i).getText();
-										number = NumberUtils.parseDynamicNumber(value);
+									for (int i = 0; i < collectionAccessContext.collectionAccessIndex().size(); i++) {
+										number = (Number) defaultNaftahParserVisitor
+												.visit(collectionAccessContext
+														.collectionAccessIndex(
+																				i));
 										if (result instanceof Tuple tuple) {
 											result = tuple.get(number.intValue());
 										}
@@ -2411,6 +2415,32 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								}
 								return result;
 							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Number visitCollectionAccessIndex(org.daiitech.naftah.parser.NaftahParser.CollectionAccessIndexContext ctx) {
+		return visitContext(
+							this,
+							"visitCollectionAccessIndex",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								collectionAccessIndexContext) -> {
+								if (Objects.nonNull(collectionAccessIndexContext.NUMBER())) {
+									Object value = collectionAccessIndexContext.NUMBER().getText();
+									return NumberUtils.parseDynamicNumber(value);
+								}
+								else {
+									return getVariable(collectionAccessIndexContext.ID().getText(), currentContext)
+											.get();
+								}
+							},
+							Number.class
 		);
 	}
 
