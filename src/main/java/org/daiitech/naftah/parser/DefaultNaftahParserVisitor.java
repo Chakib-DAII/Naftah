@@ -124,6 +124,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * The ANTLR parser instance that produces the parse tree.
 	 */
 	private final org.daiitech.naftah.parser.NaftahParser parser;
+	private final Tuple args;
+	private final String ARGS_VAR_NAME = "وسائط";
+	private final String ARGS_SIZE = "عدد_الوسائط";
 	/**
 	 * Current depth in the parse tree traversal.
 	 */
@@ -134,8 +137,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 *
 	 * @param parser the ANTLR-generated Naftah parser instance
 	 */
-	public DefaultNaftahParserVisitor(org.daiitech.naftah.parser.NaftahParser parser) {
+	public DefaultNaftahParserVisitor(org.daiitech.naftah.parser.NaftahParser parser, List<String> args) {
 		this.parser = parser;
+		this.args = Tuple.of(args);
 		PARSER_VOCABULARY = parser.getVocabulary();
 	}
 
@@ -162,6 +166,23 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getRootContext(ctx),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, programContext) -> {
+								currentContext
+										.defineVariable(ARGS_VAR_NAME,
+														DeclaredVariable
+																.of(programContext,
+																	ARGS_VAR_NAME,
+																	true,
+																	Tuple.class,
+																	args));
+								currentContext
+										.defineVariable(ARGS_SIZE,
+														DeclaredVariable
+																.of(programContext,
+																	ARGS_SIZE,
+																	true,
+																	int.class,
+																	args.size()));
+
 								defaultNaftahParserVisitor.depth = currentContext.getDepth();
 								Object result = None.get();
 								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
