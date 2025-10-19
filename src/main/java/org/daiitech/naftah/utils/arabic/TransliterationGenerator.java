@@ -54,21 +54,19 @@ import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanCLasses;
  */
 public final class TransliterationGenerator {
 	/**
+	 * The source language code used in translation requests (e.g., "en").
+	 */
+	private static String SOURCE_LANG = "en";
+	/**
+	 * The target language code used in translation requests (e.g., "ar").
+	 */
+	private static String TARGET_LANG = "ar";
+	/**
 	 * The base URL for the translation API.
 	 * This should point to a service accepting POST requests with
 	 * URL-encoded parameters for source/target languages and the query string.
 	 */
-	private static final String API_URL = "http://localhost:5000/translate";
-
-	/**
-	 * The source language code used in translation requests (e.g., "en").
-	 */
-	private static final String SOURCE_LANG = "en";
-
-	/**
-	 * The target language code used in translation requests (e.g., "ar").
-	 */
-	private static final String TARGET_LANG = "ar";
+	private static String API_URL = "http://localhost:5000/translate";
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -94,6 +92,30 @@ public final class TransliterationGenerator {
 	 * @throws InterruptedException if the HTTP request is interrupted
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
+		switch (args.length) {
+			case 1:
+				API_URL = args[0];
+				break;
+			case 2:
+				API_URL = args[0];
+				SOURCE_LANG = args[1];
+				break;
+			case 3:
+				API_URL = args[0];
+				SOURCE_LANG = args[1];
+				TARGET_LANG = args[2];
+				break;
+			default:
+				break;
+		}
+
+		System.out.printf("""
+							Running transliteration using
+							libre-translate server at: %s
+							source language: %s
+							target language: %s
+							%n""", API_URL, SOURCE_LANG, TARGET_LANG);
+
 		HttpClient client = HttpClient.newHttpClient();
 
 		var classNames = scanCLasses();

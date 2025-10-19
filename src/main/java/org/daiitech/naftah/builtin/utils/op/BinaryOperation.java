@@ -16,6 +16,7 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.builtin.utils.StringUtils.charWiseModulo;
 import static org.daiitech.naftah.builtin.utils.StringUtils.stringToInt;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
+import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
@@ -1238,7 +1239,7 @@ public enum BinaryOperation implements Operation {
 	 */
 	public static NaftahBugError newNaftahBugError(Operation binaryOperation, Object left, Object right) {
 		return new NaftahBugError("العملية '%s' غير مدعومة للنوعين: '%s' و'%s'."
-				.formatted( binaryOperation,
+				.formatted( getFormattedTokenSymbols(binaryOperation.toString(), false),
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(left.getClass().getName()) :
 									getNaftahType(PARSER_VOCABULARY, left.getClass()),

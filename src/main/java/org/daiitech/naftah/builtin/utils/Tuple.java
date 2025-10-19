@@ -65,11 +65,11 @@ public final class Tuple implements List<Object>, Serializable {
 	 * @return a new {@code Tuple} containing the given list elements
 	 * @throws NaftahBugError if the input list is null
 	 */
-	public static Tuple of(List<Object> elements) {
+	public static Tuple of(List<?> elements) {
 		if (elements == null) {
 			throw newNaftahBugNullError();
 		}
-		return new Tuple(elements);
+		return new Tuple((List<Object>) elements);
 	}
 
 	/**

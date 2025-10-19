@@ -24,7 +24,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة[البلدة][عدد_البيوت]
+										المدينة["البلدة"]["عدد_البيوت"]
 										""", 400, null),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -35,7 +35,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟[ء]:عدد_البيوت
+										المدينة؟["ء"]:عدد_البيوت
 										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء")),
 					Arguments.of(true, """
 										متغير المدينة تعيين {
@@ -46,7 +46,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟[ء]؟[عدد_البيوت]
+										المدينة؟["ء"]؟["عدد_البيوت"]
 										""", None.get(), null),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -57,7 +57,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدي؟:البلدة؟[عدد_البيوت]
+										المدي؟:البلدة؟["عدد_البيوت"]
 										""", null, newNaftahBugVariableNotFoundError("المدي")),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -68,7 +68,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟[البلدة]؟:عددت
+										المدينة؟["البلدة"]؟:عددت
 										""", null, newNaftahBugVariableNotFoundError("المدينة؟:البلدة؟:عددت")),
 					Arguments.of(true, """
 										متغير المدينة تعيين {
@@ -79,7 +79,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة[البلدة][عدد_البيوت]
+										المدينة["البلدة"]["عدد_البيوت"]
 										""", 400, null),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -90,7 +90,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟[ء][عدد_البيوت]
+										المدينة؟["ء"]["عدد_البيوت"]
 										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء")),
 					Arguments.of(true, """
 										متغير المدينة تعيين {
@@ -101,7 +101,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟[ء]؟[عدد_البيوت]
+										المدينة؟["ء"]؟["عدد_البيوت"]
 										""", None.get(), null),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -112,7 +112,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدي؟[البلدة]؟[عدد_البيوت]
+										المدي؟["البلدة"]؟["عدد_البيوت"]
 										""", null, newNaftahBugVariableNotFoundError("المدي")),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -123,7 +123,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟[البلدة]؟[عددت]
+										المدينة؟["البلدة"]؟["عددت"]
 										""", null, newNaftahBugVariableNotFoundError("المدينة؟:البلدة؟:عددت"))
 				);
 	}

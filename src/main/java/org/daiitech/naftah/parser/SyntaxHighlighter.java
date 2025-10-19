@@ -21,9 +21,7 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import static org.daiitech.naftah.utils.repl.REPLHelper.ESCAPE_CHARS_REGEX;
-import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
-import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
-import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
+import static org.daiitech.naftah.utils.repl.REPLHelper.rightAlign;
 
 /**
  * A syntax highlighter class specifically tailored for highlighting
@@ -176,7 +174,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.RETURN, org.daiitech.naftah.parser.NaftahLexer.THEN,
 					org.daiitech.naftah.parser.NaftahLexer.UNTIL, org.daiitech.naftah.parser.NaftahLexer.WHILE,
 					org.daiitech.naftah.parser.NaftahLexer.CASE, org.daiitech.naftah.parser.NaftahLexer.OF,
-					org.daiitech.naftah.parser.NaftahLexer.ID -> AttributedStyle.BOLD.foreground(AttributedStyle.BLUE);
+					org.daiitech.naftah.parser.NaftahLexer.ID, org.daiitech.naftah.parser.NaftahLexer.TRY,
+					org.daiitech.naftah.parser.NaftahLexer.ARROW ->
+				AttributedStyle.BOLD.foreground(AttributedStyle.BLUE);
 			case org.daiitech.naftah.parser.NaftahLexer.VAR, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN,
 					org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, org.daiitech.naftah.parser.NaftahLexer.CHAR,
 					org.daiitech.naftah.parser.NaftahLexer.BYTE, org.daiitech.naftah.parser.NaftahLexer.SHORT,
@@ -208,7 +208,10 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_DIV,
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MOD,
 					org.daiitech.naftah.parser.NaftahLexer.BASE_RADIX,
-					org.daiitech.naftah.parser.NaftahLexer.RAW, org.daiitech.naftah.parser.NaftahLexer.BYTE_ARRAY ->
+					org.daiitech.naftah.parser.NaftahLexer.RAW, org.daiitech.naftah.parser.NaftahLexer.BYTE_ARRAY,
+					org.daiitech.naftah.parser.NaftahLexer.OK, org.daiitech.naftah.parser.NaftahLexer.ERROR,
+					org.daiitech.naftah.parser.NaftahLexer.SOME, org.daiitech.naftah.parser.NaftahLexer.NONE,
+					org.daiitech.naftah.parser.NaftahLexer.ORDERED ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.RED);
 			case org.daiitech.naftah.parser.NaftahLexer.LPAREN, org.daiitech.naftah.parser.NaftahLexer.RPAREN,
 					org.daiitech.naftah.parser.NaftahLexer.LBRACE, org.daiitech.naftah.parser.NaftahLexer.RBRACE,
@@ -225,21 +228,4 @@ public class SyntaxHighlighter extends BaseHighlighter {
 		};
 	}
 
-	/**
-	 * Aligns the given attributed string to the right side of the terminal,
-	 * applying appropriate spacing and appending the prompt.
-	 *
-	 * @param str   the input string to align
-	 * @param width the total width of the terminal line
-	 * @return a right-aligned {@link AttributedString}
-	 */
-	private AttributedString rightAlign(AttributedString str, int width) {
-		int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
-		int padding = Math.max(0, width - contentWidth);
-		AttributedString spacePad = new AttributedString(" ".repeat(padding));
-		AttributedString prompt = MULTILINE_IS_ACTIVE ?
-				new AttributedString(RTL_MULTILINE_PROMPT) :
-				new AttributedString(RTL_PROMPT);
-		return AttributedString.join(new AttributedString(""), spacePad, str, prompt);
-	}
 }

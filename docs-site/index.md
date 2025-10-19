@@ -1,5 +1,7 @@
 ---
 title: Naftah Programming Language
+layout: default
+permalink: /
 ---
 
 # Naftah Programming Language
@@ -14,9 +16,11 @@ title: Naftah Programming Language
 
 ## 📚 Documentation
 
-- [Javadoc](./javadoc/index.html)
-- [Benchmarks](./benchmarks.md)
-- [About](./about.md)
+- [Language Reference](./language/keywords)
+- [Javadoc (Embedded View)](./java-doc)
+- [Javadoc (Open in New Tab)](./javadoc/index.html){:target="_blank"}
+- [Benchmarks](./benchmarks)
+- [About](./about)
 
 ---
 

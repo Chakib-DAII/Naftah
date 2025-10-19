@@ -48,6 +48,7 @@ import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
@@ -55,6 +56,7 @@ import static org.daiitech.naftah.parser.DefaultContext.registerContext;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
+import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
@@ -358,7 +360,7 @@ public final class NaftahParserHelper {
 			// process non named args
 			finalArguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
 				var argument = arguments.get(i);
-				var param = requiredParams.size() >= i ? parameters.get(i) : requiredParams.get(i);
+				var param = i >= requiredParams.size() ? parameters.get(i) : requiredParams.get(i);
 				return Map.entry(param.getName(), argument.b);
 			}).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		}
@@ -454,17 +456,32 @@ public final class NaftahParserHelper {
 	public static String getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext ctx) {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
-		for (int i = 0; i < ctx.ID().size(); i++) {
-			String id = ctx.ID(i).getText();
-			result.get().append(id);
+		String id = ctx.ID().getText();
+		result.get().append(id);
 
-			if (i != ctx.ID().size() - 1) {
-				String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
-						ctx.QUESTION(i).getText() + ":" :
-						":";
-				result.get().append(qualifier);
-			}
+		for (int i = 0; i < ctx.propertyAccess().size(); i++) {
+			String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
+					ctx.QUESTION(i).getText() + ":" :
+					":";
+			result.get().append(qualifier);
+
+			final var currentPropertyAccess = ctx.propertyAccess(i);
+			id = Optional
+					.of(currentPropertyAccess)
+					.map(propertyAccessContext -> Optional
+							.ofNullable(propertyAccessContext.ID())
+							.map(ParseTree::getText)
+							.orElse(Optional
+									.ofNullable(propertyAccessContext.CHARACTER())
+									.map(ParseTree::getText)
+									.orElse(Optional
+											.ofNullable(propertyAccessContext.STRING())
+											.map(ParseTree::getText)
+											.orElse(null))))
+					.orElseThrow(() -> newNaftahBugNullInputError(true, currentPropertyAccess));
+			result.get().append(cleanInput(id));
 		}
+
 		return result.get().toString();
 	}
 
@@ -525,9 +542,9 @@ public final class NaftahParserHelper {
 	 * @param parser The parser instance.
 	 * @return The result of visiting the parse tree.
 	 */
-	public static Object doRun(org.daiitech.naftah.parser.NaftahParser parser) {
+	public static Object doRun(org.daiitech.naftah.parser.NaftahParser parser, List<String> args) {
 		// Create a visitor and visit the parse tree
-		DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor(parser);
+		DefaultNaftahParserVisitor visitor = new DefaultNaftahParserVisitor(parser, args);
 		// Parse the input and get the parse tree
 		return visitor.visit();
 	}
@@ -732,6 +749,23 @@ public final class NaftahParserHelper {
 	 */
 	public static String getFormattedTokenSymbols(Vocabulary vocabulary, int tokenType, boolean ln) {
 		String tokenName = vocabulary.getDisplayName(tokenType);
+		return getFormattedTokenSymbols(tokenName, ln);
+	}
+
+	/**
+	 * Returns a formatted string of token symbols based on the token name.
+	 * <p>
+	 * This method looks up the token name in a {@code TOKENS_SYMBOLS} map (assumed to be a
+	 * {@link java.util.Properties} object). If a match is found, the associated value is used
+	 * as the base symbol string. Commas in the value are replaced with " أو" (Arabic "or").
+	 * <p>
+	 * If {@code ln} is {@code true}, the formatted string will include a line break and bullet point.
+	 *
+	 * @param tokenName The name of the token.
+	 * @param ln        If {@code true}, output is formatted with a line break and bullet.
+	 * @return A formatted string representing the token symbols, or {@code null} if not found.
+	 */
+	public static String getFormattedTokenSymbols(String tokenName, boolean ln) {
 		String tokenSymbols = Objects.isNull(TOKENS_SYMBOLS) ? tokenName : TOKENS_SYMBOLS.getProperty(tokenName);
 		return tokenSymbols == null ? null : (ln ? """
 													- %s
@@ -1156,7 +1190,7 @@ public final class NaftahParserHelper {
 		else {
 			result = getVariable(accessArray[0], currentContext).get();
 		}
-		return result;
+		return result instanceof DeclaredVariable declaredVariable ? declaredVariable.getValue() : result;
 	}
 
 	/**

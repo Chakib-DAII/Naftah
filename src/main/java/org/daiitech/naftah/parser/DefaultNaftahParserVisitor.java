@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +30,7 @@ import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
@@ -121,6 +124,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * The ANTLR parser instance that produces the parse tree.
 	 */
 	private final org.daiitech.naftah.parser.NaftahParser parser;
+	private final Tuple args;
+	private final String ARGS_VAR_NAME = "وسائط";
+	private final String ARGS_SIZE = "عدد_الوسائط";
 	/**
 	 * Current depth in the parse tree traversal.
 	 */
@@ -131,8 +137,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 *
 	 * @param parser the ANTLR-generated Naftah parser instance
 	 */
-	public DefaultNaftahParserVisitor(org.daiitech.naftah.parser.NaftahParser parser) {
+	public DefaultNaftahParserVisitor(org.daiitech.naftah.parser.NaftahParser parser, List<String> args) {
 		this.parser = parser;
+		this.args = Tuple.of(args);
 		PARSER_VOCABULARY = parser.getVocabulary();
 	}
 
@@ -159,6 +166,23 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getRootContext(ctx),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, programContext) -> {
+								currentContext
+										.defineVariable(ARGS_VAR_NAME,
+														DeclaredVariable
+																.of(programContext,
+																	ARGS_VAR_NAME,
+																	true,
+																	Tuple.class,
+																	args));
+								currentContext
+										.defineVariable(ARGS_SIZE,
+														DeclaredVariable
+																.of(programContext,
+																	ARGS_SIZE,
+																	true,
+																	int.class,
+																	args.size()));
+
 								defaultNaftahParserVisitor.depth = currentContext.getDepth();
 								Object result = None.get();
 								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
@@ -366,6 +390,24 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitTryStatementStatement(org.daiitech.naftah.parser.NaftahParser.TryStatementStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitTryStatementStatement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								tryStatementStatementContext) -> defaultNaftahParserVisitor
+										.visit(
+												tryStatementStatementContext.tryStatement())
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -584,11 +626,13 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									Object variable = result = getVariable( collectionAccessContext.ID().getText(),
 																			currentContext).get();
 									Number number = -1;
-									int size = collectionAccessContext.NUMBER().size();
+									int size = collectionAccessContext.collectionAccessIndex().size();
 									try {
 										for (int i = 0; i < size; i++) {
-											Object numberStr = collectionAccessContext.NUMBER(i).getText();
-											number = NumberUtils.parseDynamicNumber(numberStr);
+											number = (Number) defaultNaftahParserVisitor
+													.visit(collectionAccessContext
+															.collectionAccessIndex(
+																					i));
 											if (variable instanceof List && !(variable instanceof Tuple)) {
 												List<Object> list = (List<Object>) variable;
 												if (i < size - 1) {
@@ -699,10 +743,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											argumentName,
 											hasChild(parameterDeclarationContext.CONSTANT()),
 											hasChild(parameterDeclarationContext.type()) ?
-													visit(parameterDeclarationContext.type()) :
+													(Class<?>) defaultNaftahParserVisitor
+															.visit(parameterDeclarationContext.type()) :
 													Object.class,
 											hasChild(parameterDeclarationContext.value()) ?
-													visit(parameterDeclarationContext.value()) :
+													defaultNaftahParserVisitor
+															.visit(parameterDeclarationContext.value()) :
 													null);
 							});
 	}
@@ -1457,8 +1503,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									pushLoop(label, whileStatementContext);
 									loopInStack = true;
 
-									while (isTruthy(visit(whileStatementContext.expression()))) {
-										visit(whileStatementContext.block());
+									while (isTruthy(defaultNaftahParserVisitor
+											.visit(whileStatementContext.expression()))) {
+										defaultNaftahParserVisitor.visit(whileStatementContext.block());
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -1546,7 +1593,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									loopInStack = true;
 
 									do {
-										visit(repeatStatementContext.block());
+										defaultNaftahParserVisitor.visit(repeatStatementContext.block());
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -1582,7 +1629,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										// force current loop label
 										currentContext.setLoopLabel(label);
 									}
-									while (!isTruthy(visit(repeatStatementContext.expression())));
+									while (!isTruthy(defaultNaftahParserVisitor
+											.visit(repeatStatementContext.expression())));
 
 								}
 								finally {
@@ -1661,6 +1709,276 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitTryStatementWithTryCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithTryCasesContext ctx) {
+		return visitContext(
+							this,
+							"visitTryStatementWithTryCases",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								tryStatementContext) -> {
+								Result<Object, NaftahBugError> result = null;
+								String okVariableName = null;
+								String errorVariableName = null;
+								DeclaredVariable previousOkVariable = null;
+								DeclaredVariable previousErrorVariable = null;
+
+								var tryCases = tryStatementContext.tryCases();
+								try {
+									Object expressionResult = null;
+									try {
+										expressionResult = defaultNaftahParserVisitor
+												.visit(tryStatementContext.expression());
+									}
+									catch (Throwable th) {
+										var errorCase = tryCases.errorCase();
+
+										if (Objects.nonNull(errorCase)) {
+											errorVariableName = errorCase.ID().getText();
+
+											result = Result.Error
+													.of(th instanceof NaftahBugError naftahBugError ?
+															naftahBugError :
+															new NaftahBugError(th));
+
+											var declaredVariable = DeclaredVariable
+													.of(tryStatementContext,
+														errorVariableName,
+														true,
+														Result.Error.class,
+														result);
+
+											boolean errorVarExists = currentContext.containsVariable(errorVariableName);
+											if (errorVarExists) {
+												previousErrorVariable = currentContext
+														.setVariable(   errorVariableName,
+																		declaredVariable);
+											}
+											else {
+												currentContext.defineVariable(errorVariableName, declaredVariable);
+											}
+
+											return defaultNaftahParserVisitor.visit(errorCase);
+										}
+										else {
+											throw th;
+										}
+									}
+
+									var okCase = tryCases.okCase();
+
+									if (Objects.nonNull(okCase) && Objects.nonNull(expressionResult)) {
+										okVariableName = okCase.ID().getText();
+
+										result = Result.Ok.of(expressionResult);
+
+										var declaredVariable = DeclaredVariable
+												.of(tryStatementContext,
+													okVariableName,
+													true,
+													Result.Ok.class,
+													result);
+
+										boolean okVarExists = currentContext.containsVariable(okVariableName);
+										if (okVarExists) {
+											previousOkVariable = currentContext
+													.setVariable(okVariableName, declaredVariable);
+										}
+										else {
+											currentContext.defineVariable(okVariableName, declaredVariable);
+										}
+
+										return defaultNaftahParserVisitor.visit(okCase);
+									}
+								}
+								finally {
+									if (Objects.nonNull(okVariableName)) {
+										if (Objects.nonNull(previousOkVariable)) {
+											currentContext
+													.setVariable(   okVariableName,
+																	previousOkVariable);
+										}
+										else {
+											currentContext.removeVariable(okVariableName, true);
+										}
+									}
+									if (Objects.nonNull(errorVariableName)) {
+										if (Objects.nonNull(previousErrorVariable)) {
+											currentContext
+													.setVariable(   errorVariableName,
+																	previousErrorVariable);
+										}
+										else {
+											currentContext.removeVariable(errorVariableName, true);
+										}
+									}
+								}
+								return Objects.nonNull(result) ? result : None.get();
+							}
+		);
+	}
+
+	@Override
+	public Object visitTryStatementWithOptionCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext ctx) {
+		return visitContext(
+							this,
+							"visitTryStatementWithOptionCases",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								tryStatementContext) -> {
+								var result = defaultNaftahParserVisitor
+										.visit(tryStatementContext.expression());
+
+								String someVariableName = null;
+								DeclaredVariable previousSomeVariable = null;
+
+								var tryCases = tryStatementContext.optionCases();
+
+								try {
+									if (Objects.isNull(result) || None
+											.isNone(result) || (result instanceof Optional<?> optional && (optional
+													.isEmpty() || None.isNone(optional.get())))) {
+										var noneCase = tryCases.noneCase();
+
+										result = defaultNaftahParserVisitor.visit(noneCase);
+									}
+									else {
+										var someCase = tryCases.someCase();
+										someVariableName = someCase.ID().getText();
+
+										var declaredVariable = DeclaredVariable
+												.of(tryStatementContext,
+													someVariableName,
+													true,
+													result.getClass(),
+													result instanceof Optional<?> optional ?
+															optional.get() :
+															result);
+
+										boolean okVarExists = currentContext.containsVariable(someVariableName);
+										if (okVarExists) {
+											previousSomeVariable = currentContext
+													.setVariable(someVariableName, declaredVariable);
+										}
+										else {
+											currentContext.defineVariable(someVariableName, declaredVariable);
+										}
+
+										return defaultNaftahParserVisitor.visit(someCase);
+									}
+
+								}
+								finally {
+									if (Objects.nonNull(someVariableName)) {
+										if (Objects.nonNull(previousSomeVariable)) {
+											currentContext
+													.setVariable(   someVariableName,
+																	previousSomeVariable);
+										}
+										else {
+											currentContext.removeVariable(someVariableName, true);
+										}
+									}
+								}
+								return result;
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitOkCase(org.daiitech.naftah.parser.NaftahParser.OkCaseContext ctx) {
+		return visitContext(
+							this,
+							"visitOkCase",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								okCaseContext) -> Objects.nonNull(okCaseContext.expression()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														okCaseContext.expression()) :
+										defaultNaftahParserVisitor
+												.visit(
+														okCaseContext.block())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitErrorCase(org.daiitech.naftah.parser.NaftahParser.ErrorCaseContext ctx) {
+		return visitContext(
+							this,
+							"visitErrorCase",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								errorCaseContext) -> Objects.nonNull(errorCaseContext.expression()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														errorCaseContext.expression()) :
+										defaultNaftahParserVisitor
+												.visit(
+														errorCaseContext.block())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitSomeCase(org.daiitech.naftah.parser.NaftahParser.SomeCaseContext ctx) {
+		return visitContext(
+							this,
+							"visitSomeCase",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								someCaseContext) -> Objects.nonNull(someCaseContext.expression()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														someCaseContext.expression()) :
+										defaultNaftahParserVisitor
+												.visit(
+														someCaseContext.block())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitNoneCase(org.daiitech.naftah.parser.NaftahParser.NoneCaseContext ctx) {
+		return visitContext(
+							this,
+							"visitNoneCase",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								noneCaseContext) -> Objects.nonNull(noneCaseContext.expression()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														noneCaseContext.expression()) :
+										defaultNaftahParserVisitor
+												.visit(
+														noneCaseContext.block())
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -1905,7 +2223,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, objectFieldsContext) -> {
-								var result = new HashMap<String, DeclaredVariable>();
+								var result = new LinkedHashMap<String, DeclaredVariable>();
 
 								for (int i = 0; i < objectFieldsContext.assignment().size(); i++) {
 									var field = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
@@ -2058,9 +2376,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.get();
 								Number number = -1;
 								try {
-									for (int i = 0; i < collectionAccessContext.NUMBER().size(); i++) {
-										Object value = collectionAccessContext.NUMBER(i).getText();
-										number = NumberUtils.parseDynamicNumber(value);
+									for (int i = 0; i < collectionAccessContext.collectionAccessIndex().size(); i++) {
+										number = (Number) defaultNaftahParserVisitor
+												.visit(collectionAccessContext
+														.collectionAccessIndex(
+																				i));
 										if (result instanceof Tuple tuple) {
 											result = tuple.get(number.intValue());
 										}
@@ -2095,6 +2415,32 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								}
 								return result;
 							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Number visitCollectionAccessIndex(org.daiitech.naftah.parser.NaftahParser.CollectionAccessIndexContext ctx) {
+		return visitContext(
+							this,
+							"visitCollectionAccessIndex",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								collectionAccessIndexContext) -> {
+								if (Objects.nonNull(collectionAccessIndexContext.NUMBER())) {
+									Object value = collectionAccessIndexContext.NUMBER().getText();
+									return NumberUtils.parseDynamicNumber(value);
+								}
+								else {
+									return getVariable(collectionAccessIndexContext.ID().getText(), currentContext)
+											.get();
+								}
+							},
+							Number.class
 		);
 	}
 
@@ -2165,10 +2511,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							"visitSetValue",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, setValueContext) -> new HashSet<>(
-																											(List<?>) defaultNaftahParserVisitor
-																													.visit(setValueContext
-																															.elements())),
+							(defaultNaftahParserVisitor, currentContext, setValueContext) -> {
+								var value = (List<?>) defaultNaftahParserVisitor
+										.visit(setValueContext
+												.elements());
+								return Objects.nonNull(setValueContext.ORDERED()) ?
+										new LinkedHashSet<>(value) :
+										new HashSet<>(value);
+							},
 							Set.class
 		);
 	}
@@ -2369,7 +2719,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									currentDeclarationName = currentDeclaration.a.getName();
 								}
 								// process entries
-								Map<Object, Object> map = new HashMap<>();
+								org.daiitech.naftah.parser.NaftahParser.MapValueContext mapValueContext = (org.daiitech.naftah.parser.NaftahParser.MapValueContext) keyValuePairsContext
+										.getParent();
+								Map<Object, Object> map = Objects.nonNull(mapValueContext.ORDERED()) ?
+										new LinkedHashMap<>() :
+										new HashMap<>();
 								Set<Class<?>> keyTypes = new HashSet<>();
 								Set<Class<?>> valueTypes = new HashSet<>();
 								for (int i = 0; i < keyValuePairsContext.keyValue().size(); i++) {
@@ -2912,13 +3266,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, ternaryExpressionContext) -> {
 								if (Objects.nonNull(ternaryExpressionContext.QUESTION())) {
 									// ternary expression: condition ? thenExpression : elseExpression
-									Object condition = visit(ternaryExpressionContext.nullishExpression());
+									Object condition = defaultNaftahParserVisitor
+											.visit(ternaryExpressionContext.nullishExpression());
 									return isTruthy(condition) ?
-											visit(ternaryExpressionContext.expression()) :
-											visit(ternaryExpressionContext.ternaryExpression());
+											defaultNaftahParserVisitor.visit(ternaryExpressionContext.expression()) :
+											defaultNaftahParserVisitor
+													.visit(ternaryExpressionContext.ternaryExpression());
 								}
 								else {
-									return visit(ternaryExpressionContext.nullishExpression());
+									return defaultNaftahParserVisitor
+											.visit(ternaryExpressionContext.nullishExpression());
 								}
 							});
 	}
@@ -3142,8 +3499,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, powerExpressionContext) -> {
 								if (Objects.nonNull(powerExpressionContext.POW())) {
-									Object left = visit(powerExpressionContext.unaryExpression());
-									Object right = visit(powerExpressionContext.powerExpression());
+									Object left = defaultNaftahParserVisitor
+											.visit(powerExpressionContext.unaryExpression());
+									Object right = defaultNaftahParserVisitor
+											.visit(powerExpressionContext.powerExpression());
 
 									String op = NaftahParserHelper
 											.getDisplayName(powerExpressionContext.POW(),
@@ -3151,7 +3510,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									return applyOperation(left, right, BinaryOperation.of(op));
 								}
 								else {
-									return visit(powerExpressionContext.unaryExpression());
+									return defaultNaftahParserVisitor.visit(powerExpressionContext.unaryExpression());
 								}
 							});
 	}

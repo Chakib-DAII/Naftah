@@ -32,10 +32,9 @@ public final class DeclaredParameter {
 	private final boolean constant;
 
 	/**
-	 * The declared type of the parameter.
-	 * TODO: use Class type
+	 * The Java class representing the type of the parameter.
 	 */
-	private final Object type;
+	private final Class<?> type;
 
 	/**
 	 * The default value assigned to the parameter.
@@ -64,7 +63,7 @@ public final class DeclaredParameter {
 	private DeclaredParameter(  NaftahParser.ParameterDeclarationContext originalContext,
 								String name,
 								boolean constant,
-								Object type,
+								Class<?> type,
 								Object defaultValue) {
 		this.originalContext = originalContext;
 		this.name = name;
@@ -86,7 +85,7 @@ public final class DeclaredParameter {
 	public static DeclaredParameter of( NaftahParser.ParameterDeclarationContext originalContext,
 										String name,
 										boolean constant,
-										Object type,
+										Class<?> type,
 										Object defaultValue) {
 		return new DeclaredParameter(originalContext, name, constant, type, defaultValue);
 	}

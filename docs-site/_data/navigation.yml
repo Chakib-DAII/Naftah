@@ -1,0 +1,18 @@
+- title: الرئيسية
+  url: /
+- title: الكلمات المفتاحية
+  url: /language/keywords
+- title: الأنواع الأولية
+  url: /language/primitives-and-variables
+- title: بُنى المعطيات
+  url: /language/collections
+- title: التعبيرات
+  url: /language/expressions
+- title: الأعداد بأنظمة العد المختلفة
+  url: /language/radix-numbers
+- title: الكائنات
+  url: /language/objects
+- title: التحكم في تدفق البرنامج
+  url: /language/control-flow
+- title: الدوال
+  url: /language/functions

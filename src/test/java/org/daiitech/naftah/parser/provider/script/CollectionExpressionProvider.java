@@ -2,6 +2,8 @@ package org.daiitech.naftah.parser.provider.script;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -91,6 +93,36 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 							.of(true,
 								"{\"اسم\": \"أحمد\", \"عمر\": ٢٠, \"معدل\": ٨٨}",
 								new HashMap<>() {
+									{
+										put("اسم", "أحمد");
+										put("عمر", 20);
+										put("معدل", 88);
+									}
+								},
+								null),
+					Arguments.of(true, "مرتب {١، ٢، ٣، ٤}", new LinkedHashSet<>() {
+						{
+							add(1);
+							add(2);
+							add(3);
+							add(4);
+						}
+					}, null),
+					Arguments
+							.of(true,
+								"مرتب {\"أ\", \"ب\", \"ج\"}",
+								new LinkedHashSet<>() {
+									{
+										add('أ');
+										add('ب');
+										add('ج');
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"مرتب {\"اسم\": \"أحمد\", \"عمر\": ٢٠, \"معدل\": ٨٨}",
+								new LinkedHashMap<>() {
 									{
 										put("اسم", "أحمد");
 										put("عمر", 20);

@@ -22,6 +22,7 @@ import org.daiitech.naftah.parser.provider.script.QualifiedNameProvider;
 import org.daiitech.naftah.parser.provider.script.QualifiedObjectAccessProvider;
 import org.daiitech.naftah.parser.provider.script.RepeatStatementProvider;
 import org.daiitech.naftah.parser.provider.script.ReturnStatementProvider;
+import org.daiitech.naftah.parser.provider.script.TryStatementProvider;
 import org.daiitech.naftah.parser.provider.script.ValueExpressionsProvider;
 import org.daiitech.naftah.parser.provider.script.WhileStatementProvider;
 import org.junit.jupiter.api.BeforeAll;
@@ -235,6 +236,16 @@ public class DefaultNaftahParserVisitorTests {
 	@ParameterizedTest
 	@ArgumentsSource(CaseStatementProvider.class)
 	void caseStatementTests(boolean validScript,
+							String script,
+							Object expectedValue,
+							NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+
+	@ParameterizedTest
+	@ArgumentsSource(TryStatementProvider.class)
+	void tryStatementTests( boolean validScript,
 							String script,
 							Object expectedValue,
 							NaftahBugError expectedNaftahBugError) throws Exception {

@@ -181,8 +181,8 @@ public class AssignmentProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة[البلدة][عدد_البيوت] = 50
-										المدينة[البلدة][عدد_البيوت]
+										المدينة["البلدة"]["عدد_البيوت"] = 50
+										المدينة["البلدة"]["عدد_البيوت"]
 										""", 50, null),
 					Arguments.of(false, """
 										متغير المدينة تعيين {
@@ -193,8 +193,8 @@ public class AssignmentProvider implements ArgumentsProvider {
 											متغير عدد_البيوت تعيين 400
 										}
 										}
-										المدينة؟[ء]:عدد_البيوت = 50
-										المدينة؟[ء]:عدد_البيوت
+										المدينة؟["ء"]:عدد_البيوت = 50
+										المدينة؟["ء"]:عدد_البيوت
 										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء")));
 	}
 }

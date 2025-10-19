@@ -10,7 +10,7 @@ input_file = Path("build/reports/benchmarks/jmh-results.json")
 output_file = Path("docs-site/benchmarks.md")
 
 # Create graph output directory
-graphs_dir = Path("docs-site/static/benchmark-graphs")
+graphs_dir = Path("docs-site/assets/images/benchmark-graphs")
 graphs_dir.mkdir(parents=True, exist_ok=True)
 
 if not input_file.exists():
@@ -30,6 +30,14 @@ def fmt(val):
 
 # Markdown header
 lines = [
+	"""
+	---
+	title: About Benchmarks
+	layout: default
+	permalink: /benchmarks/
+	---
+	
+	""",
 	"# 🧪 Benchmark Results",
 	"",
 	"| Benchmark | Params | Mode | Score | Error | Units | Percentiles |",
@@ -122,8 +130,21 @@ graph_paths = sorted(graphs_dir.glob("*.png"))
 for img_path in graph_paths:
 	title = img_path.stem.split(".")[-1].replace("_", " ")  # Restore class.method from filename
 	lines.append(f"### {title}")
-	lines.append(f"![{title}](static/benchmark-graphs/{img_path.name})")
+	lines.append(f"![{title}](assets/images/benchmark-graphs/{img_path.name})")
 	lines.append("")  # newline
+
+lines.append("""
+
+---
+
+## 📁 ملفات مرتبطة
+
+* [Home - الرئيسية](./index.md)
+
+---
+</div>
+<!-- HIDDEN-SECTION-END -->
+""")
 
 # Write to file
 output_file.parent.mkdir(parents=True, exist_ok=True)

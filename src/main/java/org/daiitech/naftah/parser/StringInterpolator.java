@@ -1,8 +1,8 @@
 package org.daiitech.naftah.parser;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
-import static org.daiitech.naftah.Naftah.MULTILINE_CACHE_PROPERTY;
+import static org.daiitech.naftah.Naftah.INTERPOLATION_CACHE_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
@@ -73,8 +73,8 @@ public final class StringInterpolator {
 	private static Map<String, Matcher> MATCHER_CACHE;
 
 	static {
-		if (Boolean.getBoolean(MULTILINE_CACHE_PROPERTY)) {
-			MATCHER_CACHE = new HashMap<>();
+		if (Boolean.getBoolean(INTERPOLATION_CACHE_PROPERTY)) {
+			MATCHER_CACHE = new ConcurrentHashMap<>();
 		}
 	}
 
@@ -215,7 +215,7 @@ public final class StringInterpolator {
 	 */
 	public static String cleanInput(String input) {
 		// Replace all string delimiter characters from original parsed
-		return input.replaceAll("[\"«»]", "");
+		return input.replaceAll("['\"«»]", "");
 	}
 
 	/**

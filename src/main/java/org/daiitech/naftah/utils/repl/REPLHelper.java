@@ -3,27 +3,53 @@ package org.daiitech.naftah.utils.repl;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
+import org.daiitech.naftah.utils.arabic.ArabicHighlighter;
 import org.jline.keymap.KeyMap;
 import org.jline.reader.Binding;
 import org.jline.reader.Completer;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.MaskingCallback;
 import org.jline.reader.Reference;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.AttributedString;
 import org.jline.utils.InfoCmp;
+
+import com.vladsch.flexmark.ast.BlockQuote;
+import com.vladsch.flexmark.ast.BulletList;
+import com.vladsch.flexmark.ast.Code;
+import com.vladsch.flexmark.ast.Emphasis;
+import com.vladsch.flexmark.ast.FencedCodeBlock;
+import com.vladsch.flexmark.ast.HardLineBreak;
+import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ast.Image;
+import com.vladsch.flexmark.ast.Link;
+import com.vladsch.flexmark.ast.ListItem;
+import com.vladsch.flexmark.ast.OrderedList;
+import com.vladsch.flexmark.ast.Paragraph;
+import com.vladsch.flexmark.ast.SoftLineBreak;
+import com.vladsch.flexmark.ast.StrongEmphasis;
+import com.vladsch.flexmark.ast.Text;
+import com.vladsch.flexmark.ast.ThematicBreak;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
@@ -62,9 +88,40 @@ public final class REPLHelper {
 			RTL_MULTILINE_PROMPT_VALUE;
 
 	/**
+	 * The raw prompt message (in Arabic) used during right-to-left (RTL) pagination.
+	 * <p>
+	 * This message is displayed to the user between paginated content chunks,
+	 * instructing them to press Enter to continue or enter one of the exit commands
+	 * ('q', 'quit', or 'خروج') to terminate navigation and return to the main program.
+	 */
+	private static final String RTL_PAGINATION_PROMPT_VALUE = """
+																[اضغط Enter للمتابعة، أو أدخل 'q' أو 'quit' أو 'خروج' لإنهاء التصفح والعودة إلى البرنامج الرئيسي.]
+																""";
+	/**
+	 * The formatted RTL pagination prompt displayed to the user.
+	 * <p>
+	 * If Arabic text shaping is enabled (via {@code shouldReshape()}), this version
+	 * uses a reshaped (visually adjusted) version of {@link #RTL_PAGINATION_PROMPT_VALUE}.
+	 * Otherwise, it falls back to the original raw form.
+	 */
+	public static final String RTL_PAGINATION_PROMPT = shouldReshape() ?
+			shape(RTL_PAGINATION_PROMPT_VALUE) :
+			RTL_PAGINATION_PROMPT_VALUE;
+
+	/**
 	 * Indicates if multiline mode is active in the REPL.
 	 */
 	public static boolean MULTILINE_IS_ACTIVE = false;
+	/**
+	 * A reusable instance of {@link Parser} from the Flexmark library used for parsing
+	 * Markdown content into an abstract syntax tree (AST).
+	 * <p>
+	 * This parser can be used to convert raw Markdown strings into a structured {@link Node}
+	 * tree that can be traversed or rendered.
+	 * <p>
+	 * It is recommended to reuse this instance instead of creating new ones for performance.
+	 */
+	public static Parser MARKDOWN_PARSER = Parser.builder().build();
 
 	/**
 	 * Regex for matching variable names.
@@ -131,10 +188,18 @@ public final class REPLHelper {
 
 	/**
 	 * Creates and returns a {@link LineReader} instance configured with custom parsing,
-	 * highlighting, and autocompletion for Arabic/Naftah syntax.
+	 * syntax highlighting, and autocompletion designed for Arabic/Naftah syntax.
+	 * <p>
+	 * The returned LineReader supports:
+	 * <ul>
+	 * <li>Parsing with custom regex for variables and commands</li>
+	 * <li>Handling of escaped new lines and quoted strings</li>
+	 * <li>Syntax highlighting combining the original highlighter and Arabic/Naftah specific rules</li>
+	 * <li>Autocompletion with static and runtime completions including lexer literals</li>
+	 * </ul>
 	 *
-	 * @param terminal the terminal instance to bind the reader to
-	 * @return a configured LineReader
+	 * @param terminal the {@link Terminal} instance to which the LineReader will be bound
+	 * @return a configured {@link LineReader} supporting Arabic/Naftah input
 	 */
 	public static LineReader getLineReader(Terminal terminal) {
 		LineReader baseReader = LineReaderBuilder.builder().terminal(terminal).build();
@@ -162,6 +227,32 @@ public final class REPLHelper {
 		lineReaderBuilder.completer(stringsCompleter);
 
 		return lineReaderBuilder.build();
+	}
+
+	/**
+	 * Creates and returns a {@link LineReader} instance configured with a custom set of completions
+	 * and syntax highlighting tailored for Arabic/Naftah input.
+	 * <p>
+	 * This method allows providing a specific collection of completion strings which will be
+	 * used by the autocompleter.
+	 *
+	 * @param terminal    the {@link Terminal} instance to which the LineReader will be bound
+	 * @param completions a {@link Collection} of completion strings for the autocompleter
+	 * @return a configured {@link LineReader} with custom completions and Arabic-specific highlighting
+	 */
+	public static LineReader getLineReader(Terminal terminal, Collection<String> completions) {
+		LineReader baseReader = LineReaderBuilder.builder().terminal(terminal).build();
+
+		Highlighter originalHighlighter = baseReader.getHighlighter();
+
+		Completer completer = new StringsCompleter(completions);
+
+		return LineReaderBuilder
+				.builder()
+				.terminal(terminal)
+				.completer(completer)
+				.highlighter(new ArabicHighlighter(originalHighlighter))
+				.build();
 	}
 
 	/**
@@ -236,5 +327,204 @@ public final class REPLHelper {
 		if (reader instanceof LineReaderImpl lineReader) {
 			lineReader.redrawLine();
 		}
+	}
+
+	/**
+	 * Aligns the given attributed string to the right side of the terminal,
+	 * applying appropriate spacing and appending the prompt.
+	 *
+	 * @param str   the input string to align
+	 * @param width the total width of the terminal line
+	 * @return a right-aligned {@link AttributedString}
+	 */
+	public static AttributedString rightAlign(AttributedString str, int width) {
+		int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
+		int padding = Math.max(0, width - contentWidth);
+		AttributedString spacePad = new AttributedString(" ".repeat(padding));
+		AttributedString prompt = MULTILINE_IS_ACTIVE ?
+				new AttributedString(RTL_MULTILINE_PROMPT) :
+				new AttributedString(RTL_PROMPT);
+		return AttributedString.join(new AttributedString(""), spacePad, str, prompt);
+	}
+
+	/**
+	 * Prompts the user with a localized RTL pagination message asking whether to continue or quit.
+	 * <p>
+	 * Reads a line of input and checks if the user wants to quit based on recognized quit commands.
+	 *
+	 * @param reader the {@link LineReader} instance used to read user input
+	 * @return {@code true} if the input matches "q", "quit", or "خروج" (case-insensitive), otherwise {@code false}
+	 */
+	public static boolean shouldQuit(LineReader reader) {
+		String input = reader
+				.readLine(  null,
+							RTL_PAGINATION_PROMPT,
+							(MaskingCallback) null,
+							null);
+		return List.of("q", "quit", "خروج").contains(input.trim().toLowerCase(ARABIC));
+	}
+
+	/**
+	 * Recursively processes and converts a Markdown AST {@link Node} from the Flexmark library
+	 * into a formatted plain-text representation, preserving structure and indentation.
+	 * <p>
+	 * This method supports a wide variety of Markdown elements, including:
+	 * <ul>
+	 * <li>{@link com.vladsch.flexmark.ast.Heading}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Paragraph}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Text}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.SoftLineBreak} / {@link com.vladsch.flexmark.ast.HardLineBreak}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.ThematicBreak}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.BulletList} / {@link com.vladsch.flexmark.ast.OrderedList}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.ListItem}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Emphasis} / {@link com.vladsch.flexmark.ast.StrongEmphasis}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Code} / {@link com.vladsch.flexmark.ast.FencedCodeBlock}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Link} / {@link com.vladsch.flexmark.ast.Image}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.BlockQuote}</li>
+	 * </ul>
+	 * <p>
+	 * Any unknown or unsupported node types are recursively processed if they contain children.
+	 *
+	 * @param node   the root Markdown {@link Node} to convert
+	 * @param indent the indentation level to apply (used for nested structures)
+	 * @return a formatted string representation of the node and its children
+	 */
+	public static String getMarkdownNodeAsString(Node node, int indent) {
+		StringBuilder result = new StringBuilder();
+		String indentStr = "  ".repeat(indent);
+
+		if (node instanceof Heading heading) {
+			// Append heading text with its level indicated by hashes #
+			int level = heading.getLevel();
+			String prefix = "#".repeat(level) + " ";
+			String text = heading.getText().toString();
+			result.append(prefix).append(text);
+		}
+		else if (node instanceof Paragraph) {
+			// Append paragraphs as plain text with indentation
+			StringBuilder paragraphText = new StringBuilder();
+			for (Node child : node.getChildren()) {
+				paragraphText.append(child.getChars());
+			}
+			result.append(indentStr).append(paragraphText).append("\n");
+		}
+		else if (node instanceof Text textNode) {
+			result.append(indentStr).append(textNode.getChars());
+		}
+		else if (node instanceof SoftLineBreak || node instanceof HardLineBreak) {
+			result.append("\n");
+		}
+		else if (node instanceof ThematicBreak) {
+			result.append("\n---------------------------------------------------\n");
+		}
+		else if (node instanceof BulletList) {
+			// For bullet lists, append each item prefixed with a bullet
+			for (Node child : node.getChildren()) {
+				result
+						.append(indentStr)
+						.append("• ")
+						.append(getMarkdownNodeAsString(child, indent + 1))
+						.append("\n");
+			}
+		}
+		else if (node instanceof OrderedList orderedList) {
+			int startNumber = orderedList.getStartNumber();
+			int index = 0;
+			for (Node child : node.getChildren()) {
+				result
+						.append(indentStr)
+						.append(startNumber + index)
+						.append(". ")
+						.append(getMarkdownNodeAsString(child, indent + 1))
+						.append("\n");
+				index++;
+			}
+		}
+		else if (node instanceof ListItem) {
+			// List items: just append their children
+			for (Node child : node.getChildren()) {
+				result.append(getMarkdownNodeAsString(child, indent));
+			}
+		}
+		else if (node instanceof Emphasis) {
+			// Emphasis: append children wrapped with * *
+			result.append(indentStr).append("*");
+			for (Node child : node.getChildren()) {
+				result.append(getMarkdownNodeAsString(child, 0));
+			}
+			result.append("*");
+		}
+		else if (node instanceof StrongEmphasis) {
+			// Strong emphasis: append children wrapped with ** **
+			result.append(indentStr).append("**");
+			for (Node child : node.getChildren()) {
+				result.append(getMarkdownNodeAsString(child, 0));
+			}
+			result.append("**");
+		}
+		else if (node instanceof Code code) {
+			// Inline code wrapped with backticks
+			result.append(indentStr).append("`").append(code.getText().toString()).append("`");
+		}
+		else if (node instanceof FencedCodeBlock codeBlock) {
+			// Code block with language info if present
+			String info = codeBlock.getInfo().toString();
+			result
+					.append(indentStr)
+					.append("```")
+					.append(info)
+					.append(codeBlock.getContentChars())
+					.append(indentStr)
+					.append("```");
+		}
+		else if (node instanceof Link link) {
+			// Append link text and URL
+			String url = link.getUrl().toString();
+			result.append(indentStr).append("[");
+			for (Node child : link.getChildren()) {
+				result.append(getMarkdownNodeAsString(child, 0));
+			}
+			result.append("](").append(url).append(")");
+		}
+		else if (node instanceof Image image) {
+			// Append image alt text and URL
+			String url = image.getUrl().toString();
+			result.append(indentStr).append("![");
+			for (Node child : image.getChildren()) {
+				result.append(getMarkdownNodeAsString(child, 0));
+			}
+			result.append("](").append(url).append(")");
+		}
+		else if (node instanceof BlockQuote) {
+			result.append(indentStr).append("> ");
+			for (Node child : node.getChildren()) {
+				result.append(getMarkdownNodeAsString(child, indent + 1));
+			}
+			result.append("\n");
+		}
+		else {
+			// Default fallback: recursively append children
+			if (node.hasChildren()) {
+				for (Node child : node.getChildren()) {
+					result.append(getMarkdownNodeAsString(child, indent));
+				}
+			}
+		}
+		return result.toString();
+	}
+
+	/**
+	 * Parses a Markdown string using the {@link #MARKDOWN_PARSER} and converts
+	 * it into a plain-text formatted representation suitable for terminal output.
+	 * <p>
+	 * This is typically used to display user guides, help documentation,
+	 * or any content written in Markdown in a readable form within a terminal interface.
+	 *
+	 * @param topicContent the raw Markdown input as a {@link String}
+	 * @return the formatted plain-text representation of the Markdown content
+	 */
+	public static String getMarkdownAsString(String topicContent) {
+		Node document = MARKDOWN_PARSER.parse(topicContent);
+		return getMarkdownNodeAsString(document, 0);
 	}
 }

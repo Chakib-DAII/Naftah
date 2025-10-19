@@ -14,6 +14,7 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.intToBoolean;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.not;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
+import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
@@ -328,7 +329,7 @@ public enum UnaryOperation implements Operation {
 	 */
 	public static NaftahBugError newNaftahBugError(Operation unaryOperation, Object o) {
 		return new NaftahBugError("العملية '%s' غير مدعومة للنوع: '%s'"
-				.formatted( unaryOperation,
+				.formatted( getFormattedTokenSymbols(unaryOperation.toString(), false),
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(o.getClass().getName()) :
 									getNaftahType(  PARSER_VOCABULARY,
@@ -465,6 +466,11 @@ public enum UnaryOperation implements Operation {
 	 */
 	@Override
 	public String toString() {
+		if (op.contains(INCREMENT) || op.contains(DECREMENT)) {
+			return op
+					.replace(PRE, "")
+					.replace(POST, "");
+		}
 		return op;
 	}
 }

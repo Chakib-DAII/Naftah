@@ -1,5 +1,7 @@
 ---
 title: About Naftah
+layout: default
+permalink: /about
 ---
 
 # About نفطه
@@ -17,3 +19,5 @@ natural and expressive for Arabic-speaking developers.
 - Write code entirely in Arabic
 - Support natural language-inspired syntax
 - Integrate seamlessly with the JVM
+
+---

@@ -49,6 +49,7 @@ dependencies {
 	implementation 'org.jline:jline:3.23.0'
 	implementation 'org.jline:jline-terminal-jansi:3.28.0'
 	implementation 'org.openjdk.jmh:jmh-core:1.37'
+	implementation 'com.vladsch.flexmark:flexmark:0.64.0'
 	annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 }
 
@@ -92,6 +93,12 @@ idea {
 	}
 }
 
+tasks.register('copyJavadoc', Copy) {
+	dependsOn javadoc
+	from javadoc.destinationDir
+	into "$rootDir/docs-site/javadoc"
+}
+
 tasks.register('extractLexerLiterals') {
 	description = 'Extracts all literal strings from lexer grammar rules.'
 
@@ -106,6 +113,7 @@ tasks.register('extractLexerLiterals') {
 		def literals = []
 		// tokens list processing
 		def tokensPattern = ~/^(\w+)\s*:\s*((?:'[^']+'\s*\|\s*)*'[^']+')\s*;$/
+		def tokensAndPlaceholderPattern = ~/^(\w+)\s*:\s*((?:('[^']+'|.+)\s*\|\s*)*('[^']+'|.+))\s*;$/
 		def skipPatterns = [
 				~/^\s*fragment\s*.*/,
 				~/.*\s*skip\s*.*/,
@@ -122,6 +130,8 @@ tasks.register('extractLexerLiterals') {
 
 		def literalPatterns = [
 				~/^\s*NUMBER\s*:\s*.*/,
+				~/^\s*BASE_DIGITS\s*:\s*.*/,
+				~/^\s*BASE_RADIX\s*:\s*.*/,
 				~/^\s*CHARACTER\s*:\s*.*/,
 				~/^\s*STRING\s*:\s*.*/,
 				~/^\s*ID\s*:\s*.*/,
@@ -130,6 +140,8 @@ tasks.register('extractLexerLiterals') {
 
 		def literalTranslations = [
 				"NUMBER"     : "رقم",
+				"BASE_DIGITS": "رقم_الأساس",
+				"BASE_RADIX" : "نظام_العد",
 				"CHARACTER"  : "حرف",
 				"STRING"     : "سلسلة",
 				"ID"         : "معرف",
@@ -181,19 +193,33 @@ tasks.register('extractLexerLiterals') {
 						}
 						tokens.setProperty(token, symbols.join(", "))
 					} else {
-						def placeholderPattern = /^(\w+)\s*:\s*(.+);$/
-						def placeholderMatcher = line =~ placeholderPattern
-						if (placeholderMatcher.matches()) {
-							def token = placeholderMatcher[0][1]
-							def symbolsStr = placeholderMatcher[0][2].trim()
+						def tokensAndPlaceholderMatcher = line =~ tokensAndPlaceholderPattern
+						if (tokensAndPlaceholderMatcher.matches()) {
+							def token = tokensAndPlaceholderMatcher[0][1]
+							def tokensGroup = tokensAndPlaceholderMatcher[0][2]
 
-							// Split tokens by whitespace (since no pipes here)
-							def symbolsList = symbolsStr.split(/\s+/).collect { "PLACEHOLDER(${it.trim()})" }
+							// Extract all quoted tokens
+							def symbols = []
 
-							// Remove single quotes if any (none here but safe)
-							symbolsList = symbolsList.collect { it.replaceAll(/^'(.*)'$/, '$1') }
+							(tokensGroup =~ literalsPattern).each { match ->
+								symbols << match[0]
+							}
 
-							tokens.setProperty(token, symbolsList.join(" "))
+							def placeholderParts = tokensGroup.split(/\s*\|\s*/).findAll { part ->
+								!(part =~ literalsPattern)
+							}
+
+							placeholderParts.each { placeholderPart ->
+								// Split tokens by whitespace (since no pipes here)
+								def symbolsList = placeholderPart.split(/\s+/).collect { "PLACEHOLDER(${it.trim()})" }
+
+								// Remove single quotes if any (none here but safe)
+								symbolsList = symbolsList.collect { it.replaceAll(/^'(.*)'$/, '$1') }
+
+								symbols << symbolsList.join(" ")
+							}
+
+							tokens.setProperty(token, symbols.join(", "))
 						}
 					}
 				}
@@ -448,6 +474,10 @@ tasks.register('baseDistZip', Zip) {
 
 	from('learn-by-example') {
 		into "${zipBaseFolder}/learn-by-example"
+	}
+
+	from('docs-site/_includes/language') {
+		into "${zipBaseFolder}/manual"
 	}
 
 	from("$buildDir/libs") {

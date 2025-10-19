@@ -34,6 +34,7 @@ statement: block END? #blockStatement
          | whileStatement END? #whileStatementStatement
          | repeatStatement END? #repeatStatementStatement
          | caseStatement END? #caseStatementStatement
+         | tryStatement END? #tryStatementStatement
          | functionDeclaration END? #functionDeclarationStatement
          | functionCall END? #functionCallStatement
          | objectAccess END? #objectAccessStatement
@@ -120,6 +121,28 @@ caseStatement:
 // A list of labels for a 'case' option (e.g., 1, 2, 3)
 caseLabelList: expression ((COMMA | SEMI) expression)*;                // One or more comma or semicolon separated expressions
 
+tryStatement: TRY LPAREN expression RPAREN LBRACE tryCases RBRACE #tryStatementWithTryCases
+  | TRY LPAREN expression RPAREN LBRACE optionCases RBRACE #tryStatementWithOptionCases
+  ;
+
+tryCases
+  : okCase errorCase?
+  | errorCase okCase?
+  ;
+
+okCase: OK LPAREN ID RPAREN (DO | ARROW) (block | expression);
+
+errorCase: ERROR LPAREN ID RPAREN (DO | ARROW) (block | expression);
+
+optionCases
+  : someCase noneCase?
+  | noneCase someCase?
+  ;
+
+someCase: SOME LPAREN ID RPAREN (DO | ARROW) (block | expression);
+
+noneCase: NONE (DO | ARROW) (block | expression);
+
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;
 
@@ -178,8 +201,8 @@ objectAccess: qualifiedName
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
           | LPAREN elements? RPAREN #tupleValue
-          | LBRACE elements? RBRACE #setValue
-          | LBRACE keyValuePairs? RBRACE #mapValue;
+          | ORDERED? LBRACE elements? RBRACE #setValue
+          | ORDERED? LBRACE keyValuePairs? RBRACE #mapValue;
 
 // single value elements
 elements: expression (COMMA | SEMI) #singleElement
@@ -229,11 +252,22 @@ qualifiedName: ID (QUESTION? COLON ID)+;
 
 qualifiedCall: qualifiedName COLON COLON ID;
 
-qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK)))+;
+qualifiedObjectAccess: ID (QUESTION? propertyAccess)+;
 
 //qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK) | collectionAccess))+;
 
-collectionAccess: ID (QUESTION? LBRACK NUMBER RBRACK)+;
+collectionAccess: ID (QUESTION? LBRACK collectionAccessIndex RBRACK)+;
+
+propertyAccess
+    : COLON ID
+    | LBRACK CHARACTER RBRACK
+    | LBRACK STRING RBRACK
+    ;
+
+collectionAccessIndex
+    : NUMBER
+    | ID
+    ;
 
 // A label is an identifier followed by a colon for loops
 label: ID COLON;
