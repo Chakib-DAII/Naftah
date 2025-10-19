@@ -6,8 +6,13 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Objects;
 
+import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
  * Represents a Java method that can be invoked dynamically.
@@ -174,12 +179,116 @@ public class JvmFunction implements Serializable {
 	}
 
 	/**
-	 * Returns a string representation of this {@code JvmFunction}.
+	 * Returns a concise string representation of this {@code JvmFunction},
+	 * formatted in Arabic as {@code <دالة qualifiedCall>}.
+	 * <p>
+	 * This is intended for short, human-readable descriptions, using the Arabic label "دالة"
+	 * (which means "function" or "method").
 	 *
-	 * @return a string in the format &lt;دالة qualifiedCall&gt;
+	 * @return a string in the format {@code <دالة qualifiedCall>}
 	 */
 	@Override
 	public String toString() {
 		return "<%s %s>".formatted("دالة", this.qualifiedCall);
+	}
+
+	/**
+	 * Returns a detailed, Arabic-formatted string representation of this {@code JvmFunction},
+	 * including metadata about the method, such as return type, parameters, modifiers,
+	 * and annotations.
+	 * <p>
+	 * The output is structured in a human-readable Arabic format and includes
+	 * phonetic transliterations (into Arabic script) for class names, return types,
+	 * modifiers, and annotations using {@link ClassUtils#getQualifiedName(String)} or
+	 * {@link ArabicUtils#transliterateToArabicScriptDefaultCustom(String...)}.
+	 * <p>
+	 * The following information is included:
+	 * <ul>
+	 * <li><strong>Qualified method name</strong> — including both the fully qualified and transliterated form</li>
+	 * <li><strong>Return type</strong> — full Java type name with its Arabic transliteration</li>
+	 * <li><strong>Parameters</strong> — each parameter type with its fully qualified name and transliteration</li>
+	 * <li><strong>Modifiers</strong> — Java keywords (e.g., {@code public static}) with their Arabic
+	 * transliteration</li>
+	 * <li><strong>Annotations</strong> — fully qualified annotation names with transliterations</li>
+	 * </ul>
+	 *
+	 * <p><strong>Example output:</strong>
+	 * <pre>
+	 * تفاصيل الدالة:
+	 * - الاسم المؤهل: com.example.MyClass::greet - كوم:إِكْزامْبِل:ماي_كْلاس::غْرِيتْ
+	 * - نوع الإرجاع: java.lang.String - جافا:لانغ:سترينج
+	 * - المعاملات:
+	 * - java.lang.String - جافا:لانغ:سترينج
+	 * - المُعدّلات: public static - بَبْلِكْ سْتَاتِكْ
+	 * - التعليقات التوضيحية:
+	 * - @java.lang.Deprecated - جافا:لانغ:دِبْرِكَيْتِدْ
+	 * </pre>
+	 *
+	 * @return a formatted, multi-line Arabic string describing the method's structure and metadata
+	 */
+	public String toDetailedString() {
+		StringBuilder detailedString = new StringBuilder();
+
+		detailedString
+				.append("""
+							تفاصيل الدالة:
+							\t- الاسم المؤهل: %s::%s - %s
+						"""
+						.formatted( clazz.getName(),
+									methodName,
+									ClassUtils.getQualifiedCall(clazz.getName(), methodName)));
+
+		if (Objects.nonNull(method)) {
+			detailedString
+					.append("\t- نوع الإرجاع: ")
+					.append(method.getReturnType().getName())
+					.append(" - ")
+					.append(getQualifiedName(method.getReturnType().getName()))
+					.append("\n");
+
+			Class<?>[] paramTypes = method.getParameterTypes();
+			detailedString.append("\t- المعاملات:\n");
+			if (paramTypes.length == 0) {
+				detailedString.append("\t\t- لا يوجد\n");
+			}
+			else {
+				for (Class<?> param : paramTypes) {
+					detailedString
+							.append("\t\t- ")
+							.append(param.getName())
+							.append(" - ")
+							.append(getQualifiedName(param.getName()))
+							.append("\n");
+				}
+			}
+
+			var modifiers = Modifier.toString(method.getModifiers());
+			detailedString
+					.append("\t- المُعدّلات: ")
+					.append(modifiers)
+					.append(" - ")
+					.append(String
+							.join(  " ",
+									ArabicUtils.transliterateToArabicScriptDefaultCustom(modifiers.split("\\s"))))
+					.append("\n");
+
+			var annotations = method.getDeclaredAnnotations();
+			detailedString.append("\t- التعليقات التوضيحية:\n");
+			if (annotations.length == 0) {
+				detailedString.append("\t\t- لا يوجد\n");
+			}
+			else {
+				for (var annotation : annotations) {
+					detailedString
+							.append("\t\t- @")
+							.append(annotation.annotationType().getName())
+							.append(" - ")
+							.append(getQualifiedName(annotation.annotationType().getName()))
+							.append("\n");
+				}
+			}
+		}
+
+		return detailedString.toString();
 	}
 }
