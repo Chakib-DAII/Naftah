@@ -260,7 +260,8 @@ collectionAccess: ID (QUESTION? LBRACK collectionAccessIndex RBRACK)+;
 
 propertyAccess
     : COLON ID
-    | LBRACK (DoubleQuotationMark | QuotationMark) ID (DoubleQuotationMark | QuotationMark) RBRACK
+    | LBRACK CHARACTER RBRACK
+    | LBRACK STRING RBRACK
     ;
 
 collectionAccessIndex
