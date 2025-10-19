@@ -350,8 +350,8 @@ public final class Naftah {
 	private boolean run(NaftahCommand naftahCommand) {
 		try {
 			naftahCommand
-					.run(this,
-						 !(naftahCommand instanceof NaftahCommand.InitCommand || naftahCommand instanceof NaftahCommand.ManualCommand));
+					.run(   this,
+							!(naftahCommand instanceof NaftahCommand.InitCommand || naftahCommand instanceof NaftahCommand.ManualCommand));
 			return true;
 		}
 		catch (ParseCancellationException e) {
@@ -383,10 +383,10 @@ public final class Naftah {
 								Vendor (المُصنّع): %s
 								OS (نظام التشغيل): %s
 								"""
-										.formatted(NaftahSystem.getVersion(),
-												   System.getProperty(JAVA_VERSION_PROPERTY),
-												   System.getProperty(JAVA_VM_VENDOR_PROPERTY),
-												   System.getProperty(OS_NAME_PROPERTY))};
+					.formatted( NaftahSystem.getVersion(),
+								System.getProperty(JAVA_VERSION_PROPERTY),
+								System.getProperty(JAVA_VM_VENDOR_PROPERTY),
+								System.getProperty(OS_NAME_PROPERTY))};
 		}
 	}
 
@@ -395,11 +395,11 @@ public final class Naftah {
 	 * Supports subcommands: run, init, and shell.
 	 * TODO: add support for ManCammand (Manual), to list java apis in arabic (transliterated)
 	 */
-	@Command(name = NaftahCommand.NAME,
-			 customSynopsis = "naftah [run/shell/init] [options] [filename] [args]",
-			 description = {"The Naftah command line processor.", "معالج الأوامر الخاص بـلغة البرمجة نفطة"},
-			 sortOptions = false,
-			 versionProvider = VersionProvider.class)
+	@Command(   name = NaftahCommand.NAME,
+				customSynopsis = "naftah [run/shell/init] [options] [filename] [args]",
+				description = {"The Naftah command line processor.", "معالج الأوامر الخاص بـلغة البرمجة نفطة"},
+				sortOptions = false,
+				versionProvider = VersionProvider.class)
 	private static class NaftahCommand {
 		/**
 		 * The main command name.
@@ -418,25 +418,25 @@ public final class Naftah {
 				names = "--enable-cache",
 				split = ",",
 				description = {
-						"""
-						Enable specific caches (disabled by default). M for multiline and I for string interpolation.
-						""",
-						"""
-						تمكين أنواع محددة من الكاش (وهي معطلة بشكل افتراضي). M للنصوص متعددة الأسطر و I للاستيفاء النصي.
-						"""
+								"""
+								Enable specific caches (disabled by default). M for multiline and I for string interpolation.
+								""",
+								"""
+								تمكين أنواع محددة من الكاش (وهي معطلة بشكل افتراضي). M للنصوص متعددة الأسطر و I للاستيفاء النصي.
+								"""
 				}
 		)
 		List<String> enabledCaches = new ArrayList<>();
 
 		@Option(names = {"-cp", "-classpath", "--classpath"},
 				paramLabel = "<path>",
-				description = {"Specify where to find the class files - must be first argument",
-							   "حدّد مكان ملفات الفئات (class files) — يجب أن يكون هو الوسيط الأول"})
+				description = { "Specify where to find the class files - must be first argument",
+								"حدّد مكان ملفات الفئات (class files) — يجب أن يكون هو الوسيط الأول"})
 		private String classpath;
 
 		@Option(names = {"-d", "--debug"},
-				description = {"Debug mode will print out full stack traces",
-							   "في وضع التصحيح، سيتم طباعة تتبع الأخطاء الكامل."})
+				description = { "Debug mode will print out full stack traces",
+								"في وضع التصحيح، سيتم طباعة تتبع الأخطاء الكامل."})
 		private boolean debug;
 
 		@Option(names = {"-c", "--encoding"},
@@ -446,14 +446,14 @@ public final class Naftah {
 
 		@Option(names = {"-scp", "--scan-classpath"},
 				paramLabel = "<charset>",
-				description = {"Specify if the classpath classes should be reused as nafta types",
-							   "حدد ما إذا كان يجب إعادة استخدام فئات المسار (classpath) كأنواع في نفطح."})
+				description = { "Specify if the classpath classes should be reused as nafta types",
+								"حدد ما إذا كان يجب إعادة استخدام فئات المسار (classpath) كأنواع في نفطح."})
 		private boolean scanClasspath;
 
 		@Option(names = {"-f", "--force-scan-classpath"},
 				paramLabel = "<charset>",
-				description = {"Force scanning the classpath when (-scp, --scan-classpath) is provided.",
-							   "فرض فحص مسار الأصناف (classpath) عند توفير الخيار (-scp, --scan-classpath)."})
+				description = { "Force scanning the classpath when (-scp, --scan-classpath) is provided.",
+								"فرض فحص مسار الأصناف (classpath) عند توفير الخيار (-scp, --scan-classpath)."})
 		private boolean forceScanClasspath;
 
 		@Option(names = {"-e"},
@@ -472,21 +472,21 @@ public final class Naftah {
 		private boolean versionRequested;
 
 		@Option(names = {"-vec", "--vector"},
-				description = {"Enable Vector API optimizations for performance",
-							   "تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"})
+				description = { "Enable Vector API optimizations for performance",
+								"تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"})
 		private boolean useVectorApi;
 
 		@Option(names = {"-ar_f", "--arabic_formatting"},
 				description = {
-						"Use Arabic numerals and formatting symbols (e.g., decimal separator, digit shapes).",
-						"استخدام الأرقام العربية ورموز التنسيق (مثل الفاصلة العشرية وأشكال الأرقام)."
+								"Use Arabic numerals and formatting symbols (e.g., decimal separator, digit shapes).",
+								"استخدام الأرقام العربية ورموز التنسيق (مثل الفاصلة العشرية وأشكال الأرقام)."
 				})
 		private boolean useArabicFormatter;
 
 		@Option(names = {"-ar_ind", "--arabic_indic"},
 				description = {
-						"Display numbers using Arabic-Indic digits (٠١٢٣٤٥٦٧٨٩)",
-						"عرض الأرقام باستخدام الأرقام الهندية-العربية (٠١٢٣٤٥٦٧٨٩)"
+								"Display numbers using Arabic-Indic digits (٠١٢٣٤٥٦٧٨٩)",
+								"عرض الأرقام باستخدام الأرقام الهندية-العربية (٠١٢٣٤٥٦٧٨٩)"
 				})
 		private boolean useArabicIndic;
 
@@ -518,8 +518,8 @@ public final class Naftah {
 			if (Objects.nonNull(matchedCommand.classpath)) {
 				final String actualClasspath = System.getProperty(CLASS_PATH_PROPERTY);
 				System
-						.setProperty(CLASS_PATH_PROPERTY,
-									 actualClasspath + File.pathSeparator + matchedCommand.classpath);
+						.setProperty(   CLASS_PATH_PROPERTY,
+										actualClasspath + File.pathSeparator + matchedCommand.classpath);
 			}
 
 			// append system properties
@@ -550,8 +550,8 @@ public final class Naftah {
 				main.isScriptFile = matchedCommand.script == null;
 				if (main.isScriptFile) {
 					if (matchedCommand.arguments.isEmpty()) {
-						throw new ParameterException(parseResult.commandSpec().commandLine(),
-													 "خطأ: لم يتم تقديم الخيار -e ولا اسم الملف.");
+						throw new ParameterException(   parseResult.commandSpec().commandLine(),
+														"خطأ: لم يتم تقديم الخيار -e ولا اسم الملف.");
 					}
 					main.script = matchedCommand.arguments.remove(0);
 				}
@@ -574,11 +574,11 @@ public final class Naftah {
 
 			if (!matchedCommand.enabledCaches.isEmpty()) {
 				System
-						.setProperty(MULTILINE_CACHE_PROPERTY,
-									 Boolean.toString(matchedCommand.enabledCaches.contains("M")));
+						.setProperty(   MULTILINE_CACHE_PROPERTY,
+										Boolean.toString(matchedCommand.enabledCaches.contains("M")));
 				System
-						.setProperty(INTERPOLATION_CACHE_PROPERTY,
-									 Boolean.toString(matchedCommand.enabledCaches.contains("I")));
+						.setProperty(   INTERPOLATION_CACHE_PROPERTY,
+										Boolean.toString(matchedCommand.enabledCaches.contains("I")));
 			}
 
 			main.args = matchedCommand.arguments;
@@ -589,12 +589,12 @@ public final class Naftah {
 		/**
 		 * The 'run' subcommand that interprets a Naftah script.
 		 */
-		@Command(name = RunCommand.NAME,
-				 customSynopsis = "naftah run [options] [filename] [args]",
-				 description = {
-						 "The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
-						 "أمر تشغيل نفطة. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."},
-				 sortOptions = false)
+		@Command(   name = RunCommand.NAME,
+					customSynopsis = "naftah run [options] [filename] [args]",
+					description = {
+									"The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
+									"أمر تشغيل نفطة. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."},
+					sortOptions = false)
 		private static final class RunCommand extends NaftahCommand {
 			private static final String NAME = "run";
 
@@ -624,13 +624,13 @@ public final class Naftah {
 		/**
 		 * The 'init' subcommand that prepares Java classpath classes for Naftah reuse.
 		 */
-		@Command(name = InitCommand.NAME,
-				 customSynopsis = "naftah init [options] [filename] [args]",
-				 description = {"""
-								The Naftah init command. it prepares the classpath classes (java classpath) and process them to reuse inside naftah script.""",
-								"""
-								أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة."""},
-				 sortOptions = false)
+		@Command(   name = InitCommand.NAME,
+					customSynopsis = "naftah init [options] [filename] [args]",
+					description = { """
+									The Naftah init command. it prepares the classpath classes (java classpath) and process them to reuse inside naftah script.""",
+									"""
+									أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة."""},
+					sortOptions = false)
 		private static final class InitCommand extends NaftahCommand {
 			private static final String NAME = "init";
 
@@ -649,15 +649,15 @@ public final class Naftah {
 		/**
 		 * The 'man' subcommand that loads and displays documentation topics related to Naftah usage.
 		 */
-		@Command(name = ManualCommand.NAME,
-				 customSynopsis = "naftah man [options] [filename] [args]",
-				 description = {
-						 """
-						 The Naftah manual command. It loads and displays documentation topics related to Naftah usage.""",
-						 """
-						 أمر 'man' في نفطة. يعرض صفحات المساعدة والمواضيع الخاصة باستخدام نفطة."""
-				 },
-				 sortOptions = false)
+		@Command(   name = ManualCommand.NAME,
+					customSynopsis = "naftah man [options] [filename] [args]",
+					description = {
+									"""
+									The Naftah manual command. It loads and displays documentation topics related to Naftah usage.""",
+									"""
+									أمر 'man' في نفطة. يعرض صفحات المساعدة والمواضيع الخاصة باستخدام نفطة."""
+					},
+					sortOptions = false)
 		private static final class ManualCommand extends NaftahCommand {
 			private static final String NAME = "man";
 			private static final int PAGE_SIZE = 5;
@@ -722,8 +722,8 @@ public final class Naftah {
 									if ((lineParts = line.split(QUALIFIED_CALL_SEPARATOR)).length == 2) {
 										arabicQualifiedNameOrBuiltinFunction = ClassUtils
 												.getQualifiedCall(ClassUtils
-																		  .getQualifiedName(
-																				  lineParts[0]), lineParts[1]);
+														.getQualifiedName(
+																			lineParts[0]), lineParts[1]);
 
 									}
 									else if (lineParts.length == 1) {
@@ -733,8 +733,8 @@ public final class Naftah {
 								else {
 									var builtinFunctionOpt = Optional
 											.ofNullable(DefaultContext
-																.getBuiltinFunctions()
-																.get(line));
+													.getBuiltinFunctions()
+													.get(line));
 
 									if (builtinFunctionOpt.isPresent()) {
 										var builtinFunctions = builtinFunctionOpt.get();
@@ -745,18 +745,18 @@ public final class Naftah {
 										}
 										else {
 											arabicQualifiedNameOrBuiltinFunction = IntStream
-													.range(0,
-														   builtinFunctions.size())
+													.range( 0,
+															builtinFunctions.size())
 													.mapToObj(index -> """
-																	   %s
-																	   ----------------------------------------------
-																	   %s
-																	   """
+																		%s
+																		----------------------------------------------
+																		%s
+																		"""
 															.formatted(
-																	index + 1,
-																	builtinFunctions
-																			.get(index)
-																			.toDetailedString()))
+																		index + 1,
+																		builtinFunctions
+																				.get(index)
+																				.toDetailedString()))
 													.collect(Collectors.joining());
 										}
 									}
@@ -794,7 +794,7 @@ public final class Naftah {
 			 *
 			 * @param line the input command line to check
 			 * @return {@code true} if the input matches a known command and the corresponding
-			 * action has been executed; {@code false} otherwise
+			 *         action has been executed; {@code false} otherwise
 			 * @throws UserInterruptException if the input command is an exit command ("exit" or "خروج"),
 			 *                                which interrupts the user session and exits the program
 			 */
@@ -840,10 +840,10 @@ public final class Naftah {
 				else if (List
 						.of("instantiable-classes", "الأصناف-القابلة-للصنع", "الأصناف-القابلة-للتهيئة")
 						.contains(command)) {
-					matched = true;
-					padText("الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية:", true);
-					printPaginated(instantiableClasses);
-				}
+							matched = true;
+							padText("الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية:", true);
+							printPaginated(instantiableClasses);
+						}
 				else if (List.of("builtin-functions", "الدوال-المدمجة").contains(command)) {
 					matched = true;
 					padText("الدوال المدمجة في نظام نفطة:", true);
@@ -886,7 +886,7 @@ public final class Naftah {
 			 * and ensures proper shutdown of the executor.
 			 *
 			 * @implNote This method does not block for task completion or handle exceptions
-			 * from submitted tasks. It's designed for background population of in-memory lists.
+			 *           from submitted tasks. It's designed for background population of in-memory lists.
 			 */
 			private void loadClassesAndFunctions() {
 				ExecutorService executor = Executors.newFixedThreadPool(5);
@@ -895,14 +895,14 @@ public final class Naftah {
 					Runnable classesLoaderTask = () -> loadDetailedClasses(DefaultContext.getClasses(), classes);
 					executor.submit(classesLoaderTask);
 
-					Runnable accessibleClassesLoaderTask = () -> loadDetailedClasses(DefaultContext
-																							 .getAccessibleClasses(),
-																					 accessibleClasses);
+					Runnable accessibleClassesLoaderTask = () -> loadDetailedClasses(   DefaultContext
+																								.getAccessibleClasses(),
+																						accessibleClasses);
 					executor.submit(accessibleClassesLoaderTask);
 
-					Runnable instantiableClassesLoaderTask = () -> loadDetailedClasses(DefaultContext
-																							   .getInstantiableClasses(),
-																					   instantiableClasses);
+					Runnable instantiableClassesLoaderTask = () -> loadDetailedClasses( DefaultContext
+																								.getInstantiableClasses(),
+																						instantiableClasses);
 					executor.submit(instantiableClassesLoaderTask);
 
 					Runnable builtinFunctionsLoaderTask = () -> DefaultContext
@@ -915,32 +915,32 @@ public final class Naftah {
 													%s
 													---------------------------------------------------
 													"""
-									.formatted(builtinFunction.getKey(),
+									.formatted( builtinFunction.getKey(),
 
-											   builtinFunction
-													   .getValue()
-													   .size() == 1 ?
-											   builtinFunction
-													   .getValue()
-													   .get(0)
-													   .toDetailedString() :
-											   IntStream
-													   .range(0,
-															  builtinFunction
-																	  .getValue()
-																	  .size())
-													   .mapToObj(index -> """
-																		  %s
-																		  ----------------------------------------------
-																		  %s
-																		  """
-															   .formatted(
-																	   index + 1,
-																	   builtinFunction
-																			   .getValue()
-																			   .get(index)
-																			   .toDetailedString()))
-													   .collect(Collectors.joining())
+												builtinFunction
+														.getValue()
+														.size() == 1 ?
+																builtinFunction
+																		.getValue()
+																		.get(0)
+																		.toDetailedString() :
+																IntStream
+																		.range( 0,
+																				builtinFunction
+																						.getValue()
+																						.size())
+																		.mapToObj(index -> """
+																							%s
+																							----------------------------------------------
+																							%s
+																							"""
+																				.formatted(
+																							index + 1,
+																							builtinFunction
+																									.getValue()
+																									.get(index)
+																									.toDetailedString()))
+																		.collect(Collectors.joining())
 									)
 							)
 							.filter(Objects::nonNull)
@@ -957,31 +957,31 @@ public final class Naftah {
 												%s
 												---------------------------------------------------
 												"""
-									.formatted(JvmFunction.getKey(),
-											   JvmFunction
-													   .getValue()
-													   .size() == 1 ?
-											   JvmFunction
-													   .getValue()
-													   .get(0)
-													   .toDetailedString() :
-											   IntStream
-													   .range(0,
-															  JvmFunction
-																	  .getValue()
-																	  .size())
-													   .mapToObj(index -> """
-																		  %s
-																		  ----------------------------------------------
-																		  %s
-																		  """
-															   .formatted(
-																	   index + 1,
-																	   JvmFunction
-																			   .getValue()
-																			   .get(index)
-																			   .toDetailedString()))
-													   .collect(Collectors.joining())
+									.formatted( JvmFunction.getKey(),
+												JvmFunction
+														.getValue()
+														.size() == 1 ?
+																JvmFunction
+																		.getValue()
+																		.get(0)
+																		.toDetailedString() :
+																IntStream
+																		.range( 0,
+																				JvmFunction
+																						.getValue()
+																						.size())
+																		.mapToObj(index -> """
+																							%s
+																							----------------------------------------------
+																							%s
+																							"""
+																				.formatted(
+																							index + 1,
+																							JvmFunction
+																									.getValue()
+																									.get(index)
+																									.toDetailedString()))
+																		.collect(Collectors.joining())
 									)
 							)
 							.filter(Objects::nonNull)
@@ -1073,24 +1073,24 @@ public final class Naftah {
 			 * The resulting map allows easy lookup of topics by normalized key.
 			 *
 			 * @return a map of topic keys (e.g., {@code getting-started}) to {@link Path} objects
-			 * representing their files
+			 *         representing their files
 			 * @throws IOException if an I/O error occurs while accessing the {@code manualDir}
 			 */
 			private Map<String, Path> loadAvailableTopics() throws IOException {
 				try (var list = Files.list(manualDir)) {
 					return list
 							.map(path -> {
-									 var topicKey = Arrays
-											 .stream(path
-															 .getFileName()
-															 .toString()
-															 .replaceFirst("[.][^.]+$", "")
-															 .split("_"))
-											 .skip(1)
-											 .collect(Collectors.joining("-"));
+								var topicKey = Arrays
+										.stream(path
+												.getFileName()
+												.toString()
+												.replaceFirst("[.][^.]+$", "")
+												.split("_"))
+										.skip(1)
+										.collect(Collectors.joining("-"));
 
-									 return Map.entry(topicKey, path);
-								 }
+								return Map.entry(topicKey, path);
+							}
 							)
 							.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 				}
@@ -1120,10 +1120,10 @@ public final class Naftah {
 
 				// Output to terminal
 				padText("📖 الدليل: %s - %s"
-								.formatted(
-										ArabicUtils
-												.transliterateToArabicScriptDefault(false, topic)[0],
-										topic), true);
+						.formatted(
+									ArabicUtils
+											.transliterateToArabicScriptDefault(false, topic)[0],
+									topic), true);
 				padText("────────────────────────────────────────────", true);
 				printedLines += 2;
 				topicContent = getMarkdownAsString(topicContent);
@@ -1177,8 +1177,8 @@ public final class Naftah {
 											%s
 											---------------------------------------------------
 											"""
-								.formatted(JvmFunction.getKey(),
-										   classToDetailedString(JvmFunction.getValue())
+								.formatted( JvmFunction.getKey(),
+											classToDetailedString(JvmFunction.getValue())
 								)
 						)
 						.filter(Objects::nonNull)
@@ -1190,14 +1190,14 @@ public final class Naftah {
 		/**
 		 * The 'shell' subcommand that starts the interactive Naftah REPL.
 		 */
-		@Command(name = ShellCommand.NAME,
-				 customSynopsis = "naftah shell [options] [filename] [args]",
-				 description = {"""
-								The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code.""",
-								"""
-								يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."""
-				 },
-				 sortOptions = false)
+		@Command(   name = ShellCommand.NAME,
+					customSynopsis = "naftah shell [options] [filename] [args]",
+					description = { """
+									The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code.""",
+									"""
+									يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."""
+					},
+					sortOptions = false)
 		private static final class ShellCommand extends NaftahCommand {
 			private static final String NAME = "shell";
 
@@ -1226,8 +1226,8 @@ public final class Naftah {
 				while (true) {
 					try {
 						String line = MULTILINE_IS_ACTIVE ?
-									  reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null) :
-									  reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
+								reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null) :
+								reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
 
 						if (!MULTILINE_IS_ACTIVE && line.isBlank()) {
 							continue;
@@ -1265,8 +1265,8 @@ public final class Naftah {
 					}
 					catch (IndexOutOfBoundsException | EOFError ignored) {
 						String currentLine = reader.getBuffer().atChar(reader.getBuffer().length() - 1) == '\n' ?
-											 reader.getBuffer().substring(0, reader.getBuffer().length() - 2) :
-											 reader.getBuffer().substring(0, reader.getBuffer().length() - 1);
+								reader.getBuffer().substring(0, reader.getBuffer().length() - 2) :
+								reader.getBuffer().substring(0, reader.getBuffer().length() - 1);
 						fullLine.append(currentLine);
 						MULTILINE_IS_ACTIVE = true;
 						println(reader);
