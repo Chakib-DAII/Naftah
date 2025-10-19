@@ -269,7 +269,9 @@ public class JvmFunction implements Serializable {
 					.append(" - ")
 					.append(String
 							.join(  " ",
-									ArabicUtils.transliterateToArabicScriptDefaultCustom(modifiers.split("\\s"))))
+									ArabicUtils
+											.transliterateToArabicScriptDefault(true,
+																				modifiers.split("\\s"))))
 					.append("\n");
 
 			var annotations = method.getDeclaredAnnotations();

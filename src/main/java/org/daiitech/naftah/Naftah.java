@@ -824,7 +824,7 @@ public final class Naftah {
 					topics
 							.keySet()
 							.forEach(topic -> padText("\t- " + topic + " - " + ArabicUtils
-									.transliterateToArabicScriptDefaultCustom(topic)[0], true));
+									.transliterateToArabicScriptDefault(false, topic)[0], true));
 				}
 				else if (List.of("classes", "الأصناف").contains(command)) {
 					matched = true;
@@ -1101,7 +1101,7 @@ public final class Naftah {
 				padText("📖 الدليل: %s - %s"
 						.formatted( topic,
 									ArabicUtils
-											.transliterateToArabicScriptDefaultCustom(topic)[0]), true);
+											.transliterateToArabicScriptDefault(false, topic)[0]), true);
 				padText("────────────────────────────────────────────", true);
 				printMarkdown(topicContent);
 			}
