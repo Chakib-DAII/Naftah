@@ -422,4 +422,132 @@ public final class ClassUtils {
 						.toList() :
 				List.of();
 	}
+
+	/**
+	 * Returns a detailed, Arabic-formatted string representation of the specified Java class.
+	 * <p>
+	 * The returned string includes the following information about the class:
+	 * <ul>
+	 * <li>Fully qualified class name (e.g., {@code java.util.ArrayList})</li>
+	 * <li>Simple class name (e.g., {@code ArrayList})</li>
+	 * <li>Package name (or "(default)" if the class is in the default package)</li>
+	 * <li>Class modifiers (whether it's {@code public}, {@code abstract}, or an {@code interface})</li>
+	 * <li>The superclass of the class (if any)</li>
+	 * <li>All interfaces implemented by the class</li>
+	 * <li>Declaring class (if the class is an inner or nested class)</li>
+	 * <li>Whether the class is an {@code enum}, {@code annotation}, {@code record}, or {@code primitive} type</li>
+	 * </ul>
+	 * <p>
+	 * Additionally, the method includes Arabic transliteration (phonetic representation in Arabic script)
+	 * for class names and package names, using {@link ClassUtils#getQualifiedName(String)}
+	 * or {@link ArabicUtils#transliterateToArabicScriptDefaultCustom(String...)}.
+	 * For example, the simple name {@code ArrayList} might appear as:
+	 * <pre>{@code
+	 * ArrayList - أرَي لِسْتْ
+	 * }</pre>
+	 * <p>
+	 * The output is formatted as a multi-line string with Arabic labels for each item.
+	 * Example output (for {@code java.util.ArrayList}):
+	 *
+	 * <pre>
+	 * تفاصيل الصنف:
+	 * - الاسم الكامل: java.util.ArrayList - جاڤا:يوتِل:أرَي_لِسْتْ
+	 * - الاسم المختصر: ArrayList - أرَي_لِسْتْ
+	 * - الحزمة: java.util - جاڤا:يوتِل
+	 * - عام؟: نعم
+	 * - مجرد؟: لا
+	 * - واجهة؟: لا
+	 * - الصنف الأب: java.util.AbstractList - جاڤا:يوتِل:أَبْسْتْرَكْتْ_لِسْتْ
+	 * - الواجهات:
+	 * - java.util.List - جاڤا:يوتِل:لِسْتْ
+	 * - java.util.RandomAccess - جاڤا:يوتِل:رَانْدُم_أَكْسِسْ
+	 * - java.lang.Cloneable - جاڤا:لانْغ:كْلُونِبْلْ
+	 * - java.io.Serializable - جاڤا:أَي_أُو:سِرِيَالِيزَابْلْ
+	 * - تعداد؟: لا
+	 * - توصيف؟: لا
+	 * - سجل؟: لا
+	 * - نوع بدائي؟: لا
+	 * </pre>
+	 *
+	 * @param clazz the {@link Class} object to inspect
+	 * @return a multi-line, Arabic-formatted string describing the class, including Arabic transliterations
+	 */
+	public static String classToDetailedString(Class<?> clazz) {
+		StringBuilder detailedString = new StringBuilder();
+
+		detailedString
+				.append("""
+							تفاصيل الصنف:
+							\t- الاسم الكامل: %s
+							\t- الاسم المختصر: %s
+							\t- الحزمة: %s
+							\t- عام؟: %s
+							\t- مجرد؟: %s
+							\t- واجهة؟: %s
+						"""
+						.formatted(
+									clazz.getName() + " - " + getQualifiedName(clazz.getName()),
+									clazz.getSimpleName() + " - " + ArabicUtils
+											.transliterateToArabicScriptDefaultCustom(clazz.getSimpleName())[0],
+									clazz.getPackage() != null ?
+											clazz.getPackage().getName() + " - " + getQualifiedName(clazz
+													.getPackage()
+													.getName()) :
+											"(افتراضي)",
+									Modifier.isPublic(clazz.getModifiers()) ? "نعم" : "لا",
+									Modifier.isAbstract(clazz.getModifiers()) ? "نعم" : "لا",
+									Modifier.isInterface(clazz.getModifiers()) ? "نعم" : "لا"
+						));
+
+		// Superclass
+		if (clazz.getSuperclass() != null) {
+			detailedString
+					.append("\t- الصنف الأب: ")
+					.append(clazz.getSuperclass().getName())
+					.append(" - ")
+					.append(getQualifiedName(clazz.getSuperclass().getName()))
+					.append("\n");
+		}
+
+		// Interfaces
+		Class<?>[] interfaces = clazz.getInterfaces();
+		if (interfaces.length > 0) {
+			detailedString.append("\t- الواجهات:\n");
+			for (Class<?> iface : interfaces) {
+				detailedString
+						.append("\t\t- ")
+						.append(iface.getName())
+						.append(" - ")
+						.append(getQualifiedName(iface.getName()))
+						.append("\n");
+			}
+		}
+
+		// Declaring class (for nested/inner classes)
+		if (clazz.getDeclaringClass() != null) {
+			detailedString
+					.append("\t- الصنف المُعلن: ")
+					.append(clazz.getDeclaringClass().getName())
+					.append(" - ")
+					.append(getQualifiedName(clazz.getDeclaringClass().getName()))
+					.append("\n");
+		}
+
+		// Special types
+		detailedString
+				.append("""
+							\t- تعداد؟: %s
+							\t- توصيف؟: %s
+							\t- سجل؟: %s
+							\t- نوع بدائي؟: %s
+						"""
+						.formatted(
+									clazz.isEnum() ? "نعم" : "لا",
+									clazz.isAnnotation() ? "نعم" : "لا",
+									clazz.isRecord() ? "نعم" : "لا",
+									clazz.isPrimitive() ? "نعم" : "لا"
+						));
+
+		return detailedString.toString();
+	}
 }
