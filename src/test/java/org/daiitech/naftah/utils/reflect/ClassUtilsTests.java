@@ -33,7 +33,7 @@ public class ClassUtilsTests {
 
 	@Test
 	void getQualifiedCallTest() throws Exception {
-		String qn = ClassUtils.getQualifiedName("java:lang:String");
+		String qn = ClassUtils.getQualifiedName("java.lang.String");
 		Method m = String.class.getMethod("trim");
 		String actual = ClassUtils.getQualifiedCall(qn, m);
 		assertTrue(actual.startsWith("جافا:لغة:سلسلة::تقليم"));
