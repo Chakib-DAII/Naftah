@@ -49,6 +49,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
@@ -360,7 +361,7 @@ public final class REPLHelper {
 							RTL_PAGINATION_PROMPT,
 							(MaskingCallback) null,
 							null);
-		return List.of("q", "quit", "خروج").contains(input.trim().toLowerCase());
+		return List.of("q", "quit", "خروج").contains(input.trim().toLowerCase(ARABIC));
 	}
 
 	/**

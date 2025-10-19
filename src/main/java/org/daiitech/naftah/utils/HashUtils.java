@@ -46,7 +46,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  *
  * @author Chakib Daii
  */
-public class HashUtils {
+public final class HashUtils {
 	/**
 	 * Private constructor to prevent instantiation.
 	 * Throws {@link NaftahBugError} if called.

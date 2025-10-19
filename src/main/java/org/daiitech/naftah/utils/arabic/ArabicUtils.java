@@ -320,7 +320,7 @@ public final class ArabicUtils {
 
 			stringBuilder.append("""
 									%s > %s;
-									""".formatted(key.toLowerCase(Locale.US), value));
+									""".formatted(key.toLowerCase(ARABIC), value));
 		}
 		CUSTOM_RULES = stringBuilder.toString();
 

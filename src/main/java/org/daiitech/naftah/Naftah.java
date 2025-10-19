@@ -63,6 +63,7 @@ import static org.daiitech.naftah.utils.JulLoggerConfig.initialize;
 import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
@@ -800,7 +801,7 @@ public final class Naftah {
 			 */
 			private boolean checkManagementCommands(String line) {
 				var matched = false;
-				String command = line.trim().toLowerCase();
+				String command = line.trim().toLowerCase(ARABIC);
 
 				if (List.of("usage", "مساعدة").contains(command)) {
 					matched = true;
