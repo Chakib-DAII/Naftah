@@ -438,8 +438,8 @@ public final class NaftahExecutionLogger {
 											PropertyAccessContext::ID -> %s
 											PropertyAccessContext::COLON -> %s
 											PropertyAccessContext::LBRACK -> %s
-											PropertyAccessContext::DoubleQuotationMark -> %s
-											PropertyAccessContext::QuotationMark -> %s
+											PropertyAccessContext::CHARACTER -> %s
+											PropertyAccessContext::STRING -> %s
 											PropertyAccessContext::RBRACK -> %s
 											"""
 										.formatted(
@@ -452,8 +452,12 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.LBRACK()) ?
 															context.LBRACK().getText() :
 															null,
-													join(context.DoubleQuotationMark()),
-													join(context.QuotationMark()),
+													Objects.nonNull(context.CHARACTER()) ?
+															context.CHARACTER().getText() :
+															null,
+													Objects.nonNull(context.STRING()) ?
+															context.STRING().getText() :
+															null,
 													Objects.nonNull(context.RBRACK()) ?
 															context.RBRACK().getText() :
 															null));
