@@ -48,6 +48,7 @@ import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
@@ -55,6 +56,7 @@ import static org.daiitech.naftah.parser.DefaultContext.registerContext;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
+import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
@@ -232,9 +234,9 @@ public final class NaftahParserHelper {
 	 * @param executedParseTreeProperty a property map indicating executed nodes
 	 * @return true if any executed child or descendant is of the specified type; false otherwise
 	 */
-	public static <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType( ParseTree ctx,
-																				Class<T> type,
-																				ParseTreeProperty<Boolean> executedParseTreeProperty) {
+	public static <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(ParseTree ctx,
+																			   Class<T> type,
+																			   ParseTreeProperty<Boolean> executedParseTreeProperty) {
 		return getAllChildrenOfType(ctx, type)
 				.stream()
 				.anyMatch(child -> Optional
@@ -254,8 +256,8 @@ public final class NaftahParserHelper {
 	public static <T extends Tree> List<ParseTree> getAllChildrenOfType(ParseTree ctx, Class<T> type) {
 		var children = getAllChildren(ctx);
 		return !ObjectUtils.isEmpty(children) ?
-				children.stream().filter(child -> hasChildOfType(child, type)).toList() :
-				List.of();
+			   children.stream().filter(child -> hasChildOfType(child, type)).toList() :
+			   List.of();
 	}
 
 	/**
@@ -297,8 +299,8 @@ public final class NaftahParserHelper {
 	 * @param tree                    the parse tree to visit
 	 * @return the result of the visit operation
 	 */
-	public static Object visit( org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
-								ParseTree tree) {
+	public static Object visit(org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
+							   ParseTree tree) {
 		return naftahParserBaseVisitor.visit(tree);
 	}
 
@@ -309,13 +311,13 @@ public final class NaftahParserHelper {
 	 * @param function                the declared function to prepare
 	 */
 	public static void prepareDeclaredFunction(
-												org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
-												DeclaredFunction function) {
+			org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
+			DeclaredFunction function) {
 		if (function.getParameters() == null && hasChild(function.getParametersContext())) {
 			function
 					.setParameters(
-									(List<DeclaredParameter>) visit(naftahParserBaseVisitor,
-																	function.getParametersContext()));
+							(List<DeclaredParameter>) visit(naftahParserBaseVisitor,
+															function.getParametersContext()));
 		}
 		if (function.getReturnType() == null && hasChild(function.getReturnTypeContext())) {
 			function.setReturnType(visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
@@ -331,12 +333,12 @@ public final class NaftahParserHelper {
 	 * @throws NaftahBugError if more arguments are passed than parameters, or if
 	 *                        required parameters are missing or duplicated.
 	 */
-	public static Map<String, Object> prepareDeclaredFunctionArguments( List<DeclaredParameter> parameters,
-																		List<Pair<String, Object>> arguments) {
+	public static Map<String, Object> prepareDeclaredFunctionArguments(List<DeclaredParameter> parameters,
+																	   List<Pair<String, Object>> arguments) {
 		if (parameters.size() < arguments.size()) {
 			throw new NaftahBugError(
-										"عدد الوسائط الممررة '%s' يتجاوز عدد المعاملات '%s' المحددة."
-												.formatted(arguments, parameters));
+					"عدد الوسائط الممررة '%s' يتجاوز عدد المعاملات '%s' المحددة."
+							.formatted(arguments, parameters));
 		}
 
 		// how many params don't have defaults
@@ -352,8 +354,8 @@ public final class NaftahParserHelper {
 		if (namedArguments.isEmpty()) {
 			if (arguments.size() < requiredParams.size()) {
 				throw new NaftahBugError(
-											"عدد الوسائط الممررة '%s' أقل من عدد المعاملات '%s' المحددة."
-													.formatted(arguments, parameters));
+						"عدد الوسائط الممررة '%s' أقل من عدد المعاملات '%s' المحددة."
+								.formatted(arguments, parameters));
 			}
 			// process non named args
 			finalArguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
@@ -412,8 +414,8 @@ public final class NaftahParserHelper {
 					}
 					else {
 						throw new NaftahBugError(
-													"الوسيط '%s' لم يتم مطابقته مع أي من المعاملات."
-															.formatted(param.getName()));
+								"الوسيط '%s' لم يتم مطابقته مع أي من المعاملات."
+										.formatted(param.getName()));
 					}
 				}
 			}
@@ -437,8 +439,8 @@ public final class NaftahParserHelper {
 
 			if (i != ctx.ID().size() - 1) {
 				String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
-						ctx.QUESTION(i).getText() + ctx.COLON(i).getText() :
-						ctx.COLON(i).getText();
+								   ctx.QUESTION(i).getText() + ctx.COLON(i).getText() :
+								   ctx.COLON(i).getText();
 				result.get().append(qualifier);
 			}
 		}
@@ -454,17 +456,32 @@ public final class NaftahParserHelper {
 	public static String getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext ctx) {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
-		for (int i = 0; i < ctx.propertyAccess().size(); i++) {
-			String id = ctx.propertyAccess(i).ID().getText();
-			result.get().append(id);
+		String id = ctx.ID().getText();
+		result.get().append(id);
 
-			if (i != ctx.propertyAccess().size() - 1) {
-				String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
-						ctx.QUESTION(i).getText() + ":" :
-						":";
-				result.get().append(qualifier);
-			}
+		for (int i = 0; i < ctx.propertyAccess().size(); i++) {
+			String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
+							   ctx.QUESTION(i).getText() + ":" :
+							   ":";
+			result.get().append(qualifier);
+
+			final var currentPropertyAccess = ctx.propertyAccess(i);
+			id = Optional
+					.of(currentPropertyAccess)
+					.map(propertyAccessContext -> Optional
+							.ofNullable(propertyAccessContext.ID())
+							.map(ParseTree::getText)
+							.orElse(Optional
+											.ofNullable(propertyAccessContext.CHARACTER())
+											.map(ParseTree::getText)
+											.orElse(Optional
+															.ofNullable(propertyAccessContext.STRING())
+															.map(ParseTree::getText)
+															.orElse(null))))
+					.orElseThrow(() -> newNaftahBugNullInputError(true, currentPropertyAccess));
+			result.get().append(cleanInput(id));
 		}
+
 		return result.get().toString();
 	}
 
@@ -485,8 +502,8 @@ public final class NaftahParserHelper {
 	 * @param errorListener The error listener to add.
 	 * @return The prepared parser instance.
 	 */
-	public static org.daiitech.naftah.parser.NaftahParser prepareRun(   CharStream input,
-																		ANTLRErrorListener errorListener) {
+	public static org.daiitech.naftah.parser.NaftahParser prepareRun(CharStream input,
+																	 ANTLRErrorListener errorListener) {
 		return prepareRun(input, List.of(errorListener));
 	}
 
@@ -497,8 +514,8 @@ public final class NaftahParserHelper {
 	 * @param errorListeners The list of error listeners to add.
 	 * @return The prepared parser instance.
 	 */
-	public static org.daiitech.naftah.parser.NaftahParser prepareRun(   CharStream input,
-																		List<ANTLRErrorListener> errorListeners) {
+	public static org.daiitech.naftah.parser.NaftahParser prepareRun(CharStream input,
+																	 List<ANTLRErrorListener> errorListeners) {
 		// Create a lexer and token stream
 		var lexerCommonTokenStreamPair = getCommonTokenStream(input, errorListeners);
 
@@ -554,7 +571,8 @@ public final class NaftahParserHelper {
 	public static org.daiitech.naftah.parser.NaftahParser getParser(CommonTokenStream commonTokenStream,
 																	List<ANTLRErrorListener> errorListeners) {
 		// Create a parser
-		org.daiitech.naftah.parser.NaftahParser parser = new org.daiitech.naftah.parser.NaftahParser(commonTokenStream);
+		org.daiitech.naftah.parser.NaftahParser parser =
+				new org.daiitech.naftah.parser.NaftahParser(commonTokenStream);
 		parser.removeErrorListeners();
 		errorListeners.forEach(parser::addErrorListener);
 
@@ -593,8 +611,8 @@ public final class NaftahParserHelper {
 	 * @return A pair containing the lexer and token stream.
 	 */
 	public static Pair<org.daiitech.naftah.parser.NaftahLexer, CommonTokenStream> getCommonTokenStream(
-																										CharStream charStream,
-																										List<ANTLRErrorListener> errorListeners) {
+			CharStream charStream,
+			List<ANTLRErrorListener> errorListeners) {
 		// Create a lexer and token stream
 		org.daiitech.naftah.parser.NaftahLexer lexer = new org.daiitech.naftah.parser.NaftahLexer(charStream);
 		lexer.removeErrorListeners();
@@ -751,8 +769,8 @@ public final class NaftahParserHelper {
 	public static String getFormattedTokenSymbols(String tokenName, boolean ln) {
 		String tokenSymbols = Objects.isNull(TOKENS_SYMBOLS) ? tokenName : TOKENS_SYMBOLS.getProperty(tokenName);
 		return tokenSymbols == null ? null : (ln ? """
-													- %s
-													""" : "%s").formatted(tokenSymbols.replaceAll(",", " أو"));
+												   - %s
+												   """ : "%s").formatted(tokenSymbols.replaceAll(",", " أو"));
 	}
 
 	/**
@@ -794,15 +812,15 @@ public final class NaftahParserHelper {
 	public static boolean typeMismatch(Class<?> valueType, Class<?> declarationType) {
 		return Objects.nonNull(declarationType) && !Object.class.equals(declarationType) && !Collection.class
 				.isAssignableFrom(declarationType) && !Map.class.isAssignableFrom(declarationType) && (((Number.class
-						.isAssignableFrom(valueType) && !Number.class
-								.isAssignableFrom(declarationType)) || (!Number.class
-										.isAssignableFrom(valueType) && Number.class
-												.isAssignableFrom(declarationType))) || (!Number.class
-														.isAssignableFrom(declarationType) && !Number.class
-																.isAssignableFrom(valueType) && !valueType
-																		.isAssignableFrom(declarationType)) || Collection.class
-																				.isAssignableFrom(valueType) || Map.class
-																						.isAssignableFrom(valueType));
+				.isAssignableFrom(valueType) && !Number.class
+				.isAssignableFrom(declarationType)) || (!Number.class
+				.isAssignableFrom(valueType) && Number.class
+				.isAssignableFrom(declarationType))) || (!Number.class
+				.isAssignableFrom(declarationType) && !Number.class
+				.isAssignableFrom(valueType) && !valueType
+				.isAssignableFrom(declarationType)) || Collection.class
+				.isAssignableFrom(valueType) || Map.class
+				.isAssignableFrom(valueType));
 	}
 
 	/**
@@ -816,18 +834,18 @@ public final class NaftahParserHelper {
 	 * @return A pair containing the declared variable and a boolean flag.
 	 */
 	public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(
-																			org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
-																			org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx,
-																			String variableName,
-																			boolean isConstant,
-																			boolean hasType) {
+			org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
+			org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx,
+			String variableName,
+			boolean isConstant,
+			boolean hasType) {
 
 		return new Pair<>(DeclaredVariable
-				.of(ctx,
-					variableName,
-					isConstant,
-					hasType ? (Class<?>) visit(naftahParserBaseVisitor, ctx.type()) : null,
-					null), true);
+								  .of(ctx,
+									  variableName,
+									  isConstant,
+									  hasType ? (Class<?>) visit(naftahParserBaseVisitor, ctx.type()) : null,
+									  null), true);
 	}
 
 	/**
@@ -852,11 +870,11 @@ public final class NaftahParserHelper {
 	 * @return True if inside a loop, false otherwise.
 	 */
 	public static boolean checkInsideLoop(ParseTree ctx) {
-		return hasAnyParentOfType(  ctx,
-									List
-											.of(org.daiitech.naftah.parser.NaftahParser.ForStatementContext.class,
-												org.daiitech.naftah.parser.NaftahParser.WhileStatementContext.class,
-												org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext.class));
+		return hasAnyParentOfType(ctx,
+								  List
+										  .of(org.daiitech.naftah.parser.NaftahParser.ForStatementContext.class,
+											  org.daiitech.naftah.parser.NaftahParser.WhileStatementContext.class,
+											  org.daiitech.naftah.parser.NaftahParser.RepeatStatementContext.class));
 	}
 
 	/**
@@ -871,12 +889,12 @@ public final class NaftahParserHelper {
 													ParseTree currentStatement,
 													Object result) {
 		return currentContext
-				.hasAnyExecutedChildOrSubChildOfType(   currentStatement,
-														org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class) || (result instanceof LoopSignal.LoopSignalDetails && (currentContext
-																.hasAnyExecutedChildOrSubChildOfType(   currentStatement,
-																										org.daiitech.naftah.parser.NaftahParser.BreakStatementStatementContext.class) || currentContext
-																												.hasAnyExecutedChildOrSubChildOfType(   currentStatement,
-																																						org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext.class)));
+				.hasAnyExecutedChildOrSubChildOfType(currentStatement,
+													 org.daiitech.naftah.parser.NaftahParser.ReturnStatementStatementContext.class) || (result instanceof LoopSignal.LoopSignalDetails && (currentContext
+				.hasAnyExecutedChildOrSubChildOfType(currentStatement,
+													 org.daiitech.naftah.parser.NaftahParser.BreakStatementStatementContext.class) || currentContext
+				.hasAnyExecutedChildOrSubChildOfType(currentStatement,
+													 org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext.class)));
 	}
 
 	/**
@@ -899,11 +917,11 @@ public final class NaftahParserHelper {
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER
 					.fine("%s(%s)"
-							.formatted( methodName,
-										FORMATTER
-												.formatted( ctx.getRuleIndex(),
-															ctx.getText(),
-															ctx.getPayload())));
+								  .formatted(methodName,
+											 FORMATTER
+													 .formatted(ctx.getRuleIndex(),
+																ctx.getText(),
+																ctx.getPayload())));
 		}
 	}
 
@@ -929,12 +947,13 @@ public final class NaftahParserHelper {
 	 * @param <R>                        th return type of the parsed result
 	 * @return the result of applying the visit function
 	 */
-	public static <T extends ParserRuleContext, R> R visitContext(  DefaultNaftahParserVisitor defaultNaftahParserVisitor,
-																	String methodName,
-																	DefaultContext currentContext,
-																	T ctx,
-																	TriFunction<DefaultNaftahParserVisitor, DefaultContext, T, Object> visitFunction,
-																	Class<R> returnType) {
+	public static <T extends ParserRuleContext, R> R visitContext(DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+																  String methodName,
+																  DefaultContext currentContext,
+																  T ctx,
+																  TriFunction<DefaultNaftahParserVisitor,
+																		  DefaultContext, T, Object> visitFunction,
+																  Class<R> returnType) {
 		debugCurrentContextVisit(methodName, ctx);
 		logExecution(ctx);
 		var result = visitFunction.apply(defaultNaftahParserVisitor, currentContext, ctx);
@@ -947,7 +966,8 @@ public final class NaftahParserHelper {
 																	String methodName,
 																	DefaultContext currentContext,
 																	T ctx,
-																	TriFunction<DefaultNaftahParserVisitor, DefaultContext, T, Object> visitFunction) {
+																	TriFunction<DefaultNaftahParserVisitor,
+																			DefaultContext, T, Object> visitFunction) {
 		return visitContext(defaultNaftahParserVisitor, methodName, currentContext, ctx, visitFunction, Object.class);
 	}
 
@@ -964,14 +984,14 @@ public final class NaftahParserHelper {
 		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
 			return hasChildOrSubChildOfType(ctx,
 											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
-													REPLContext.registerContext(new HashMap<>(), new HashMap<>()) :
-													REPLContext.registerContext();
+				   REPLContext.registerContext(new HashMap<>(), new HashMap<>()) :
+				   REPLContext.registerContext();
 		}
 		else {
 			return hasChildOrSubChildOfType(ctx,
 											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
-													registerContext(new HashMap<>(), new HashMap<>()) :
-													registerContext();
+				   registerContext(new HashMap<>(), new HashMap<>()) :
+				   registerContext();
 		}
 	}
 
@@ -985,23 +1005,23 @@ public final class NaftahParserHelper {
 	 * @param currentContext the currently active execution context
 	 * @return a new or updated execution context
 	 */
-	public static DefaultContext getBlockContext(   org.daiitech.naftah.parser.NaftahParser.BlockContext ctx,
-													DefaultContext currentContext) {
+	public static DefaultContext getBlockContext(org.daiitech.naftah.parser.NaftahParser.BlockContext ctx,
+												 DefaultContext currentContext) {
 		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
 			return hasChildOrSubChildOfType(ctx,
 											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
-													registerContext(currentContext, new HashMap<>(), new HashMap<>()) :
-													REPLContext.registerContext(currentContext);
+				   registerContext(currentContext, new HashMap<>(), new HashMap<>()) :
+				   REPLContext.registerContext(currentContext);
 		}
 		else {
 			return hasChildOrSubChildOfType(ctx,
 											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) || hasChildOrSubChildOfType(
-																																					ctx,
-																																					org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
-																																							registerContext(currentContext,
-																																											new HashMap<>(),
-																																											new HashMap<>()) :
-																																							registerContext(currentContext);
+					ctx,
+					org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
+				   registerContext(currentContext,
+								   new HashMap<>(),
+								   new HashMap<>()) :
+				   registerContext(currentContext);
 		}
 	}
 
@@ -1021,10 +1041,11 @@ public final class NaftahParserHelper {
 		}
 	}
 
-	public static void setForeachVariables( DefaultContext currentContext,
-											Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass,
-											Tuple variableNames,
-											Tuple targetValues) {
+	public static void setForeachVariables(DefaultContext currentContext,
+										   Class<?
+												   extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass,
+										   Tuple variableNames,
+										   Tuple targetValues) {
 		if (org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext.class
 				.isAssignableFrom(foreachTargetClass)) {
 			String valueVar = (String) variableNames.get(0);
@@ -1033,37 +1054,37 @@ public final class NaftahParserHelper {
 		}
 		else if (org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext.class
 				.isAssignableFrom(
-									foreachTargetClass)) {
-										String keyVar = (String) variableNames.get(0);
-										var key = targetValues.get(1);
-										currentContext.setLoopVariable(keyVar, key);
-										String valueVar = (String) variableNames.get(1);
-										var value = targetValues.get(2);
-										currentContext.setLoopVariable(valueVar, value);
-									}
+						foreachTargetClass)) {
+			String keyVar = (String) variableNames.get(0);
+			var key = targetValues.get(1);
+			currentContext.setLoopVariable(keyVar, key);
+			String valueVar = (String) variableNames.get(1);
+			var value = targetValues.get(2);
+			currentContext.setLoopVariable(valueVar, value);
+		}
 		else if (org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext.class
 				.isAssignableFrom(
-									foreachTargetClass)) {
-										String indexVar = (String) variableNames.get(0);
-										var index = targetValues.get(0);
-										currentContext.setLoopVariable(indexVar, index);
-										String valueVar = (String) variableNames.get(1);
-										var value = targetValues.get(1);
-										currentContext.setLoopVariable(valueVar, value);
-									}
+						foreachTargetClass)) {
+			String indexVar = (String) variableNames.get(0);
+			var index = targetValues.get(0);
+			currentContext.setLoopVariable(indexVar, index);
+			String valueVar = (String) variableNames.get(1);
+			var value = targetValues.get(1);
+			currentContext.setLoopVariable(valueVar, value);
+		}
 		else if (org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext.class
 				.isAssignableFrom(
-									foreachTargetClass)) {
-										String indexVar = (String) variableNames.get(0);
-										var index = targetValues.get(0);
-										currentContext.setLoopVariable(indexVar, index);
-										String keyVar = (String) variableNames.get(1);
-										var key = targetValues.get(1);
-										currentContext.setLoopVariable(keyVar, key);
-										String valueVar = (String) variableNames.get(2);
-										var value = targetValues.get(2);
-										currentContext.setLoopVariable(valueVar, value);
-									}
+						foreachTargetClass)) {
+			String indexVar = (String) variableNames.get(0);
+			var index = targetValues.get(0);
+			currentContext.setLoopVariable(indexVar, index);
+			String keyVar = (String) variableNames.get(1);
+			var key = targetValues.get(1);
+			currentContext.setLoopVariable(keyVar, key);
+			String valueVar = (String) variableNames.get(2);
+			var value = targetValues.get(2);
+			currentContext.setLoopVariable(valueVar, value);
+		}
 	}
 
 	/**
@@ -1161,10 +1182,10 @@ public final class NaftahParserHelper {
 							.range(0, accessArray.length)
 							.filter(index -> index <= finalI)
 							.mapToObj(index -> accessArray[index] + (index < optional.length ?
-									(optional[index] ?
-											"؟" :
-											"") :
-									""))
+																	 (optional[index] ?
+																	  "؟" :
+																	  "") :
+																	 ""))
 							.collect(Collectors.joining(":"));
 					throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
 				}
@@ -1202,9 +1223,9 @@ public final class NaftahParserHelper {
 	 * @return the top-level {@link DeclaredVariable} (even if nested values were updated)
 	 * @throws NaftahBugError if a non-optional intermediate or final variable is not found
 	 */
-	public static Object setObjectUsingQualifiedName(   String qualifiedName,
-														DefaultContext currentContext,
-														Object newValue) {
+	public static Object setObjectUsingQualifiedName(String qualifiedName,
+													 DefaultContext currentContext,
+													 Object newValue) {
 		var accessArray = qualifiedName.split(":");
 		boolean[] optional = new boolean[accessArray.length - 1];
 
@@ -1269,10 +1290,10 @@ public final class NaftahParserHelper {
 						.range(0, accessArray.length)
 						.filter(index -> index <= finalI)
 						.mapToObj(index -> accessArray[index] + (index < optional.length ?
-								(optional[index] ?
-										"؟" :
-										"") :
-								""))
+																 (optional[index] ?
+																  "؟" :
+																  "") :
+																 ""))
 						.collect(Collectors.joining(":"));
 				throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
 			}
