@@ -44,6 +44,7 @@ import org.daiitech.naftah.utils.reflect.ClassUtils;
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
+import static org.daiitech.naftah.Naftah.INSIDE_MAN_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
@@ -628,7 +629,8 @@ public class DefaultContext {
 	 * @param async {@code true} for asynchronous bootstrap, {@code false} for synchronous
 	 */
 	public static void bootstrap(boolean async) {
-		if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY)) {
+		if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY) || Boolean
+				.getBoolean(INSIDE_MAN_PROPERTY)) {
 			padText("تحضير فئات مسار فئات جافا (Java classpath)...", true);
 		}
 		SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
@@ -1469,5 +1471,25 @@ public class DefaultContext {
 	 */
 	public void setLoopLabel(String loopLabel) {
 		this.loopLabel = loopLabel;
+	}
+
+	public static Map<String, List<BuiltinFunction>> getBuiltinFunctions() {
+		return BUILTIN_FUNCTIONS;
+	}
+
+	public static Map<String, List<JvmFunction>> getJvmFunctions() {
+		return JVM_FUNCTIONS;
+	}
+
+	public static Map<String, Class<?>> getClasses() {
+		return CLASSES;
+	}
+
+	public static Map<String, Class<?>> getAccessibleClasses() {
+		return ACCESSIBLE_CLASSES;
+	}
+
+	public static Map<String, Class<?>> getInstantiableClasses() {
+		return INSTANTIABLE_CLASSES;
 	}
 }
