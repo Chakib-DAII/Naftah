@@ -5,9 +5,11 @@ import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.utils.AttributedString;
 
+import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
+import static org.daiitech.naftah.utils.repl.REPLHelper.rightAlign;
 
 /**
  * A highlighter implementation that reshapes Arabic text for correct display.
@@ -43,11 +45,18 @@ public class ArabicHighlighter extends BaseHighlighter {
 	 */
 	@Override
 	public AttributedString highlight(LineReader reader, String buffer) {
+		if (buffer.isBlank()) {
+			return new AttributedString(buffer);
+		}
+
+		int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
+
 		AttributedString attributedString = super.highlight(reader, buffer);
+
 		if (shouldReshape() && containsArabic(buffer)) {
 			try {
 				String reshaped = shape(buffer); // display only
-				attributedString = merge(attributedString, new AttributedString(reshaped));
+				attributedString = rightAlign(new AttributedString(reshaped), terminalWidth);
 			}
 			catch (Exception e) {
 				// do nothing

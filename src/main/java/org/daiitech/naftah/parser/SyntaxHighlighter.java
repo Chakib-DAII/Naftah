@@ -21,9 +21,7 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import static org.daiitech.naftah.utils.repl.REPLHelper.ESCAPE_CHARS_REGEX;
-import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
-import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
-import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
+import static org.daiitech.naftah.utils.repl.REPLHelper.rightAlign;
 
 /**
  * A syntax highlighter class specifically tailored for highlighting
@@ -230,21 +228,4 @@ public class SyntaxHighlighter extends BaseHighlighter {
 		};
 	}
 
-	/**
-	 * Aligns the given attributed string to the right side of the terminal,
-	 * applying appropriate spacing and appending the prompt.
-	 *
-	 * @param str   the input string to align
-	 * @param width the total width of the terminal line
-	 * @return a right-aligned {@link AttributedString}
-	 */
-	private AttributedString rightAlign(AttributedString str, int width) {
-		int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
-		int padding = Math.max(0, width - contentWidth);
-		AttributedString spacePad = new AttributedString(" ".repeat(padding));
-		AttributedString prompt = MULTILINE_IS_ACTIVE ?
-				new AttributedString(RTL_MULTILINE_PROMPT) :
-				new AttributedString(RTL_PROMPT);
-		return AttributedString.join(new AttributedString(""), spacePad, str, prompt);
-	}
 }
