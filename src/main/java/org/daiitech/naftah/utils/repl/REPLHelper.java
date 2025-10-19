@@ -3,11 +3,13 @@ package org.daiitech.naftah.utils.repl;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
+import org.daiitech.naftah.utils.arabic.ArabicHighlighter;
 import org.jline.keymap.KeyMap;
 import org.jline.reader.Binding;
 import org.jline.reader.Completer;
@@ -17,6 +19,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.Reference;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
@@ -131,10 +134,18 @@ public final class REPLHelper {
 
 	/**
 	 * Creates and returns a {@link LineReader} instance configured with custom parsing,
-	 * highlighting, and autocompletion for Arabic/Naftah syntax.
+	 * syntax highlighting, and autocompletion designed for Arabic/Naftah syntax.
+	 * <p>
+	 * The returned LineReader supports:
+	 * <ul>
+	 * <li>Parsing with custom regex for variables and commands</li>
+	 * <li>Handling of escaped new lines and quoted strings</li>
+	 * <li>Syntax highlighting combining the original highlighter and Arabic/Naftah specific rules</li>
+	 * <li>Autocompletion with static and runtime completions including lexer literals</li>
+	 * </ul>
 	 *
-	 * @param terminal the terminal instance to bind the reader to
-	 * @return a configured LineReader
+	 * @param terminal the {@link Terminal} instance to which the LineReader will be bound
+	 * @return a configured {@link LineReader} supporting Arabic/Naftah input
 	 */
 	public static LineReader getLineReader(Terminal terminal) {
 		LineReader baseReader = LineReaderBuilder.builder().terminal(terminal).build();
@@ -162,6 +173,32 @@ public final class REPLHelper {
 		lineReaderBuilder.completer(stringsCompleter);
 
 		return lineReaderBuilder.build();
+	}
+
+	/**
+	 * Creates and returns a {@link LineReader} instance configured with a custom set of completions
+	 * and syntax highlighting tailored for Arabic/Naftah input.
+	 * <p>
+	 * This method allows providing a specific collection of completion strings which will be
+	 * used by the autocompleter.
+	 *
+	 * @param terminal    the {@link Terminal} instance to which the LineReader will be bound
+	 * @param completions a {@link Collection} of completion strings for the autocompleter
+	 * @return a configured {@link LineReader} with custom completions and Arabic-specific highlighting
+	 */
+	public static LineReader getLineReader(Terminal terminal, Collection<String> completions) {
+		LineReader baseReader = LineReaderBuilder.builder().terminal(terminal).build();
+
+		Highlighter originalHighlighter = baseReader.getHighlighter();
+
+		Completer completer = new StringsCompleter(completions);
+
+		return LineReaderBuilder
+				.builder()
+				.terminal(terminal)
+				.completer(completer)
+				.highlighter(new ArabicHighlighter(originalHighlighter))
+				.build();
 	}
 
 	/**
