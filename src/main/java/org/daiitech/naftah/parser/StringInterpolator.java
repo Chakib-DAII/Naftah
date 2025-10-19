@@ -1,8 +1,8 @@
 package org.daiitech.naftah.parser;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -74,7 +74,7 @@ public final class StringInterpolator {
 
 	static {
 		if (Boolean.getBoolean(INTERPOLATION_CACHE_PROPERTY)) {
-			MATCHER_CACHE = new HashMap<>();
+			MATCHER_CACHE = new ConcurrentHashMap<>();
 		}
 	}
 
