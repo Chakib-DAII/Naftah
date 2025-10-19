@@ -215,7 +215,7 @@ public final class StringInterpolator {
 	 */
 	public static String cleanInput(String input) {
 		// Replace all string delimiter characters from original parsed
-		return input.replaceAll("[\"«»]", "");
+		return input.replaceAll("['\"«»]", "");
 	}
 
 	/**
