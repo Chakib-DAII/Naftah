@@ -68,17 +68,37 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Returns a qualified method call string combining qualified class name and method name,
-	 * transliterated to Arabic.
+	 * Returns a qualified method call string by combining the qualified class name
+	 * and the method name, transliterated into Arabic script.
+	 * <p>
+	 * The format of the returned string is: {@code qualifiedName::methodName},
+	 * where the method name is transliterated.
 	 *
-	 * @param qualifiedName the qualified class name
-	 * @param method        the method instance
-	 * @return qualified call string of the form "qualifiedName::methodName" in Arabic script
+	 * @param qualifiedName the fully qualified name of the class (e.g., {@code com.example.MyClass})
+	 * @param method        the {@link Method} instance representing the method
+	 * @return a string in the form {@code qualifiedName::methodName} with the method name in Arabic script
 	 */
 	public static String getQualifiedCall(String qualifiedName, Method method) {
 		return "%s::%s"
 				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefaultCustom(method.getName())[0]);
 	}
+
+	/**
+	 * Returns a qualified method call string by combining the qualified class name
+	 * and the method name, transliterated into Arabic script.
+	 * <p>
+	 * The format of the returned string is: {@code qualifiedName::methodName},
+	 * where the method name is transliterated.
+	 *
+	 * @param qualifiedName the fully qualified name of the class (e.g., {@code com.example.MyClass})
+	 * @param methodName    the name of the method as a string
+	 * @return a string in the form {@code qualifiedName::methodName} with the method name in Arabic script
+	 */
+	public static String getQualifiedCall(String qualifiedName, String methodName) {
+		return "%s::%s"
+				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefaultCustom(methodName)[0]);
+	}
+
 
 	/**
 	 * Extracts class parts from the input class names and returns a map where
