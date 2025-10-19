@@ -86,9 +86,39 @@ public final class REPLHelper {
 			RTL_MULTILINE_PROMPT_VALUE;
 
 	/**
+	 * The raw prompt message (in Arabic) used during right-to-left (RTL) pagination.
+	 * <p>
+	 * This message is displayed to the user between paginated content chunks,
+	 * instructing them to press Enter to continue or enter one of the exit commands
+	 * ('q', 'quit', or 'خروج') to terminate navigation and return to the main program.
+	 */
+	private static final String RTL_PAGINATION_PROMPT_VALUE = """
+																[اضغط Enter للمتابعة، أو أدخل 'q' أو 'quit' أو 'خروج' لإنهاء التصفح والعودة إلى البرنامج الرئيسي.]
+																""";
+	/**
+	 * The formatted RTL pagination prompt displayed to the user.
+	 * <p>
+	 * If Arabic text shaping is enabled (via {@code shouldReshape()}), this version
+	 * uses a reshaped (visually adjusted) version of {@link #RTL_PAGINATION_PROMPT_VALUE}.
+	 * Otherwise, it falls back to the original raw form.
+	 */
+	public static final String RTL_PAGINATION_PROMPT = shouldReshape() ?
+			shape(RTL_PAGINATION_PROMPT_VALUE) :
+			RTL_PAGINATION_PROMPT_VALUE;
+
+	/**
 	 * Indicates if multiline mode is active in the REPL.
 	 */
 	public static boolean MULTILINE_IS_ACTIVE = false;
+	/**
+	 * A reusable instance of {@link Parser} from the Flexmark library used for parsing
+	 * Markdown content into an abstract syntax tree (AST).
+	 * <p>
+	 * This parser can be used to convert raw Markdown strings into a structured {@link Node}
+	 * tree that can be traversed or rendered.
+	 * <p>
+	 * It is recommended to reuse this instance instead of creating new ones for performance.
+	 */
 	public static Parser MARKDOWN_PARSER = Parser.builder().build();
 
 	/**

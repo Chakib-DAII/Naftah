@@ -63,13 +63,13 @@ import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.classToDetailedString;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
+import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PAGINATION_PROMPT;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getLineReader;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
@@ -1023,9 +1023,7 @@ public final class Naftah {
 					if (current < total) {
 						String input = reader
 								.readLine(  null,
-											shape("""
-													[اضغط Enter للمتابعة، أو أدخل 'q' أو 'quit' أو 'خروج' لإنهاء التصفح والعودة إلى البرنامج الرئيسي.]
-													"""),
+											RTL_PAGINATION_PROMPT,
 											(MaskingCallback) null,
 											null);
 						if (List.of("q", "quit", "خروج").contains(input.trim().toLowerCase())) {

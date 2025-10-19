@@ -306,7 +306,7 @@ public final class ArabicUtils {
 					CUSTOM_RULES_BUNDLE.getString(key) :
 					existentCustomRules.get(key);
 			// If s contains underscore or spaces or any special char, quote it
-			String regex = ".*[ _\\t\\r\\n].*";
+			String regex = ".*[ _\\t\\r\\n-].*";
 			if (key.matches(regex) || ICU_RESERVED_WORDS.contains(key.trim()) || key
 					.trim()
 					.startsWith("::")) { // underscore or space or whitespace
