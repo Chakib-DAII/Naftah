@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -16,6 +17,7 @@ import org.jline.reader.Completer;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.MaskingCallback;
 import org.jline.reader.Reference;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
@@ -47,7 +49,6 @@ import com.vladsch.flexmark.util.ast.Node;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
@@ -346,156 +347,183 @@ public final class REPLHelper {
 	}
 
 	/**
-	 * Recursively processes and prints the content of a Markdown AST {@link Node}
-	 * from the Flexmark library to the terminal, with appropriate formatting and indentation.
+	 * Prompts the user with a localized RTL pagination message asking whether to continue or quit.
 	 * <p>
-	 * This method handles a wide range of Markdown node types including:
+	 * Reads a line of input and checks if the user wants to quit based on recognized quit commands.
+	 *
+	 * @param reader the {@link LineReader} instance used to read user input
+	 * @return {@code true} if the input matches "q", "quit", or "خروج" (case-insensitive), otherwise {@code false}
+	 */
+	public static boolean shouldQuit(LineReader reader) {
+		String input = reader
+				.readLine(  null,
+							RTL_PAGINATION_PROMPT,
+							(MaskingCallback) null,
+							null);
+		return List.of("q", "quit", "خروج").contains(input.trim().toLowerCase());
+	}
+
+	/**
+	 * Recursively processes and converts a Markdown AST {@link Node} from the Flexmark library
+	 * into a formatted plain-text representation, preserving structure and indentation.
+	 * <p>
+	 * This method supports a wide variety of Markdown elements, including:
 	 * <ul>
-	 * <li>{@link com.vladsch.flexmark.ast.Heading} - rendered with '#' prefix</li>
-	 * <li>{@link com.vladsch.flexmark.ast.Paragraph} - rendered as plain text</li>
-	 * <li>{@link com.vladsch.flexmark.ast.Text} - rendered as-is</li>
-	 * <li>{@link com.vladsch.flexmark.ast.SoftLineBreak} and {@link com.vladsch.flexmark.ast.HardLineBreak}</li>
-	 * <li>{@link com.vladsch.flexmark.ast.ThematicBreak} - rendered as a horizontal line</li>
-	 * <li>{@link com.vladsch.flexmark.ast.BulletList} and {@link com.vladsch.flexmark.ast.OrderedList}</li>
-	 * <li>{@link com.vladsch.flexmark.ast.ListItem} - recursive rendering</li>
-	 * <li>{@link com.vladsch.flexmark.ast.Emphasis} and {@link com.vladsch.flexmark.ast.StrongEmphasis}</li>
-	 * <li>{@link com.vladsch.flexmark.ast.Code} and {@link com.vladsch.flexmark.ast.FencedCodeBlock}</li>
-	 * <li>{@link com.vladsch.flexmark.ast.Link} and {@link com.vladsch.flexmark.ast.Image}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Heading}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Paragraph}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Text}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.SoftLineBreak} / {@link com.vladsch.flexmark.ast.HardLineBreak}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.ThematicBreak}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.BulletList} / {@link com.vladsch.flexmark.ast.OrderedList}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.ListItem}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Emphasis} / {@link com.vladsch.flexmark.ast.StrongEmphasis}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Code} / {@link com.vladsch.flexmark.ast.FencedCodeBlock}</li>
+	 * <li>{@link com.vladsch.flexmark.ast.Link} / {@link com.vladsch.flexmark.ast.Image}</li>
 	 * <li>{@link com.vladsch.flexmark.ast.BlockQuote}</li>
 	 * </ul>
 	 * <p>
-	 * For unknown node types, if they have children, this method recursively processes them.
-	 * Otherwise, the node is skipped without rendering.
+	 * Any unknown or unsupported node types are recursively processed if they contain children.
 	 *
-	 * @param node   the root Markdown {@link Node} to render
-	 * @param indent the indentation level for nested elements, used to create visual structure
+	 * @param node   the root Markdown {@link Node} to convert
+	 * @param indent the indentation level to apply (used for nested structures)
+	 * @return a formatted string representation of the node and its children
 	 */
-	public static void printMarkdownNode(Node node, int indent) {
+	public static String getMarkdownNodeAsString(Node node, int indent) {
+		StringBuilder result = new StringBuilder();
 		String indentStr = "  ".repeat(indent);
 
 		if (node instanceof Heading heading) {
-			// Print heading text with its level indicated by hashes #
+			// Append heading text with its level indicated by hashes #
 			int level = heading.getLevel();
 			String prefix = "#".repeat(level) + " ";
 			String text = heading.getText().toString();
-			padText(prefix + text, true);
+			result.append(prefix).append(text);
 		}
 		else if (node instanceof Paragraph) {
-			// Print paragraphs as plain text with indentation
+			// Append paragraphs as plain text with indentation
 			StringBuilder paragraphText = new StringBuilder();
 			for (Node child : node.getChildren()) {
 				paragraphText.append(child.getChars());
 			}
-			padText(indentStr + paragraphText, true);
-			System.out.println();
+			result.append(indentStr).append(paragraphText).append("\n");
 		}
 		else if (node instanceof Text textNode) {
-			padText(indentStr + textNode.getChars(), true);
+			result.append(indentStr).append(textNode.getChars());
 		}
 		else if (node instanceof SoftLineBreak || node instanceof HardLineBreak) {
-			System.out.println();
+			result.append("\n");
 		}
 		else if (node instanceof ThematicBreak) {
-			padText("\n---------------------------------------------------\n", true);
+			result.append("\n---------------------------------------------------\n");
 		}
 		else if (node instanceof BulletList) {
-			// For bullet lists, print each item prefixed with a bullet
+			// For bullet lists, append each item prefixed with a bullet
 			for (Node child : node.getChildren()) {
-				padText(indentStr + "• ", true);
-				printMarkdownNode(child, indent + 1);
-				System.out.println();
+				result
+						.append(indentStr)
+						.append("• ")
+						.append(getMarkdownNodeAsString(child, indent + 1))
+						.append("\n");
 			}
 		}
 		else if (node instanceof OrderedList orderedList) {
 			int startNumber = orderedList.getStartNumber();
 			int index = 0;
 			for (Node child : node.getChildren()) {
-				padText(indentStr + (startNumber + index) + ". ", true);
-				printMarkdownNode(child, indent + 1);
-				System.out.println();
+				result
+						.append(indentStr)
+						.append(startNumber + index)
+						.append(". ")
+						.append(getMarkdownNodeAsString(child, indent + 1))
+						.append("\n");
 				index++;
 			}
 		}
 		else if (node instanceof ListItem) {
-			// List items: just print their children
+			// List items: just append their children
 			for (Node child : node.getChildren()) {
-				printMarkdownNode(child, indent);
+				result.append(getMarkdownNodeAsString(child, indent));
 			}
 		}
 		else if (node instanceof Emphasis) {
-			// Emphasis: print children wrapped with * *
-			padText(indentStr + "*", false);
+			// Emphasis: append children wrapped with * *
+			result.append(indentStr).append("*");
 			for (Node child : node.getChildren()) {
-				printMarkdownNode(child, 0);
+				result.append(getMarkdownNodeAsString(child, 0));
 			}
-			padText("*", true);
+			result.append("*");
 		}
 		else if (node instanceof StrongEmphasis) {
-			// Strong emphasis: print children wrapped with ** **
-			padText(indentStr + "**", false);
+			// Strong emphasis: append children wrapped with ** **
+			result.append(indentStr).append("**");
 			for (Node child : node.getChildren()) {
-				printMarkdownNode(child, 0);
+				result.append(getMarkdownNodeAsString(child, 0));
 			}
-			padText("**", true);
+			result.append("**");
 		}
 		else if (node instanceof Code code) {
 			// Inline code wrapped with backticks
-			padText(indentStr + "`" + code.getText().toString() + "`", true);
+			result.append(indentStr).append("`").append(code.getText().toString()).append("`");
 		}
 		else if (node instanceof FencedCodeBlock codeBlock) {
 			// Code block with language info if present
 			String info = codeBlock.getInfo().toString();
-			padText(indentStr + "```" + info, true);
-			padText(codeBlock.getContentChars().toString(), true);
-			padText(indentStr + "```", true);
+			result
+					.append(indentStr)
+					.append("```")
+					.append(info)
+					.append(codeBlock.getContentChars())
+					.append(indentStr)
+					.append("```");
 		}
 		else if (node instanceof Link link) {
-			// Print link text and URL
+			// Append link text and URL
 			String url = link.getUrl().toString();
-			padText(indentStr + "[", false);
+			result.append(indentStr).append("[");
 			for (Node child : link.getChildren()) {
-				printMarkdownNode(child, 0);
+				result.append(getMarkdownNodeAsString(child, 0));
 			}
-			padText("](" + url + ")", true);
+			result.append("](").append(url).append(")");
 		}
 		else if (node instanceof Image image) {
-			// Print image alt text and URL
+			// Append image alt text and URL
 			String url = image.getUrl().toString();
-			padText(indentStr + "![", false);
+			result.append(indentStr).append("![");
 			for (Node child : image.getChildren()) {
-				printMarkdownNode(child, 0);
+				result.append(getMarkdownNodeAsString(child, 0));
 			}
-			padText("](" + url + ")", true);
+			result.append("](").append(url).append(")");
 		}
 		else if (node instanceof BlockQuote) {
-			padText(indentStr + "> ", false);
+			result.append(indentStr).append("> ");
 			for (Node child : node.getChildren()) {
-				printMarkdownNode(child, indent + 1);
+				result.append(getMarkdownNodeAsString(child, indent + 1));
 			}
-			System.out.println();
+			result.append("\n");
 		}
 		else {
-			// Default fallback: recursively print children
+			// Default fallback: recursively append children
 			if (node.hasChildren()) {
 				for (Node child : node.getChildren()) {
-					printMarkdownNode(child, indent);
+					result.append(getMarkdownNodeAsString(child, indent));
 				}
 			}
 		}
+		return result.toString();
 	}
 
 	/**
-	 * Parses a raw Markdown string using the configured {@code MARKDOWN_PARSER},
-	 * and prints the content to the terminal in a formatted style by delegating
-	 * to {@link #printMarkdownNode(Node, int)}.
+	 * Parses a Markdown string using the {@link #MARKDOWN_PARSER} and converts
+	 * it into a plain-text formatted representation suitable for terminal output.
 	 * <p>
-	 * This function is typically used to display help documents, manuals, or guides
-	 * stored as Markdown content directly to the console or terminal.
+	 * This is typically used to display user guides, help documentation,
+	 * or any content written in Markdown in a readable form within a terminal interface.
 	 *
-	 * @param topicContent the raw Markdown content as a {@link String}
+	 * @param topicContent the raw Markdown input as a {@link String}
+	 * @return the formatted plain-text representation of the Markdown content
 	 */
-	public static void printMarkdown(String topicContent) {
+	public static String getMarkdownAsString(String topicContent) {
 		Node document = MARKDOWN_PARSER.parse(topicContent);
-		printMarkdownNode(document, 0);
+		return getMarkdownNodeAsString(document, 0);
 	}
 }
