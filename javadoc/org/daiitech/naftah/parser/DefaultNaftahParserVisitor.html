@@ -108,24 +108,33 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>private int</code></div>
-<div class="col-second even-row-color"><code><a href="#depth" class="member-name-link">depth</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first even-row-color"><code>private final <a href="../builtin/utils/Tuple.html" title="class in org.daiitech.naftah.builtin.utils">Tuple</a></code></div>
+<div class="col-second even-row-color"><code><a href="#args" class="member-name-link">args</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#ARGS_SIZE" class="member-name-link">ARGS_SIZE</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#ARGS_VAR_NAME" class="member-name-link">ARGS_VAR_NAME</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>private int</code></div>
+<div class="col-second odd-row-color"><code><a href="#depth" class="member-name-link">depth</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Current depth in the parse tree traversal.</div>
 </div>
-<div class="col-first odd-row-color"><code>(package private) static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.logging/java/util/logging/Logger.html" title="class or interface in java.util.logging" class="external-link">Logger</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#LOGGER" class="member-name-link">LOGGER</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>(package private) static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.logging/java/util/logging/Logger.html" title="class or interface in java.util.logging" class="external-link">Logger</a></code></div>
+<div class="col-second even-row-color"><code><a href="#LOGGER" class="member-name-link">LOGGER</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Logger instance for logging parser visitor activities.</div>
 </div>
-<div class="col-first even-row-color"><code>private final <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second even-row-color"><code><a href="#parser" class="member-name-link">parser</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>private final <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#parser" class="member-name-link">parser</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The ANTLR parser instance that produces the parse tree.</div>
 </div>
-<div class="col-first odd-row-color"><code>static org.antlr.v4.runtime.Vocabulary</code></div>
-<div class="col-second odd-row-color"><code><a href="#PARSER_VOCABULARY" class="member-name-link">PARSER_VOCABULARY</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static org.antlr.v4.runtime.Vocabulary</code></div>
+<div class="col-second even-row-color"><code><a href="#PARSER_VOCABULARY" class="member-name-link">PARSER_VOCABULARY</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The vocabulary used by the parser, typically containing mappings from token names to their
  symbolic and literal representations.</div>
 </div>
@@ -140,7 +149,8 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser)" class="member-name-link">DefaultNaftahParserVisitor</a><wbr>(<a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a>&nbsp;parser)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser,java.util.List)" class="member-name-link">DefaultNaftahParserVisitor</a><wbr>(<a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a>&nbsp;parser,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;args)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Constructs the visitor with a given parser.</div>
 </div>
@@ -251,44 +261,54 @@ loadScripts(document, 'script');</script>
 <div class="block">Visit a parse tree produced by the <code>collectionAccessExpression</code>
  labeled alternative in <a href="NaftahParser.html#primary()"><code>NaftahParser.primary()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitCollectionAccessStatement(org.daiitech.naftah.parser.NaftahParser.CollectionAccessStatementContext)" class="member-name-link">visitCollectionAccessStatement</a><wbr>(<a href="NaftahParser.CollectionAccessStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.CollectionAccessStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitCollectionAccessIndex(org.daiitech.naftah.parser.NaftahParser.CollectionAccessIndexContext)" class="member-name-link">visitCollectionAccessIndex</a><wbr>(<a href="NaftahParser.CollectionAccessIndexContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.CollectionAccessIndexContext</a>&nbsp;ctx)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#collectionAccessIndex()"><code>NaftahParser.collectionAccessIndex()</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitCollectionAccessStatement(org.daiitech.naftah.parser.NaftahParser.CollectionAccessStatementContext)" class="member-name-link">visitCollectionAccessStatement</a><wbr>(<a href="NaftahParser.CollectionAccessStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.CollectionAccessStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>collectionAccessStatement</code>
  labeled alternative in <a href="NaftahParser.html#statement()"><code>NaftahParser.statement()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitCollectionExpression(org.daiitech.naftah.parser.NaftahParser.CollectionExpressionContext)" class="member-name-link">visitCollectionExpression</a><wbr>(<a href="NaftahParser.CollectionExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.CollectionExpressionContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitCollectionExpression(org.daiitech.naftah.parser.NaftahParser.CollectionExpressionContext)" class="member-name-link">visitCollectionExpression</a><wbr>(<a href="NaftahParser.CollectionExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.CollectionExpressionContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>collectionExpression</code>
  labeled alternative in <a href="NaftahParser.html#primary()"><code>NaftahParser.primary()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitContinueStatement(org.daiitech.naftah.parser.NaftahParser.ContinueStatementContext)" class="member-name-link">visitContinueStatement</a><wbr>(<a href="NaftahParser.ContinueStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ContinueStatementContext</a>&nbsp;ctx)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitContinueStatement(org.daiitech.naftah.parser.NaftahParser.ContinueStatementContext)" class="member-name-link">visitContinueStatement</a><wbr>(<a href="NaftahParser.ContinueStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ContinueStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by <a href="NaftahParser.html#continueStatement()"><code>NaftahParser.continueStatement()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitContinueStatementStatement(org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext)" class="member-name-link">visitContinueStatementStatement</a><wbr>(<a href="NaftahParser.ContinueStatementStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ContinueStatementStatementContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitContinueStatementStatement(org.daiitech.naftah.parser.NaftahParser.ContinueStatementStatementContext)" class="member-name-link">visitContinueStatementStatement</a><wbr>(<a href="NaftahParser.ContinueStatementStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ContinueStatementStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>continueStatementStatement</code>
  labeled alternative in <a href="NaftahParser.html#statement()"><code>NaftahParser.statement()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitDeclaration(org.daiitech.naftah.parser.NaftahParser.DeclarationContext)" class="member-name-link">visitDeclaration</a><wbr>(<a href="NaftahParser.DeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.DeclarationContext</a>&nbsp;ctx)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitDeclaration(org.daiitech.naftah.parser.NaftahParser.DeclarationContext)" class="member-name-link">visitDeclaration</a><wbr>(<a href="NaftahParser.DeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.DeclarationContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by <a href="NaftahParser.html#declaration()"><code>NaftahParser.declaration()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitDeclarationStatement(org.daiitech.naftah.parser.NaftahParser.DeclarationStatementContext)" class="member-name-link">visitDeclarationStatement</a><wbr>(<a href="NaftahParser.DeclarationStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.DeclarationStatementContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitDeclarationStatement(org.daiitech.naftah.parser.NaftahParser.DeclarationStatementContext)" class="member-name-link">visitDeclarationStatement</a><wbr>(<a href="NaftahParser.DeclarationStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.DeclarationStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>declarationStatement</code>
  labeled alternative in <a href="NaftahParser.html#statement()"><code>NaftahParser.statement()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitEqualityExpression(org.daiitech.naftah.parser.NaftahParser.EqualityExpressionContext)" class="member-name-link">visitEqualityExpression</a><wbr>(<a href="NaftahParser.EqualityExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.EqualityExpressionContext</a>&nbsp;ctx)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitEqualityExpression(org.daiitech.naftah.parser.NaftahParser.EqualityExpressionContext)" class="member-name-link">visitEqualityExpression</a><wbr>(<a href="NaftahParser.EqualityExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.EqualityExpressionContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by <a href="NaftahParser.html#equalityExpression()"><code>NaftahParser.equalityExpression()</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitErrorCase(org.daiitech.naftah.parser.NaftahParser.ErrorCaseContext)" class="member-name-link">visitErrorCase</a><wbr>(<a href="NaftahParser.ErrorCaseContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ErrorCaseContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#errorCase()"><code>NaftahParser.errorCase()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitExpression(org.daiitech.naftah.parser.NaftahParser.ExpressionContext)" class="member-name-link">visitExpression</a><wbr>(<a href="NaftahParser.ExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionContext</a>&nbsp;ctx)</code></div>
@@ -438,54 +458,64 @@ loadScripts(document, 'script');</script>
  labeled alternative in <a href="NaftahParser.html#value()"><code>NaftahParser.value()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitNullishExpression(org.daiitech.naftah.parser.NaftahParser.NullishExpressionContext)" class="member-name-link">visitNullishExpression</a><wbr>(<a href="NaftahParser.NullishExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.NullishExpressionContext</a>&nbsp;ctx)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitNoneCase(org.daiitech.naftah.parser.NaftahParser.NoneCaseContext)" class="member-name-link">visitNoneCase</a><wbr>(<a href="NaftahParser.NoneCaseContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.NoneCaseContext</a>&nbsp;ctx)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#nullishExpression()"><code>NaftahParser.nullishExpression()</code></a>.</div>
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#noneCase()"><code>NaftahParser.noneCase()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitNullValue(org.daiitech.naftah.parser.NaftahParser.NullValueContext)" class="member-name-link">visitNullValue</a><wbr>(<a href="NaftahParser.NullValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.NullValueContext</a>&nbsp;ctx)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitNullishExpression(org.daiitech.naftah.parser.NaftahParser.NullishExpressionContext)" class="member-name-link">visitNullishExpression</a><wbr>(<a href="NaftahParser.NullishExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.NullishExpressionContext</a>&nbsp;ctx)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#nullishExpression()"><code>NaftahParser.nullishExpression()</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitNullValue(org.daiitech.naftah.parser.NaftahParser.NullValueContext)" class="member-name-link">visitNullValue</a><wbr>(<a href="NaftahParser.NullValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.NullValueContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>nullValue</code>
  labeled alternative in <a href="NaftahParser.html#value()"><code>NaftahParser.value()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitNumberValue(org.daiitech.naftah.parser.NaftahParser.NumberValueContext)" class="member-name-link">visitNumberValue</a><wbr>(<a href="NaftahParser.NumberValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.NumberValueContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitNumberValue(org.daiitech.naftah.parser.NaftahParser.NumberValueContext)" class="member-name-link">visitNumberValue</a><wbr>(<a href="NaftahParser.NumberValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.NumberValueContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>numberValue</code>
  labeled alternative in <a href="NaftahParser.html#value()"><code>NaftahParser.value()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObject(org.daiitech.naftah.parser.NaftahParser.ObjectContext)" class="member-name-link">visitObject</a><wbr>(<a href="NaftahParser.ObjectContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectContext</a>&nbsp;ctx)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObject(org.daiitech.naftah.parser.NaftahParser.ObjectContext)" class="member-name-link">visitObject</a><wbr>(<a href="NaftahParser.ObjectContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by <a href="NaftahParser.html#object()"><code>NaftahParser.object()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectAccess(org.daiitech.naftah.parser.NaftahParser.ObjectAccessContext)" class="member-name-link">visitObjectAccess</a><wbr>(<a href="NaftahParser.ObjectAccessContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectAccessContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectAccess(org.daiitech.naftah.parser.NaftahParser.ObjectAccessContext)" class="member-name-link">visitObjectAccess</a><wbr>(<a href="NaftahParser.ObjectAccessContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectAccessContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by <a href="NaftahParser.html#objectAccess()"><code>NaftahParser.objectAccess()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectAccessExpression(org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext)" class="member-name-link">visitObjectAccessExpression</a><wbr>(<a href="NaftahParser.ObjectAccessExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectAccessExpressionContext</a>&nbsp;ctx)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectAccessExpression(org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext)" class="member-name-link">visitObjectAccessExpression</a><wbr>(<a href="NaftahParser.ObjectAccessExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectAccessExpressionContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>objectAccessExpression</code>
  labeled alternative in <a href="NaftahParser.html#primary()"><code>NaftahParser.primary()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectAccessStatement(org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext)" class="member-name-link">visitObjectAccessStatement</a><wbr>(<a href="NaftahParser.ObjectAccessStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectAccessStatementContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectAccessStatement(org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext)" class="member-name-link">visitObjectAccessStatement</a><wbr>(<a href="NaftahParser.ObjectAccessStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectAccessStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>objectAccessStatement</code>
  labeled alternative in <a href="NaftahParser.html#statement()"><code>NaftahParser.statement()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectExpression(org.daiitech.naftah.parser.NaftahParser.ObjectExpressionContext)" class="member-name-link">visitObjectExpression</a><wbr>(<a href="NaftahParser.ObjectExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectExpressionContext</a>&nbsp;ctx)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectExpression(org.daiitech.naftah.parser.NaftahParser.ObjectExpressionContext)" class="member-name-link">visitObjectExpression</a><wbr>(<a href="NaftahParser.ObjectExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectExpressionContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>objectExpression</code>
  labeled alternative in <a href="NaftahParser.html#primary()"><code>NaftahParser.primary()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectFields(org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext)" class="member-name-link">visitObjectFields</a><wbr>(<a href="NaftahParser.ObjectFieldsContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectFieldsContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitObjectFields(org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext)" class="member-name-link">visitObjectFields</a><wbr>(<a href="NaftahParser.ObjectFieldsContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ObjectFieldsContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by <a href="NaftahParser.html#objectFields()"><code>NaftahParser.objectFields()</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitOkCase(org.daiitech.naftah.parser.NaftahParser.OkCaseContext)" class="member-name-link">visitOkCase</a><wbr>(<a href="NaftahParser.OkCaseContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.OkCaseContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#okCase()"><code>NaftahParser.okCase()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitParameterDeclaration(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext)" class="member-name-link">visitParameterDeclaration</a><wbr>(<a href="NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a>&nbsp;ctx)</code></div>
@@ -597,21 +627,44 @@ loadScripts(document, 'script');</script>
  labeled alternative in <a href="NaftahParser.html#elements()"><code>NaftahParser.elements()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitStringValue(org.daiitech.naftah.parser.NaftahParser.StringValueContext)" class="member-name-link">visitStringValue</a><wbr>(<a href="NaftahParser.StringValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.StringValueContext</a>&nbsp;ctx)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitSomeCase(org.daiitech.naftah.parser.NaftahParser.SomeCaseContext)" class="member-name-link">visitSomeCase</a><wbr>(<a href="NaftahParser.SomeCaseContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.SomeCaseContext</a>&nbsp;ctx)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#someCase()"><code>NaftahParser.someCase()</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitStringValue(org.daiitech.naftah.parser.NaftahParser.StringValueContext)" class="member-name-link">visitStringValue</a><wbr>(<a href="NaftahParser.StringValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.StringValueContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>stringValue</code>
  labeled alternative in <a href="NaftahParser.html#value()"><code>NaftahParser.value()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitTernaryExpression(org.daiitech.naftah.parser.NaftahParser.TernaryExpressionContext)" class="member-name-link">visitTernaryExpression</a><wbr>(<a href="NaftahParser.TernaryExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TernaryExpressionContext</a>&nbsp;ctx)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitTernaryExpression(org.daiitech.naftah.parser.NaftahParser.TernaryExpressionContext)" class="member-name-link">visitTernaryExpression</a><wbr>(<a href="NaftahParser.TernaryExpressionContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TernaryExpressionContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by <a href="NaftahParser.html#ternaryExpression()"><code>NaftahParser.ternaryExpression()</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitTrueValue(org.daiitech.naftah.parser.NaftahParser.TrueValueContext)" class="member-name-link">visitTrueValue</a><wbr>(<a href="NaftahParser.TrueValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TrueValueContext</a>&nbsp;ctx)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitTrueValue(org.daiitech.naftah.parser.NaftahParser.TrueValueContext)" class="member-name-link">visitTrueValue</a><wbr>(<a href="NaftahParser.TrueValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TrueValueContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Visit a parse tree produced by the <code>trueValue</code>
  labeled alternative in <a href="NaftahParser.html#value()"><code>NaftahParser.value()</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitTryStatementStatement(org.daiitech.naftah.parser.NaftahParser.TryStatementStatementContext)" class="member-name-link">visitTryStatementStatement</a><wbr>(<a href="NaftahParser.TryStatementStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TryStatementStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Visit a parse tree produced by the <code>tryStatementStatement</code>
+ labeled alternative in <a href="NaftahParser.html#statement()"><code>NaftahParser.statement()</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitTryStatementWithOptionCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext)" class="member-name-link">visitTryStatementWithOptionCases</a><wbr>(<a href="NaftahParser.TryStatementWithOptionCasesContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TryStatementWithOptionCasesContext</a>&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Visit a parse tree produced by the <code>tryStatementWithOptionCases</code>
+ labeled alternative in <a href="NaftahParser.html#tryStatement()"><code>NaftahParser.tryStatement()</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitTryStatementWithTryCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithTryCasesContext)" class="member-name-link">visitTryStatementWithTryCases</a><wbr>(<a href="NaftahParser.TryStatementWithTryCasesContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TryStatementWithTryCasesContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Visit a parse tree produced by the <code>tryStatementWithTryCases</code>
+ labeled alternative in <a href="NaftahParser.html#tryStatement()"><code>NaftahParser.tryStatement()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../builtin/utils/Tuple.html" title="class in org.daiitech.naftah.builtin.utils">Tuple</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#visitTupleValue(org.daiitech.naftah.parser.NaftahParser.TupleValueContext)" class="member-name-link">visitTupleValue</a><wbr>(<a href="NaftahParser.TupleValueContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TupleValueContext</a>&nbsp;ctx)</code></div>
@@ -665,7 +718,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.daiitech.naftah.parser.NaftahParserBaseVisitor">Methods inherited from class&nbsp;org.daiitech.naftah.parser.<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a></h3>
-<code><a href="NaftahParserBaseVisitor.html#visitCaseLabelList(org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext)">visitCaseLabelList</a>, <a href="NaftahParserBaseVisitor.html#visitInitCall(org.daiitech.naftah.parser.NaftahParser.InitCallContext)">visitInitCall</a></code></div>
+<code><a href="NaftahParserBaseVisitor.html#visitCaseLabelList(org.daiitech.naftah.parser.NaftahParser.CaseLabelListContext)">visitCaseLabelList</a>, <a href="NaftahParserBaseVisitor.html#visitInitCall(org.daiitech.naftah.parser.NaftahParser.InitCallContext)">visitInitCall</a>, <a href="NaftahParserBaseVisitor.html#visitOptionCases(org.daiitech.naftah.parser.NaftahParser.OptionCasesContext)">visitOptionCases</a>, <a href="NaftahParserBaseVisitor.html#visitPropertyAccess(org.daiitech.naftah.parser.NaftahParser.PropertyAccessContext)">visitPropertyAccess</a>, <a href="NaftahParserBaseVisitor.html#visitTryCases(org.daiitech.naftah.parser.NaftahParser.TryCasesContext)">visitTryCases</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.antlr.v4.runtime.tree.AbstractParseTreeVisitor">Methods inherited from class&nbsp;org.antlr.v4.runtime.tree.AbstractParseTreeVisitor</h3>
 <code>aggregateResult, defaultResult, shouldVisitNextChild, visit, visitChildren, visitErrorNode, visitTerminal</code></div>
@@ -714,6 +767,40 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="args">
+<h3>args</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="../builtin/utils/Tuple.html" title="class in org.daiitech.naftah.builtin.utils">Tuple</a></span>&nbsp;<span class="element-name">args</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="ARGS_VAR_NAME">
+<h3>ARGS_VAR_NAME</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">ARGS_VAR_NAME</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.parser.DefaultNaftahParserVisitor.ARGS_VAR_NAME">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="ARGS_SIZE">
+<h3>ARGS_SIZE</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">ARGS_SIZE</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.parser.DefaultNaftahParserVisitor.ARGS_SIZE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="depth">
 <h3>depth</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">depth</span></div>
@@ -729,9 +816,10 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(org.daiitech.naftah.parser.NaftahParser)">
+<section class="detail" id="&lt;init&gt;(org.daiitech.naftah.parser.NaftahParser,java.util.List)">
 <h3>DefaultNaftahParserVisitor</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DefaultNaftahParserVisitor</span><wbr><span class="parameters">(<a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a>&nbsp;parser)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DefaultNaftahParserVisitor</span><wbr><span class="parameters">(<a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a>&nbsp;parser,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;args)</span></div>
 <div class="block">Constructs the visitor with a given parser.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -982,6 +1070,27 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="NaftahParserVisitor.html#visitCaseStatementStatement(org.daiitech.naftah.parser.NaftahParser.CaseStatementStatementContext)">visitCaseStatementStatement</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
 <dt>Overrides:</dt>
 <dd><code><a href="NaftahParserBaseVisitor.html#visitCaseStatementStatement(org.daiitech.naftah.parser.NaftahParser.CaseStatementStatementContext)">visitCaseStatementStatement</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitTryStatementStatement(org.daiitech.naftah.parser.NaftahParser.TryStatementStatementContext)">
+<h3>visitTryStatementStatement</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitTryStatementStatement</span><wbr><span class="parameters">(<a href="NaftahParser.TryStatementStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TryStatementStatementContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by the <code>tryStatementStatement</code>
+ labeled alternative in <a href="NaftahParser.html#statement()"><code>NaftahParser.statement()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="NaftahParserVisitor.html#visitTryStatementStatement(org.daiitech.naftah.parser.NaftahParser.TryStatementStatementContext)">visitTryStatementStatement</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="NaftahParserBaseVisitor.html#visitTryStatementStatement(org.daiitech.naftah.parser.NaftahParser.TryStatementStatementContext)">visitTryStatementStatement</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>ctx</code> - the parse tree</dd>
 <dt>Returns:</dt>
@@ -1441,6 +1550,129 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="visitTryStatementWithTryCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithTryCasesContext)">
+<h3>visitTryStatementWithTryCases</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitTryStatementWithTryCases</span><wbr><span class="parameters">(<a href="NaftahParser.TryStatementWithTryCasesContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TryStatementWithTryCasesContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by the <code>tryStatementWithTryCases</code>
+ labeled alternative in <a href="NaftahParser.html#tryStatement()"><code>NaftahParser.tryStatement()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="NaftahParserVisitor.html#visitTryStatementWithTryCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithTryCasesContext)">visitTryStatementWithTryCases</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="NaftahParserBaseVisitor.html#visitTryStatementWithTryCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithTryCasesContext)">visitTryStatementWithTryCases</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitTryStatementWithOptionCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext)">
+<h3>visitTryStatementWithOptionCases</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitTryStatementWithOptionCases</span><wbr><span class="parameters">(<a href="NaftahParser.TryStatementWithOptionCasesContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.TryStatementWithOptionCasesContext</a>&nbsp;ctx)</span></div>
+<div class="block"><span class="descfrm-type-label">Description copied from class:&nbsp;<code><a href="NaftahParserBaseVisitor.html#visitTryStatementWithOptionCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext)">NaftahParserBaseVisitor</a></code></span></div>
+<div class="block">Visit a parse tree produced by the <code>tryStatementWithOptionCases</code>
+ labeled alternative in <a href="NaftahParser.html#tryStatement()"><code>NaftahParser.tryStatement()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="NaftahParserVisitor.html#visitTryStatementWithOptionCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext)">visitTryStatementWithOptionCases</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="NaftahParserBaseVisitor.html#visitTryStatementWithOptionCases(org.daiitech.naftah.parser.NaftahParser.TryStatementWithOptionCasesContext)">visitTryStatementWithOptionCases</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitOkCase(org.daiitech.naftah.parser.NaftahParser.OkCaseContext)">
+<h3>visitOkCase</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitOkCase</span><wbr><span class="parameters">(<a href="NaftahParser.OkCaseContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.OkCaseContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#okCase()"><code>NaftahParser.okCase()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="NaftahParserVisitor.html#visitOkCase(org.daiitech.naftah.parser.NaftahParser.OkCaseContext)">visitOkCase</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="NaftahParserBaseVisitor.html#visitOkCase(org.daiitech.naftah.parser.NaftahParser.OkCaseContext)">visitOkCase</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitErrorCase(org.daiitech.naftah.parser.NaftahParser.ErrorCaseContext)">
+<h3>visitErrorCase</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitErrorCase</span><wbr><span class="parameters">(<a href="NaftahParser.ErrorCaseContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ErrorCaseContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#errorCase()"><code>NaftahParser.errorCase()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="NaftahParserVisitor.html#visitErrorCase(org.daiitech.naftah.parser.NaftahParser.ErrorCaseContext)">visitErrorCase</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="NaftahParserBaseVisitor.html#visitErrorCase(org.daiitech.naftah.parser.NaftahParser.ErrorCaseContext)">visitErrorCase</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitSomeCase(org.daiitech.naftah.parser.NaftahParser.SomeCaseContext)">
+<h3>visitSomeCase</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitSomeCase</span><wbr><span class="parameters">(<a href="NaftahParser.SomeCaseContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.SomeCaseContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#someCase()"><code>NaftahParser.someCase()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="NaftahParserVisitor.html#visitSomeCase(org.daiitech.naftah.parser.NaftahParser.SomeCaseContext)">visitSomeCase</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="NaftahParserBaseVisitor.html#visitSomeCase(org.daiitech.naftah.parser.NaftahParser.SomeCaseContext)">visitSomeCase</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitNoneCase(org.daiitech.naftah.parser.NaftahParser.NoneCaseContext)">
+<h3>visitNoneCase</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitNoneCase</span><wbr><span class="parameters">(<a href="NaftahParser.NoneCaseContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.NoneCaseContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#noneCase()"><code>NaftahParser.noneCase()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="NaftahParserVisitor.html#visitNoneCase(org.daiitech.naftah.parser.NaftahParser.NoneCaseContext)">visitNoneCase</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="NaftahParserBaseVisitor.html#visitNoneCase(org.daiitech.naftah.parser.NaftahParser.NoneCaseContext)">visitNoneCase</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="visitExpressionStatement(org.daiitech.naftah.parser.NaftahParser.ExpressionStatementContext)">
 <h3>visitExpressionStatement</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitExpressionStatement</span><wbr><span class="parameters">(<a href="NaftahParser.ExpressionStatementContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ExpressionStatementContext</a>&nbsp;ctx)</span></div>
@@ -1739,6 +1971,26 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="NaftahParserVisitor.html#visitCollectionAccess(org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext)">visitCollectionAccess</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
 <dt>Overrides:</dt>
 <dd><code><a href="NaftahParserBaseVisitor.html#visitCollectionAccess(org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext)">visitCollectionAccess</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitCollectionAccessIndex(org.daiitech.naftah.parser.NaftahParser.CollectionAccessIndexContext)">
+<h3>visitCollectionAccessIndex</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></span>&nbsp;<span class="element-name">visitCollectionAccessIndex</span><wbr><span class="parameters">(<a href="NaftahParser.CollectionAccessIndexContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.CollectionAccessIndexContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by <a href="NaftahParser.html#collectionAccessIndex()"><code>NaftahParser.collectionAccessIndex()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="NaftahParserVisitor.html#visitCollectionAccessIndex(org.daiitech.naftah.parser.NaftahParser.CollectionAccessIndexContext)">visitCollectionAccessIndex</a></code>&nbsp;in interface&nbsp;<code><a href="NaftahParserVisitor.html" title="interface in org.daiitech.naftah.parser">NaftahParserVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="NaftahParserBaseVisitor.html#visitCollectionAccessIndex(org.daiitech.naftah.parser.NaftahParser.CollectionAccessIndexContext)">visitCollectionAccessIndex</a></code>&nbsp;in class&nbsp;<code><a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>ctx</code> - the parse tree</dd>
 <dt>Returns:</dt>

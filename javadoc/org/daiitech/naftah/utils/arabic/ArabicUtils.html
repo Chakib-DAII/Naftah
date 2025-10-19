@@ -362,14 +362,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Splits an identifier string into constituent parts based on various naming conventions.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateScript(com.ibm.icu.text.Transliterator,boolean,java.lang.String)" class="member-name-link">transliterateScript</a><wbr>(com.ibm.icu.text.Transliterator&nbsp;transliterator,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateScript(boolean,com.ibm.icu.text.Transliterator,boolean,java.lang.String)" class="member-name-link">transliterateScript</a><wbr>(boolean&nbsp;split,
+ com.ibm.icu.text.Transliterator&nbsp;transliterator,
  boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;word)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates a single word using the given Transliterator.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateScript(java.lang.String,boolean,java.lang.String,java.lang.String...)" class="member-name-link">transliterateScript</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateScript(boolean,java.lang.String,boolean,java.lang.String,java.lang.String...)" class="member-name-link">transliterateScript</a><wbr>(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
  boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
@@ -378,13 +380,15 @@ loadScripts(document, 'script');</script>
  using the specified ICU Transliterator ID and optional custom rules.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateScript(java.lang.String,java.lang.String...)" class="member-name-link">transliterateScript</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateScript(boolean,java.lang.String,java.lang.String...)" class="member-name-link">transliterateScript</a><wbr>(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates one or more strings using the specified transliterator ID.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateScript(java.lang.String,java.lang.String,java.lang.String...)" class="member-name-link">transliterateScript</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateScript(boolean,java.lang.String,java.lang.String,java.lang.String...)" class="member-name-link">transliterateScript</a><wbr>(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -397,37 +401,43 @@ loadScripts(document, 'script');</script>
 <div class="block">Transliterates the input text letter by letter using the specified transliterator ID.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScript(boolean,java.lang.String...)" class="member-name-link">transliterateToArabicScript</a><wbr>(boolean&nbsp;removeDiacritics,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScript(boolean,boolean,java.lang.String...)" class="member-name-link">transliterateToArabicScript</a><wbr>(boolean&nbsp;split,
+ boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates one or more strings to Arabic script.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScript(boolean,java.lang.String,java.lang.String...)" class="member-name-link">transliterateToArabicScript</a><wbr>(boolean&nbsp;removeDiacritics,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScript(boolean,boolean,java.lang.String,java.lang.String...)" class="member-name-link">transliterateToArabicScript</a><wbr>(boolean&nbsp;split,
+ boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates one or more strings to Arabic script using provided custom rules.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScript(java.lang.String...)" class="member-name-link">transliterateToArabicScript</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScript(boolean,java.lang.String...)" class="member-name-link">transliterateToArabicScript</a><wbr>(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates one or more strings to Arabic script.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScript(java.lang.String,java.lang.String...)" class="member-name-link">transliterateToArabicScript</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScript(boolean,java.lang.String,java.lang.String...)" class="member-name-link">transliterateToArabicScript</a><wbr>(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates one or more strings to Arabic script using the provided custom rules.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScriptDefaultCustom(boolean,java.lang.String...)" class="member-name-link">transliterateToArabicScriptDefaultCustom</a><wbr>(boolean&nbsp;removeDiacritics,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScriptDefault(boolean,boolean,java.lang.String...)" class="member-name-link">transliterateToArabicScriptDefault</a><wbr>(boolean&nbsp;split,
+ boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates one or more strings to Arabic script using default custom rules.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScriptDefaultCustom(java.lang.String...)" class="member-name-link">transliterateToArabicScriptDefaultCustom</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#transliterateToArabicScriptDefault(boolean,java.lang.String...)" class="member-name-link">transliterateToArabicScriptDefault</a><wbr>(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates one or more strings to Arabic script using default custom rules.</div>
 </div>
@@ -987,9 +997,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateScript(java.lang.String,boolean,java.lang.String,java.lang.String...)">
+<section class="detail" id="transliterateScript(boolean,java.lang.String,boolean,java.lang.String,java.lang.String...)">
 <h3>transliterateScript</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateScript</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateScript</span><wbr><span class="parameters">(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
  boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
@@ -1007,9 +1018,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateScript(com.ibm.icu.text.Transliterator,boolean,java.lang.String)">
+<section class="detail" id="transliterateScript(boolean,com.ibm.icu.text.Transliterator,boolean,java.lang.String)">
 <h3>transliterateScript</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">transliterateScript</span><wbr><span class="parameters">(com.ibm.icu.text.Transliterator&nbsp;transliterator,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">transliterateScript</span><wbr><span class="parameters">(boolean&nbsp;split,
+ com.ibm.icu.text.Transliterator&nbsp;transliterator,
  boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;word)</span></div>
 <div class="block">Transliterates a single word using the given Transliterator.</div>
@@ -1039,9 +1051,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateScript(java.lang.String,java.lang.String...)">
+<section class="detail" id="transliterateScript(boolean,java.lang.String,java.lang.String...)">
 <h3>transliterateScript</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateScript</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateScript</span><wbr><span class="parameters">(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
 <div class="block">Transliterates one or more strings using the specified transliterator ID.
  Diacritics are not removed.</div>
@@ -1055,9 +1068,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateScript(java.lang.String,java.lang.String,java.lang.String...)">
+<section class="detail" id="transliterateScript(boolean,java.lang.String,java.lang.String,java.lang.String...)">
 <h3>transliterateScript</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateScript</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateScript</span><wbr><span class="parameters">(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;transliteratorID,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
 <div class="block">Transliterates one or more strings using the specified transliterator ID and custom rules.
@@ -1073,9 +1087,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateToArabicScript(boolean,java.lang.String...)">
+<section class="detail" id="transliterateToArabicScript(boolean,boolean,java.lang.String...)">
 <h3>transliterateToArabicScript</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScript</span><wbr><span class="parameters">(boolean&nbsp;removeDiacritics,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScript</span><wbr><span class="parameters">(boolean&nbsp;split,
+ boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
 <div class="block">Transliterates one or more strings to Arabic script.
  Diacritics are removed by default.</div>
@@ -1089,9 +1104,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateToArabicScriptDefaultCustom(boolean,java.lang.String...)">
-<h3>transliterateToArabicScriptDefaultCustom</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScriptDefaultCustom</span><wbr><span class="parameters">(boolean&nbsp;removeDiacritics,
+<section class="detail" id="transliterateToArabicScriptDefault(boolean,boolean,java.lang.String...)">
+<h3>transliterateToArabicScriptDefault</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScriptDefault</span><wbr><span class="parameters">(boolean&nbsp;split,
+ boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
 <div class="block">Transliterates one or more strings to Arabic script using default custom rules.
  Diacritics are removed by default.</div>
@@ -1105,9 +1121,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateToArabicScript(boolean,java.lang.String,java.lang.String...)">
+<section class="detail" id="transliterateToArabicScript(boolean,boolean,java.lang.String,java.lang.String...)">
 <h3>transliterateToArabicScript</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScript</span><wbr><span class="parameters">(boolean&nbsp;removeDiacritics,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScript</span><wbr><span class="parameters">(boolean&nbsp;split,
+ boolean&nbsp;removeDiacritics,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
 <div class="block">Transliterates one or more strings to Arabic script using provided custom rules.
@@ -1123,9 +1140,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateToArabicScript(java.lang.String...)">
+<section class="detail" id="transliterateToArabicScript(boolean,java.lang.String...)">
 <h3>transliterateToArabicScript</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScript</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScript</span><wbr><span class="parameters">(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
 <div class="block">Transliterates one or more strings to Arabic script.
  Diacritics are removed by default.</div>
 <dl class="notes">
@@ -1137,23 +1155,26 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateToArabicScriptDefaultCustom(java.lang.String...)">
-<h3>transliterateToArabicScriptDefaultCustom</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScriptDefaultCustom</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
+<section class="detail" id="transliterateToArabicScriptDefault(boolean,java.lang.String...)">
+<h3>transliterateToArabicScriptDefault</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScriptDefault</span><wbr><span class="parameters">(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
 <div class="block">Transliterates one or more strings to Arabic script using default custom rules.
  Diacritics are removed by default.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>text</code> - the input strings</dd>
+<dd><code>split</code> - flags if the input should be split</dd>
 <dt>Returns:</dt>
 <dd>transliterated Arabic script strings</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="transliterateToArabicScript(java.lang.String,java.lang.String...)">
+<section class="detail" id="transliterateToArabicScript(boolean,java.lang.String,java.lang.String...)">
 <h3>transliterateToArabicScript</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScript</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">transliterateToArabicScript</span><wbr><span class="parameters">(boolean&nbsp;split,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;customRules,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>...&nbsp;text)</span></div>
 <div class="block">Transliterates one or more strings to Arabic script using the provided custom rules.
  Diacritics are removed by default.</div>

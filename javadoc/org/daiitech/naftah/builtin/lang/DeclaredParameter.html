@@ -125,10 +125,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">The original ANTLR context of the parameter declaration.</div>
 </div>
-<div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#type" class="member-name-link">type</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The declared type of the parameter.</div>
+<div class="block">The Java class representing the type of the parameter.</div>
 </div>
 <div class="col-first even-row-color"><code>private boolean</code></div>
 <div class="col-second even-row-color"><code><a href="#updatedCurrentValue" class="member-name-link">updatedCurrentValue</a></code></div>
@@ -148,10 +148,10 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>private </code></div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext,java.lang.String,boolean,java.lang.Object,java.lang.Object)" class="member-name-link">DeclaredParameter</a><wbr>(<a href="../../parser/NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a>&nbsp;originalContext,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext,java.lang.String,boolean,java.lang.Class,java.lang.Object)" class="member-name-link">DeclaredParameter</a><wbr>(<a href="../../parser/NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a>&nbsp;originalContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  boolean&nbsp;constant,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;type,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;defaultValue)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Constructs a declared parameter with its definition details.</div>
@@ -201,10 +201,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Indicates whether this parameter is a constant.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext,java.lang.String,boolean,java.lang.Object,java.lang.Object)" class="member-name-link">of</a><wbr>(<a href="../../parser/NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a>&nbsp;originalContext,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext,java.lang.String,boolean,java.lang.Class,java.lang.Object)" class="member-name-link">of</a><wbr>(<a href="../../parser/NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a>&nbsp;originalContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  boolean&nbsp;constant,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;type,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;defaultValue)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Factory method to create a new <code>DeclaredParameter</code>.</div>
@@ -260,9 +260,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="type">
 <h3>type</h3>
-<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">type</span></div>
-<div class="block">The declared type of the parameter.
- TODO: use Class type</div>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">type</span></div>
+<div class="block">The Java class representing the type of the parameter.</div>
 </section>
 </li>
 <li>
@@ -295,12 +294,12 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext,java.lang.String,boolean,java.lang.Object,java.lang.Object)">
+<section class="detail" id="&lt;init&gt;(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext,java.lang.String,boolean,java.lang.Class,java.lang.Object)">
 <h3>DeclaredParameter</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="element-name">DeclaredParameter</span><wbr><span class="parameters">(<a href="../../parser/NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a>&nbsp;originalContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  boolean&nbsp;constant,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;type,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;defaultValue)</span></div>
 <div class="block">Constructs a declared parameter with its definition details.</div>
 <dl class="notes">
@@ -322,12 +321,12 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="of(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext,java.lang.String,boolean,java.lang.Object,java.lang.Object)">
+<section class="detail" id="of(org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext,java.lang.String,boolean,java.lang.Class,java.lang.Object)">
 <h3>of</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="../../parser/NaftahParser.ParameterDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationContext</a>&nbsp;originalContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  boolean&nbsp;constant,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;type,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;defaultValue)</span></div>
 <div class="block">Factory method to create a new <code>DeclaredParameter</code>.</div>
 <dl class="notes">

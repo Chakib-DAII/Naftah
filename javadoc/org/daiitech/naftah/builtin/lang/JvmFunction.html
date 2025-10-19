@@ -219,13 +219,21 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
  by searching methods with matching name in the class.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toDetailedString()" class="member-name-link">toDetailedString</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns a string representation of this <code>JvmFunction</code>.</div>
+<div class="block">Returns a detailed, Arabic-formatted string representation of this <code>JvmFunction</code>,
+ including metadata about the method, such as return type, parameters, modifiers,
+ and annotations.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#writeObject(java.io.ObjectOutputStream)" class="member-name-link">writeObject</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/ObjectOutputStream.html" title="class or interface in java.io" class="external-link">ObjectOutputStream</a>&nbsp;oos)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns a concise string representation of this <code>JvmFunction</code>,
+ formatted in Arabic as <code>&lt;دالة qualifiedCall&gt;</code>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#writeObject(java.io.ObjectOutputStream)" class="member-name-link">writeObject</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/ObjectOutputStream.html" title="class or interface in java.io" class="external-link">ObjectOutputStream</a>&nbsp;oos)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Custom serialization logic to write the object's non-transient fields.</div>
 </div>
 </div>
@@ -440,12 +448,56 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <section class="detail" id="toString()">
 <h3>toString</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toString</span>()</div>
-<div class="block">Returns a string representation of this <code>JvmFunction</code>.</div>
+<div class="block">Returns a concise string representation of this <code>JvmFunction</code>,
+ formatted in Arabic as <code>&lt;دالة qualifiedCall&gt;</code>.
+ <p>
+ This is intended for short, human-readable descriptions, using the Arabic label "دالة"
+ (which means "function" or "method").</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></dd>
 <dt>Returns:</dt>
-<dd>a string in the format &lt;دالة qualifiedCall&gt;</dd>
+<dd>a string in the format <code>&lt;دالة qualifiedCall&gt;</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="toDetailedString()">
+<h3>toDetailedString</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toDetailedString</span>()</div>
+<div class="block">Returns a detailed, Arabic-formatted string representation of this <code>JvmFunction</code>,
+ including metadata about the method, such as return type, parameters, modifiers,
+ and annotations.
+ <p>
+ The output is structured in a human-readable Arabic format and includes
+ phonetic transliterations (into Arabic script) for class names, return types,
+ modifiers, and annotations using <a href="../../utils/reflect/ClassUtils.html#getQualifiedName(java.lang.String)"><code>ClassUtils.getQualifiedName(String)</code></a> or
+ <code>ArabicUtils#transliterateToArabicScriptDefaultCustom(String...)</code>.
+ <p>
+ The following information is included:
+ <ul>
+ <li><strong>Qualified method name</strong> — including both the fully qualified and transliterated form</li>
+ <li><strong>Return type</strong> — full Java type name with its Arabic transliteration</li>
+ <li><strong>Parameters</strong> — each parameter type with its fully qualified name and transliteration</li>
+ <li><strong>Modifiers</strong> — Java keywords (e.g., <code>public static</code>) with their Arabic
+ transliteration</li>
+ <li><strong>Annotations</strong> — fully qualified annotation names with transliterations</li>
+ </ul>
+
+ <p><strong>Example output:</strong>
+ <pre>
+ تفاصيل الدالة:
+ - الاسم المؤهل: com.example.MyClass::greet - كوم:إِكْزامْبِل:ماي_كْلاس::غْرِيتْ
+ - نوع الإرجاع: java.lang.String - جافا:لانغ:سترينج
+ - المعاملات:
+ - java.lang.String - جافا:لانغ:سترينج
+ - المُعدّلات: public static - بَبْلِكْ سْتَاتِكْ
+ - التعليقات التوضيحية:
+ - @java.lang.Deprecated - جافا:لانغ:دِبْرِكَيْتِدْ
+ </pre></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a formatted, multi-line Arabic string describing the method's structure and metadata</dd>
 </dl>
 </section>
 </li>
