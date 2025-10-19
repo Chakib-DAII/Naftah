@@ -5,7 +5,11 @@ layout: default
 permalink: /language/primitives-and-variables
 ---
 
+<div dir="rtl">
+
 {% capture included_content %}
-  {% include language/02_primitives_and_variables.md %}
+{% include language/02_primitives_and_variables.md %}
 {% endcapture %}
 {{ included_content | markdownify }}
+
+</div>

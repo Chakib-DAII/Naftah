@@ -5,7 +5,11 @@ layout: default
 permalink: /language/functions
 ---
 
+<div dir="rtl">
+
 {% capture included_content %}
 {% include language/08_functions.md %}
 {% endcapture %}
 {{ included_content | markdownify }}
+
+</div>
