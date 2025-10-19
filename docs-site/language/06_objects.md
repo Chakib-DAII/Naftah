@@ -5,7 +5,11 @@ layout: default
 permalink: /language/objects
 ---
 
+<div dir="rtl">
+
 {% capture included_content %}
-  {% include language/06_objects.md %}
+{% include language/06_objects.md %}
 {% endcapture %}
 {{ included_content | markdownify }}
+
+</div>

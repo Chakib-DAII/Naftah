@@ -2,7 +2,7 @@
 
 # نفطه: لغة برمجة، لنكتب برامج باللغة العربية وكأننا نعيش في نفطه
 
-### 🌟 Motivation: Why I Created Naftah
+## 🌟 Motivation: Why I Created Naftah
 
 As a **Tunisian** and an **Arabic speaker** passionate about programming, I was always searching for a programming
 language that uses **Arabic naturally** — not just in keywords, but in structure, logic, and **support for dialects**,
@@ -170,7 +170,19 @@ By standing on the shoulders of a giant like the JVM, Naftah gets:
 
 ---
 
-## 🚀 Running Naftah: Scripts, REPL, and Initialization
+## 🧩 Java/Kotlin/Groovy Interoperability
+
+Naftah allows full access to Java libraries:
+
+* After running `init`, all Java classes in `lib/` become usable.
+* You can use transliterated Arabic method names to call them.
+* Java extensions can be written once and reused inside Naftah without recompilation.
+
+This makes Naftah a **gateway language** — start in Arabic, scale into Java as needed.
+
+---
+
+## 🚀 Running Naftah: Scripts, REPL, Initialization and Manual
 
 Naftah comes with cross-platform CLI tools that allow you to run scripts, start an interactive shell, or initialize the
 system to work with existing Java/Kotlin/Groovy libraries.
@@ -378,18 +390,6 @@ cp mylib.jar lib/
 
 ---
 
-## 🧩 Java/Kotlin/Groovy Interoperability
-
-Naftah allows full access to Java libraries:
-
-* After running `init`, all Java classes in `lib/` become usable.
-* You can use transliterated Arabic method names to call them.
-* Java extensions can be written once and reused inside Naftah without recompilation.
-
-This makes Naftah a **gateway language** — start in Arabic, scale into Java as needed.
-
----
-
 ### 📄 CLI Usage Summary
 
 #### Available Subcommands:
@@ -475,7 +475,7 @@ You can also run `naftah shell` and start experimenting right away.
 
 ---
 
-### 🤝 Contributing
+## 🤝 Contributing
 
 We welcome contributions of all kinds!
 Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
@@ -484,7 +484,7 @@ By participating, you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ---
 
-### 💸 Support This Project
+## 💸 Support This Project
 
 This project is actively maintained and developed. If you find it useful or want to support ongoing development, you can
 sponsor or donate through any of the platforms below:
@@ -493,6 +493,7 @@ sponsor or donate through any of the platforms below:
 [![Open Collective](https://img.shields.io/badge/OpenCollective-Support-blue?logo=open-collective&style=flat-square)](https://opencollective.com/your-project)
 [![Patreon](https://img.shields.io/badge/Patreon-Subscribe-orange?logo=patreon&style=flat-square)](https://patreon.com/your-username)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Buy_me_a_coffee-ff5f5f?logo=ko-fi&style=flat-square)](https://ko-fi.com/your-username)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-Donate-yellow?logo=buy-me-a-coffee&style=flat-square)](https://buymeacoffee.com/your-username)
 
 Your support helps improve the tools, documentation, and the language itself.
 

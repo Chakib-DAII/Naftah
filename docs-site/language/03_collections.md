@@ -5,7 +5,11 @@ layout: default
 permalink: /language/collections
 ---
 
+<div dir="rtl">
+
 {% capture included_content %}
-  {% include language/03_collections.md %}
+{% include language/03_collections.md %}
 {% endcapture %}
 {{ included_content | markdownify }}
+
+</div>

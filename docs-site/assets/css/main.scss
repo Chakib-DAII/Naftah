@@ -16,7 +16,6 @@ $footer-bg: #2a353a;
 $code-text: #ffdfb6;        // Slightly brighter for code
 
 body {
-  direction: rtl;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: $bg-color !important;
   color: $text-color !important;
@@ -60,6 +59,7 @@ body {
 }
 
 nav ul {
+  direction: rtl;
   list-style: none;
   padding: 0;
   margin: 0 0 2rem 0;
