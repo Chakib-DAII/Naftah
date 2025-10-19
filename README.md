@@ -194,6 +194,7 @@ system to work with existing Java/Kotlin/Groovy libraries.
 | `naftah.sh` / `.bat`      | Default entry point (runs a script by default) |
 | `naftah-repl.sh` / `.bat` | Starts REPL (interactive shell)                |
 | `naftah-init.sh` / `.bat` | Initializes Java classpath libraries           |
+| `naftah-man.sh` / `.bat`  | Naftah language manual                         |
 
 > 🖥️ Use `.bat` files on **Windows** and `.sh` scripts on **Linux/macOS**.
 
@@ -302,6 +303,59 @@ naftah.bat init
 
 ---
 
+### 📚 4. Use the Naftah Manual (Dynamic CLI Help)
+
+The `man` command launches **Naftah's interactive manual system**, which supports exploring all built-in commands,
+functions, and Java interop metadata — in both **Arabic and English**.
+
+It behaves like a smart REPL-based help system, not just a static manual:
+
+#### 🔍 Features:
+
+* ⌨️ Type `usage` / `مساعدة` to view all supported commands
+* 📁 Use `list` / `المواضيع` to browse available help topics
+* 📚 Type any topic name to open its Markdown-based guide
+* 🏷️ Type any Java class name (fully-qualified) to view its **Arabic-qualified alias**
+* 📦 Explore Java interop using:
+	* `classes` / `الأصناف` — All known classes
+	* `accessible-classes` / `الأصناف-المتاحة` — Public classes only
+	* `instantiable-classes` / `الأصناف-القابلة-للتهيئة` — Instantiable classes
+* ⚙️ View runtime and built-in functions using:
+	* `builtin-functions` / `الدوال-المدمجة`
+	* `jvm-functions` / `دوال-جافا`
+* ❌ Type `exit` / `خروج` to quit the manual session at any time
+
+---
+
+#### Linux / macOS
+
+```bash
+./naftah-man.sh
+```
+
+Or:
+
+```bash
+./naftah.sh man
+```
+
+#### Windows
+
+```cmd
+naftah-man.bat
+```
+
+Or:
+
+```cmd
+naftah.bat man
+```
+
+> 💡 You can use this command as a lightweight alternative to browsing the docs online — it’s fully terminal-friendly and
+> supports Arabic output with pagination.
+
+---
+
 ### 🧪 Example Workflow
 
 1. Add your Java/Kotlin/Groovy `.jar` files under `lib/`
@@ -345,6 +399,7 @@ This makes Naftah a **gateway language** — start in Arabic, scale into Java as
 | `run`   | Runs a `.naftah` script or inline code        |
 | `shell` | Starts interactive REPL                       |
 | `init`  | Scans Java/Kotlin/Groovy `.jar`s under `lib/` |
+| `man`   | launches Naftah's interactive manual system   |
 
 #### Global Options:
 
@@ -396,7 +451,7 @@ Looking to learn the Naftah programming language?
 
 > 🚀 Visit the full **Language Reference Guide** for syntax, types, control flow, functions, and more:
 
-[//]: # (TODO github page)
+[//]: # (TODO: github page)
 
 👉 **[docs]()**
 
