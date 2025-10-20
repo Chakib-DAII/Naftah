@@ -489,11 +489,11 @@ By participating, you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 This project is actively maintained and developed. If you find it useful or want to support ongoing development, you can
 sponsor or donate through any of the platforms below:
 
-[![GitHub Sponsors](https://img.shields.io/badge/GitHub_Sponsors-Fund-blue?logo=githubsponsors&style=flat-square)](https://github.com/sponsors/your-username)
-[![Open Collective](https://img.shields.io/badge/OpenCollective-Support-blue?logo=open-collective&style=flat-square)](https://opencollective.com/your-project)
-[![Patreon](https://img.shields.io/badge/Patreon-Subscribe-orange?logo=patreon&style=flat-square)](https://patreon.com/your-username)
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-Buy_me_a_coffee-ff5f5f?logo=ko-fi&style=flat-square)](https://ko-fi.com/your-username)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-Donate-yellow?logo=buy-me-a-coffee&style=flat-square)](https://buymeacoffee.com/your-username)
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub_Sponsors-Fund-blue?logo=githubsponsors&style=flat-square)](https://github.com/sponsors/Chakib-DAII)
+[![Open Collective](https://img.shields.io/badge/OpenCollective-Support-blue?logo=open-collective&style=flat-square)](https://opencollective.com/Naftah)
+[![Patreon](https://img.shields.io/badge/Patreon-Subscribe-orange?logo=patreon&style=flat-square)](https://www.patreon.com/Chakibd)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Buy_me_a_coffee-ff5f5f?logo=ko-fi&style=flat-square)](https://ko-fi.com/chakibd)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-Donate-yellow?logo=buy-me-a-coffee&style=flat-square)](https://buymeacoffee.com/chakibd)
 
 Your support helps improve the tools, documentation, and the language itself.
 
