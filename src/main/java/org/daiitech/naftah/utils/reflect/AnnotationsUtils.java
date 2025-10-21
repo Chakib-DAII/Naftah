@@ -141,7 +141,11 @@ public final class AnnotationsUtils {
 	public static NaftahFunctionProvider getNaftahFunctionProviderAnnotation(Class<?> aClass) {
 		NaftahFnProvider naftahFnProvider = getClassAnnotation(aClass, NaftahFnProvider.class);
 		return NaftahFunctionProvider
-				.of(naftahFnProvider.name(), naftahFnProvider.description(), naftahFnProvider.functionNames());
+				.of(naftahFnProvider.name(),
+					naftahFnProvider.useQualifiedName(),
+					naftahFnProvider.useQualifiedAliases(),
+					naftahFnProvider.description(),
+					naftahFnProvider.functionNames());
 	}
 
 	/**
