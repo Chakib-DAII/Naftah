@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.stream.Collector;
 
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.errors.NaftahBugError;
+
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinFunctionName;
 
 /**
  * A specialized HashMap that supports aliasing of keys.
@@ -71,10 +74,41 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 				.of(
 					AliasHashMap::new,
 					(map, fn) -> {
-						String canonicalKey = fn.getFunctionInfo().name();
+						boolean useQualifiedName = fn
+								.getProviderInfo()
+								.useQualifiedName();
+
+						boolean useQualifiedAliases = fn
+								.getProviderInfo()
+								.useQualifiedName();
+
+						String providerName = fn
+								.getProviderInfo()
+								.name();
+
+						String canonicalKey = getBuiltinFunctionName(   useQualifiedName,
+																		providerName,
+																		fn
+																				.getFunctionInfo()
+																				.name(),
+																		true);
 						map.computeIfAbsent(canonicalKey, k -> new ArrayList<>()).add(fn);
 						for (String alias : fn.getFunctionInfo().aliases()) {
-							map.aliasToKeyMap.put(alias, canonicalKey);
+							var maybeQualifiedAlias = getBuiltinFunctionName(   useQualifiedAliases,
+																				providerName,
+																				alias,
+																				false);
+							if (map.aliasToKeyMap.containsKey(maybeQualifiedAlias)) {
+								throw new NaftahBugError("""
+															أسماء الدوال المستعارة (Function Aliases) معرفة بشكل ثابت، ولا يمكن لمزوّدين آخرين تعديلها أو تجاوزها.
+															إذا كنت بصدد إنشاء امتداد مضمّن (builtin extension)، يُرجى تمييزه باستخدام useQualifiedAliases أو التأكد من استخدام أسماء مستعارة (aliases) فريدة من نوعها.
+															%s
+															"""
+										.formatted(fn.toDetailedString()));
+							}
+							else {
+								map.aliasToKeyMap.put(maybeQualifiedAlias, canonicalKey);
+							}
 						}
 					},
 					(left, right) -> {
