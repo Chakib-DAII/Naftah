@@ -19,7 +19,8 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: $bg-color !important;
   color: $text-color !important;
-  line-height: 1.6;
+  font-size: 0.85rem;
+  line-height: 1.4;
   margin: 0;
   padding: 0 1rem;
   -webkit-font-smoothing: antialiased;
@@ -29,14 +30,14 @@ body {
 .site-header {
   background-color: $header-bg !important;
   color: $accent-color !important;
-  padding: 1.25rem 1rem;
+  padding: 0.6rem 1rem;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 
   h1 {
     margin: 0;
     font-weight: 700;
-    font-size: 1.8rem;
+    font-size: 1.2rem;
   }
 
   a {
@@ -54,33 +55,34 @@ body {
 
 .site-content {
   width: 100%;
-  margin: 2rem auto 4rem auto;
-  padding: 0 2vw;
+  margin: 1.5rem auto 3rem auto;
+  padding: 0 1.5vw;
   box-sizing: border-box;
 }
 
 
 nav {
   width: 100%;
-  padding: 1rem 2vw;
+  padding: 0.5rem 1.5vw;
   box-sizing: border-box;
 
   ul {
     direction: rtl;
     list-style: none;
     padding: 0;
-    margin: 0 0 2rem 0;
+    margin: 0 0 1.5rem 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1rem;
-    border-bottom: 2px solid $border-color !important;
+    gap: 0.6rem;
+    border-bottom: 1px solid $border-color !important;
 
     li {
       a {
-        font-weight: 600;
+        font-weight: 500;
+        font-size: 0.85rem;
         color: $link-color !important;
-        padding: 0.4rem 0.8rem;
+        padding: 0.25rem 0.6rem;
         border-radius: 4px;
         transition: background-color 0.25s ease, color 0.25s ease;
         display: inline-block;
@@ -98,45 +100,45 @@ nav {
 
 h1, h2, h3 {
   color: $accent-color !important;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  line-height: 1.25;
+  margin-top: 1.2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
 }
 
 h1 {
-  font-size: 2.25rem;
+  font-size: 1.6rem;
   font-weight: 700;
 }
 
 h2 {
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  border-bottom: 2px solid $link-color !important;
+  border-bottom: 1px solid $link-color !important;
   padding-bottom: 0.25rem;
 }
 
 h3 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
 }
 
 p {
-  margin-bottom: 1.25rem;
-  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
 }
 
 hr {
   border: none;
   border-top: 1px solid $border-color !important;
-  margin: 2rem 0;
+  margin: 1.5rem 0;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 2rem;
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: $text-color !important;
 
   thead {
@@ -146,7 +148,7 @@ table {
 
   th, td {
     border: 1px solid $border-color !important;
-    padding: 0.6rem 0.8rem;
+    padding: 0.4rem 0.6rem;
     text-align: right;
   }
 
@@ -160,7 +162,7 @@ table {
     color: $code-text !important;
     padding: 0.15rem 0.3rem;
     border-radius: 3px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -169,7 +171,7 @@ pre {
   background-color: $code-bg !important;
   color: $code-text !important;
   font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
-  font-size: 1rem;
+  font-size: 0.85rem;
   padding: 1rem;
   border-radius: 6px;
   overflow-x: auto;
@@ -184,7 +186,7 @@ code {
   color: $code-text !important;
   padding: 0.15rem 0.35rem;
   border-radius: 4px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-family: Consolas, Monaco, monospace;
 }
 
@@ -192,10 +194,10 @@ code {
 ul {
   list-style: disc inside;
   margin-left: 0;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 
   li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
   }
 }
 
@@ -215,12 +217,12 @@ a {
 // Footer
 footer.site-footer {
   background-color: $footer-bg !important;
-  padding: 1.25rem 0;
+  padding: 0.8rem 0;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: lighten($text-color, 20%) !important;
   border-top: 1px solid $border-color !important;
-  margin-top: 4rem;
+  margin-top: 3rem;
 }
 
 .hidden-in-html {
@@ -231,18 +233,49 @@ footer.site-footer {
 @media (max-width: 600px) {
   nav ul {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+
+    li {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+
+      a {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
   }
 
   .site-header h1 {
-    font-size: 1.5rem;
+    font-size: 1rem;
   }
 
   h1 {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
   }
 
   h2 {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
+  }
+
+  .site-content {
+    padding: 0 1rem;
+  }
+
+  table {
+    font-size: 0.75rem;
+    overflow-x: auto;
+  }
+
+  pre {
+    font-size: 0.75rem;
   }
 }
+
