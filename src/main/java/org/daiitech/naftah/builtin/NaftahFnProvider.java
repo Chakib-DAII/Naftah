@@ -41,14 +41,14 @@ public @interface NaftahFnProvider {
 	String name();
 
 	/**
-	 * flags that the function names should be bound with the provider's name
+	 * flags that the function names should be bound with the provider's name.
 	 *
 	 * @return true if we should use qualified name; false if not
 	 */
 	boolean useQualifiedName() default false;
 
 	/**
-	 * flags that the function aliases should be bound with the provider's name
+	 * flags that the function aliases should be bound with the provider's name.
 	 *
 	 * @return true if we should use qualified name; false if not
 	 */
