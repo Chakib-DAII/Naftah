@@ -49,7 +49,12 @@ public class AliasHashMapTests {
 
 	@Test
 	public void toAliasGroupedByNameCollectorTest() throws NoSuchMethodException {
-		NaftahFunctionProvider naftahFunctionProvider = NaftahFunctionProvider.of("java", "", new String[]{});
+		NaftahFunctionProvider naftahFunctionProvider = NaftahFunctionProvider
+				.of("java",
+					false,
+					false,
+					"",
+					new String[]{});
 		List<BuiltinFunction> functions = List
 				.of(
 					BuiltinFunction
