@@ -712,6 +712,26 @@ public class DefaultContext {
 		return new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
 	}
 
+	public static Map<String, List<BuiltinFunction>> getBuiltinFunctions() {
+		return BUILTIN_FUNCTIONS;
+	}
+
+	public static Map<String, List<JvmFunction>> getJvmFunctions() {
+		return JVM_FUNCTIONS;
+	}
+
+	public static Map<String, Class<?>> getClasses() {
+		return CLASSES;
+	}
+
+	public static Map<String, Class<?>> getAccessibleClasses() {
+		return ACCESSIBLE_CLASSES;
+	}
+
+	public static Map<String, Class<?>> getInstantiableClasses() {
+		return INSTANTIABLE_CLASSES;
+	}
+
 	/**
 	 * Checks if the variable with the given name exists in the current context or any parent context.
 	 *
@@ -1471,25 +1491,5 @@ public class DefaultContext {
 	 */
 	public void setLoopLabel(String loopLabel) {
 		this.loopLabel = loopLabel;
-	}
-
-	public static Map<String, List<BuiltinFunction>> getBuiltinFunctions() {
-		return BUILTIN_FUNCTIONS;
-	}
-
-	public static Map<String, List<JvmFunction>> getJvmFunctions() {
-		return JVM_FUNCTIONS;
-	}
-
-	public static Map<String, Class<?>> getClasses() {
-		return CLASSES;
-	}
-
-	public static Map<String, Class<?>> getAccessibleClasses() {
-		return ACCESSIBLE_CLASSES;
-	}
-
-	public static Map<String, Class<?>> getInstantiableClasses() {
-		return INSTANTIABLE_CLASSES;
 	}
 }
