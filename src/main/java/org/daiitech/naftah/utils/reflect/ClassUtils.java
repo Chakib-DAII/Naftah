@@ -513,9 +513,9 @@ public final class ClassUtils {
 							\t- الاسم الكامل: %s
 							\t- الاسم المختصر: %s
 							\t- الحزمة: %s
-							\t- عام؟: %s
-							\t- مجرد؟: %s
-							\t- واجهة؟: %s
+							\t- عام (public)؟: %s
+							\t- مجرد (abstract)؟: %s
+							\t- واجهة (interface)؟: %s
 						"""
 						.formatted(
 									clazz.getName() + " - " + getQualifiedName(clazz.getName()),
@@ -534,7 +534,7 @@ public final class ClassUtils {
 		// Superclass
 		if (clazz.getSuperclass() != null) {
 			detailedString
-					.append("\t- الصنف الأب: ")
+					.append("\t- الصنف الأب (super classes): ")
 					.append(clazz.getSuperclass().getName())
 					.append(" - ")
 					.append(getQualifiedName(clazz.getSuperclass().getName()))
@@ -544,7 +544,7 @@ public final class ClassUtils {
 		// Interfaces
 		Class<?>[] interfaces = clazz.getInterfaces();
 		if (interfaces.length > 0) {
-			detailedString.append("\t- الواجهات:\n");
+			detailedString.append("\t- الواجهات (interfaces):\n");
 			for (Class<?> iface : interfaces) {
 				detailedString
 						.append("\t\t- ")
@@ -558,7 +558,7 @@ public final class ClassUtils {
 		// Declaring class (for nested/inner classes)
 		if (clazz.getDeclaringClass() != null) {
 			detailedString
-					.append("\t- الصنف المُعلن: ")
+					.append("\t- الصنف المُعلن (declaring class): ")
 					.append(clazz.getDeclaringClass().getName())
 					.append(" - ")
 					.append(getQualifiedName(clazz.getDeclaringClass().getName()))
@@ -568,10 +568,10 @@ public final class ClassUtils {
 		// Special types
 		detailedString
 				.append("""
-							\t- تعداد؟: %s
-							\t- توصيف؟: %s
-							\t- سجل؟: %s
-							\t- نوع بدائي؟: %s
+							\t- تعداد (enum)؟: %s
+							\t- توصيف (annotation)؟: %s
+							\t- سجل (record)؟: %s
+							\t- نوع بدائي (primitive)؟: %s
 						"""
 						.formatted(
 									clazz.isEnum() ? "نعم" : "لا",
