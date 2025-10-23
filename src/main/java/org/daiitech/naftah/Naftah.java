@@ -26,7 +26,10 @@ import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
@@ -143,6 +146,10 @@ public final class Naftah {
 	 * Property set when inside the man command.
 	 */
 	public static final String INSIDE_MAN_PROPERTY = "naftah.man";
+	/**
+	 * Controls whether class and function definitions should be loaded on startup.
+	 */
+	public static final String LOAD_CLASSES_AND_FUNCTIONS_PROPERTY = "naftah.man.load.active";
 	/**
 	 * Property set when inside the run command.
 	 */
@@ -491,6 +498,13 @@ public final class Naftah {
 				})
 		private boolean useArabicIndic;
 
+		@Option(names = {"-load_clf", "--load_classes_and_functions"},
+				description = {
+								"",
+								""
+				})
+		private boolean loadClassesAndFunctions;
+
 		/**
 		 * Runs the command.
 		 *
@@ -582,6 +596,10 @@ public final class Naftah {
 										Boolean.toString(matchedCommand.enabledCaches.contains("I")));
 			}
 
+			if (matchedCommand.loadClassesAndFunctions) {
+				System.setProperty(LOAD_CLASSES_AND_FUNCTIONS_PROPERTY, Boolean.toString(true));
+			}
+
 			main.args = matchedCommand.arguments;
 
 			return main.run(matchedCommand);
@@ -668,6 +686,7 @@ public final class Naftah {
 			private final List<String> instantiableClasses = new CopyOnWriteArrayList<>();
 			private final List<String> builtinFunctions = new CopyOnWriteArrayList<>();
 			private final List<String> jvmFunctions = new CopyOnWriteArrayList<>();
+
 			private LineReader reader;
 			private Map<String, Path> topics;
 
@@ -679,8 +698,9 @@ public final class Naftah {
 				System.setProperty(INSIDE_MAN_PROPERTY, Boolean.toString(true));
 				System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
 				super.run(main, bootstrapAsync);
-
-				loadClassesAndFunctions();
+				if (Boolean.getBoolean(LOAD_CLASSES_AND_FUNCTIONS_PROPERTY)) {
+					loadClassesAndFunctions();
+				}
 
 				topics = loadAvailableTopics();
 
@@ -694,7 +714,7 @@ public final class Naftah {
 
 				setupKeyBindingsConfig(reader);
 
-				String line;
+				String line = null;
 
 				while (true) {
 					try {
@@ -703,6 +723,17 @@ public final class Naftah {
 							main.args.clear();
 						}
 						else {
+							if (Objects.isNull(line)) {
+								padText("""
+										مرحبًا بك في الواجهة التفاعلية للكتيبات التقنية لنفطه.
+
+										إذا كنت تستخدم الأداة لأول مرة أو لا تعرف الأوامر المتاحة،
+										اكتب الأمر التالي لعرض قائمة الأوامر والتعليمات:
+
+										مساعدة أو usage
+
+										""", true);
+							}
 							line = reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null).trim();
 						}
 
@@ -910,40 +941,7 @@ public final class Naftah {
 							.getBuiltinFunctions()
 							.entrySet()
 							.stream()
-							.map(builtinFunction -> """
-													---------------------------------------------------
-													%s
-													%s
-													---------------------------------------------------
-													"""
-									.formatted( builtinFunction.getKey(),
-
-												builtinFunction
-														.getValue()
-														.size() == 1 ?
-																builtinFunction
-																		.getValue()
-																		.get(0)
-																		.toDetailedString() :
-																IntStream
-																		.range( 0,
-																				builtinFunction
-																						.getValue()
-																						.size())
-																		.mapToObj(index -> """
-																							%s
-																							----------------------------------------------
-																							%s
-																							"""
-																				.formatted(
-																							index + 1,
-																							builtinFunction
-																									.getValue()
-																									.get(index)
-																									.toDetailedString()))
-																		.collect(Collectors.joining())
-									)
-							)
+							.map(this::loadBuiltinFunction)
 							.filter(Objects::nonNull)
 							.forEach(builtinFunctions::add);
 					executor.submit(builtinFunctionsLoaderTask);
@@ -952,45 +950,248 @@ public final class Naftah {
 							.getJvmFunctions()
 							.entrySet()
 							.stream()
-							.map(JvmFunction -> """
-												---------------------------------------------------
-												%s
-												%s
-												---------------------------------------------------
-												"""
-									.formatted( JvmFunction.getKey(),
-												JvmFunction
-														.getValue()
-														.size() == 1 ?
-																JvmFunction
-																		.getValue()
-																		.get(0)
-																		.toDetailedString() :
-																IntStream
-																		.range( 0,
-																				JvmFunction
-																						.getValue()
-																						.size())
-																		.mapToObj(index -> """
-																							%s
-																							----------------------------------------------
-																							%s
-																							"""
-																				.formatted(
-																							index + 1,
-																							JvmFunction
-																									.getValue()
-																									.get(index)
-																									.toDetailedString()))
-																		.collect(Collectors.joining())
-									)
-							)
+							.map(this::loadJvmFunction)
 							.filter(Objects::nonNull)
 							.forEach(jvmFunctions::add);
 					executor.submit(jvmFunctionsLoaderTask);
 				}
 				finally {
 					executor.shutdown();
+				}
+			}
+
+			/**
+			 * Builds a detailed textual representation of a single built-in function entry.
+			 * <p>
+			 * The output includes the function group name (key) and a formatted list of one or
+			 * more {@link BuiltinFunction} details separated by visual dividers for clarity.
+			 * </p>
+			 *
+			 * @param builtinFunction a map entry containing the function group name as key and
+			 *                        a list of {@link BuiltinFunction} instances as value
+			 * @return a formatted string containing a detailed description of the built-in functions
+			 */
+			private String loadBuiltinFunction(Map.Entry<String, List<BuiltinFunction>> builtinFunction) {
+				return """
+						---------------------------------------------------
+						%s
+						%s
+						---------------------------------------------------
+						"""
+						.formatted( builtinFunction.getKey(),
+
+									builtinFunction
+											.getValue()
+											.size() == 1 ?
+													builtinFunction
+															.getValue()
+															.get(0)
+															.toDetailedString() :
+													IntStream
+															.range( 0,
+																	builtinFunction
+																			.getValue()
+																			.size())
+															.mapToObj(index -> """
+																				%s
+																				----------------------------------------------
+																				%s
+																				"""
+																	.formatted(
+																				index + 1,
+																				builtinFunction
+																						.getValue()
+																						.get(index)
+																						.toDetailedString()))
+															.collect(Collectors.joining())
+						);
+			}
+
+			/**
+			 * Builds a detailed textual representation of a single JVM function entry.
+			 * <p>
+			 * The output includes the function group name (key) and a formatted list of one or
+			 * more {@link JvmFunction} details separated by visual dividers for readability.
+			 * </p>
+			 *
+			 * @param jvmFunction a map entry containing the function group name as key and
+			 *                    a list of {@link JvmFunction} instances as value
+			 * @return a formatted string containing a detailed description of the JVM functions
+			 */
+			private String loadJvmFunction(Map.Entry<String, List<JvmFunction>> jvmFunction) {
+				return """
+						---------------------------------------------------
+						%s
+						%s
+						---------------------------------------------------
+						"""
+						.formatted( jvmFunction.getKey(),
+									jvmFunction
+											.getValue()
+											.size() == 1 ?
+													jvmFunction
+															.getValue()
+															.get(0)
+															.toDetailedString() :
+													IntStream
+															.range( 0,
+																	jvmFunction
+																			.getValue()
+																			.size())
+															.mapToObj(index -> """
+																				%s
+																				----------------------------------------------
+																				%s
+																				"""
+																	.formatted(
+																				index + 1,
+																				jvmFunction
+																						.getValue()
+																						.get(index)
+																						.toDetailedString()))
+															.collect(Collectors.joining())
+						);
+			}
+
+			/**
+			 * Determines the total number of elements in a target list, ensuring the count
+			 * is at least as large as the corresponding collection from {@link DefaultContext}.
+			 * <p>
+			 * This helps synchronize manual or temporary lists with the runtime context
+			 * to avoid index mismatches when accessing elements.
+			 * </p>
+			 *
+			 * @param target the list whose size should be compared to its related collection
+			 * @return the maximum of the target's size and the associated context collection size
+			 */
+			private int getTotal(List<String> target) {
+				int total = target.size();
+				if (classes.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getClasses()
+											.size());
+				}
+				else if (accessibleClasses.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getAccessibleClasses()
+											.size());
+				}
+				else if (instantiableClasses.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getInstantiableClasses()
+											.size());
+				}
+				else if (builtinFunctions.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getBuiltinFunctions()
+											.size());
+				}
+				else if (jvmFunctions.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getJvmFunctions()
+											.size());
+				}
+				return total;
+			}
+
+
+			/**
+			 * Retrieves and formats the detailed information for a class or function
+			 * at a given index from the specified target list or its related context collection.
+			 * <p>
+			 * If the requested index exceeds the target list’s current size, this method
+			 * attempts to fetch the corresponding element from the appropriate collection
+			 * in {@link DefaultContext}. Depending on the target, it delegates to one of:
+			 * <ul>
+			 * <li>{@code loadDetailedClass(Map.Entry)}</li>
+			 * <li>{@code loadBuiltinFunction(Map.Entry)}</li>
+			 * <li>{@code loadJvmFunction(Map.Entry)}</li>
+			 * </ul>
+			 * </p>
+			 *
+			 * @param index  the index of the element to retrieve (0-based)
+			 * @param target the list corresponding to one of the tracked element types
+			 * @return a formatted string representing the detailed view of the element
+			 * @throws NaftahBugError if no valid element can be resolved for the given index
+			 */
+			private String loadClassOrFunction(int index, List<String> target) {
+				if (target.size() > index) {
+					return target.get(index);
+				}
+				else {
+					String result = null;
+					if (classes.equals(target)) {
+						var element = CollectionUtils
+								.getElementAt(
+												DefaultContext
+														.getClasses()
+														.entrySet(),
+												index);
+						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+						}
+					}
+					else if (accessibleClasses.equals(target)) {
+						var element = CollectionUtils
+								.getElementAt(
+												DefaultContext
+														.getAccessibleClasses()
+														.entrySet(),
+												index);
+						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+						}
+					}
+					else if (instantiableClasses.equals(target)) {
+						var element = CollectionUtils
+								.getElementAt(
+												DefaultContext
+														.getInstantiableClasses()
+														.entrySet(),
+												index);
+						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+						}
+					}
+					else if (builtinFunctions.equals(target)) {
+						var element = CollectionUtils
+								.getElementAt(
+												DefaultContext
+														.getBuiltinFunctions()
+														.entrySet(),
+												index);
+						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+							result = loadBuiltinFunction((Map.Entry<String, List<BuiltinFunction>>) entry);
+						}
+					}
+					else if (jvmFunctions.equals(target)) {
+						var element = CollectionUtils
+								.getElementAt(
+												DefaultContext
+														.getJvmFunctions()
+														.entrySet(),
+												index);
+						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+							result = loadJvmFunction((Map.Entry<String, List<JvmFunction>>) entry);
+						}
+					}
+
+					if (result == null) {
+						throw new NaftahBugError("حدث خطأ غير متوقع أثناء تحميل العنصر المطلوب من القائمة المحددة");
+					}
+
+					target.add(result);
+					return result;
 				}
 			}
 
@@ -1014,14 +1215,14 @@ public final class Naftah {
 			 * @param lines the list of lines to display, paginated
 			 */
 			private void printPaginated(List<String> lines) {
-				int total = lines.size();
+				int total = getTotal(lines);
 				int printedLines = 0;
 				int currentIndex = 0;
 
 				outerLoop:
 				while (currentIndex < total) {
 					for (int i = 0; i < PAGE_SIZE && currentIndex < total; i++, currentIndex++) {
-						var current = lines.get(currentIndex);
+						var current = loadClassOrFunction(currentIndex, lines);
 						var currentLines = current.lines().toList();
 						var currentLinesCount = currentLines.size();
 						int terminalHeight = Integer.getInteger(TERMINAL_HEIGHT_PROPERTY) - 1;
@@ -1172,18 +1373,20 @@ public final class Naftah {
 				classes
 						.entrySet()
 						.stream()
-						.map(JvmFunction -> """
-											---------------------------------------------------
-											%s
-											%s
-											---------------------------------------------------
-											"""
-								.formatted( JvmFunction.getKey(),
-											classToDetailedString(JvmFunction.getValue())
-								)
-						)
+						.map(this::loadDetailedClass)
 						.filter(Objects::nonNull)
 						.forEach(target::add);
+			}
+
+			private String loadDetailedClass(Map.Entry<String, Class<?>> JvmFunction) {
+				return """
+						---------------------------------------------------
+						%s
+						%s
+						---------------------------------------------------
+						"""
+						.formatted( JvmFunction.getKey(),
+									classToDetailedString(JvmFunction.getValue()));
 			}
 		}
 
