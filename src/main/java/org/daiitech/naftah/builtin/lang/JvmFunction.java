@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
@@ -263,15 +265,18 @@ public class JvmFunction implements Serializable {
 			}
 
 			var modifiers = Modifier.toString(method.getModifiers());
+			var modifiersArray = modifiers.split("\\s");
+			var modifiersArabicArray = ArabicUtils
+					.transliterateToArabicScriptDefault(true,
+														modifiersArray.clone());
 			detailedString
 					.append("\t- المُعدّلات: ")
-					.append(modifiers)
-					.append(" - ")
-					.append(String
-							.join(  " ",
-									ArabicUtils
-											.transliterateToArabicScriptDefault(true,
-																				modifiers.split("\\s"))))
+					.append(IntStream
+							.range(0, modifiersArray.length)
+							.mapToObj(index -> "%s (%s)"
+									.formatted( modifiersArabicArray[index],
+												modifiersArray[index]))
+							.collect(Collectors.joining(" ")))
 					.append("\n");
 
 			var annotations = method.getDeclaredAnnotations();
