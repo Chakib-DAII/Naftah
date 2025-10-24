@@ -548,26 +548,28 @@ public class DefaultContext {
 
 		String builtinProp = System.getProperty(BUILTIN_PROPERTY);
 
-		Set<Class<?>> builtinClasses = new HashSet<>();
+		if (Objects.nonNull(builtinProp)) {
+			Set<Class<?>> builtinClasses = new HashSet<>();
 
-		Arrays
-				.stream(builtinProp.split(","))
-				.map(String::trim)
-				.filter(s -> !s.isEmpty())
-				.forEach(className -> {
-					try {
-						Class<?> clazz = Class.forName(className);
-						builtinClasses.add(clazz);
-					}
-					catch (ClassNotFoundException e) {
-						padText("تعذر العثور على الفئة(class): " + className, true);
-					}
-				});
+			Arrays
+					.stream(builtinProp.split(","))
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
+					.forEach(className -> {
+						try {
+							Class<?> clazz = Class.forName(className);
+							builtinClasses.add(clazz);
+						}
+						catch (ClassNotFoundException e) {
+							padText("تعذر العثور على الفئة(class): " + className, true);
+						}
+					});
 
-		BUILTIN_FUNCTIONS
-				.putAll(getBuiltinMethods(builtinClasses)
-						.stream()
-						.collect(toAliasGroupedByName()));
+			BUILTIN_FUNCTIONS
+					.putAll(getBuiltinMethods(builtinClasses)
+							.stream()
+							.collect(toAliasGroupedByName()));
+		}
 	}
 
 	/**

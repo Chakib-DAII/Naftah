@@ -62,6 +62,8 @@ public class AliasHashMapTests {
 								naftahFunctionProvider,
 								NaftahFunction
 										.of("equals",
+											false,
+											false,
 											new String[]{"equal", "equals", "eq"},
 											"",
 											"",
@@ -73,6 +75,8 @@ public class AliasHashMapTests {
 								naftahFunctionProvider,
 								NaftahFunction
 										.of("hashCode",
+											false,
+											false,
 											new String[]{"code", "hash", "hc"},
 											"",
 											"",
@@ -84,6 +88,8 @@ public class AliasHashMapTests {
 								naftahFunctionProvider,
 								NaftahFunction
 										.of("wait",
+											false,
+											false,
 											new String[]{"w", "waits"},
 											"",
 											"",
