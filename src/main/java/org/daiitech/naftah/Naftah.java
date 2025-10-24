@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,6 +35,7 @@ import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
+import org.daiitech.naftah.utils.ResourceUtils;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.jline.reader.EOFError;
@@ -179,6 +181,22 @@ public final class Naftah {
 	 */
 	public static final String INTERPOLATION_CACHE_PROPERTY = "naftah.cache.interpolation.active";
 	/**
+	 * Property to specify the path to a Naftah configuration file.
+	 */
+	public static final String CONFIG_FILE_PROPERTY = "naftah.config.file";
+	/**
+	 * Property to specify which builtin function set to use in Naftah.
+	 */
+	public static final String BUILTIN_PROPERTY = "naftah.builtin";
+	/**
+	 * Default value representing the "builtin" function set.
+	 */
+	public static final String BUILTIN = "builtin";
+	/**
+	 * Default filename for the Naftah configuration file.
+	 */
+	public static final String CONFIG_FILE = "naftah.properties";
+	/**
 	 * The recognized standard file extensions for Naftah scripts.
 	 */
 	public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
@@ -216,6 +234,9 @@ public final class Naftah {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
+		System.setProperty(ReleaseInfo.NAFTAH_VERSION_PROPERTY, ReleaseInfo.getVersion());
+		System.setProperty(ReleaseInfo.NAFTAH_VERSION_DATE_PROPERTY, ReleaseInfo.getBuildDate());
+		System.setProperty(ReleaseInfo.NAFTAH_VERSION_TIME_PROPERTY, ReleaseInfo.getBuildTime());
 		processArgs(args);
 	}
 
@@ -264,6 +285,66 @@ public final class Naftah {
 				LOGGER = getLogger("org.daiitech.naftah");
 				LOGGER.setLevel(Level.FINE);
 			}
+		}
+	}
+
+	/**
+	 * Processes a set of configuration properties and updates system properties accordingly.
+	 *
+	 * <p>If the provided {@code properties} contains a key for built-in functions ("builtin"),
+	 * this method appends its value to the current {@link #BUILTIN_PROPERTY} system property.
+	 * Builtin configuration is cumulative; existing values are preserved and new ones are appended.</p>
+	 *
+	 * @param properties The configuration properties to process; may be {@code null}.
+	 */
+	private static void processConfig(Properties properties) {
+		if (Objects.nonNull(properties)) {
+			if (properties.containsKey(BUILTIN)) {
+				// builtin config is cumulative
+				var current = System.getProperty(BUILTIN_PROPERTY);
+				System
+						.setProperty(   BUILTIN_PROPERTY,
+										(Objects.nonNull(current) ? current + ", " : "") + properties.get(BUILTIN));
+			}
+		}
+	}
+
+	/**
+	 * Initializes the Naftah configuration by loading default and optional external properties.
+	 *
+	 * <p>The initialization process is as follows:</p>
+	 * <ol>
+	 * <li>Load default properties from the resource file {@link #CONFIG_FILE}.</li>
+	 * <li>Process builtin configuration via {@link #processConfig(Properties)}.</li>
+	 * <li>If a system property {@link #CONFIG_FILE_PROPERTY} is set, attempt to load external configuration
+	 * from the specified file. External configuration overrides defaults.</li>
+	 * <li>Any errors (e.g., {@link NaftahBugError}) fallback to default properties.</li>
+	 * </ol>
+	 *
+	 * <p>All processed properties are used to update system properties, especially
+	 * {@link #BUILTIN_PROPERTY}.</p>
+	 */
+	private static void initConfig() {
+		Properties properties = null;
+		try {
+			String configFile = System.getProperty(CONFIG_FILE_PROPERTY);
+
+			// load default config
+			properties = ResourceUtils.getPropertiesFromResources(CONFIG_FILE);
+			processConfig(properties);
+			properties = null;
+
+			if (Objects.nonNull(configFile)) {
+				// external config are priority if exists
+				properties = ResourceUtils.getProperties(configFile);
+			}
+		}
+		catch (NaftahBugError e) {
+			// fallback to default config
+			properties = ResourceUtils.getPropertiesFromResources(CONFIG_FILE);
+		}
+		finally {
+			processConfig(properties);
 		}
 	}
 
@@ -516,6 +597,7 @@ public final class Naftah {
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
 			}
+			initConfig();
 			bootstrap(bootstrapAsync);
 		}
 
