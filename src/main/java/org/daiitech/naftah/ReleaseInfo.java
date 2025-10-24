@@ -23,32 +23,40 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  */
 public final class ReleaseInfo {
 
+	/**
+	 * System property key representing the Naftah version.
+	 */
+	public static final String NAFTAH_VERSION_PROPERTY = "naftah.version";
 
+	/**
+	 * System property key representing the Naftah build/release date.
+	 */
+	public static final String NAFTAH_VERSION_DATE_PROPERTY = "naftah.version.date";
+
+	/**
+	 * System property key representing the Naftah framework build/release time.
+	 */
+	public static final String NAFTAH_VERSION_TIME_PROPERTY = "naftah.version.time";
 	/**
 	 * The loaded release information properties.
 	 */
 	private static final Properties RELEASE_INFO = new Properties();
-
 	/**
 	 * Path to the release info properties file inside the JAR.
 	 */
 	private static final String RELEASE_INFO_FILE = "META-INF/naftah-release-info.properties";
-
 	/**
 	 * Property key for the implementation version.
 	 */
 	private static final String KEY_IMPLEMENTATION_VERSION = "ImplementationVersion";
-
 	/**
 	 * Property key for the bundle version.
 	 */
 	private static final String KEY_BUNDLE_VERSION = "BundleVersion";
-
 	/**
 	 * Property key for the build date.
 	 */
 	private static final String KEY_BUILD_DATE = "BuildDate";
-
 	/**
 	 * Property key for the build time.
 	 */
