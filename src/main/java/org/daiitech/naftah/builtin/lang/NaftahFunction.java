@@ -20,17 +20,21 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
  * usage instructions, return type, parameter types, and declared exception types.
  * </p>
  *
- * @param name           the function name
- * @param aliases        function aliases, list of alternative function name
- * @param description    a brief description of the function
- * @param usage          usage information or signature of the function
- * @param returnType     the return type class of the function
- * @param parameterTypes a list of classes representing the parameter types
- * @param exceptionTypes a list of classes representing the exceptions the function may throw
+ * @param name                the function name
+ * @param useQualifiedName    flags that the function names should be bound with the provider's name
+ * @param useQualifiedAliases flags that the function aliases should be bound with the provider's name
+ * @param aliases             function aliases, list of alternative function name
+ * @param description         a brief description of the function
+ * @param usage               usage information or signature of the function
+ * @param returnType          the return type class of the function
+ * @param parameterTypes      a list of classes representing the parameter types
+ * @param exceptionTypes      a list of classes representing the exceptions the function may throw
  * @author Chakib Daii
  */
 public record NaftahFunction(
 		String name,
+		boolean useQualifiedName,
+		boolean useQualifiedAliases,
 		String[] aliases,
 		String description,
 		String usage,
@@ -54,15 +58,19 @@ public record NaftahFunction(
 	/**
 	 * Factory method to create a {@code NaftahFunction} instance.
 	 *
-	 * @param name           the function name
-	 * @param description    a brief description of the function
-	 * @param usage          usage information or signature of the function
-	 * @param returnType     the return type class of the function
-	 * @param parameterTypes an array of parameter type classes
-	 * @param exceptionTypes an array of exception type classes
+	 * @param name                the function name
+	 * @param useQualifiedName    flags that the function names should be bound with the provider's name
+	 * @param useQualifiedAliases flags that the function aliases should be bound with the provider's name
+	 * @param description         a brief description of the function
+	 * @param usage               usage information or signature of the function
+	 * @param returnType          the return type class of the function
+	 * @param parameterTypes      an array of parameter type classes
+	 * @param exceptionTypes      an array of exception type classes
 	 * @return a new {@code NaftahFunction} instance
 	 */
 	public static NaftahFunction of(String name,
+									boolean useQualifiedName,
+									boolean useQualifiedAliases,
 									String[] aliases,
 									String description,
 									String usage,
@@ -70,6 +78,8 @@ public record NaftahFunction(
 									Class<?>[] parameterTypes,
 									Class<?>[] exceptionTypes) {
 		return new NaftahFunction(  name,
+									useQualifiedName,
+									useQualifiedAliases,
 									aliases,
 									description,
 									usage,
