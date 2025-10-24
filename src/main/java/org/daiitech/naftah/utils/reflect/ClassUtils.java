@@ -455,6 +455,24 @@ public final class ClassUtils {
 				List.of();
 	}
 
+
+	/**
+	 * Retrieves built-in functions from multiple classes annotated with {@link NaftahFnProvider}.
+	 * <p>
+	 * This method aggregates results from all provided classes by invoking
+	 * {@link #getBuiltinMethods(Class)} on each one.
+	 *
+	 * @param classes the set of classes to inspect
+	 * @return a combined list of {@link BuiltinFunction} instances from all classes,
+	 *         or an empty list if none are found
+	 */
+	public static List<BuiltinFunction> getBuiltinMethods(Set<Class<?>> classes) {
+		return classes
+				.stream()
+				.flatMap(aClass -> getBuiltinMethods(aClass).stream())
+				.toList();
+	}
+
 	/**
 	 * Returns a detailed, Arabic-formatted string representation of the specified Java class.
 	 * <p>
