@@ -11,7 +11,6 @@ import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
 import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
@@ -68,7 +67,17 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 										"إزاحة_إلى_اليمين",
 										"تقريب",
 										"جذر",
-										"زيادة_قبلية"
+										"زيادة_قبلية",
+										"و_منطقي",
+										"أو_منطقي",
+										"أس",
+										"جمع_عنصر_ب_عنصر",
+										"طرح_عنصر_ب_عنصر",
+										"ضرب_عنصر_ب_عنصر",
+										"قسمة_عنصر_ب_عنصر",
+										"باقي_القسمة_عنصر_ب_عنصر",
+										"عكس_الإشارة",
+										"نفي_منطقي"
 					})
 public final class Builtin {
 
@@ -144,7 +153,65 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object add(T x, T y) {
-		return applyOperation(x, y, ADD);
+		return applyOperation(x, y, BinaryOperation.ADD);
+	}
+
+	/**
+	 * Logical AND operation with short-circuit evaluation.
+	 * <p>
+	 * Returns the second operand if the first operand is "truthy"; otherwise returns the first operand.
+	 * <p>
+	 * Supports numbers, booleans, characters, and strings.
+	 * Uses custom "truthy" rules via {@code isTruthy()} to determine truthiness:
+	 * <ul>
+	 * <li>Numbers: non-zero values are truthy.</li>
+	 * <li>Booleans: {@code true} is truthy, {@code false} is falsy.</li>
+	 * <li>Characters: non-null, non-zero characters are truthy.</li>
+	 * <li>Strings: non-empty strings are truthy.</li>
+	 * </ul>
+	 *
+	 * @param <T> the type of operands (Number, Boolean, Character, String)
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the second operand if the first is truthy, otherwise the first operand
+	 */
+	@NaftahFn(  name = "و_منطقي",
+				description = """
+								إجراء عملية "و" المنطقية بين قيمتين. تُعيد الدالة القيمة الصحيحة فقط إذا كانت كلتا القيمتين صحيحتين، وتُستخدم في البرمجة والمنطق للتحقق من تحقق شرطين معًا.""",
+				usage = "و_منطقي(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object logicalAnd(T x, T y) {
+		return applyOperation(x, y, BinaryOperation.AND);
+	}
+
+	/**
+	 * Logical OR operation with short-circuit evaluation.
+	 * <p>
+	 * Returns the first operand if it is "truthy"; otherwise returns the second operand.
+	 * <p>
+	 * Supports numbers, booleans, characters, and strings.
+	 * Uses custom "truthy" rules via {@code isTruthy()} to determine truthiness:
+	 * <ul>
+	 * <li>Numbers: non-zero values are truthy.</li>
+	 * <li>Booleans: {@code true} is truthy, {@code false} is falsy.</li>
+	 * <li>Characters: non-null, non-zero characters are truthy.</li>
+	 * <li>Strings: non-empty strings are truthy.</li>
+	 * </ul>
+	 *
+	 * @param <T> the type of operands (Number, Boolean, Character, String)
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the first "truthy" operand, or the second operand if the first is falsy
+	 */
+	@NaftahFn(  name = "أو_منطقي",
+				description = """
+								إجراء عملية "أو" المنطقية بين قيمتين. تُعيد الدالة القيمة الصحيحة إذا كانت إحدى القيمتين أو كلتاهما صحيحتين، وتُستخدم في البرمجة والمنطق للتحقق من تحقق أحد الشرطين على الأقل.""",
+				usage = "أو_منطقي(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object logicalOr(T x, T y) {
+		return applyOperation(x, y, BinaryOperation.OR);
 	}
 
 	/**
@@ -181,6 +248,27 @@ public final class Builtin {
 				returnType = Object.class)
 	public static <T> Object multiply(T x, T y) {
 		return applyOperation(x, y, BinaryOperation.MULTIPLY);
+	}
+
+	/**
+	 * Raises a value to a given power.
+	 * <p>
+	 * Computes the result of raising the first operand (base) to the second operand (exponent).
+	 * Supports numbers and compatible numeric types.
+	 *
+	 * @param <T> the type of the operands
+	 * @param x   the base value
+	 * @param y   the exponent value
+	 * @return the result of x raised to the power of y
+	 */
+	@NaftahFn(  name = "أس",
+				description = """
+								رفع قيمة إلى قوة معينة. تُعيد الدالة النتيجة الناتجة عن رفع القيمة الأولى (الأساس) إلى القيمة الثانية (الأس)، وتُستخدم في الرياضيات والبرمجة لإجراء العمليات الأسية.""",
+				usage = "أس(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object pow(T x, T y) {
+		return applyOperation(x, y, BinaryOperation.POWER);
 	}
 
 	/**
@@ -637,6 +725,104 @@ public final class Builtin {
 	}
 
 	/**
+	 * Performs element-wise addition of two values.
+	 * <p>
+	 * Applies addition to each element individually for numbers, strings, simple values,
+	 * arrays, and compatible collections.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise sum of x and y
+	 */
+	@NaftahFn(  name = "جمع_عنصر_ب_عنصر",
+				description = """
+								يُطبق الجمع عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا، نصوصًا، أو قيم بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية الجمع على كل عنصر مقابل حيثما أمكن.""",
+				usage = "جمع_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseAdd(T x, T y) {
+		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_ADD);
+	}
+
+	/**
+	 * Performs element-wise subtraction of two values.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise difference of x and y
+	 */
+	@NaftahFn(  name = "طرح_عنصر_ب_عنصر",
+				description = """
+								يُطبق الطرح عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا أو قيمًا بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية الطرح على كل عنصر مقابل حيثما أمكن.""",
+				usage = "طرح_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseSubtract(T x, T y) {
+		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_SUBTRACT);
+	}
+
+	/**
+	 * Performs element-wise multiplication of two values.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise product of x and y
+	 */
+	@NaftahFn(  name = "ضرب_عنصر_ب_عنصر",
+				description = """
+								يُطبق الضرب عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا أو قيمًا بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية الضرب على كل عنصر مقابل حيثما أمكن.""",
+				usage = "ضرب_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseMultiply(T x, T y) {
+		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_MULTIPLY);
+	}
+
+	/**
+	 * Performs element-wise division of two values.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise quotient of x and y
+	 */
+	@NaftahFn(  name = "قسمة_عنصر_ب_عنصر",
+				description = """
+								يُطبق القسمة عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا أو قيمًا بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية القسمة على كل عنصر مقابل حيثما أمكن.""",
+				usage = "قسمة_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseDivide(T x, T y) {
+		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_DIVIDE);
+	}
+
+	/**
+	 * Performs element-wise modulo of two values.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise remainder of x divided by y
+	 */
+	@NaftahFn(  name = "باقي_القسمة_عنصر_ب_عنصر",
+				description = """
+								يُطبق عملية باقي القسمة عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا أو قيمًا بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية الباقي على كل عنصر مقابل حيثما أمكن.""",
+				usage = "باقي_القسمة_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseModulo(T x, T y) {
+		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_MODULO);
+	}
+
+	/**
 	 * The (not) function performs a bitwise NOT operation on the given number.
 	 * Returns the result of flipping all bits in the number.
 	 *
@@ -782,6 +968,52 @@ public final class Builtin {
 				returnType = Object.class)
 	public static <T> Object postDecrement(T x) {
 		return applyOperation(x, UnaryOperation.POST_DECREMENT);
+	}
+
+	/**
+	 * The (negate) function returns the arithmetic negation of the given value.
+	 * <p>
+	 * It inverts the numeric sign of the value. For example:
+	 * <pre>{@code
+	 * negate(5)  → -5
+	 * negate(-2) → 2
+	 * }</pre>
+	 *
+	 * @param <T> The type of the object to negate
+	 * @param x   The object whose sign should be inverted
+	 * @return The negated value
+	 * @usage negate(x)
+	 */
+	@NaftahFn(  name = "عكس_الإشارة",
+				description = "الدالة (عكس_الإشارة) تُعيد معكوس إشارة القيمة المُعطاة.",
+				usage = "عكس_الإشارة(س)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object negate(T x) {
+		return applyOperation(x, UnaryOperation.MINUS);
+	}
+
+	/**
+	 * The (logicalNot) function returns the logical negation of the given value.
+	 * <p>
+	 * It inverts a boolean value. For example:
+	 * <pre>{@code
+	 * logicalNot(true)  → false
+	 * logicalNot(false) → true
+	 * }</pre>
+	 *
+	 * @param <T> The type of the object to logically negate
+	 * @param x   The object to negate
+	 * @return The logical negation of the given value
+	 * @usage logicalNot(x)
+	 */
+	@NaftahFn(  name = "نفي_منطقي",
+				description = "الدالة (نفي_منطقي) تُعيد القيمة المنطقية المعاكسة للقيمة المُعطاة.",
+				usage = "نفي_منطقي(س)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object logicalNot(T x) {
+		return applyOperation(x, UnaryOperation.NOT);
 	}
 
 	@NaftahFn(
