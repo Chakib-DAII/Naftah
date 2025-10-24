@@ -6,6 +6,7 @@ import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 
 /**
  * <p><b>System Built-in Functions</b></p>
@@ -244,7 +245,7 @@ public final class SystemBuiltinFunctions {
 				returnType = String.class
 	)
 	public static String osName() {
-		return System.getProperty("os.name");
+		return System.getProperty(OS_NAME_PROPERTY);
 	}
 
 	/**
