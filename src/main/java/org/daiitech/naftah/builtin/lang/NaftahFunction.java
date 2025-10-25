@@ -44,9 +44,9 @@ public record NaftahFunction(
 ) implements Serializable {
 
 	public NaftahFunction {
-		if (Objects.nonNull(LEXER_LITERALS) && (LEXER_LITERALS.contains(name) || Arrays
+		if (Objects.nonNull(LEXER_LITERALS) && (!useQualifiedName && LEXER_LITERALS.contains(name) || Arrays
 				.stream(aliases)
-				.anyMatch(alias -> LEXER_LITERALS.contains(alias)))) {
+				.anyMatch(alias -> !useQualifiedAliases && LEXER_LITERALS.contains(alias)))) {
 			throw new NaftahBugError(
 										String
 												.format("اسم الدالة المضمّنة '%s' %s لا يجوز أن يتطابق مع كلمة مفتاحية في اللغة.",
