@@ -145,7 +145,7 @@ public final class RuntimeClassScanner {
 	 * @return a map of fully qualified class names to their corresponding class loaders (may be null if default)
 	 */
 	public static Map<String, ClassLoader> scanCLasses() {
-		return scanCLasses(PATHS);
+		return scanCLasses(PATHS, null);
 	}
 
 	/**
@@ -154,20 +154,69 @@ public final class RuntimeClassScanner {
 	 * @param paths an array of file system paths (directories or JAR files) to scan for classes
 	 * @return a map of fully qualified class names to their corresponding class loaders (may be null if default)
 	 */
-	public static Map<String, ClassLoader> scanCLasses(String[] paths) {
+	public static Map<String, ClassLoader> scanCLasses(String[] paths, String packagePath) {
 		Map<String, ClassLoader> classNames = new HashMap<>();
 		for (String path : paths) {
-			File file = new File(path);
-			if (file.exists()) {
-				if (file.isDirectory()) {
-					classNames.putAll(findClassesInDirectory(file, file));
-				}
-				else if (file.getName().endsWith(JAR_EXTENSION) || file.getName().endsWith(JMOD_EXTENSION)) {
-					classNames.putAll(findClassesInJar(file));
-				}
+			classNames.putAll(scanCLasses(path, packagePath));
+		}
+		return classNames;
+	}
+
+	/**
+	 * Scans a single path (directory or JAR/JMOD file) for classes.
+	 *
+	 * @param path the file system path to scan
+	 * @return a map of fully qualified class names to their corresponding {@link ClassLoader}s;
+	 *         may be {@code null} if default
+	 */
+	public static Map<String, ClassLoader> scanCLasses(String path, String packagePath) {
+		Map<String, ClassLoader> classNames = new HashMap<>();
+		File file = new File(path);
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				classNames.putAll(findClassesInDirectory(file, file, packagePath));
+			}
+			else if (file.getName().endsWith(JAR_EXTENSION) || file.getName().endsWith(JMOD_EXTENSION)) {
+				classNames.putAll(findClassesInJar(file, packagePath));
 			}
 		}
 		return classNames;
+	}
+
+	/**
+	 * Scans all classes within the given package.
+	 *
+	 * <p>Uses the class loaders in {@link #CLASS_LOADERS} to locate the package resource,
+	 * then scans the resolved path for classes.</p>
+	 *
+	 * @param packageName the fully qualified package name to scan
+	 * @return a map of fully qualified class names to their corresponding {@link ClassLoader}s
+	 * @throws NullPointerException if the package cannot be found in any class loader
+	 */
+	public static Map<String, ClassLoader> scanPackageCLasses(String packageName) {
+		String packagePath = packageName.replace('.', '/');
+		URL resource = null;
+		for (ClassLoader classLoader : CLASS_LOADERS) {
+			if (Objects.isNull(resource)) {
+				resource = classLoader.getResource(packagePath);
+			}
+		}
+
+		if (Objects.nonNull(resource)) {
+			String protocol = resource.getProtocol();
+
+			if ("file".equals(protocol)) {
+				return scanCLasses(resource.getFile(), packagePath);
+			}
+			else if ("jar".equals(protocol)) {
+				String url = resource.toString();
+				int separatorIndex = url.indexOf("!/");
+				String jarPath = url.substring(url.indexOf("file:") + 5, separatorIndex);
+				String insidePath = url.substring(separatorIndex + 2);
+				return scanCLasses(jarPath, insidePath);
+			}
+		}
+		throw new IllegalArgumentException();
 	}
 
 	/**
@@ -225,25 +274,27 @@ public final class RuntimeClassScanner {
 	 * @param dir  current directory or file to scan
 	 * @return a map of fully qualified class names to their corresponding class loaders (null here)
 	 */
-	public static Map<String, ClassLoader> findClassesInDirectory(File root, File dir) {
+	public static Map<String, ClassLoader> findClassesInDirectory(File root, File dir, String packagePath) {
 		Map<String, ClassLoader> classNames = new HashMap<>();
 		for (File file : Objects.requireNonNull(dir.listFiles())) {
 			if (file.isDirectory()) {
-				classNames.putAll(findClassesInDirectory(root, file));
+				classNames.putAll(findClassesInDirectory(root, file, packagePath));
 			}
-			else if (IGNORE_CLASS.stream().noneMatch(s -> file.getName().endsWith(s)) && file
-					.getName()
-					.endsWith(CLASS_EXTENSION)) {
-						String className = file
-								.getAbsolutePath()
-								.substring(root.getAbsolutePath().length() + 1)
-								.replace("/", ".")
-								.replace(File.separatorChar, '.')
-								.replaceAll(CLASS_EXTENSION_REGEX, "");
-						classNames.put(className, null);
-					}
+			else if ((Objects.isNull(packagePath) || file.getName().startsWith(packagePath)) && IGNORE_CLASS
+					.stream()
+					.noneMatch(s -> file.getName().endsWith(s)) && file
+							.getName()
+							.endsWith(CLASS_EXTENSION)) {
+								String className = file
+										.getAbsolutePath()
+										.substring(root.getAbsolutePath().length() + 1)
+										.replace("/", ".")
+										.replace(File.separatorChar, '.')
+										.replaceAll(CLASS_EXTENSION_REGEX, "");
+								classNames.put(className, null);
+							}
 			else if (file.getName().endsWith(JAR_EXTENSION) || file.getName().endsWith(JMOD_EXTENSION)) {
-				classNames.putAll(findClassesInJar(file));
+				classNames.putAll(findClassesInJar(file, packagePath));
 			}
 		}
 		return classNames;
@@ -258,15 +309,17 @@ public final class RuntimeClassScanner {
 	 *         nested
 	 *         jars)
 	 */
-	public static Map<String, ClassLoader> findClassesInJar(File jarFile) {
+	public static Map<String, ClassLoader> findClassesInJar(File jarFile, String packagePath) {
 		Map<String, ClassLoader> classNames = new HashMap<>();
 		try (JarFile jar = new JarFile(jarFile)) {
 			Enumeration<JarEntry> entries = jar.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry entry = entries.nextElement();
-				if (IGNORE_CLASS.stream().noneMatch(s -> entry.getName().endsWith(s)) && entry
-						.getName()
-						.endsWith(CLASS_EXTENSION)) {
+				if ((Objects.isNull(packagePath) || entry.getName().startsWith(packagePath)) && IGNORE_CLASS
+						.stream()
+						.noneMatch(s -> entry.getName().endsWith(s)) && entry
+								.getName()
+								.endsWith(CLASS_EXTENSION)) {
 					String className = entry
 							.getName()
 							.replace("classes/", "") // handling jmod class prefix
@@ -281,7 +334,7 @@ public final class RuntimeClassScanner {
 					try (URLClassLoader loader = new URLClassLoader(new URL[]{tempInnerJar.toURI().toURL()},
 																	RuntimeClassScanner.class.getClassLoader())) {
 						classNames
-								.putAll(findClassesInJar(tempInnerJar)
+								.putAll(findClassesInJar(tempInnerJar, packagePath)
 										.keySet()
 										.stream()
 										.map(className -> Map.entry(className, loader))
