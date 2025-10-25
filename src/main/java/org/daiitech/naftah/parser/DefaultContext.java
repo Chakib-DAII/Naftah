@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -41,8 +42,10 @@ import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
 
-import static org.daiitech.naftah.Naftah.BUILTIN_PROPERTY;
+import static org.daiitech.naftah.Naftah.BUILTIN_CLASSES_PROPERTY;
+import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
@@ -546,30 +549,74 @@ public class DefaultContext {
 				.stream()
 				.collect(toAliasGroupedByName());
 
-		String builtinProp = System.getProperty(BUILTIN_PROPERTY);
+		Set<Class<?>> builtinClasses = new HashSet<>();
 
-		if (Objects.nonNull(builtinProp)) {
-			Set<Class<?>> builtinClasses = new HashSet<>();
+		String builtinPropClasses = System.getProperty(BUILTIN_CLASSES_PROPERTY);
 
-			Arrays
-					.stream(builtinProp.split(","))
-					.map(String::trim)
-					.filter(s -> !s.isEmpty())
-					.forEach(className -> {
-						try {
-							Class<?> clazz = Class.forName(className);
-							builtinClasses.add(clazz);
-						}
-						catch (ClassNotFoundException e) {
-							padText("تعذر العثور على الفئة(class): " + className, true);
-						}
-					});
+		if (Objects.nonNull(builtinPropClasses)) {
+			processBuiltin(builtinPropClasses, className -> {
+				try {
+					Class<?> clazz = Class.forName(className);
+					builtinClasses.add(clazz);
+				}
+				catch (ClassNotFoundException e) {
+					padText("تعذر العثور على الفئة(class): " + className, true);
+				}
+			});
+		}
 
+		String builtinPropPackages = System.getProperty(BUILTIN_PACKAGES_PROPERTY);
+
+		if (Objects.nonNull(builtinPropPackages)) {
+			processBuiltin(builtinPropPackages, packageName -> {
+				try {
+					var classNames = RuntimeClassScanner.scanPackageCLasses(packageName);
+					var classes = RuntimeClassScanner.loadClasses(classNames, false);
+					builtinClasses.addAll(classes.values());
+				}
+				catch (Exception e) {
+					padText("تعذر العثور على الحزمة(package): " + packageName, true);
+				}
+			});
+		}
+
+		if (!builtinClasses.isEmpty()) {
 			BUILTIN_FUNCTIONS
 					.putAll(getBuiltinMethods(builtinClasses)
 							.stream()
 							.collect(toAliasGroupedByName()));
 		}
+	}
+
+	/**
+	 * Processes a comma-separated list of built-in property names by applying the specified
+	 * {@link java.util.function.Consumer} to each non-empty, trimmed element.
+	 * <p>
+	 * This method splits the given string by commas (<code>,</code>), trims whitespace from each part,
+	 * filters out any empty entries, and then passes each resulting value to the provided consumer.
+	 * </p>
+	 *
+	 * <h3>Example:</h3>
+	 * <pre>{@code
+	 * processBuiltin("foo, bar, baz", System.out::println);
+	 * // Output:
+	 * // foo
+	 * // bar
+	 * // baz
+	 * }</pre>
+	 *
+	 * @param builtinProp     a comma-separated string of property names; may contain whitespace
+	 * @param builtinConsumer a {@link java.util.function.Consumer} that will process each non-empty, trimmed property
+	 *                        name
+	 * @throws NullPointerException if {@code builtinProp} or {@code builtinConsumer} is {@code null}
+	 */
+	private static void processBuiltin( String builtinProp,
+										Consumer<String> builtinConsumer) {
+		Arrays
+				.stream(builtinProp.split(","))
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.forEach(builtinConsumer);
 	}
 
 	/**
