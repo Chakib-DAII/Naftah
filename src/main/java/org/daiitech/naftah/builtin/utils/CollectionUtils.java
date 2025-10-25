@@ -10,6 +10,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -317,6 +319,143 @@ public final class CollectionUtils {
 			return new HashSet<>();
 		}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * Recursively verifies that all elements in the given collection match the provided predicate.
+	 * <p>
+	 * Nested structures (collections, maps, arrays) are traversed and evaluated recursively.
+	 * </p>
+	 *
+	 * @param collection the collection to evaluate
+	 * @param predicate  the predicate to test each element against
+	 * @param <T>        the expected element type
+	 * @return {@code true} if all elements (and nested elements) match the predicate; {@code false} otherwise
+	 */
+	public static <T> boolean allMatch(Collection<?> collection, Predicate<T> predicate) {
+		for (Object element : collection) {
+			if (!FunctionUtils.allMatch(element, predicate)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Recursively verifies that all elements in the given array match the provided predicate.
+	 * <p>
+	 * Nested structures (collections, maps, arrays) are traversed and evaluated recursively.
+	 * </p>
+	 *
+	 * @param array     the array to evaluate
+	 * @param predicate the predicate to test each element against
+	 * @param <T>       the expected element type
+	 * @return {@code true} if all elements (and nested elements) match the predicate; {@code false} otherwise
+	 */
+	public static <T> boolean allMatch(Object[] array, Predicate<T> predicate) {
+		for (Object element : array) {
+			if (!FunctionUtils.allMatch(element, predicate)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+	/**
+	 * Recursively verifies that all values in the given map match the provided predicate.
+	 * <p>
+	 * Nested structures (collections, maps, arrays) are traversed and evaluated recursively.
+	 * </p>
+	 *
+	 * @param map       the map whose values to evaluate
+	 * @param predicate the predicate to test each value against
+	 * @param <T>       the expected element type
+	 * @return {@code true} if all values (and nested values) match the predicate; {@code false} otherwise
+	 */
+	public static <T> boolean allMatch(Map<?, ?> map, Predicate<T> predicate) {
+		for (Map.Entry<?, ?> entry : map.entrySet()) {
+			if (!FunctionUtils.allMatch(entry.getValue(), predicate)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+	/**
+	 * Reduces the elements of the given collection into a single value
+	 * using the specified combining operator.
+	 * <p>
+	 * The reduction is performed in iteration order, starting with the first element as the initial value.
+	 * </p>
+	 *
+	 * @param collection the collection to reduce
+	 * @param combiner   the operator used to combine two elements into one
+	 * @return the result of the reduction, or {@code null} if the collection is empty
+	 */
+
+	public static Object reduce(Collection<Object> collection, BinaryOperator<Object> combiner) {
+		Object result = null;
+		for (Object element : collection) {
+			result = (result == null) ? element : combiner.apply(result, element);
+		}
+		return result;
+	}
+
+	/**
+	 * Reduces the elements of the given array into a single value
+	 * using the specified combining operator.
+	 * <p>
+	 * The reduction is performed in iteration order, starting with the first element as the initial value.
+	 * </p>
+	 *
+	 * @param array    the array to reduce
+	 * @param combiner the operator used to combine two elements into one
+	 * @return the result of the reduction, or {@code null} if the array is empty
+	 */
+	public static Object reduce(Object[] array, BinaryOperator<Object> combiner) {
+		Object result = null;
+		for (Object element : array) {
+			result = (result == null) ? element : combiner.apply(result, element);
+		}
+		return result;
+	}
+
+
+	/**
+	 * Reduces the values of the given map into a single value
+	 * using the specified combining operator.
+	 * <p>
+	 * The reduction is performed over the map's values in iteration order.
+	 * </p>
+	 *
+	 * @param map      the map whose values to reduce
+	 * @param combiner the operator used to combine two elements into one
+	 * @return the result of the reduction, or {@code null} if the map is empty
+	 */
+
+	public static Object reduce(Map<?, Object> map, BinaryOperator<Object> combiner) {
+		Object result = null;
+		for (Map.Entry<?, Object> entry : map.entrySet()) {
+			result = (result == null) ? entry.getValue() : combiner.apply(result, entry.getValue());
+		}
+		return result;
+	}
+
+	/**
+	 * Determines whether the specified object represents a collection-like structure:
+	 * a {@link Collection}, {@link Map}, or an array.
+	 * <p>
+	 * This method is used for dynamic type inspection in recursive utilities
+	 * that operate over general data structures.
+	 * </p>
+	 *
+	 * @param obj the object to inspect
+	 * @return {@code true} if the object is a Collection, Map, or Array; {@code false} otherwise
+	 */
+	public static boolean isCollectionMapOrArray(Object obj) {
+		return obj != null && (obj instanceof Collection<?> || obj instanceof Map<?, ?> || obj.getClass().isArray());
 	}
 
 	/**
