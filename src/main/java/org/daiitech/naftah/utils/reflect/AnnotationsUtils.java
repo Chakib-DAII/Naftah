@@ -78,12 +78,14 @@ public final class AnnotationsUtils {
 	 * @param method The method annotated with {@link NaftahFn}.
 	 * @return A {@link NaftahFunction} instance constructed from the annotation.
 	 */
-	public static NaftahFunction getNaftahFunctionAnnotation(Method method) {
+	public static NaftahFunction getNaftahFunctionAnnotation(   Method method,
+																boolean useQualifiedName,
+																boolean useQualifiedAliases) {
 		NaftahFn naftahFn = getMethodAnnotation(method, NaftahFn.class);
 		return NaftahFunction
 				.of(naftahFn.name(),
-					naftahFn.useQualifiedName(),
-					naftahFn.useQualifiedAliases(),
+					naftahFn.useQualifiedName() | useQualifiedName,
+					naftahFn.useQualifiedAliases() | useQualifiedAliases,
 					naftahFn.aliases(),
 					naftahFn.description(),
 					naftahFn.usage(),
