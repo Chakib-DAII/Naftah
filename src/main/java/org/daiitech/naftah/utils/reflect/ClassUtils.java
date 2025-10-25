@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.daiitech.naftah.builtin.NaftahFn;
@@ -46,6 +47,10 @@ public final class ClassUtils {
 	 * Separator used to join qualified calls (class::method).
 	 */
 	public static final String QUALIFIED_CALL_SEPARATOR = "::";
+	/**
+	 * Regex to match strings with at least one ':' and exactly one '::', with '::' before the last segment.
+	 */
+	public static final Pattern QUALIFIED_CALL_REGEX = Pattern.compile("^[^:]*::(?:[^:]*:)+[^:]*$");
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -383,7 +388,9 @@ public final class ClassUtils {
 					Class<?> clazz = methodEntry.getValue().getValue();
 					Method method = methodEntry.getKey();
 					var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
-					var naftahFunction = getNaftahFunctionAnnotation(method);
+					var naftahFunction = getNaftahFunctionAnnotation(   method,
+																		naftahFunctionProvider.useQualifiedName(),
+																		naftahFunctionProvider.useQualifiedAliases());
 					return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
 				})
 				.collect(toAliasGroupedByName());
@@ -403,11 +410,25 @@ public final class ClassUtils {
 												String providerName,
 												String functionName,
 												boolean removeNameDiacritics) {
-		return useQualifiedName ?
-				cleanBuiltinFunctionName(providerName, true) + QUALIFIED_CALL_SEPARATOR + cleanBuiltinFunctionName(
-																													functionName,
-																													removeNameDiacritics) :
-				cleanBuiltinFunctionName(functionName, removeNameDiacritics);
+		if (useQualifiedName) {
+			var qualifiedName = cleanBuiltinFunctionName(   providerName,
+															QUALIFIED_NAME_SEPARATOR,
+															true) + QUALIFIED_CALL_SEPARATOR + cleanBuiltinFunctionName(
+																														functionName,
+																														"_",
+																														removeNameDiacritics);
+			if (QUALIFIED_CALL_REGEX.matcher(qualifiedName).matches()) {
+				System.out.println(qualifiedName);
+				throw new NaftahBugError(
+											"""
+											تنسيق الاسم المؤهل غير صالح. يجب أن يحتوي على ':' واحد على الأقل و'::' واحد بالضبط، مثل: 'أ:ب::ج' أو 'أ:ب:ب:أ::ج'..
+											"""
+				);
+			}
+			return qualifiedName;
+		}
+		return cleanBuiltinFunctionName(functionName, "_", removeNameDiacritics);
+
 	}
 
 	/**
@@ -419,9 +440,10 @@ public final class ClassUtils {
 	 * @return a sanitized string with optional diacritics removed and spaces replaced with underscores
 	 */
 	public static String cleanBuiltinFunctionName(  String name,
+													String replacement,
 													boolean removeDiacritics) {
 		name = removeDiacritics ? ArabicUtils.removeDiacritics(name) : name;
-		return name.replaceAll("\\s+", "_");
+		return name.replaceAll("\\s+", replacement);
 	}
 
 	/**
@@ -448,7 +470,11 @@ public final class ClassUtils {
 						.filter(method -> isAnnotationsPresent(method, NaftahFn.class))
 						.map(method -> {
 							var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
-							var naftahFunction = getNaftahFunctionAnnotation(method);
+							var naftahFunction = getNaftahFunctionAnnotation(   method,
+																				naftahFunctionProvider
+																						.useQualifiedName(),
+																				naftahFunctionProvider
+																						.useQualifiedAliases());
 							return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
 						})
 						.toList() :
