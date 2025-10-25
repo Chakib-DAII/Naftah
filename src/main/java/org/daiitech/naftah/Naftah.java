@@ -345,7 +345,7 @@ public final class Naftah {
 	 * <p>All successfully processed properties update system properties, including
 	 * {@link #BUILTIN_CLASSES_PROPERTY} and {@link #BUILTIN_PACKAGES_PROPERTY}.</p>
 	 */
-	private static void initConfig() {
+	public static void initConfig() {
 		Properties properties = null;
 		try {
 			String configFile = System.getProperty(CONFIG_FILE_PROPERTY);
@@ -374,7 +374,7 @@ public final class Naftah {
 	 *
 	 * @param args the raw command line arguments
 	 */
-	private static void processArgs(String[] args) {
+	public static void processArgs(String[] args) {
 		setupOutputStream();
 		setupErrorStream();
 		setupLocale();
@@ -503,7 +503,6 @@ public final class Naftah {
 	/**
 	 * The base command class for the Naftah CLI, implemented with picocli.
 	 * Supports subcommands: run, init, and shell.
-	 * TODO: add support for ManCammand (Manual), to list java apis in arabic (transliterated)
 	 */
 	@Command(   name = NaftahCommand.NAME,
 				customSynopsis = "naftah [run/shell/init] [options] [filename] [args]",
@@ -1233,7 +1232,11 @@ public final class Naftah {
 				}
 				else {
 					String result = null;
-					if (classes.equals(target)) {
+					boolean validIndex = true;
+					if (classes.equals(target) && (validIndex = DefaultContext
+							.getClasses()
+							.entrySet()
+							.size() > index)) {
 						var element = CollectionUtils
 								.getElementAt(
 												DefaultContext
@@ -1244,57 +1247,77 @@ public final class Naftah {
 							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
 						}
 					}
-					else if (accessibleClasses.equals(target)) {
-						var element = CollectionUtils
-								.getElementAt(
-												DefaultContext
-														.getAccessibleClasses()
-														.entrySet(),
-												index);
-						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
-							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
-						}
-					}
-					else if (instantiableClasses.equals(target)) {
-						var element = CollectionUtils
-								.getElementAt(
-												DefaultContext
-														.getInstantiableClasses()
-														.entrySet(),
-												index);
-						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
-							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
-						}
-					}
-					else if (builtinFunctions.equals(target)) {
-						var element = CollectionUtils
-								.getElementAt(
-												DefaultContext
-														.getBuiltinFunctions()
-														.entrySet(),
-												index);
-						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
-							result = loadBuiltinFunction((Map.Entry<String, List<BuiltinFunction>>) entry);
-						}
-					}
-					else if (jvmFunctions.equals(target)) {
-						var element = CollectionUtils
-								.getElementAt(
-												DefaultContext
-														.getJvmFunctions()
-														.entrySet(),
-												index);
-						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
-							result = loadJvmFunction((Map.Entry<String, List<JvmFunction>>) entry);
-						}
-					}
+					else if (accessibleClasses.equals(target) && (validIndex = DefaultContext
+							.getAccessibleClasses()
+							.entrySet()
+							.size() > index)) {
+								var element = CollectionUtils
+										.getElementAt(
+														DefaultContext
+																.getAccessibleClasses()
+																.entrySet(),
+														index);
+								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+								}
+							}
+					else if (instantiableClasses.equals(target) && (validIndex = DefaultContext
+							.getInstantiableClasses()
+							.entrySet()
+							.size() > index)) {
+								var element = CollectionUtils
+										.getElementAt(
+														DefaultContext
+																.getInstantiableClasses()
+																.entrySet(),
+														index);
+								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+								}
+							}
+					else if (builtinFunctions.equals(target) && (validIndex = DefaultContext
+							.getBuiltinFunctions()
+							.entrySet()
+							.size() > index)) {
+								var element = CollectionUtils
+										.getElementAt(
+														DefaultContext
+																.getBuiltinFunctions()
+																.entrySet(),
+														index);
+								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									result = loadBuiltinFunction((Map.Entry<String, List<BuiltinFunction>>) entry);
+								}
+							}
+					else if (jvmFunctions.equals(target) && (validIndex = DefaultContext
+							.getJvmFunctions()
+							.entrySet()
+							.size() > index)) {
+								var element = CollectionUtils
+										.getElementAt(
+														DefaultContext
+																.getJvmFunctions()
+																.entrySet(),
+														index);
+								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									result = loadJvmFunction((Map.Entry<String, List<JvmFunction>>) entry);
+								}
+							}
 
-					if (result == null) {
-						throw new NaftahBugError("حدث خطأ غير متوقع أثناء تحميل العنصر المطلوب من القائمة المحددة");
+					if (!validIndex) {
+						return null;
 					}
+					else {
+						if (result == null) {
+							throw new NaftahBugError(
+														"""
+														حدث خطأ غير متوقع أثناء تحميل العنصر المطلوب من القائمة المحددة.
+														""");
+						}
 
-					target.add(result);
-					return result;
+						target.add(result);
+						return result;
+					}
 				}
 			}
 
@@ -1326,6 +1349,9 @@ public final class Naftah {
 				while (currentIndex < total) {
 					for (int i = 0; i < PAGE_SIZE && currentIndex < total; i++, currentIndex++) {
 						var current = loadClassOrFunction(currentIndex, lines);
+						if (Objects.isNull(current)) {
+							break outerLoop;
+						}
 						var currentLines = current.lines().toList();
 						var currentLinesCount = currentLines.size();
 						int terminalHeight = Integer.getInteger(TERMINAL_HEIGHT_PROPERTY) - 1;
