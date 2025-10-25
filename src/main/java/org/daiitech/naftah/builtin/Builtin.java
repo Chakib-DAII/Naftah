@@ -9,6 +9,8 @@ import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.builtin.utils.FunctionUtils.allMatch;
+import static org.daiitech.naftah.builtin.utils.FunctionUtils.reduce;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
@@ -153,7 +155,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object add(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.ADD);
+		return reduce(applyOperation(x, y, BinaryOperation.ADD), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -182,7 +184,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object logicalAnd(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.AND);
+		return reduce(applyOperation(x, y, BinaryOperation.AND), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -211,7 +213,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object logicalOr(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.OR);
+		return reduce(applyOperation(x, y, BinaryOperation.OR), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -229,7 +231,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object subtract(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.SUBTRACT);
+		return reduce(applyOperation(x, y, BinaryOperation.SUBTRACT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -247,7 +249,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object multiply(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.MULTIPLY);
+		return reduce(applyOperation(x, y, BinaryOperation.MULTIPLY), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -268,7 +270,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object pow(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.POWER);
+		return reduce(applyOperation(x, y, BinaryOperation.POWER), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -286,7 +288,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object divide(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.DIVIDE);
+		return reduce(applyOperation(x, y, BinaryOperation.DIVIDE), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -304,7 +306,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object modulo(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.MODULO);
+		return reduce(applyOperation(x, y, BinaryOperation.MODULO), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -546,7 +548,7 @@ public final class Builtin {
 				returnType = Object.class)
 	public static <T> boolean equals(T x, T y) {
 		try {
-			return (boolean) applyOperation(x, y, BinaryOperation.EQUALS);
+			return allMatch(applyOperation(x, y, BinaryOperation.EQUALS), Boolean.TRUE::equals);
 		}
 		catch (NaftahBugError bug) {
 			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
@@ -574,7 +576,7 @@ public final class Builtin {
 				returnType = Object.class)
 	public static <T> boolean notEquals(T x, T y) {
 		try {
-			return (boolean) applyOperation(x, y, BinaryOperation.NOT_EQUALS);
+			return allMatch(applyOperation(x, y, BinaryOperation.NOT_EQUALS), Boolean.TRUE::equals);
 		}
 		catch (NaftahBugError bug) {
 			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
@@ -601,7 +603,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean lessThan(T x, T y) {
-		return (boolean) applyOperation(x, y, BinaryOperation.LESS_THAN);
+		return allMatch(applyOperation(x, y, BinaryOperation.LESS_THAN), Boolean.TRUE::equals);
 	}
 
 	/**
@@ -621,7 +623,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean lessThanEquals(T x, T y) {
-		return (boolean) applyOperation(x, y, BinaryOperation.LESS_THAN_EQUALS);
+		return allMatch(applyOperation(x, y, BinaryOperation.LESS_THAN_EQUALS), Boolean.TRUE::equals);
 	}
 
 	/**
@@ -641,7 +643,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean greaterThan(T x, T y) {
-		return (boolean) applyOperation(x, y, BinaryOperation.GREATER_THAN);
+		return allMatch(applyOperation(x, y, BinaryOperation.GREATER_THAN), Boolean.TRUE::equals);
 	}
 
 	/**
@@ -661,7 +663,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean greaterThanEquals(T x, T y) {
-		return (boolean) applyOperation(x, y, BinaryOperation.GREATER_THAN_EQUALS);
+		return allMatch(applyOperation(x, y, BinaryOperation.GREATER_THAN_EQUALS), Boolean.TRUE::equals);
 	}
 
 	/**
@@ -681,7 +683,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object and(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.BITWISE_AND);
+		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_AND), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -701,7 +703,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object or(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.BITWISE_OR);
+		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_OR), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -721,7 +723,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object xor(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.BITWISE_XOR);
+		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_XOR), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -743,7 +745,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object elementWiseAdd(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_ADD);
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_ADD), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -762,7 +764,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object elementWiseSubtract(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_SUBTRACT);
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_SUBTRACT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -781,7 +783,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object elementWiseMultiply(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_MULTIPLY);
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_MULTIPLY), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -800,7 +802,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object elementWiseDivide(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_DIVIDE);
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_DIVIDE), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -819,7 +821,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object elementWiseModulo(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_MODULO);
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_MODULO), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -838,7 +840,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object not(T x) {
-		return applyOperation(x, UnaryOperation.BITWISE_NOT);
+		return reduce(applyOperation(x, UnaryOperation.BITWISE_NOT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -916,7 +918,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object preIncrement(T x) {
-		return applyOperation(x, UnaryOperation.PRE_INCREMENT);
+		return reduce(applyOperation(x, UnaryOperation.PRE_INCREMENT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -933,7 +935,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object postIncrement(T x) {
-		return applyOperation(x, UnaryOperation.POST_INCREMENT);
+		return reduce(applyOperation(x, UnaryOperation.POST_INCREMENT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -950,7 +952,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object preDecrement(T x) {
-		return applyOperation(x, UnaryOperation.PRE_DECREMENT);
+		return reduce(applyOperation(x, UnaryOperation.PRE_DECREMENT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -967,7 +969,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object postDecrement(T x) {
-		return applyOperation(x, UnaryOperation.POST_DECREMENT);
+		return reduce(applyOperation(x, UnaryOperation.POST_DECREMENT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -990,7 +992,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object negate(T x) {
-		return applyOperation(x, UnaryOperation.MINUS);
+		return reduce(applyOperation(x, UnaryOperation.MINUS), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -1013,7 +1015,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object logicalNot(T x) {
-		return applyOperation(x, UnaryOperation.NOT);
+		return reduce(applyOperation(x, UnaryOperation.NOT), BinaryOperation.ADD::apply);
 	}
 
 	@NaftahFn(
