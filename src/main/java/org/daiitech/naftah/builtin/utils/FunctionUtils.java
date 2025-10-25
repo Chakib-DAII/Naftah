@@ -24,7 +24,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputErr
  *
  * @author Chakib Daii
  */
-public class FunctionUtils {
+public final class FunctionUtils {
 	/**
 	 * Private constructor to prevent instantiation.
 	 * Always throws a {@link NaftahBugError} when called.
