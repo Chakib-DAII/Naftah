@@ -2,8 +2,11 @@ package org.daiitech.naftah.parser.provider.script;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.NaftahSystem;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -11,7 +14,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
+import static org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions.newNaftahNotCollectionOrMapArgumentError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugUnsupportedBitwiseDecimalError;
+import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 
 
 public class FunctionCallProvider implements ArgumentsProvider {
@@ -602,6 +607,907 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								تحليل_رقم_بنظام_العد("ك٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠٠"؛٣٢)
 								""",
 								new BigInteger("37476700408053504415891456"),
+								null),
+					Arguments.of(true, "و_منطقي(6 ، 3)", 3, null),
+					Arguments.of(true, "أو_منطقي(6 ، 3)", 6, null),
+					Arguments.of(true, "أس(6 ، 3)", 216.0, null),
+					Arguments.of(true, "جمع_عنصر_ب_عنصر(6 ، 3)", 5, null),
+					Arguments.of(true, "جمع_عنصر_ب_عنصر(\"666\" ، 3)", "i", null),
+					Arguments.of(true, "طرح_عنصر_ب_عنصر(6 ، 3)", -6, null),
+					Arguments.of(true, "ضرب_عنصر_ب_عنصر(6 ، 3)", 2, null),
+					Arguments.of(true, "ضرب_عنصر_ب_عنصر(\"666\" ، 3)", "ૂ", null),
+					Arguments.of(true, "قسمة_عنصر_ب_عنصر(6 ، 3)", 0, null),
+					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر(6 ، 3)", 2, null),
+					Arguments.of(true, "عكس_الإشارة(6)", -6, null),
+					Arguments.of(true, "نفي_منطقي(6)", -6, null),
+					Arguments.of(true, "اقرأ_متغير_بيئة(\"JAVA_HOME\")", System.getenv("JAVA_HOME"), null),
+					Arguments.of(true, "اقرأ_خاصية(\"os.name\")", System.getProperty("os.name"), null),
+					Arguments.of(true, "اكتب_خاصية(\"my.prop\", \"value\")", None.get(), null),
+					Arguments.of(true, "نسخة_جافا()", System.getProperty("java.version"), null),
+					Arguments.of(true, "إصدار_نفطة()", NaftahSystem.getVersion(), null),
+					Arguments.of(true, "إصدار_قصير_نفطة()", NaftahSystem.getShortVersion(), null),
+					Arguments.of(true, "اسم_النظام()", System.getProperty(OS_NAME_PROPERTY), null),
+					Arguments.of(true, "إسم_المستخدم()", System.getProperty("user.name"), null),
+					Arguments.of(true, "مجلد_المستخدم()", System.getProperty("user.home"), null),
+					Arguments.of(true, "الذاكرة_الإجمالية()", Runtime.getRuntime().totalMemory(), null),
+					Arguments.of(true, "ذاكرة_قصوى()", Runtime.getRuntime().maxMemory(), null),
+					Arguments.of(true, "عدد_المعالجات()", Runtime.getRuntime().availableProcessors(), null),
+					Arguments.of(true, "إجمع({أ:1 , ب:2} , {أ:1 , ب:2})", 6, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::إجمع({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 2);
+										put("ب", 4);
+									}
+								},
+								null),
+					Arguments.of(true, "إجمع([1 , 2], [3 , 4])", 10, null),
+					Arguments.of(true, "دوال:الحزم::إجمع([1 , 2], [3 , 4])", List.of(4, 6), null),
+					Arguments.of(true, "إجمع({1 , 2}, {3 , 5})", 11, null),
+					Arguments.of(true, "دوال:الحزم::إجمع({1 , 2}, {3 , 5})", List.of(4, 7), null),
+					Arguments.of(true, "إجمع((1 , 2), (1 , 2))", 6, null),
+					Arguments.of(true, "دوال:الحزم::إجمع((1 , 2), (1 , 2))", List.of(2, 4), null),
+					Arguments.of(true, "إجمع([1 ,2 , 3], 10)", 36, null),
+					Arguments.of(true, "دوال:الحزم::إجمع([1 ,2 , 3], 10)", List.of(11, 12, 13), null),
+					Arguments.of(true, "إجمع(10 , [1 ,2 , 3])", 36, null),
+					Arguments.of(true, "دوال:الحزم::إجمع(10 , [1 ,2 , 3])", List.of(11, 12, 13), null),
+					Arguments
+							.of(false,
+								"دوال:الحزم::إجمع(10 , 5)",
+								null,
+								newNaftahNotCollectionOrMapArgumentError(false)),
+					Arguments.of(true, "جمع_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::جمع_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 0);
+										put("ب", 0);
+									}
+								},
+								null),
+					Arguments.of(true, "جمع_عنصر_ب_عنصر([1 , 2], [3 , 4])", 8, null),
+					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر([1 , 2], [3 , 4])", List.of(2, 6), null),
+					Arguments.of(true, "جمع_عنصر_ب_عنصر({1 , 2}, {3 , 5})", 9, null),
+					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر({1 , 2}, {3 , 5})", List.of(2, 7), null),
+					Arguments.of(true, "جمع_عنصر_ب_عنصر((1 , 2), (1 , 2))", 0, null),
+					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر((1 , 2), (1 , 2))", List.of(0, 0), null),
+					Arguments.of(true, "جمع_عنصر_ب_عنصر([1 ,2 , 3], 10)", 28, null),
+					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر([1 ,2 , 3], 10)", List.of(11, 8, 9), null),
+					Arguments.of(true, "جمع_عنصر_ب_عنصر(10 , [1 ,2 , 3])", 28, null),
+					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر(10 , [1 ,2 , 3])", List.of(11, 8, 9), null),
+					Arguments.of(true, "و_منطقي({أ:1 , ب:2} , {أ:1 , ب:2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::و_منطقي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 2);
+									}
+								},
+								null),
+					Arguments.of(true, "و_منطقي([1 , 2], [3 , 4])", 7, null),
+					Arguments.of(true, "دوال:الحزم::و_منطقي([1 , 2], [3 , 4])", List.of(3, 4), null),
+					Arguments.of(true, "و_منطقي({1 , 2}, {3 , 5})", 8, null),
+					Arguments.of(true, "دوال:الحزم::و_منطقي({1 , 2}, {3 , 5})", List.of(3, 5), null),
+					Arguments.of(true, "و_منطقي((1 , 2), (1 , 2))", 3, null),
+					Arguments.of(true, "دوال:الحزم::و_منطقي((1 , 2), (1 , 2))", List.of(1, 2), null),
+					Arguments.of(true, "و_منطقي([1 ,2 , 3], 10)", 30, null),
+					Arguments.of(true, "دوال:الحزم::و_منطقي([1 ,2 , 3], 10)", List.of(10, 10, 10), null),
+					Arguments.of(true, "و_منطقي(10 , [1 ,2 , 3])", 6, null),
+					Arguments.of(true, "دوال:الحزم::و_منطقي(10 , [1 ,2 , 3])", List.of(1, 2, 3), null),
+					Arguments.of(true, "أو_منطقي({أ:1 , ب:2} , {أ:1 , ب:2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::أو_منطقي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 2);
+									}
+								},
+								null),
+					Arguments.of(true, "أو_منطقي([1 , 2], [3 , 4])", 3, null),
+					Arguments.of(true, "دوال:الحزم::أو_منطقي([1 , 2], [3 , 4])", List.of(1, 2), null),
+					Arguments.of(true, "أو_منطقي({1 , 2}, {3 , 5})", 3, null),
+					Arguments.of(true, "دوال:الحزم::أو_منطقي({1 , 2}, {3 , 5})", List.of(1, 2), null),
+					Arguments.of(true, "أو_منطقي((1 , 2), (1 , 2))", 3, null),
+					Arguments.of(true, "دوال:الحزم::أو_منطقي((1 , 2), (1 , 2))", List.of(1, 2), null),
+					Arguments.of(true, "أو_منطقي([1 ,2 , 3], 10)", 6, null),
+					Arguments.of(true, "دوال:الحزم::أو_منطقي([1 ,2 , 3], 10)", List.of(1, 2, 3), null),
+					Arguments.of(true, "أو_منطقي(10 , [1 ,2 , 3])", 30, null),
+					Arguments.of(true, "دوال:الحزم::أو_منطقي(10 , [1 ,2 , 3])", List.of(10, 10, 10), null),
+					Arguments.of(true, "إطرح({أ:1 , ب:2} , {أ:1 , ب:2})", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::إطرح({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 0);
+										put("ب", 0);
+									}
+								},
+								null),
+					Arguments.of(true, "إطرح([1 , 2], [3 , 4])", -4, null),
+					Arguments.of(true, "دوال:الحزم::إطرح([1 , 2], [3 , 4])", List.of(-2, -2), null),
+					Arguments.of(true, "إطرح({1 , 2}, {3 , 5})", -5, null),
+					Arguments.of(true, "دوال:الحزم::إطرح({1 , 2}, {3 , 5})", List.of(-2, -3), null),
+					Arguments.of(true, "إطرح((1 , 2), (1 , 2))", 0, null),
+					Arguments.of(true, "دوال:الحزم::إطرح((1 , 2), (1 , 2))", List.of(0, 0), null),
+					Arguments.of(true, "إطرح([1 ,2 , 3], 10)", -24, null),
+					Arguments.of(true, "دوال:الحزم::إطرح([1 ,2 , 3], 10)", List.of(-9, -8, -7), null),
+					Arguments.of(true, "إطرح(10 , [1 ,2 , 3])", 24, null),
+					Arguments.of(true, "دوال:الحزم::إطرح(10 , [1 ,2 , 3])", List.of(9, 8, 7), null),
+					Arguments.of(true, "طرح_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})", -2, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::طرح_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", -1);
+										put("ب", -1);
+									}
+								},
+								null),
+					Arguments.of(true, "طرح_عنصر_ب_عنصر([1 , 2], [3 , 4])", -10, null),
+					Arguments.of(true, "دوال:الحزم::طرح_عنصر_ب_عنصر([1 , 2], [3 , 4])", List.of(-3, -7), null),
+					Arguments.of(true, "طرح_عنصر_ب_عنصر({1 , 2}, {3 , 5})", -11, null),
+					Arguments.of(true, "دوال:الحزم::طرح_عنصر_ب_عنصر({1 , 2}, {3 , 5})", List.of(-3, -8), null),
+					Arguments.of(true, "طرح_عنصر_ب_عنصر((1 , 2), (1 , 2))", -2, null),
+					Arguments.of(true, "دوال:الحزم::طرح_عنصر_ب_عنصر((1 , 2), (1 , 2))", List.of(-1, -1), null),
+					Arguments.of(true, "طرح_عنصر_ب_عنصر([1 ,2 , 3], 10)", -31, null),
+					Arguments.of(true, "دوال:الحزم::طرح_عنصر_ب_عنصر([1 ,2 , 3], 10)", List.of(-12, -9, -10), null),
+					Arguments.of(true, "طرح_عنصر_ب_عنصر(10 , [1 ,2 , 3])", -31, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::طرح_عنصر_ب_عنصر(10 , [1 ,2 , 3])",
+								List.of(-12, -9, -10),
+								null),
+					Arguments.of(true, "إضرب({أ:1 , ب:2} , {أ:1 , ب:2})", 5, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::إضرب({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 4);
+									}
+								},
+								null),
+					Arguments.of(true, "إضرب([1 , 2], [3 , 4])", 11, null),
+					Arguments.of(true, "دوال:الحزم::إضرب([1 , 2], [3 , 4])", List.of(3, 8), null),
+					Arguments.of(true, "إضرب({1 , 2}, {3 , 5})", 13, null),
+					Arguments.of(true, "دوال:الحزم::إضرب({1 , 2}, {3 , 5})", List.of(3, 10), null),
+					Arguments.of(true, "إضرب((1 , 2), (1 , 2))", 5, null),
+					Arguments.of(true, "دوال:الحزم::إضرب((1 , 2), (1 , 2))", List.of(1, 4), null),
+					Arguments.of(true, "إضرب([1 ,2 , 3], 10)", 60, null),
+					Arguments.of(true, "دوال:الحزم::إضرب([1 ,2 , 3], 10)", List.of(10, 20, 30), null),
+					Arguments.of(true, "إضرب(10 , [1 ,2 , 3])", 60, null),
+					Arguments.of(true, "دوال:الحزم::إضرب(10 , [1 ,2 , 3])", List.of(10, 20, 30), null),
+					Arguments.of(true, "ضرب_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::ضرب_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 2);
+									}
+								},
+								null),
+					Arguments.of(true, "ضرب_عنصر_ب_عنصر([1 , 2], [3 , 4])", 1, null),
+					Arguments.of(true, "دوال:الحزم::ضرب_عنصر_ب_عنصر([1 , 2], [3 , 4])", List.of(1, 0), null),
+					Arguments.of(true, "ضرب_عنصر_ب_عنصر({1 , 2}, {3 , 5})", 1, null),
+					Arguments.of(true, "دوال:الحزم::ضرب_عنصر_ب_عنصر({1 , 2}, {3 , 5})", List.of(1, 0), null),
+					Arguments.of(true, "ضرب_عنصر_ب_عنصر((1 , 2), (1 , 2))", 3, null),
+					Arguments.of(true, "دوال:الحزم::ضرب_عنصر_ب_عنصر((1 , 2), (1 , 2))", List.of(1, 2), null),
+					Arguments.of(true, "ضرب_عنصر_ب_عنصر([1 ,2 , 3], 10)", 4, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::ضرب_عنصر_ب_عنصر([1 ,2 , 3], 10)",
+								List.of(0, 2, 2),
+								null),
+					Arguments.of(true, "ضرب_عنصر_ب_عنصر(10 , [1 ,2 , 3])", 4, null),
+					Arguments.of(true, "دوال:الحزم::ضرب_عنصر_ب_عنصر(10 , [1 ,2 , 3])", List.of(0, 2, 2), null),
+					Arguments.of(true, "أس({أ:1 , ب:2} , {أ:1 , ب:2})", 5., null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::أس({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1.);
+										put("ب", 4.);
+									}
+								},
+								null),
+					Arguments.of(true, "أس([1 , 2], [3 , 4])", 17., null),
+					Arguments.of(true, "دوال:الحزم::أس([1 , 2], [3 , 4])", List.of(1., 16.), null),
+					Arguments.of(true, "أس({1 , 2}, {3 , 5})", 33., null),
+					Arguments.of(true, "دوال:الحزم::أس({1 , 2}, {3 , 5})", List.of(1., 32.), null),
+					Arguments.of(true, "أس((1 , 2), (1 , 2))", 5., null),
+					Arguments.of(true, "دوال:الحزم::أس((1 , 2), (1 , 2))", List.of(1., 4.), null),
+					Arguments.of(true, "أس([1 ,2 , 3], 10)", 60074., null),
+					Arguments.of(true, "دوال:الحزم::أس([1 ,2 , 3], 10)", List.of(1., 1024., 59049.), null),
+					Arguments.of(true, "أس(10 , [1 ,2 , 3])", 1110., null),
+					Arguments.of(true, "دوال:الحزم::أس(10 , [1 ,2 , 3])", List.of(10., 100., 1000.), null),
+					Arguments.of(true, "إقسم({أ:1 , ب:2} , {أ:1 , ب:2})", 2, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::إقسم({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 1);
+									}
+								},
+								null),
+					Arguments.of(true, "إقسم([1 , 2], [3 , 4])", 0, null),
+					Arguments.of(true, "دوال:الحزم::إقسم([1 , 2], [3 , 4])", List.of(0, 0), null),
+					Arguments.of(true, "إقسم({1 , 2}, {3 , 5})", 0, null),
+					Arguments.of(true, "دوال:الحزم::إقسم({1 , 2}, {3 , 5})", List.of(0, 0), null),
+					Arguments.of(true, "إقسم((1 , 2), (1 , 2))", 2, null),
+					Arguments.of(true, "دوال:الحزم::إقسم((1 , 2), (1 , 2))", List.of(1, 1), null),
+					Arguments.of(true, "إقسم([1 ,2 , 3], 10)", 0, null),
+					Arguments.of(true, "دوال:الحزم::إقسم([1 ,2 , 3], 10)", List.of(0, 0, 0), null),
+					Arguments.of(true, "إقسم(10 , [1 ,2 , 3])", 18, null),
+					Arguments.of(true, "دوال:الحزم::إقسم(10 , [1 ,2 , 3])", List.of(10, 5, 3), null),
+					Arguments.of(true, "قسمة_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::قسمة_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 0);
+										put("ب", 0);
+									}
+								},
+								null),
+					Arguments.of(true, "قسمة_عنصر_ب_عنصر([1 , 2], [3 , 4])", 0, null),
+					Arguments.of(true, "دوال:الحزم::قسمة_عنصر_ب_عنصر([1 , 2], [3 , 4])", List.of(0, 0), null),
+					Arguments.of(true, "قسمة_عنصر_ب_عنصر({1 , 2}, {3 , 5})", 0, null),
+					Arguments.of(true, "دوال:الحزم::قسمة_عنصر_ب_عنصر({1 , 2}, {3 , 5})", List.of(0, 0), null),
+					Arguments.of(true, "قسمة_عنصر_ب_عنصر((1 , 2), (1 , 2))", 0, null),
+					Arguments.of(true, "دوال:الحزم::قسمة_عنصر_ب_عنصر((1 , 2), (1 , 2))", List.of(0, 0), null),
+					Arguments
+							.of(false,
+								"قسمة_عنصر_ب_عنصر([1 ,2 , 3], 10)",
+								null,
+								new NaftahBugError(
+													new ArithmeticException(
+																			String
+																					.format("مقدار الإزاحة غير صالح: %d. يجب أن يكون بين 0 و " + "%d.",
+																							10,
+																							7)))),
+					Arguments
+							.of(false,
+								"دوال:الحزم::قسمة_عنصر_ب_عنصر([1 ,2 , 3], 10)",
+								null,
+								new NaftahBugError(
+													new ArithmeticException(
+																			String
+																					.format("مقدار الإزاحة غير صالح: %d. يجب أن يكون بين 0 و " + "%d.",
+																							10,
+																							7)))),
+					Arguments.of(true, "قسمة_عنصر_ب_عنصر(10 , [1 ,2 , 3])", 8, null),
+					Arguments.of(true, "دوال:الحزم::قسمة_عنصر_ب_عنصر(10 , [1 ,2 , 3])", List.of(5, 2, 1), null),
+					Arguments.of(true, "باقي_القسمة({أ:1 , ب:2} , {أ:1 , ب:2})", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::باقي_القسمة({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 0);
+										put("ب", 0);
+									}
+								},
+								null),
+					Arguments.of(true, "باقي_القسمة([1 , 2], [3 , 4])", 3, null),
+					Arguments.of(true, "دوال:الحزم::باقي_القسمة([1 , 2], [3 , 4])", List.of(1, 2), null),
+					Arguments.of(true, "باقي_القسمة({1 , 2}, {3 , 5})", 3, null),
+					Arguments.of(true, "دوال:الحزم::باقي_القسمة({1 , 2}, {3 , 5})", List.of(1, 2), null),
+					Arguments.of(true, "باقي_القسمة((1 , 2), (1 , 2))", 0, null),
+					Arguments.of(true, "دوال:الحزم::باقي_القسمة((1 , 2), (1 , 2))", List.of(0, 0), null),
+					Arguments.of(true, "باقي_القسمة([1 ,2 , 3], 10)", 6, null),
+					Arguments.of(true, "دوال:الحزم::باقي_القسمة([1 ,2 , 3], 10)", List.of(1, 2, 3), null),
+					Arguments.of(true, "باقي_القسمة(10 , [1 ,2 , 3])", 1, null),
+					Arguments.of(true, "دوال:الحزم::باقي_القسمة(10 , [1 ,2 , 3])", List.of(0, 0, 1), null),
+					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::باقي_القسمة_عنصر_ب_عنصر({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 0);
+										put("ب", 0);
+									}
+								},
+								null),
+					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر([1 , 2], [3 , 4])", 2, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::باقي_القسمة_عنصر_ب_عنصر([1 , 2], [3 , 4])",
+								List.of(0, 2),
+								null),
+					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر({1 , 2}, {3 , 5})", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::باقي_القسمة_عنصر_ب_عنصر({1 , 2}, {3 , 5})",
+								List.of(0, 0),
+								null),
+					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر((1 , 2), (1 , 2))", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::باقي_القسمة_عنصر_ب_عنصر((1 , 2), (1 , 2))",
+								List.of(0, 0),
+								null),
+					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر([1 ,2 , 3], 10)", 2, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::باقي_القسمة_عنصر_ب_عنصر([1 ,2 , 3], 10)",
+								List.of(1, 0, 1),
+								null),
+					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر(10 , [1 ,2 , 3])", 2, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::باقي_القسمة_عنصر_ب_عنصر(10 , [1 ,2 , 3])",
+								List.of(0, 0, 2),
+								null),
+					Arguments.of(true, "هل_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", true);
+										put("ب", true);
+									}
+								},
+								null),
+					Arguments.of(true, "هل_يساوي([1 , 2], [3 , 4])", false, null),
+					Arguments.of(true, "دوال:الحزم::هل_يساوي([1 , 2], [3 , 4])", List.of(false, false), null),
+					Arguments.of(true, "هل_يساوي({1 , 2}, {3 , 5})", false, null),
+					Arguments.of(true, "دوال:الحزم::هل_يساوي({1 , 2}, {3 , 5})", List.of(false, false), null),
+					Arguments.of(true, "هل_يساوي((1 , 2), (1 , 2))", true, null),
+					Arguments.of(true, "دوال:الحزم::هل_يساوي((1 , 2), (1 , 2))", List.of(true, true), null),
+					Arguments.of(true, "هل_يساوي([1 ,2 , 3], 10)", false, null),
+					Arguments.of(true, "دوال:الحزم::هل_يساوي([1 ,2 , 3], 10)", List.of(false, false, false), null),
+					Arguments.of(true, "هل_يساوي(10 , [1 ,2 , 3])", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_يساوي(10 , [1 ,2 , 3])",
+								List.of(false, false, false),
+								null),
+					Arguments.of(true, "هل_لا_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_لا_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", false);
+										put("ب", false);
+									}
+								},
+								null),
+					Arguments.of(true, "هل_لا_يساوي([1 , 2], [3 , 4])", true, null),
+					Arguments.of(true, "دوال:الحزم::هل_لا_يساوي([1 , 2], [3 , 4])", List.of(true, true), null),
+					Arguments.of(true, "هل_لا_يساوي({1 , 2}, {3 , 5})", true, null),
+					Arguments.of(true, "دوال:الحزم::هل_لا_يساوي({1 , 2}, {3 , 5})", List.of(true, true), null),
+					Arguments.of(true, "هل_لا_يساوي((1 , 2), (1 , 2))", false, null),
+					Arguments.of(true, "دوال:الحزم::هل_لا_يساوي((1 , 2), (1 , 2))", List.of(false, false), null),
+					Arguments.of(true, "هل_لا_يساوي([1 ,2 , 3], 10)", true, null),
+					Arguments.of(true, "دوال:الحزم::هل_لا_يساوي([1 ,2 , 3], 10)", List.of(true, true, true), null),
+					Arguments.of(true, "هل_لا_يساوي(10 , [1 ,2 , 3])", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_لا_يساوي(10 , [1 ,2 , 3])",
+								List.of(true, true, true),
+								null),
+					Arguments.of(true, "هل_أصغر_من({أ:1 , ب:2} , {أ:1 , ب:2})", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أصغر_من({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", false);
+										put("ب", false);
+									}
+								},
+								null),
+					Arguments.of(true, "هل_أصغر_من([1 , 2], [3 , 4])", true, null),
+					Arguments.of(true, "دوال:الحزم::هل_أصغر_من([1 , 2], [3 , 4])", List.of(true, true), null),
+					Arguments.of(true, "هل_أصغر_من({1 , 2}, {3 , 5})", true, null),
+					Arguments.of(true, "دوال:الحزم::هل_أصغر_من({1 , 2}, {3 , 5})", List.of(true, true), null),
+					Arguments.of(true, "هل_أصغر_من((1 , 2), (1 , 2))", false, null),
+					Arguments.of(true, "دوال:الحزم::هل_أصغر_من((1 , 2), (1 , 2))", List.of(false, false), null),
+					Arguments.of(true, "هل_أصغر_من([1 ,2 , 3], 10)", true, null),
+					Arguments.of(true, "دوال:الحزم::هل_أصغر_من([1 ,2 , 3], 10)", List.of(true, true, true), null),
+					Arguments.of(true, "هل_أصغر_من(10 , [1 ,2 , 3])", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أصغر_من(10 , [1 ,2 , 3])",
+								List.of(false, false, false),
+								null),
+					Arguments.of(true, "هل_أصغر_أو_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أصغر_أو_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", true);
+										put("ب", true);
+									}
+								},
+								null),
+					Arguments.of(true, "هل_أصغر_أو_يساوي([1 , 2], [3 , 4])", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أصغر_أو_يساوي([1 , 2], [3 , 4])",
+								List.of(true, true),
+								null),
+					Arguments.of(true, "هل_أصغر_أو_يساوي({1 , 2}, {3 , 5})", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أصغر_أو_يساوي({1 , 2}, {3 , 5})",
+								List.of(true, true),
+								null),
+					Arguments.of(true, "هل_أصغر_أو_يساوي((1 , 2), (1 , 2))", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أصغر_أو_يساوي((1 , 2), (1 , 2))",
+								List.of(true, true),
+								null),
+					Arguments.of(true, "هل_أصغر_أو_يساوي([1 ,2 , 3], 10)", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أصغر_أو_يساوي([1 ,2 , 3], 10)",
+								List.of(true, true, true),
+								null),
+					Arguments.of(true, "هل_أصغر_أو_يساوي(10 , [1 ,2 , 3])", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أصغر_أو_يساوي(10 , [1 ,2 , 3])",
+								List.of(false, false, false),
+								null),
+					Arguments.of(true, "هل_أكبر_من({أ:1 , ب:2} , {أ:1 , ب:2})", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_من({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", false);
+										put("ب", false);
+									}
+								},
+								null),
+					Arguments.of(true, "هل_أكبر_من([1 , 2], [3 , 4])", false, null),
+					Arguments.of(true, "دوال:الحزم::هل_أكبر_من([1 , 2], [3 , 4])", List.of(false, false), null),
+					Arguments.of(true, "هل_أكبر_من({1 , 2}, {3 , 5})", false, null),
+					Arguments.of(true, "دوال:الحزم::هل_أكبر_من({1 , 2}, {3 , 5})", List.of(false, false), null),
+					Arguments.of(true, "هل_أكبر_من((1 , 2), (1 , 2))", false, null),
+					Arguments.of(true, "دوال:الحزم::هل_أكبر_من((1 , 2), (1 , 2))", List.of(false, false), null),
+					Arguments.of(true, "هل_أكبر_من([1 ,2 , 3], 10)", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_من([1 ,2 , 3], 10)",
+								List.of(false, false, false),
+								null),
+					Arguments.of(true, "هل_أكبر_من(10 , [1 ,2 , 3])", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_من(10 , [1 ,2 , 3])",
+								List.of(true, true, true),
+								null),
+					Arguments.of(true, "هل_أكبر_أو_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_أو_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", true);
+										put("ب", true);
+									}
+								},
+								null),
+					Arguments.of(true, "هل_أكبر_أو_يساوي([1 , 2], [3 , 4])", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_أو_يساوي([1 , 2], [3 , 4])",
+								List.of(false, false),
+								null),
+					Arguments.of(true, "هل_أكبر_أو_يساوي({1 , 2}, {3 , 5})", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_أو_يساوي({1 , 2}, {3 , 5})",
+								List.of(false, false),
+								null),
+					Arguments.of(true, "هل_أكبر_أو_يساوي((1 , 2), (1 , 2))", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_أو_يساوي((1 , 2), (1 , 2))",
+								List.of(true, true),
+								null),
+					Arguments.of(true, "هل_أكبر_أو_يساوي([1 ,2 , 3], 10)", false, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_أو_يساوي([1 ,2 , 3], 10)",
+								List.of(false, false, false),
+								null),
+					Arguments.of(true, "هل_أكبر_أو_يساوي(10 , [1 ,2 , 3])", true, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::هل_أكبر_أو_يساوي(10 , [1 ,2 , 3])",
+								List.of(true, true, true),
+								null),
+					Arguments.of(true, "أو_بتي({أ:1 , ب:2} , {أ:1 , ب:2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::أو_بتي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 2);
+									}
+								},
+								null),
+					Arguments.of(true, "أو_بتي([1 , 2], [3 , 4])", 9, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::أو_بتي([1 , 2], [3 , 4])",
+								List.of(3, 6),
+								null),
+					Arguments.of(true, "أو_بتي({1 , 2}, {3 , 5})", 10, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::أو_بتي({1 , 2}, {3 , 5})",
+								List.of(3, 7),
+								null),
+					Arguments.of(true, "أو_بتي((1 , 2), (1 , 2))", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::أو_بتي((1 , 2), (1 , 2))",
+								List.of(1, 2),
+								null),
+					Arguments.of(true, "أو_بتي([1 ,2 , 3], 10)", 32, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::أو_بتي([1 ,2 , 3], 10)",
+								List.of(11, 10, 11),
+								null),
+					Arguments.of(true, "أو_بتي(10 , [1 ,2 , 3])", 32, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::أو_بتي(10 , [1 ,2 , 3])",
+								List.of(11, 10, 11),
+								null),
+					Arguments.of(true, "حصري_أو_بتي({أ:1 , ب:2} , {أ:1 , ب:2})", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصري_أو_بتي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 0);
+										put("ب", 0);
+									}
+								},
+								null),
+					Arguments.of(true, "حصري_أو_بتي([1 , 2], [3 , 4])", 8, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصري_أو_بتي([1 , 2], [3 , 4])",
+								List.of(2, 6),
+								null),
+					Arguments.of(true, "حصري_أو_بتي({1 , 2}, {3 , 5})", 9, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصري_أو_بتي({1 , 2}, {3 , 5})",
+								List.of(2, 7),
+								null),
+					Arguments.of(true, "حصري_أو_بتي((1 , 2), (1 , 2))", 0, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصري_أو_بتي((1 , 2), (1 , 2))",
+								List.of(0, 0),
+								null),
+					Arguments.of(true, "حصري_أو_بتي([1 ,2 , 3], 10)", 28, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصري_أو_بتي([1 ,2 , 3], 10)",
+								List.of(11, 8, 9),
+								null),
+					Arguments.of(true, "حصري_أو_بتي(10 , [1 ,2 , 3])", 28, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصري_أو_بتي(10 , [1 ,2 , 3])",
+								List.of(11, 8, 9),
+								null),
+					Arguments.of(true, "و_بتي({أ:1 , ب:2} , {أ:1 , ب:2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::و_بتي({أ:1 , ب:2} , {أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 2);
+									}
+								},
+								null),
+					Arguments.of(true, "و_بتي([1 , 2], [3 , 4])", 1, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::و_بتي([1 , 2], [3 , 4])",
+								List.of(1, 0),
+								null),
+					Arguments.of(true, "و_بتي({1 , 2}, {3 , 5})", 1, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::و_بتي({1 , 2}, {3 , 5})",
+								List.of(1, 0),
+								null),
+					Arguments.of(true, "و_بتي((1 , 2), (1 , 2))", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::و_بتي((1 , 2), (1 , 2))",
+								List.of(1, 2),
+								null),
+					Arguments.of(true, "و_بتي([1 ,2 , 3], 10)", 4, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::و_بتي([1 ,2 , 3], 10)",
+								List.of(0, 2, 2),
+								null),
+					Arguments.of(true, "و_بتي(10 , [1 ,2 , 3])", 4, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::و_بتي(10 , [1 ,2 , 3])",
+								List.of(0, 2, 2),
+								null),
+					Arguments.of(true, "ليس_بتي({أ:1 , ب:2})", -5, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::ليس_بتي({أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", -2);
+										put("ب", -3);
+									}
+								},
+								null),
+					Arguments.of(true, "ليس_بتي([1 , 2 , 3])", -9, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::ليس_بتي([1 , 2 , 3])",
+								List.of(-2, -3, -4),
+								null),
+					Arguments.of(true, "ليس_بتي({1 , 2})", -5, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::ليس_بتي({1 , 2})",
+								List.of(-2, -3),
+								null),
+					Arguments.of(true, "ليس_بتي((1 , 2))", -5, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::ليس_بتي((1 , 2))",
+								List.of(-2, -3),
+								null),
+					Arguments
+							.of(false,
+								"دوال:الحزم::ليس_بتي(1)",
+								null,
+								newNaftahNotCollectionOrMapArgumentError(true)),
+					Arguments.of(true, "زيادة_قبلية({أ:1 , ب:2})", 5, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::زيادة_قبلية({أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 2);
+										put("ب", 3);
+									}
+								},
+								null),
+					Arguments.of(true, "زيادة_قبلية([1 , 2 , 3])", 9, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::زيادة_قبلية([1 , 2 , 3])",
+								List.of(2, 3, 4),
+								null),
+					Arguments.of(true, "زيادة_قبلية({1 , 2})", 5, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::زيادة_قبلية({1 , 2})",
+								List.of(2, 3),
+								null),
+					Arguments.of(true, "زيادة_قبلية((1 , 2))", 5, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::زيادة_قبلية((1 , 2))",
+								List.of(2, 3),
+								null),
+					Arguments.of(true, "زيادة_بعدية({أ:1 , ب:2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::زيادة_بعدية({أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 2);
+									}
+								},
+								null),
+					Arguments.of(true, "زيادة_بعدية([1 , 2 , 3])", 6, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::زيادة_بعدية([1 , 2 , 3])",
+								List.of(1, 2, 3),
+								null),
+					Arguments.of(true, "زيادة_بعدية({1 , 2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::زيادة_بعدية({1 , 2})",
+								List.of(1, 2),
+								null),
+					Arguments.of(true, "زيادة_بعدية((1 , 2))", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::زيادة_بعدية((1 , 2))",
+								List.of(1, 2),
+								null),
+					Arguments.of(true, "نقصان_قبلي({أ:1 , ب:2})", 1, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نقصان_قبلي({أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 0);
+										put("ب", 1);
+									}
+								},
+								null),
+					Arguments.of(true, "نقصان_قبلي([1 , 2 , 3])", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نقصان_قبلي([1 , 2 , 3])",
+								List.of(0, 1, 2),
+								null),
+					Arguments.of(true, "نقصان_قبلي({1 , 2})", 1, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نقصان_قبلي({1 , 2})",
+								List.of(0, 1),
+								null),
+					Arguments.of(true, "نقصان_قبلي((1 , 2))", 1, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نقصان_قبلي((1 , 2))",
+								List.of(0, 1),
+								null),
+					Arguments.of(true, "نقصان_بعدي({أ:1 , ب:2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نقصان_بعدي({أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", 1);
+										put("ب", 2);
+									}
+								},
+								null),
+					Arguments.of(true, "نقصان_بعدي([1 , 2 , 3])", 6, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نقصان_بعدي([1 , 2 , 3])",
+								List.of(1, 2, 3),
+								null),
+					Arguments.of(true, "نقصان_بعدي({1 , 2})", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نقصان_بعدي({1 , 2})",
+								List.of(1, 2),
+								null),
+					Arguments.of(true, "نقصان_بعدي((1 , 2))", 3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نقصان_بعدي((1 , 2))",
+								List.of(1, 2),
+								null),
+
+					Arguments.of(true, "عكس_الإشارة({أ:1 , ب:2})", -3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::عكس_الإشارة({أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", -1);
+										put("ب", -2);
+									}
+								},
+								null),
+					Arguments.of(true, "عكس_الإشارة([1 , 2 , 3])", -6, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::عكس_الإشارة([1 , 2 , 3])",
+								List.of(-1, -2, -3),
+								null),
+					Arguments.of(true, "عكس_الإشارة({1 , 2})", -3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::عكس_الإشارة({1 , 2})",
+								List.of(-1, -2),
+								null),
+					Arguments.of(true, "عكس_الإشارة((1 , 2))", -3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::عكس_الإشارة((1 , 2))",
+								List.of(-1, -2),
+								null),
+					Arguments.of(true, "نفي_منطقي({أ:1 , ب:2})", -3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نفي_منطقي({أ:1 , ب:2})",
+								new HashMap<>() {
+									{
+										put("أ", -1);
+										put("ب", -2);
+									}
+								},
+								null),
+					Arguments.of(true, "نفي_منطقي([1 , 2 , 3])", -6, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نفي_منطقي([1 , 2 , 3])",
+								List.of(-1, -2, -3),
+								null),
+					Arguments.of(true, "نفي_منطقي({1 , 2})", -3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نفي_منطقي({1 , 2})",
+								List.of(-1, -2),
+								null),
+					Arguments.of(true, "نفي_منطقي((1 , 2))", -3, null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::نفي_منطقي((1 , 2))",
+								List.of(-1, -2),
+								null),
+					Arguments
+							.of(true,
+								"""
+								متغير قائمة تعيين [1 , 2 , 3]
+								دوال:الحزم::تعيين_عنصر(قائمة, 1 , 99)
+								قائمة
+								""",
+								List.of(1, 99, 3),
+								null),
+					Arguments
+							.of(true,
+								"""
+								متغير مجموعة تعيين {1 , 2}
+								دوال:الحزم::تعيين_عنصر(مجموعة, 1 , 99)
+								مجموعة
+								""",
+								List.of(1, 99),
+								null)
+
+					,
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)",
+								2,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصول_على_عنصر((1 , 2), 1)",
+								2,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حصول_على_عنصر({1 , 2}, 1)",
+								2,
 								null)
 				);
 	}
