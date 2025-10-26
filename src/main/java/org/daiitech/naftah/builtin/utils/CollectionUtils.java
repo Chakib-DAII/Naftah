@@ -1,5 +1,6 @@
 package org.daiitech.naftah.builtin.utils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -547,7 +548,13 @@ public final class CollectionUtils {
 	public static String toString(Object o) {
 		String result;
 		if (o.getClass().isArray()) {
-			result = "قائمة: " + toString((Object[]) o, '[', ']');
+			result = "قائمة: ";
+			if (o instanceof Object[] objects) {
+				result += toString(objects, '[', ']');
+			}
+			else {
+				result += arrayToString(o, '[', ']');
+			}
 		}
 		else if (o instanceof Collection<?> collection) {
 			if (collection instanceof Tuple tuple) {
@@ -579,6 +586,58 @@ public final class CollectionUtils {
 	}
 
 	/**
+	 * Converts an array to a string representation, handling both primitive and object arrays.
+	 * <p>
+	 * This method works for any array type, including nested arrays of primitives or objects.
+	 * Each element is converted to a string using {@link ObjectUtils#getNaftahValueToString(Object)}.
+	 * The resulting string is enclosed between the specified {@code prefix} and {@code suffix}
+	 * characters, and elements are separated by commas.
+	 * </p>
+	 *
+	 * <p>Examples:</p>
+	 * <pre>
+	 * int[] ints = {1, 2, 3};
+	 * arrayToString(ints, '[', ']'); // returns "[1, 2, 3]"
+	 *
+	 * String[] strs = {"a", "b"};
+	 * arrayToString(strs, '(', ')'); // returns "(a, b)"
+	 * </pre>
+	 *
+	 * @param obj    the array object to convert; may be a primitive array, object array, or {@code null}
+	 * @param prefix the character to put at the beginning of the string representation
+	 * @param suffix the character to put at the end of the string representation
+	 * @return a string representation of the array, or {@code NULL} if the array is {@code null}
+	 * @see java.lang.reflect.Array
+	 * @see ObjectUtils#getNaftahValueToString(Object)
+	 */
+	public static String arrayToString(Object obj, char prefix, char suffix) {
+		if (obj == null) {
+			return NULL;
+		}
+		Class<?> clazz = obj.getClass();
+
+		if (!clazz.isArray()) {
+			return getNaftahValueToString(obj);
+		}
+
+		int iMax = Array.getLength(obj) - 1;
+		if (iMax == -1) {
+			return "" + prefix + suffix;
+		}
+
+		StringBuilder b = new StringBuilder();
+		b.append(prefix);
+		for (int i = 0;; i++) {
+			Object element = getNaftahValueToString(Array.get(obj, i));
+			b.append(element);
+			if (i == iMax) {
+				return b.append(suffix).toString();
+			}
+			b.append(" , ");
+		}
+	}
+
+	/**
 	 * Converts an array into a string representation using the specified prefix and suffix characters.
 	 * <p>
 	 * Each element is converted via {@link ObjectUtils#getNaftahValueToString(Object)}.
@@ -605,7 +664,7 @@ public final class CollectionUtils {
 			if (i == iMax) {
 				return b.append(suffix).toString();
 			}
-			b.append(", ");
+			b.append(" , ");
 		}
 	}
 
@@ -637,13 +696,13 @@ public final class CollectionUtils {
 			Map.Entry<K, V> e = i.next();
 			K key = e.getKey();
 			V value = e.getValue();
-			sb.append(key == map ? "(هذه المصفوفة ترابطية)" : key);
+			sb.append(key == map ? "(هذه المصفوفة ترابطية)" : getNaftahValueToString(key));
 			sb.append('=');
-			sb.append(value == map ? "(هذه المصفوفة ترابطية)" : value);
+			sb.append(value == map ? "(هذه المصفوفة ترابطية)" : getNaftahValueToString(value));
 			if (!i.hasNext()) {
 				return sb.append(suffix).toString();
 			}
-			sb.append(',').append(' ');
+			sb.append(" , ");
 		}
 	}
 }
