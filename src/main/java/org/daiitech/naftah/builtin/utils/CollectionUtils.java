@@ -15,13 +15,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahKeyNotFoundError;
+import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 
 /**
  * Utility class for applying binary and unary operations on collections, arrays, and maps.
@@ -523,5 +526,124 @@ public final class CollectionUtils {
 		return new NaftahBugError(String.format("""
 												المؤشر المطلوب (%d) خارج حدود المجموعة. عدد العناصر الحالية هو %d.
 												""", targetIndex, size), e, line, column);
+	}
+
+	/**
+	 * Converts an arbitrary object into its Arabic string representation.
+	 * <p>
+	 * This method detects the object's runtime type and renders it accordingly:
+	 * <ul>
+	 * <li>{@code List} → قائمة</li>
+	 * <li>{@code Set} → مجموعة</li>
+	 * <li>{@code Tuple} → تركيبة</li>
+	 * <li>{@code Map} → كائن / مصفوفة ترابطية</li>
+	 * <li>Array → قائمة</li>
+	 * <li>Other → uses {@code getNaftahValueToString(o)}</li>
+	 * </ul>
+	 *
+	 * @param o the object to convert
+	 * @return a string in Arabic describing the object's structure and contents
+	 */
+	public static String toString(Object o) {
+		String result;
+		if (o.getClass().isArray()) {
+			result = "قائمة: " + toString((Object[]) o, '[', ']');
+		}
+		else if (o instanceof Collection<?> collection) {
+			if (collection instanceof Tuple tuple) {
+				result = "تركيبة: " + toString(tuple.toArray(Object[]::new), '(', ')');
+			}
+			else if (collection instanceof List<?> list) {
+				result = "قائمة: " + toString(list.toArray(Object[]::new), '[', ']');
+			}
+			else if (collection instanceof Set<?> set) {
+				result = "مجموعة: " + toString(set.toArray(Object[]::new), '{', '}');
+			}
+			else {
+				result = collection.toString();
+			}
+		}
+		else if (o instanceof Map<?, ?> map) {
+			if (map.values().stream().allMatch(value -> value instanceof DeclaredVariable)) {
+				result = "كائن: ";
+			}
+			else {
+				result = "مصفوفة ترابطية: ";
+			}
+			result += toString(map, '{', '}');
+		}
+		else {
+			result = getNaftahValueToString(o);
+		}
+		return result;
+	}
+
+	/**
+	 * Converts an array into a string representation using the specified prefix and suffix characters.
+	 * <p>
+	 * Each element is converted via {@link ObjectUtils#getNaftahValueToString(Object)}.
+	 *
+	 * @param <T>    the type of elements in the array
+	 * @param a      the array to convert (can be {@code null})
+	 * @param prefix the opening character (e.g., '[', '(', '{')
+	 * @param suffix the closing character (e.g., ']', ')', '}')
+	 * @return a formatted Arabic string representing the array contents
+	 */
+	public static <T> String toString(T[] a, char prefix, char suffix) {
+		if (a == null) {
+			return NULL;
+		}
+		int iMax = a.length - 1;
+		if (iMax == -1) {
+			return "" + prefix + suffix;
+		}
+
+		StringBuilder b = new StringBuilder();
+		b.append(prefix);
+		for (int i = 0;; i++) {
+			b.append(getNaftahValueToString(a[i]));
+			if (i == iMax) {
+				return b.append(suffix).toString();
+			}
+			b.append(", ");
+		}
+	}
+
+	/**
+	 * Converts a {@link Map} into a string representation using the specified prefix and suffix characters.
+	 * <p>
+	 * Keys and values are converted to strings, with recursive detection for self-references
+	 * (to prevent infinite loops).
+	 *
+	 * @param <K>    the key type
+	 * @param <V>    the value type
+	 * @param map    the map to convert (can be {@code null})
+	 * @param prefix the opening character (e.g., '{')
+	 * @param suffix the closing character (e.g., '}')
+	 * @return a formatted Arabic string representing the map entries
+	 */
+	public static <K, V> String toString(Map<K, V> map, char prefix, char suffix) {
+		if (map == null) {
+			return NULL;
+		}
+		Iterator<Map.Entry<K, V>> i = map.entrySet().iterator();
+		if (!i.hasNext()) {
+			return "" + prefix + suffix;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(prefix);
+		for (;;) {
+			Map.Entry<K, V> e = i.next();
+			K key = e.getKey();
+			V value = e.getValue();
+			sb.append(key == map ? "(هذه المصفوفة ترابطية)" : key);
+			sb.append('=');
+			sb.append(value == map ? "(هذه المصفوفة ترابطية)" : value);
+			if (!i.hasNext()) {
+				return sb.append(suffix).toString();
+			}
+			sb.append(',').append(' ');
+		}
 	}
 }

@@ -5,11 +5,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -587,53 +585,6 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Converts an array to a string representation, handling both primitive and object arrays.
-	 *
-	 * @param obj the array object
-	 * @return a string representation of the array
-	 */
-	public static String arrayToString(Object obj) {
-		if (obj == null) {
-			return NULL;
-		}
-
-		Class<?> objClass = obj.getClass();
-
-		if (!objClass.isArray()) {
-			return obj.toString(); // not an array
-		}
-		String prefix = "قائمة: ";
-		// Handle primitive arrays
-		if (obj instanceof int[]) {
-			return prefix + Arrays.toString((int[]) obj);
-		}
-		if (obj instanceof long[]) {
-			return prefix + Arrays.toString((long[]) obj);
-		}
-		if (obj instanceof double[]) {
-			return prefix + Arrays.toString((double[]) obj);
-		}
-		if (obj instanceof float[]) {
-			return prefix + Arrays.toString((float[]) obj);
-		}
-		if (obj instanceof boolean[]) {
-			return prefix + Arrays.toString((boolean[]) obj);
-		}
-		if (obj instanceof char[]) {
-			return prefix + Arrays.toString((char[]) obj);
-		}
-		if (obj instanceof byte[]) {
-			return prefix + Arrays.toString((byte[]) obj);
-		}
-		if (obj instanceof short[]) {
-			return prefix + Arrays.toString((short[]) obj);
-		}
-
-		// Handle object arrays
-		return prefix + replaceAllNulls(Arrays.toString((Object[]) obj));
-	}
-
-	/**
 	 * Converts a Naftah value into its string representation, using language-specific formatting.
 	 *
 	 * @param o the value to convert
@@ -643,41 +594,26 @@ public final class ObjectUtils {
 		if (o == null) {
 			return NULL;
 		}
+
+		String result;
+
 		if (o instanceof Number number) {
-			return numberToString(number);
+			result = numberToString(number);
 		}
-		if (o instanceof Boolean aBoolean) {
-			return booleanToString(aBoolean);
+		else if (o instanceof Boolean aBoolean) {
+			result = booleanToString(aBoolean);
 		}
-		if (o instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
-			return getNaftahValueToString(loopSignalDetails.result());
+		else if (o instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
+			result = getNaftahValueToString(loopSignalDetails.result());
 		}
-		if (o.getClass().isArray()) {
-			return arrayToString(o);
+		else if (CollectionUtils.isCollectionMapOrArray(o)) {
+			result = CollectionUtils.toString(o);
 		}
-
-		String result = replaceAllNulls(o.toString());
-
-		if (o instanceof Collection<?> collection) {
-			if (collection instanceof Tuple) {
-				return "تركيبة: " + result;
-			}
-			if (collection instanceof List<?>) {
-				return "قائمة: " + result;
-			}
-			if (collection instanceof Set<?>) {
-				return "مجموعة: " + result;
-			}
+		else {
+			result = o.toString();
 		}
 
-		if (o instanceof Map<?, ?> map) {
-			if (map.values().stream().allMatch(value -> value instanceof DeclaredVariable)) {
-				return "كائن: " + result;
-			}
-			return "مصفوفة ترابطية: " + result;
-		}
-
-		return result;
+		return replaceAllNulls(result);
 	}
 
 	/**
