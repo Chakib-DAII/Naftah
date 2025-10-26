@@ -13,6 +13,7 @@ kramdown:
 
 plugins:
   - jekyll-seo-tag    # for SEO improvements
+  - jekyll-paginate
 
 exclude:
   - Gemfile
