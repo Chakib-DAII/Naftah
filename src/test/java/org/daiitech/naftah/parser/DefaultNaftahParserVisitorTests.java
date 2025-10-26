@@ -31,6 +31,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.Naftah.initConfig;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_HEIGHT_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.TestUtils.assertBugEquals;
@@ -59,6 +60,7 @@ public class DefaultNaftahParserVisitorTests {
 		System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(24));
 		System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(false));
 
+		initConfig();
 		bootstrap(false);
 
 		System.setProperty(CLASS_PATH_PROPERTY, originalClassPath);
