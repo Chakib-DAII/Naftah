@@ -280,19 +280,28 @@ public final class RuntimeClassScanner {
 			if (file.isDirectory()) {
 				classNames.putAll(findClassesInDirectory(root, file, packagePath));
 			}
-			else if ((Objects.isNull(packagePath) || file.getName().startsWith(packagePath)) && IGNORE_CLASS
-					.stream()
-					.noneMatch(s -> file.getName().endsWith(s)) && file
-							.getName()
-							.endsWith(CLASS_EXTENSION)) {
-								String className = file
-										.getAbsolutePath()
-										.substring(root.getAbsolutePath().length() + 1)
-										.replace("/", ".")
-										.replace(File.separatorChar, '.')
-										.replaceAll(CLASS_EXTENSION_REGEX, "");
-								classNames.put(className, null);
-							}
+			else if ((Objects.isNull(packagePath) || file
+					.getPath()
+					.replace('\\', '/')
+					.contains(packagePath)) && IGNORE_CLASS
+							.stream()
+							.noneMatch(s -> file.getName().endsWith(s)) && file
+									.getName()
+									.endsWith(CLASS_EXTENSION)) {
+										String className = file
+												.getAbsolutePath()
+												.substring(root.getAbsolutePath().length() + 1);
+										if (Objects.nonNull(packagePath)) {
+											className = packagePath + File.separatorChar + className;
+										}
+
+										className = className
+												.replace("/", ".")
+												.replace(File.separatorChar, '.')
+												.replaceAll(CLASS_EXTENSION_REGEX, "");
+
+										classNames.put(className, null);
+									}
 			else if (file.getName().endsWith(JAR_EXTENSION) || file.getName().endsWith(JMOD_EXTENSION)) {
 				classNames.putAll(findClassesInJar(file, packagePath));
 			}
@@ -315,11 +324,14 @@ public final class RuntimeClassScanner {
 			Enumeration<JarEntry> entries = jar.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry entry = entries.nextElement();
-				if ((Objects.isNull(packagePath) || entry.getName().startsWith(packagePath)) && IGNORE_CLASS
-						.stream()
-						.noneMatch(s -> entry.getName().endsWith(s)) && entry
-								.getName()
-								.endsWith(CLASS_EXTENSION)) {
+				if ((Objects.isNull(packagePath) || entry
+						.getName()
+						.replace('\\', '/')
+						.contains(packagePath)) && IGNORE_CLASS
+								.stream()
+								.noneMatch(s -> entry.getName().endsWith(s)) && entry
+										.getName()
+										.endsWith(CLASS_EXTENSION)) {
 					String className = entry
 							.getName()
 							.replace("classes/", "") // handling jmod class prefix
