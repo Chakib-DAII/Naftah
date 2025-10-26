@@ -7,10 +7,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.daiitech.naftah.builtin.Builtin;
+import org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions;
+import org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions;
+import org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions;
+import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClassUtilsTests {
@@ -113,5 +119,45 @@ public class ClassUtilsTests {
 		var filtered = ClassUtils.filterClasses(input, c -> c == String.class);
 		assertEquals(1, filtered.size());
 		assertTrue(filtered.containsKey("A"));
+	}
+
+	@Test
+	void getBuiltinMethodsTest() {
+		List<BuiltinFunction> builtinFunctions = ClassUtils
+				.getBuiltinMethods(Set
+						.of(SystemBuiltinFunctions.class,
+							RuntimeBuiltinFunctions.class,
+							CollectionBuiltinFunctions.class));
+		assertNotNull(builtinFunctions);
+		assertEquals(49, builtinFunctions.size());
+	}
+
+	@Test
+	void getBuiltinFunctionNameTest() {
+		String functionName = ClassUtils.getBuiltinFunctionName(true, "دوال الحزم", "و_منطقي", true);
+		assertNotNull(functionName);
+		assertEquals("دوال:الحزم::و_منطقي", functionName);
+	}
+
+	@Test
+	void classToDetailedStringTest() {
+		String builtinClassToDetailedString = ClassUtils.classToDetailedString(Builtin.class);
+		assertNotNull(builtinClassToDetailedString);
+		assertEquals(
+						"""
+							تفاصيل الصنف:
+								- الاسم الكامل: org.daiitech.naftah.builtin.Builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة:مدرجة_مدرجة
+								- الاسم المختصر: Builtin - مدرجة_مدرجة
+								- الحزمة: org.daiitech.naftah.builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة
+								- عام (public)؟: نعم
+								- مجرد (abstract)؟: لا
+								- واجهة (interface)؟: لا
+							- الصنف الأب (super classes): java.lang.Object - جافا:لغة:كائن
+								- تعداد (enum)؟: لا
+								- توصيف (annotation)؟: لا
+								- سجل (record)؟: لا
+								- نوع بدائي (primitive)؟: لا
+						""",
+						builtinClassToDetailedString);
 	}
 }
