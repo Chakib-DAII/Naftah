@@ -2,6 +2,7 @@ package org.daiitech.naftah.errors;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.misc.Pair;
@@ -57,6 +58,38 @@ public final class ExceptionUtils {
 	 * Arabic: "لا يمكن أن تكون الوسائط فارغة."
 	 */
 	public static final String EMPTY_ARGUMENTS_ERROR = "لا يمكن أن تكون الوسائط فارغة (%s)، (%s).";
+	/**
+	 * Note prefix used in error messages.
+	 * <p>
+	 * Arabic: "ملاحظة:"
+	 * </p>
+	 */
+	public static final String NOTE = "\nملاحظة:\n";
+	/**
+	 * Generates an error message indicating that an instance method was called incorrectly.
+	 * <p>
+	 * The message is in Arabic and explains that the method is not static and requires the
+	 * first argument (or second if the method is from a list of functions) to be the instance
+	 * on which the method will be invoked.
+	 * </p>
+	 *
+	 * <p>Usage example:
+	 * <pre>
+	 * String msg = INVALID_INSTANCE_METHOD_CALL_MSG.apply("methodName", additionalInfo);
+	 * </pre>
+	 * </p>
+	 * <p>
+	 * Parameters:
+	 * <ul>
+	 * <li>First: the method name ({@code %s})</li>
+	 * <li>Second: additional context or details ({@code %s})</li>
+	 * </ul>
+	 */
+	public static final BiFunction<String, String, String> INVALID_INSTANCE_METHOD_CALL_MSG = """
+																								الدالة '%s' ليست ثابتة (instance method)، يجب تزويد الوسيط الأول (الثاني في حالة الدالة المرتبطة بقائمة من الدوال) كالكائن (instance) الذي سيتم استدعاء الدالة عليه.
+
+																								%s
+																								"""::formatted;
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -295,4 +328,174 @@ public final class ExceptionUtils {
 	public static NaftahBugError newNaftahNegativeNumberError() {
 		return new NaftahBugError("لا يُسمح بالأعداد السالبة.");
 	}
+
+
+	/**
+	 * Creates a new {@link NaftahBugError} indicating that the specified function is not supported.
+	 *
+	 * @param functionName  the name of the unsupported function.
+	 * @param functionClass the class providing the function.
+	 * @param line          the line number in the source code where the error occurred.
+	 * @param column        the column number in the source code where the error occurred.
+	 * @return a {@code NaftahBugError} describing the unsupported function.
+	 */
+	public static NaftahBugError newNaftahUnsupportedFunctionError( String functionName,
+																	Class<?> functionClass,
+																	int line,
+																	int column) {
+		throw new NaftahBugError(   "الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
+											.formatted( functionName,
+														functionClass.getName()),
+									line,
+									column);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for illegal argument count or mismatched argument types.
+	 *
+	 * @param functionName           the name of the function being invoked.
+	 * @param providerClassName      the class providing the function.
+	 * @param paramCount             the expected number of parameters.
+	 * @param argCount               the actual number of arguments provided.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param e                      the underlying exception, if any.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the illegal argument error.
+	 */
+	public static NaftahBugError newNaftahIllegalArgumentError( String functionName,
+																String providerClassName,
+																int paramCount,
+																int argCount,
+																String functionDetailedString,
+																Exception e,
+																int line,
+																int column) {
+
+		throw new NaftahBugError(   """
+									عدد الوسائط غير صحيح للدالة '%s' المقدمة من '%s'.
+									العدد المتوقع: %d،
+									العدد الفعلي: %d.
+
+									%s
+									"""
+											.formatted( functionName,
+														providerClassName,
+														paramCount,
+														argCount,
+														functionDetailedString
+											),
+									e,
+									line,
+									column);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for errors occurring during function invocation.
+	 *
+	 * @param functionName           the name of the function being invoked.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param e                      the underlying exception.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the invocation error.
+	 */
+	public static NaftahBugError newNaftahInvocationError(  String functionName,
+															String functionDetailedString,
+															Exception e,
+															int line,
+															int column) {
+		throw new NaftahBugError(   """
+									.'%s' حدث خطأ أثناء استدعاء الدالة
+
+									%s
+									"""
+											.formatted( functionName,
+														functionDetailedString),
+									e,
+									line,
+									column);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for functions that are not invocable.
+	 *
+	 * @param functionName           the name of the function.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the non-invocable function error.
+	 */
+	public static NaftahBugError newNaftahNonInvocableFunctionError(String functionName,
+																	String functionDetailedString,
+																	int line,
+																	int column) {
+		throw new NaftahBugError(
+									"""
+									الدالة '%s' غير قابلة للاستدعاء.
+
+									%s
+									"""
+											.formatted(functionName, functionDetailedString),
+									line,
+									column
+		);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for missing or invalid methods.
+	 *
+	 * @param functionName           the name of the method.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param e                      the underlying exception.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the missing or invalid method.
+	 */
+	public static NaftahBugError newNaftahNoSuchMethodError(String functionName,
+															String functionDetailedString,
+															Exception e,
+															int line,
+															int column) {
+		throw new NaftahBugError(
+									"""
+									لم يتم العثور على الدالة المطلوبة '%s'، أو توقيعها غير صالح، أو أحد الوسائط غير متوافق مع النوع المطلوب.
+
+									%s
+									"""
+											.formatted(functionName, functionDetailedString),
+									e,
+									line,
+									column
+		);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} when object instantiation fails.
+	 *
+	 * @param functionName           the name of the function triggering instantiation.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param e                      the underlying exception.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the instantiation failure.
+	 */
+	public static NaftahBugError newNaftahInstantiationError(   String functionName,
+																String functionDetailedString,
+																Exception e,
+																int line,
+																int column) {
+		throw new NaftahBugError(
+									"""
+									تعذر إنشاء كائن من الفئة المطلوبة '%s' أثناء تنفيذ الدالة أو أثناء تهيئة أحد الوسائط عند التحويل إلى نوع الطريقة المناسب.
+
+									%s
+									"""
+											.formatted(functionName, functionDetailedString),
+									e,
+									line,
+									column
+		);
+	}
+
 }
