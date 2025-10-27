@@ -7,6 +7,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -42,6 +43,10 @@ public class JvmFunction implements Serializable {
 	 * The name of the method.
 	 */
 	private final String methodName;
+	/**
+	 * The method parameter types.
+	 */
+	private final Class<?>[] methodParameterTypes;
 
 	/**
 	 * Whether the method is static.
@@ -72,6 +77,7 @@ public class JvmFunction implements Serializable {
 		this.clazz = clazz;
 		this.method = method;
 		this.methodName = method.getName();
+		this.methodParameterTypes = method.getParameterTypes();
 		this.isStatic = isStatic;
 		this.isInvocable = isInvocable;
 	}
@@ -159,7 +165,7 @@ public class JvmFunction implements Serializable {
 
 	/**
 	 * Custom deserialization logic to restore the transient {@link Method}
-	 * by searching methods with matching name in the class.
+	 * by searching methods with matching name and parameter types in the class.
 	 *
 	 * @param ois the object input stream
 	 * @throws IOException            if an I/O error occurs
@@ -170,7 +176,7 @@ public class JvmFunction implements Serializable {
 		try {
 			ois.defaultReadObject();
 			for (Method m : clazz.getDeclaredMethods()) {
-				if (m.getName().equals(methodName)) {
+				if (m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), methodParameterTypes)) {
 					this.method = m;
 					break;
 				}
@@ -238,7 +244,9 @@ public class JvmFunction implements Serializable {
 						"""
 						.formatted( clazz.getName(),
 									methodName,
-									ClassUtils.getQualifiedCall(clazz.getName(), methodName)));
+									ClassUtils
+											.getQualifiedCall(  ClassUtils.getQualifiedName(clazz.getName()),
+																methodName)));
 
 		if (Objects.nonNull(method)) {
 			detailedString
