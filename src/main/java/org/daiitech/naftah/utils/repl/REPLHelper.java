@@ -1,11 +1,16 @@
 package org.daiitech.naftah.utils.repl;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -50,6 +55,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
@@ -64,29 +70,32 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
  * @author Chakib Daii
  */
 public final class REPLHelper {
-
+	/**
+	 * Holds the last printed output as a thread-safe reference.
+	 * <p>
+	 * This can be used for operations such as copying the last output to the clipboard
+	 * or accessing it programmatically. The use of {@link AtomicReference} ensures
+	 * that updates to the last printed value are thread-safe.
+	 */
+	public static final AtomicReference<String> LAST_PRINTED = new AtomicReference<>();
 	/**
 	 * Right-to-left prompt value.
 	 */
 	private static final String RTL_PROMPT_VALUE = "< نفطة >";
-
 	/**
 	 * Public RTL prompt with optional reshaping for display.
 	 */
 	public static final String RTL_PROMPT = shouldReshape() ? shape(RTL_PROMPT_VALUE) : RTL_PROMPT_VALUE;
-
 	/**
 	 * Right-to-left multiline prompt marker value.
 	 */
 	private static final String RTL_MULTILINE_PROMPT_VALUE = "    < .... >";
-
 	/**
 	 * Public RTL multiline prompt with optional reshaping for display.
 	 */
 	public static final String RTL_MULTILINE_PROMPT = shouldReshape() ?
 			shape(RTL_MULTILINE_PROMPT_VALUE) :
 			RTL_MULTILINE_PROMPT_VALUE;
-
 	/**
 	 * The raw prompt message (in Arabic) used during right-to-left (RTL) pagination.
 	 * <p>
@@ -107,7 +116,23 @@ public final class REPLHelper {
 	public static final String RTL_PAGINATION_PROMPT = shouldReshape() ?
 			shape(RTL_PAGINATION_PROMPT_VALUE) :
 			RTL_PAGINATION_PROMPT_VALUE;
-
+	/**
+	 * Command name for copying text to the clipboard.
+	 */
+	private static final String COPY_TO_CLIPBOARD_COMMAND = "copy-to-clipboard";
+	/**
+	 * Message displayed when text is successfully copied to the clipboard.
+	 * Arabic: "[تم النسخ إلى ذاكرة النسخ بنجاح]"
+	 */
+	private static final String COPIED_TO_CLIPBOARD_MSG = "[تم النسخ إلى ذاكرة النسخ بنجاح]";
+	/**
+	 * Command name for copying the last printed output to the clipboard.
+	 */
+	private static final String COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND = "copy-last-output";
+	/**
+	 * Command name for pasting text from the clipboard.
+	 */
+	private static final String PASTE_FROM_CLIPBOARD_COMMAND = "paste-from-clipboard";
 	/**
 	 * Indicates if multiline mode is active in the REPL.
 	 */
@@ -122,27 +147,22 @@ public final class REPLHelper {
 	 * It is recommended to reuse this instance instead of creating new ones for performance.
 	 */
 	public static Parser MARKDOWN_PARSER = Parser.builder().build();
-
 	/**
 	 * Regex for matching variable names.
 	 */
 	public static String REGEX_VARIABLE = "[\\p{L}_][\\p{L}0-9_-]*";
-
 	/**
 	 * Regex for matching command names.
 	 */
 	public static String REGEX_COMMAND = "[:]?[\\p{L}]+[\\p{L}0-9_-]*";
-
 	/**
 	 * Characters that can be used to escape other characters.
 	 */
 	public static char[] ESCAPE_CHARS = new char[]{'#', '\\'};
-
 	/**
 	 * Set form of the escape characters for faster lookup.
 	 */
 	public static Set<Character> ESCAPE_CHAR_SET = Set.of('#', '\\');
-
 	/**
 	 * Regex pattern for matching escape characters or escape + newline.
 	 */
@@ -152,7 +172,6 @@ public final class REPLHelper {
 							.stream()
 							.flatMap(character -> Stream.of(String.valueOf(character), character + "\n"))
 							.toArray(String[]::new));
-
 	/**
 	 * Quotation characters allowed in the REPL.
 	 */
@@ -272,7 +291,7 @@ public final class REPLHelper {
 	 * @param reader the LineReader to configure
 	 */
 	public static void setupHistoryConfig(LineReader reader) {
-		reader.setVariable(LineReader.HISTORY_FILE, Paths.get("bin/.naftah_history"));
+		reader.setVariable(LineReader.HISTORY_FILE, Paths.get(".naftah/.naftah_history"));
 		reader.setVariable(LineReader.HISTORY_SIZE, 1000);
 		reader.setVariable(LineReader.HISTORY_FILE_SIZE, 2000);
 
@@ -282,6 +301,35 @@ public final class REPLHelper {
 		reader.setOpt(LineReader.Option.HISTORY_VERIFY);
 	}
 
+	/**
+	 * Configures custom key bindings and clipboard-related widgets for a given {@link LineReader}.
+	 * <p>
+	 * This method performs the following actions:
+	 * <ul>
+	 * <li>Swaps the left and right arrow keys for cursor movement.</li>
+	 * <li>Adds widgets for clipboard operations:
+	 * <ul>
+	 * <li>{@code copy-to-clipboard}: Copies the current buffer to the clipboard.</li>
+	 * <li>{@code copy-last-output}: Copies the last printed output to the clipboard.</li>
+	 * <li>{@code paste-from-clipboard}: Pastes clipboard content into the current buffer at the cursor
+	 * position.</li>
+	 * </ul>
+	 * </li>
+	 * <li>Binds keyboard shortcuts for clipboard and text editing operations:
+	 * <ul>
+	 * <li>Alt+C = copy current buffer</li>
+	 * <li>Alt+L = copy last printed output</li>
+	 * <li>Alt+V = paste from clipboard</li>
+	 * <li>Alt+M = mark start</li>
+	 * <li>Alt+X = cut selected region</li>
+	 * <li>Alt+K = copy selected region</li>
+	 * <li>Alt+Y = paste (yank)</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 *
+	 * @param reader the {@link LineReader} to configure with custom key bindings and clipboard widgets
+	 */
 	public static void setupKeyBindingsConfig(LineReader reader) {
 		KeyMap<Binding> keyMap = reader.getKeyMaps().get(LineReader.MAIN);
 
@@ -292,6 +340,47 @@ public final class REPLHelper {
 		keyMap
 				.bind(  new Reference(LineReader.BACKWARD_CHAR),
 						KeyMap.key(reader.getTerminal(), InfoCmp.Capability.key_right));
+
+		// Copy current buffer to clipboard widget
+		reader.getWidgets().put(COPY_TO_CLIPBOARD_COMMAND, () -> {
+			String buffer = reader.getBuffer().toString();
+			copyToClipboard(buffer);
+			padText(COPIED_TO_CLIPBOARD_MSG, true);
+			println(reader);
+			return true;
+		});
+
+		// Copy last output to clipboard widget
+		reader.getWidgets().put(COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND, () -> {
+			String text = LAST_PRINTED.get();
+			copyToClipboard(Objects.nonNull(text) ? text : "");
+			padText(COPIED_TO_CLIPBOARD_MSG, true);
+			println(reader);
+			return true;
+		});
+
+		// Paste from clipboard into buffer widget
+		reader.getWidgets().put(PASTE_FROM_CLIPBOARD_COMMAND, () -> {
+			String text = pasteFromClipboard();
+			reader.getBuffer().write(text);  // inserts at cursor
+			return true;
+		});
+
+		// key bindings
+		// Alt+c = copy current buffer to clipboard
+		keyMap.bind(new Reference(COPY_TO_CLIPBOARD_COMMAND), KeyMap.alt('c'));
+		// Alt+l = copy last printed line to clipboard
+		keyMap.bind(new Reference(COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND), KeyMap.alt('l'));
+		// Alt+v = paste from clipboard into buffer widget
+		keyMap.bind(new Reference(PASTE_FROM_CLIPBOARD_COMMAND), KeyMap.alt('v'));
+		// Alt+m = mark start
+		keyMap.bind(new Reference(LineReader.SET_MARK_COMMAND), KeyMap.alt('m'));
+		// Alt+x = cut selected region
+		keyMap.bind(new Reference(LineReader.KILL_REGION), KeyMap.alt('x'));
+		// Alt+k = copy selected region
+		keyMap.bind(new Reference(LineReader.COPY_REGION_AS_KILL), KeyMap.alt('k'));
+		// Alt+y = paste (yank)
+		keyMap.bind(new Reference(LineReader.YANK), KeyMap.alt('y'));
 	}
 
 	/**
@@ -330,6 +419,35 @@ public final class REPLHelper {
 	}
 
 	/**
+	 * Copies the given text to the system clipboard.
+	 *
+	 * @param text the text to copy
+	 */
+	public static void copyToClipboard(String text) {
+		StringSelection selection = new StringSelection(text);
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+	}
+
+	/**
+	 * Retrieves text content from the system clipboard.
+	 * <p>
+	 * If the clipboard does not contain a string or an error occurs, an empty string is returned.
+	 *
+	 * @return the text from the clipboard, or an empty string if unavailable
+	 */
+	public static String pasteFromClipboard() {
+		try {
+			return (String) Toolkit
+					.getDefaultToolkit()
+					.getSystemClipboard()
+					.getData(DataFlavor.stringFlavor);
+		}
+		catch (Exception e) {
+			return "";
+		}
+	}
+
+	/**
 	 * Aligns the given attributed string to the right side of the terminal,
 	 * applying appropriate spacing and appending the prompt.
 	 *
@@ -362,6 +480,15 @@ public final class REPLHelper {
 							(MaskingCallback) null,
 							null);
 		return List.of("q", "quit", "خروج").contains(input.trim().toLowerCase(ARABIC));
+	}
+
+	/**
+	 * Clears the console screen using ANSI escape codes.
+	 * Moves the cursor to the top-left corner.
+	 */
+	public static void clearScreen() {
+		System.out.print("\033[H\033[2J");
+		System.out.flush();
 	}
 
 	/**
