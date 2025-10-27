@@ -1,6 +1,7 @@
 package org.daiitech.naftah.parser;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -33,25 +34,39 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.Tree;
+import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
+import org.daiitech.naftah.utils.reflect.ClassUtils;
 
 import com.ibm.icu.text.Normalizer2;
 
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
+import static org.daiitech.naftah.errors.ExceptionUtils.INVALID_INSTANCE_METHOD_CALL_MSG;
+import static org.daiitech.naftah.errors.ExceptionUtils.NOTE;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahIllegalArgumentError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInstantiationError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocationError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNoSuchMethodError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNonInvocableFunctionError;
 import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
+import static org.daiitech.naftah.parser.DefaultContext.popCall;
+import static org.daiitech.naftah.parser.DefaultContext.pushCall;
 import static org.daiitech.naftah.parser.DefaultContext.registerContext;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
@@ -1298,5 +1313,242 @@ public final class NaftahParserHelper {
 			objectVariable.setValue(newValue);
 		}
 		return objectVariable;
+	}
+
+	/**
+	 * Converts a function object to a detailed string representation.
+	 *
+	 * @param <T>             the type of the function
+	 * @param currentFunction the function object, either {@link BuiltinFunction}, {@link JvmFunction}, or any other
+	 *                        object
+	 * @return a detailed string representation of the function
+	 */
+	public static <T> String FunctionToString(T currentFunction) {
+		if (currentFunction instanceof BuiltinFunction builtinFunction) {
+			return builtinFunction.toDetailedString();
+		}
+		else if (currentFunction instanceof JvmFunction jvmFunction) {
+			return jvmFunction.toDetailedString();
+		}
+		else {
+			return currentFunction.toString();
+		}
+	}
+
+	/**
+	 * Retrieves a function from a collection by index.
+	 *
+	 * @param functions     the collection of functions
+	 * @param functionIndex the index of the desired function
+	 * @return the function object at the specified index
+	 */
+	public static Object getFunction(Collection<?> functions, Number functionIndex) {
+		return functions instanceof List<?> list ?
+				list.get(functionIndex.intValue()) :
+				getElementAt(functions, functionIndex.intValue());
+	}
+
+	/**
+	 * Invokes a declared function with provided arguments in the given context.
+	 *
+	 * @param declaredFunction           the declared function to invoke
+	 * @param defaultNaftahParserVisitor the visitor used to evaluate the function body
+	 * @param args                       the list of argument name/value pairs
+	 * @param currentContext             the current execution context
+	 * @return the result of invoking the declared function
+	 */
+	public static Object invokeDeclaredFunction(DeclaredFunction declaredFunction,
+												DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+												List<Pair<String, Object>> args,
+												DefaultContext currentContext
+	) {
+		boolean functionInStack = false;
+		try {
+			prepareDeclaredFunction(defaultNaftahParserVisitor, declaredFunction);
+			Map<String, Object> finalArgs = isEmpty(declaredFunction.getParameters()) ?
+					Map.of() :
+					prepareDeclaredFunctionArguments(   declaredFunction.getParameters(),
+														args);
+
+			if (!isEmpty(declaredFunction.getParameters())) {
+				currentContext
+						.defineFunctionParameters(  declaredFunction
+															.getParameters()
+															.stream()
+															.map(parameter -> Map
+																	.entry( parameter
+																					.getName(),
+																			parameter))
+															.collect(Collectors
+																	.toMap( Map.Entry::getKey,
+																			Map.Entry::getValue)),
+													true);
+			}
+
+			if (!isEmpty(declaredFunction.getParameters())) {
+				currentContext.defineFunctionArguments(finalArgs);
+			}
+
+			pushCall(declaredFunction, finalArgs);
+			functionInStack = true;
+			return defaultNaftahParserVisitor.visit(declaredFunction.getBody());
+		}
+		finally {
+			if (functionInStack) {
+				popCall();
+			}
+		}
+	}
+
+	/**
+	 * Invokes a built-in function using reflection with argument conversion.
+	 *
+	 * @param functionName    the name of the function
+	 * @param builtinFunction the built-in function to invoke
+	 * @param args            the list of argument name/value pairs
+	 * @param line            the line number in source code for error reporting
+	 * @param column          the column number in source code for error reporting
+	 * @return the result of invoking the built-in function
+	 */
+	public static Object invokeBuiltinFunction( String functionName,
+												BuiltinFunction builtinFunction,
+												List<Pair<String, Object>> args,
+												int line,
+												int column) {
+		try {
+			return ClassUtils
+					.invokeJvmMethod(   null,
+										builtinFunction.getMethod(),
+										args,
+										builtinFunction
+												.getFunctionInfo()
+												.returnType());
+		}
+		catch (IllegalArgumentException e) {
+			throw newNaftahIllegalArgumentError(functionName,
+												builtinFunction
+														.getProviderInfo()
+														.name(),
+												builtinFunction
+														.getMethod()
+														.getParameterCount(),
+												args.size(),
+												builtinFunction
+														.toDetailedString(),
+												e,
+												line,
+												column);
+		}
+		catch (IllegalAccessException | InvocationTargetException e) {
+			throw newNaftahInvocationError( functionName,
+											builtinFunction.toDetailedString(),
+											e,
+											line,
+											column);
+		}
+		catch (NoSuchMethodException e) {
+			throw newNaftahNoSuchMethodError(   functionName,
+												builtinFunction.toDetailedString(),
+												e,
+												line,
+												column);
+		}
+		catch (InstantiationException e) {
+			throw newNaftahInstantiationError(  functionName,
+												builtinFunction.toDetailedString(),
+												e,
+												line,
+												column);
+		}
+	}
+
+	/**
+	 * Invokes a JVM function, either static or instance, with argument conversion.
+	 * If the function is an instance method, the first argument must be the instance object.
+	 *
+	 * @param functionName the name of the function
+	 * @param jvmFunction  the JVM function to invoke
+	 * @param args         the list of argument name/value pairs
+	 * @param line         the line number in source code for error reporting
+	 * @param column       the column number in source code for error reporting
+	 * @return the result of invoking the JVM function
+	 * @throws NaftahBugError if the instance is missing for an instance method or the function is non-invocable
+	 */
+	public static Object invokeJvmFunction( String functionName,
+											JvmFunction jvmFunction,
+											List<Pair<String, Object>> args,
+											int line,
+											int column) {
+
+		if (jvmFunction.isInvocable()) {
+			// instance should be passed as first arg if invoking method on instance
+			Object possibleInstance = null;
+			if (!jvmFunction.isStatic()) {
+				if (args.isEmpty()) {
+					throw new NaftahBugError(INVALID_INSTANCE_METHOD_CALL_MSG
+							.apply( functionName,
+									jvmFunction
+											.toDetailedString()));
+				}
+				possibleInstance = args.remove(0).b;
+			}
+
+			try {
+				return ClassUtils
+						.invokeJvmMethod(   possibleInstance,
+											jvmFunction.getMethod(),
+											args,
+											jvmFunction.getMethod().getReturnType());
+			}
+			catch (IllegalArgumentException e) {
+				throw newNaftahIllegalArgumentError(functionName,
+													ClassUtils.getQualifiedName(jvmFunction.getClazz().getName()),
+													jvmFunction
+															.getMethod()
+															.getParameterCount(),
+													args.size(),
+													jvmFunction.isStatic() ?
+															jvmFunction
+																	.toDetailedString() :
+															jvmFunction
+																	.toDetailedString() + NOTE + INVALID_INSTANCE_METHOD_CALL_MSG
+																			.apply(functionName, ""),
+													e,
+													line,
+													column);
+			}
+			catch (IllegalAccessException | InvocationTargetException e) {
+				throw newNaftahInvocationError( functionName,
+												jvmFunction.isStatic() ?
+														jvmFunction
+																.toDetailedString() :
+														jvmFunction
+																.toDetailedString() + NOTE + INVALID_INSTANCE_METHOD_CALL_MSG
+																		.apply(functionName, ""),
+												e,
+												line,
+												column);
+			}
+			catch (NoSuchMethodException e) {
+				throw newNaftahNoSuchMethodError(   functionName,
+													jvmFunction.toDetailedString(),
+													e,
+													line,
+													column);
+			}
+			catch (InstantiationException e) {
+				throw newNaftahInstantiationError(  functionName,
+													jvmFunction.toDetailedString(),
+													e,
+													line,
+													column);
+			}
+		}
+		else {
+			throw newNaftahNonInvocableFunctionError(   functionName,
+														jvmFunction.toDetailedString(),
+														line,
+														column);
+		}
 	}
 }
