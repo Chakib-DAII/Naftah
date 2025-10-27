@@ -69,14 +69,16 @@ import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
-import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.classToDetailedString;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.daiitech.naftah.utils.repl.REPLHelper.LAST_PRINTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
+import static org.daiitech.naftah.utils.repl.REPLHelper.clearScreen;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getLineReader;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getMarkdownAsString;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
@@ -816,6 +818,8 @@ public final class Naftah {
 
 				setupKeyBindingsConfig(reader);
 
+				clearScreen();
+
 				String line = null;
 
 				while (true) {
@@ -834,6 +838,11 @@ public final class Naftah {
 
 										مساعدة أو usage
 
+										يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
+										Alt+L → نسخ آخر نص مطبوع إلى الحافظة
+										Alt+V → لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
+
+										استمتع بالتجربة وتعلم بسرعة!
 										""", true);
 							}
 							line = reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null).trim();
@@ -852,7 +861,7 @@ public final class Naftah {
 							else {
 								String arabicQualifiedNameOrBuiltinFunction = null;
 								String[] lineParts;
-								if (line.contains(".") && !line.contains(QUALIFIED_NAME_SEPARATOR)) {
+								if (!containsArabic(line) && line.contains(".")) {
 									if ((lineParts = line.split(QUALIFIED_CALL_SEPARATOR)).length == 2) {
 										arabicQualifiedNameOrBuiltinFunction = ClassUtils
 												.getQualifiedCall(ClassUtils
@@ -897,7 +906,13 @@ public final class Naftah {
 								}
 
 								if (arabicQualifiedNameOrBuiltinFunction != null) {
+									LAST_PRINTED.set(arabicQualifiedNameOrBuiltinFunction);
 									padText(arabicQualifiedNameOrBuiltinFunction, true);
+									padText("""
+											\n
+											[استخدم Alt+L لنسخ آخر نص مطبوع إلى الحافظة، واستخدم Alt+V للصقه مرة أخرى في محرر الإدخال لإعادة استخدامه.]
+											""",
+											true);
 								}
 								else {
 									padText("لم يتم العثور على دليل للموضوع.", true);
@@ -1556,6 +1571,19 @@ public final class Naftah {
 
 				setupKeyBindingsConfig(reader);
 
+				clearScreen();
+
+
+				padText("""
+						مرحبًا بك في الواجهة التفاعلية للكتيبات التقنية لنفطه.
+
+						يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
+						Alt+L → نسخ آخر نص مطبوع إلى الحافظة
+						Alt+V → لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
+
+						استمتع بالتجربة وتعلم بسرعة!
+						""", true);
+
 				StringBuilder fullLine = new StringBuilder();
 
 				while (true) {
@@ -1598,7 +1626,7 @@ public final class Naftah {
 						padText(closingMsg, true);
 						break;
 					}
-					catch (IndexOutOfBoundsException | EOFError ignored) {
+					catch (EOFError ignored) {
 						String currentLine = reader.getBuffer().atChar(reader.getBuffer().length() - 1) == '\n' ?
 								reader.getBuffer().substring(0, reader.getBuffer().length() - 2) :
 								reader.getBuffer().substring(0, reader.getBuffer().length() - 1);
