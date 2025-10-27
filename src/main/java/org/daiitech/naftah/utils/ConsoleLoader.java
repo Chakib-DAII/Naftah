@@ -4,6 +4,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
+import static org.daiitech.naftah.utils.repl.REPLHelper.clearScreen;
 
 /**
  * Utility class for displaying a console-based loading spinner animation.
@@ -80,14 +81,5 @@ public final class ConsoleLoader {
 			LOADER_THREAD.interrupt();
 		}
 		clearScreen();
-	}
-
-	/**
-	 * Clears the console screen using ANSI escape codes.
-	 * Moves the cursor to the top-left corner.
-	 */
-	public static void clearScreen() {
-		System.out.print("\033[H\033[2J");
-		System.out.flush();
 	}
 }
