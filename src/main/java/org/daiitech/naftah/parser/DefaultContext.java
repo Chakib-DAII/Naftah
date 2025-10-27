@@ -96,7 +96,7 @@ public class DefaultContext {
 	/**
 	 * The path used for caching runtime data.
 	 */
-	public static final Path CACHE_PATH = Paths.get("bin/.naftah_cache");
+	public static final Path CACHE_PATH = Paths.get(".naftah/.naftah_cache");
 
 	/**
 	 * Global map holding contexts indexed by their depth.
@@ -186,7 +186,7 @@ public class DefaultContext {
 	protected static Map<String, Class<?>> INSTANTIABLE_CLASSES;
 	// qualifiedCall -> Method
 	protected static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
-	protected static Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
+	protected static volatile Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
 	protected static volatile boolean SHOULD_BOOT_STRAP;
 	protected static volatile boolean FORCE_BOOT_STRAP;
 	protected static volatile boolean ASYNC_BOOT_STRAP;
@@ -537,7 +537,7 @@ public class DefaultContext {
 		ACCESSIBLE_CLASSES = result.getAccessibleClasses();
 		INSTANTIABLE_CLASSES = result.getInstantiableClasses();
 		JVM_FUNCTIONS = result.getJvmFunctions();
-		BUILTIN_FUNCTIONS = result.getBuiltinFunctions();
+		setBuiltinFunctions(result.getBuiltinFunctions());
 		BOOT_STRAPPED = true;
 	}
 
@@ -545,9 +545,9 @@ public class DefaultContext {
 	 * Loads the default builtin functions into the context.
 	 */
 	public static void defaultBootstrap() {
-		BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class)
+		setBuiltinFunctions(getBuiltinMethods(Builtin.class)
 				.stream()
-				.collect(toAliasGroupedByName());
+				.collect(toAliasGroupedByName()));
 
 		Set<Class<?>> builtinClasses = new HashSet<>();
 
@@ -581,10 +581,9 @@ public class DefaultContext {
 		}
 
 		if (!builtinClasses.isEmpty()) {
-			BUILTIN_FUNCTIONS
-					.putAll(getBuiltinMethods(builtinClasses)
-							.stream()
-							.collect(toAliasGroupedByName()));
+			putAllInBuiltinFunctions(getBuiltinMethods(builtinClasses)
+					.stream()
+					.collect(toAliasGroupedByName()));
 		}
 	}
 
@@ -686,6 +685,9 @@ public class DefaultContext {
 	 * @return list of completion names
 	 */
 	public static List<String> getCompletions() {
+		if (Objects.isNull(BUILTIN_FUNCTIONS)) {
+			defaultBootstrap();
+		}
 		var runtimeCompletions = new ArrayList<>(BUILTIN_FUNCTIONS.keySet());
 		Optional
 				.ofNullable(JVM_FUNCTIONS)
@@ -780,28 +782,87 @@ public class DefaultContext {
 		return Object.class;
 	}
 
-	// variables
-
+	/**
+	 * Creates a new {@link NaftahBugError} indicating that a variable was not found
+	 * in the current context.
+	 *
+	 * <p>The error message is in Arabic and will include the variable name:
+	 * "المتغير '%s' غير موجود في السياق الحالي."
+	 * </p>
+	 *
+	 * @param name the name of the variable that was not found.
+	 * @return a new {@link NaftahBugError} with the formatted message.
+	 */
 	public static NaftahBugError newNaftahBugVariableNotFoundError(String name) {
 		return new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
 	}
 
+	/**
+	 * Adds all entries from the given map into the global built-in functions map.
+	 * <p>
+	 * This method is synchronized to ensure thread-safe updates.
+	 * </p>
+	 *
+	 * @param builtinFunctions a map of function names to lists of {@link BuiltinFunction} to add.
+	 */
+	public static synchronized void putAllInBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
+		BUILTIN_FUNCTIONS
+				.putAll(builtinFunctions);
+	}
+
+	/**
+	 * Returns the global map of built-in functions.
+	 *
+	 * @return an unmodifiable view or reference to the map of built-in functions.
+	 */
 	public static Map<String, List<BuiltinFunction>> getBuiltinFunctions() {
 		return BUILTIN_FUNCTIONS;
 	}
 
+	/**
+	 * Replaces the global built-in functions map with the provided one.
+	 * <p>
+	 * This method is synchronized to ensure thread-safe updates.
+	 * </p>
+	 *
+	 * @param builtinFunctions the new map of built-in functions to set.
+	 */
+	public static synchronized void setBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
+		BUILTIN_FUNCTIONS = builtinFunctions;
+	}
+
+	/**
+	 * Returns the global map of JVM functions.
+	 *
+	 * @return a map of function names to lists of {@link JvmFunction}.
+	 */
 	public static Map<String, List<JvmFunction>> getJvmFunctions() {
 		return JVM_FUNCTIONS;
 	}
 
+	/**
+	 * Returns the global map of all registered classes.
+	 *
+	 * @return a map of class names to {@link Class} objects.
+	 */
 	public static Map<String, Class<?>> getClasses() {
 		return CLASSES;
 	}
 
+	/**
+	 * Returns the global map of classes that are marked as accessible.
+	 *
+	 * @return a map of class names to {@link Class} objects which are accessible.
+	 */
 	public static Map<String, Class<?>> getAccessibleClasses() {
 		return ACCESSIBLE_CLASSES;
 	}
 
+	/**
+	 * Returns the global map of classes that can be instantiated.
+	 *
+	 * @return a map of class names to {@link Class} objects that can be instantiated.
+	 */
 	public static Map<String, Class<?>> getInstantiableClasses() {
 		return INSTANTIABLE_CLASSES;
 	}
@@ -917,7 +978,7 @@ public class DefaultContext {
 	public boolean containsFunction(String name) {
 		return functions.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name
 				.matches(
-							QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS
+							QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
 									.containsKey(
 													name))) || parent != null && parent.containsFunction(name);
 	}
