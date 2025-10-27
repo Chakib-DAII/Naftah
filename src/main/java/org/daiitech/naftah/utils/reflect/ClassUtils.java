@@ -1,22 +1,33 @@
 package org.daiitech.naftah.utils.reflect;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
@@ -625,5 +636,196 @@ public final class ClassUtils {
 						));
 
 		return detailedString.toString();
+	}
+
+	/**
+	 * Dynamically invokes a Java method using reflection.
+	 *
+	 * <p>This method supports invoking both:
+	 * <ul>
+	 * <li>Static methods</li>
+	 * <li>Instance methods</li>
+	 * </ul>
+	 * It also automatically converts arguments to match the method's parameter types,
+	 * including handling of primitives, arrays, and collections.
+	 * </p>
+	 *
+	 * @param instance   the object instance to invoke the method on if it is an instance method,
+	 *                   or null if the method is static.
+	 * @param method     the Java {@link Method} to invoke.
+	 * @param args       a list of {@code Pair<String, Object>} representing the method arguments.
+	 * @param returnType the expected return type of the method. Use {@link Void#TYPE} for void methods.
+	 * @return the result of the method invocation, or {@link None#get()} if the method returns void or null.
+	 * @throws InvocationTargetException if an exception occurs while invoking the method.
+	 * @throws NoSuchMethodException     if a required method or constructor cannot be found.
+	 * @throws InstantiationException    if an instance cannot be created during argument conversion.
+	 * @throws IllegalAccessException    if access to the method or constructor is denied.
+	 * @throws IllegalArgumentException  if the number of arguments or their types do not match the method signature.
+	 */
+	public static Object invokeJvmMethod(
+											Object instance,
+											Method method,
+											List<Pair<String, Object>> args,
+											Class<?> returnType)
+			throws InvocationTargetException,
+			NoSuchMethodException,
+			InstantiationException,
+			IllegalAccessException {
+		Class<?>[] paramTypes = method.getParameterTypes();
+
+		if (args.size() != paramTypes.length) {
+			throw new IllegalArgumentException("Argument count mismatch");
+		}
+
+		Object[] methodArgs = new Object[args.size()];
+		Type[] genericTypes = method.getGenericParameterTypes();
+
+		for (int i = 0; i < args.size(); i++) {
+			methodArgs[i] = convertArgument(args.get(i).b, paramTypes[i], genericTypes[i]);
+		}
+
+		method.setAccessible(true);
+		var possibleResult = method.invoke(instance, methodArgs);
+		return returnType != Void.class && possibleResult != null ? possibleResult : None.get();
+	}
+
+	/**
+	 * Converts a single argument to the target type expected by a method parameter.
+	 *
+	 * <p>This method supports:
+	 * <ul>
+	 * <li>Primitive types (int, long, double, float, boolean, char, byte, short)</li>
+	 * <li>{@link DynamicNumber}</li>
+	 * <li>Arrays (recursively)</li>
+	 * <li>Collections (recursively, attempting to respect generic type if provided)</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param value       the original argument value.
+	 * @param targetType  the expected type to convert to.
+	 * @param genericType the generic type information, if available.
+	 * @return the converted value matching the target type.
+	 * @throws InvocationTargetException if creating a nested object fails.
+	 * @throws NoSuchMethodException     if a required constructor cannot be found.
+	 * @throws InstantiationException    if an instance cannot be created.
+	 * @throws IllegalAccessException    if access to a constructor is denied.
+	 */
+	private static Object convertArgument(Object value, Class<?> targetType, Type genericType)
+			throws InvocationTargetException,
+			NoSuchMethodException,
+			InstantiationException,
+			IllegalAccessException {
+		if (value == null || None.isNone(value)) {
+			return null;
+		}
+
+		// Already assignable
+		if (targetType.isInstance(value)) {
+			return value;
+		}
+
+		// Handle primitives
+		if (targetType.isPrimitive()) {
+			if (targetType == int.class) {
+				return ((Number) value).intValue();
+			}
+			if (targetType == long.class) {
+				return ((Number) value).longValue();
+			}
+			if (targetType == double.class) {
+				return ((Number) value).doubleValue();
+			}
+			if (targetType == float.class) {
+				return ((Number) value).floatValue();
+			}
+			if (targetType == boolean.class) {
+				return value;
+			}
+			if (targetType == char.class) {
+				return (value instanceof Character) ? value : value.toString().charAt(0);
+			}
+			if (targetType == byte.class) {
+				return ((Number) value).byteValue();
+			}
+			if (targetType == short.class) {
+				return ((Number) value).shortValue();
+			}
+		}
+
+		if (value instanceof DynamicNumber dynamicNumber) {
+			value = dynamicNumber.get();
+		}
+
+		// Handle arrays
+		if (targetType.isArray() && value.getClass().isArray()) {
+			int length = Array.getLength(value);
+			Object newArray = Array.newInstance(targetType.getComponentType(), length);
+			for (int i = 0; i < length; i++) {
+				Array
+						.set(   newArray,
+								i,
+								convertArgument(Array.get(value, i),
+												targetType.getComponentType(),
+												targetType.getComponentType()));
+			}
+			return newArray;
+		}
+
+		// Handle collections
+		if (Collection.class.isAssignableFrom(targetType) && value instanceof Collection<?> src) {
+			Collection<Object> result = createCollection(targetType);
+			Class<?> itemType = Object.class;
+			if (genericType instanceof ParameterizedType pt) {
+				Type[] typeArgs = pt.getActualTypeArguments();
+				if (typeArgs.length == 1 && typeArgs[0] instanceof Class<?> c) {
+					itemType = c;
+				}
+			}
+			for (Object item : src) {
+				result.add(convertArgument(item, itemType, itemType));
+			}
+			return result;
+		}
+
+		// Fallback to Class.cast
+		return targetType.cast(value);
+	}
+
+	/**
+	 * Creates a new {@link Collection} instance of the specified type.
+	 *
+	 * <p>If {@code collectionType} is an interface (e.g., List, Set, Queue), a default
+	 * implementation will be created (ArrayList, HashSet, LinkedList).
+	 * If {@code collectionType} is a concrete class, an attempt is made to create a new
+	 * instance using the default constructor.
+	 * </p>
+	 *
+	 * @param collectionType the collection type to instantiate.
+	 * @return a new collection instance of the requested type.
+	 * @throws NoSuchMethodException     if a default constructor is not found.
+	 * @throws InvocationTargetException if instantiation fails via reflection.
+	 * @throws InstantiationException    if the instance cannot be created.
+	 * @throws IllegalAccessException    if access to the constructor is denied.
+	 */
+	public static Collection<Object> createCollection(Class<?> collectionType)
+			throws NoSuchMethodException,
+			InvocationTargetException,
+			InstantiationException,
+			IllegalAccessException {
+		if (!collectionType.isInterface()) {
+			//noinspection unchecked
+			return (Collection<Object>) collectionType.getDeclaredConstructor().newInstance();
+		}
+		// Default implementations for common interfaces
+		if (List.class.isAssignableFrom(collectionType)) {
+			return new ArrayList<>();
+		}
+		if (Set.class.isAssignableFrom(collectionType)) {
+			return new HashSet<>();
+		}
+		if (Queue.class.isAssignableFrom(collectionType)) {
+			return new LinkedList<>();
+		}
+		return new ArrayList<>();
 	}
 }
