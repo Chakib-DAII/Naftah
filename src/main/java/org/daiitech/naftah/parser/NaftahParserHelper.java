@@ -39,6 +39,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
@@ -1494,11 +1495,12 @@ public final class NaftahParserHelper {
 			}
 
 			try {
-				return ClassUtils
-						.invokeJvmMethod(   possibleInstance,
-											jvmFunction.getMethod(),
-											args,
-											jvmFunction.getMethod().getReturnType());
+				return NaftahObject
+						.of(ClassUtils
+								.invokeJvmMethod(   possibleInstance,
+													jvmFunction.getMethod(),
+													args,
+													jvmFunction.getMethod().getReturnType()));
 			}
 			catch (IllegalArgumentException e) {
 				throw newNaftahIllegalArgumentError(functionName,
