@@ -816,6 +816,8 @@ public final class Naftah {
 
 				reader = getLineReader(terminal, topics.keySet());
 
+				setupHistoryConfig(reader, ".naftah/.naftah_man_history");
+
 				setupKeyBindingsConfig(reader);
 
 				clearScreen();
@@ -929,6 +931,10 @@ public final class Naftah {
 					}
 					catch (Throwable t) {
 						printPaddedErrorMessageToString(t);
+					}
+					finally {
+						// Save history explicitly (though it's usually done automatically)
+						reader.getHistory().save();
 					}
 				}
 			}
@@ -1567,7 +1573,7 @@ public final class Naftah {
 
 				LineReader reader = getLineReader(terminal);
 
-				setupHistoryConfig(reader);
+				setupHistoryConfig(reader, ".naftah/.naftah_history");
 
 				setupKeyBindingsConfig(reader);
 
@@ -1616,7 +1622,9 @@ public final class Naftah {
 						var result = doRun(parser, main.args);
 
 						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)) {
-							printPaddedToString(result);
+							var resultStr = getNaftahValueToString(result);
+							LAST_PRINTED.set(resultStr);
+							printPaddedToString(resultStr);
 						}
 						System.out.println();
 
