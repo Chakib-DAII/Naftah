@@ -29,6 +29,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
@@ -1268,13 +1269,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								Tuple target;
 								Tuple targetValues;
 
-								// Loop expression. should be an iterable or Map
-								Object collection = defaultNaftahParserVisitor
+								// Loop expression. should be an iterable or Map or Naftah Object
+								Object object = defaultNaftahParserVisitor
 										.visit(forEachLoopStatementContext.expression());
+
+								if (object instanceof NaftahObject naftahObject) {
+									object = naftahObject.get();
+								}
+
 								Iterator<?> iterator;
 								boolean isMap = false;
 
-								if (collection instanceof Iterable<?> iterable) {
+								if (object instanceof Iterable<?> iterable) {
 									if (foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext || foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext) {
 										throw new NaftahBugError(   "key value not supported for collection.",
 																	forEachLoopStatementContext.getStart().getLine(),
@@ -1285,7 +1291,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									target = (Tuple) defaultNaftahParserVisitor.visit(foreachTarget);
 									iterator = iterable.iterator();
 								}
-								else if (collection instanceof Map<?, ?> map) {
+								else if (object instanceof Map<?, ?> map) {
 									isMap = true;
 									target = (Tuple) defaultNaftahParserVisitor.visit(foreachTarget);
 									iterator = map.entrySet().iterator();
@@ -2221,7 +2227,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								currentContext.setCreatingObject(false);
 
-								return result;
+								return NaftahObject.of(result);
 							}
 		);
 	}

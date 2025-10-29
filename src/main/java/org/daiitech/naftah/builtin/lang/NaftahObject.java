@@ -32,10 +32,10 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleType;
  *
  * <p>This record provides utilities to:</p>
  * <ul>
- *   <li>Wrap Java objects and expose their structure as nested maps</li>
- *   <li>Recursively serialize Java objects, records, arrays, and collections into a {@link Map}</li>
- *   <li>Transliterate field or key names into Arabic script for user-facing representation</li>
- *   <li>Distinguish between Java-backed and declaratively defined Naftah objects</li>
+ * <li>Wrap Java objects and expose their structure as nested maps</li>
+ * <li>Recursively serialize Java objects, records, arrays, and collections into a {@link Map}</li>
+ * <li>Transliterate field or key names into Arabic script for user-facing representation</li>
+ * <li>Distinguish between Java-backed and declaratively defined Naftah objects</li>
  * </ul>
  *
  * <p>When {@code fromJava} is {@code true}, the instance wraps a native Java object.
@@ -66,8 +66,8 @@ public record NaftahObject(
 	 *
 	 * <p>Ensures that required fields are non-null based on {@code fromJava}:</p>
 	 * <ul>
-	 *   <li>If {@code fromJava} is {@code true}, {@code javaObject} must not be {@code null}.</li>
-	 *   <li>If {@code fromJava} is {@code false}, {@code objectFields} must not be {@code null}.</li>
+	 * <li>If {@code fromJava} is {@code true}, {@code javaObject} must not be {@code null}.</li>
+	 * <li>If {@code fromJava} is {@code false}, {@code objectFields} must not be {@code null}.</li>
 	 * </ul>
 	 *
 	 * @throws NullPointerException if {@code type} is {@code null}, or if required fields are missing
@@ -91,9 +91,9 @@ public record NaftahObject(
 	public static String formatKeyOrFieldName(String keyOrFieldName) {
 		return KEY_OR_FIELD_TRANSLITERATION_FORMAT
 				.formatted(
-						ArabicUtils
-								.transliterateToArabicScriptDefault(false, keyOrFieldName)[0],
-						keyOrFieldName
+							ArabicUtils
+									.transliterateToArabicScriptDefault(false, keyOrFieldName)[0],
+							keyOrFieldName
 				);
 	}
 
@@ -148,17 +148,17 @@ public record NaftahObject(
 	 *
 	 * <p>This method supports:</p>
 	 * <ul>
-	 *   <li>Records (via {@link java.lang.reflect.RecordComponent})</li>
-	 *   <li>Plain old Java objects (POJOs)</li>
-	 *   <li>Collections, maps, and arrays</li>
+	 * <li>Records (via {@link java.lang.reflect.RecordComponent})</li>
+	 * <li>Plain old Java objects (POJOs)</li>
+	 * <li>Collections, maps, and arrays</li>
 	 * </ul>
 	 *
 	 * <p>If a circular reference is detected, a special placeholder entry is added:
 	 * {@code "[circular-reference]" → <simple-class-name>}.</p>
 	 */
-	private static Map<String, Object> toMap(Object obj,
-											 IdentityHashMap<Object, Boolean> visited,
-											 boolean skipNulls) {
+	private static Map<String, Object> toMap(   Object obj,
+												IdentityHashMap<Object, Boolean> visited,
+												boolean skipNulls) {
 		if (obj == null) {
 			return null;
 		}
@@ -284,12 +284,12 @@ public record NaftahObject(
 					.entrySet()
 					.stream()
 					.collect(Collectors
-									 .toMap(
-											 e -> NaftahObject.get(e.getKey()),
-											 e -> NaftahObject.get(e.getValue()),
-											 (a, b) -> b,
-											 () -> createMap(map.getClass())
-									 ));
+							.toMap(
+									e -> NaftahObject.get(e.getKey()),
+									e -> NaftahObject.get(e.getValue()),
+									(a, b) -> b,
+									() -> createMap(map.getClass())
+							));
 		}
 		else if (None.isNone(javaObject) || isSimpleType(javaObject) || isBuiltinType(javaObject)) {
 			return javaObject;
@@ -303,8 +303,8 @@ public record NaftahObject(
 	 * Returns the evaluated value represented by this {@code NaftahObject}.
 	 *
 	 * <ul>
-	 *   <li>If wrapping a Java object, recursively resolves it into a map, collection, or scalar value.</li>
-	 *   <li>If wrapping declared fields, returns the underlying field map directly.</li>
+	 * <li>If wrapping a Java object, recursively resolves it into a map, collection, or scalar value.</li>
+	 * <li>If wrapping declared fields, returns the underlying field map directly.</li>
 	 * </ul>
 	 *
 	 * @return the evaluated representation of this object
@@ -319,14 +319,68 @@ public record NaftahObject(
 	}
 
 	/**
+	 * Compares this {@code NaftahObject} to another object for equality.
+	 *
+	 * <p>Two {@code NaftahObject} instances are considered equal if and only if:
+	 * <ul>
+	 * <li>They are of the same runtime class, and</li>
+	 * <li>Their {@code fromJava} flags are identical, and</li>
+	 * <li>Their {@code javaObject}, {@code type}, and {@code objectFields} properties are equal
+	 * according to {@link java.util.Objects#equals(Object, Object)}.</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * <p>This ensures that equality reflects both the source (Java vs. declarative)
+	 * and the internal data or type structure of the wrapped object.</p>
+	 *
+	 * @param o the object to compare with this instance
+	 * @return {@code true} if the specified object is equal to this one; otherwise {@code false}
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		NaftahObject that = (NaftahObject) o;
+		return fromJava == that.fromJava && Objects
+				.equals(javaObject,
+						that.javaObject) && Objects
+								.equals(type,
+										that.type) && Objects
+												.equals(
+														objectFields,
+														that.objectFields);
+	}
+
+	/**
+	 * Computes the hash code for this {@code NaftahObject}.
+	 *
+	 * <p>The hash code is derived from the {@code fromJava} flag,
+	 * the {@code javaObject} reference, the {@code type} of the object,
+	 * and the {@code objectFields} map. This ensures that two
+	 * {@code NaftahObject} instances considered equal will always
+	 * produce the same hash code, satisfying the general contract
+	 * of {@link Object#hashCode()}.</p>
+	 *
+	 * @return a hash code value for this object
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(fromJava, javaObject, type, objectFields);
+	}
+
+	/**
 	 * Returns a string representation of this Naftah object.
 	 *
 	 * <p>The format depends on whether it wraps a Java object or declared fields:</p>
 	 * <ul>
-	 *   <li>For collections, maps, and arrays → formatted collection output</li>
-	 *   <li>For simple or built-in values → localized string representation</li>
-	 *   <li>For complex Java objects → Arabic-labeled key-value pairs</li>
-	 *   <li>For declarative Naftah objects → field map string representation</li>
+	 * <li>For collections, maps, and arrays → formatted collection output</li>
+	 * <li>For simple or built-in values → localized string representation</li>
+	 * <li>For complex Java objects → Arabic-labeled key-value pairs</li>
+	 * <li>For declarative Naftah objects → field map string representation</li>
 	 * </ul>
 	 *
 	 * @return a human-readable Arabic/Latin mixed representation of the object

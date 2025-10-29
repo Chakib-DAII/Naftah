@@ -96,15 +96,15 @@ public final class CollectionUtils {
 	 * @param operation     the binary operation to apply
 	 * @return a new array containing the results of the operation
 	 */
-	public static Object[] applyOperation(Object[] arr,
-										  Number scalar,
-										  boolean isLeftOperand,
-										  BinaryOperation operation) {
+	public static Object[] applyOperation(  Object[] arr,
+											Number scalar,
+											boolean isLeftOperand,
+											BinaryOperation operation) {
 		return Arrays
 				.stream(arr)
 				.map(o -> isLeftOperand ?
-						  ObjectUtils.applyOperation(o, scalar, operation) :
-						  ObjectUtils.applyOperation(scalar, o, operation))
+						ObjectUtils.applyOperation(o, scalar, operation) :
+						ObjectUtils.applyOperation(scalar, o, operation))
 				.toArray(Object[]::new);
 	}
 
@@ -117,10 +117,10 @@ public final class CollectionUtils {
 	 * @param operation     the binary operation to apply
 	 * @return a new collection containing the results of the operation
 	 */
-	public static Collection<?> applyOperation(Collection<?> collection,
-											   Number scalar,
-											   boolean isLeftOperand,
-											   BinaryOperation operation) {
+	public static Collection<?> applyOperation( Collection<?> collection,
+												Number scalar,
+												boolean isLeftOperand,
+												BinaryOperation operation) {
 		return List.of(applyOperation(collection.toArray(Object[]::new), scalar, isLeftOperand, operation));
 	}
 
@@ -164,21 +164,21 @@ public final class CollectionUtils {
 	 * @param operation     the binary operation to apply
 	 * @return a new map containing the results of the operation
 	 */
-	public static Map<?, ?> applyOperation(Map<?, ?> map,
-										   Number scalar,
-										   boolean isLeftOperand,
-										   BinaryOperation operation) {
+	public static Map<?, ?> applyOperation( Map<?, ?> map,
+											Number scalar,
+											boolean isLeftOperand,
+											BinaryOperation operation) {
 		Map<Object, Object> result = new HashMap<>();
 
 		for (var entry : map.entrySet()) {
 			result
-					.put(entry.getKey(),
-						 isLeftOperand ?
-						 ObjectUtils.applyOperation(entry.getValue(), scalar, operation) :
-						 ObjectUtils
-								 .applyOperation(scalar,
-												 entry.getValue(),
-												 operation)); // Reuse from earlier
+					.put(   entry.getKey(),
+							isLeftOperand ?
+									ObjectUtils.applyOperation(entry.getValue(), scalar, operation) :
+									ObjectUtils
+											.applyOperation(scalar,
+															entry.getValue(),
+															operation)); // Reuse from earlier
 		}
 
 		return result;
@@ -373,16 +373,16 @@ public final class CollectionUtils {
 	 * is an interface, a default implementation is chosen based on the type hierarchy:</p>
 	 *
 	 * <ul>
-	 *   <li>{@link java.util.SortedMap} → {@link java.util.TreeMap}</li>
-	 *   <li>{@link java.util.LinkedHashMap} → {@link java.util.LinkedHashMap}</li>
-	 *   <li>Any other type → {@link java.util.HashMap}</li>
+	 * <li>{@link java.util.SortedMap} → {@link java.util.TreeMap}</li>
+	 * <li>{@link java.util.LinkedHashMap} → {@link java.util.LinkedHashMap}</li>
+	 * <li>Any other type → {@link java.util.HashMap}</li>
 	 * </ul>
 	 *
 	 * @param mapType the {@link Class} representing the map type to instantiate
 	 * @param <K>     the type of keys maintained by the map
 	 * @param <V>     the type of mapped values
 	 * @return a new {@link Map} instance of the requested type, or a default implementation
-	 * if instantiation fails
+	 *         if instantiation fails
 	 * @throws NullPointerException if {@code mapType} is {@code null}
 	 */
 	public static <K, V> Map<K, V> createMap(Class<?> mapType) {
@@ -547,10 +547,10 @@ public final class CollectionUtils {
 	 */
 	public static NaftahBugError newNaftahSizeBugError(Object[] left, Object[] right) {
 		return new NaftahBugError("""
-								  يجب أن تكون أحجام المصفوفات متساوية.
-								  '%s'
-								  '%s'
-								  """.formatted(Arrays.toString(left), Arrays.toString(right)));
+									يجب أن تكون أحجام المصفوفات متساوية.
+									'%s'
+									'%s'
+									""".formatted(Arrays.toString(left), Arrays.toString(right)));
 	}
 
 	/**
@@ -563,10 +563,10 @@ public final class CollectionUtils {
 	 */
 	public static NaftahBugError newNaftahSizeBugError(Map<?, ?> left, Map<?, ?> right) {
 		return new NaftahBugError("""
-								  يجب أن تكون أحجام المصفوفات الترابطية متساوية.
-								  '%s'
-								  '%s'
-								  """.formatted(left, right));
+									يجب أن تكون أحجام المصفوفات الترابطية متساوية.
+									'%s'
+									'%s'
+									""".formatted(left, right));
 	}
 
 	/**
@@ -595,11 +595,11 @@ public final class CollectionUtils {
 	 *                    it occurs
 	 * @return a {@code NaftahBugError} with a detailed Arabic error message and optional cause
 	 */
-	public static NaftahBugError newNaftahIndexOutOfBoundsBugError(int targetIndex,
-																   int size,
-																   Exception e,
-																   int line,
-																   int column) {
+	public static NaftahBugError newNaftahIndexOutOfBoundsBugError( int targetIndex,
+																	int size,
+																	Exception e,
+																	int line,
+																	int column) {
 		return new NaftahBugError(String.format("""
 												المؤشر المطلوب (%d) خارج حدود المجموعة. عدد العناصر الحالية هو %d.
 												""", targetIndex, size), e, line, column);
@@ -703,7 +703,7 @@ public final class CollectionUtils {
 
 		StringBuilder b = new StringBuilder();
 		b.append(prefix);
-		for (int i = 0; ; i++) {
+		for (int i = 0;; i++) {
 			Object element = getNaftahValueToString(Array.get(obj, i));
 			b.append(element);
 			if (i == iMax) {
@@ -735,7 +735,7 @@ public final class CollectionUtils {
 
 		StringBuilder b = new StringBuilder();
 		b.append(prefix);
-		for (int i = 0; ; i++) {
+		for (int i = 0;; i++) {
 			b.append(getNaftahValueToString(a[i]));
 			if (i == iMax) {
 				return b.append(suffix).toString();
@@ -768,7 +768,7 @@ public final class CollectionUtils {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(prefix);
-		for (; ; ) {
+		for (;;) {
 			Map.Entry<K, V> e = i.next();
 			K key = e.getKey();
 			V value = e.getValue();
