@@ -59,6 +59,10 @@ public record NaftahObject(
 	 * The resulting format will be {@code "<arabic> (<latin>)"}.
 	 */
 	public static final String KEY_OR_FIELD_TRANSLITERATION_FORMAT = "%s (%s)";
+
+	/**
+	 * Format pattern for field processing errors in Arabic: "[خطأ أثناء معالجة الحقل: %s]".
+	 */
 	public static final String FIELD_ERROR_FORMAT = "[خطأ أثناء معالجة الحقل: %s]";
 
 	/**
