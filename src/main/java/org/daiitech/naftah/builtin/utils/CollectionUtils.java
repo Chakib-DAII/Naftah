@@ -7,10 +7,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -91,15 +96,15 @@ public final class CollectionUtils {
 	 * @param operation     the binary operation to apply
 	 * @return a new array containing the results of the operation
 	 */
-	public static Object[] applyOperation(  Object[] arr,
-											Number scalar,
-											boolean isLeftOperand,
-											BinaryOperation operation) {
+	public static Object[] applyOperation(Object[] arr,
+										  Number scalar,
+										  boolean isLeftOperand,
+										  BinaryOperation operation) {
 		return Arrays
 				.stream(arr)
 				.map(o -> isLeftOperand ?
-						ObjectUtils.applyOperation(o, scalar, operation) :
-						ObjectUtils.applyOperation(scalar, o, operation))
+						  ObjectUtils.applyOperation(o, scalar, operation) :
+						  ObjectUtils.applyOperation(scalar, o, operation))
 				.toArray(Object[]::new);
 	}
 
@@ -112,10 +117,10 @@ public final class CollectionUtils {
 	 * @param operation     the binary operation to apply
 	 * @return a new collection containing the results of the operation
 	 */
-	public static Collection<?> applyOperation( Collection<?> collection,
-												Number scalar,
-												boolean isLeftOperand,
-												BinaryOperation operation) {
+	public static Collection<?> applyOperation(Collection<?> collection,
+											   Number scalar,
+											   boolean isLeftOperand,
+											   BinaryOperation operation) {
 		return List.of(applyOperation(collection.toArray(Object[]::new), scalar, isLeftOperand, operation));
 	}
 
@@ -159,21 +164,21 @@ public final class CollectionUtils {
 	 * @param operation     the binary operation to apply
 	 * @return a new map containing the results of the operation
 	 */
-	public static Map<?, ?> applyOperation( Map<?, ?> map,
-											Number scalar,
-											boolean isLeftOperand,
-											BinaryOperation operation) {
+	public static Map<?, ?> applyOperation(Map<?, ?> map,
+										   Number scalar,
+										   boolean isLeftOperand,
+										   BinaryOperation operation) {
 		Map<Object, Object> result = new HashMap<>();
 
 		for (var entry : map.entrySet()) {
 			result
-					.put(   entry.getKey(),
-							isLeftOperand ?
-									ObjectUtils.applyOperation(entry.getValue(), scalar, operation) :
-									ObjectUtils
-											.applyOperation(scalar,
-															entry.getValue(),
-															operation)); // Reuse from earlier
+					.put(entry.getKey(),
+						 isLeftOperand ?
+						 ObjectUtils.applyOperation(entry.getValue(), scalar, operation) :
+						 ObjectUtils
+								 .applyOperation(scalar,
+												 entry.getValue(),
+												 operation)); // Reuse from earlier
 		}
 
 		return result;
@@ -312,17 +317,88 @@ public final class CollectionUtils {
 	 * @param <T>      the element type of the collection
 	 * @return a new empty collection with behavior compatible to the original
 	 */
-	private static <T> Collection<T> createCompatibleCollection(Collection<T> original) {
+	public static <T> Collection<T> createCompatibleCollection(Collection<T> original) {
 		if (original instanceof LinkedHashSet<T>) {
 			return new LinkedHashSet<>();
 		}
-		if (original instanceof List) {
+		if (original instanceof List<T>) {
 			return new ArrayList<>();
 		}
 		if (original instanceof Set<T>) {
 			return new HashSet<>();
 		}
+		if (original instanceof Queue<T>) {
+			return new LinkedList<>();
+		}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * Creates a new {@link Collection} instance of the specified type.
+	 *
+	 * <p>If {@code collectionType} is an interface (e.g., List, Set, Queue), a default
+	 * implementation will be created (ArrayList, HashSet, LinkedList).
+	 * If {@code collectionType} is a concrete class, an attempt is made to create a new
+	 * instance using the default constructor.
+	 * </p>
+	 *
+	 * @param collectionType the collection type to instantiate.
+	 * @return a new collection instance of the requested type.
+	 */
+	public static Collection<Object> createCollection(Class<?> collectionType) {
+		try {
+			//noinspection unchecked
+			return (Collection<Object>) collectionType.getDeclaredConstructor().newInstance();
+		}
+		catch (Exception ignored) {
+			// Default implementations for common interfaces
+			if (List.class.isAssignableFrom(collectionType)) {
+				return new ArrayList<>();
+			}
+			if (Set.class.isAssignableFrom(collectionType)) {
+				return new HashSet<>();
+			}
+			if (Queue.class.isAssignableFrom(collectionType)) {
+				return new LinkedList<>();
+			}
+			return new ArrayList<>();
+		}
+	}
+
+	/**
+	 * Creates a new {@link Map} instance of the specified type.
+	 *
+	 * <p>If the provided {@code mapType} represents a concrete class, this method attempts
+	 * to instantiate it using its no-argument constructor. If instantiation fails or if the type
+	 * is an interface, a default implementation is chosen based on the type hierarchy:</p>
+	 *
+	 * <ul>
+	 *   <li>{@link java.util.SortedMap} → {@link java.util.TreeMap}</li>
+	 *   <li>{@link java.util.LinkedHashMap} → {@link java.util.LinkedHashMap}</li>
+	 *   <li>Any other type → {@link java.util.HashMap}</li>
+	 * </ul>
+	 *
+	 * @param mapType the {@link Class} representing the map type to instantiate
+	 * @param <K>     the type of keys maintained by the map
+	 * @param <V>     the type of mapped values
+	 * @return a new {@link Map} instance of the requested type, or a default implementation
+	 * if instantiation fails
+	 * @throws NullPointerException if {@code mapType} is {@code null}
+	 */
+	public static <K, V> Map<K, V> createMap(Class<?> mapType) {
+		try {
+			//noinspection unchecked
+			return (Map<K, V>) mapType.getDeclaredConstructor().newInstance();
+		}
+		catch (Exception ignored) {
+			if (SortedMap.class.isAssignableFrom(mapType)) {
+				return new TreeMap<>();
+			}
+			if (LinkedHashMap.class.isAssignableFrom(mapType)) {
+				return new LinkedHashMap<>();
+			}
+			return new HashMap<>();
+		}
 	}
 
 	/**
@@ -471,10 +547,10 @@ public final class CollectionUtils {
 	 */
 	public static NaftahBugError newNaftahSizeBugError(Object[] left, Object[] right) {
 		return new NaftahBugError("""
-									يجب أن تكون أحجام المصفوفات متساوية.
-									'%s'
-									'%s'
-									""".formatted(Arrays.toString(left), Arrays.toString(right)));
+								  يجب أن تكون أحجام المصفوفات متساوية.
+								  '%s'
+								  '%s'
+								  """.formatted(Arrays.toString(left), Arrays.toString(right)));
 	}
 
 	/**
@@ -487,10 +563,10 @@ public final class CollectionUtils {
 	 */
 	public static NaftahBugError newNaftahSizeBugError(Map<?, ?> left, Map<?, ?> right) {
 		return new NaftahBugError("""
-									يجب أن تكون أحجام المصفوفات الترابطية متساوية.
-									'%s'
-									'%s'
-									""".formatted(left, right));
+								  يجب أن تكون أحجام المصفوفات الترابطية متساوية.
+								  '%s'
+								  '%s'
+								  """.formatted(left, right));
 	}
 
 	/**
@@ -519,11 +595,11 @@ public final class CollectionUtils {
 	 *                    it occurs
 	 * @return a {@code NaftahBugError} with a detailed Arabic error message and optional cause
 	 */
-	public static NaftahBugError newNaftahIndexOutOfBoundsBugError( int targetIndex,
-																	int size,
-																	Exception e,
-																	int line,
-																	int column) {
+	public static NaftahBugError newNaftahIndexOutOfBoundsBugError(int targetIndex,
+																   int size,
+																   Exception e,
+																   int line,
+																   int column) {
 		return new NaftahBugError(String.format("""
 												المؤشر المطلوب (%d) خارج حدود المجموعة. عدد العناصر الحالية هو %d.
 												""", targetIndex, size), e, line, column);
@@ -627,7 +703,7 @@ public final class CollectionUtils {
 
 		StringBuilder b = new StringBuilder();
 		b.append(prefix);
-		for (int i = 0;; i++) {
+		for (int i = 0; ; i++) {
 			Object element = getNaftahValueToString(Array.get(obj, i));
 			b.append(element);
 			if (i == iMax) {
@@ -659,7 +735,7 @@ public final class CollectionUtils {
 
 		StringBuilder b = new StringBuilder();
 		b.append(prefix);
-		for (int i = 0;; i++) {
+		for (int i = 0; ; i++) {
 			b.append(getNaftahValueToString(a[i]));
 			if (i == iMax) {
 				return b.append(suffix).toString();
@@ -692,7 +768,7 @@ public final class CollectionUtils {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(prefix);
-		for (;;) {
+		for (; ; ) {
 			Map.Entry<K, V> e = i.next();
 			K key = e.getKey();
 			V value = e.getValue();

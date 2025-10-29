@@ -7,15 +7,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -32,6 +28,8 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.createCollection;
+import static org.daiitech.naftah.builtin.utils.CollectionUtils.createMap;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.reflect.AnnotationsUtils.getNaftahFunctionAnnotation;
 import static org.daiitech.naftah.utils.reflect.AnnotationsUtils.getNaftahFunctionProviderAnnotation;
@@ -705,16 +703,8 @@ public final class ClassUtils {
 	 * @param targetType  the expected type to convert to.
 	 * @param genericType the generic type information, if available.
 	 * @return the converted value matching the target type.
-	 * @throws InvocationTargetException if creating a nested object fails.
-	 * @throws NoSuchMethodException     if a required constructor cannot be found.
-	 * @throws InstantiationException    if an instance cannot be created.
-	 * @throws IllegalAccessException    if access to a constructor is denied.
 	 */
-	private static Object convertArgument(Object value, Class<?> targetType, Type genericType)
-			throws InvocationTargetException,
-			NoSuchMethodException,
-			InstantiationException,
-			IllegalAccessException {
+	private static Object convertArgument(Object value, Class<?> targetType, Type genericType) {
 		if (value == null || None.isNone(value)) {
 			return null;
 		}
@@ -787,45 +777,35 @@ public final class ClassUtils {
 			return result;
 		}
 
+
+		// Handle maps
+		if (Map.class.isAssignableFrom(targetType) && value instanceof Map<?, ?> srcMap) {
+			Map<Object, Object> result = createMap(targetType);
+
+			Class<?> keyType = Object.class;
+			Class<?> valueType = Object.class;
+
+			if (genericType instanceof ParameterizedType pt) {
+				Type[] typeArgs = pt.getActualTypeArguments();
+				if (typeArgs.length == 2) {
+					if (typeArgs[0] instanceof Class<?> k) {
+						keyType = k;
+					}
+					if (typeArgs[1] instanceof Class<?> v) {
+						valueType = v;
+					}
+				}
+			}
+
+			for (Map.Entry<?, ?> entry : srcMap.entrySet()) {
+				Object newKey = convertArgument(entry.getKey(), keyType, keyType);
+				Object newValue = convertArgument(entry.getValue(), valueType, valueType);
+				result.put(newKey, newValue);
+			}
+			return result;
+		}
+
 		// Fallback to Class.cast
 		return targetType.cast(value);
-	}
-
-	/**
-	 * Creates a new {@link Collection} instance of the specified type.
-	 *
-	 * <p>If {@code collectionType} is an interface (e.g., List, Set, Queue), a default
-	 * implementation will be created (ArrayList, HashSet, LinkedList).
-	 * If {@code collectionType} is a concrete class, an attempt is made to create a new
-	 * instance using the default constructor.
-	 * </p>
-	 *
-	 * @param collectionType the collection type to instantiate.
-	 * @return a new collection instance of the requested type.
-	 * @throws NoSuchMethodException     if a default constructor is not found.
-	 * @throws InvocationTargetException if instantiation fails via reflection.
-	 * @throws InstantiationException    if the instance cannot be created.
-	 * @throws IllegalAccessException    if access to the constructor is denied.
-	 */
-	public static Collection<Object> createCollection(Class<?> collectionType)
-			throws NoSuchMethodException,
-			InvocationTargetException,
-			InstantiationException,
-			IllegalAccessException {
-		if (!collectionType.isInterface()) {
-			//noinspection unchecked
-			return (Collection<Object>) collectionType.getDeclaredConstructor().newInstance();
-		}
-		// Default implementations for common interfaces
-		if (List.class.isAssignableFrom(collectionType)) {
-			return new ArrayList<>();
-		}
-		if (Set.class.isAssignableFrom(collectionType)) {
-			return new HashSet<>();
-		}
-		if (Queue.class.isAssignableFrom(collectionType)) {
-			return new LinkedList<>();
-		}
-		return new ArrayList<>();
 	}
 }
