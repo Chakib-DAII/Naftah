@@ -664,7 +664,8 @@ public final class ClassUtils {
 											Object instance,
 											Method method,
 											List<Pair<String, Object>> args,
-											Class<?> returnType)
+											Class<?> returnType,
+											boolean useNone)
 			throws InvocationTargetException,
 			NoSuchMethodException,
 			InstantiationException,
@@ -679,7 +680,7 @@ public final class ClassUtils {
 		Type[] genericTypes = method.getGenericParameterTypes();
 
 		for (int i = 0; i < args.size(); i++) {
-			methodArgs[i] = convertArgument(args.get(i).b, paramTypes[i], genericTypes[i]);
+			methodArgs[i] = convertArgument(args.get(i).b, paramTypes[i], genericTypes[i], useNone);
 		}
 
 		method.setAccessible(true);
@@ -704,9 +705,9 @@ public final class ClassUtils {
 	 * @param genericType the generic type information, if available.
 	 * @return the converted value matching the target type.
 	 */
-	private static Object convertArgument(Object value, Class<?> targetType, Type genericType) {
+	private static Object convertArgument(Object value, Class<?> targetType, Type genericType, boolean useNone) {
 		if (value == null || None.isNone(value)) {
-			return null;
+			return useNone ? None.get() : null;
 		}
 
 		// Already assignable
@@ -756,7 +757,8 @@ public final class ClassUtils {
 								i,
 								convertArgument(Array.get(value, i),
 												targetType.getComponentType(),
-												targetType.getComponentType()));
+												targetType.getComponentType(),
+												useNone));
 			}
 			return newArray;
 		}
@@ -772,7 +774,7 @@ public final class ClassUtils {
 				}
 			}
 			for (Object item : src) {
-				result.add(convertArgument(item, itemType, itemType));
+				result.add(convertArgument(item, itemType, itemType, useNone));
 			}
 			return result;
 		}
@@ -798,8 +800,8 @@ public final class ClassUtils {
 			}
 
 			for (Map.Entry<?, ?> entry : srcMap.entrySet()) {
-				Object newKey = convertArgument(entry.getKey(), keyType, keyType);
-				Object newValue = convertArgument(entry.getValue(), valueType, valueType);
+				Object newKey = convertArgument(entry.getKey(), keyType, keyType, useNone);
+				Object newValue = convertArgument(entry.getValue(), valueType, valueType, useNone);
 				result.put(newKey, newValue);
 			}
 			return result;
