@@ -19,6 +19,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
@@ -344,7 +345,7 @@ public final class ObjectUtils {
 			return false;
 		}
 		Class<?> cls = obj.getClass();
-		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class;
+		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class;
 	}
 
 	/**
@@ -605,6 +606,9 @@ public final class ObjectUtils {
 		}
 		else if (o instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
 			result = getNaftahValueToString(loopSignalDetails.result());
+		}
+		else if (o instanceof NaftahObject naftahObject) {
+			result = naftahObject.toString();
 		}
 		else if (CollectionUtils.isCollectionMapOrArray(o)) {
 			result = CollectionUtils.toString(o);
