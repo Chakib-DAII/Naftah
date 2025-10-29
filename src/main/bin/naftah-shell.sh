@@ -120,7 +120,19 @@ if $cygwin; then
 fi
 
 # Append JVM options to JAVA_OPTS
-JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector --add-opens=java.base/java.lang.reflect=ALL-UNNAMED"
+JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector --add-modules=jdk.incubator.vector \
+--add-opens=java.base/java.lang=ALL-UNNAMED \
+--add-opens=java.base/java.lang.reflect=ALL-UNNAMED \
+--add-opens=java.base/java.util=ALL-UNNAMED \
+--add-opens=java.base/java.time=ALL-UNNAMED \
+--add-opens=java.base/java.io=ALL-UNNAMED \
+--add-opens=java.base/java.math=ALL-UNNAMED \
+--add-opens=java.base/sun.nio.ch=ALL-UNNAMED \
+--add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED \
+--add-opens=java.desktop/java.awt=ALL-UNNAMED \
+--add-opens=java.desktop/sun.awt=ALL-UNNAMED \
+--add-opens=java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED"
+
 
 IFS=" " read -r -a javaOpts <<< "$JAVA_OPTS"
 
