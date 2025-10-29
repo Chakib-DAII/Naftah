@@ -288,10 +288,11 @@ public final class REPLHelper {
 	 * Configures history settings for the REPL, including history file path,
 	 * size limits, and duplicate entry handling.
 	 *
-	 * @param reader the LineReader to configure
+	 * @param reader      the LineReader to configure
+	 * @param historyPath the path of history to use
 	 */
-	public static void setupHistoryConfig(LineReader reader) {
-		reader.setVariable(LineReader.HISTORY_FILE, Paths.get(".naftah/.naftah_history"));
+	public static void setupHistoryConfig(LineReader reader, String historyPath) {
+		reader.setVariable(LineReader.HISTORY_FILE, Paths.get(historyPath));
 		reader.setVariable(LineReader.HISTORY_SIZE, 1000);
 		reader.setVariable(LineReader.HISTORY_FILE_SIZE, 2000);
 
