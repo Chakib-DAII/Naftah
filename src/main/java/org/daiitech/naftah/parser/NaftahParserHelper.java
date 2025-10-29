@@ -1139,48 +1139,52 @@ public final class NaftahParserHelper {
 		boolean found = false;
 		boolean safeChaining = false;
 		if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
-				.get() instanceof Map<?, ?> map) {
-			var object = (Map<String, DeclaredVariable>) map;
+				.get() instanceof NaftahObject naftahObject) {
 			int i = 1;
-			for (; i < accessArray.length; i++) {
-				if (i < accessArray.length - 1) {
+			if (!naftahObject.fromJava()) {
+				//noinspection unchecked
+				var object = (Map<String, DeclaredVariable>) naftahObject.get();
+				for (; i < accessArray.length; i++) {
+					if (i < accessArray.length - 1) {
 
-					if (accessArray[i].endsWith("؟")) {
-						optional[i] = true;
-						accessArray[i] = accessArray[i]
-								.substring(0, accessArray[i].length() - 1);
+						if (accessArray[i].endsWith("؟")) {
+							optional[i] = true;
+							accessArray[i] = accessArray[i]
+									.substring(0, accessArray[i].length() - 1);
+						}
+
+						DeclaredVariable declaredVariable = object.get(accessArray[i]);
+						if (Objects.isNull(declaredVariable)) {
+							safeChaining = IntStream
+									.range(0, optional.length)
+									.mapToObj(index -> optional[index])
+									.allMatch(Boolean.TRUE::equals);
+							found = false;
+							break;
+						}
+						else {
+							found = true;
+							//noinspection unchecked
+							object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
+									.getValue()).get();
+						}
 					}
-
-					DeclaredVariable declaredVariable = object.get(accessArray[i]);
-					if (Objects.isNull(declaredVariable)) {
+					else if (Objects.nonNull(object)) {
+						DeclaredVariable declaredVariable = object.get(accessArray[i]);
+						if (Objects.nonNull(declaredVariable)) {
+							found = true;
+							result = declaredVariable;
+						}
+						else {
+							found = false;
+						}
+					}
+					else {
 						safeChaining = IntStream
 								.range(0, optional.length)
 								.mapToObj(index -> optional[index])
 								.allMatch(Boolean.TRUE::equals);
-						found = false;
-						break;
 					}
-					else {
-						found = true;
-						object = (Map<String, DeclaredVariable>) declaredVariable
-								.getValue();
-					}
-				}
-				else if (Objects.nonNull(object)) {
-					DeclaredVariable declaredVariable = object.get(accessArray[i]);
-					if (Objects.nonNull(declaredVariable)) {
-						found = true;
-						result = declaredVariable;
-					}
-					else {
-						found = false;
-					}
-				}
-				else {
-					safeChaining = IntStream
-							.range(0, optional.length)
-							.mapToObj(index -> optional[index])
-							.allMatch(Boolean.TRUE::equals);
 				}
 			}
 
@@ -1251,51 +1255,54 @@ public final class NaftahParserHelper {
 
 		DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).b;
 
-		if (accessArray.length > 1 && objectVariable.getValue() instanceof Map<?, ?> map) {
-			var object = (Map<String, DeclaredVariable>) map;
+		if (accessArray.length > 1 && objectVariable.getValue() instanceof NaftahObject naftahObject) {
 			int i = 1;
-			for (; i < accessArray.length; i++) {
-				if (i < accessArray.length - 1) {
+			if (!naftahObject.fromJava()) {
+				//noinspection unchecked
+				var object = (Map<String, DeclaredVariable>) naftahObject.get();
+				for (; i < accessArray.length; i++) {
+					if (i < accessArray.length - 1) {
 
-					if (accessArray[i].endsWith("؟")) {
-						optional[i] = true;
-						accessArray[i] = accessArray[i]
-								.substring(0, accessArray[i].length() - 1);
+						if (accessArray[i].endsWith("؟")) {
+							optional[i] = true;
+							accessArray[i] = accessArray[i]
+									.substring(0, accessArray[i].length() - 1);
+						}
+
+						DeclaredVariable declaredVariable = object.get(accessArray[i]);
+						if (Objects.isNull(declaredVariable)) {
+							safeChaining = IntStream
+									.range(0, optional.length)
+									.mapToObj(index -> optional[index])
+									.allMatch(Boolean.TRUE::equals);
+							found = false;
+							break;
+						}
+						else {
+							found = true;
+							//noinspection unchecked
+							object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
+									.getValue()).get();
+						}
 					}
-
-					DeclaredVariable declaredVariable = object.get(accessArray[i]);
-					if (Objects.isNull(declaredVariable)) {
+					else if (Objects.nonNull(object)) {
+						DeclaredVariable declaredVariable = object.get(accessArray[i]);
+						if (Objects.nonNull(declaredVariable)) {
+							found = true;
+							declaredVariable.setValue(newValue);
+						}
+						else {
+							found = false;
+						}
+					}
+					else {
 						safeChaining = IntStream
 								.range(0, optional.length)
 								.mapToObj(index -> optional[index])
 								.allMatch(Boolean.TRUE::equals);
-						found = false;
-						break;
 					}
-					else {
-						found = true;
-						object = (Map<String, DeclaredVariable>) declaredVariable
-								.getValue();
-					}
-				}
-				else if (Objects.nonNull(object)) {
-					DeclaredVariable declaredVariable = object.get(accessArray[i]);
-					if (Objects.nonNull(declaredVariable)) {
-						found = true;
-						declaredVariable.setValue(newValue);
-					}
-					else {
-						found = false;
-					}
-				}
-				else {
-					safeChaining = IntStream
-							.range(0, optional.length)
-							.mapToObj(index -> optional[index])
-							.allMatch(Boolean.TRUE::equals);
 				}
 			}
-
 			if (!found && !safeChaining) {
 				int finalI = i;
 				String traversedQualifiedName = IntStream
@@ -1423,7 +1430,8 @@ public final class NaftahParserHelper {
 										args,
 										builtinFunction
 												.getFunctionInfo()
-												.returnType());
+												.returnType(),
+										true);
 		}
 		catch (IllegalArgumentException e) {
 			throw newNaftahIllegalArgumentError(functionName,
@@ -1500,7 +1508,8 @@ public final class NaftahParserHelper {
 								.invokeJvmMethod(   possibleInstance,
 													jvmFunction.getMethod(),
 													args,
-													jvmFunction.getMethod().getReturnType()));
+													jvmFunction.getMethod().getReturnType(),
+													false));
 			}
 			catch (IllegalArgumentException e) {
 				throw newNaftahIllegalArgumentError(functionName,
