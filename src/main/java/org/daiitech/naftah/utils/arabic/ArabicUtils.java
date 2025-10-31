@@ -31,8 +31,10 @@ import com.ibm.icu.text.Transliterator;
 import static org.daiitech.naftah.Naftah.ARABIC_INDIC_PROPERTY;
 import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.Naftah.MULTILINE_CACHE_PROPERTY;
+import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
 import static org.daiitech.naftah.utils.HashUtils.hashString;
 
 /**
@@ -72,7 +74,7 @@ public final class ArabicUtils {
 	/**
 	 * ICU Transliterator ID for Latin-to-Arabic and Arabic-to-Latin transliteration.
 	 */
-	public static final String LATIN_ARABIC_TRANSLITERATION_ID = "Any-Latin; Latin-Arabic";
+	public static final String LATIN_ARABIC_TRANSLITERATION_ID = "Latin-Arabic";
 	/**
 	 * Language code for Arabic.
 	 */
@@ -130,32 +132,32 @@ public final class ArabicUtils {
 	 * </ul>
 	 */
 	private static final char[] ARABIC_LETTERS = {
-													'ا',
-													'ب',
-													'ت',
-													'ث',
-													'ج',
-													'ح',
-													'خ',
-													'د',
-													'ذ',
-													'ر',
-													'ز',
-													'س',
-													'ش',
-													'ص',
-													'ض',
-													'ط',
-													'ظ',
-													'ع',
-													'غ',
-													'ف',
-													'ق',
-													'ك',
-													'ل',
-													'م',
-													'ن',
-													'ه'
+			'ا',
+			'ب',
+			'ت',
+			'ث',
+			'ج',
+			'ح',
+			'خ',
+			'د',
+			'ذ',
+			'ر',
+			'ز',
+			'س',
+			'ش',
+			'ص',
+			'ض',
+			'ط',
+			'ظ',
+			'ع',
+			'غ',
+			'ف',
+			'ق',
+			'ك',
+			'ل',
+			'م',
+			'ن',
+			'ه'
 	};
 	/**
 	 * Latin uppercase letters used as transliteration equivalents for Arabic letters.
@@ -174,32 +176,32 @@ public final class ArabicUtils {
 	 * </ul>
 	 */
 	private static final char[] LATIN_LETTERS = {
-													'A',
-													'B',
-													'C',
-													'D',
-													'E',
-													'F',
-													'G',
-													'H',
-													'I',
-													'J',
-													'K',
-													'L',
-													'M',
-													'N',
-													'O',
-													'P',
-													'Q',
-													'R',
-													'S',
-													'T',
-													'U',
-													'V',
-													'W',
-													'X',
-													'Y',
-													'Z'
+			'A',
+			'B',
+			'C',
+			'D',
+			'E',
+			'F',
+			'G',
+			'H',
+			'I',
+			'J',
+			'K',
+			'L',
+			'M',
+			'N',
+			'O',
+			'P',
+			'Q',
+			'R',
+			'S',
+			'T',
+			'U',
+			'V',
+			'W',
+			'X',
+			'Y',
+			'Z'
 	};
 	/**
 	 * A set of reserved words used by the ICU (International Components for Unicode)
@@ -227,25 +229,25 @@ public final class ArabicUtils {
 	 */
 	private static final Set<String> ICU_RESERVED_WORDS = Set
 			.of(
-				"::",
-				"use",
-				"import",
-				"function",
-				"Null",
-				"NFD",
-				"NFC",
-				"NFKD",
-				"NFKC",
-				"Any",
-				"Latin",
-				"Greek",
-				"Cyrillic",
-				"Han",
-				"Kana",
-				"Hiragana",
-				"Katakana",
-				"Common",
-				"Inherited"
+					"::",
+					"use",
+					"import",
+					"function",
+					"Null",
+					"NFD",
+					"NFC",
+					"NFKD",
+					"NFKC",
+					"Any",
+					"Latin",
+					"Greek",
+					"Cyrillic",
+					"Han",
+					"Kana",
+					"Hiragana",
+					"Katakana",
+					"Common",
+					"Inherited"
 			);
 	/**
 	 * A reusable {@link NumberFormat} instance configured for the Arabic locale.
@@ -305,8 +307,8 @@ public final class ArabicUtils {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (String key : keylist) {
 			String value = CUSTOM_RULES_BUNDLE.containsKey(key) ?
-					CUSTOM_RULES_BUNDLE.getString(key) :
-					existentCustomRules.get(key);
+						   CUSTOM_RULES_BUNDLE.getString(key) :
+						   existentCustomRules.get(key);
 			// If s contains underscore or spaces or any special char, quote it
 			String regex = ".*[ _\\t\\r\\n-].*";
 			if (key.matches(regex) || ICU_RESERVED_WORDS.contains(key.trim()) || key
@@ -319,8 +321,8 @@ public final class ArabicUtils {
 			}
 
 			stringBuilder.append("""
-									%s > %s;
-									""".formatted(key.toLowerCase(ARABIC), value));
+								 %s > %s;
+								 """.formatted(key.toLowerCase(ARABIC), value));
 		}
 		CUSTOM_RULES = stringBuilder.toString();
 
@@ -331,16 +333,16 @@ public final class ArabicUtils {
 //			TODO : not working; check it
 				symbols
 						.setDigitStrings(new String[]{
-														"٠",
-														"١",
-														"٢",
-														"٣",
-														"٤",
-														"٥",
-														"٦",
-														"٧",
-														"٨",
-														"٩"
+								"٠",
+								"١",
+								"٢",
+								"٣",
+								"٤",
+								"٥",
+								"٦",
+								"٧",
+								"٨",
+								"٩"
 						}); // Arabic-Indic zero
 			}
 			else {
@@ -463,9 +465,9 @@ public final class ArabicUtils {
 	 * @param function a bi-function taking a line and the print flag, returning the processed line
 	 * @return the processed text if {@code print} is false; otherwise, null
 	 */
-	public static synchronized String applyBiFunction(  String input,
-														boolean print,
-														ThrowingBiFunction<String, Boolean, String> function) {
+	public static synchronized String applyBiFunction(String input,
+													  boolean print,
+													  ThrowingBiFunction<String, Boolean, String> function) {
 		if (isMultiline(input)) {
 			Matcher matcher = getTextMatcher(input).reset();
 
@@ -549,7 +551,8 @@ public final class ArabicUtils {
 	 * @throws ArabicShapingException if an error occurs during shaping
 	 */
 	public static synchronized String doShape(String input) throws ArabicShapingException {
-		ArabicShaping shaper = new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.TEXT_DIRECTION_VISUAL_RTL);
+		ArabicShaping shaper =
+				new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.TEXT_DIRECTION_VISUAL_RTL);
 		String shaped = shaper.shape(input);
 		Bidi bidi = new Bidi(shaped, Bidi.DIRECTION_RIGHT_TO_LEFT);
 		return bidi.writeReordered(Bidi.DO_MIRRORING);
@@ -653,7 +656,7 @@ public final class ArabicUtils {
 	 * @param inputSb       the {@link StringBuilder} containing the text to pad
 	 * @param terminalWidth the total width of the terminal to align the text to
 	 * @return a {@link String} with added padding spaces to align the text,
-	 *         or the original text if padding cannot be applied
+	 * or the original text if padding cannot be applied
 	 */
 	public static synchronized String addPadding(StringBuilder inputSb, int terminalWidth) {
 		try {
@@ -706,11 +709,11 @@ public final class ArabicUtils {
 	 * @param text             one or more strings to transliterate
 	 * @return an array of transliterated strings in the same order
 	 */
-	public static String[] transliterateScript( boolean split,
-												String transliteratorID,
-												boolean removeDiacritics,
-												String customRules,
-												String... text) {
+	public static String[] transliterateScript(boolean split,
+											   String transliteratorID,
+											   boolean removeDiacritics,
+											   String customRules,
+											   String... text) {
 		Transliterator transliterator = null;
 
 		if (Objects.nonNull(customRules) && !customRules.isEmpty() && !customRules.isBlank()) {
@@ -738,7 +741,10 @@ public final class ArabicUtils {
 		}
 
 		for (int i = 0; i < text.length; i++) {
-			text[i] = transliterateScript(split, transliterator, removeDiacritics, text[i]);
+			text[i] = transliterateScript(split,
+										  transliterator,
+										  removeDiacritics,
+										  text[i]);
 		}
 
 		return text;
@@ -752,22 +758,37 @@ public final class ArabicUtils {
 	 * @param word             the input word to transliterate
 	 * @return the transliterated word
 	 */
-	public static String transliterateScript(   boolean split,
-												Transliterator transliterator,
-												boolean removeDiacritics,
-												String word) {
+	public static String transliterateScript(boolean split,
+											 Transliterator transliterator,
+											 boolean removeDiacritics,
+											 String word) {
 		// Apply transliteration
-		word = split ?
-				splitIdentifier(word)
-						.stream()
-						.map(s -> s.toLowerCase(Locale.US))
-						.map(transliterator::transliterate)
-						.collect(Collectors.joining()) :
-				transliterator.transliterate(word);
+		if (split) {
+			var parts = splitIdentifier(word);
+			if (parts.size() == 1) {
+				word = transliterator.transliterate(word.toLowerCase(Locale.US));
+			}
+			else {
+				for (int i = 0; i < parts.size(); i++) {
+					var currentPart = parts.get(i);
+					currentPart = transliterator.transliterate(currentPart.toLowerCase(Locale.US));
+					parts.set(i, currentPart);
+				}
+				word = String.join(UNDERSCORE, parts);
+			}
+		}
+		else {
+			word = transliterator.transliterate(word.toLowerCase(Locale.US));
+		}
 
 		// Remove the diacritics from the Arabic text
 		if (removeDiacritics) {
 			word = removeDiacritics(word);
+		}
+
+		// Force underscore suffix for keywords
+		if (Objects.nonNull(LEXER_LITERALS) && LEXER_LITERALS.contains(word)) {
+			word += UNDERSCORE;
 		}
 
 		return word;
@@ -820,10 +841,10 @@ public final class ArabicUtils {
 	 * @param text             the input strings
 	 * @return transliterated strings
 	 */
-	public static String[] transliterateScript( boolean split,
-												String transliteratorID,
-												String customRules,
-												String... text) {
+	public static String[] transliterateScript(boolean split,
+											   String transliteratorID,
+											   String customRules,
+											   String... text) {
 		return transliterateScript(split, transliteratorID, false, customRules, text);
 	}
 
@@ -847,9 +868,9 @@ public final class ArabicUtils {
 	 * @param text             the input strings
 	 * @return transliterated Arabic script strings
 	 */
-	public static String[] transliterateToArabicScriptDefault(  boolean split,
-																boolean removeDiacritics,
-																String... text) {
+	public static String[] transliterateToArabicScriptDefault(boolean split,
+															  boolean removeDiacritics,
+															  String... text) {
 		return transliterateScript(split, LATIN_ARABIC_TRANSLITERATION_ID, removeDiacritics, CUSTOM_RULES, text);
 	}
 
@@ -862,10 +883,10 @@ public final class ArabicUtils {
 	 * @param text             the input strings
 	 * @return transliterated Arabic script strings
 	 */
-	public static String[] transliterateToArabicScript( boolean split,
-														boolean removeDiacritics,
-														String customRules,
-														String... text) {
+	public static String[] transliterateToArabicScript(boolean split,
+													   boolean removeDiacritics,
+													   String customRules,
+													   String... text) {
 		return transliterateScript(split, LATIN_ARABIC_TRANSLITERATION_ID, removeDiacritics, customRules, text);
 	}
 
@@ -978,7 +999,7 @@ public final class ArabicUtils {
 	 *
 	 * @param text the input string to process
 	 * @return a list of pairs of the form ("U+XXXX", "char"), representing each character's Unicode code point and
-	 *         character
+	 * character
 	 */
 	public static List<Pair<String, String>> getRawHexBytes(String text) {
 		return getRawHexBytes(text.toCharArray());
@@ -1055,10 +1076,10 @@ public final class ArabicUtils {
 			}
 			else {
 				throw new NaftahBugError(String
-						.format("""
-								الحرف '%c' في النص '%s' غير مدعوم. يرجى التأكد من أن جميع الأحرف المدخلة مدعومة.""",
-								maybeArabicChar,
-								arabicText));
+												 .format("""
+														 الحرف '%c' في النص '%s' غير مدعوم. يرجى التأكد من أن جميع الأحرف المدخلة مدعومة.""",
+														 maybeArabicChar,
+														 arabicText));
 			}
 		}
 
