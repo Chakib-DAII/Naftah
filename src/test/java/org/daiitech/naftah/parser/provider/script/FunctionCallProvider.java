@@ -1508,6 +1508,21 @@ public class FunctionCallProvider implements ArgumentsProvider {
 							.of(true,
 								"دوال:الحزم::حصول_على_عنصر({1 , 2}, 1)",
 								2,
+								null),
+					Arguments
+							.of(true,
+								"إجمع(127 ، 1)::إطرح(1)",
+								127,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::إجمع([127؛127] ، 1):::إطرح(1)",
+								List.of(127, 127),
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::إجمع([127؛127] ، 1)::إطرح(1)",
+								254,
 								null)
 				);
 	}
