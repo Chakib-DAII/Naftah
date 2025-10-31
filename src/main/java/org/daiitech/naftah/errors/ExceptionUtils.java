@@ -373,7 +373,7 @@ public final class ExceptionUtils {
 																int column) {
 
 		throw new NaftahBugError(   """
-									عدد الوسائط غير صحيح للدالة '%s' المقدمة من '%s'.
+									عدد الوسائط غير صحيح للمُستدعى '%s' المقدمة من '%s'.
 									العدد المتوقع: %d،
 									العدد الفعلي: %d.
 
@@ -406,7 +406,7 @@ public final class ExceptionUtils {
 															int line,
 															int column) {
 		throw new NaftahBugError(   """
-									.'%s' حدث خطأ أثناء استدعاء الدالة
+									.'%s' حدث خطأ أثناء استدعاء المُستدعى
 
 									%s
 									"""
@@ -443,34 +443,6 @@ public final class ExceptionUtils {
 	}
 
 	/**
-	 * Creates a new {@link NaftahBugError} for missing or invalid methods.
-	 *
-	 * @param functionName           the name of the method.
-	 * @param functionDetailedString detailed string representation of the function.
-	 * @param e                      the underlying exception.
-	 * @param line                   the line number where the error occurred.
-	 * @param column                 the column number where the error occurred.
-	 * @return a {@code NaftahBugError} describing the missing or invalid method.
-	 */
-	public static NaftahBugError newNaftahNoSuchMethodError(String functionName,
-															String functionDetailedString,
-															Exception e,
-															int line,
-															int column) {
-		throw new NaftahBugError(
-									"""
-									لم يتم العثور على الدالة المطلوبة '%s'، أو توقيعها غير صالح، أو أحد الوسائط غير متوافق مع النوع المطلوب.
-
-									%s
-									"""
-											.formatted(functionName, functionDetailedString),
-									e,
-									line,
-									column
-		);
-	}
-
-	/**
 	 * Creates a new {@link NaftahBugError} when object instantiation fails.
 	 *
 	 * @param functionName           the name of the function triggering instantiation.
@@ -487,7 +459,7 @@ public final class ExceptionUtils {
 																int column) {
 		throw new NaftahBugError(
 									"""
-									تعذر إنشاء كائن من الفئة المطلوبة '%s' أثناء تنفيذ الدالة أو أثناء تهيئة أحد الوسائط عند التحويل إلى نوع الطريقة المناسب.
+									تعذر إنشاء كائن من الفئة المطلوبة '%s' أثناء تنفيذ المُستدعى أو أثناء تهيئة أحد الوسائط عند التحويل إلى نوع الطريقة المناسب.
 
 									%s
 									"""
@@ -496,6 +468,28 @@ public final class ExceptionUtils {
 									line,
 									column
 		);
+	}
+
+	/**
+	 * Creates and throws a new {@link NaftahBugError} when the requested invocable
+	 * (method or constructor) cannot be found in the current context.
+	 *
+	 * <p>The generated error message (in Arabic) indicates that the target
+	 * callable symbol is undefined or inaccessible.</p>
+	 *
+	 * @param functionName the name of the missing invocable (method or constructor).
+	 * @param line         the source line number where the error occurred.
+	 * @param column       the source column number where the error occurred.
+	 * @return this method never returns normally; it always throws a {@link NaftahBugError}.
+	 * @throws NaftahBugError always thrown to indicate a missing invocable.
+	 */
+	public static NaftahBugError newNaftahInvocableNotFoundError(   String functionName,
+																	int line,
+																	int column) {
+		throw new NaftahBugError(   "المُستدعى '%s' غير موجودة في السياق الحالي."
+											.formatted(functionName),
+									line,
+									column);
 	}
 
 }
