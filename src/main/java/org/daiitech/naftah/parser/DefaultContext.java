@@ -37,6 +37,7 @@ import org.daiitech.naftah.builtin.lang.ClassScanningResult;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -61,6 +62,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.filterClasses;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getArabicClassQualifiers;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinMethods;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassConstructors;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassMethods;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassQualifiers;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.loadClasses;
@@ -150,6 +152,13 @@ public class DefaultContext {
 			result.setAccessibleClasses(accessibleClassFuture.get());
 			result.setInstantiableClasses(instantiableClassFuture.get());
 
+			Callable<Map<String, List<JvmClassInitializer>>> jvmClassInitializerLoaderTask = () -> getClassConstructors(
+																														result
+																																.getInstantiableClasses());
+			var jvmClassInitializerFuture = internalExecutor.submit(jvmClassInitializerLoaderTask);
+
+			result.setJvmClassInitializers(jvmClassInitializerFuture.get());
+
 			var accessibleAndInstantiable = new HashMap<>(result.getAccessibleClasses()) {
 				{
 					putAll(result.getInstantiableClasses());
@@ -186,6 +195,7 @@ public class DefaultContext {
 	protected static Map<String, Class<?>> INSTANTIABLE_CLASSES;
 	// qualifiedCall -> Method
 	protected static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
+	protected static Map<String, List<JvmClassInitializer>> JVM_CLASS_INITIALIZERS;
 	protected static volatile Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
 	protected static volatile boolean SHOULD_BOOT_STRAP;
 	protected static volatile boolean FORCE_BOOT_STRAP;
@@ -536,6 +546,7 @@ public class DefaultContext {
 		CLASSES = result.getClasses();
 		ACCESSIBLE_CLASSES = result.getAccessibleClasses();
 		INSTANTIABLE_CLASSES = result.getInstantiableClasses();
+		JVM_CLASS_INITIALIZERS = result.getJvmClassInitializers();
 		JVM_FUNCTIONS = result.getJvmFunctions();
 		setBuiltinFunctions(result.getBuiltinFunctions());
 		BOOT_STRAPPED = true;
@@ -838,6 +849,10 @@ public class DefaultContext {
 	 */
 	public static Map<String, List<JvmFunction>> getJvmFunctions() {
 		return JVM_FUNCTIONS;
+	}
+
+	public static Map<String, List<JvmClassInitializer>> getJvmClassInitializers() {
+		return JVM_CLASS_INITIALIZERS;
 	}
 
 	/**
