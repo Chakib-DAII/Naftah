@@ -2,6 +2,7 @@ package org.daiitech.naftah.utils.reflect;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -22,11 +23,15 @@ import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createCollection;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createMap;
@@ -225,6 +230,54 @@ public final class ClassUtils {
 	}
 
 	/**
+	 * Retrieves and groups constructors from multiple classes, filtered by a specified predicate,
+	 * mapping each qualified class name to a list of {@link JvmClassInitializer} wrappers.
+	 * <p>
+	 * For each class in the provided map, this method inspects its public constructors (via
+	 * {@link Class#getConstructors()}), applies the given {@code constructorPredicate}, and wraps
+	 * all matching constructors as {@link JvmClassInitializer} instances. The results are then grouped
+	 * by their qualified class names.
+	 * <p>
+	 * Any classes or constructors that cannot be accessed or processed (e.g., due to security restrictions)
+	 * are silently skipped.
+	 *
+	 * @param classes              a map where each key is the fully qualified class name
+	 *                             (e.g., {@code "com.example.MyClass"}) and each value is the corresponding
+	 *                             {@link Class} object
+	 * @param constructorPredicate a {@link Predicate} used to filter which constructors should be included
+	 * @return a map where each key is a qualified class name and each value is a list of
+	 *         {@link JvmClassInitializer} instances representing all constructors of that class
+	 *         that satisfy the given predicate
+	 * @throws NullPointerException if {@code classes} or {@code constructorPredicate} is {@code null}
+	 * @see Class#getConstructors()
+	 * @see JvmClassInitializer
+	 */
+	public static Map<String, List<JvmClassInitializer>> getClassConstructors(  Map<String, Class<?>> classes,
+																				Predicate<Constructor<?>> constructorPredicate) {
+		return classes.entrySet().stream().filter(Objects::nonNull).flatMap(classEntry -> {
+			try {
+				return Arrays
+						.stream(classEntry.getValue().getConstructors())
+						.filter(constructorPredicate)
+						.map(constructor -> Map.entry(constructor, classEntry));
+			}
+			catch (Throwable e) {
+				// skip
+				return null;
+			}
+		}).filter(Objects::nonNull).map(methodEntry -> {
+			Class<?> clazz = methodEntry.getValue().getValue();
+			Constructor<?> constructor = methodEntry.getKey();
+			String qualifiedName = methodEntry.getValue().getKey();
+			return Map.entry(qualifiedName, JvmClassInitializer.of(qualifiedName, clazz, constructor));
+		})
+				.collect(
+							Collectors
+									.groupingBy(Map.Entry::getKey,
+												Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+	}
+
+	/**
 	 * Retrieves all methods from a single class wrapped as JvmFunction instances.
 	 *
 	 * @param qualifiedName qualified name of the class
@@ -238,6 +291,27 @@ public final class ClassUtils {
 		}).toList();
 	}
 
+	/**
+	 * Retrieves all public constructors of the specified class and wraps them
+	 * as {@link JvmClassInitializer} instances.
+	 * <p>
+	 * Each {@code JvmClassInitializer} represents a single constructor
+	 * and includes its qualified name and reflective metadata.
+	 *
+	 * @param qualifiedName the fully qualified name of the class
+	 *                      (e.g., "com.example.MyClass")
+	 * @param clazz         the {@link Class} object representing the class whose constructors
+	 *                      should be retrieved
+	 * @return a list of {@link JvmClassInitializer} instances representing all public
+	 *         constructors of the specified class
+	 */
+	public static List<JvmClassInitializer> getClassConstructors(String qualifiedName, Class<?> clazz) {
+		return Arrays
+				.stream(clazz.getConstructors())
+				.map(constructor -> JvmClassInitializer.of(qualifiedName, clazz, constructor))
+				.toList();
+	}
+
 
 	/**
 	 * Returns all methods from given classes without filtering.
@@ -247,6 +321,27 @@ public final class ClassUtils {
 	 */
 	public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes) {
 		return getClassMethods(classes, (method) -> true);
+	}
+
+	/**
+	 * Retrieves all public constructors from the given classes without applying any filtering,
+	 * mapping each qualified class name to a list of {@link JvmClassInitializer} wrappers.
+	 * <p>
+	 * This method is a convenience overload of
+	 * {@link #getClassConstructors(Map, java.util.function.Predicate)} that includes
+	 * all available constructors by default.
+	 *
+	 * @param classes a map where each key is the fully qualified class name
+	 *                (e.g., {@code "com.example.MyClass"}) and each value is the corresponding
+	 *                {@link Class} object
+	 * @return a map from qualified class names to lists of {@link JvmClassInitializer} instances
+	 *         representing all public constructors of the given classes
+	 * @throws NullPointerException if {@code classes} is {@code null}
+	 * @see #getClassConstructors(Map, java.util.function.Predicate)
+	 * @see JvmClassInitializer
+	 */
+	public static Map<String, List<JvmClassInitializer>> getClassConstructors(Map<String, Class<?>> classes) {
+		return getClassConstructors(classes, (constructor) -> true);
 	}
 
 	/**
@@ -308,27 +403,37 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Checks if a method is invocable: public, not synthetic or bridge,
-	 * and either static or declared in an instantiable class.
+	 * Determines whether a given {@link Executable} (method or constructor) can be invoked dynamically.
 	 *
-	 * @param method the method to check
-	 * @return true if invocable, false otherwise
+	 * <p>A member is considered <em>invocable</em> if it meets all of the following conditions:</p>
+	 * <ul>
+	 * <li>It is {@code public}.</li>
+	 * <li>It is not synthetic or compiler-generated (e.g., bridge methods).</li>
+	 * <li>If it is a {@link Method}, it is either {@code static} or declared in an instantiable class.</li>
+	 * <li>If it is a {@link Constructor}, it belongs to an instantiable class.</li>
+	 * </ul>
+	 *
+	 * @param methodOrConstructor the {@link Executable} (method or constructor) to check
+	 * @return {@code true} if the executable can be invoked via reflection, otherwise {@code false}
+	 * @see Method#isBridge()
+	 * @see Executable#isSynthetic()
+	 * @see Modifier#isPublic(int)
 	 */
-	public static boolean isInvocable(Method method) {
+	public static boolean isInvocable(Executable methodOrConstructor) {
 		// Must be public
-		if (!Modifier.isPublic(method.getModifiers())) {
+		if (!Modifier.isPublic(methodOrConstructor.getModifiers())) {
 			return false;
 		}
 
 		// Ignore synthetic or bridge methods (compiler-generated)
-		if (method.isSynthetic() || method.isBridge()) {
+		if (methodOrConstructor.isSynthetic() || (methodOrConstructor instanceof Method method && method.isBridge())) {
 			return false;
 		}
 
-		Class<?> declaringClass = method.getDeclaringClass();
+		Class<?> declaringClass = methodOrConstructor.getDeclaringClass();
 
 		// If it's a static method, it's invocable directly
-		if (isStatic(method)) {
+		if (methodOrConstructor instanceof Method method && isStatic(method)) {
 			return true;
 		}
 
@@ -424,7 +529,7 @@ public final class ClassUtils {
 															QUALIFIED_NAME_SEPARATOR,
 															true) + QUALIFIED_CALL_SEPARATOR + cleanBuiltinFunctionName(
 																														functionName,
-																														"_",
+																														UNDERSCORE,
 																														removeNameDiacritics);
 			if (QUALIFIED_CALL_REGEX.matcher(qualifiedName).matches()) {
 				System.out.println(qualifiedName);
@@ -436,7 +541,7 @@ public final class ClassUtils {
 			}
 			return qualifiedName;
 		}
-		return cleanBuiltinFunctionName(functionName, "_", removeNameDiacritics);
+		return cleanBuiltinFunctionName(functionName, UNDERSCORE, removeNameDiacritics);
 
 	}
 
@@ -637,55 +742,94 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Dynamically invokes a Java method using reflection.
+	 * Dynamically invokes a Java {@link Method} or {@link Constructor} via reflection.
 	 *
-	 * <p>This method supports invoking both:
+	 * <p>This unified invocation utility supports both:</p>
 	 * <ul>
-	 * <li>Static methods</li>
-	 * <li>Instance methods</li>
+	 * <li><b>Instance and static methods</b> — using {@link Method#invoke(Object, Object...)}.</li>
+	 * <li><b>Constructors</b> — using {@link Constructor#newInstance(Object...)}.</li>
 	 * </ul>
-	 * It also automatically converts arguments to match the method's parameter types,
-	 * including handling of primitives, arrays, and collections.
-	 * </p>
 	 *
-	 * @param instance   the object instance to invoke the method on if it is an instance method,
-	 *                   or null if the method is static.
-	 * @param method     the Java {@link Method} to invoke.
-	 * @param args       a list of {@code Pair<String, Object>} representing the method arguments.
-	 * @param returnType the expected return type of the method. Use {@link Void#TYPE} for void methods.
-	 * @return the result of the method invocation, or {@link None#get()} if the method returns void or null.
-	 * @throws InvocationTargetException if an exception occurs while invoking the method.
-	 * @throws NoSuchMethodException     if a required method or constructor cannot be found.
-	 * @throws InstantiationException    if an instance cannot be created during argument conversion.
-	 * @throws IllegalAccessException    if access to the method or constructor is denied.
-	 * @throws IllegalArgumentException  if the number of arguments or their types do not match the method signature.
+	 * <p>All arguments are automatically converted to match the target’s parameter types,
+	 * including support for primitives, arrays, collections, and generic types.
+	 * If {@code useNone} is enabled, {@link None#get()} is returned in place of {@code null}
+	 * or {@code void} results.</p>
+	 *
+	 * @param instance            the target object instance for method invocation,
+	 *                            or {@code null} if invoking a static method or constructor.
+	 * @param methodOrConstructor the {@link Executable} to invoke
+	 *                            (either a {@link Method} or a {@link Constructor}).
+	 * @param args                a list of {@code Pair<String, Object>} representing
+	 *                            argument names and their corresponding values.
+	 * @param returnType          the expected return type. Use {@link Void#TYPE} or {@link Void}
+	 *                            for methods that return {@code void}.
+	 * @param useNone             if {@code true}, replaces {@code null} results with {@link None#get()}.
+	 * @return the invocation result, or {@link None#get()} if the result is {@code null}
+	 *         or the executable has a {@code void} return type.
+	 * @throws InvocationTargetException if the underlying method or constructor throws an exception.
+	 * @throws InstantiationException    if the target constructor cannot instantiate a new object.
+	 * @throws IllegalAccessException    if reflective access is not permitted.
+	 * @throws IllegalArgumentException  if argument count or types do not match the executable’s parameters.
+	 * @see Method#invoke(Object, Object...)
+	 * @see Constructor#newInstance(Object...)
+	 * @see Executable
 	 */
-	public static Object invokeJvmMethod(
-											Object instance,
-											Method method,
-											List<Pair<String, Object>> args,
-											Class<?> returnType,
-											boolean useNone)
+	public static Object invokeJvmExecutable(
+												Object instance,
+												Executable methodOrConstructor,
+												List<Pair<String, Object>> args,
+												Class<?> returnType,
+												boolean useNone)
 			throws InvocationTargetException,
-			NoSuchMethodException,
 			InstantiationException,
 			IllegalAccessException {
-		Class<?>[] paramTypes = method.getParameterTypes();
+		Class<?>[] paramTypes = methodOrConstructor.getParameterTypes();
 
 		if (args.size() != paramTypes.length) {
 			throw new IllegalArgumentException("Argument count mismatch");
 		}
 
-		Object[] methodArgs = new Object[args.size()];
-		Type[] genericTypes = method.getGenericParameterTypes();
+		Object[] executableArgs = new Object[args.size()];
+		Type[] genericTypes = methodOrConstructor.getGenericParameterTypes();
 
 		for (int i = 0; i < args.size(); i++) {
-			methodArgs[i] = convertArgument(args.get(i).b, paramTypes[i], genericTypes[i], useNone);
+			executableArgs[i] = convertArgument(args.get(i).b, paramTypes[i], genericTypes[i], useNone);
 		}
 
-		method.setAccessible(true);
-		var possibleResult = method.invoke(instance, methodArgs);
+		methodOrConstructor.setAccessible(true);
+		Object possibleResult = null;
+		if (methodOrConstructor instanceof Method method) {
+			possibleResult = method.invoke(instance, executableArgs);
+		}
+		else if (methodOrConstructor instanceof Constructor<?> constructor) {
+			possibleResult = constructor.newInstance(executableArgs);
+		}
 		return returnType != Void.class && possibleResult != null ? possibleResult : None.get();
+	}
+
+	/**
+	 * Convenience wrapper for {@link #invokeJvmExecutable(Object, Executable, List, Class, boolean)}
+	 * that directly invokes a {@link Constructor}.
+	 *
+	 * @param methodOrConstructor the {@link Constructor} to invoke.
+	 * @param args                the constructor arguments as a list of {@code Pair<String, Object>}.
+	 * @param returnType          the expected return type of the constructed object.
+	 * @param useNone             if {@code true}, replaces {@code null} or {@code void} results
+	 *                            with {@link None#get()}.
+	 * @return the newly created instance, or {@link None#get()} if the result is {@code null}.
+	 * @throws InvocationTargetException if the underlying constructor throws an exception.
+	 * @throws InstantiationException    if the constructor cannot instantiate a new object.
+	 * @throws IllegalAccessException    if reflective access is not permitted.
+	 * @throws IllegalArgumentException  if the argument count or types do not match the constructor parameters.
+	 */
+	public static Object invokeJvmConstructor(  Executable methodOrConstructor,
+												List<Pair<String, Object>> args,
+												Class<?> returnType,
+												boolean useNone)
+			throws InvocationTargetException,
+			InstantiationException,
+			IllegalAccessException {
+		return invokeJvmExecutable(null, methodOrConstructor, args, returnType, useNone);
 	}
 
 	/**
@@ -710,9 +854,21 @@ public final class ClassUtils {
 			return useNone ? None.get() : null;
 		}
 
+		if (!targetType.equals(NaftahObject.class) && value instanceof NaftahObject naftahObject) {
+			value = naftahObject.get();
+		}
+
 		// Already assignable
 		if (targetType.isInstance(value)) {
 			return value;
+		}
+
+		if (value instanceof DynamicNumber dynamicNumber) {
+			value = dynamicNumber.get();
+		}
+
+		if (NaN.isNaN(value)) {
+			value = Double.NaN;
 		}
 
 		// Handle primitives
@@ -741,10 +897,6 @@ public final class ClassUtils {
 			if (targetType == short.class) {
 				return ((Number) value).shortValue();
 			}
-		}
-
-		if (value instanceof DynamicNumber dynamicNumber) {
-			value = dynamicNumber.get();
 		}
 
 		// Handle arrays
