@@ -175,7 +175,7 @@ public class JvmFunction implements Serializable {
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		try {
 			ois.defaultReadObject();
-			for (Method m : clazz.getDeclaredMethods()) {
+			for (Method m : clazz.getMethods()) {
 				if (m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), methodParameterTypes)) {
 					this.method = m;
 					break;
