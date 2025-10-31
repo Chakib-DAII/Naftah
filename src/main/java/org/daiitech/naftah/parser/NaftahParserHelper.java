@@ -38,6 +38,7 @@ import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
@@ -60,8 +61,8 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahIllegalArgumentError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInstantiationError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocationError;
-import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNoSuchMethodError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNonInvocableFunctionError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedFunctionError;
 import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
@@ -1458,13 +1459,6 @@ public final class NaftahParserHelper {
 											line,
 											column);
 		}
-		catch (NoSuchMethodException e) {
-			throw newNaftahNoSuchMethodError(   functionName,
-												builtinFunction.toDetailedString(),
-												e,
-												line,
-												column);
-		}
 		catch (InstantiationException e) {
 			throw newNaftahInstantiationError(  functionName,
 												builtinFunction.toDetailedString(),
@@ -1543,13 +1537,6 @@ public final class NaftahParserHelper {
 												line,
 												column);
 			}
-			catch (NoSuchMethodException e) {
-				throw newNaftahNoSuchMethodError(   functionName,
-													jvmFunction.toDetailedString(),
-													e,
-													line,
-													column);
-			}
 			catch (InstantiationException e) {
 				throw newNaftahInstantiationError(  functionName,
 													jvmFunction.toDetailedString(),
@@ -1563,6 +1550,79 @@ public final class NaftahParserHelper {
 														jvmFunction.toDetailedString(),
 														line,
 														column);
+		}
+	}
+
+	/**
+	 * Invokes a JVM class initializer (constructor) with automatic argument conversion.
+	 *
+	 * <p>This method creates a new instance of the specified class by invoking its
+	 * {@link java.lang.reflect.Constructor} via reflection, wrapping the result in a
+	 * {@link NaftahObject}.</p>
+	 *
+	 * <p>Any reflection-related exceptions are caught and rethrown as {@link NaftahBugError}
+	 * instances, with detailed contextual information (class name, line, and column)
+	 * for precise error reporting.</p>
+	 *
+	 * @param classInitializerName the name of the class initializer (constructor) for error reporting.
+	 * @param jvmClassInitializer  the {@link JvmClassInitializer} representing the target constructor.
+	 * @param args                 the list of argument name/value pairs to pass to the constructor.
+	 * @param line                 the source line number where the invocation occurs.
+	 * @param column               the source column number where the invocation occurs.
+	 * @return a {@link NaftahObject} containing the newly created instance.
+	 * @throws NaftahBugError if:
+	 *                        <ul>
+	 *                        <li>argument count or types do not match the constructor signature,</li>
+	 *                        <li>the constructor cannot be accessed or invoked,</li>
+	 *                        <li>the instantiation fails for any reason.</li>
+	 *                        </ul>
+	 * @see NaftahObject
+	 * @see ClassUtils#invokeJvmConstructor(java.lang.reflect.Executable, List, Class, boolean)
+	 * @see java.lang.reflect.Constructor
+	 * @see java.lang.reflect.InvocationTargetException
+	 */
+	public static Object invokeJvmClassInitializer( String classInitializerName,
+													JvmClassInitializer jvmClassInitializer,
+													List<Pair<String, Object>> args,
+													int line,
+													int column) {
+		try {
+			return NaftahObject
+					.of(ClassUtils
+							.invokeJvmConstructor(
+													jvmClassInitializer
+															.getConstructor(),
+													args,
+													jvmClassInitializer.getClazz(),
+													false));
+		}
+		catch (IllegalArgumentException e) {
+			throw newNaftahIllegalArgumentError(classInitializerName,
+												jvmClassInitializer.getQualifiedName(),
+												jvmClassInitializer
+														.getConstructor()
+														.getParameterCount(),
+												args.size(),
+												jvmClassInitializer
+														.toDetailedString(),
+												e,
+												line,
+												column);
+		}
+		catch (IllegalAccessException | InvocationTargetException e) {
+			throw newNaftahInvocationError( classInitializerName,
+											jvmClassInitializer
+													.toDetailedString(),
+											e,
+											line,
+											column);
+		}
+		catch (InstantiationException e) {
+			throw newNaftahInstantiationError(  classInitializerName,
+												jvmClassInitializer.toDetailedString(),
+												e,
+												line,
+												column);
 		}
 	}
 
@@ -1720,10 +1780,9 @@ public final class NaftahParserHelper {
 			}
 		}
 		else {
-			throw new NaftahBugError(   "الدالة '%s' غير موجودة في السياق الحالي."
-												.formatted(functionName),
-										line,
-										column);
+			throw newNaftahInvocableNotFoundError(  functionName,
+													line,
+													column);
 		}
 		currentContext.setFunctionCallId(null);
 		return result;
