@@ -210,6 +210,12 @@ public final class Naftah {
 	 * The recognized standard file extensions for Naftah scripts.
 	 */
 	public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
+
+	/**
+	 * Constant representing a single underscore character ("_").
+	 */
+	public static final String UNDERSCORE = "_";
+
 	/**
 	 * Logger instance for logging Naftah program.
 	 */
@@ -1439,7 +1445,7 @@ public final class Naftah {
 												.getFileName()
 												.toString()
 												.replaceFirst("[.][^.]+$", "")
-												.split("_"))
+												.split(UNDERSCORE))
 										.skip(1)
 										.collect(Collectors.joining("-"));
 
