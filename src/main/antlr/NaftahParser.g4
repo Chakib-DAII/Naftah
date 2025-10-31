@@ -36,6 +36,7 @@ statement: block END? #blockStatement
          | caseStatement END? #caseStatementStatement
          | tryStatement END? #tryStatementStatement
          | functionDeclaration END? #functionDeclarationStatement
+         | initCall END? #initCallStatement
          | functionCall END? #functionCallStatement
          | objectAccess END? #objectAccessStatement
          | collectionAccess END? #collectionAccessStatement
@@ -62,11 +63,21 @@ parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclarat
 // Parameter declaration : parameter id with optional type and assignment
 parameterDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 
-// Function call: Can have arguments and return values
-functionCall: (ID | qualifiedCall) LPAREN argumentList? RPAREN;
+// Chained Function calls: Can have arguments and return values
+// and the return value is piped to the next in case of chain
+functionCall: primaryCall callSegment*;
 
 // constructor call: Can have arguments and return the created object
-initCall: qualifiedName LPAREN argumentList? RPAREN;
+// the object instance is piped to the next in case of chall chain
+initCall: qualifiedName LPAREN argumentList? RPAREN callSegment*;
+
+// Chained Function calls segment: Can have arguments and return values
+// in case of ::: we reuse the previous call qualified name as the same qualified for the current
+// and we don't in case of :: (where the qualified name can be provided for itself)
+callSegment: COLON COLON COLON? primaryCall;
+
+// Function call: Can have arguments and return values
+primaryCall: (ID | qualifiedCall) LPAREN argumentList? RPAREN;
 
 // Argument list: Expressions separated by commas or semicolons
 argumentList: (ID ASSIGN)? expression ((COMMA | SEMI) (ID ASSIGN)? expression)*;
@@ -182,7 +193,8 @@ unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unar
 
 postfixExpression: primary (INCREMENT | DECREMENT)?;
 
-primary: functionCall #functionCallExpression
+primary: initCall #initCallExpression
+	   | functionCall #functionCallExpression
        | object #objectExpression
        | collection #collectionExpression
        | objectAccess #objectAccessExpression
