@@ -455,6 +455,14 @@ public final class ObjectUtils {
 			throw newNaftahBugNullInputError(false, left, right);
 		}
 
+		if (left instanceof NaftahObject naftahObject) {
+			left = naftahObject.get();
+		}
+
+		if (right instanceof NaftahObject naftahObject) {
+			right = naftahObject.get();
+		}
+
 		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
 		if ((NaN.isNaN(left) || NaN.isNaN(right)) || (None.isNone(left) || None
 				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String)) {
@@ -529,6 +537,10 @@ public final class ObjectUtils {
 	public static Object applyOperation(Object a, UnaryOperation operation) {
 		if (a == null) {
 			throw newNaftahBugNullInputError(true, a);
+		}
+
+		if (a instanceof NaftahObject naftahObject) {
+			a = naftahObject.get();
 		}
 
 		// Number or Boolean or Character or String
