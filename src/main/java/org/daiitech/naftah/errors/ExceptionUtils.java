@@ -343,7 +343,7 @@ public final class ExceptionUtils {
 																	Class<?> functionClass,
 																	int line,
 																	int column) {
-		throw new NaftahBugError(   "الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
+		return new NaftahBugError(  "الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
 											.formatted( functionName,
 														functionClass.getName()),
 									line,
@@ -372,7 +372,7 @@ public final class ExceptionUtils {
 																int line,
 																int column) {
 
-		throw new NaftahBugError(   """
+		return new NaftahBugError(  """
 									عدد الوسائط غير صحيح للمُستدعى '%s' المقدمة من '%s'.
 									العدد المتوقع: %d،
 									العدد الفعلي: %d.
@@ -405,7 +405,7 @@ public final class ExceptionUtils {
 															Exception e,
 															int line,
 															int column) {
-		throw new NaftahBugError(   """
+		return new NaftahBugError(  """
 									.'%s' حدث خطأ أثناء استدعاء المُستدعى
 
 									%s
@@ -430,7 +430,7 @@ public final class ExceptionUtils {
 																	String functionDetailedString,
 																	int line,
 																	int column) {
-		throw new NaftahBugError(
+		return new NaftahBugError(
 									"""
 									الدالة '%s' غير قابلة للاستدعاء.
 
@@ -457,7 +457,7 @@ public final class ExceptionUtils {
 																Exception e,
 																int line,
 																int column) {
-		throw new NaftahBugError(
+		return new NaftahBugError(
 									"""
 									تعذر إنشاء كائن من الفئة المطلوبة '%s' أثناء تنفيذ المُستدعى أو أثناء تهيئة أحد الوسائط عند التحويل إلى نوع الطريقة المناسب.
 
@@ -486,7 +486,7 @@ public final class ExceptionUtils {
 	public static NaftahBugError newNaftahInvocableNotFoundError(   String functionName,
 																	int line,
 																	int column) {
-		throw new NaftahBugError(   "المُستدعى '%s' غير موجودة في السياق الحالي."
+		return new NaftahBugError(  "المُستدعى '%s' غير موجودة في السياق الحالي."
 											.formatted(functionName),
 									line,
 									column);

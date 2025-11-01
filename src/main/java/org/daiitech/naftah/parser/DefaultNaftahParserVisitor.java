@@ -803,7 +803,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								Map<String, List<JvmClassInitializer>> jvmClassInitializersMap = DefaultContext
 										.getJvmClassInitializers();
-								if (jvmClassInitializersMap.containsKey(functionName)) {
+								if (Objects.nonNull(jvmClassInitializersMap) && jvmClassInitializersMap
+										.containsKey(functionName)) {
 									List<JvmClassInitializer> jvmClassInitializersList = jvmClassInitializersMap
 											.get(functionName);
 									if (jvmClassInitializersList.size() == 1) {

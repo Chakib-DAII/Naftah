@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import static org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions.newNaftahNotCollectionOrMapArgumentError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugUnsupportedBitwiseDecimalError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 
 
@@ -1523,7 +1524,14 @@ public class FunctionCallProvider implements ArgumentsProvider {
 							.of(true,
 								"دوال:الحزم::إجمع([127؛127] ، 1)::إطرح(1)",
 								254,
-								null)
+								null),
+					Arguments
+							.of(false,
+								"جافا:لغة:الرياضيات::ابس(0؛1):::أميكس(0؛10)",
+								null,
+								newNaftahInvocableNotFoundError("جافا:لغة:الرياضيات::ابس",
+																1,
+																0))
 				);
 	}
 }
