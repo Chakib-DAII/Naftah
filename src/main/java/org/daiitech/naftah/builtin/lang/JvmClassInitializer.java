@@ -232,7 +232,7 @@ public class JvmClassInitializer implements Serializable {
 			var modifiers = Modifier.toString(constructor.getModifiers());
 			var modifiersArray = modifiers.split("\\s");
 			var modifiersArabicArray = ArabicUtils
-					.transliterateToArabicScriptDefault(true,
+					.transliterateToArabicScriptDefault(
 														modifiersArray.clone());
 			detailedString
 					.append("\t- المُعدّلات: ")

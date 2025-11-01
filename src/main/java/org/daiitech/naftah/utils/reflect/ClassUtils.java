@@ -84,7 +84,7 @@ public final class ClassUtils {
 	public static String getQualifiedName(String className) {
 		return String
 				.join(  QUALIFIED_NAME_SEPARATOR,
-						ArabicUtils.transliterateToArabicScriptDefault(true, className.split(CLASS_SEPARATORS_REGEX)));
+						ArabicUtils.transliterateToArabicScriptDefault(className.split(CLASS_SEPARATORS_REGEX)));
 	}
 
 	/**
@@ -100,7 +100,7 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, Method method) {
 		return "%s::%s"
-				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(true, method.getName())[0]);
+				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(method.getName())[0]);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, String methodName) {
 		return "%s::%s"
-				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(true, methodName)[0]);
+				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(methodName)[0]);
 	}
 
 
@@ -160,7 +160,7 @@ public final class ClassUtils {
 		return classQualifiers
 				.stream()
 				.map(strings -> String
-						.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefault(true, strings)))
+						.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefault(strings)))
 				.collect(Collectors.toSet());
 	}
 
@@ -178,7 +178,7 @@ public final class ClassUtils {
 						.entry(
 								String
 										.join(  QUALIFIED_NAME_SEPARATOR,
-												ArabicUtils.transliterateToArabicScriptDefault(true, strings.clone())),
+												ArabicUtils.transliterateToArabicScriptDefault(strings.clone())),
 								String.join(QUALIFIED_NAME_SEPARATOR, strings.clone())))
 				.collect(Collectors
 						.toMap( Map.Entry::getKey,
@@ -630,7 +630,7 @@ public final class ClassUtils {
 	 * <p>
 	 * Additionally, the method includes Arabic transliteration (phonetic representation in Arabic script)
 	 * for class names and package names, using {@link ClassUtils#getQualifiedName(String)}
-	 * or {@link ArabicUtils#transliterateToArabicScriptDefault(boolean, String...)}.
+	 * or {@link ArabicUtils#transliterateToArabicScriptDefault(String...)}.
 	 * For example, the simple name {@code ArrayList} might appear as:
 	 * <pre>{@code
 	 * ArrayList - أرَي لِسْتْ
@@ -678,7 +678,7 @@ public final class ClassUtils {
 						.formatted(
 									clazz.getName() + " - " + getQualifiedName(clazz.getName()),
 									clazz.getSimpleName() + " - " + ArabicUtils
-											.transliterateToArabicScriptDefault(true, clazz.getSimpleName())[0],
+											.transliterateToArabicScriptDefault(clazz.getSimpleName())[0],
 									clazz.getPackage() != null ?
 											clazz.getPackage().getName() + " - " + getQualifiedName(clazz
 													.getPackage()

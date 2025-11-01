@@ -99,7 +99,7 @@ public record NaftahObject(
 		return KEY_OR_FIELD_TRANSLITERATION_FORMAT
 				.formatted(
 							ArabicUtils
-									.transliterateToArabicScriptDefault(false, keyOrFieldName)[0],
+									.transliterateToArabicScriptDefault(keyOrFieldName)[0],
 							keyOrFieldName
 				);
 	}

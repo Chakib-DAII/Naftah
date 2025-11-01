@@ -208,7 +208,7 @@ public class JvmFunction implements Serializable {
 	 * The output is structured in a human-readable Arabic format and includes
 	 * phonetic transliterations (into Arabic script) for class names, return types,
 	 * modifiers, and annotations using {@link ClassUtils#getQualifiedName(String)} or
-	 * {@link ArabicUtils#transliterateToArabicScriptDefault(boolean, String...)}.
+	 * {@link ArabicUtils#transliterateToArabicScriptDefault(String...)}.
 	 * <p>
 	 * The following information is included:
 	 * <ul>
@@ -275,7 +275,7 @@ public class JvmFunction implements Serializable {
 			var modifiers = Modifier.toString(method.getModifiers());
 			var modifiersArray = modifiers.split("\\s");
 			var modifiersArabicArray = ArabicUtils
-					.transliterateToArabicScriptDefault(true,
+					.transliterateToArabicScriptDefault(
 														modifiersArray.clone());
 			detailedString
 					.append("\t- المُعدّلات: ")
