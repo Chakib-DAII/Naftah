@@ -853,7 +853,7 @@ public final class ClassUtils {
 	 * @param genericType the generic type information, if available.
 	 * @return the converted value matching the target type.
 	 */
-	private static Object convertArgument(Object value, Class<?> targetType, Type genericType, boolean useNone) {
+	public static Object convertArgument(Object value, Class<?> targetType, Type genericType, boolean useNone) {
 		if (value == null || None.isNone(value)) {
 			return useNone ? None.get() : null;
 		}
