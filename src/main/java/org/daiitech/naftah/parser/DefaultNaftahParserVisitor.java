@@ -2982,12 +2982,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								// prepare validations
 								boolean creatingCollection = hasAnyParentOfType(valueExpressionContext,
 																				org.daiitech.naftah.parser.NaftahParser.CollectionContext.class);
+								boolean callingInitOrFunction = hasAnyParentOfType( valueExpressionContext,
+																					List
+																							.of(
+																								org.daiitech.naftah.parser.NaftahParser.InitCallContext.class,
+																								org.daiitech.naftah.parser.NaftahParser.FunctionCallContext.class));
 								boolean parsingAssignment = currentContext.isParsingAssignment();
 
 								// process value
 								var result = defaultNaftahParserVisitor.visit(valueExpressionContext.value());
 
-								if (!creatingCollection && parsingAssignment) {
+								if (!creatingCollection && !callingInitOrFunction && parsingAssignment) {
 									var currentDeclaration = currentContext.getDeclarationOfAssignment();
 									Class<?> currentDeclarationType = currentDeclaration.a.getType();
 									Class<?> resultType = Objects.nonNull(result) ? result.getClass() : Object.class;
