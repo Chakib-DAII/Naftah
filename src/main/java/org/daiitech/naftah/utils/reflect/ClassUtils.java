@@ -799,6 +799,10 @@ public final class ClassUtils {
 		methodOrConstructor.setAccessible(true);
 		Object possibleResult = null;
 		if (methodOrConstructor instanceof Method method) {
+			if (Objects.nonNull(instance) && !NaftahObject.class
+					.isAssignableFrom(method.getDeclaringClass()) && instance instanceof NaftahObject naftahObject) {
+				instance = naftahObject.get();
+			}
 			possibleResult = method.invoke(instance, executableArgs);
 		}
 		else if (methodOrConstructor instanceof Constructor<?> constructor) {

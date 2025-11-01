@@ -80,6 +80,9 @@ public record NaftahObject(
 		Objects.requireNonNull(type);
 		if (fromJava) {
 			Objects.requireNonNull(javaObject);
+			if (javaObject instanceof NaftahObject naftahObject) {
+				javaObject = Objects.requireNonNull(naftahObject.javaObject);
+			}
 		}
 		else {
 			Objects.requireNonNull(objectFields);

@@ -27,6 +27,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
+import org.daiitech.naftah.utils.reflect.ClassUtils;
 
 import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -366,7 +367,7 @@ public final class ObjectUtils {
 		Class<?> cls = obj.getClass();
 
 		return cls
-				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class || cls == Object.class;
+				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class || cls == Object.class || cls == Class.class;
 	}
 
 	/**
@@ -624,6 +625,17 @@ public final class ObjectUtils {
 		}
 		else if (CollectionUtils.isCollectionMapOrArray(o)) {
 			result = CollectionUtils.toString(o);
+		}
+		else if (o instanceof Class<?> aClass) {
+			result = "فئة: " + ClassUtils.getQualifiedName(aClass.getName()) + " - " + aClass.getName();
+		}
+		else if (o.getClass().equals(Object.class)) {
+			result = """
+						الكائن من الفئة %s - %s، ذا رمز التجزئة: %s
+						"""
+					.formatted( ClassUtils.getQualifiedName(o.getClass().getName()),
+								o.getClass().getName(),
+								Integer.toHexString(o.hashCode()));
 		}
 		else {
 			result = o.toString();
