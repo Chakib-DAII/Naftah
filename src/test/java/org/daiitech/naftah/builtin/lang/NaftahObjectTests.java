@@ -120,10 +120,10 @@ class NaftahObjectTests {
 	void testConvertNestedMapAndList() {
 		Map<String, Object> complex = Map
 				.of(
-						"list",
-						List.of(1, 2, 3),
-						"map",
-						Map.of("a", "A")
+					"list",
+					List.of(1, 2, 3),
+					"map",
+					Map.of("a", "A")
 				);
 
 		Map<String, Object> result = NaftahObject.toMap(complex);

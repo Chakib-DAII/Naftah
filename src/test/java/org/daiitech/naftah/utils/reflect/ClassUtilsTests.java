@@ -112,14 +112,14 @@ public class ClassUtilsTests {
 		Map<String, Class<?>> classMap = Map.of("جافا:لغة:سلسلة", String.class);
 		var methodsFiltered = ClassUtils.getClassMethods(classMap, m -> m.getName().equals("trim"));
 		assertTrue(methodsFiltered
-						   .values()
-						   .stream()
-						   .flatMap(List::stream)
-						   .anyMatch(jf -> jf.getQualifiedCall().equals("جافا:لغة:سلسلة::تقليم") && jf
-								   .getClazz()
-								   .equals(String.class) && jf.getMethod().getName().equals(jf.getMethodName()) && !jf
-								   .isStatic() && jf.isInvocable()
-						   ));
+				.values()
+				.stream()
+				.flatMap(List::stream)
+				.anyMatch(jf -> jf.getQualifiedCall().equals("جافا:لغة:سلسلة::تقليم") && jf
+						.getClazz()
+						.equals(String.class) && jf.getMethod().getName().equals(jf.getMethodName()) && !jf
+								.isStatic() && jf.isInvocable()
+				));
 	}
 
 	@Test
@@ -130,16 +130,16 @@ public class ClassUtilsTests {
 		Map<String, Class<?>> classMap = Map.of("جافا:لغة:سلسلة", String.class);
 		var methodsFiltered = ClassUtils.getClassConstructors(classMap, ClassUtils::isInvocable);
 		assertTrue(methodsFiltered
-						   .values()
-						   .stream()
-						   .flatMap(List::stream)
-						   .anyMatch(jci -> jci.getQualifiedName().equals("جافا:لغة:سلسلة") && jci
-								   .getClazz()
-								   .equals(String.class) && jci
-								   .getConstructor()
-								   .getName()
-								   .equals(String.class.getName()) && jci.isInvocable()
-						   ));
+				.values()
+				.stream()
+				.flatMap(List::stream)
+				.anyMatch(jci -> jci.getQualifiedName().equals("جافا:لغة:سلسلة") && jci
+						.getClazz()
+						.equals(String.class) && jci
+								.getConstructor()
+								.getName()
+								.equals(String.class.getName()) && jci.isInvocable()
+				));
 	}
 
 	@Test
@@ -165,9 +165,9 @@ public class ClassUtilsTests {
 	void getBuiltinMethodsTest() {
 		List<BuiltinFunction> builtinFunctions = ClassUtils
 				.getBuiltinMethods(Set
-										   .of(SystemBuiltinFunctions.class,
-											   RuntimeBuiltinFunctions.class,
-											   CollectionBuiltinFunctions.class));
+						.of(SystemBuiltinFunctions.class,
+							RuntimeBuiltinFunctions.class,
+							CollectionBuiltinFunctions.class));
 		assertNotNull(builtinFunctions);
 		assertEquals(49, builtinFunctions.size());
 	}
@@ -176,12 +176,12 @@ public class ClassUtilsTests {
 	void getBuiltinMethodsMapTest() {
 		Map<String, List<BuiltinFunction>> builtinFunctions = ClassUtils
 				.getBuiltinMethods(Map
-										   .of("org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions",
-											   SystemBuiltinFunctions.class,
-											   "org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions",
-											   RuntimeBuiltinFunctions.class,
-											   "org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions",
-											   CollectionBuiltinFunctions.class));
+						.of("org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions",
+							SystemBuiltinFunctions.class,
+							"org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions",
+							RuntimeBuiltinFunctions.class,
+							"org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions",
+							CollectionBuiltinFunctions.class));
 		assertNotNull(builtinFunctions);
 		assertEquals(49, builtinFunctions.size());
 	}
@@ -198,21 +198,21 @@ public class ClassUtilsTests {
 		String builtinClassToDetailedString = ClassUtils.classToDetailedString(Builtin.class);
 		assertNotNull(builtinClassToDetailedString);
 		assertEquals(
-				"""
-					تفاصيل الصنف:
-						- الاسم الكامل: org.daiitech.naftah.builtin.Builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة:مدرجة_مدرجة
-						- الاسم المختصر: Builtin - مدرجة_مدرجة
-						- الحزمة: org.daiitech.naftah.builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة
-						- عام (public)؟: نعم
-						- مجرد (abstract)؟: لا
-						- واجهة (interface)؟: لا
-					- الصنف الأب (super classes): java.lang.Object - جافا:لغة:كائن
-						- تعداد (enum)؟: لا
-						- توصيف (annotation)؟: لا
-						- سجل (record)؟: لا
-						- نوع بدائي (primitive)؟: لا
-				""",
-				builtinClassToDetailedString);
+						"""
+							تفاصيل الصنف:
+								- الاسم الكامل: org.daiitech.naftah.builtin.Builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة:مدرجة_مدرجة
+								- الاسم المختصر: Builtin - مدرجة_مدرجة
+								- الحزمة: org.daiitech.naftah.builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة
+								- عام (public)؟: نعم
+								- مجرد (abstract)؟: لا
+								- واجهة (interface)؟: لا
+							- الصنف الأب (super classes): java.lang.Object - جافا:لغة:كائن
+								- تعداد (enum)؟: لا
+								- توصيف (annotation)؟: لا
+								- سجل (record)؟: لا
+								- نوع بدائي (primitive)؟: لا
+						""",
+						builtinClassToDetailedString);
 	}
 
 	@Nested
@@ -224,11 +224,11 @@ public class ClassUtilsTests {
 
 			Object result = ClassUtils
 					.invokeJvmExecutable(
-							obj,
-							method,
-							List.of(),
-							Object.class,
-							false
+											obj,
+											method,
+											List.of(),
+											Object.class,
+											false
 					);
 
 			assertEquals(System.getProperties(), result);
@@ -240,13 +240,13 @@ public class ClassUtilsTests {
 
 			Object result = ClassUtils
 					.invokeJvmExecutable(
-							null,
-							method,
-							List
-									.of(new Pair<>(null, "_"),
-										new Pair<>(null, new String[]{"Naftah", "Lang"})),
-							String.class,
-							false
+											null,
+											method,
+											List
+													.of(new Pair<>(null, "_"),
+														new Pair<>(null, new String[]{"Naftah", "Lang"})),
+											String.class,
+											false
 					);
 
 			assertEquals("Naftah_Lang", result);
@@ -256,23 +256,23 @@ public class ClassUtilsTests {
 		void testInvokeConstructor() throws Exception {
 			Constructor<?> constructor = NaftahObject.class
 					.getConstructor(
-							boolean.class,
-							Object.class,
-							Class.class,
-							Map.class);
+									boolean.class,
+									Object.class,
+									Class.class,
+									Map.class);
 
 			Object javaObject = new Object();
 
 			Object instance = ClassUtils
 					.invokeJvmConstructor(
-							constructor,
-							List
-									.of(new Pair<>(null, true),
-										new Pair<>(null, javaObject),
-										new Pair<>(null, Object.class),
-										new Pair<>(null, null)),
-							NaftahObject.class,
-							false
+											constructor,
+											List
+													.of(new Pair<>(null, true),
+														new Pair<>(null, javaObject),
+														new Pair<>(null, Object.class),
+														new Pair<>(null, null)),
+											NaftahObject.class,
+											false
 					);
 
 			assertTrue(instance instanceof NaftahObject);
@@ -283,31 +283,31 @@ public class ClassUtilsTests {
 
 
 			Object naftahScriptObject = new LinkedHashMap<>(Map
-																	.of("أ",
-																		DeclaredVariable
-																				.of(null,
-																					"أ",
-																					false,
-																					null,
-																					DynamicNumber.of(1)),
-																		"ب",
-																		DeclaredVariable
-																				.of(null,
-																					"ب",
-																					false,
-																					null,
-																					DynamicNumber.of(4))));
+					.of("أ",
+						DeclaredVariable
+								.of(null,
+									"أ",
+									false,
+									null,
+									DynamicNumber.of(1)),
+						"ب",
+						DeclaredVariable
+								.of(null,
+									"ب",
+									false,
+									null,
+									DynamicNumber.of(4))));
 
 			instance = ClassUtils
 					.invokeJvmConstructor(
-							constructor,
-							List
-									.of(new Pair<>(null, false),
-										new Pair<>(null, null),
-										new Pair<>(null, Map.class),
-										new Pair<>(null, naftahScriptObject)),
-							NaftahObject.class,
-							false
+											constructor,
+											List
+													.of(new Pair<>(null, false),
+														new Pair<>(null, null),
+														new Pair<>(null, Map.class),
+														new Pair<>(null, naftahScriptObject)),
+											NaftahObject.class,
+											false
 					);
 
 			assertTrue(instance instanceof NaftahObject);
@@ -328,15 +328,15 @@ public class ClassUtilsTests {
 				throw new RuntimeException(e);
 			}
 
-			assertThrows(IllegalArgumentException.class,
-						 () -> ClassUtils
-								 .invokeJvmExecutable(
-										 obj,
-										 method,
-										 List.of(new Pair<>("a", 1)), // more args
-										 int.class,
-										 false
-								 )
+			assertThrows(   IllegalArgumentException.class,
+							() -> ClassUtils
+									.invokeJvmExecutable(
+															obj,
+															method,
+															List.of(new Pair<>("a", 1)), // more args
+															int.class,
+															false
+									)
 			);
 		}
 
@@ -347,14 +347,14 @@ public class ClassUtilsTests {
 		static Stream<Arguments> primitiveConversionProvider() {
 			return Stream
 					.of(
-							Arguments.of(5.5, int.class, 5),
-							Arguments.of(42.0, long.class, 42L),
-							Arguments.of(1.5f, double.class, 1.5),
-							Arguments.of(7, float.class, 7f),
-							Arguments.of(true, boolean.class, true),
-							Arguments.of('A', char.class, 'A'),
-							Arguments.of(9, short.class, (short) 9),
-							Arguments.of(3, byte.class, (byte) 3)
+						Arguments.of(5.5, int.class, 5),
+						Arguments.of(42.0, long.class, 42L),
+						Arguments.of(1.5f, double.class, 1.5),
+						Arguments.of(7, float.class, 7f),
+						Arguments.of(true, boolean.class, true),
+						Arguments.of('A', char.class, 'A'),
+						Arguments.of(9, short.class, (short) 9),
+						Arguments.of(3, byte.class, (byte) 3)
 					);
 		}
 
