@@ -459,7 +459,7 @@ public final class ObjectUtils {
 		}
 
 		if (left instanceof NaftahObject naftahObject) {
-			left = naftahObject.get(true);
+			left = naftahObject.get(false);
 		}
 
 		if (right instanceof NaftahObject naftahObject) {
