@@ -24,6 +24,7 @@ import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
+import org.daiitech.naftah.builtin.lang.JvmExecutable;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
@@ -742,44 +743,67 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Dynamically invokes a Java {@link Method} or {@link Constructor} via reflection.
+	 * Dynamically invokes a Java {@link Method} or {@link Constructor} using reflection.
 	 *
-	 * <p>This unified invocation utility supports both:</p>
+	 * <p>This unified reflection utility abstracts the complexity of invoking either
+	 * a {@link Method} or {@link Constructor} by automatically handling parameter
+	 * conversion, null-safety, and primitive boxing/unboxing. It is designed for
+	 * runtime execution environments that need to dynamically call JVM executables
+	 * without compile-time type information.</p>
+	 *
+	 * <h3>Supported executable types</h3>
 	 * <ul>
-	 * <li><b>Instance and static methods</b> — using {@link Method#invoke(Object, Object...)}.</li>
-	 * <li><b>Constructors</b> — using {@link Constructor#newInstance(Object...)}.</li>
+	 * <li><b>Instance and static methods</b> — invoked via {@link Method#invoke(Object, Object...)}.</li>
+	 * <li><b>Constructors</b> — invoked via {@link Constructor#newInstance(Object...)}.</li>
 	 * </ul>
 	 *
-	 * <p>All arguments are automatically converted to match the target’s parameter types,
-	 * including support for primitives, arrays, collections, and generic types.
-	 * If {@code useNone} is enabled, {@link None#get()} is returned in place of {@code null}
-	 * or {@code void} results.</p>
+	 * <h3>Argument conversion</h3>
+	 * <p>Each argument is automatically converted to match the target parameter’s
+	 * declared type, including support for:
+	 * <ul>
+	 * <li>Primitive and wrapper types (e.g. {@code int ↔ Integer})</li>
+	 * <li>Arrays and collections</li>
+	 * <li>Generic types and parameterized arguments</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * <h3>Null and {@link None} handling</h3>
+	 * <p>If {@code useNone} is {@code true}, the method returns {@link None#get()}
+	 * instead of {@code null} or {@code void} results, ensuring a non-null return
+	 * value in all cases.</p>
+	 *
+	 * <h3>Parameter validation</h3>
+	 * <p>If the number of provided arguments does not match the executable’s parameter count,
+	 * an {@link IllegalArgumentException} is thrown.</p>
 	 *
 	 * @param instance            the target object instance for method invocation,
-	 *                            or {@code null} if invoking a static method or constructor.
-	 * @param methodOrConstructor the {@link Executable} to invoke
-	 *                            (either a {@link Method} or a {@link Constructor}).
-	 * @param args                a list of {@code Pair<String, Object>} representing
+	 *                            or {@code null} when invoking a static method or a constructor.
+	 * @param methodOrConstructor the reflective {@link Executable} to invoke (either a {@link Method} or a
+	 *                            {@link Constructor}).
+	 * @param args                a list of {@link Pair}&lt;{@link String}, {@link Object}&gt; representing
 	 *                            argument names and their corresponding values.
-	 * @param returnType          the expected return type. Use {@link Void#TYPE} or {@link Void}
+	 * @param returnType          the expected return type of the invocation. Use {@link Void#TYPE} or {@link Void}
 	 *                            for methods that return {@code void}.
-	 * @param useNone             if {@code true}, replaces {@code null} results with {@link None#get()}.
+	 * @param useNone             if {@code true}, replaces {@code null} or {@code void} results with
+	 *                            {@link None#get()}.
 	 * @return the invocation result, or {@link None#get()} if the result is {@code null}
 	 *         or the executable has a {@code void} return type.
-	 * @throws InvocationTargetException if the underlying method or constructor throws an exception.
-	 * @throws InstantiationException    if the target constructor cannot instantiate a new object.
-	 * @throws IllegalAccessException    if reflective access is not permitted.
-	 * @throws IllegalArgumentException  if argument count or types do not match the executable’s parameters.
-	 * @see Method#invoke(Object, Object...)
-	 * @see Constructor#newInstance(Object...)
-	 * @see Executable
+	 * @throws InvocationTargetException if the underlying executable throws an exception.
+	 * @throws InstantiationException    if the target constructor fails to create a new instance.
+	 * @throws IllegalAccessException    if this {@link Executable} object is enforcing Java language access control
+	 *                                   and the underlying method or constructor is inaccessible.
+	 * @throws IllegalArgumentException  if the provided arguments do not match the executable’s parameter types or
+	 *                                   count.
+	 * @see java.lang.reflect.Method#invoke(Object, Object...)
+	 * @see java.lang.reflect.Constructor#newInstance(Object...)
+	 * @see java.lang.reflect.Executable
 	 */
-	public static Object invokeJvmExecutable(
-												Object instance,
-												Executable methodOrConstructor,
-												List<Pair<String, Object>> args,
-												Class<?> returnType,
-												boolean useNone)
+	public static <T extends Executable> Object invokeJvmExecutable(
+																	Object instance,
+																	T methodOrConstructor,
+																	List<Pair<String, Object>> args,
+																	Class<?> returnType,
+																	boolean useNone)
 			throws InvocationTargetException,
 			InstantiationException,
 			IllegalAccessException {
@@ -796,12 +820,67 @@ public final class ClassUtils {
 			executableArgs[i] = convertArgument(args.get(i).b, paramTypes[i], genericTypes[i], useNone);
 		}
 
+		return invokeJvmExecutable(instance, methodOrConstructor, executableArgs, returnType);
+	}
+
+	/**
+	 * Invokes a given Java {@link Method} or {@link Constructor} reflectively with the specified arguments.
+	 *
+	 * <p>This low-level helper provides direct reflective invocation of any JVM {@link Executable},
+	 * including both instance and static methods as well as constructors. It performs runtime access
+	 * override, handles {@link NaftahObject} unwrapping for method calls, and provides unified return
+	 * value handling using {@link None#get()} for {@code void} or {@code null} results.</p>
+	 *
+	 * <h3>Behavior overview</h3>
+	 * <ul>
+	 * <li>Automatically calls {@link java.lang.reflect.AccessibleObject#setAccessible(boolean)} to bypass Java
+	 * access checks.</li>
+	 * <li>Invokes instance or static methods via {@link Method#invoke(Object, Object...)}.</li>
+	 * <li>Creates new instances via {@link Constructor#newInstance(Object...)}.</li>
+	 * <li>Unwraps {@link NaftahObject} instances automatically if the declaring class
+	 * is not a subclass of {@link NaftahObject}.</li>
+	 * <li>Returns {@link None#get()} for {@code void} or {@code null} return values.</li>
+	 * </ul>
+	 *
+	 * <h3>Return semantics</h3>
+	 * <p>
+	 * If the executable returns a value and it is non-null, that value is returned directly.
+	 * Otherwise, {@link None#get()} is returned to represent an absence of value.
+	 * </p>
+	 *
+	 * @param instance            the target object instance for method invocation,
+	 *                            or {@code null} when invoking a static method or a constructor.
+	 * @param methodOrConstructor the reflective {@link Executable} to invoke (either a {@link Method} or a
+	 *                            {@link Constructor}).
+	 * @param executableArgs      an array of argument values to pass to the executable, in declared order.
+	 * @param returnType          the expected return type of the invocation. Use {@link Void#TYPE} or {@link Void}
+	 *                            for {@code void} methods or constructors.
+	 * @return the invocation result, or {@link None#get()} if the result is {@code null}
+	 *         or the executable has a {@code void} return type.
+	 * @throws InvocationTargetException if the underlying method or constructor throws an exception.
+	 * @throws InstantiationException    if the target constructor fails to instantiate a new object.
+	 * @throws IllegalAccessException    if this {@link Executable} object is enforcing Java language access control
+	 *                                   and the underlying method or constructor is inaccessible.
+	 * @see java.lang.reflect.Method#invoke(Object, Object...)
+	 * @see java.lang.reflect.Constructor#newInstance(Object...)
+	 * @see java.lang.reflect.AccessibleObject#setAccessible(boolean)
+	 * @see NaftahObject
+	 * @see None#get()
+	 */
+	public static <T extends Executable> Object invokeJvmExecutable(
+																	Object instance,
+																	T methodOrConstructor,
+																	Object[] executableArgs,
+																	Class<?> returnType)
+			throws InvocationTargetException,
+			InstantiationException,
+			IllegalAccessException {
 		methodOrConstructor.setAccessible(true);
 		Object possibleResult = null;
 		if (methodOrConstructor instanceof Method method) {
 			if (Objects.nonNull(instance) && !NaftahObject.class
 					.isAssignableFrom(method.getDeclaringClass()) && instance instanceof NaftahObject naftahObject) {
-				instance = naftahObject.get();
+				instance = naftahObject.get(true);
 			}
 			possibleResult = method.invoke(instance, executableArgs);
 		}
@@ -812,28 +891,95 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Convenience wrapper for {@link #invokeJvmExecutable(Object, Executable, List, Class, boolean)}
-	 * that directly invokes a {@link Constructor}.
+	 * Invokes a Java {@link Constructor} reflectively using the given argument list.
+	 *
+	 * <p>This is a convenience wrapper around
+	 * {@link #invokeJvmExecutable(Object, Executable, List, Class, boolean)}
+	 * that simplifies reflective constructor invocation by automatically passing
+	 * {@code null} as the instance (since constructors do not require one).</p>
+	 *
+	 * <p>All constructor arguments are converted as needed to match the parameter types,
+	 * including handling of primitive values, arrays, and generic types. The method also
+	 * supports the {@link None} sentinel for representing {@code null} or {@code void}
+	 * results, depending on the {@code useNone} flag.</p>
+	 *
+	 * <h3>Behavior overview</h3>
+	 * <ul>
+	 * <li>Uses {@link java.lang.reflect.Constructor#newInstance(Object...)} for instantiation.</li>
+	 * <li>Automatically adjusts and converts argument types where necessary.</li>
+	 * <li>Returns {@link None#get()} if the constructor result is {@code null} or if {@code useNone} is enabled
+	 * .</li>
+	 * <li>Throws standard reflection exceptions for access or instantiation failures.</li>
+	 * </ul>
 	 *
 	 * @param methodOrConstructor the {@link Constructor} to invoke.
-	 * @param args                the constructor arguments as a list of {@code Pair<String, Object>}.
+	 * @param args                the constructor arguments as a list of {@code Pair<String, Object>}, where each pair
+	 *                            represents an argument name and its value.
 	 * @param returnType          the expected return type of the constructed object.
-	 * @param useNone             if {@code true}, replaces {@code null} or {@code void} results
-	 *                            with {@link None#get()}.
-	 * @return the newly created instance, or {@link None#get()} if the result is {@code null}.
+	 * @param useNone             if {@code true}, replaces {@code null} or {@code void} results with
+	 *                            {@link None#get()}.
+	 * @return the newly created instance, or {@link None#get()} if the constructor returns {@code null}
+	 *         or {@code void}, or if {@code useNone} is enabled.
 	 * @throws InvocationTargetException if the underlying constructor throws an exception.
 	 * @throws InstantiationException    if the constructor cannot instantiate a new object.
 	 * @throws IllegalAccessException    if reflective access is not permitted.
 	 * @throws IllegalArgumentException  if the argument count or types do not match the constructor parameters.
+	 * @see #invokeJvmExecutable(Object, Executable, List, Class, boolean)
+	 * @see java.lang.reflect.Constructor#newInstance(Object...)
+	 * @see None#get()
 	 */
-	public static Object invokeJvmConstructor(  Executable methodOrConstructor,
-												List<Pair<String, Object>> args,
-												Class<?> returnType,
-												boolean useNone)
+	public static <T extends Executable> Object invokeJvmConstructor(   T methodOrConstructor,
+																		List<Pair<String, Object>> args,
+																		Class<?> returnType,
+																		boolean useNone)
 			throws InvocationTargetException,
 			InstantiationException,
 			IllegalAccessException {
 		return invokeJvmExecutable(null, methodOrConstructor, args, returnType, useNone);
+	}
+
+	/**
+	 * Invokes a Java {@link Constructor} reflectively using the specified argument array.
+	 *
+	 * <p>This is a lower-level convenience wrapper around
+	 * {@link #invokeJvmExecutable(Object, Executable, Object[], Class)}
+	 * that specifically targets constructors. It automatically supplies
+	 * {@code null} for the {@code instance} parameter since constructors
+	 * do not require a target object.</p>
+	 *
+	 * <h3>Behavior overview</h3>
+	 * <ul>
+	 * <li>Invokes the provided {@link Constructor} using
+	 * {@link java.lang.reflect.Constructor#newInstance(Object...)}.</li>
+	 * <li>Delegates reflection handling and {@link None#get()} substitution
+	 * to {@link #invokeJvmExecutable(Object, Executable, Object[], Class)}.</li>
+	 * <li>Returns {@link None#get()} for {@code void} or {@code null} results.</li>
+	 * </ul>
+	 *
+	 * <p>This method assumes that all arguments in {@code executableArgs}
+	 * are already type-compatible with the constructor’s parameters.
+	 * For automatic type conversion or named arguments, use the
+	 * {@link #invokeJvmConstructor(Executable, List, Class, boolean)} variant.</p>
+	 *
+	 * @param methodOrConstructor the {@link Constructor} to invoke reflectively.
+	 * @param executableArgs      an array of argument values to pass to the constructor.
+	 * @param returnType          the expected return type of the constructed object.
+	 * @return the newly created instance, or {@link None#get()} if the constructor
+	 *         result is {@code null} or represents {@code void}.
+	 * @throws InvocationTargetException if the underlying constructor throws an exception.
+	 * @throws InstantiationException    if the constructor cannot instantiate a new object.
+	 * @throws IllegalAccessException    if reflective access is not permitted.
+	 * @see #invokeJvmExecutable(Object, Executable, Object[], Class)
+	 * @see java.lang.reflect.Constructor#newInstance(Object...)
+	 * @see None#get()
+	 */
+	public static <T extends Executable> Object invokeJvmConstructor(   T methodOrConstructor,
+																		Object[] executableArgs,
+																		Class<?> returnType)
+			throws InvocationTargetException,
+			InstantiationException,
+			IllegalAccessException {
+		return invokeJvmExecutable(null, methodOrConstructor, executableArgs, returnType);
 	}
 
 	/**
@@ -859,7 +1005,7 @@ public final class ClassUtils {
 		}
 
 		if (!targetType.equals(NaftahObject.class) && value instanceof NaftahObject naftahObject) {
-			value = naftahObject.get();
+			value = naftahObject.get(true);
 		}
 
 		// Already assignable
@@ -920,7 +1066,8 @@ public final class ClassUtils {
 		}
 
 		// Handle collections
-		if (Collection.class.isAssignableFrom(targetType) && value instanceof Collection<?> src) {
+		if ((Collection.class.isAssignableFrom(targetType) || targetType
+				.isArray()) && value instanceof Collection<?> src) {
 			Collection<Object> result = createCollection(targetType);
 			Class<?> itemType = Object.class;
 			if (genericType instanceof ParameterizedType pt) {
@@ -932,7 +1079,7 @@ public final class ClassUtils {
 			for (Object item : src) {
 				result.add(convertArgument(item, itemType, itemType, useNone));
 			}
-			return result;
+			return targetType.isArray() ? result.toArray() : result;
 		}
 
 
@@ -965,5 +1112,172 @@ public final class ClassUtils {
 
 		// Fallback to Class.cast
 		return targetType.cast(value);
+	}
+
+	/**
+	 * Attempts to find the most suitable {@link JvmExecutable} (method or constructor)
+	 * from a collection of candidates, based on the provided argument list.
+	 *
+	 * <p>This overload delegates to
+	 * {@link #findBestExecutable(Collection, List, boolean)} with
+	 * {@code removeInstanceArg = false}.</p>
+	 *
+	 * @param candidates the collection of available {@link JvmExecutable} instances to evaluate.
+	 * @param args       the argument list to match, represented as {@code Pair<String, Object>}
+	 *                   where each pair contains the argument name and its value.
+	 * @param <T>        the type of {@link JvmExecutable} (e.g. {@code JvmFunction}, {@code BuiltinFunction}).
+	 * @return a {@link Pair} containing the best-matching {@link JvmExecutable} and its
+	 *         prepared argument array; or {@code null} if no suitable match is found.
+	 * @see #findBestExecutable(Collection, List, boolean)
+	 */
+	public static <T extends JvmExecutable> Pair<T, Object[]> findBestExecutable(   Collection<T> candidates,
+																					List<Pair<String, Object>> args) {
+		return findBestExecutable(candidates, args, false);
+	}
+
+	/**
+	 * Determines the best-matching {@link JvmExecutable} (method or constructor)
+	 * from a given collection of candidates based on argument compatibility.
+	 *
+	 * <p>The matching process computes a “score” for each executable using
+	 * {@link #matchScore(Executable, Class[], List, boolean)}, where lower scores
+	 * indicate a closer match. The executable with the lowest non-negative score
+	 * is returned along with its converted argument array.</p>
+	 *
+	 * <p>If {@code removeInstanceArg} is {@code true}, and the executable represents
+	 * a non-static {@link JvmFunction}, the first argument in {@code args} is removed,
+	 * as it corresponds to the instance already passed during invocation.</p>
+	 *
+	 * @param candidates        the collection of {@link JvmExecutable} candidates to search through.
+	 * @param args              the argument list as {@code Pair<String, Object>} entries.
+	 * @param removeInstanceArg whether to remove the first argument when matching
+	 *                          non-static functions (useful when the instance is already supplied).
+	 * @param <T>               the type of {@link JvmExecutable}.
+	 * @return a {@link Pair} containing:
+	 *         <ul>
+	 *         <li>the best-matching {@link JvmExecutable}, and</li>
+	 *         <li>the prepared and type-converted argument array for invocation.</li>
+	 *         </ul>
+	 *         Returns {@code null} if no compatible executable is found.
+	 * @see #matchScore(Executable, Class[], List, boolean)
+	 * @see JvmExecutable
+	 * @see JvmFunction
+	 * @see BuiltinFunction
+	 */
+	public static <T extends JvmExecutable> Pair<T, Object[]> findBestExecutable(   Collection<T> candidates,
+																					List<Pair<String, Object>> args,
+																					boolean removeInstanceArg) {
+		if (candidates == null || candidates.isEmpty()) {
+			return null;
+		}
+
+		Pair<T, Object[]> best = null;
+		int bestScore = Integer.MAX_VALUE;
+
+		for (T jvmExecutable : candidates) {
+			Executable executable = jvmExecutable.getExecutable();
+			Class<?>[] paramTypes = executable.getParameterTypes();
+
+			// if the current executable is not static we should remove the first arg because the instance is passed
+			if (removeInstanceArg && jvmExecutable instanceof JvmFunction jvmFunction && !jvmFunction
+					.isStatic()) {
+				args.remove(0);
+			}
+
+			if (paramTypes.length != args.size()) {
+				continue;
+			}
+
+			Pair<Integer, Object[]> scoreAndArgs = matchScore(  executable,
+																paramTypes,
+																args,
+																jvmExecutable instanceof BuiltinFunction);
+			if (scoreAndArgs.a >= 0 && scoreAndArgs.a < bestScore) {
+				best = new Pair<>(jvmExecutable, scoreAndArgs.b);
+				bestScore = scoreAndArgs.a;
+			}
+		}
+		return best;
+	}
+
+	/**
+	 * Calculates how closely a set of provided arguments matches the parameters of a given {@link Executable}.
+	 *
+	 * <p>This method attempts to convert each argument into the target parameter type using
+	 * {@code convertArgument()}, computing a total compatibility score as follows:</p>
+	 * <ul>
+	 * <li>Exact type match: score += 0</li>
+	 * <li>Numeric type coercion (e.g. {@code Integer → Double}): score += 1</li>
+	 * <li>Generic or compatible conversion: score += 3</li>
+	 * <li>{@code null} argument: score += 10</li>
+	 * </ul>
+	 *
+	 * <p>If any argument fails conversion, the method returns a score of {@code -1} to indicate incompatibility.</p>
+	 *
+	 * @param executable the target method or constructor being evaluated.
+	 * @param params     the parameter types of the executable.
+	 * @param args       the provided arguments as a list of {@code Pair<String, Object>}.
+	 * @param useNone    whether {@link None#get()} should be treated as a {@code null}-equivalent placeholder.
+	 * @param <T>        the type of the {@link Executable}.
+	 * @return a {@link Pair} containing:
+	 *         <ul>
+	 *         <li>The computed match score (lower is better, {@code -1} indicates failure).</li>
+	 *         <li>The array of converted argument values ready for invocation.</li>
+	 *         </ul>
+	 */
+	private static <T extends Executable> Pair<Integer, Object[]> matchScore(   T executable,
+																				Class<?>[] params,
+																				List<Pair<String, Object>> args,
+																				boolean useNone) {
+		int score = 0;
+		Object[] executableArgs = new Object[args.size()];
+
+		for (int i = 0; i < params.length; i++) {
+			Object arg = args.get(i).b;
+			Class<?> param = params[i];
+
+			try {
+				Object converted = convertArgument(arg, param, getGenericType(executable, i), useNone);
+				if (converted == null && param.isPrimitive()) {
+					return new Pair<>(-1, null);
+				}
+
+				// scoring: lower is better
+				if (arg == null) {
+					score += 10;
+				}
+				else if (param.isInstance(converted)) {
+					score += 0;
+				}
+				else //noinspection DataFlowIssue
+					if (Number.class.isAssignableFrom(param) && Number.class.isAssignableFrom(converted.getClass())) {
+						score += 1;
+					}
+					else {
+						score += 3;
+					}
+				executableArgs[i] = converted;
+			}
+			catch (Throwable ignored) {
+				return new Pair<>(-1, null); // conversion failed
+			}
+		}
+		return new Pair<>(score, executableArgs);
+	}
+
+	/**
+	 * Retrieves the generic parameter type for the specified parameter index of a given {@link Executable}.
+	 *
+	 * <p>If the executable declares generic parameter types, the corresponding one is returned;
+	 * otherwise, the raw parameter type is used as a fallback.</p>
+	 *
+	 * @param executable the {@link Executable} whose parameter type should be retrieved.
+	 * @param index      the parameter index.
+	 * @param <T>        the type of the {@link Executable}.
+	 * @return the {@link Type} representing the parameter’s declared or generic type.
+	 */
+	private static <T extends Executable> Type getGenericType(T executable, int index) {
+		Type[] generic = executable.getGenericParameterTypes();
+		return (index < generic.length) ? generic[index] : executable.getParameterTypes()[index];
 	}
 }
