@@ -1068,18 +1068,38 @@ public final class ClassUtils {
 		// Handle collections
 		if ((Collection.class.isAssignableFrom(targetType) || targetType
 				.isArray()) && value instanceof Collection<?> src) {
-			Collection<Object> result = createCollection(targetType);
+
 			Class<?> itemType = Object.class;
-			if (genericType instanceof ParameterizedType pt) {
-				Type[] typeArgs = pt.getActualTypeArguments();
-				if (typeArgs.length == 1 && typeArgs[0] instanceof Class<?> c) {
-					itemType = c;
-				}
+			Collection<Object> result;
+			if (targetType.isArray()) {
+				itemType = targetType.getComponentType();
+				result = createCollection(itemType);
 			}
+			else {
+				if (genericType instanceof ParameterizedType pt) {
+					Type[] typeArgs = pt.getActualTypeArguments();
+					if (typeArgs.length == 1 && typeArgs[0] instanceof Class<?> c) {
+						itemType = c;
+					}
+				}
+				result = createCollection(targetType);
+			}
+
 			for (Object item : src) {
 				result.add(convertArgument(item, itemType, itemType, useNone));
 			}
-			return targetType.isArray() ? result.toArray() : result;
+
+			if (targetType.isArray()) {
+				Object array = Array.newInstance(itemType, result.size());
+				int i = 0;
+				for (Object element : result) {
+					Array.set(array, i++, element);
+				}
+				return array;
+			}
+			else {
+				return result;
+			}
 		}
 
 

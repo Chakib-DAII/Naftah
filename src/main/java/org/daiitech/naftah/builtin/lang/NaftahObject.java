@@ -286,6 +286,26 @@ public record NaftahObject(
 					.map(object -> NaftahObject.get(object, original))
 					.collect(Collectors.toCollection(() -> createCollection(collection.getClass())));
 		}
+		else if (javaObject != null && javaObject.getClass().isArray()) {
+			Class<?> componentType = javaObject.getClass().getComponentType();
+
+			// Only handle Object[] and String[]
+			if (!componentType.isPrimitive() && (Object.class
+					.isAssignableFrom(componentType) || componentType == String.class)) {
+				int length = Array.getLength(javaObject);
+				Object resultArray = Array.newInstance(componentType, length);
+
+				for (int i = 0; i < length; i++) {
+					Object element = Array.get(javaObject, i);
+					Array.set(resultArray, i, NaftahObject.get(element, original));
+				}
+
+				return resultArray;
+			}
+			else {
+				return javaObject;
+			}
+		}
 		else if (javaObject instanceof Map<?, ?> map) {
 			return map
 					.entrySet()
