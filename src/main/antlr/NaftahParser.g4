@@ -63,21 +63,38 @@ parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclarat
 // Parameter declaration : parameter id with optional type and assignment
 parameterDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 
-// Chained Function calls: Can have arguments and return values
-// and the return value is piped to the next in case of chain
+/**
+* Chained Function calls: Can have arguments and return values
+* and the return value is piped to the next in case of chain
+*/
 functionCall: primaryCall callSegment*;
 
-// constructor call: Can have arguments and return the created object
-// the object instance is piped to the next in case of chall chain
-initCall: qualifiedName LPAREN argumentList? RPAREN callSegment*;
+/**
+* constructor call: Can have arguments and return the created object
+* the object instance is piped to the next in case of chall chain
+*/
+initCall: qualifiedName targetExecutableIndex? LPAREN argumentList? RPAREN callSegment*;
 
-// Chained Function calls segment: Can have arguments and return values
-// in case of ::: we reuse the previous call qualified name as the same qualified for the current
-// and we don't in case of :: (where the qualified name can be provided for itself)
+/**
+* Chained Function calls segment: Can have arguments and return values
+* in case of ::: we reuse the previous call qualified name as the same qualified for the current
+* and we don't in case of :: (where the qualified name can be provided for itself)
+*/
 callSegment: COLON COLON COLON? primaryCall;
 
 // Function call: Can have arguments and return values
-primaryCall: (ID | qualifiedCall) LPAREN argumentList? RPAREN;
+primaryCall: (ID | qualifiedCall) targetExecutableIndex? LPAREN argumentList? RPAREN;
+
+/**
+ * Represents the index of the target executable (method or constructor)
+ * in the case where multiple overloads exist for a given qualified call.
+ *
+ * <p>
+ * If the qualified call maps to a single executable, this index is ignored.
+ * Otherwise, it specifies which overloaded executable to invoke.
+ * </p>
+ */
+targetExecutableIndex: COLON NUMBER;
 
 // Argument list: Expressions separated by commas or semicolons
 argumentList: (ID ASSIGN)? expression ((COMMA | SEMI) (ID ASSIGN)? expression)*;
@@ -143,6 +160,7 @@ tryCases
 
 okCase: OK LPAREN ID RPAREN (DO | ARROW) (block | expression);
 
+// TODO: make variable creation optional
 errorCase: ERROR LPAREN ID RPAREN (DO | ARROW) (block | expression);
 
 optionCases
