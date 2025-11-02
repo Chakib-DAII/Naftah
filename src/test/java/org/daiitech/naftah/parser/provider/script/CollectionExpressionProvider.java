@@ -83,9 +83,9 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 								"{\"أ\", \"ب\", \"ج\"}",
 								new HashSet<>() {
 									{
-										add('أ');
-										add('ب');
-										add('ج');
+										add("أ");
+										add("ب");
+										add("ج");
 									}
 								},
 								null),
@@ -110,7 +110,7 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 					}, null),
 					Arguments
 							.of(true,
-								"مرتب {\"أ\", \"ب\", \"ج\"}",
+								"مرتب {'أ', 'ب', 'ج'}",
 								new LinkedHashSet<>() {
 									{
 										add('أ');

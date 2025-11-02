@@ -51,7 +51,7 @@ public class AssignmentProvider implements ArgumentsProvider {
 										ي
 										""", false, null),
 					Arguments.of(true, """
-										ثابت ز : حرف تعيين "ث"
+										ثابت ز : حرف تعيين 'ث'
 											ز
 										""", 'ث', null),
 					Arguments.of(true, """
