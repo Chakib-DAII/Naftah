@@ -1,6 +1,8 @@
 package org.daiitech.naftah.builtin.utils;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -457,11 +459,11 @@ public final class ObjectUtils {
 		}
 
 		if (left instanceof NaftahObject naftahObject) {
-			left = naftahObject.get();
+			left = naftahObject.get(true);
 		}
 
 		if (right instanceof NaftahObject naftahObject) {
-			right = naftahObject.get();
+			right = naftahObject.get(false);
 		}
 
 		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
@@ -541,7 +543,7 @@ public final class ObjectUtils {
 		}
 
 		if (a instanceof NaftahObject naftahObject) {
-			a = naftahObject.get();
+			a = naftahObject.get(false);
 		}
 
 		// Number or Boolean or Character or String
@@ -683,5 +685,63 @@ public final class ObjectUtils {
 		else {
 			return latinNumberToArabicString(number);
 		}
+	}
+
+	/**
+	 * Returns the size or length of the given object, depending on its type.
+	 *
+	 * <p>This method provides a unified way to determine the "size" of various types
+	 * of objects commonly encountered in Java, including arrays, collections, maps,
+	 * strings, and arbitrary objects. The definition of size depends on the object's
+	 * runtime type as follows:</p>
+	 *
+	 * <ul>
+	 * <li><b>Arrays:</b> Returns the array's length via {@link java.lang.reflect.Array#getLength(Object)}.</li>
+	 * <li><b>Collections:</b> Returns the number of elements using {@link java.util.Collection#size()}.</li>
+	 * <li><b>Maps:</b> Returns the number of key-value mappings using {@link java.util.Map#size()}.</li>
+	 * <li><b>Strings:</b> Returns the number of characters using {@link java.lang.String#length()}.</li>
+	 * <li><b>Other objects:</b> Returns the count of non-static declared fields in the object's class.</li>
+	 * </ul>
+	 *
+	 * <p>If the provided object is {@code null}, this method returns {@code 0}.</p>
+	 *
+	 * @param obj the object whose size is to be determined; may be {@code null}
+	 * @return the size or length of the given object, or {@code 0} if {@code null}
+	 */
+	public static int size(Object obj) {
+		if (obj == null) {
+			return 0;
+		}
+
+		Class<?> clazz = obj.getClass();
+
+		// Array
+		if (clazz.isArray()) {
+			return Array.getLength(obj);
+		}
+
+		// Collection (List, Set, etc.)
+		if (obj instanceof Collection<?>) {
+			return ((Collection<?>) obj).size();
+		}
+
+		// Map
+		if (obj instanceof Map<?, ?>) {
+			return ((Map<?, ?>) obj).size();
+		}
+
+		// String
+		if (obj instanceof String) {
+			return ((String) obj).length();
+		}
+
+		// Other Objects — count declared fields (excluding static)
+		int count = 0;
+		for (Field field : clazz.getDeclaredFields()) {
+			if (!Modifier.isStatic(field.getModifiers())) {
+				count++;
+			}
+		}
+		return count;
 	}
 }

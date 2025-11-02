@@ -261,6 +261,56 @@ public final class CollectionUtils {
 	}
 
 	/**
+	 * Removes and returns the element at the specified index from the given collection.
+	 *
+	 * <p>This method provides an index-based removal operation for any {@link java.util.Collection}
+	 * type that supports element removal via an {@link java.util.Iterator}. It iterates over
+	 * the collection until the target index is reached, removes that element, and returns it.
+	 * </p>
+	 *
+	 * <p>If the collection's size is less than or equal to {@code targetIndex}, an
+	 * {@code IndexOutOfBoundsException}-like error is thrown using
+	 * {@code newNaftahIndexOutOfBoundsBugError(int, int)}.</p>
+	 *
+	 * <p>Behavior details:</p>
+	 * <ul>
+	 * <li>Removes the element at the specified zero-based index.</li>
+	 * <li>Returns the removed element.</li>
+	 * <li>Returns {@code None.get()} if the element cannot be found (which should not occur
+	 * if the bounds check passes).</li>
+	 * </ul>
+	 *
+	 * <p>This method does not support random access and runs in O(n) time.</p>
+	 *
+	 * @param collection  the collection from which to remove the element; must not be {@code null}
+	 * @param targetIndex the zero-based index of the element to remove
+	 * @return the removed element, or {@code None.get()} if no element was removed
+	 * @throws NaftahBugError if {@code targetIndex} is out of bounds for the given collection
+	 * @see java.util.Iterator#remove()
+	 * @see java.util.Collection#size()
+	 */
+	public static Object removeElementAt(Collection<?> collection, int targetIndex) {
+		if (collection.size() <= targetIndex) {
+			throw newNaftahIndexOutOfBoundsBugError(targetIndex, collection.size());
+		}
+
+		Iterator<?> iterator = collection.iterator();
+		int currentIndex = 0;
+		Object removed = None.get();
+
+		while (iterator.hasNext()) {
+			Object item = iterator.next();
+			if (currentIndex == targetIndex) {
+				iterator.remove();
+				removed = item;
+				break;
+			}
+			currentIndex++;
+		}
+		return removed;
+	}
+
+	/**
 	 * Replaces the element at the specified index in a {@link Collection} with a new value.
 	 * <p>
 	 * This method iterates through the collection using an {@link Iterator},
