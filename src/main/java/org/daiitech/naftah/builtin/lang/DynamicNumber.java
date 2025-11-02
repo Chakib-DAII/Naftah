@@ -23,7 +23,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputErr
  *
  * @author Chakib Daii
  */
-public class DynamicNumber extends Number implements Cloneable {
+public class DynamicNumber extends Number implements Comparable<DynamicNumber>, Cloneable {
 	/**
 	 * The underlying numeric value.
 	 */
@@ -551,5 +551,15 @@ public class DynamicNumber extends Number implements Cloneable {
 		catch (CloneNotSupportedException e) {
 			throw new NaftahBugError("فشل الاستنساخ بشكل غير متوقع.", e);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(
+							@SuppressWarnings("NullableProblems")
+							DynamicNumber anotherDynamicNumber) {
+		return NumberUtils.compare(this, anotherDynamicNumber);
 	}
 }

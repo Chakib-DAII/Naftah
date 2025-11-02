@@ -279,11 +279,11 @@ public record NaftahObject(
 	 * @param javaObject the object to process
 	 * @return a converted object representation
 	 */
-	public static Object get(Object javaObject) {
+	public static Object get(Object javaObject, boolean original) {
 		if (javaObject instanceof Collection<?> collection) {
 			return collection
 					.stream()
-					.map(NaftahObject::get)
+					.map(object -> NaftahObject.get(object, original))
 					.collect(Collectors.toCollection(() -> createCollection(collection.getClass())));
 		}
 		else if (javaObject instanceof Map<?, ?> map) {
@@ -292,8 +292,8 @@ public record NaftahObject(
 					.stream()
 					.collect(Collectors
 							.toMap(
-									e -> NaftahObject.get(e.getKey()),
-									e -> NaftahObject.get(e.getValue()),
+									e -> NaftahObject.get(e.getKey(), original),
+									e -> NaftahObject.get(e.getValue(), original),
 									(a, b) -> b,
 									() -> createMap(map.getClass())
 							));
@@ -302,7 +302,7 @@ public record NaftahObject(
 			return javaObject;
 		}
 		else {
-			return toMap(javaObject);
+			return original ? javaObject : toMap(javaObject);
 		}
 	}
 
@@ -316,9 +316,9 @@ public record NaftahObject(
 	 *
 	 * @return the evaluated representation of this object
 	 */
-	public Object get() {
+	public Object get(boolean original) {
 		if (fromJava) {
-			return get(javaObject);
+			return get(javaObject, original);
 		}
 		else {
 			return objectFields;
@@ -396,13 +396,13 @@ public record NaftahObject(
 	public String toString() {
 		if (fromJava) {
 			if (isCollectionMapOrArray(javaObject)) {
-				return CollectionUtils.toString(get());
+				return CollectionUtils.toString(get(false));
 			}
 			if (None.isNone(javaObject) || isSimpleType(javaObject) || isBuiltinType(javaObject)) {
 				return ObjectUtils.getNaftahValueToString(javaObject);
 			}
 			else {
-				return "كائن: " + CollectionUtils.toString((Map<?, ?>) get(), '{', '}');
+				return "كائن: " + CollectionUtils.toString((Map<?, ?>) get(false), '{', '}');
 			}
 		}
 		else {
