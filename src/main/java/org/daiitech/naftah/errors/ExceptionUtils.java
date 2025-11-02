@@ -1,16 +1,22 @@
 package org.daiitech.naftah.errors;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.builtin.lang.JvmExecutable;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
+import static org.daiitech.naftah.parser.NaftahParserHelper.FunctionToString;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
+import static org.daiitech.naftah.parser.NaftahParserHelper.getFunction;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
@@ -492,4 +498,78 @@ public final class ExceptionUtils {
 									column);
 	}
 
+	/**
+	 * Creates and throws a {@link NaftahBugError} when a collection of invocable
+	 * functions or class initializers is found, but the caller did not specify
+	 * an index to select which one to invoke.
+	 *
+	 * <p>This is typically used for overloaded or indexed functions. The generated
+	 * error message (in Arabic) explains how to select a specific version using
+	 * a numeric index appended after the function name with a colon.</p>
+	 *
+	 * <p>The message includes a numbered list of all available invocable versions
+	 * for reference.</p>
+	 *
+	 * @param functionName                 the name of the function or class initializer
+	 * @param functionsOrClassInitializers a collection of available overloaded or indexed invocables
+	 * @param exception                    the original exception that triggered this error, for context
+	 * @param line                         the source line number where the error occurred
+	 * @param column                       the source column number where the error occurred
+	 * @param <T>                          type of {@link JvmExecutable} in the collection
+	 * @return this method never returns normally; it always throws a {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate ambiguity in the invocable list
+	 */
+	public static <T extends JvmExecutable> NaftahBugError newNaftahInvocableListFoundError(String functionName,
+																							Collection<T> functionsOrClassInitializers,
+																							Throwable exception,
+																							int line,
+																							int column) {
+		return new NaftahBugError(
+									"""
+									المُستدعى '%s' مرتبط بعدة نُسخ قابلة للتنفيذ، ويجب تحديد فهرس (عدد) لاختيار أي منها سيتم استدعاؤه.
+									يُضاف هذا الفهرس بعد اسم المُستدعى مباشرة باستخدام النقطتين (:)،
+									مثل المثال التالي:
+
+									المُستدعى:الفهرس(الوسائط)
+
+									على سبيل المثال:
+
+									java.lang.Math::abs
+
+									جافا:لغة:الرياضيات::ابس:0(-5)
+									جافا:لغة:الرياضيات::ابس:1(-500)
+									جافا:لغة:الرياضيات::ابس:2(-555555234،5)
+									جافا:لغة:الرياضيات::ابس:3(-512039123،9)
+
+									يستدعي النسخة ذات الفهرس المطلوبة من الدالة abs.
+
+															النُسخ قابلة للتنفيذ:
+
+									%s
+
+									الخطأ الأصلي:
+
+									"""
+											.formatted( functionName,
+														IntStream
+																.range( 0,
+																		functionsOrClassInitializers
+																				.size())
+																.mapToObj(index -> """
+																					%s
+																					----------------------------------------------
+																					%s
+																					"""
+																		.formatted(
+																					index + 1,
+																					FunctionToString(getFunction(
+																													functionsOrClassInitializers,
+																													index)))
+																)
+																.collect(Collectors
+																		.joining())),
+									exception,
+									line,
+									column);
+	}
 }
