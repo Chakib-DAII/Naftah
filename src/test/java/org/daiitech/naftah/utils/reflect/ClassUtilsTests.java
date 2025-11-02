@@ -1,8 +1,10 @@
 package org.daiitech.naftah.utils.reflect;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.misc.Pair;
+import org.daiitech.naftah.Naftah;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions;
 import org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions;
@@ -18,9 +21,12 @@ import org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.builtin.lang.JvmExecutable;
+import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -220,13 +226,13 @@ public class ClassUtilsTests {
 		@Test
 		void testInvokeInstanceMethod() throws Exception {
 			NaftahObject obj = NaftahObject.of(System.getProperties());
-			Method method = NaftahObject.class.getMethod("get");
+			Method method = NaftahObject.class.getMethod("get", boolean.class);
 
 			Object result = ClassUtils
 					.invokeJvmExecutable(
 											obj,
 											method,
-											List.of(),
+											List.of(new Pair<>(null, false)),
 											Object.class,
 											false
 					);
@@ -338,6 +344,40 @@ public class ClassUtilsTests {
 															false
 									)
 			);
+		}
+
+		@Test
+		void invokeJvmConstructorThrowsExceptionTest() throws Exception {
+			Constructor<Naftah> ctor = Naftah.class.getDeclaredConstructor();
+			assertThrows(   InvocationTargetException.class,
+							() -> ClassUtils.invokeJvmConstructor(ctor, new Object[]{}, NaftahBugError.class));
+		}
+
+	}
+
+	@Nested
+	class BestExecutableTests {
+		@Test
+		void findBestExecutableEmptyCandidatesTest() {
+			List<JvmFunction> candidates = Collections.emptyList();
+			List<Pair<String, Object>> args = Collections.emptyList();
+			assertNull(ClassUtils.findBestExecutable(candidates, args));
+		}
+
+		@Test
+		void findBestExecutableMatchScoreTest() throws NoSuchMethodException {
+			JvmFunction df = JvmFunction
+					.of("any:any:NaftahObject",
+						NaftahObject.class,
+						NaftahObject.class.getMethod("get", boolean.class));
+
+			List<Pair<String, Object>> args = List
+					.of(
+						new Pair<>("a", true)
+					);
+			Pair<JvmExecutable, Object[]> best = ClassUtils.findBestExecutable(Collections.singleton(df), args);
+			assertNotNull(best);
+			assertEquals(JvmFunction.class, best.a.getClass());
 		}
 
 	}
