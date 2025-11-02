@@ -15,8 +15,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
@@ -58,6 +56,7 @@ import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_DECREMENT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_INCREMENT;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidLoopLabelError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableListFoundError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.parser.DefaultContext.LOOP_STACK;
 import static org.daiitech.naftah.parser.DefaultContext.currentLoopLabel;
@@ -818,48 +817,47 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																					.getCharPositionInLine());
 									}
 									else {
-										if (args.isEmpty() || !(args.get(0).b instanceof Number)) {
-											throw new NaftahBugError(
-																		"""
-																		استدعاء المنشئ '%s' مرتبط بقائمة من المنشئين، ويجب تزويد الوسيط الأول كفهرس (عدد) لتحديد المنشئ الذي سيتم استدعاؤه.
+										if (Objects.nonNull(initCallContext.targetExecutableIndex())) {
+											Number jvmClassInitializerIndex = NumberUtils
+													.parseDynamicNumber(initCallContext
+															.targetExecutableIndex()
+															.NUMBER()
+															.getText());
 
-																		%s
-																		"""
-																				.formatted( functionName,
-																							IntStream
-																									.range( 0,
-																											jvmClassInitializersList
-																													.size())
-																									.mapToObj(index -> """
-																														%s
-																														----------------------------------------------
-																														%s
-																														"""
-																											.formatted(
-																														index + 1,
-																														jvmClassInitializersList
-																																.get(index)
-																																.toDetailedString())
-																									)
-																									.collect(Collectors
-																											.joining())),
-
-																		initCallContext.getStart().getLine(),
-																		initCallContext
-																				.getStart()
-																				.getCharPositionInLine());
+											JvmClassInitializer jvmClassInitializer = jvmClassInitializersList
+													.get(jvmClassInitializerIndex.intValue());
+											result = invokeJvmClassInitializer( functionName,
+																				jvmClassInitializer,
+																				args,
+																				initCallContext.getStart().getLine(),
+																				initCallContext
+																						.getStart()
+																						.getCharPositionInLine());
 										}
-										Number jvmClassInitializerIndex = (Number) args.remove(0).b;
-										JvmClassInitializer jvmClassInitializer = jvmClassInitializersList
-												.get(
-														jvmClassInitializerIndex.intValue());
-										result = invokeJvmClassInitializer( functionName,
-																			jvmClassInitializer,
-																			args,
-																			initCallContext.getStart().getLine(),
-																			initCallContext
-																					.getStart()
-																					.getCharPositionInLine());
+										else {
+											try {
+												result = invokeJvmClassInitializer( functionName,
+																					jvmClassInitializersList,
+																					args,
+																					initCallContext
+																							.getStart()
+																							.getLine(),
+																					initCallContext
+																							.getStart()
+																							.getCharPositionInLine());
+											}
+											catch (Throwable th) {
+												throw newNaftahInvocableListFoundError( functionName,
+																						jvmClassInitializersList,
+																						th,
+																						initCallContext
+																								.getStart()
+																								.getLine(),
+																						initCallContext
+																								.getStart()
+																								.getCharPositionInLine());
+											}
+										}
 									}
 								}
 								else {
@@ -924,12 +922,21 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										// and as the instance (this) for java instance methods
 										args.add(0, new Pair<>(null, result));
 
+										Number jvmFunctionIndex = Objects
+												.nonNull(initCallContext.targetExecutableIndex()) ?
+														NumberUtils
+																.parseDynamicNumber(initCallContext
+																		.targetExecutableIndex()
+																		.NUMBER()
+																		.getText()) :
+														null;
+
 										result = visitFunctionCallInChain(  depth,
 																			defaultNaftahParserVisitor,
 																			currentContext,
 																			functionName,
 																			args,
-																			true,
+																			jvmFunctionIndex,
 																			callSegmentContext.getStart().getLine(),
 																			callSegmentContext
 																					.getStart()
@@ -971,12 +978,24 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											.visit(functionCallContext.primaryCall().argumentList());
 								}
 
+								Number jvmFunctionIndex = Objects
+										.nonNull(functionCallContext
+												.primaryCall()
+												.targetExecutableIndex()) ?
+														NumberUtils
+																.parseDynamicNumber(functionCallContext
+																		.primaryCall()
+																		.targetExecutableIndex()
+																		.NUMBER()
+																		.getText()) :
+														null;
+
 								Object result = visitFunctionCallInChain(   depth,
 																			defaultNaftahParserVisitor,
 																			currentContext,
 																			functionName,
 																			args,
-																			false,
+																			jvmFunctionIndex,
 																			functionCallContext.getStart().getLine(),
 																			functionCallContext
 																					.getStart()
@@ -1022,12 +1041,24 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										// and as the instance (this) for java instance methods
 										args.add(0, new Pair<>(null, result));
 
+										jvmFunctionIndex = Objects
+												.nonNull(callSegmentContext
+														.primaryCall()
+														.targetExecutableIndex()) ?
+																NumberUtils
+																		.parseDynamicNumber(callSegmentContext
+																				.primaryCall()
+																				.targetExecutableIndex()
+																				.NUMBER()
+																				.getText()) :
+																null;
+
 										result = visitFunctionCallInChain(  depth,
 																			defaultNaftahParserVisitor,
 																			currentContext,
 																			functionName,
 																			args,
-																			true,
+																			jvmFunctionIndex,
 																			callSegmentContext.getStart().getLine(),
 																			callSegmentContext
 																					.getStart()
@@ -1416,7 +1447,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.visit(forEachLoopStatementContext.expression());
 
 								if (object instanceof NaftahObject naftahObject) {
-									object = naftahObject.get();
+									object = naftahObject.get(false);
 								}
 
 								Iterator<?> iterator;

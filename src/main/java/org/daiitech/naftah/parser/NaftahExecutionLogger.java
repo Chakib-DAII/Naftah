@@ -955,6 +955,7 @@ public final class NaftahExecutionLogger {
 								ctx,
 								context -> """
 																		InitCallContext::qualifiedName -> %s
+																		InitCallContext::targetExecutableIndex -> %s
 																		InitCallContext::LPAREN -> %s
 																		InitCallContext::argumentList -> {
 																			%s
@@ -966,6 +967,9 @@ public final class NaftahExecutionLogger {
 																		"""
 										.formatted( Objects.nonNull(context.qualifiedName()) ?
 															context.qualifiedName().getText() :
+															null,
+													Objects.nonNull(context.targetExecutableIndex()) ?
+															context.targetExecutableIndex().getText() :
 															null,
 													Objects.nonNull(context.LPAREN()) ?
 															context.LPAREN().getText() :
@@ -986,6 +990,7 @@ public final class NaftahExecutionLogger {
 								context -> """
 											PrimaryCallContext::ID -> %s
 											PrimaryCallContext::qualifiedCall -> %s
+											PrimaryCallContext::targetExecutableIndex -> %s
 											PrimaryCallContext::LPAREN -> %s
 											PrimaryCallContext::argumentList -> {
 											%s
@@ -995,6 +1000,9 @@ public final class NaftahExecutionLogger {
 										.formatted( Objects.nonNull(context.ID()) ? context.ID().getText() : null,
 													Objects.nonNull(context.qualifiedCall()) ?
 															context.qualifiedCall().getText() :
+															null,
+													Objects.nonNull(context.targetExecutableIndex()) ?
+															context.targetExecutableIndex().getText() :
 															null,
 													Objects.nonNull(context.LPAREN()) ?
 															context.LPAREN().getText() :
