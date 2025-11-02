@@ -1444,7 +1444,7 @@ public final class NaftahParserHelper {
 	 *
 	 * @param functionName the name of the function being invoked (used for error reporting)
 	 * @param jvmFunctions the collection of available {@link JvmExecutable} functions
-	 * @param args         the list of arguments as {@link Pair<String, Object>}, where the first element may be the
+	 * @param args         the list of arguments as {@link Pair}, where the first element may be the
 	 *                     instance
 	 * @param line         the source line number for error reporting
 	 * @param column       the source column number for error reporting
@@ -1585,7 +1585,7 @@ public final class NaftahParserHelper {
 	 *
 	 * @param functionName    the name of the function (used for error reporting)
 	 * @param builtinFunction the {@link BuiltinFunction} to invoke
-	 * @param args            either an array of arguments or a {@link List} of {@link Pair<String, Object>} name
+	 * @param args            either an array of arguments or a {@link List} of {@link Pair} name
 	 *                        /value pairs
 	 * @param line            the source code line number for error reporting
 	 * @param column          the source code column number for error reporting
@@ -1668,7 +1668,7 @@ public final class NaftahParserHelper {
 	 *
 	 * @param functionName     the name of the function (used for error reporting)
 	 * @param jvmFunction      the {@link JvmFunction} to invoke
-	 * @param args             either an array of argument values or a {@link List} of {@link Pair<String, Object>}
+	 * @param args             either an array of argument values or a {@link List} of {@link Pair}
 	 *                         name/value pairs
 	 * @param possibleInstance the instance object for instance methods; {@code null} for static methods
 	 * @param line             the source code line number for error reporting
@@ -1775,7 +1775,7 @@ public final class NaftahParserHelper {
 	 * @param classInitializerName the name of the class initializer (for error reporting)
 	 * @param jvmClassInitializer  the {@link JvmClassInitializer} representing the constructor to invoke
 	 * @param args                 either an array of argument values or a {@link List} of
-	 *                             {@link Pair<String, Object>} name/value pairs
+	 *                             {@link Pair} name/value pairs
 	 * @param line                 the source line number for error reporting
 	 * @param column               the source column number for error reporting
 	 * @return a {@link NaftahObject} containing the newly created instance
@@ -1918,17 +1918,17 @@ public final class NaftahParserHelper {
 	 *
 	 *                                  <p><b>Example usage:</b></p>
 	 *                                  <pre>{@code
-	 *                                  visitFunctionCallInChain(
-	 *                                      0,
-	 *                                      visitor,
-	 *                                      context,
-	 *                                      "print",
-	 *                                      List.of(Pair.of("arg", "Hello, world!")),
-	 *                                      null,
-	 *                                      12,
-	 *                                      8
-	 *                                  );
-	 *                                  }</pre>
+	 *                                                                                                                                                                      visitFunctionCallInChain(
+	 *                                                                                                                                                                          0,
+	 *                                                                                                                                                                          visitor,
+	 *                                                                                                                                                                          context,
+	 *                                                                                                                                                                          "print",
+	 *                                                                                                                                                                          List.of(Pair.of("arg", "Hello, world!")),
+	 *                                                                                                                                                                          null,
+	 *                                                                                                                                                                          12,
+	 *                                                                                                                                                                          8
+	 *                                                                                                                                                                      );
+	 *                                                                                                                                                                      }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction

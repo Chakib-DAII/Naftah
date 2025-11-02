@@ -17,7 +17,7 @@ class NaftahObjectTests {
 	@Test
 	void testGetWithCollection() {
 		List<String> data = List.of("a", "b");
-		Object result = NaftahObject.get(data);
+		Object result = NaftahObject.get(data, false);
 		assertTrue(result instanceof Collection<?>);
 		assertEquals(List.of("a", "b"), result);
 	}
@@ -25,27 +25,27 @@ class NaftahObjectTests {
 	@Test
 	void testGetWithMap() {
 		Map<String, Integer> map = Map.of("x", 1, "y", 2);
-		Object result = NaftahObject.get(map);
+		Object result = NaftahObject.get(map, false);
 		assertTrue(result instanceof Map);
 		assertEquals(2, ((Map<?, ?>) result).size());
 	}
 
 	@Test
 	void testGetWithNone() {
-		Object result = NaftahObject.get(None.get());
+		Object result = NaftahObject.get(None.get(), false);
 		assertSame(None.get(), result);
 	}
 
 	@Test
 	void testGetWithSimpleType() {
-		assertEquals("hello", NaftahObject.get("hello"));
-		assertEquals(123, NaftahObject.get(123));
+		assertEquals("hello", NaftahObject.get("hello", false));
+		assertEquals(123, NaftahObject.get(123, false));
 	}
 
 	@Test
 	void testGetWithPojo() {
 		SimplePojo pojo = new SimplePojo();
-		Object result = NaftahObject.get(pojo);
+		Object result = NaftahObject.get(pojo, false);
 		assertTrue(result instanceof Map);
 		Map<?, ?> map = (Map<?, ?>) result;
 		assertEquals("Naftah", map.get("اسم (name)"));
@@ -150,7 +150,7 @@ class NaftahObjectTests {
 	@Test
 	void testGetDelegatesToMapForPojo() {
 		SimplePojo pojo = new SimplePojo();
-		Object result = NaftahObject.get(pojo);
+		Object result = NaftahObject.get(pojo, false);
 		assertTrue(result instanceof Map);
 		assertEquals(2, ((Map<?, ?>) result).size());
 	}

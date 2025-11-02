@@ -278,7 +278,7 @@ public class ClassUtilsTests {
 			assertTrue(instance instanceof NaftahObject);
 			assertTrue(((NaftahObject) instance).fromJava());
 			assertEquals(javaObject, ((NaftahObject) instance).javaObject());
-			assertEquals(javaObject, ((NaftahObject) instance).get());
+			assertEquals(javaObject, ((NaftahObject) instance).get(false));
 			assertEquals(ObjectUtils.getNaftahValueToString(javaObject), instance.toString());
 
 
@@ -313,7 +313,7 @@ public class ClassUtilsTests {
 			assertTrue(instance instanceof NaftahObject);
 			assertFalse(((NaftahObject) instance).fromJava());
 			assertEquals(naftahScriptObject, ((NaftahObject) instance).objectFields());
-			assertEquals(naftahScriptObject, ((NaftahObject) instance).get());
+			assertEquals(naftahScriptObject, ((NaftahObject) instance).get(false));
 			assertEquals(CollectionUtils.toString(naftahScriptObject), instance.toString());
 		}
 

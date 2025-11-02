@@ -4,7 +4,7 @@ import java.lang.reflect.Executable;
 
 /**
  * Represents any executable entity in the JVM runtime model, such as a method,
- * a constructor, or a class initializer (<clinit> block).
+ * a constructor, or a class initializer (clinit block).
  *
  * <p>This interface provides a common abstraction for Java reflection
  * {@link java.lang.reflect.Executable Executable} objects, allowing unified
