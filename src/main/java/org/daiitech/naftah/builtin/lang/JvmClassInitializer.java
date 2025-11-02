@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
@@ -34,7 +35,7 @@ import org.daiitech.naftah.utils.reflect.ClassUtils;
  *
  * @author Chakib Daii
  */
-public class JvmClassInitializer implements Serializable {
+public final class JvmClassInitializer implements Serializable, JvmExecutable {
 
 
 	/**
@@ -135,6 +136,13 @@ public class JvmClassInitializer implements Serializable {
 		return isInvocable;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Executable getExecutable() {
+		return constructor;
+	}
 
 	/**
 	 * Custom serialization logic for writing non-transient fields.

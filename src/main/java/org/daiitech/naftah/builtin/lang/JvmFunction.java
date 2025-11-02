@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -28,7 +29,7 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
  *
  * @author Chakib Daii
  */
-public class JvmFunction implements Serializable {
+public final class JvmFunction implements Serializable, JvmExecutable {
 	/**
 	 * Fully qualified call signature of the method.
 	 */
@@ -150,6 +151,14 @@ public class JvmFunction implements Serializable {
 	 */
 	public boolean isInvocable() {
 		return isInvocable;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Executable getExecutable() {
+		return method;
 	}
 
 	/**

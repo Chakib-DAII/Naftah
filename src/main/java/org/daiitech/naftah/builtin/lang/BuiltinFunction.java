@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -19,7 +20,7 @@ import java.util.Arrays;
  *
  * @author Chakib Daii
  */
-public class BuiltinFunction implements Serializable {
+public final class BuiltinFunction implements Serializable, JvmExecutable {
 
 	/**
 	 * The name of the method.
@@ -104,6 +105,14 @@ public class BuiltinFunction implements Serializable {
 	 */
 	public NaftahFunction getFunctionInfo() {
 		return functionInfo;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Executable getExecutable() {
+		return method;
 	}
 
 	/**
