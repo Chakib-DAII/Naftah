@@ -30,6 +30,10 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
  * @author Chakib Daii
  */
 public final class JvmFunction implements Serializable, JvmExecutable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Fully qualified call signature of the method.
 	 */

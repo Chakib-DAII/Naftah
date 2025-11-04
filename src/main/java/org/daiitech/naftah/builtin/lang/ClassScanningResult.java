@@ -1,5 +1,6 @@
 package org.daiitech.naftah.builtin.lang;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,10 @@ import java.util.Set;
  * @author Chakib Daii
  */
 public class ClassScanningResult implements Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Maps class names to their respective ClassLoader instances.
 	 */

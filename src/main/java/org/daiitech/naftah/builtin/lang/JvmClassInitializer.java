@@ -37,6 +37,9 @@ import org.daiitech.naftah.utils.reflect.ClassUtils;
  */
 public final class JvmClassInitializer implements Serializable, JvmExecutable {
 
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 
 	/**
 	 * The class declaring this constructor.

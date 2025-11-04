@@ -22,6 +22,9 @@ import java.util.Arrays;
  */
 public final class BuiltinFunction implements Serializable, JvmExecutable {
 
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The name of the method.
 	 */

@@ -1,5 +1,6 @@
 package org.daiitech.naftah.builtin.utils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,9 @@ import org.daiitech.naftah.errors.NaftahBugError;
  * @author Chakib Daii
  */
 public final class Tuple implements List<Object>, Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The underlying unmodifiable list of tuple elements.
