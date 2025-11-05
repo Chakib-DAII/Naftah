@@ -1038,13 +1038,13 @@ public final class NaftahParserHelper {
 	public static DefaultContext getRootContext(org.daiitech.naftah.parser.NaftahParser.ProgramContext ctx) {
 		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
 			return hasChildOrSubChildOfType(ctx,
-											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
+											org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
 													REPLContext.registerContext(new HashMap<>(), new HashMap<>()) :
 													REPLContext.registerContext();
 		}
 		else {
 			return hasChildOrSubChildOfType(ctx,
-											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
+											org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
 													registerContext(new HashMap<>(), new HashMap<>()) :
 													registerContext();
 		}
@@ -1064,19 +1064,17 @@ public final class NaftahParserHelper {
 													DefaultContext currentContext) {
 		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
 			return hasChildOrSubChildOfType(ctx,
-											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) ?
+											org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
 													registerContext(currentContext, new HashMap<>(), new HashMap<>()) :
 													REPLContext.registerContext(currentContext);
 		}
 		else {
 			return hasChildOrSubChildOfType(ctx,
-											org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext.class) || hasChildOrSubChildOfType(
-																																					ctx,
-																																					org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
-																																							registerContext(currentContext,
-																																											new HashMap<>(),
-																																											new HashMap<>()) :
-																																							registerContext(currentContext);
+											org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
+													registerContext(currentContext,
+																	new HashMap<>(),
+																	new HashMap<>()) :
+													registerContext(currentContext);
 		}
 	}
 
@@ -1994,17 +1992,17 @@ public final class NaftahParserHelper {
 	 *
 	 *                                  <p><b>Example usage:</b></p>
 	 *                                  <pre>{@code
-	 *                                                                                                                                       visitFunctionCallInChain(
-	 *                                                                                                                                       0,
-	 *                                                                                                                                       visitor,
-	 *                                                                                                                                       context,
-	 *                                                                                                                                       "print",
-	 *                                                                                                                                        List.of(Pair.of("arg", "Hello, world!")),
-	 *                                                                                                                                        null,
-	 *                                                                                                                                        12,
-	 *                                                                                                                                        8
-	 *                                                                                                                                        );
-	 *                                                                                                                                                                                                                                                                            }</pre>
+	 *                                                                                                                                                                        visitFunctionCallInChain(
+	 *                                                                                                                                                                        0,
+	 *                                                                                                                                                                        visitor,
+	 *                                                                                                                                                                        context,
+	 *                                                                                                                                                                        "print",
+	 *                                                                                                                                                                         List.of(Pair.of("arg", "Hello, world!")),
+	 *                                                                                                                                                                         null,
+	 *                                                                                                                                                                         12,
+	 *                                                                                                                                                                         8
+	 *                                                                                                                                                                         );
+	 *                                                                                                                                                                                                                                                                                                             }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction

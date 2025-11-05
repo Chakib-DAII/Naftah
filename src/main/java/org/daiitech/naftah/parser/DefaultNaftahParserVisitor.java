@@ -197,22 +197,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitObjectAccessStatement(org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext ctx) {
-		return visitContext(
-							this,
-							"visitObjectAccessStatement",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								objectAccessStatementContext) -> defaultNaftahParserVisitor
-										.visit(objectAccessStatementContext.objectAccess())
-		);
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -271,43 +255,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												functionDeclarationStatementContext.functionDeclaration())
 		);
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitInitCallStatement(org.daiitech.naftah.parser.NaftahParser.InitCallStatementContext ctx) {
-		return visitContext(
-							this,
-							"visitInitCallStatement",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								initCallStatementContext) -> defaultNaftahParserVisitor
-										.visit(
-												initCallStatementContext.initCall())
-		);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitFunctionCallStatement(org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext ctx) {
-		return visitContext(
-							this,
-							"visitFunctionCallStatement",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								functionCallStatementContext) -> defaultNaftahParserVisitor
-										.visit(
-												functionCallStatementContext.functionCall())
-		);
-	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -2494,24 +2441,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitCollectionAccessStatement(org.daiitech.naftah.parser.NaftahParser.CollectionAccessStatementContext ctx) {
-		return visitContext(
-							this,
-							"visitCollectionAccessStatement",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								collectionAccessStatementContext) -> defaultNaftahParserVisitor
-										.visit(
-												collectionAccessStatementContext.collectionAccess())
-		);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Object visitCollectionAccessExpression(org.daiitech.naftah.parser.NaftahParser.CollectionAccessExpressionContext ctx) {
 		return visitContext(
 							this,
@@ -3389,10 +3318,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, qualifiedNameContext) -> {
 								Object result;
-								boolean accessingObjectField = hasAnyParentOfType(  qualifiedNameContext,
-																					org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext.class) || hasAnyParentOfType(
-																																														qualifiedNameContext,
-																																														org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
+								boolean accessingObjectField = hasAnyParentOfType(
+																					qualifiedNameContext,
+																					org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
 								if (accessingObjectField) {
 									var qualifiedName = getQualifiedName(qualifiedNameContext);
 									result = accessObjectUsingQualifiedName(qualifiedName, currentContext);
