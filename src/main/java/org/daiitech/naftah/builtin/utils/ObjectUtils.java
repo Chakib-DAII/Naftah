@@ -481,7 +481,7 @@ public final class ObjectUtils {
 
 			// Number vs Array (scalar multiplication)
 			if (right.getClass().isArray()) {
-				return CollectionUtils.applyOperation((Object[]) right, number, false, operation);
+				return CollectionUtils.applyOperation(CollectionUtils.toObjectArray(right), number, false, operation);
 			}
 
 			// Number vs Map (multiply all values by scalar)
@@ -500,7 +500,7 @@ public final class ObjectUtils {
 
 			// Array vs Number (scalar multiplication)
 			if (left.getClass().isArray()) {
-				return CollectionUtils.applyOperation((Object[]) left, number, true, operation);
+				return CollectionUtils.applyOperation(CollectionUtils.toObjectArray(left), number, true, operation);
 			}
 
 			// Map vs Number (multiply all values by scalar)
@@ -511,14 +511,33 @@ public final class ObjectUtils {
 			return operation.apply(left, number);
 		}
 
-		// Collection vs Collection (element-wise)
-		if (left instanceof Collection<?> collection1 && right instanceof Collection<?> collection2) {
-			return CollectionUtils.applyOperation(collection1, collection2, operation);
+		// Collection vs Collection or Array (element-wise)
+		if (left instanceof Collection<?> collection1) {
+			if (right instanceof Collection<?> collection2) {
+				return CollectionUtils.applyOperation(collection1, collection2, operation);
+			}
+			if (right.getClass().isArray()) {
+				return CollectionUtils
+						.applyOperation(collection1.toArray(Object[]::new),
+										CollectionUtils.toObjectArray(right),
+										operation);
+			}
 		}
 
-		// Array vs Array (element-wise)
-		if (left.getClass().isArray() && right.getClass().isArray()) {
-			return CollectionUtils.applyOperation((Object[]) left, (Object[]) right, operation);
+		// Array vs Collection or Array (element-wise)
+		if (left.getClass().isArray()) {
+			if (right.getClass().isArray()) {
+				return CollectionUtils
+						.applyOperation(CollectionUtils.toObjectArray(left),
+										CollectionUtils.toObjectArray(right),
+										operation);
+			}
+			if (right instanceof Collection<?> collection2) {
+				return CollectionUtils
+						.applyOperation(CollectionUtils.toObjectArray(left),
+										collection2.toArray(Object[]::new),
+										operation);
+			}
 		}
 
 		// Map vs Map (element-wise value multiplication)
@@ -559,7 +578,7 @@ public final class ObjectUtils {
 
 		// Array
 		if (a.getClass().isArray()) {
-			return CollectionUtils.applyOperation((Object[]) a, operation);
+			return CollectionUtils.applyOperation(CollectionUtils.toObjectArray(a), operation);
 		}
 
 		// Map
@@ -700,6 +719,7 @@ public final class ObjectUtils {
 	 * <li><b>Collections:</b> Returns the number of elements using {@link java.util.Collection#size()}.</li>
 	 * <li><b>Maps:</b> Returns the number of key-value mappings using {@link java.util.Map#size()}.</li>
 	 * <li><b>Strings:</b> Returns the number of characters using {@link java.lang.String#length()}.</li>
+	 * <li><b>Boxed primitives:</b> Returns 1 because primitives are considered as a single value counts.</li>
 	 * <li><b>Other objects:</b> Returns the count of non-static declared fields in the object's class.</li>
 	 * </ul>
 	 *
@@ -733,6 +753,11 @@ public final class ObjectUtils {
 		// String
 		if (obj instanceof String) {
 			return ((String) obj).length();
+		}
+
+		// Boxed primitives: Integer, Double, Boolean, etc.
+		if (obj instanceof Number || obj instanceof Boolean || obj instanceof Character) {
+			return 1; // a single value counts as "size 1"
 		}
 
 		// Other Objects — count declared fields (excluding static)

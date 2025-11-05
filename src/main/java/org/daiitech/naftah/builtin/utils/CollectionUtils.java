@@ -452,6 +452,39 @@ public final class CollectionUtils {
 	}
 
 	/**
+	 * Converts any Java array (including primitive arrays) into an Object[].
+	 * This is reflection-safe and never throws ClassCastException.
+	 *
+	 * @param array the source array (e.g. int[], String[], Object[], etc.)
+	 * @return an Object[] containing all elements, or an empty array if null
+	 * @throws IllegalArgumentException if the input is not an array
+	 */
+	public static Object[] toObjectArray(Object array) {
+		if (array == null) {
+			return new Object[0];
+		}
+
+		Class<?> type = array.getClass();
+		if (!type.isArray()) {
+			throw new IllegalArgumentException("Provided object is not an array: " + type);
+		}
+
+		// Case 1: Already an Object[] → return same reference (no copy)
+		if (array instanceof Object[] objectArray) {
+			return objectArray;
+		}
+
+		// Case 2: Primitive array → must box elements
+		int length = Array.getLength(array);
+		Object[] boxed = new Object[length];
+		for (int i = 0; i < length; i++) {
+			boxed[i] = Array.get(array, i);
+		}
+
+		return boxed;
+	}
+
+	/**
 	 * Recursively verifies that all elements in the given collection match the provided predicate.
 	 * <p>
 	 * Nested structures (collections, maps, arrays) are traversed and evaluated recursively.
