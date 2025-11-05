@@ -156,8 +156,7 @@ tryCases
 
 okCase: OK LPAREN ID RPAREN (DO | ARROW) (block | expression);
 
-// TODO: make variable creation optional
-errorCase: ERROR LPAREN ID RPAREN (DO | ARROW) (block | expression);
+errorCase: ERROR (LPAREN ID RPAREN)? (DO | ARROW) (block | expression);
 
 optionCases
   : someCase noneCase?
