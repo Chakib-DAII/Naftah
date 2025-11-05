@@ -136,6 +136,14 @@ public final class Naftah {
 	 */
 	public static final String FORCE_CLASSPATH_PROPERTY = "naftah.forceClassPathScan";
 	/**
+	 * Property to enable scanning the Jdk classes for Naftah types.
+	 */
+	public static final String SCAN_JDK_PROPERTY = "naftah.scanJDK";
+	/**
+	 * Cache results of classpath and JDK scanning.
+	 */
+	public static final String CACHE_SCANNING_RESULTS_PROPERTY = "naftah.cacheScanningResults";
+	/**
 	 * Property to enable debug mode.
 	 */
 	public static final String DEBUG_PROPERTY = "naftah.debug";
@@ -624,6 +632,8 @@ public final class Naftah {
 		 * @throws Exception if any error occurs
 		 */
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
+			System.setProperty(SCAN_JDK_PROPERTY, Boolean.toString(true));
+			System.setProperty(CACHE_SCANNING_RESULTS_PROPERTY, Boolean.toString(true));
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
 			}

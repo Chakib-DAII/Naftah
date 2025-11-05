@@ -47,6 +47,7 @@ import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
 
 import static org.daiitech.naftah.Naftah.BUILTIN_CLASSES_PROPERTY;
 import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
+import static org.daiitech.naftah.Naftah.CACHE_SCANNING_RESULTS_PROPERTY;
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
@@ -214,7 +215,9 @@ public class DefaultContext {
 		}
 		else {
 			setContextFromClassScanningResult(result);
-			serializeClassScanningResult(result);
+			if (Boolean.getBoolean(CACHE_SCANNING_RESULTS_PROPERTY)) {
+				serializeClassScanningResult(result);
+			}
 		}
 	};
 
@@ -264,8 +267,7 @@ public class DefaultContext {
 	protected DefaultContext(   DefaultContext parent,
 								Map<String, DeclaredParameter> parameters,
 								Map<String, Object> arguments) {
-		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS
-				.size() != 0)) {
+		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (!CONTEXTS.isEmpty())) {
 			throw newNaftahBugInvalidUsageError();
 		}
 		this.parent = parent;

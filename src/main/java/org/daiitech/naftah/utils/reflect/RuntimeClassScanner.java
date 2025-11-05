@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.Naftah.SCAN_JDK_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
@@ -57,6 +58,12 @@ public final class RuntimeClassScanner {
 	 * Typically points to the directory where the JRE or JDK is installed.
 	 */
 	public static final String JAVA_HOME = System.getProperty(JAVA_HOME_PROPERTY);
+
+	/**
+	 * Flag indicating whether to scan JDK classes for Naftah types,
+	 * obtained from the system property {@code naftah.scanJDK}.
+	 */
+	public static final boolean SCAN_JDK = Boolean.getBoolean(SCAN_JDK_PROPERTY);
 
 	/**
 	 * The file extension for Java archive files (JAR).
@@ -117,16 +124,15 @@ public final class RuntimeClassScanner {
 
 	static {
 		// Get the classpath and java home files
-		String[] tempPaths;
+		String[] tempPaths = (CLASS_PATH + (SCAN_JDK ? File.pathSeparator + JAVA_HOME : "")).split(File.pathSeparator);
 		try {
 			var ignoredJars = readFileLines(getJarDirectory() + "/original-dependencies");
 			tempPaths = Arrays
-					.stream((CLASS_PATH + File.pathSeparator + JAVA_HOME).split(File.pathSeparator))
+					.stream(tempPaths)
 					.filter(path -> ignoredJars.stream().noneMatch(path::contains))
 					.toArray(String[]::new);
 		}
 		catch (IOException ignored) {
-			tempPaths = (CLASS_PATH + File.pathSeparator + JAVA_HOME).split(File.pathSeparator);
 		}
 		PATHS = tempPaths;
 	}
@@ -245,7 +251,7 @@ public final class RuntimeClassScanner {
 		for (var nameEntry : classNames.entrySet()) {
 			var classLoaderOptional = Optional.ofNullable(nameEntry.getValue());
 			var loaders = Arrays.copyOf(CLASS_LOADERS, CLASS_LOADERS.length + (classLoaderOptional.isEmpty() ? 0 : 1));
-			classLoaderOptional.ifPresent(classLoader -> loaders[CLASS_LOADERS.length + 1] = classLoader);
+			classLoaderOptional.ifPresent(classLoader -> loaders[CLASS_LOADERS.length] = classLoader);
 			for (ClassLoader cl : loaders) {
 				try {
 					if (Objects.isNull(cl)) {
