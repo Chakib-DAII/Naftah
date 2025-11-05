@@ -58,7 +58,6 @@ import static org.daiitech.naftah.NaftahSystem.setupTerminalWidthAndHeight;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrBuiltinOrCollectionOrMapOfSimpleType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.replaceAllNulls;
-import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.doRun;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getCharStream;
@@ -250,7 +249,6 @@ public final class Naftah {
 	 * Private constructor to prevent instantiation.
 	 */
 	private Naftah() {
-		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
