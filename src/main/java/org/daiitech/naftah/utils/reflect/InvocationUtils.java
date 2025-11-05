@@ -65,7 +65,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  * @see #convertArgument(Object, Class, Type, boolean)
  * @see #convertArgumentsBack(Object[], List)
  */
-public class InvocationUtils {
+public final class InvocationUtils {
 
 	/**
 	 * Private constructor to prevent instantiation.
