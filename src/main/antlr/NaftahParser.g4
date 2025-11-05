@@ -25,27 +25,23 @@ options {
 }
 
 // Top-level rule: A Naftah program consists of statements
-program: statement+;
+program: (statement END?)+;
 
 // Statement: Can be an assignment, function call, or control flow
-statement: block END? #blockStatement
-         | ifStatement END? #ifStatementStatement
-         | forStatement END? #forStatementStatement
-         | whileStatement END? #whileStatementStatement
-         | repeatStatement END? #repeatStatementStatement
-         | caseStatement END? #caseStatementStatement
-         | tryStatement END? #tryStatementStatement
-         | functionDeclaration END? #functionDeclarationStatement
-         | initCall END? #initCallStatement
-         | functionCall END? #functionCallStatement
-         | objectAccess END? #objectAccessStatement
-         | collectionAccess END? #collectionAccessStatement
-         | declaration END? #declarationStatement
-         | assignment END? #assignmentStatement
-         | returnStatement END? #returnStatementStatement
-         | breakStatement END? #breakStatementStatement
-         | continueStatement END? #continueStatementStatement
-         | expression END? #expressionStatement
+statement: block #blockStatement
+         | ifStatement #ifStatementStatement
+         | forStatement #forStatementStatement
+         | whileStatement #whileStatementStatement
+         | repeatStatement #repeatStatementStatement
+         | caseStatement #caseStatementStatement
+         | tryStatement #tryStatementStatement
+         | functionDeclaration #functionDeclarationStatement
+         | declaration #declarationStatement
+         | assignment #assignmentStatement
+         | returnStatement #returnStatementStatement
+         | breakStatement #breakStatementStatement
+         | continueStatement #continueStatementStatement
+         | expression #expressionStatement
          ;
 
 // Declaration: variable or constant declaration
@@ -182,7 +178,7 @@ continueStatement: CONTINUE ID?;
 returnStatement: RETURN expression?;
 
 // Block: A block of statements enclosed in curly braces
-block: LBRACE statement* RBRACE;
+block: LBRACE (statement END?)* RBRACE;
 
 // Expressions: Can be value, binary operations
 expression: ternaryExpression;
