@@ -817,25 +817,27 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																					.getCharPositionInLine());
 									}
 									else {
-										if (Objects.nonNull(initCallContext.targetExecutableIndex())) {
-											Number jvmClassInitializerIndex = NumberUtils
-													.parseDynamicNumber(initCallContext
-															.targetExecutableIndex()
-															.NUMBER()
-															.getText());
+										try {
+											if (Objects.nonNull(initCallContext.targetExecutableIndex())) {
+												Number jvmClassInitializerIndex = NumberUtils
+														.parseDynamicNumber(initCallContext
+																.targetExecutableIndex()
+																.NUMBER()
+																.getText());
 
-											JvmClassInitializer jvmClassInitializer = jvmClassInitializersList
-													.get(jvmClassInitializerIndex.intValue());
-											result = invokeJvmClassInitializer( functionName,
-																				jvmClassInitializer,
-																				args,
-																				initCallContext.getStart().getLine(),
-																				initCallContext
-																						.getStart()
-																						.getCharPositionInLine());
-										}
-										else {
-											try {
+												JvmClassInitializer jvmClassInitializer = jvmClassInitializersList
+														.get(jvmClassInitializerIndex.intValue());
+												result = invokeJvmClassInitializer( functionName,
+																					jvmClassInitializer,
+																					args,
+																					initCallContext
+																							.getStart()
+																							.getLine(),
+																					initCallContext
+																							.getStart()
+																							.getCharPositionInLine());
+											}
+											else {
 												result = invokeJvmClassInitializer( functionName,
 																					jvmClassInitializersList,
 																					args,
@@ -846,17 +848,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																							.getStart()
 																							.getCharPositionInLine());
 											}
-											catch (Throwable th) {
-												throw newNaftahInvocableListFoundError( functionName,
-																						jvmClassInitializersList,
-																						th,
-																						initCallContext
-																								.getStart()
-																								.getLine(),
-																						initCallContext
-																								.getStart()
-																								.getCharPositionInLine());
-											}
+										}
+										catch (Throwable th) {
+											throw newNaftahInvocableListFoundError( functionName,
+																					jvmClassInitializersList,
+																					th,
+																					initCallContext
+																							.getStart()
+																							.getLine(),
+																					initCallContext
+																							.getStart()
+																							.getCharPositionInLine());
 										}
 									}
 								}
