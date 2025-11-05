@@ -1844,7 +1844,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								var tryCases = tryStatementContext.tryCases();
 								try {
-									Object expressionResult = null;
+									Object expressionResult;
 									try {
 										expressionResult = defaultNaftahParserVisitor
 												.visit(tryStatementContext.expression());
@@ -1853,28 +1853,31 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										var errorCase = tryCases.errorCase();
 
 										if (Objects.nonNull(errorCase)) {
-											errorVariableName = errorCase.ID().getText();
+											if (Objects.nonNull(errorCase.ID())) {
+												errorVariableName = errorCase.ID().getText();
 
-											result = Result.Error
-													.of(th instanceof NaftahBugError naftahBugError ?
-															naftahBugError :
-															new NaftahBugError(th));
+												result = Result.Error
+														.of(th instanceof NaftahBugError naftahBugError ?
+																naftahBugError :
+																new NaftahBugError(th));
 
-											var declaredVariable = DeclaredVariable
-													.of(tryStatementContext,
-														errorVariableName,
-														true,
-														Result.Error.class,
-														result);
+												var declaredVariable = DeclaredVariable
+														.of(tryStatementContext,
+															errorVariableName,
+															true,
+															Result.Error.class,
+															result);
 
-											boolean errorVarExists = currentContext.containsVariable(errorVariableName);
-											if (errorVarExists) {
-												previousErrorVariable = currentContext
-														.setVariable(   errorVariableName,
-																		declaredVariable);
-											}
-											else {
-												currentContext.defineVariable(errorVariableName, declaredVariable);
+												boolean errorVarExists = currentContext
+														.containsVariable(errorVariableName);
+												if (errorVarExists) {
+													previousErrorVariable = currentContext
+															.setVariable(   errorVariableName,
+																			declaredVariable);
+												}
+												else {
+													currentContext.defineVariable(errorVariableName, declaredVariable);
+												}
 											}
 
 											return defaultNaftahParserVisitor.visit(errorCase);
