@@ -798,7 +798,7 @@ public final class ArabicUtils {
 			word += UNDERSCORE;
 		}
 
-		return word;
+		return word.replaceAll("\\s+", UNDERSCORE);
 	}
 
 	/**
