@@ -370,14 +370,20 @@ public final class ClassUtils {
 		// Try to find a public no-arg constructor
 		try {
 			Constructor<?> constructor = clazz.getConstructor();
-			if (Modifier.isPublic(constructor.getModifiers())) {
-				return true;
-			}
+			return Modifier.isPublic(constructor.getModifiers());
 		}
 		catch (NoSuchMethodException ignored) {
+			// check if the class has any public constructor
+			var constructors = clazz.getConstructors();
+			if (constructors.length == 0) {
+				return false;
+			}
+			else {
+				return Arrays
+						.stream(constructors)
+						.anyMatch(constructor -> Modifier.isPublic(constructor.getModifiers()));
+			}
 		}
-
-		return false;
 	}
 
 	/**

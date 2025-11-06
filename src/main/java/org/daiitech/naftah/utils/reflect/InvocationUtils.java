@@ -21,6 +21,7 @@ import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 
@@ -484,8 +485,12 @@ public final class InvocationUtils {
 			}
 
 			// Skip if logically equal (value equal)
-			if (Boolean.TRUE.equals(ObjectUtils.applyOperation(original, converted, BinaryOperation.EQUALS))) {
-				continue;
+			try {
+				if (Boolean.TRUE.equals(ObjectUtils.applyOperation(original, converted, BinaryOperation.EQUALS))) {
+					continue;
+				}
+			}
+			catch (Throwable ignored) {
 			}
 
 			var merged = convertArgumentBack(original, converted);
@@ -563,13 +568,22 @@ public final class InvocationUtils {
 		if ((Collection.class.isAssignableFrom(convertedType) || convertedType
 				.isArray()) && original instanceof @SuppressWarnings("rawtypes")
 		Collection src) {
-
-			for (int i = 0; i < src.size(); i++) {
-				var convertedElement = convertedType.isArray() ?
-						Array.get(converted, i) :
-						getElementAt((Collection<?>) converted, i);
-				//noinspection unchecked
-				setElementAt(src, i, convertedElement);
+			if (src instanceof Tuple tuple) {
+				var tupleArray = tuple.toArray();
+				for (int i = 0; i < tuple.size(); i++) {
+					Object convertedElement = Array.get(converted, i);
+					Array.set(tupleArray, i, convertedElement);
+				}
+				tuple.update(List.of(tupleArray));
+			}
+			else {
+				for (int i = 0; i < src.size(); i++) {
+					var convertedElement = convertedType.isArray() ?
+							Array.get(converted, i) :
+							getElementAt((Collection<?>) converted, i);
+					//noinspection unchecked
+					setElementAt(src, i, convertedElement);
+				}
 			}
 
 			return src;

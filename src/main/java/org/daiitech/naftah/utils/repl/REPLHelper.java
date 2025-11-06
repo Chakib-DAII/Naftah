@@ -158,11 +158,11 @@ public final class REPLHelper {
 	/**
 	 * Characters that can be used to escape other characters.
 	 */
-	public static char[] ESCAPE_CHARS = new char[]{'#', '\\'};
+	public static char[] ESCAPE_CHARS = new char[]{'N', '\\'};
 	/**
 	 * Set form of the escape characters for faster lookup.
 	 */
-	public static Set<Character> ESCAPE_CHAR_SET = Set.of('#', '\\');
+	public static Set<Character> ESCAPE_CHAR_SET = Set.of('N', '\\');
 	/**
 	 * Regex pattern for matching escape characters or escape + newline.
 	 */

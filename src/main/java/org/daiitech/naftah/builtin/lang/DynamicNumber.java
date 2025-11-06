@@ -2,6 +2,8 @@ package org.daiitech.naftah.builtin.lang;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -144,7 +146,7 @@ public class DynamicNumber extends Number implements Comparable<DynamicNumber>, 
 	 * @return true if the underlying value is an Integer
 	 */
 	public boolean isInt() {
-		return !isNaN() && value instanceof Integer;
+		return !isNaN() && value instanceof Integer || value instanceof AtomicInteger;
 	}
 
 	/**
@@ -153,7 +155,7 @@ public class DynamicNumber extends Number implements Comparable<DynamicNumber>, 
 	 * @return true if the underlying value is a Long
 	 */
 	public boolean isLong() {
-		return !isNaN() && value instanceof Long;
+		return !isNaN() && value instanceof Long || value instanceof AtomicLong;
 	}
 
 	/**

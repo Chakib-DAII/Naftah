@@ -426,7 +426,7 @@ public record NaftahObject(
 			}
 		}
 		else {
-			return CollectionUtils.toString(objectFields);
+			return CollectionUtils.toString(objectFields, true);
 		}
 	}
 }

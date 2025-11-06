@@ -705,6 +705,27 @@ public final class CollectionUtils {
 	 * @return a string in Arabic describing the object's structure and contents
 	 */
 	public static String toString(Object o) {
+		return toString(o, false);
+	}
+
+	/**
+	 * Converts an arbitrary object into its Arabic string representation.
+	 * <p>
+	 * This method detects the object's runtime type and renders it accordingly:
+	 * <ul>
+	 * <li>{@code List} → قائمة</li>
+	 * <li>{@code Set} → مجموعة</li>
+	 * <li>{@code Tuple} → تركيبة</li>
+	 * <li>{@code Map} → كائن / مصفوفة ترابطية</li>
+	 * <li>Array → قائمة</li>
+	 * <li>Other → uses {@code getNaftahValueToString(o)}</li>
+	 * </ul>
+	 *
+	 * @param o            the object to convert
+	 * @param naftahObject marks that the object to convert is naftah object
+	 * @return a string in Arabic describing the object's structure and contents
+	 */
+	public static String toString(Object o, boolean naftahObject) {
 		String result;
 		if (o.getClass().isArray()) {
 			result = "قائمة: ";
@@ -730,7 +751,7 @@ public final class CollectionUtils {
 			}
 		}
 		else if (o instanceof Map<?, ?> map) {
-			if (map.values().stream().allMatch(value -> value instanceof DeclaredVariable)) {
+			if (naftahObject || map.values().stream().allMatch(value -> value instanceof DeclaredVariable)) {
 				result = "كائن: ";
 			}
 			else {

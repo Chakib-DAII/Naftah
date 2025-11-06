@@ -131,7 +131,8 @@ JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector --add-modules=jdk.incub
 --add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED \
 --add-opens=java.desktop/java.awt=ALL-UNNAMED \
 --add-opens=java.desktop/sun.awt=ALL-UNNAMED \
---add-opens=java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED"
+--add-opens=java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED \
+--add-opens java.base/java.security=ALL-UNNAMED"
 
 
 IFS=" " read -r -a javaOpts <<< "$JAVA_OPTS"

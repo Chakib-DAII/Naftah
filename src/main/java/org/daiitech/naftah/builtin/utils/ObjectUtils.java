@@ -460,9 +460,11 @@ public final class ObjectUtils {
 
 		if (left instanceof NaftahObject naftahObject) {
 			left = naftahObject.get(false);
+			right = NaftahObject.get(right, false);
 		}
 
 		if (right instanceof NaftahObject naftahObject) {
+			left = NaftahObject.get(left, false);
 			right = naftahObject.get(false);
 		}
 
