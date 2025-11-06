@@ -87,19 +87,22 @@ ELEMENTWISE_MOD : DOT MOD DOT;
 
 
 // Special characters
-LPAREN     : '(';
-RPAREN     : ')';
-LBRACE     : '{';
-RBRACE     : '}';
-LBRACK     : '[';
-RBRACK     : ']';
-SEMI       : '؛';
-COLON      : ':';
-DOT        : '.';
-COMMA      : ',' | '٫' | '،' | '٬';
-QUESTION   : '؟';
-ARROW      : '->';
-ORDERED    : 'مرتب';
+LPAREN      : '(';
+RPAREN      : ')';
+LBRACE      : '{';
+RBRACE      : '}';
+LBRACK      : '[';
+RBRACK      : ']';
+SEMI        : '؛';
+COLON       : ':';
+DOT         : '.';
+COMMA       : ',' | '٫' | '،' | '٬';
+QUESTION    : '؟';
+ARROW       : '->';
+ORDERED     : 'مرتب';
+HASH_SIGN   : '#';
+AT_SIGN     : '@';
+DOLLAR_SIGN : '$';
 
 
 // Types

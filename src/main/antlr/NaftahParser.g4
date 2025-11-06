@@ -217,7 +217,9 @@ primary: initCall #initCallExpression
        ;
 
 // Object
-object: LBRACE objectFields? RBRACE;
+object: AT_SIGN LBRACE RBRACE #emptyObject
+	  | AT_SIGN? LBRACE objectFields RBRACE #objectValue;
+
 objectFields: assignment ((COMMA | SEMI) assignment)*;
 
 objectAccess: qualifiedName
@@ -225,14 +227,20 @@ objectAccess: qualifiedName
 
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
-          | LPAREN elements? RPAREN #tupleValue
-          | ORDERED? LBRACE elements? RBRACE #setValue
-          | ORDERED? LBRACE keyValuePairs? RBRACE #mapValue;
+          | LPAREN tupleElements? RPAREN #tupleValue
+          | ORDERED? HASH_SIGN LBRACE RBRACE #emptySet
+          | ORDERED? HASH_SIGN? LBRACE elements RBRACE #setValue
+          | ORDERED? DOLLAR_SIGN LBRACE RBRACE #emptyMap
+          | ORDERED? DOLLAR_SIGN? LBRACE keyValuePairs RBRACE #mapValue;
 
 // single value elements
-elements: expression (COMMA | SEMI) #singleElement
-        | expression ((COMMA | SEMI) expression)+ (COMMA | SEMI)? #multipleElements;
+elements: expression (COMMA | SEMI)? #singleElement
+        | collectionMultipleElements #multipleElements;
 
+tupleElements: expression (COMMA | SEMI) #tupleSingleElement
+        | collectionMultipleElements #tupleMultipleElements;
+
+collectionMultipleElements: expression ((COMMA | SEMI) expression)+ (COMMA | SEMI)?;
 
 // key=value value elements
 keyValuePairs: keyValue ((COMMA | SEMI) keyValue)* (COMMA | SEMI)?;
