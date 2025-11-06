@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
+import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -37,6 +39,9 @@ public final class TestUtils {
 		else if (result instanceof DeclaredVariable declaredVariable) {
 			assertEquals(expectedValue, declaredVariable.getValue());
 		}
+		else if (result instanceof NaftahObject naftahObject) {
+			assertEquals(expectedValue, naftahObject.get(true));
+		}
 		else {
 			doAssertEquals(result, expectedValue);
 		}
@@ -51,6 +56,9 @@ public final class TestUtils {
 			}
 			else if (value instanceof DeclaredVariable declaredVariable) {
 				assertEquals(expectedValueFromMap, declaredVariable.getValue());
+			}
+			else if (value instanceof NaftahObject naftahObject) {
+				assertEquals(expectedValueFromMap, naftahObject.get(true));
 			}
 			else {
 				assertEquals(expectedValueFromMap, value);
@@ -86,7 +94,9 @@ public final class TestUtils {
 						Assertions.assertArrayEquals(expectedValueAsBytes, resultAsBytes);
 					}
 					else {
-						Assertions.assertArrayEquals((Object[]) expectedValue, (Object[]) result);
+						Assertions
+								.assertArrayEquals( CollectionUtils.toObjectArray(expectedValue),
+													CollectionUtils.toObjectArray(result));
 					}
 				}
 		else {

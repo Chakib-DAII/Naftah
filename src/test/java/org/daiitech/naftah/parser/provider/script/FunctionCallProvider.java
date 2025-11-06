@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.daiitech.naftah.NaftahSystem;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -1527,11 +1528,243 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								null),
 					Arguments
 							.of(false,
-								"جافا:لغة:الرياضيات::ابس(0؛1):::أميكس(0؛10)",
+								"""
+								جافا:لغة:كائن::ابكديفجهجكلمنوبكرستيفوكسز()
+								""",
 								null,
-								newNaftahInvocableNotFoundError("جافا:لغة:الرياضيات::ابس",
+								newNaftahInvocableNotFoundError("جافا:لغة:كائن::ابكديفجهجكلمنوبكرستيفوكسز",
 																1,
-																0))
+																0)),
+					Arguments
+							.of(true,
+								"جافا:لغة:الرياضيات::ابس(1):::أميكس(10)",
+								NaftahObject.of(10),
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- java.lang.Math::acos
+								جافا:لغة:الرياضيات::اكوس(0،5)
+								""",
+								NaftahObject.of(1.0471975511965979),
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- java.lang.Math::asin
+								جافا:لغة:الرياضيات::االخطيئة(0،25)
+								""",
+								NaftahObject.of(0.25268025514207865),
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- java.lang.Math::atan
+								جافا:لغة:الرياضيات::أتاني(1،0)
+								""",
+								NaftahObject.of(0.7853981633974483),
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- java.lang.Math::atan2
+								جافا:لغة:الرياضيات::أتاني_٢(1،0؛2،0)
+								""",
+								NaftahObject.of(0.4636476090008061),
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- java.lang.Math::cbrt
+								جافا:لغة:الرياضيات::كبرت(27)
+								""",
+								NaftahObject.of(3.0),
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- java.lang.Math::ceil
+								جافا:لغة:الرياضيات::سيل(3،14)
+								""",
+								NaftahObject.of(4.0),
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- java.util.Objects::checkIndex
+								جافا:أدة:الكائنات::شيك_فيدسابق(5؛10)
+								جافا:أدة:الكائنات::شيك_فيدسابق:0(5؛10)
+								جافا:أدة:الكائنات::شيك_فيدسابق:1(5؛10)
+								""",
+								NaftahObject.of(5),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::equals
+								جافا:أدة:الكائنات::متساوية("a"؛"b")
+								جافا:أدة:الكائنات::متساوية:0("a"؛"b")
+								جافا:أدة:الكائنات::متساوية:1("a"؛"b")
+								""",
+								NaftahObject.of(Boolean.FALSE),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::deepEquals
+								جافا:أدة:الكائنات::عميق_متساوية([1؛2؛3]؛[1؛2؛3])
+								""",
+								NaftahObject.of(Boolean.TRUE),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::hash
+								جافا:أدة:الكائنات::هتاف(("كائن"؛123؛خاطئ))
+								""",
+								NaftahObject.of(150903613),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::hashCode
+								جافا:أدة:الكائنات::هتاف_رمز("كائن")
+								""",
+								NaftahObject.of(49318948),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::requireNonNull
+								حاول(جافا:أدة:الكائنات::الاحتياجات_غير_فارغ(فارغ)){
+								نجاح(أ) -> إطبع(أ)
+								فشل إفعل إلى_نص("فشل")
+								}
+								""",
+								"فشل",
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::requireNonNullElse
+								جافا:أدة:الكائنات::الاحتياجات_غير_فارغ_لس(فارغ؛"جافا")
+								""",
+								NaftahObject.of("جافا"),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::toString
+								[
+								جافا:أدة:الكائنات::إلى_سلسلة(1) ،
+								جافا:أدة:الكائنات::إلى_سلسلة:0(1) ،
+								جافا:أدة:الكائنات::إلى_سلسلة:1(1؛"2") ،
+								جافا:أدة:الكائنات::إلى_سلسلة:1(فارغ؛"2")
+								]
+								""",
+								List
+										.of(
+											NaftahObject.of("1"),
+											NaftahObject.of("1"),
+											NaftahObject.of("1"),
+											NaftahObject.of("2")
+										),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::isNull
+								جافا:أدة:الكائنات::هو_فارغ(فارغ)
+								""",
+								NaftahObject.of(Boolean.TRUE),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Objects::nonNull
+								جافا:أدة:الكائنات::غير_فارغ(فارغ)
+								""",
+								NaftahObject.of(Boolean.FALSE),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								---*
+								java.util.Objects::compare
+								using java.util.Comparator::naturalOrder
+								*---
+								ثابت مقارن_الترتيب_الطبيعي تعيين جافا:أدة:مقارن::الطبيعية_الأمر()
+								جافا:أدة:الكائنات::المقارنة("جافا"؛"جافا"؛مقارن_الترتيب_الطبيعي)
+								""",
+								NaftahObject.of(0),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Arrays::asList
+								جافا:أدة:صفائف::اس_القائمة([1؛2؛3])
+								""",
+								NaftahObject.of(List.of(1, 2, 3)),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Arrays::binarySearch
+								جافا:أدة:صفائف::ثنائية_البحث([1؛2؛3]؛3)
+								""",
+								NaftahObject.of(2),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Arrays::compare
+								[
+								جافا:أدة:صفائف::المقارنة([1؛2؛3]؛[1؛2؛3]) ،
+								جافا:أدة:صفائف::المقارنة([1؛2؛3]؛[1؛3]) ،
+								جافا:أدة:صفائف::المقارنة([1؛2؛3]؛0؛2؛[1؛2]؛0؛2) ،
+								جافا:أدة:صفائف::المقارنة([صحيح؛خطأ؛صحيح]؛[حقيقي؛خاطئ؛صائب]) ،
+								جافا:أدة:صفائف::المقارنة([صحيح؛خطأ؛صحيح]؛0؛2؛[خطأ؛صحيح]؛0؛2) ،
+								جافا:أدة:صفائف::المقارنة(['أ', 'ب', 'ج']؛['أ'؛'ب'؛'ج']) ،
+								جافا:أدة:صفائف::المقارنة(['أ', 'ب', 'ج']؛0؛2؛['أ'؛'ب'؛'ج']؛0؛2) ،
+								جافا:أدة:صفائف::المقارنة(["كائن", "نفطه", "جافا"]؛["نفطه"؛"جافا"؛"كائن"]) ،
+								جافا:أدة:صفائف::المقارنة(["كائن", "نفطه"]؛0؛2؛["نفطه"؛"جافا"؛"كائن"]؛0؛2) ،
+								]
+								""",
+								List
+										.of(
+											NaftahObject.of(0),
+											NaftahObject.of(-1),
+											NaftahObject.of(0),
+											NaftahObject.of(0),
+											NaftahObject.of(1),
+											NaftahObject.of(0),
+											NaftahObject.of(0),
+											NaftahObject.of(-3),
+											NaftahObject.of(-3)
+										),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Arrays::copyOfRange
+								جافا:أدة:صفائف::نسخ_وف_النطاق([1؛2؛3]؛0؛2)
+								""",
+								NaftahObject.of(new Float[]{1.F, 2.F}),
+								null)
 				);
 	}
 }

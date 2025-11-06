@@ -31,7 +31,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import static org.daiitech.naftah.Naftah.CACHE_SCANNING_RESULTS_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.Naftah.SCAN_JDK_PROPERTY;
 import static org.daiitech.naftah.Naftah.initConfig;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_HEIGHT_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
@@ -43,6 +45,7 @@ import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
 import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.JAVA_HOME_PROPERTY;
 
 public class DefaultNaftahParserVisitorTests {
 
@@ -51,15 +54,18 @@ public class DefaultNaftahParserVisitorTests {
 		initializeFromResources(LOGGING_FILE);
 
 		String originalClassPath = System.getProperty(CLASS_PATH_PROPERTY);
-		String tempPaths = Arrays
-				.stream((originalClassPath).split(File.pathSeparator))
-				.filter(path -> path.contains("Naftah"))
-				.collect(Collectors.joining(File.pathSeparator));
+		String tempPaths = System
+				.getProperty(JAVA_HOME_PROPERTY) + File.pathSeparator + "jmods" + File.pathSeparator + "java.base.jmod" + File.pathSeparator + Arrays
+						.stream((originalClassPath).split(File.pathSeparator))
+						.filter(path -> path.contains("Naftah") && path.contains("java") && path.contains("main"))
+						.collect(Collectors.joining(File.pathSeparator));
 		System.setProperty(CLASS_PATH_PROPERTY, tempPaths);
 
 		System.setProperty(TERMINAL_WIDTH_PROPERTY, Integer.toString(80));
 		System.setProperty(TERMINAL_HEIGHT_PROPERTY, Integer.toString(24));
-		System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(false));
+		System.setProperty(SCAN_JDK_PROPERTY, Boolean.toString(false));
+		System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
+		System.setProperty(CACHE_SCANNING_RESULTS_PROPERTY, Boolean.toString(false));
 
 		initConfig();
 		bootstrap(false);

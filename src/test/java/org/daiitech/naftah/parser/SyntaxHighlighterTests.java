@@ -43,13 +43,11 @@ public class SyntaxHighlighterTests {
 	@Test
 	void testEscapedNewlineThrowsEOFError() {
 		String buffer = """
-						كرر_حلقة أ تعيين 1 إلى 5 إفعل { #
-							إطبع(أ) #
+						كرر_حلقة أ تعيين 1 إلى 5 إفعل { N
+							إطبع(أ) N
 						""";
 
-		assertThrows(EOFError.class, () -> {
-			highlighter.highlight(reader, buffer);
-		});
+		assertThrows(EOFError.class, () -> highlighter.highlight(reader, buffer));
 	}
 
 	@Test
