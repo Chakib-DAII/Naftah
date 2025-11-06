@@ -273,6 +273,12 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.EmptyObjectContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectValueContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ValueExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -291,7 +297,13 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TupleValueContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.EmptySetContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SetValueContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.EmptyMapContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.MapValueContext context) {
@@ -300,7 +312,13 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SingleElementContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TupleSingleElementContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.MultipleElementsContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TupleMultipleElementsContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.KeyValuePairsContext context) {
@@ -1694,17 +1712,43 @@ public final class NaftahExecutionLogger {
 	}
 
 
-	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.ObjectContext ctx) {
+	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.EmptyObjectContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											ObjectContext::LBRACE -> %s
-											ObjectContext::objectFields -> {
-											%s
-											}
-											ObjectContext::RBRACE -> %s
+											EmptyObjectContext::AT_SIGN -> %s
+											EmptyObjectContext::LBRACE -> %s
+											EmptyObjectContext::RBRACE -> %s
 														"""
 										.formatted(
+													Objects.nonNull(context.AT_SIGN()) ?
+															context.AT_SIGN().getText() :
+															null,
+													Objects.nonNull(context.LBRACE()) ?
+															context.LBRACE().getText() :
+															null,
+													Objects.nonNull(context.RBRACE()) ?
+															context.RBRACE().getText() :
+															null
+
+										));
+	}
+
+	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.ObjectValueContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ObjectValueContext::AT_SIGN -> %s
+											ObjectValueContext::LBRACE -> %s
+											ObjectValueContext::objectFields -> {
+											%s
+											}
+											ObjectValueContext::RBRACE -> %s
+														"""
+										.formatted(
+													Objects.nonNull(context.AT_SIGN()) ?
+															context.AT_SIGN().getText() :
+															null,
 													Objects.nonNull(context.LBRACE()) ?
 															context.LBRACE().getText() :
 															null,
@@ -1712,7 +1756,7 @@ public final class NaftahExecutionLogger {
 															context.objectFields().getText() :
 															null,
 													Objects.nonNull(context.RBRACE()) ?
-															context.objectFields().getText() :
+															context.RBRACE().getText() :
 															null
 
 										));
@@ -1769,7 +1813,7 @@ public final class NaftahExecutionLogger {
 								ctx,
 								context -> """
 											TupleValueContext::LPAREN -> %s
-											TupleValueContext::elements -> {
+											TupleValueContext::tupleElements -> {
 											%s
 											}
 											TupleValueContext::RPAREN -> %s
@@ -1778,11 +1822,37 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.LPAREN()) ?
 															context.LPAREN().getText() :
 															null,
-													Objects.nonNull(context.elements()) ?
-															context.elements().getText() :
+													Objects.nonNull(context.tupleElements()) ?
+															context.tupleElements().getText() :
 															null,
 													Objects.nonNull(context.RPAREN()) ?
 															context.RPAREN().getText() :
+															null
+
+										));
+	}
+
+	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.EmptySetContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											EmptySetContext::ORDERED -> %s
+											EmptySetContext::HASH_SIGN -> %s
+											EmptySetContext::LBRACE -> %s
+											EmptySetContext::RBRACE -> %s
+													"""
+										.formatted(
+													Objects.nonNull(context.ORDERED()) ?
+															context.ORDERED().getText() :
+															null,
+													Objects.nonNull(context.HASH_SIGN()) ?
+															context.HASH_SIGN().getText() :
+															null,
+													Objects.nonNull(context.LBRACE()) ?
+															context.LBRACE().getText() :
+															null,
+													Objects.nonNull(context.RBRACE()) ?
+															context.RBRACE().getText() :
 															null
 
 										));
@@ -1792,6 +1862,8 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
+											SetValueContext::ORDERED -> %s
+											SetValueContext::HASH_SIGN -> %s
 											SetValueContext::LBRACE -> %s
 											SetValueContext::elements -> {
 											%s
@@ -1799,6 +1871,12 @@ public final class NaftahExecutionLogger {
 											SetValueContext::RBRACE -> %s
 													"""
 										.formatted(
+													Objects.nonNull(context.ORDERED()) ?
+															context.ORDERED().getText() :
+															null,
+													Objects.nonNull(context.HASH_SIGN()) ?
+															context.HASH_SIGN().getText() :
+															null,
 													Objects.nonNull(context.LBRACE()) ?
 															context.LBRACE().getText() :
 															null,
@@ -1812,10 +1890,38 @@ public final class NaftahExecutionLogger {
 										));
 	}
 
+	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.EmptyMapContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											EmptyMapContext::ORDERED -> %s
+											EmptyMapContext::DOLLAR_SIGN -> %s
+											EmptyMapContext::LBRACE -> %s
+											EmptyMapContext::RBRACE -> %s
+													"""
+										.formatted(
+													Objects.nonNull(context.ORDERED()) ?
+															context.ORDERED().getText() :
+															null,
+													Objects.nonNull(context.DOLLAR_SIGN()) ?
+															context.DOLLAR_SIGN().getText() :
+															null,
+													Objects.nonNull(context.LBRACE()) ?
+															context.LBRACE().getText() :
+															null,
+													Objects.nonNull(context.RBRACE()) ?
+															context.RBRACE().getText() :
+															null
+
+										));
+	}
+
 	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.MapValueContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
+											MapValueContext::ORDERED -> %s
+											MapValueContext::DOLLAR_SIGN -> %s
 											MapValueContext::LBRACE -> %s
 											MapValueContext::keyValuePairs -> {
 											%s
@@ -1823,6 +1929,12 @@ public final class NaftahExecutionLogger {
 											MapValueContext::RBRACE -> %s
 													"""
 										.formatted(
+													Objects.nonNull(context.ORDERED()) ?
+															context.ORDERED().getText() :
+															null,
+													Objects.nonNull(context.DOLLAR_SIGN()) ?
+															context.DOLLAR_SIGN().getText() :
+															null,
 													Objects.nonNull(context.LBRACE()) ?
 															context.LBRACE().getText() :
 															null,
@@ -1858,20 +1970,59 @@ public final class NaftahExecutionLogger {
 	}
 
 	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.TupleSingleElementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											TupleSingleElementContext::expression -> %s
+											TupleSingleElementContext::COMMA -> %s
+											TupleSingleElementContext::SEMI -> %s
+											"""
+										.formatted( Objects.nonNull(context.expression()) ?
+															context.expression().getText() :
+															null,
+													Objects.nonNull(context.COMMA()) ?
+															context.expression().getText() :
+															null,
+													Objects.nonNull(context.SEMI()) ?
+															context.expression().getText() :
+															null
+										));
+	}
+
+	public static String logExecution(  boolean doLog,
 										org.daiitech.naftah.parser.NaftahParser.MultipleElementsContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											MultipleElementsContext::expression -> {
+											MultipleElementsContext::collectionMultipleElements::expression -> {
 											%s
 											}
-											MultipleElementsContext::COMMA -> %s
-											MultipleElementsContext::SEMI -> %s
+											MultipleElementsContext::collectionMultipleElements::COMMA -> %s
+											MultipleElementsContext::collectionMultipleElements::SEMI -> %s
 											"""
 										.formatted(
-													join(context.expression()),
-													join(context.COMMA()),
-													join(context.SEMI())
+													join(context.collectionMultipleElements().expression()),
+													join(context.collectionMultipleElements().COMMA()),
+													join(context.collectionMultipleElements().SEMI())
+										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.TupleMultipleElementsContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											TupleMultipleElementsContext::collectionMultipleElements::expression -> {
+											%s
+											}
+											TupleMultipleElementsContext::collectionMultipleElements::COMMA -> %s
+											TupleMultipleElementsContext::collectionMultipleElements::SEMI -> %s
+											"""
+										.formatted(
+													join(context.collectionMultipleElements().expression()),
+													join(context.collectionMultipleElements().COMMA()),
+													join(context.collectionMultipleElements().SEMI())
 										));
 	}
 
