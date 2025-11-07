@@ -873,6 +873,7 @@ It provides detailed definitions and illustrative examples.
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [📦 تعريف الكائنات - Objects](./06_objects.md)
 * [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
+* [⚙️ التوافق مع Java (Java Interop) في لغة نفطة - Java Interop](./09_java_interop.md)
 
 ---
 </div>
