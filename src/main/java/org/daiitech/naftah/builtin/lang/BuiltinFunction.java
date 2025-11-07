@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Representation of a builtin function.
@@ -18,12 +20,19 @@ import java.lang.reflect.Method;
  *
  * @author Chakib Daii
  */
-public class BuiltinFunction implements Serializable {
+public final class BuiltinFunction implements Serializable, JvmExecutable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The name of the method.
 	 */
 	private final String methodName;
+	/**
+	 * The method parameter types.
+	 */
+	private final Class<?>[] methodParameterTypes;
 
 	/**
 	 * The fully qualified name of the class declaring the method.
@@ -56,6 +65,7 @@ public class BuiltinFunction implements Serializable {
 	public BuiltinFunction(Method method, NaftahFunctionProvider providerInfo, NaftahFunction functionInfo) {
 		this.method = method;
 		this.methodName = method.getName();
+		this.methodParameterTypes = method.getParameterTypes();
 		this.className = method.getDeclaringClass().getName();
 		this.providerInfo = providerInfo;
 		this.functionInfo = functionInfo;
@@ -101,6 +111,14 @@ public class BuiltinFunction implements Serializable {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Executable getExecutable() {
+		return method;
+	}
+
+	/**
 	 * Custom serialization logic.
 	 * Writes the non-transient fields using default serialization.
 	 *
@@ -128,7 +146,7 @@ public class BuiltinFunction implements Serializable {
 			ois.defaultReadObject();
 			Class<?> clazz = Class.forName(className);
 			for (Method m : clazz.getDeclaredMethods()) {
-				if (m.getName().equals(methodName)) {
+				if (m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), methodParameterTypes)) {
 					this.method = m;
 					break;
 				}

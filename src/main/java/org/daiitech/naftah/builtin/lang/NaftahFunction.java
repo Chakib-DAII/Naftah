@@ -1,5 +1,6 @@
 package org.daiitech.naftah.builtin.lang;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,9 @@ public record NaftahFunction(
 		List<Class<?>> parameterTypes,
 		List<Class<?>> exceptionTypes
 ) implements Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	public NaftahFunction {
 		if (Objects.nonNull(LEXER_LITERALS) && (!useQualifiedName && LEXER_LITERALS.contains(name) || Arrays

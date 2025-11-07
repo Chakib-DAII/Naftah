@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.CUSTOM_RULES_BUNDLE;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.splitIdentifier;
@@ -136,7 +137,7 @@ public final class TransliterationGenerator {
 			String translated = translateWord(client, word);
 			if (!translated.isBlank() && !(translated.length() < 2) && !word.equals(translated) && !existingRules
 					.contains(word) && translated.codePoints().allMatch(ArabicUtils::isArabicChar)) {
-				translated = translated.replaceAll(" ", "_");
+				translated = translated.replaceAll(" ", UNDERSCORE);
 				properties.setProperty(word, translated);
 			}
 		}

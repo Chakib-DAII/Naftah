@@ -2,6 +2,8 @@ package org.daiitech.naftah.builtin.lang;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -23,7 +25,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputErr
  *
  * @author Chakib Daii
  */
-public class DynamicNumber extends Number implements Cloneable {
+public class DynamicNumber extends Number implements Comparable<DynamicNumber>, Cloneable {
 	/**
 	 * The underlying numeric value.
 	 */
@@ -144,7 +146,7 @@ public class DynamicNumber extends Number implements Cloneable {
 	 * @return true if the underlying value is an Integer
 	 */
 	public boolean isInt() {
-		return !isNaN() && value instanceof Integer;
+		return !isNaN() && value instanceof Integer || value instanceof AtomicInteger;
 	}
 
 	/**
@@ -153,7 +155,7 @@ public class DynamicNumber extends Number implements Cloneable {
 	 * @return true if the underlying value is a Long
 	 */
 	public boolean isLong() {
-		return !isNaN() && value instanceof Long;
+		return !isNaN() && value instanceof Long || value instanceof AtomicLong;
 	}
 
 	/**
@@ -551,5 +553,15 @@ public class DynamicNumber extends Number implements Cloneable {
 		catch (CloneNotSupportedException e) {
 			throw new NaftahBugError("فشل الاستنساخ بشكل غير متوقع.", e);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(
+							@SuppressWarnings("NullableProblems")
+							DynamicNumber anotherDynamicNumber) {
+		return NumberUtils.compare(this, anotherDynamicNumber);
 	}
 }

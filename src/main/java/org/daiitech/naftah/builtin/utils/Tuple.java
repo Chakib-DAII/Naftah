@@ -1,5 +1,6 @@
 package org.daiitech.naftah.builtin.utils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,10 +31,13 @@ import org.daiitech.naftah.errors.NaftahBugError;
  */
 public final class Tuple implements List<Object>, Serializable {
 
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The underlying unmodifiable list of tuple elements.
 	 */
-	private final List<Object> values;
+	private List<Object> values;
 
 	/**
 	 * Private constructor to wrap the given list as an unmodifiable list.
@@ -69,6 +73,7 @@ public final class Tuple implements List<Object>, Serializable {
 		if (elements == null) {
 			throw newNaftahBugNullError();
 		}
+		//noinspection unchecked
 		return new Tuple((List<Object>) elements);
 	}
 
@@ -96,6 +101,19 @@ public final class Tuple implements List<Object>, Serializable {
 	 */
 	public static NaftahBugError newNaftahBugNullError(int line, int column) {
 		return new NaftahBugError("القيم لا يجب أن تكون null", line, column);
+	}
+
+	/**
+	 * Updates the tuple’s contents by replacing its internal unmodifiable list
+	 * with a new one built from the given elements.
+	 *
+	 * <p>This method should only be used internally — external users should
+	 * treat tuples as immutable.</p>
+	 *
+	 * @param elements the new list of elements to assign to this tuple
+	 */
+	public void update(List<?> elements) {
+		this.values = Collections.unmodifiableList(elements);
 	}
 
 	/**

@@ -1,15 +1,22 @@
 package org.daiitech.naftah.errors;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.builtin.lang.JvmExecutable;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
+import static org.daiitech.naftah.parser.NaftahParserHelper.FunctionToString;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
+import static org.daiitech.naftah.parser.NaftahParserHelper.getFunction;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
 /**
@@ -57,6 +64,38 @@ public final class ExceptionUtils {
 	 * Arabic: "لا يمكن أن تكون الوسائط فارغة."
 	 */
 	public static final String EMPTY_ARGUMENTS_ERROR = "لا يمكن أن تكون الوسائط فارغة (%s)، (%s).";
+	/**
+	 * Note prefix used in error messages.
+	 * <p>
+	 * Arabic: "ملاحظة:"
+	 * </p>
+	 */
+	public static final String NOTE = "\nملاحظة:\n";
+	/**
+	 * Generates an error message indicating that an instance method was called incorrectly.
+	 * <p>
+	 * The message is in Arabic and explains that the method is not static and requires the
+	 * first argument (or second if the method is from a list of functions) to be the instance
+	 * on which the method will be invoked.
+	 * </p>
+	 *
+	 * <p>Usage example:
+	 * <pre>
+	 * String msg = INVALID_INSTANCE_METHOD_CALL_MSG.apply("methodName", additionalInfo);
+	 * </pre>
+	 * </p>
+	 * <p>
+	 * Parameters:
+	 * <ul>
+	 * <li>First: the method name ({@code %s})</li>
+	 * <li>Second: additional context or details ({@code %s})</li>
+	 * </ul>
+	 */
+	public static final BiFunction<String, String, String> INVALID_INSTANCE_METHOD_CALL_MSG = """
+																								الدالة '%s' ليست ثابتة (instance method)، يجب تزويد الوسيط الأول (الثاني في حالة الدالة المرتبطة بقائمة من الدوال) كالكائن (instance) الذي سيتم استدعاء الدالة عليه.
+
+																								%s
+																								"""::formatted;
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -294,5 +333,243 @@ public final class ExceptionUtils {
 	 */
 	public static NaftahBugError newNaftahNegativeNumberError() {
 		return new NaftahBugError("لا يُسمح بالأعداد السالبة.");
+	}
+
+
+	/**
+	 * Creates a new {@link NaftahBugError} indicating that the specified function is not supported.
+	 *
+	 * @param functionName  the name of the unsupported function.
+	 * @param functionClass the class providing the function.
+	 * @param line          the line number in the source code where the error occurred.
+	 * @param column        the column number in the source code where the error occurred.
+	 * @return a {@code NaftahBugError} describing the unsupported function.
+	 */
+	public static NaftahBugError newNaftahUnsupportedFunctionError( String functionName,
+																	Class<?> functionClass,
+																	int line,
+																	int column) {
+		return new NaftahBugError(  "الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
+											.formatted( functionName,
+														functionClass.getName()),
+									line,
+									column);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for illegal argument count or mismatched argument types.
+	 *
+	 * @param functionName           the name of the function being invoked.
+	 * @param providerClassName      the class providing the function.
+	 * @param paramCount             the expected number of parameters.
+	 * @param argCount               the actual number of arguments provided.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param e                      the underlying exception, if any.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the illegal argument error.
+	 */
+	public static NaftahBugError newNaftahIllegalArgumentError( String functionName,
+																String providerClassName,
+																int paramCount,
+																int argCount,
+																String functionDetailedString,
+																Exception e,
+																int line,
+																int column) {
+
+		return new NaftahBugError(  """
+									عدد الوسائط غير صحيح للمُستدعى '%s' المقدمة من '%s'.
+									العدد المتوقع: %d،
+									العدد الفعلي: %d.
+
+									%s
+									"""
+											.formatted( functionName,
+														providerClassName,
+														paramCount,
+														argCount,
+														functionDetailedString
+											),
+									e,
+									line,
+									column);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for errors occurring during function invocation.
+	 *
+	 * @param functionName           the name of the function being invoked.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param e                      the underlying exception.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the invocation error.
+	 */
+	public static NaftahBugError newNaftahInvocationError(  String functionName,
+															String functionDetailedString,
+															Exception e,
+															int line,
+															int column) {
+		return new NaftahBugError(  """
+									.'%s' حدث خطأ أثناء استدعاء المُستدعى
+
+									%s
+									"""
+											.formatted( functionName,
+														functionDetailedString),
+									e,
+									line,
+									column);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for functions that are not invocable.
+	 *
+	 * @param functionName           the name of the function.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the non-invocable function error.
+	 */
+	public static NaftahBugError newNaftahNonInvocableFunctionError(String functionName,
+																	String functionDetailedString,
+																	int line,
+																	int column) {
+		return new NaftahBugError(
+									"""
+									الدالة '%s' غير قابلة للاستدعاء.
+
+									%s
+									"""
+											.formatted(functionName, functionDetailedString),
+									line,
+									column
+		);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} when object instantiation fails.
+	 *
+	 * @param functionName           the name of the function triggering instantiation.
+	 * @param functionDetailedString detailed string representation of the function.
+	 * @param e                      the underlying exception.
+	 * @param line                   the line number where the error occurred.
+	 * @param column                 the column number where the error occurred.
+	 * @return a {@code NaftahBugError} describing the instantiation failure.
+	 */
+	public static NaftahBugError newNaftahInstantiationError(   String functionName,
+																String functionDetailedString,
+																Exception e,
+																int line,
+																int column) {
+		return new NaftahBugError(
+									"""
+									تعذر إنشاء كائن من الفئة المطلوبة '%s' أثناء تنفيذ المُستدعى أو أثناء تهيئة أحد الوسائط عند التحويل إلى نوع الطريقة المناسب.
+
+									%s
+									"""
+											.formatted(functionName, functionDetailedString),
+									e,
+									line,
+									column
+		);
+	}
+
+	/**
+	 * Creates and throws a new {@link NaftahBugError} when the requested invocable
+	 * (method or constructor) cannot be found in the current context.
+	 *
+	 * <p>The generated error message (in Arabic) indicates that the target
+	 * callable symbol is undefined or inaccessible.</p>
+	 *
+	 * @param functionName the name of the missing invocable (method or constructor).
+	 * @param line         the source line number where the error occurred.
+	 * @param column       the source column number where the error occurred.
+	 * @return this method never returns normally; it always throws a {@link NaftahBugError}.
+	 * @throws NaftahBugError always thrown to indicate a missing invocable.
+	 */
+	public static NaftahBugError newNaftahInvocableNotFoundError(   String functionName,
+																	int line,
+																	int column) {
+		return new NaftahBugError(  "المُستدعى '%s' غير موجودة في السياق الحالي."
+											.formatted(functionName),
+									line,
+									column);
+	}
+
+	/**
+	 * Creates and throws a {@link NaftahBugError} when a collection of invocable
+	 * functions or class initializers is found, but the caller did not specify
+	 * an index to select which one to invoke.
+	 *
+	 * <p>This is typically used for overloaded or indexed functions. The generated
+	 * error message (in Arabic) explains how to select a specific version using
+	 * a numeric index appended after the function name with a colon.</p>
+	 *
+	 * <p>The message includes a numbered list of all available invocable versions
+	 * for reference.</p>
+	 *
+	 * @param functionName                 the name of the function or class initializer
+	 * @param functionsOrClassInitializers a collection of available overloaded or indexed invocables
+	 * @param exception                    the original exception that triggered this error, for context
+	 * @param line                         the source line number where the error occurred
+	 * @param column                       the source column number where the error occurred
+	 * @param <T>                          type of {@link JvmExecutable} in the collection
+	 * @return this method never returns normally; it always throws a {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate ambiguity in the invocable list
+	 */
+	public static <T extends JvmExecutable> NaftahBugError newNaftahInvocableListFoundError(String functionName,
+																							Collection<T> functionsOrClassInitializers,
+																							Throwable exception,
+																							int line,
+																							int column) {
+		return new NaftahBugError(
+									"""
+									المُستدعى '%s' مرتبط بعدة نُسخ قابلة للتنفيذ، ويجب تحديد فهرس (عدد) لاختيار أي منها سيتم استدعاؤه.
+									يُضاف هذا الفهرس بعد اسم المُستدعى مباشرة باستخدام النقطتين (:)،
+									مثل المثال التالي:
+
+									المُستدعى:الفهرس(الوسائط)
+
+									على سبيل المثال:
+
+									java.lang.Math::abs
+
+									جافا:لغة:الرياضيات::ابس:0(-5)
+									جافا:لغة:الرياضيات::ابس:1(-500)
+									جافا:لغة:الرياضيات::ابس:2(-555555234،5)
+									جافا:لغة:الرياضيات::ابس:3(-512039123،9)
+
+									يستدعي النسخة ذات الفهرس المطلوبة من الدالة abs.
+
+															النُسخ قابلة للتنفيذ:
+
+									%s
+
+									الخطأ الأصلي:
+
+									"""
+											.formatted( functionName,
+														IntStream
+																.range( 0,
+																		functionsOrClassInitializers
+																				.size())
+																.mapToObj(index -> """
+																					%s
+																					----------------------------------------------
+																					%s
+																					"""
+																		.formatted(
+																					index + 1,
+																					FunctionToString(getFunction(
+																													functionsOrClassInitializers,
+																													index)))
+																)
+																.collect(Collectors
+																		.joining())),
+									exception,
+									line,
+									column);
 	}
 }

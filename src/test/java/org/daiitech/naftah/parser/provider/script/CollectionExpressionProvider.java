@@ -20,6 +20,8 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
 				.of(
+					Arguments.of(true, "[]", List.of(), null),
+					Arguments.of(true, "[٩٢؛]", List.of(92), null),
 					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢]", List.of(85, 90, 78, 92), null),
 					Arguments
 							.of(true,
@@ -44,8 +46,10 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 																																		.of(2,
 																																			1))))))))),
 								null),
+					Arguments.of(true, "()", Tuple.of(), null),
 					Arguments.of(true, "(٣٢، ٤٥)", Tuple.of(32, 45), null),
 					Arguments.of(true, "(٣٢،)", Tuple.of(32), null),
+					Arguments.of(true, "(٣٢؛)", Tuple.of(32), null),
 					Arguments
 							.of(true,
 								"(١٠، (٩، (٨، (٧، (٦، (٥، (٤، (٣، (٢، ١)))))))))",
@@ -70,6 +74,22 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 																																			1))))))
 																))),
 								null),
+					Arguments.of(true, "#{}", new HashSet<>(), null),
+					Arguments.of(true, "#{١؛}", new HashSet<>() {
+						{
+							add(1);
+						}
+					}, null),
+					Arguments.of(true, "{١،}", new HashSet<>() {
+						{
+							add(1);
+						}
+					}, null),
+					Arguments.of(true, "{١؛}", new HashSet<>() {
+						{
+							add(1);
+						}
+					}, null),
 					Arguments.of(true, "{١، ٢، ٣، ٤}", new HashSet<>() {
 						{
 							add(1);
@@ -83,9 +103,9 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 								"{\"أ\", \"ب\", \"ج\"}",
 								new HashSet<>() {
 									{
-										add('أ');
-										add('ب');
-										add('ج');
+										add("أ");
+										add("ب");
+										add("ج");
 									}
 								},
 								null),
@@ -110,12 +130,28 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 					}, null),
 					Arguments
 							.of(true,
-								"مرتب {\"أ\", \"ب\", \"ج\"}",
+								"مرتب {'أ', 'ب', 'ج'}",
 								new LinkedHashSet<>() {
 									{
 										add('أ');
 										add('ب');
 										add('ج');
+									}
+								},
+								null),
+					Arguments
+							.of(true,
+								"${}",
+								new HashMap<>(),
+								null),
+					Arguments
+							.of(true,
+								"${\"اسم\": \"أحمد\", \"عمر\": ٢٠, \"معدل\": ٨٨}",
+								new LinkedHashMap<>() {
+									{
+										put("اسم", "أحمد");
+										put("عمر", 20);
+										put("معدل", 88);
 									}
 								},
 								null),

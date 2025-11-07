@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -1030,6 +1031,25 @@ public final class Builtin {
 		String value = ArabicUtils
 				.convertArabicToLatinLetterByLetter(text);
 		return NumberUtils.parseDynamicNumber(value, radix, text);
+	}
+
+	@NaftahFn(
+				name = "حجم",
+				description = """
+								دالة (حجم) لحساب حجم الكائن.
+								- للمصفوفات: طول المصفوفة
+								- للقوائم والمجموعات: عدد العناصر
+								- للخرائط: عدد المدخلات
+								- للسلاسل: طول النص
+								- للأنواع العددية والمنطقية: 1
+								- للكائنات الأخرى: عدد الحقول غير الثابتة
+								""",
+				usage = "حجم(الكائن)",
+				parameterTypes = {Object.class},
+				returnType = Number.class
+	)
+	public static Number size(Object obj) {
+		return ObjectUtils.size(obj);
 	}
 
 }

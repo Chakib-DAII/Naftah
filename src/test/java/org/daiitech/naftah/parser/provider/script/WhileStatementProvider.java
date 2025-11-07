@@ -18,7 +18,7 @@ public class WhileStatementProvider implements ArgumentsProvider {
 							متغير أ تعيين ١
 
 							بينما أ أصغر_من ١٠ افعل {
-								إطبع(أ)
+								إطبع(أ) أنهي
 								زد أ
 							}
 							أنهي

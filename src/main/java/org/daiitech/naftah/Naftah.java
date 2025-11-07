@@ -69,14 +69,16 @@ import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
-import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.classToDetailedString;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.daiitech.naftah.utils.repl.REPLHelper.LAST_PRINTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
+import static org.daiitech.naftah.utils.repl.REPLHelper.clearScreen;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getLineReader;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getMarkdownAsString;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
@@ -132,6 +134,14 @@ public final class Naftah {
 	 * Property to force scanning the Java classpath.
 	 */
 	public static final String FORCE_CLASSPATH_PROPERTY = "naftah.forceClassPathScan";
+	/**
+	 * Property to enable scanning the Jdk classes for Naftah types.
+	 */
+	public static final String SCAN_JDK_PROPERTY = "naftah.scanJDK";
+	/**
+	 * Cache results of classpath and JDK scanning.
+	 */
+	public static final String CACHE_SCANNING_RESULTS_PROPERTY = "naftah.cacheScanningResults";
 	/**
 	 * Property to enable debug mode.
 	 */
@@ -208,6 +218,12 @@ public final class Naftah {
 	 * The recognized standard file extensions for Naftah scripts.
 	 */
 	public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
+
+	/**
+	 * Constant representing a single underscore character ("_").
+	 */
+	public static final String UNDERSCORE = "_";
+
 	/**
 	 * Logger instance for logging Naftah program.
 	 */
@@ -614,6 +630,8 @@ public final class Naftah {
 		 * @throws Exception if any error occurs
 		 */
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
+			System.setProperty(SCAN_JDK_PROPERTY, Boolean.toString(true));
+			System.setProperty(CACHE_SCANNING_RESULTS_PROPERTY, Boolean.toString(true));
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
 			}
@@ -814,7 +832,11 @@ public final class Naftah {
 
 				reader = getLineReader(terminal, topics.keySet());
 
+				setupHistoryConfig(reader, ".naftah/.naftah_man_history");
+
 				setupKeyBindingsConfig(reader);
+
+				clearScreen();
 
 				String line = null;
 
@@ -834,6 +856,11 @@ public final class Naftah {
 
 										مساعدة أو usage
 
+										يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
+										Alt+L → نسخ آخر نص مطبوع إلى الحافظة
+										Alt+V → لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
+
+										استمتع بالتجربة وتعلم بسرعة!
 										""", true);
 							}
 							line = reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null).trim();
@@ -852,7 +879,7 @@ public final class Naftah {
 							else {
 								String arabicQualifiedNameOrBuiltinFunction = null;
 								String[] lineParts;
-								if (line.contains(".") && !line.contains(QUALIFIED_NAME_SEPARATOR)) {
+								if (!containsArabic(line) && line.contains(".")) {
 									if ((lineParts = line.split(QUALIFIED_CALL_SEPARATOR)).length == 2) {
 										arabicQualifiedNameOrBuiltinFunction = ClassUtils
 												.getQualifiedCall(ClassUtils
@@ -897,7 +924,13 @@ public final class Naftah {
 								}
 
 								if (arabicQualifiedNameOrBuiltinFunction != null) {
+									LAST_PRINTED.set(arabicQualifiedNameOrBuiltinFunction);
 									padText(arabicQualifiedNameOrBuiltinFunction, true);
+									padText("""
+											\n
+											[استخدم Alt+L لنسخ آخر نص مطبوع إلى الحافظة، واستخدم Alt+V للصقه مرة أخرى في محرر الإدخال لإعادة استخدامه.]
+											""",
+											true);
 								}
 								else {
 									padText("لم يتم العثور على دليل للموضوع.", true);
@@ -914,6 +947,10 @@ public final class Naftah {
 					}
 					catch (Throwable t) {
 						printPaddedErrorMessageToString(t);
+					}
+					finally {
+						// Save history explicitly (though it's usually done automatically)
+						reader.getHistory().save();
 					}
 				}
 			}
@@ -935,8 +972,10 @@ public final class Naftah {
 			private boolean checkManagementCommands(String line) {
 				var matched = false;
 				String command = line.trim().toLowerCase(ARABIC);
-
+//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic)
+//					TODO: so the flow you transliterate then get all infos
 				if (List.of("usage", "مساعدة").contains(command)) {
+
 					matched = true;
 					padText(
 							"""
@@ -959,7 +998,7 @@ public final class Naftah {
 					topics
 							.keySet()
 							.forEach(topic -> padText("\t- " + ArabicUtils
-									.transliterateToArabicScriptDefault(false, topic)[0] + " - " + topic, true));
+									.transliterateToArabicScriptDefault(topic)[0] + " - " + topic, true));
 				}
 				else if (List.of("classes", "الأصناف").contains(command)) {
 					matched = true;
@@ -1416,7 +1455,7 @@ public final class Naftah {
 												.getFileName()
 												.toString()
 												.replaceFirst("[.][^.]+$", "")
-												.split("_"))
+												.split(UNDERSCORE))
 										.skip(1)
 										.collect(Collectors.joining("-"));
 
@@ -1453,7 +1492,7 @@ public final class Naftah {
 				padText("📖 الدليل: %s - %s"
 						.formatted(
 									ArabicUtils
-											.transliterateToArabicScriptDefault(false, topic)[0],
+											.transliterateToArabicScriptDefault(topic)[0],
 									topic), true);
 				padText("────────────────────────────────────────────", true);
 				printedLines += 2;
@@ -1550,9 +1589,22 @@ public final class Naftah {
 
 				LineReader reader = getLineReader(terminal);
 
-				setupHistoryConfig(reader);
+				setupHistoryConfig(reader, ".naftah/.naftah_history");
 
 				setupKeyBindingsConfig(reader);
+
+				clearScreen();
+
+
+				padText("""
+						مرحبًا بك في الواجهة التفاعلية للكتيبات التقنية لنفطه.
+
+						يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
+						Alt+L → نسخ آخر نص مطبوع إلى الحافظة
+						Alt+V → لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
+
+						استمتع بالتجربة وتعلم بسرعة!
+						""", true);
 
 				StringBuilder fullLine = new StringBuilder();
 
@@ -1586,7 +1638,9 @@ public final class Naftah {
 						var result = doRun(parser, main.args);
 
 						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)) {
-							printPaddedToString(result);
+							var resultStr = getNaftahValueToString(result);
+							LAST_PRINTED.set(resultStr);
+							printPaddedToString(resultStr);
 						}
 						System.out.println();
 
@@ -1596,7 +1650,7 @@ public final class Naftah {
 						padText(closingMsg, true);
 						break;
 					}
-					catch (IndexOutOfBoundsException | EOFError ignored) {
+					catch (EOFError ignored) {
 						String currentLine = reader.getBuffer().atChar(reader.getBuffer().length() - 1) == '\n' ?
 								reader.getBuffer().substring(0, reader.getBuffer().length() - 2) :
 								reader.getBuffer().substring(0, reader.getBuffer().length() - 1);

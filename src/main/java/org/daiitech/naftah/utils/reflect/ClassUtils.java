@@ -1,6 +1,7 @@
 package org.daiitech.naftah.utils.reflect;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -16,10 +17,12 @@ import java.util.stream.Collectors;
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.reflect.AnnotationsUtils.getNaftahFunctionAnnotation;
@@ -52,6 +55,90 @@ public final class ClassUtils {
 	 */
 	public static final Pattern QUALIFIED_CALL_REGEX = Pattern.compile("^[^:]*::(?:[^:]*:)+[^:]*$");
 
+
+	/**
+	 * Commonly recognized <b>factory-style static method names</b> in Java.
+	 *
+	 * <p>These names are used by {@code hasFactoryMethod(Class<?>)} to detect
+	 * whether a class provides a static creation method that returns instances
+	 * of itself or its subclasses. This allows Naftah to treat such methods as
+	 * "constructors" in its interop layer.</p>
+	 *
+	 * <p>The list includes canonical JDK factories (e.g., {@code of}, {@code from}),
+	 * builder-style factories, parser/deserializer names, and provider patterns
+	 * from the JDK, Guava, Jackson, and Spring ecosystems.</p>
+	 */
+	private static final Set<String> FACTORY_NAMES = Set
+			.of(
+				"of",
+				"ofNullable",
+				"from",
+				"valueOf",
+				"newInstance",
+				"instance",
+				"getInstance",
+				"empty",
+				"singleton",
+				"copyOf",
+				"unmodifiable",
+				"immutable",
+				"noneOf",
+				"anyOf",
+				"allOf",
+				"builder",
+				"build",
+				"newBuilder",
+				"parse",
+				"parseFrom",
+				"parseValue",
+				"decode",
+				"encode",
+				"forName",
+				"fromString",
+				"fromJson",
+				"fromXml",
+				"open",
+				"load",
+				"read",
+				"connect",
+				"acquire",
+				"create",
+				"createFrom",
+				"createInstance",
+				"getDefault",
+				"defaultInstance",
+				"defaultFactory",
+				"provide",
+				"supply",
+				"with",
+				"withDefaults",
+				"using",
+				"usingDefaults",
+				"usingFactory",
+				"usingProvider"
+			);
+	/**
+	 * Common prefixes used to identify <b>factory-like methods</b> when scanning class members.
+	 *
+	 * <p>Unlike {@link #FACTORY_NAMES}, these are matched as prefixes,
+	 * so methods such as {@code newBuilder()}, {@code createStream()},
+	 * {@code fromJsonString()}, and {@code getInstanceSafe()} are also recognized.</p>
+	 *
+	 * <p>This prefix-based detection is useful for frameworks that
+	 * generate descriptive factory names dynamically or through code generation.</p>
+	 */
+	private static final String[] FACTORY_PREFIXES = {
+														"new",
+														"create",
+														"from",
+														"get",
+														"of",
+														"build",
+														"parse",
+														"with",
+														"using"
+	};
+
 	/**
 	 * Private constructor to prevent instantiation.
 	 * Always throws a {@link NaftahBugError} when called.
@@ -70,7 +157,7 @@ public final class ClassUtils {
 	public static String getQualifiedName(String className) {
 		return String
 				.join(  QUALIFIED_NAME_SEPARATOR,
-						ArabicUtils.transliterateToArabicScriptDefault(true, className.split(CLASS_SEPARATORS_REGEX)));
+						ArabicUtils.transliterateToArabicScriptDefault(className.split(CLASS_SEPARATORS_REGEX)));
 	}
 
 	/**
@@ -86,7 +173,7 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, Method method) {
 		return "%s::%s"
-				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(true, method.getName())[0]);
+				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(method.getName())[0]);
 	}
 
 	/**
@@ -102,7 +189,7 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, String methodName) {
 		return "%s::%s"
-				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(true, methodName)[0]);
+				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(methodName)[0]);
 	}
 
 
@@ -146,7 +233,7 @@ public final class ClassUtils {
 		return classQualifiers
 				.stream()
 				.map(strings -> String
-						.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefault(true, strings)))
+						.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefault(strings)))
 				.collect(Collectors.toSet());
 	}
 
@@ -164,7 +251,7 @@ public final class ClassUtils {
 						.entry(
 								String
 										.join(  QUALIFIED_NAME_SEPARATOR,
-												ArabicUtils.transliterateToArabicScriptDefault(true, strings.clone())),
+												ArabicUtils.transliterateToArabicScriptDefault(strings.clone())),
 								String.join(QUALIFIED_NAME_SEPARATOR, strings.clone())))
 				.collect(Collectors
 						.toMap( Map.Entry::getKey,
@@ -216,6 +303,54 @@ public final class ClassUtils {
 	}
 
 	/**
+	 * Retrieves and groups constructors from multiple classes, filtered by a specified predicate,
+	 * mapping each qualified class name to a list of {@link JvmClassInitializer} wrappers.
+	 * <p>
+	 * For each class in the provided map, this method inspects its public constructors (via
+	 * {@link Class#getConstructors()}), applies the given {@code constructorPredicate}, and wraps
+	 * all matching constructors as {@link JvmClassInitializer} instances. The results are then grouped
+	 * by their qualified class names.
+	 * <p>
+	 * Any classes or constructors that cannot be accessed or processed (e.g., due to security restrictions)
+	 * are silently skipped.
+	 *
+	 * @param classes              a map where each key is the fully qualified class name
+	 *                             (e.g., {@code "com.example.MyClass"}) and each value is the corresponding
+	 *                             {@link Class} object
+	 * @param constructorPredicate a {@link Predicate} used to filter which constructors should be included
+	 * @return a map where each key is a qualified class name and each value is a list of
+	 *         {@link JvmClassInitializer} instances representing all constructors of that class
+	 *         that satisfy the given predicate
+	 * @throws NullPointerException if {@code classes} or {@code constructorPredicate} is {@code null}
+	 * @see Class#getConstructors()
+	 * @see JvmClassInitializer
+	 */
+	public static Map<String, List<JvmClassInitializer>> getClassConstructors(  Map<String, Class<?>> classes,
+																				Predicate<Constructor<?>> constructorPredicate) {
+		return classes.entrySet().stream().filter(Objects::nonNull).flatMap(classEntry -> {
+			try {
+				return Arrays
+						.stream(classEntry.getValue().getConstructors())
+						.filter(constructorPredicate)
+						.map(constructor -> Map.entry(constructor, classEntry));
+			}
+			catch (Throwable e) {
+				// skip
+				return null;
+			}
+		}).filter(Objects::nonNull).map(methodEntry -> {
+			Class<?> clazz = methodEntry.getValue().getValue();
+			Constructor<?> constructor = methodEntry.getKey();
+			String qualifiedName = methodEntry.getValue().getKey();
+			return Map.entry(qualifiedName, JvmClassInitializer.of(qualifiedName, clazz, constructor));
+		})
+				.collect(
+							Collectors
+									.groupingBy(Map.Entry::getKey,
+												Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+	}
+
+	/**
 	 * Retrieves all methods from a single class wrapped as JvmFunction instances.
 	 *
 	 * @param qualifiedName qualified name of the class
@@ -229,6 +364,27 @@ public final class ClassUtils {
 		}).toList();
 	}
 
+	/**
+	 * Retrieves all public constructors of the specified class and wraps them
+	 * as {@link JvmClassInitializer} instances.
+	 * <p>
+	 * Each {@code JvmClassInitializer} represents a single constructor
+	 * and includes its qualified name and reflective metadata.
+	 *
+	 * @param qualifiedName the fully qualified name of the class
+	 *                      (e.g., "com.example.MyClass")
+	 * @param clazz         the {@link Class} object representing the class whose constructors
+	 *                      should be retrieved
+	 * @return a list of {@link JvmClassInitializer} instances representing all public
+	 *         constructors of the specified class
+	 */
+	public static List<JvmClassInitializer> getClassConstructors(String qualifiedName, Class<?> clazz) {
+		return Arrays
+				.stream(clazz.getConstructors())
+				.map(constructor -> JvmClassInitializer.of(qualifiedName, clazz, constructor))
+				.toList();
+	}
+
 
 	/**
 	 * Returns all methods from given classes without filtering.
@@ -238,6 +394,27 @@ public final class ClassUtils {
 	 */
 	public static Map<String, List<JvmFunction>> getClassMethods(Map<String, Class<?>> classes) {
 		return getClassMethods(classes, (method) -> true);
+	}
+
+	/**
+	 * Retrieves all public constructors from the given classes without applying any filtering,
+	 * mapping each qualified class name to a list of {@link JvmClassInitializer} wrappers.
+	 * <p>
+	 * This method is a convenience overload of
+	 * {@link #getClassConstructors(Map, java.util.function.Predicate)} that includes
+	 * all available constructors by default.
+	 *
+	 * @param classes a map where each key is the fully qualified class name
+	 *                (e.g., {@code "com.example.MyClass"}) and each value is the corresponding
+	 *                {@link Class} object
+	 * @return a map from qualified class names to lists of {@link JvmClassInitializer} instances
+	 *         representing all public constructors of the given classes
+	 * @throws NullPointerException if {@code classes} is {@code null}
+	 * @see #getClassConstructors(Map, java.util.function.Predicate)
+	 * @see JvmClassInitializer
+	 */
+	public static Map<String, List<JvmClassInitializer>> getClassConstructors(Map<String, Class<?>> classes) {
+		return getClassConstructors(classes, (constructor) -> true);
 	}
 
 	/**
@@ -277,11 +454,133 @@ public final class ClassUtils {
 		// Try to find a public no-arg constructor
 		try {
 			Constructor<?> constructor = clazz.getConstructor();
-			if (Modifier.isPublic(constructor.getModifiers())) {
+			return Modifier.isPublic(constructor.getModifiers());
+		}
+		catch (NoSuchMethodException ignored) {
+			// check if the class has any public constructor
+			var constructors = clazz.getConstructors();
+			if (constructors.length == 0) {
+				return hasFactoryMethod(clazz);
+			}
+			else {
+				return Arrays
+						.stream(constructors)
+						.anyMatch(constructor -> Modifier.isPublic(constructor.getModifiers()));
+			}
+		}
+	}
+
+	/**
+	 * Determines whether the specified class defines at least one
+	 * <b>public static factory method</b> capable of producing
+	 * an instance of that class (or a subclass of it).
+	 *
+	 * <p>This method is used by the Naftah Java interop layer to identify
+	 * Java types that are constructible through factory methods rather
+	 * than public constructors. Examples include:
+	 * {@code Optional.of()}, {@code LocalDate.parse()}, and
+	 * {@code List.copyOf()}.</p>
+	 *
+	 * <p>The detection relies on a curated set of known factory method names
+	 * and prefixes (see {@code FACTORY_NAMES} and {@code FACTORY_PREFIXES}).
+	 * The following conditions must all be satisfied for a method to be
+	 * recognized as a valid factory:</p>
+	 *
+	 * <ul>
+	 * <li>The method must be {@code public static}.</li>
+	 * <li>It must not be a compiler-generated bridge or synthetic method.</li>
+	 * <li>Its name must either match a known factory name
+	 * (e.g. {@code of}, {@code from}, {@code valueOf})
+	 * or begin with a recognized prefix (e.g. {@code create}, {@code new}, {@code build}).</li>
+	 * <li>It must return a non-{@code void} type assignable to the declaring class,
+	 * or whose simple name contains the declaring class’s simple name
+	 * (to support builder/wrapper patterns).</li>
+	 * </ul>
+	 *
+	 * <p>Example classes detected as factory-capable:</p>
+	 * <pre>{@code
+	 * Optional.of("value");
+	 * LocalDate.parse("2025-11-07");
+	 * List.copyOf(existingList);
+	 * EnumSet.noneOf(MyEnum.class);
+	 * HttpRequest.newBuilder().build();
+	 * }</pre>
+	 *
+	 * <p>Classes that are primitives, arrays, or {@code void} are excluded immediately.</p>
+	 *
+	 * @param clazz the class to inspect
+	 * @return {@code true} if the class declares at least one public static
+	 *         factory method that produces instances of itself or a compatible type;
+	 *         {@code false} otherwise
+	 */
+	public static boolean hasFactoryMethod(Class<?> clazz) {
+		// Skip primitive, void, and array types
+		if (clazz.isPrimitive() || clazz.isArray() || clazz == void.class) {
+			return false;
+		}
+
+		for (Method method : clazz.getDeclaredMethods()) {
+			int mods = method.getModifiers();
+
+			// Must be public static
+			if (!Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
+				continue;
+			}
+
+			// Ignore compiler-generated methods
+			if (method.isSynthetic() || method.isBridge()) {
+				continue;
+			}
+
+			String name = method.getName();
+
+			// Quick reject by name
+			if (!isFactoryName(name)) {
+				continue;
+			}
+
+			// Must return something usable
+			Class<?> returnType = method.getReturnType();
+			if (returnType == void.class) {
+				continue;
+			}
+
+			// Covariant return allowed: subclass or same type
+			if (clazz.isAssignableFrom(returnType)) {
+				return true;
+			}
+
+			// Optional: also consider wrapper or builder factories
+			if (returnType.getSimpleName().contains(clazz.getSimpleName())) {
 				return true;
 			}
 		}
-		catch (NoSuchMethodException ignored) {
+
+		return false;
+	}
+
+	/**
+	 * Determines whether a given method name matches a known
+	 * factory method pattern.
+	 *
+	 * <p>This method checks whether the name appears in the
+	 * {@link #FACTORY_NAMES} set or begins with one of the
+	 * {@link #FACTORY_PREFIXES}. Matching is case-sensitive
+	 * and uses simple string comparison for efficiency.</p>
+	 *
+	 * @param name the method name to test
+	 * @return {@code true} if the name matches a known factory name or prefix,
+	 *         {@code false} otherwise
+	 */
+	private static boolean isFactoryName(String name) {
+		if (FACTORY_NAMES.contains(name)) {
+			return true;
+		}
+
+		for (String prefix : FACTORY_PREFIXES) {
+			if (name.startsWith(prefix)) {
+				return true;
+			}
 		}
 
 		return false;
@@ -299,27 +598,37 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Checks if a method is invocable: public, not synthetic or bridge,
-	 * and either static or declared in an instantiable class.
+	 * Determines whether a given {@link Executable} (method or constructor) can be invoked dynamically.
 	 *
-	 * @param method the method to check
-	 * @return true if invocable, false otherwise
+	 * <p>A member is considered <em>invocable</em> if it meets all of the following conditions:</p>
+	 * <ul>
+	 * <li>It is {@code public}.</li>
+	 * <li>It is not synthetic or compiler-generated (e.g., bridge methods).</li>
+	 * <li>If it is a {@link Method}, it is either {@code static} or declared in an instantiable class.</li>
+	 * <li>If it is a {@link Constructor}, it belongs to an instantiable class.</li>
+	 * </ul>
+	 *
+	 * @param methodOrConstructor the {@link Executable} (method or constructor) to check
+	 * @return {@code true} if the executable can be invoked via reflection, otherwise {@code false}
+	 * @see Method#isBridge()
+	 * @see Executable#isSynthetic()
+	 * @see Modifier#isPublic(int)
 	 */
-	public static boolean isInvocable(Method method) {
+	public static boolean isInvocable(Executable methodOrConstructor) {
 		// Must be public
-		if (!Modifier.isPublic(method.getModifiers())) {
+		if (!Modifier.isPublic(methodOrConstructor.getModifiers())) {
 			return false;
 		}
 
 		// Ignore synthetic or bridge methods (compiler-generated)
-		if (method.isSynthetic() || method.isBridge()) {
+		if (methodOrConstructor.isSynthetic() || (methodOrConstructor instanceof Method method && method.isBridge())) {
 			return false;
 		}
 
-		Class<?> declaringClass = method.getDeclaringClass();
+		Class<?> declaringClass = methodOrConstructor.getDeclaringClass();
 
 		// If it's a static method, it's invocable directly
-		if (isStatic(method)) {
+		if (methodOrConstructor instanceof Method method && isStatic(method)) {
 			return true;
 		}
 
@@ -415,7 +724,7 @@ public final class ClassUtils {
 															QUALIFIED_NAME_SEPARATOR,
 															true) + QUALIFIED_CALL_SEPARATOR + cleanBuiltinFunctionName(
 																														functionName,
-																														"_",
+																														UNDERSCORE,
 																														removeNameDiacritics);
 			if (QUALIFIED_CALL_REGEX.matcher(qualifiedName).matches()) {
 				System.out.println(qualifiedName);
@@ -427,7 +736,7 @@ public final class ClassUtils {
 			}
 			return qualifiedName;
 		}
-		return cleanBuiltinFunctionName(functionName, "_", removeNameDiacritics);
+		return cleanBuiltinFunctionName(functionName, UNDERSCORE, removeNameDiacritics);
 
 	}
 
@@ -516,7 +825,7 @@ public final class ClassUtils {
 	 * <p>
 	 * Additionally, the method includes Arabic transliteration (phonetic representation in Arabic script)
 	 * for class names and package names, using {@link ClassUtils#getQualifiedName(String)}
-	 * or {@link ArabicUtils#transliterateToArabicScriptDefault(boolean, String...)}.
+	 * or {@link ArabicUtils#transliterateToArabicScriptDefault(String...)}.
 	 * For example, the simple name {@code ArrayList} might appear as:
 	 * <pre>{@code
 	 * ArrayList - أرَي لِسْتْ
@@ -564,7 +873,7 @@ public final class ClassUtils {
 						.formatted(
 									clazz.getName() + " - " + getQualifiedName(clazz.getName()),
 									clazz.getSimpleName() + " - " + ArabicUtils
-											.transliterateToArabicScriptDefault(true, clazz.getSimpleName())[0],
+											.transliterateToArabicScriptDefault(clazz.getSimpleName())[0],
 									clazz.getPackage() != null ?
 											clazz.getPackage().getName() + " - " + getQualifiedName(clazz
 													.getPackage()

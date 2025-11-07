@@ -1,5 +1,6 @@
 package org.daiitech.naftah.builtin.lang;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,10 @@ import java.util.Set;
  * @author Chakib Daii
  */
 public class ClassScanningResult implements Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Maps class names to their respective ClassLoader instances.
 	 */
@@ -60,6 +65,10 @@ public class ClassScanningResult implements Serializable {
 	 */
 	private Map<String, List<JvmFunction>> jvmFunctions;
 
+	/**
+	 * Maps qualified Java class names to lists of {@link JvmClassInitializer} constructors.
+	 */
+	private Map<String, List<JvmClassInitializer>> jvmClassInitializers;
 	/**
 	 * Maps qualified method or function names to lists of builtin functions.
 	 */
@@ -121,6 +130,14 @@ public class ClassScanningResult implements Serializable {
 
 	public void setJvmFunctions(Map<String, List<JvmFunction>> jvmFunctions) {
 		this.jvmFunctions = jvmFunctions;
+	}
+
+	public Map<String, List<JvmClassInitializer>> getJvmClassInitializers() {
+		return jvmClassInitializers;
+	}
+
+	public void setJvmClassInitializers(Map<String, List<JvmClassInitializer>> jvmClassInitializers) {
+		this.jvmClassInitializers = jvmClassInitializers;
 	}
 
 	public Map<String, List<BuiltinFunction>> getBuiltinFunctions() {

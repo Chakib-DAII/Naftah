@@ -18,7 +18,7 @@ public class RepeatStatementProvider implements ArgumentsProvider {
 							متغير أ تعيين ١
 
 							كرر {
-								إطبع(أ)
+								إطبع(أ) أنهي
 								زد أ
 							}
 							حتى أ أكبر_من 9

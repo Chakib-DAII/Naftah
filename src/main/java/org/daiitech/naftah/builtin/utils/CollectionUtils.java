@@ -7,10 +7,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -256,6 +261,56 @@ public final class CollectionUtils {
 	}
 
 	/**
+	 * Removes and returns the element at the specified index from the given collection.
+	 *
+	 * <p>This method provides an index-based removal operation for any {@link java.util.Collection}
+	 * type that supports element removal via an {@link java.util.Iterator}. It iterates over
+	 * the collection until the target index is reached, removes that element, and returns it.
+	 * </p>
+	 *
+	 * <p>If the collection's size is less than or equal to {@code targetIndex}, an
+	 * {@code IndexOutOfBoundsException}-like error is thrown using
+	 * {@code newNaftahIndexOutOfBoundsBugError(int, int)}.</p>
+	 *
+	 * <p>Behavior details:</p>
+	 * <ul>
+	 * <li>Removes the element at the specified zero-based index.</li>
+	 * <li>Returns the removed element.</li>
+	 * <li>Returns {@code None.get()} if the element cannot be found (which should not occur
+	 * if the bounds check passes).</li>
+	 * </ul>
+	 *
+	 * <p>This method does not support random access and runs in O(n) time.</p>
+	 *
+	 * @param collection  the collection from which to remove the element; must not be {@code null}
+	 * @param targetIndex the zero-based index of the element to remove
+	 * @return the removed element, or {@code None.get()} if no element was removed
+	 * @throws NaftahBugError if {@code targetIndex} is out of bounds for the given collection
+	 * @see java.util.Iterator#remove()
+	 * @see java.util.Collection#size()
+	 */
+	public static Object removeElementAt(Collection<?> collection, int targetIndex) {
+		if (collection.size() <= targetIndex) {
+			throw newNaftahIndexOutOfBoundsBugError(targetIndex, collection.size());
+		}
+
+		Iterator<?> iterator = collection.iterator();
+		int currentIndex = 0;
+		Object removed = None.get();
+
+		while (iterator.hasNext()) {
+			Object item = iterator.next();
+			if (currentIndex == targetIndex) {
+				iterator.remove();
+				removed = item;
+				break;
+			}
+			currentIndex++;
+		}
+		return removed;
+	}
+
+	/**
 	 * Replaces the element at the specified index in a {@link Collection} with a new value.
 	 * <p>
 	 * This method iterates through the collection using an {@link Iterator},
@@ -312,17 +367,121 @@ public final class CollectionUtils {
 	 * @param <T>      the element type of the collection
 	 * @return a new empty collection with behavior compatible to the original
 	 */
-	private static <T> Collection<T> createCompatibleCollection(Collection<T> original) {
+	public static <T> Collection<T> createCompatibleCollection(Collection<T> original) {
 		if (original instanceof LinkedHashSet<T>) {
 			return new LinkedHashSet<>();
 		}
-		if (original instanceof List) {
+		if (original instanceof List<T>) {
 			return new ArrayList<>();
 		}
 		if (original instanceof Set<T>) {
 			return new HashSet<>();
 		}
+		if (original instanceof Queue<T>) {
+			return new LinkedList<>();
+		}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * Creates a new {@link Collection} instance of the specified type.
+	 *
+	 * <p>If {@code collectionType} is an interface (e.g., List, Set, Queue), a default
+	 * implementation will be created (ArrayList, HashSet, LinkedList).
+	 * If {@code collectionType} is a concrete class, an attempt is made to create a new
+	 * instance using the default constructor.
+	 * </p>
+	 *
+	 * @param collectionType the collection type to instantiate.
+	 * @return a new collection instance of the requested type.
+	 */
+	public static Collection<Object> createCollection(Class<?> collectionType) {
+		try {
+			//noinspection unchecked
+			return (Collection<Object>) collectionType.getDeclaredConstructor().newInstance();
+		}
+		catch (Exception ignored) {
+			// Default implementations for common interfaces
+			if (List.class.isAssignableFrom(collectionType)) {
+				return new ArrayList<>();
+			}
+			if (Set.class.isAssignableFrom(collectionType)) {
+				return new HashSet<>();
+			}
+			if (Queue.class.isAssignableFrom(collectionType)) {
+				return new LinkedList<>();
+			}
+			return new ArrayList<>();
+		}
+	}
+
+	/**
+	 * Creates a new {@link Map} instance of the specified type.
+	 *
+	 * <p>If the provided {@code mapType} represents a concrete class, this method attempts
+	 * to instantiate it using its no-argument constructor. If instantiation fails or if the type
+	 * is an interface, a default implementation is chosen based on the type hierarchy:</p>
+	 *
+	 * <ul>
+	 * <li>{@link java.util.SortedMap} → {@link java.util.TreeMap}</li>
+	 * <li>{@link java.util.LinkedHashMap} → {@link java.util.LinkedHashMap}</li>
+	 * <li>Any other type → {@link java.util.HashMap}</li>
+	 * </ul>
+	 *
+	 * @param mapType the {@link Class} representing the map type to instantiate
+	 * @param <K>     the type of keys maintained by the map
+	 * @param <V>     the type of mapped values
+	 * @return a new {@link Map} instance of the requested type, or a default implementation
+	 *         if instantiation fails
+	 * @throws NullPointerException if {@code mapType} is {@code null}
+	 */
+	public static <K, V> Map<K, V> createMap(Class<?> mapType) {
+		try {
+			//noinspection unchecked
+			return (Map<K, V>) mapType.getDeclaredConstructor().newInstance();
+		}
+		catch (Exception ignored) {
+			if (SortedMap.class.isAssignableFrom(mapType)) {
+				return new TreeMap<>();
+			}
+			if (LinkedHashMap.class.isAssignableFrom(mapType)) {
+				return new LinkedHashMap<>();
+			}
+			return new HashMap<>();
+		}
+	}
+
+	/**
+	 * Converts any Java array (including primitive arrays) into an Object[].
+	 * This is reflection-safe and never throws ClassCastException.
+	 *
+	 * @param array the source array (e.g. int[], String[], Object[], etc.)
+	 * @return an Object[] containing all elements, or an empty array if null
+	 * @throws IllegalArgumentException if the input is not an array
+	 */
+	public static Object[] toObjectArray(Object array) {
+		if (array == null) {
+			return new Object[0];
+		}
+
+		Class<?> type = array.getClass();
+		if (!type.isArray()) {
+			throw new IllegalArgumentException("Provided object is not an array: " + type);
+		}
+
+		// Case 1: Already an Object[] → return same reference (no copy)
+		if (array instanceof Object[] objectArray) {
+			return objectArray;
+		}
+
+		// Case 2: Primitive array → must box elements
+		int length = Array.getLength(array);
+		Object[] boxed = new Object[length];
+		for (int i = 0; i < length; i++) {
+			boxed[i] = Array.get(array, i);
+		}
+
+		return boxed;
 	}
 
 	/**
@@ -546,6 +705,27 @@ public final class CollectionUtils {
 	 * @return a string in Arabic describing the object's structure and contents
 	 */
 	public static String toString(Object o) {
+		return toString(o, false);
+	}
+
+	/**
+	 * Converts an arbitrary object into its Arabic string representation.
+	 * <p>
+	 * This method detects the object's runtime type and renders it accordingly:
+	 * <ul>
+	 * <li>{@code List} → قائمة</li>
+	 * <li>{@code Set} → مجموعة</li>
+	 * <li>{@code Tuple} → تركيبة</li>
+	 * <li>{@code Map} → كائن / مصفوفة ترابطية</li>
+	 * <li>Array → قائمة</li>
+	 * <li>Other → uses {@code getNaftahValueToString(o)}</li>
+	 * </ul>
+	 *
+	 * @param o            the object to convert
+	 * @param naftahObject marks that the object to convert is naftah object
+	 * @return a string in Arabic describing the object's structure and contents
+	 */
+	public static String toString(Object o, boolean naftahObject) {
 		String result;
 		if (o.getClass().isArray()) {
 			result = "قائمة: ";
@@ -571,7 +751,7 @@ public final class CollectionUtils {
 			}
 		}
 		else if (o instanceof Map<?, ?> map) {
-			if (map.values().stream().allMatch(value -> value instanceof DeclaredVariable)) {
+			if (naftahObject || map.values().stream().allMatch(value -> value instanceof DeclaredVariable)) {
 				result = "كائن: ";
 			}
 			else {

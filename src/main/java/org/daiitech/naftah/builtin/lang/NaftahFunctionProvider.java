@@ -1,5 +1,6 @@
 package org.daiitech.naftah.builtin.lang;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public record NaftahFunctionProvider(
 		String description,
 		List<String> functionNames
 ) implements Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Factory method to create a {@code NaftahFunctionProvider} instance.
