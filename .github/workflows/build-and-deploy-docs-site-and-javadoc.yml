@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  javadoc:
+  build-docs-site-and-javadoc:
     runs-on: ubuntu-latest
     permissions:
       contents: write
