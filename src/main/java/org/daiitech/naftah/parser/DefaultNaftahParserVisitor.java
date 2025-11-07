@@ -865,6 +865,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											args = (List<Pair<String, Object>>) defaultNaftahParserVisitor
 													.visit(callSegmentContext.primaryCall().argumentList());
 										}
+										else {
+											args.clear();
+										}
 
 										// result of previous call in chain to perform the current function on it
 										// (it behaves like a pipe for builtin, declared and static java methods (first argument))
@@ -872,13 +875,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										args.add(0, new Pair<>(null, result));
 
 										Number jvmFunctionIndex = Objects
-												.nonNull(initCallContext.targetExecutableIndex()) ?
-														NumberUtils
-																.parseDynamicNumber(initCallContext
-																		.targetExecutableIndex()
-																		.NUMBER()
-																		.getText()) :
-														null;
+												.nonNull(callSegmentContext
+														.primaryCall()
+														.targetExecutableIndex()) ?
+																NumberUtils
+																		.parseDynamicNumber(callSegmentContext
+																				.primaryCall()
+																				.targetExecutableIndex()
+																				.NUMBER()
+																				.getText()) :
+																null;
 
 										result = visitFunctionCallInChain(  depth,
 																			defaultNaftahParserVisitor,
@@ -983,6 +989,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											//noinspection unchecked
 											args = (List<Pair<String, Object>>) defaultNaftahParserVisitor
 													.visit(callSegmentContext.primaryCall().argumentList());
+										}
+										else {
+											args.clear();
 										}
 
 										// result of previous call in chain to perform the current function on it
