@@ -42,15 +42,17 @@ jobs:
           ruby-version: '3.2'
 
       - name: Install Jekyll dependencies
+        working-directory: docs-site
         run: |
           gem install bundler
           bundle install
 
       - name: Build Jekyll site
-        run: bundle exec jekyll build -d docs-site
+        working-directory: docs-site
+        run: bundle exec jekyll build -d ../site-output
 
-      - name: Copy Javadoc into Jekyll site
-        run: cp -r build/docs/javadoc docs-site/javadoc
+      - name: Copy Javadoc into built site
+        run: cp -r build/docs/javadoc site-output/javadoc
 
       #TODO: Enable GitHub Pages
       #Go to your repo on GitHub
@@ -62,5 +64,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs-site
+          publish_dir: site-output
           publish_branch: gh-pages

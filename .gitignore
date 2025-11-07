@@ -47,3 +47,4 @@ out/
 /docs-site/_site/
 /docs-site/.jekyll-metadata
 /docs-site/javadoc/
+/docs-site/Gemfile.lock
