@@ -87,19 +87,22 @@ ELEMENTWISE_MOD : DOT MOD DOT;
 
 
 // Special characters
-LPAREN     : '(';
-RPAREN     : ')';
-LBRACE     : '{';
-RBRACE     : '}';
-LBRACK     : '[';
-RBRACK     : ']';
-SEMI       : '؛';
-COLON      : ':';
-DOT        : '.';
-COMMA      : ',' | '٫' | '،' | '٬';
-QUESTION   : '؟';
-ARROW      : '->';
-ORDERED    : 'مرتب';
+LPAREN      : '(';
+RPAREN      : ')';
+LBRACE      : '{';
+RBRACE      : '}';
+LBRACK      : '[';
+RBRACK      : ']';
+SEMI        : '؛';
+COLON       : ':';
+DOT         : '.';
+COMMA       : ',' | '٫' | '،' | '٬';
+QUESTION    : '؟';
+ARROW       : '->';
+ORDERED     : 'مرتب';
+HASH_SIGN   : '#';
+AT_SIGN     : '@';
+DOLLAR_SIGN : '$';
 
 
 // Types
@@ -120,14 +123,12 @@ BASE_DIGITS	: (Digit | Character)+ QuotationMark QuotationMark;  // Digits for b
 BASE_RADIX	: ([2-9٢-٩] | ([1-3١-٣] [0-9٠-٩])) QuotationMark; // base 2 to 36 radices
 NUMBER      : Digit+ (COMMA Digit+)?;
 NAN			: 'ليس_رقم' | 'قيمة_غير_رقمية' | 'رقم_غير_صالح' | 'غير_عددي' | 'ليس_عددي';
-CHARACTER   : QuotationMark Character QuotationMark
-			| DoubleQuotationMark Character DoubleQuotationMark
-			| DoubleQuotationMarkLeft Character DoubleQuotationMarkRight;
+CHARACTER   : QuotationMark Character QuotationMark;
 RAW		    : 'خام' | 'نص_خام'| 'سلسلة_خام';
 BYTE_ARRAY	: 'ثمانية_بت' | 'بايتات' |'سلسلة_ثمانية_بت' |'مصفوفة_ثمانية_بت' | 'سلسلة_بايتات'| 'مصفوفة_بايتات';
 STRING      : DoubleQuotationMark String DoubleQuotationMark
 			| DoubleQuotationMarkLeft String DoubleQuotationMarkRight;
-ID          : [ء-يڠ-ۿﹼ_٠-٩0-9\u064B-\u065F]* [ء-يڠ-ۿﹼ_\u064B-\u065F] [ء-يڠ-ۿﹼ_٠-٩0-9\u064B-\u065F]*;
+ID          : [ء-يڠ-ۿﹼپ_٠-٩0-9\u064B-\u065F]* [ء-يڠ-ۿﹼپ_\u064B-\u065F] [ء-يڠ-ۿﹼپ_٠-٩0-9\u064B-\u065F]*;
 
 QuotationMark : '\'' | '’';
 DoubleQuotationMark : '"';

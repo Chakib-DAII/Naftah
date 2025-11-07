@@ -1,5 +1,7 @@
 package org.daiitech.naftah.builtin.lang;
 
+import java.util.Objects;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahParserHelper;
@@ -174,6 +176,57 @@ public final class DeclaredVariable {
 			updatedCurrentValue = true;
 		}
 	}
+
+	/**
+	 * Compares this {@code DeclaredVariable} to another object for equality.
+	 *
+	 * <p>Two {@code DeclaredVariable} instances are considered equal if and only if:
+	 * <ul>
+	 * <li>They are of the same runtime class, and</li>
+	 * <li>They have equal values for all of the following properties:
+	 * {@code name}, {@code constant}, {@code type}, {@code defaultValue},
+	 * {@code currentValue}, and {@code updatedCurrentValue}.
+	 * </li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param o the object to compare with this instance
+	 * @return {@code true} if the specified object is equal to this one; otherwise {@code false}
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		DeclaredVariable that = (DeclaredVariable) o;
+		return constant == that.constant && updatedCurrentValue == that.updatedCurrentValue && Objects
+				.equals(name,
+						that.name) && Objects
+								.equals(
+										type,
+										that.type) && Objects.equals(defaultValue, that.defaultValue) && Objects
+												.equals(
+														currentValue,
+														that.currentValue);
+	}
+
+	/**
+	 * Computes the hash code for this {@code DeclaredVariable}.
+	 *
+	 * <p>The hash code is based on the same set of fields used in
+	 * {@link #equals(Object)} to ensure consistency between equality
+	 * and hashing (as required by the Java specification).</p>
+	 *
+	 * @return a hash code value for this object
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, constant, type, defaultValue, currentValue, updatedCurrentValue);
+	}
+
 
 	/**
 	 * Returns a string representation of the variable using helper formatting.

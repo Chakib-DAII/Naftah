@@ -1,6 +1,5 @@
 package org.daiitech.naftah.parser;
 
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -16,19 +15,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.Builtin;
-import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
-import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
@@ -44,7 +42,6 @@ import static org.daiitech.naftah.builtin.utils.CollectionUtils.setElementAt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getJavaType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.builtin.utils.Tuple.newNaftahBugNullError;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
@@ -59,15 +56,15 @@ import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_DECREMENT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_INCREMENT;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidLoopLabelError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableListFoundError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.parser.DefaultContext.LOOP_STACK;
 import static org.daiitech.naftah.parser.DefaultContext.currentLoopLabel;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getContextByDepth;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.loopContainsLabel;
-import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.popLoop;
-import static org.daiitech.naftah.parser.DefaultContext.pushCall;
 import static org.daiitech.naftah.parser.DefaultContext.pushLoop;
 import static org.daiitech.naftah.parser.LoopSignal.BREAK;
 import static org.daiitech.naftah.parser.LoopSignal.CONTINUE;
@@ -85,13 +82,14 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasAnyParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChildOrSubChildOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasParentOfType;
-import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunction;
-import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunctionArguments;
+import static org.daiitech.naftah.parser.NaftahParserHelper.invokeJvmClassInitializer;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.typeMismatch;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitContext;
+import static org.daiitech.naftah.parser.NaftahParserHelper.visitFunctionCallInChain;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 
 /**
  * The default implementation of the Naftah language visitor.
@@ -199,22 +197,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitObjectAccessStatement(org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext ctx) {
-		return visitContext(
-							this,
-							"visitObjectAccessStatement",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								objectAccessStatementContext) -> defaultNaftahParserVisitor
-										.visit(objectAccessStatementContext.objectAccess())
-		);
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -273,26 +255,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												functionDeclarationStatementContext.functionDeclaration())
 		);
 	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitFunctionCallStatement(org.daiitech.naftah.parser.NaftahParser.FunctionCallStatementContext ctx) {
-		return visitContext(
-							this,
-							"visitFunctionCallStatement",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								functionCallStatementContext) -> defaultNaftahParserVisitor
-										.visit(
-												functionCallStatementContext.functionCall())
-		);
-	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -758,6 +720,193 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Object visitInitCall(org.daiitech.naftah.parser.NaftahParser.InitCallContext ctx) {
+		return visitContext(
+							this,
+							"visitInitCall",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, initCallContext) -> {
+								currentContext.setParsingFunctionCallId(true);
+
+								String functionName = (String) defaultNaftahParserVisitor
+										.visit(initCallContext
+												.qualifiedName());
+
+
+								List<Pair<String, Object>> args = new ArrayList<>();
+
+								if (hasChild(initCallContext.argumentList())) {
+									//noinspection unchecked
+									args = (List<Pair<String, Object>>) defaultNaftahParserVisitor
+											.visit(initCallContext.argumentList());
+								}
+
+								Object result;
+
+								String functionCallId = generateCallId(depth, functionName);
+								currentContext.setFunctionCallId(functionCallId);
+
+								Map<String, List<JvmClassInitializer>> jvmClassInitializersMap = DefaultContext
+										.getJvmClassInitializers();
+								if (Objects.nonNull(jvmClassInitializersMap) && jvmClassInitializersMap
+										.containsKey(functionName)) {
+									List<JvmClassInitializer> jvmClassInitializersList = jvmClassInitializersMap
+											.get(functionName);
+									if (jvmClassInitializersList.size() == 1) {
+										JvmClassInitializer jvmClassInitializer = jvmClassInitializersList.get(0);
+										result = invokeJvmClassInitializer( functionName,
+																			jvmClassInitializer,
+																			args,
+																			initCallContext.getStart().getLine(),
+																			initCallContext
+																					.getStart()
+																					.getCharPositionInLine());
+									}
+									else {
+										try {
+											if (Objects.nonNull(initCallContext.targetExecutableIndex())) {
+												Number jvmClassInitializerIndex = NumberUtils
+														.parseDynamicNumber(initCallContext
+																.targetExecutableIndex()
+																.NUMBER()
+																.getText());
+
+												JvmClassInitializer jvmClassInitializer = jvmClassInitializersList
+														.get(jvmClassInitializerIndex.intValue());
+												result = invokeJvmClassInitializer( functionName,
+																					jvmClassInitializer,
+																					args,
+																					initCallContext
+																							.getStart()
+																							.getLine(),
+																					initCallContext
+																							.getStart()
+																							.getCharPositionInLine());
+											}
+											else {
+												result = invokeJvmClassInitializer( functionName,
+																					jvmClassInitializersList,
+																					args,
+																					initCallContext
+																							.getStart()
+																							.getLine(),
+																					initCallContext
+																							.getStart()
+																							.getCharPositionInLine());
+											}
+										}
+										catch (Throwable th) {
+											throw newNaftahInvocableListFoundError( functionName,
+																					jvmClassInitializersList,
+																					th,
+																					initCallContext
+																							.getStart()
+																							.getLine(),
+																					initCallContext
+																							.getStart()
+																							.getCharPositionInLine());
+										}
+									}
+								}
+								else {
+									throw newNaftahInvocableNotFoundError(  functionName,
+																			initCallContext.getStart().getLine(),
+																			initCallContext
+																					.getStart()
+																					.getCharPositionInLine());
+								}
+
+								currentContext.setFunctionCallId(null);
+
+								if (Objects.nonNull(initCallContext.callSegment()) && !initCallContext
+										.callSegment()
+										.isEmpty()) {
+									boolean firstSegment = true;
+									String[] parts;
+									String qualifiedName;
+									boolean hasQualifiedCall;
+
+									for (org.daiitech.naftah.parser.NaftahParser.CallSegmentContext callSegmentContext : initCallContext
+											.callSegment()) {
+										if (firstSegment) {
+											qualifiedName = callSegmentContext.COLON().size() == 3 ?
+													functionName :
+													null;
+											firstSegment = false;
+										}
+										else {
+											parts = functionName.split(QUALIFIED_CALL_SEPARATOR);
+											qualifiedName = parts.length == 2 && callSegmentContext
+													.COLON()
+													.size() == 3 ?
+															parts[0] :
+															null;
+										}
+
+										hasQualifiedCall = hasChild(callSegmentContext.primaryCall().qualifiedCall());
+
+										currentContext.setParsingFunctionCallId(hasQualifiedCall);
+
+										functionName = hasQualifiedCall ?
+												(String) defaultNaftahParserVisitor
+														.visit(callSegmentContext
+																.primaryCall()
+																.qualifiedCall()) :
+												callSegmentContext.primaryCall().ID().getText();
+
+
+										if (Objects.nonNull(qualifiedName) && !qualifiedName.isBlank()) {
+											functionName = qualifiedName + QUALIFIED_CALL_SEPARATOR + functionName;
+										}
+
+										if (hasChild(callSegmentContext.primaryCall().argumentList())) {
+											//noinspection unchecked
+											args = (List<Pair<String, Object>>) defaultNaftahParserVisitor
+													.visit(callSegmentContext.primaryCall().argumentList());
+										}
+										else {
+											args.clear();
+										}
+
+										// result of previous call in chain to perform the current function on it
+										// (it behaves like a pipe for builtin, declared and static java methods (first argument))
+										// and as the instance (this) for java instance methods
+										args.add(0, new Pair<>(null, result));
+
+										Number jvmFunctionIndex = Objects
+												.nonNull(callSegmentContext
+														.primaryCall()
+														.targetExecutableIndex()) ?
+																NumberUtils
+																		.parseDynamicNumber(callSegmentContext
+																				.primaryCall()
+																				.targetExecutableIndex()
+																				.NUMBER()
+																				.getText()) :
+																null;
+
+										result = visitFunctionCallInChain(  depth,
+																			defaultNaftahParserVisitor,
+																			currentContext,
+																			functionName,
+																			args,
+																			jvmFunctionIndex,
+																			callSegmentContext.getStart().getLine(),
+																			callSegmentContext
+																					.getStart()
+																					.getCharPositionInLine());
+									}
+								}
+
+								return result;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Object visitFunctionCall(org.daiitech.naftah.parser.NaftahParser.FunctionCallContext ctx) {
 		return visitContext(
 							this,
@@ -765,147 +914,116 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, functionCallContext) -> {
-								Object result = None.get();
-								// TODO: add extra vars to context to get the function called and so on, it can
-								// be a free map
-								// TODO: and using an Enum as key of predefined ids to get values
-								currentContext.setParsingFunctionCallId(true);
-								String functionName = hasChild(functionCallContext.ID()) ?
-										functionCallContext.ID().getText() :
-										(String) defaultNaftahParserVisitor.visit(functionCallContext.qualifiedCall());
-								// TODO: add support to variables as qualified call and match to the jvm
-								// function
-								String functionCallId = generateCallId(depth, functionName);
-								currentContext.setFunctionCallId(functionCallId);
+								boolean hasQualifiedCall = hasChild(functionCallContext.primaryCall().qualifiedCall());
+
+								currentContext.setParsingFunctionCallId(hasQualifiedCall);
+
+								String functionName = hasQualifiedCall ?
+										(String) defaultNaftahParserVisitor
+												.visit(functionCallContext
+														.primaryCall()
+														.qualifiedCall()) :
+										functionCallContext.primaryCall().ID().getText();
+
 								List<Pair<String, Object>> args = new ArrayList<>();
-								// TODO: add support to global variables as argument
-								if (hasChild(functionCallContext.argumentList())) {
+
+								if (hasChild(functionCallContext.primaryCall().argumentList())) {
+									//noinspection unchecked
 									args = (List<Pair<String, Object>>) defaultNaftahParserVisitor
-											.visit(functionCallContext.argumentList());
+											.visit(functionCallContext.primaryCall().argumentList());
 								}
 
-								if (currentContext.containsFunction(functionName)) {
-									Object function = currentContext.getFunction(functionName, false).b;
-									if (function instanceof DeclaredFunction declaredFunction) {
-										boolean functionInStack = false;
-										try {
-											prepareDeclaredFunction(defaultNaftahParserVisitor, declaredFunction);
-											Map<String, Object> finalArgs = isEmpty(declaredFunction.getParameters()) ?
-													Map.of() :
-													prepareDeclaredFunctionArguments(   declaredFunction.getParameters(),
-																						args);
+								Number jvmFunctionIndex = Objects
+										.nonNull(functionCallContext
+												.primaryCall()
+												.targetExecutableIndex()) ?
+														NumberUtils
+																.parseDynamicNumber(functionCallContext
+																		.primaryCall()
+																		.targetExecutableIndex()
+																		.NUMBER()
+																		.getText()) :
+														null;
 
-											if (!isEmpty(declaredFunction.getParameters())) {
-												currentContext
-														.defineFunctionParameters(  declaredFunction
-																							.getParameters()
-																							.stream()
-																							.map(parameter -> Map
-																									.entry( parameter
-																													.getName(),
-																											parameter))
-																							.collect(Collectors
-																									.toMap( Map.Entry::getKey,
-																											Map.Entry::getValue)),
-																					true);
-											}
+								Object result = visitFunctionCallInChain(   depth,
+																			defaultNaftahParserVisitor,
+																			currentContext,
+																			functionName,
+																			args,
+																			jvmFunctionIndex,
+																			functionCallContext.getStart().getLine(),
+																			functionCallContext
+																					.getStart()
+																					.getCharPositionInLine());
 
-											if (!isEmpty(declaredFunction.getParameters())) {
-												currentContext.defineFunctionArguments(finalArgs);
-											}
+								if (Objects.nonNull(functionCallContext.callSegment()) && !functionCallContext
+										.callSegment()
+										.isEmpty()) {
+									String[] parts;
+									String qualifiedName;
 
-											pushCall(declaredFunction, finalArgs);
-											functionInStack = true;
-											result = defaultNaftahParserVisitor.visit(declaredFunction.getBody());
-										}
-										finally {
-											if (functionInStack) {
-												popCall();
-											}
-										}
-									}
-									else if (function instanceof BuiltinFunction builtinFunction) {
-										var methodArgs = args
-												.stream()
-												.map(stringObjectPair -> stringObjectPair.b)
-												.toArray(Object[]::new);
-										try {
-											var possibleResult = builtinFunction.getMethod().invoke(null, methodArgs);
-											if (builtinFunction
-													.getFunctionInfo()
-													.returnType() != Void.class && possibleResult != null) {
-												result = possibleResult;
-											}
-										}
-										catch (IllegalArgumentException e) {
-											throw new NaftahBugError(   """
-																		عدد الوسائط غير صحيح للدالة '%s' المقدمة من '%s'.
-																		العدد المتوقع: %d،
-																		العدد الفعلي: %d.
+									for (org.daiitech.naftah.parser.NaftahParser.CallSegmentContext callSegmentContext : functionCallContext
+											.callSegment()) {
+										parts = functionName.split(QUALIFIED_CALL_SEPARATOR);
+										qualifiedName = parts.length == 2 && callSegmentContext.COLON().size() == 3 ?
+												parts[0] :
+												null;
 
-																		%s
-																		"""
-																				.formatted( functionName,
-																							builtinFunction
-																									.getProviderInfo()
-																									.name(),
-																							builtinFunction
-																									.getMethod()
-																									.getParameterCount(),
-																							args.size(),
-																							builtinFunction
-																									.toDetailedString()
-																				),
-																		e,
-																		functionCallContext.getStart().getLine(),
-																		functionCallContext
-																				.getStart()
-																				.getCharPositionInLine());
-										}
-										catch (IllegalAccessException | InvocationTargetException e) {
-											throw new NaftahBugError(   """
-																		.'%s' حدث خطأ أثناء استدعاء الدالة
+										hasQualifiedCall = hasChild(callSegmentContext.primaryCall().qualifiedCall());
 
-																		%s
-																		"""
-																				.formatted( functionName,
-																							builtinFunction
-																									.toDetailedString()),
-																		e,
-																		functionCallContext.getStart().getLine(),
-																		functionCallContext
-																				.getStart()
-																				.getCharPositionInLine());
+										currentContext.setParsingFunctionCallId(hasQualifiedCall);
+
+										functionName = hasQualifiedCall ?
+												(String) defaultNaftahParserVisitor
+														.visit(callSegmentContext
+																.primaryCall()
+																.qualifiedCall()) :
+												callSegmentContext.primaryCall().ID().getText();
+
+
+										if (Objects.nonNull(qualifiedName) && !qualifiedName.isBlank()) {
+											functionName = qualifiedName + QUALIFIED_CALL_SEPARATOR + functionName;
 										}
-									}
-									else if (function instanceof JvmFunction jvmFunction) {
-										throw new NaftahBugError(   "الدالة '%s' من النوع: '%s' غير مدعومة حالياً"
-																			.formatted( functionName,
-																						JvmFunction.class.getName()),
-																	functionCallContext.getStart().getLine(),
-																	functionCallContext
-																			.getStart()
-																			.getCharPositionInLine());
-									}
-									else if (function instanceof Collection<?> functions) {
-										throw new NaftahBugError(   "الدالة '%s' : '%s' من النوع: '%s' غير مدعومة حالياً"
-																			.formatted( functionName,
-																						functions,
-																						List.class.getName()),
-																	functionCallContext.getStart().getLine(),
-																	functionCallContext
-																			.getStart()
-																			.getCharPositionInLine());
+
+										if (hasChild(callSegmentContext.primaryCall().argumentList())) {
+											//noinspection unchecked
+											args = (List<Pair<String, Object>>) defaultNaftahParserVisitor
+													.visit(callSegmentContext.primaryCall().argumentList());
+										}
+										else {
+											args.clear();
+										}
+
+										// result of previous call in chain to perform the current function on it
+										// (it behaves like a pipe for builtin, declared and static java methods (first argument))
+										// and as the instance (this) for java instance methods
+										args.add(0, new Pair<>(null, result));
+
+										jvmFunctionIndex = Objects
+												.nonNull(callSegmentContext
+														.primaryCall()
+														.targetExecutableIndex()) ?
+																NumberUtils
+																		.parseDynamicNumber(callSegmentContext
+																				.primaryCall()
+																				.targetExecutableIndex()
+																				.NUMBER()
+																				.getText()) :
+																null;
+
+										result = visitFunctionCallInChain(  depth,
+																			defaultNaftahParserVisitor,
+																			currentContext,
+																			functionName,
+																			args,
+																			jvmFunctionIndex,
+																			callSegmentContext.getStart().getLine(),
+																			callSegmentContext
+																					.getStart()
+																					.getCharPositionInLine());
 									}
 								}
-								else {
-									throw new NaftahBugError(   "الدالة '%s' غير موجودة في السياق الحالي."
-																		.formatted(functionName),
-																functionCallContext.getStart().getLine(),
-																functionCallContext.getStart().getCharPositionInLine());
-								}
-								currentContext.setFunctionCallId(null);
-								// TODO: add support for all kind of functions using the qualifiedName
+
 								return result;
 							});
 	}
@@ -1282,13 +1400,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								Tuple target;
 								Tuple targetValues;
 
-								// Loop expression. should be an iterable or Map
-								Object collection = defaultNaftahParserVisitor
+								// Loop expression. should be an iterable or Map or Naftah Object
+								Object object = defaultNaftahParserVisitor
 										.visit(forEachLoopStatementContext.expression());
+
+								if (object instanceof NaftahObject naftahObject) {
+									object = naftahObject.get(false);
+								}
+
 								Iterator<?> iterator;
 								boolean isMap = false;
 
-								if (collection instanceof Iterable<?> iterable) {
+								if (object instanceof Iterable<?> iterable) {
 									if (foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext || foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext) {
 										throw new NaftahBugError(   "key value not supported for collection.",
 																	forEachLoopStatementContext.getStart().getLine(),
@@ -1299,7 +1422,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									target = (Tuple) defaultNaftahParserVisitor.visit(foreachTarget);
 									iterator = iterable.iterator();
 								}
-								else if (collection instanceof Map<?, ?> map) {
+								else if (object instanceof Map<?, ?> map) {
 									isMap = true;
 									target = (Tuple) defaultNaftahParserVisitor.visit(foreachTarget);
 									iterator = map.entrySet().iterator();
@@ -1730,7 +1853,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								var tryCases = tryStatementContext.tryCases();
 								try {
-									Object expressionResult = null;
+									Object expressionResult;
 									try {
 										expressionResult = defaultNaftahParserVisitor
 												.visit(tryStatementContext.expression());
@@ -1739,28 +1862,31 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										var errorCase = tryCases.errorCase();
 
 										if (Objects.nonNull(errorCase)) {
-											errorVariableName = errorCase.ID().getText();
+											if (Objects.nonNull(errorCase.ID())) {
+												errorVariableName = errorCase.ID().getText();
 
-											result = Result.Error
-													.of(th instanceof NaftahBugError naftahBugError ?
-															naftahBugError :
-															new NaftahBugError(th));
+												result = Result.Error
+														.of(th instanceof NaftahBugError naftahBugError ?
+																naftahBugError :
+																new NaftahBugError(th));
 
-											var declaredVariable = DeclaredVariable
-													.of(tryStatementContext,
-														errorVariableName,
-														true,
-														Result.Error.class,
-														result);
+												var declaredVariable = DeclaredVariable
+														.of(tryStatementContext,
+															errorVariableName,
+															true,
+															Result.Error.class,
+															result);
 
-											boolean errorVarExists = currentContext.containsVariable(errorVariableName);
-											if (errorVarExists) {
-												previousErrorVariable = currentContext
-														.setVariable(   errorVariableName,
-																		declaredVariable);
-											}
-											else {
-												currentContext.defineVariable(errorVariableName, declaredVariable);
+												boolean errorVarExists = currentContext
+														.containsVariable(errorVariableName);
+												if (errorVarExists) {
+													previousErrorVariable = currentContext
+															.setVariable(   errorVariableName,
+																			declaredVariable);
+												}
+												else {
+													currentContext.defineVariable(errorVariableName, declaredVariable);
+												}
 											}
 
 											return defaultNaftahParserVisitor.visit(errorCase);
@@ -2194,15 +2320,29 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitEmptyObject(org.daiitech.naftah.parser.NaftahParser.EmptyObjectContext ctx) {
+		return visitContext(
+							this,
+							"visitEmptyObject",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, objectContext) -> NaftahObject
+									.of(new LinkedHashMap<>())
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitObject(org.daiitech.naftah.parser.NaftahParser.ObjectContext ctx) {
+	public Object visitObjectValue(org.daiitech.naftah.parser.NaftahParser.ObjectValueContext ctx) {
 		return visitContext(
 							this,
-							"visitObject",
+							"visitObjectValue",
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, objectContext) -> defaultNaftahParserVisitor
@@ -2226,6 +2366,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								var result = new LinkedHashMap<String, DeclaredVariable>();
 
 								for (int i = 0; i < objectFieldsContext.assignment().size(); i++) {
+									//noinspection unchecked
 									var field = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
 											.visit(
 													objectFieldsContext.assignment(i));
@@ -2235,7 +2376,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								currentContext.setCreatingObject(false);
 
-								return result;
+								return NaftahObject.of(result);
 							}
 		);
 	}
@@ -2320,24 +2461,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								collectionExpressionContext) -> defaultNaftahParserVisitor
 										.visit(
 												collectionExpressionContext.collection())
-		);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object visitCollectionAccessStatement(org.daiitech.naftah.parser.NaftahParser.CollectionAccessStatementContext ctx) {
-		return visitContext(
-							this,
-							"visitCollectionAccessStatement",
-							getContextByDepth(depth),
-							ctx,
-							(   defaultNaftahParserVisitor,
-								currentContext,
-								collectionAccessStatementContext) -> defaultNaftahParserVisitor
-										.visit(
-												collectionAccessStatementContext.collectionAccess())
 		);
 	}
 
@@ -2454,9 +2577,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							"visitListValue",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, listValueContext) -> defaultNaftahParserVisitor
-									.visit(
-											listValueContext.elements()),
+							(defaultNaftahParserVisitor, currentContext, listValueContext) -> {
+								var value = (List<?>) (Objects.nonNull(listValueContext.elements()) ?
+										defaultNaftahParserVisitor
+												.visit(
+														listValueContext.elements()) :
+										List.of());
+								return new ArrayList<>(value);
+							},
 							List.class
 		);
 	}
@@ -2493,13 +2621,33 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																			.getCharPositionInLine());
 									}
 								}
+								//noinspection unchecked
 								return Tuple
-										.of((List<Object>) defaultNaftahParserVisitor
-												.visit(tupleValueContext.elements()));
+										.of((List<Object>) (Objects.nonNull(tupleValueContext.tupleElements()) ?
+												defaultNaftahParserVisitor
+														.visit(tupleValueContext.tupleElements()) :
+												List.of()));
 							},
 							Tuple.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitEmptySet(org.daiitech.naftah.parser.NaftahParser.EmptySetContext ctx) {
+		return visitContext(
+							this,
+							"visitEmptySet",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, setValueContext) -> Objects
+									.nonNull(setValueContext.ORDERED()) ?
+											new LinkedHashSet<>() :
+											new HashSet<>(),
+							Set.class
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -2523,6 +2671,23 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitEmptyMap(org.daiitech.naftah.parser.NaftahParser.EmptyMapContext ctx) {
+		return visitContext(
+							this,
+							"visitEmptyMap",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, mapValueContext) -> Objects
+									.nonNull(mapValueContext.ORDERED()) ?
+											new LinkedHashMap<>() :
+											new HashMap<>(),
+							Map.class
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -2555,8 +2720,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								// prepare validations
 								boolean creatingList = hasParentOfType( elementContext,
 																		org.daiitech.naftah.parser.NaftahParser.ListValueContext.class);
-								boolean creatingTuple = hasParentOfType(elementContext,
-																		org.daiitech.naftah.parser.NaftahParser.TupleValueContext.class);
+
 								boolean parsingAssignment = currentContext.isParsingAssignment();
 								Class<?> currentDeclarationType = null;
 								String currentDeclarationName = null;
@@ -2571,31 +2735,45 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										elementValue.getClass() :
 										Object.class;
 
-								if (!creatingTuple) {
-									// validating list has all the same type
-									if (parsingAssignment && typeMismatch(  elementValue,
-																			elementType,
-																			currentDeclarationType)) {
-										throw new NaftahBugError(
-																	("""
-																		لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
-																			.formatted( creatingList ?
-																								"القائمة (List)" :
-																								"المجموعة (Set)",
-																						"'%s'"
-																								.formatted(currentDeclarationName),
-																						"(%s)"
-																								.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
-																															currentDeclarationType))),
-																	elementContext.getStart().getLine(),
-																	elementContext
-																			.getStart()
-																			.getCharPositionInLine());
-									}
+								// validating list has all the same type
+								if (parsingAssignment && typeMismatch(  elementValue,
+																		elementType,
+																		currentDeclarationType)) {
+									throw new NaftahBugError(
+																("""
+																	لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
+																		.formatted( creatingList ?
+																							"القائمة (List)" :
+																							"المجموعة (Set)",
+																					"'%s'"
+																							.formatted(currentDeclarationName),
+																					"(%s)"
+																							.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
+																														currentDeclarationType))),
+																elementContext.getStart().getLine(),
+																elementContext
+																		.getStart()
+																		.getCharPositionInLine());
 								}
 
 								return List.of(elementValue);
 							},
+							List.class
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitTupleSingleElement(org.daiitech.naftah.parser.NaftahParser.TupleSingleElementContext ctx) {
+		return visitContext(
+							this,
+							"visitTupleSingleElement",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, elementContext) -> List
+									.of(defaultNaftahParserVisitor.visit(elementContext.expression())),
 							List.class
 		);
 	}
@@ -2616,8 +2794,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																		org.daiitech.naftah.parser.NaftahParser.ListValueContext.class);
 								boolean creatingSet = hasParentOfType(  elementsContext,
 																		org.daiitech.naftah.parser.NaftahParser.SetValueContext.class);
-								boolean creatingTuple = hasParentOfType(elementsContext,
-																		org.daiitech.naftah.parser.NaftahParser.TupleValueContext.class);
+
 								boolean parsingAssignment = currentContext.isParsingAssignment();
 								Class<?> currentDeclarationType = null;
 								String currentDeclarationName = null;
@@ -2629,58 +2806,61 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								// process elements
 								List<Object> elements = new ArrayList<>();
 								Set<Class<?>> elementTypes = new HashSet<>();
-								for (int i = 0; i < elementsContext.expression().size(); i++) {
-									var elementValue = defaultNaftahParserVisitor.visit(elementsContext.expression(i));
+								for (   int i = 0;
+										i < elementsContext.collectionMultipleElements().expression().size();
+										i++) {
+									var elementValue = defaultNaftahParserVisitor
+											.visit(elementsContext
+													.collectionMultipleElements()
+													.expression(i));
 									var elementType = Objects.nonNull(elementValue) ?
 											elementValue.getClass() :
 											Object.class;
-									if (!creatingTuple) {
-										// validating list has all the same type
-										if (parsingAssignment && typeMismatch(  elementValue,
-																				elementType,
-																				currentDeclarationType) || elementTypes
-																						.stream()
-																						.anyMatch(aClass -> typeMismatch(   aClass,
-																															elementType))) {
+									// validating list has all the same type
+									if (parsingAssignment && typeMismatch(  elementValue,
+																			elementType,
+																			currentDeclarationType) || elementTypes
+																					.stream()
+																					.anyMatch(aClass -> typeMismatch(   aClass,
+																														elementType))) {
+										throw new NaftahBugError(
+																	("""
+																		لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
+																			.formatted( creatingList ?
+																								"القائمة (List)" :
+																								"المجموعة (Set)",
+																						parsingAssignment ?
+																								"'%s'"
+																										.formatted(currentDeclarationName) :
+																								"",
+																						parsingAssignment ?
+																								"(%s)"
+																										.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
+																																	currentDeclarationType)) :
+																								""),
+																	elementsContext.getStart().getLine(),
+																	elementsContext
+																			.getStart()
+																			.getCharPositionInLine());
+									}
+
+									if (creatingSet) {
+										// validating set has no duplicates
+										if (elements
+												.stream()
+												.filter(Objects::nonNull)
+												.anyMatch(o -> o.equals(elementValue))) {
 											throw new NaftahBugError(
 																		("""
-																			لا يمكن أن تحتوي %s %s على عناصر من أنواع مختلفة. يجب أن تكون جميع العناصر من نفس النوع %s.""")
-																				.formatted( creatingList ?
-																									"القائمة (List)" :
-																									"المجموعة (Set)",
-																							parsingAssignment ?
-																									"'%s'"
-																											.formatted(currentDeclarationName) :
-																									"",
-																							parsingAssignment ?
-																									"(%s)"
-																											.formatted(getNaftahType(   defaultNaftahParserVisitor.parser,
-																																		currentDeclarationType)) :
-																									""),
+																			تحتوي المجموعة %s على عناصر مكرّرة، وهذا غير مسموح في المجموعات (Set) التي يجب أن تحتوي على عناصر فريدة فقط.""")
+																				.formatted(parsingAssignment ?
+																						"'%s'"
+																								.formatted(currentDeclarationName) :
+																						""),
 																		elementsContext.getStart().getLine(),
 																		elementsContext
 																				.getStart()
 																				.getCharPositionInLine());
-										}
-
-										if (creatingSet) {
-											// validating set has no duplicates
-											if (elements
-													.stream()
-													.filter(Objects::nonNull)
-													.anyMatch(o -> o.equals(elementValue))) {
-												throw new NaftahBugError(
-																			("""
-																				تحتوي المجموعة %s على عناصر مكرّرة، وهذا غير مسموح في المجموعات (Set) التي يجب أن تحتوي على عناصر فريدة فقط.""")
-																					.formatted(parsingAssignment ?
-																							"'%s'"
-																									.formatted(currentDeclarationName) :
-																							""),
-																			elementsContext.getStart().getLine(),
-																			elementsContext
-																					.getStart()
-																					.getCharPositionInLine());
-											}
 										}
 									}
 									elements.add(elementValue);
@@ -2689,6 +2869,31 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 													.isAssignableFrom(elementType)) {
 										elementTypes.add(elementType);
 									}
+								}
+								return elements;
+							},
+							List.class
+		);
+	}
+
+	@Override
+	public Object visitTupleMultipleElements(org.daiitech.naftah.parser.NaftahParser.TupleMultipleElementsContext ctx) {
+		return visitContext(
+							this,
+							"visitTupleMultipleElements",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, elementsContext) -> {
+								List<Object> elements = new ArrayList<>();
+
+								for (   int i = 0;
+										i < elementsContext.collectionMultipleElements().expression().size();
+										i++) {
+									var elementValue = defaultNaftahParserVisitor
+											.visit(elementsContext
+													.collectionMultipleElements()
+													.expression(i));
+									elements.add(elementValue);
 								}
 								return elements;
 							},
@@ -2848,12 +3053,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								// prepare validations
 								boolean creatingCollection = hasAnyParentOfType(valueExpressionContext,
 																				org.daiitech.naftah.parser.NaftahParser.CollectionContext.class);
+								boolean callingInitOrFunction = hasAnyParentOfType( valueExpressionContext,
+																					List
+																							.of(
+																								org.daiitech.naftah.parser.NaftahParser.InitCallContext.class,
+																								org.daiitech.naftah.parser.NaftahParser.FunctionCallContext.class));
 								boolean parsingAssignment = currentContext.isParsingAssignment();
 
 								// process value
 								var result = defaultNaftahParserVisitor.visit(valueExpressionContext.value());
 
-								if (!creatingCollection && parsingAssignment) {
+								if (!creatingCollection && !callingInitOrFunction && parsingAssignment) {
 									var currentDeclaration = currentContext.getDeclarationOfAssignment();
 									Class<?> currentDeclarationType = currentDeclaration.a.getType();
 									Class<?> resultType = Objects.nonNull(result) ? result.getClass() : Object.class;
@@ -2891,6 +3101,24 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								parenthesisExpressionContext) -> defaultNaftahParserVisitor
 										.visit(
 												parenthesisExpressionContext.expression())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitInitCallExpression(org.daiitech.naftah.parser.NaftahParser.InitCallExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitInitCallExpression",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								initCallExpressionContext) -> defaultNaftahParserVisitor
+										.visit(
+												initCallExpressionContext.initCall())
 		);
 	}
 
@@ -3199,10 +3427,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, qualifiedNameContext) -> {
 								Object result;
-								boolean accessingObjectField = hasAnyParentOfType(  qualifiedNameContext,
-																					org.daiitech.naftah.parser.NaftahParser.ObjectAccessStatementContext.class) || hasAnyParentOfType(
-																																														qualifiedNameContext,
-																																														org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
+								boolean accessingObjectField = hasAnyParentOfType(
+																					qualifiedNameContext,
+																					org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
 								if (accessingObjectField) {
 									var qualifiedName = getQualifiedName(qualifiedNameContext);
 									result = accessObjectUsingQualifiedName(qualifiedName, currentContext);

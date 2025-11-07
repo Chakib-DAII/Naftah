@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,11 +27,15 @@ import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
+import org.daiitech.naftah.utils.ResourceUtils;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.jline.reader.EOFError;
@@ -64,14 +69,16 @@ import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
+import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
-import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.classToDetailedString;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.daiitech.naftah.utils.repl.REPLHelper.LAST_PRINTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
+import static org.daiitech.naftah.utils.repl.REPLHelper.clearScreen;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getLineReader;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getMarkdownAsString;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
@@ -128,6 +135,14 @@ public final class Naftah {
 	 */
 	public static final String FORCE_CLASSPATH_PROPERTY = "naftah.forceClassPathScan";
 	/**
+	 * Property to enable scanning the Jdk classes for Naftah types.
+	 */
+	public static final String SCAN_JDK_PROPERTY = "naftah.scanJDK";
+	/**
+	 * Cache results of classpath and JDK scanning.
+	 */
+	public static final String CACHE_SCANNING_RESULTS_PROPERTY = "naftah.cacheScanningResults";
+	/**
 	 * Property to enable debug mode.
 	 */
 	public static final String DEBUG_PROPERTY = "naftah.debug";
@@ -143,6 +158,10 @@ public final class Naftah {
 	 * Property set when inside the man command.
 	 */
 	public static final String INSIDE_MAN_PROPERTY = "naftah.man";
+	/**
+	 * Controls whether class and function definitions should be loaded on startup.
+	 */
+	public static final String LOAD_CLASSES_AND_FUNCTIONS_PROPERTY = "naftah.man.load.active";
 	/**
 	 * Property set when inside the run command.
 	 */
@@ -172,9 +191,39 @@ public final class Naftah {
 	 */
 	public static final String INTERPOLATION_CACHE_PROPERTY = "naftah.cache.interpolation.active";
 	/**
+	 * Property to specify the path to a Naftah configuration file.
+	 */
+	public static final String CONFIG_FILE_PROPERTY = "naftah.config.file";
+	/**
+	 * Property to specify which builtin function set to use in Naftah.
+	 */
+	public static final String BUILTIN_CLASSES_PROPERTY = "naftah.builtinClasses";
+	/**
+	 * Property to specify which package of builtin function set to use in Naftah.
+	 */
+	public static final String BUILTIN_PACKAGES_PROPERTY = "naftah.builtinPackages";
+	/**
+	 * Configuration key representing the classes of builtin function set.
+	 */
+	public static final String BUILTIN_CLASSES = "builtinClasses";
+	/**
+	 * Configuration key representing the packages of builtin function set.
+	 */
+	public static final String BUILTIN_PACKAGES = "builtinPackages";
+	/**
+	 * Default filename for the Naftah configuration file.
+	 */
+	public static final String CONFIG_FILE = "naftah.properties";
+	/**
 	 * The recognized standard file extensions for Naftah scripts.
 	 */
 	public static final String[] STANDARD_EXTENSIONS = {".naftah", ".nfth", ".na", ".nsh"};
+
+	/**
+	 * Constant representing a single underscore character ("_").
+	 */
+	public static final String UNDERSCORE = "_";
+
 	/**
 	 * Logger instance for logging Naftah program.
 	 */
@@ -209,6 +258,9 @@ public final class Naftah {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
+		System.setProperty(ReleaseInfo.NAFTAH_VERSION_PROPERTY, ReleaseInfo.getVersion());
+		System.setProperty(ReleaseInfo.NAFTAH_VERSION_DATE_PROPERTY, ReleaseInfo.getBuildDate());
+		System.setProperty(ReleaseInfo.NAFTAH_VERSION_TIME_PROPERTY, ReleaseInfo.getBuildTime());
 		processArgs(args);
 	}
 
@@ -261,11 +313,84 @@ public final class Naftah {
 	}
 
 	/**
+	 * Processes the given configuration properties and updates corresponding system properties
+	 * for built-in function classes and packages.
+	 *
+	 * <p>If the provided {@code properties} include entries for
+	 * {@link #BUILTIN_CLASSES} or {@link #BUILTIN_PACKAGES}, their values are appended
+	 * to the existing system properties {@link #BUILTIN_CLASSES_PROPERTY} and
+	 * {@link #BUILTIN_PACKAGES_PROPERTY}, respectively. This behavior ensures that
+	 * built-in configurations are cumulative—existing values are preserved and new ones are appended.</p>
+	 *
+	 * @param properties the configuration properties to process; may be {@code null}
+	 */
+	private static void processConfig(Properties properties) {
+		if (Objects.nonNull(properties)) {
+			if (properties.containsKey(BUILTIN_CLASSES)) {
+				// builtin classes config is cumulative
+				var current = System.getProperty(BUILTIN_CLASSES_PROPERTY);
+				System
+						.setProperty(   BUILTIN_CLASSES_PROPERTY,
+										(Objects.nonNull(current) ? current + ", " : "") + properties
+												.get(BUILTIN_CLASSES));
+			}
+
+			if (properties.containsKey(BUILTIN_PACKAGES)) {
+				// builtin packages config is cumulative
+				var current = System.getProperty(BUILTIN_PACKAGES_PROPERTY);
+				System
+						.setProperty(   BUILTIN_PACKAGES_PROPERTY,
+										(Objects.nonNull(current) ? current + ", " : "") + properties
+												.get(BUILTIN_PACKAGES));
+			}
+		}
+	}
+
+	/**
+	 * Initializes Naftah configuration by loading default and optional external property files.
+	 *
+	 * <p>The initialization process follows these steps:</p>
+	 * <ol>
+	 * <li>Load default configuration properties from the resource file {@link #CONFIG_FILE}.</li>
+	 * <li>Apply built-in configuration values via {@link #processConfig(Properties)}.</li>
+	 * <li>If a system property {@link #CONFIG_FILE_PROPERTY} is defined, attempt to load
+	 * external configuration from the specified file. External values override defaults.</li>
+	 * <li>If loading fails (e.g., due to {@link NaftahBugError}), fall back to default properties.</li>
+	 * </ol>
+	 *
+	 * <p>All successfully processed properties update system properties, including
+	 * {@link #BUILTIN_CLASSES_PROPERTY} and {@link #BUILTIN_PACKAGES_PROPERTY}.</p>
+	 */
+	public static void initConfig() {
+		Properties properties = null;
+		try {
+			String configFile = System.getProperty(CONFIG_FILE_PROPERTY);
+
+			// load default config
+			properties = ResourceUtils.getPropertiesFromResources(CONFIG_FILE);
+			processConfig(properties);
+			properties = null;
+
+			if (Objects.nonNull(configFile)) {
+				// external config are priority if exists
+				properties = ResourceUtils.getProperties(configFile);
+			}
+		}
+		catch (NaftahBugError e) {
+			// fallback to default config
+			properties = ResourceUtils.getPropertiesFromResources(CONFIG_FILE);
+		}
+		finally {
+			processConfig(properties);
+		}
+	}
+
+	/**
 	 * Processes the command line arguments and dispatches the appropriate command.
 	 *
 	 * @param args the raw command line arguments
 	 */
-	private static void processArgs(String[] args) {
+	public static void processArgs(String[] args) {
 		setupOutputStream();
 		setupErrorStream();
 		setupLocale();
@@ -394,7 +519,6 @@ public final class Naftah {
 	/**
 	 * The base command class for the Naftah CLI, implemented with picocli.
 	 * Supports subcommands: run, init, and shell.
-	 * TODO: add support for ManCammand (Manual), to list java apis in arabic (transliterated)
 	 */
 	@Command(   name = NaftahCommand.NAME,
 				customSynopsis = "naftah [run/shell/init] [options] [filename] [args]",
@@ -491,6 +615,13 @@ public final class Naftah {
 				})
 		private boolean useArabicIndic;
 
+		@Option(names = {"-load_clf", "--load_classes_and_functions"},
+				description = {
+								"",
+								""
+				})
+		private boolean loadClassesAndFunctions;
+
 		/**
 		 * Runs the command.
 		 *
@@ -499,9 +630,12 @@ public final class Naftah {
 		 * @throws Exception if any error occurs
 		 */
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
+			System.setProperty(SCAN_JDK_PROPERTY, Boolean.toString(true));
+			System.setProperty(CACHE_SCANNING_RESULTS_PROPERTY, Boolean.toString(true));
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
 			}
+			initConfig();
 			bootstrap(bootstrapAsync);
 		}
 
@@ -580,6 +714,10 @@ public final class Naftah {
 				System
 						.setProperty(   INTERPOLATION_CACHE_PROPERTY,
 										Boolean.toString(matchedCommand.enabledCaches.contains("I")));
+			}
+
+			if (matchedCommand.loadClassesAndFunctions) {
+				System.setProperty(LOAD_CLASSES_AND_FUNCTIONS_PROPERTY, Boolean.toString(true));
 			}
 
 			main.args = matchedCommand.arguments;
@@ -668,6 +806,7 @@ public final class Naftah {
 			private final List<String> instantiableClasses = new CopyOnWriteArrayList<>();
 			private final List<String> builtinFunctions = new CopyOnWriteArrayList<>();
 			private final List<String> jvmFunctions = new CopyOnWriteArrayList<>();
+
 			private LineReader reader;
 			private Map<String, Path> topics;
 
@@ -679,8 +818,9 @@ public final class Naftah {
 				System.setProperty(INSIDE_MAN_PROPERTY, Boolean.toString(true));
 				System.setProperty(SCAN_CLASSPATH_PROPERTY, Boolean.toString(true));
 				super.run(main, bootstrapAsync);
-
-				loadClassesAndFunctions();
+				if (Boolean.getBoolean(LOAD_CLASSES_AND_FUNCTIONS_PROPERTY)) {
+					loadClassesAndFunctions();
+				}
 
 				topics = loadAvailableTopics();
 
@@ -692,9 +832,13 @@ public final class Naftah {
 
 				reader = getLineReader(terminal, topics.keySet());
 
+				setupHistoryConfig(reader, ".naftah/.naftah_man_history");
+
 				setupKeyBindingsConfig(reader);
 
-				String line;
+				clearScreen();
+
+				String line = null;
 
 				while (true) {
 					try {
@@ -703,6 +847,22 @@ public final class Naftah {
 							main.args.clear();
 						}
 						else {
+							if (Objects.isNull(line)) {
+								padText("""
+										مرحبًا بك في الواجهة التفاعلية للكتيبات التقنية لنفطه.
+
+										إذا كنت تستخدم الأداة لأول مرة أو لا تعرف الأوامر المتاحة،
+										اكتب الأمر التالي لعرض قائمة الأوامر والتعليمات:
+
+										مساعدة أو usage
+
+										يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
+										Alt+L → نسخ آخر نص مطبوع إلى الحافظة
+										Alt+V → لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
+
+										استمتع بالتجربة وتعلم بسرعة!
+										""", true);
+							}
 							line = reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null).trim();
 						}
 
@@ -719,7 +879,7 @@ public final class Naftah {
 							else {
 								String arabicQualifiedNameOrBuiltinFunction = null;
 								String[] lineParts;
-								if (line.contains(".") && !line.contains(QUALIFIED_NAME_SEPARATOR)) {
+								if (!containsArabic(line) && line.contains(".")) {
 									if ((lineParts = line.split(QUALIFIED_CALL_SEPARATOR)).length == 2) {
 										arabicQualifiedNameOrBuiltinFunction = ClassUtils
 												.getQualifiedCall(ClassUtils
@@ -764,7 +924,13 @@ public final class Naftah {
 								}
 
 								if (arabicQualifiedNameOrBuiltinFunction != null) {
+									LAST_PRINTED.set(arabicQualifiedNameOrBuiltinFunction);
 									padText(arabicQualifiedNameOrBuiltinFunction, true);
+									padText("""
+											\n
+											[استخدم Alt+L لنسخ آخر نص مطبوع إلى الحافظة، واستخدم Alt+V للصقه مرة أخرى في محرر الإدخال لإعادة استخدامه.]
+											""",
+											true);
 								}
 								else {
 									padText("لم يتم العثور على دليل للموضوع.", true);
@@ -781,6 +947,10 @@ public final class Naftah {
 					}
 					catch (Throwable t) {
 						printPaddedErrorMessageToString(t);
+					}
+					finally {
+						// Save history explicitly (though it's usually done automatically)
+						reader.getHistory().save();
 					}
 				}
 			}
@@ -802,8 +972,10 @@ public final class Naftah {
 			private boolean checkManagementCommands(String line) {
 				var matched = false;
 				String command = line.trim().toLowerCase(ARABIC);
-
+//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic)
+//					TODO: so the flow you transliterate then get all infos
 				if (List.of("usage", "مساعدة").contains(command)) {
+
 					matched = true;
 					padText(
 							"""
@@ -826,7 +998,7 @@ public final class Naftah {
 					topics
 							.keySet()
 							.forEach(topic -> padText("\t- " + ArabicUtils
-									.transliterateToArabicScriptDefault(false, topic)[0] + " - " + topic, true));
+									.transliterateToArabicScriptDefault(topic)[0] + " - " + topic, true));
 				}
 				else if (List.of("classes", "الأصناف").contains(command)) {
 					matched = true;
@@ -910,40 +1082,7 @@ public final class Naftah {
 							.getBuiltinFunctions()
 							.entrySet()
 							.stream()
-							.map(builtinFunction -> """
-													---------------------------------------------------
-													%s
-													%s
-													---------------------------------------------------
-													"""
-									.formatted( builtinFunction.getKey(),
-
-												builtinFunction
-														.getValue()
-														.size() == 1 ?
-																builtinFunction
-																		.getValue()
-																		.get(0)
-																		.toDetailedString() :
-																IntStream
-																		.range( 0,
-																				builtinFunction
-																						.getValue()
-																						.size())
-																		.mapToObj(index -> """
-																							%s
-																							----------------------------------------------
-																							%s
-																							"""
-																				.formatted(
-																							index + 1,
-																							builtinFunction
-																									.getValue()
-																									.get(index)
-																									.toDetailedString()))
-																		.collect(Collectors.joining())
-									)
-							)
+							.map(this::loadBuiltinFunction)
 							.filter(Objects::nonNull)
 							.forEach(builtinFunctions::add);
 					executor.submit(builtinFunctionsLoaderTask);
@@ -952,45 +1091,272 @@ public final class Naftah {
 							.getJvmFunctions()
 							.entrySet()
 							.stream()
-							.map(JvmFunction -> """
-												---------------------------------------------------
-												%s
-												%s
-												---------------------------------------------------
-												"""
-									.formatted( JvmFunction.getKey(),
-												JvmFunction
-														.getValue()
-														.size() == 1 ?
-																JvmFunction
-																		.getValue()
-																		.get(0)
-																		.toDetailedString() :
-																IntStream
-																		.range( 0,
-																				JvmFunction
-																						.getValue()
-																						.size())
-																		.mapToObj(index -> """
-																							%s
-																							----------------------------------------------
-																							%s
-																							"""
-																				.formatted(
-																							index + 1,
-																							JvmFunction
-																									.getValue()
-																									.get(index)
-																									.toDetailedString()))
-																		.collect(Collectors.joining())
-									)
-							)
+							.map(this::loadJvmFunction)
 							.filter(Objects::nonNull)
 							.forEach(jvmFunctions::add);
 					executor.submit(jvmFunctionsLoaderTask);
 				}
 				finally {
 					executor.shutdown();
+				}
+			}
+
+			/**
+			 * Builds a detailed textual representation of a single built-in function entry.
+			 * <p>
+			 * The output includes the function group name (key) and a formatted list of one or
+			 * more {@link BuiltinFunction} details separated by visual dividers for clarity.
+			 * </p>
+			 *
+			 * @param builtinFunction a map entry containing the function group name as key and
+			 *                        a list of {@link BuiltinFunction} instances as value
+			 * @return a formatted string containing a detailed description of the built-in functions
+			 */
+			private String loadBuiltinFunction(Map.Entry<String, List<BuiltinFunction>> builtinFunction) {
+				return """
+						---------------------------------------------------
+						%s
+						%s
+						---------------------------------------------------
+						"""
+						.formatted( builtinFunction.getKey(),
+
+									builtinFunction
+											.getValue()
+											.size() == 1 ?
+													builtinFunction
+															.getValue()
+															.get(0)
+															.toDetailedString() :
+													IntStream
+															.range( 0,
+																	builtinFunction
+																			.getValue()
+																			.size())
+															.mapToObj(index -> """
+																				%s
+																				----------------------------------------------
+																				%s
+																				"""
+																	.formatted(
+																				index + 1,
+																				builtinFunction
+																						.getValue()
+																						.get(index)
+																						.toDetailedString()))
+															.collect(Collectors.joining())
+						);
+			}
+
+			/**
+			 * Builds a detailed textual representation of a single JVM function entry.
+			 * <p>
+			 * The output includes the function group name (key) and a formatted list of one or
+			 * more {@link JvmFunction} details separated by visual dividers for readability.
+			 * </p>
+			 *
+			 * @param jvmFunction a map entry containing the function group name as key and
+			 *                    a list of {@link JvmFunction} instances as value
+			 * @return a formatted string containing a detailed description of the JVM functions
+			 */
+			private String loadJvmFunction(Map.Entry<String, List<JvmFunction>> jvmFunction) {
+				return """
+						---------------------------------------------------
+						%s
+						%s
+						---------------------------------------------------
+						"""
+						.formatted( jvmFunction.getKey(),
+									jvmFunction
+											.getValue()
+											.size() == 1 ?
+													jvmFunction
+															.getValue()
+															.get(0)
+															.toDetailedString() :
+													IntStream
+															.range( 0,
+																	jvmFunction
+																			.getValue()
+																			.size())
+															.mapToObj(index -> """
+																				%s
+																				----------------------------------------------
+																				%s
+																				"""
+																	.formatted(
+																				index + 1,
+																				jvmFunction
+																						.getValue()
+																						.get(index)
+																						.toDetailedString()))
+															.collect(Collectors.joining())
+						);
+			}
+
+			/**
+			 * Determines the total number of elements in a target list, ensuring the count
+			 * is at least as large as the corresponding collection from {@link DefaultContext}.
+			 * <p>
+			 * This helps synchronize manual or temporary lists with the runtime context
+			 * to avoid index mismatches when accessing elements.
+			 * </p>
+			 *
+			 * @param target the list whose size should be compared to its related collection
+			 * @return the maximum of the target's size and the associated context collection size
+			 */
+			private int getTotal(List<String> target) {
+				int total = target.size();
+				if (classes.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getClasses()
+											.size());
+				}
+				else if (accessibleClasses.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getAccessibleClasses()
+											.size());
+				}
+				else if (instantiableClasses.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getInstantiableClasses()
+											.size());
+				}
+				else if (builtinFunctions.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getBuiltinFunctions()
+											.size());
+				}
+				else if (jvmFunctions.equals(target)) {
+					total = Math
+							.max(   total,
+									DefaultContext
+											.getJvmFunctions()
+											.size());
+				}
+				return total;
+			}
+
+
+			/**
+			 * Retrieves and formats the detailed information for a class or function
+			 * at a given index from the specified target list or its related context collection.
+			 * <p>
+			 * If the requested index exceeds the target list’s current size, this method
+			 * attempts to fetch the corresponding element from the appropriate collection
+			 * in {@link DefaultContext}. Depending on the target, it delegates to one of:
+			 * <ul>
+			 * <li>{@code loadDetailedClass(Map.Entry)}</li>
+			 * <li>{@code loadBuiltinFunction(Map.Entry)}</li>
+			 * <li>{@code loadJvmFunction(Map.Entry)}</li>
+			 * </ul>
+			 * </p>
+			 *
+			 * @param index  the index of the element to retrieve (0-based)
+			 * @param target the list corresponding to one of the tracked element types
+			 * @return a formatted string representing the detailed view of the element
+			 * @throws NaftahBugError if no valid element can be resolved for the given index
+			 */
+			private String loadClassOrFunction(int index, List<String> target) {
+				if (target.size() > index) {
+					return target.get(index);
+				}
+				else {
+					String result = null;
+					boolean validIndex = true;
+					if (classes.equals(target) && (validIndex = DefaultContext
+							.getClasses()
+							.entrySet()
+							.size() > index)) {
+						var element = CollectionUtils
+								.getElementAt(
+												DefaultContext
+														.getClasses()
+														.entrySet(),
+												index);
+						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+						}
+					}
+					else if (accessibleClasses.equals(target) && (validIndex = DefaultContext
+							.getAccessibleClasses()
+							.entrySet()
+							.size() > index)) {
+								var element = CollectionUtils
+										.getElementAt(
+														DefaultContext
+																.getAccessibleClasses()
+																.entrySet(),
+														index);
+								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+								}
+							}
+					else if (instantiableClasses.equals(target) && (validIndex = DefaultContext
+							.getInstantiableClasses()
+							.entrySet()
+							.size() > index)) {
+								var element = CollectionUtils
+										.getElementAt(
+														DefaultContext
+																.getInstantiableClasses()
+																.entrySet(),
+														index);
+								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+								}
+							}
+					else if (builtinFunctions.equals(target) && (validIndex = DefaultContext
+							.getBuiltinFunctions()
+							.entrySet()
+							.size() > index)) {
+								var element = CollectionUtils
+										.getElementAt(
+														DefaultContext
+																.getBuiltinFunctions()
+																.entrySet(),
+														index);
+								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									result = loadBuiltinFunction((Map.Entry<String, List<BuiltinFunction>>) entry);
+								}
+							}
+					else if (jvmFunctions.equals(target) && (validIndex = DefaultContext
+							.getJvmFunctions()
+							.entrySet()
+							.size() > index)) {
+								var element = CollectionUtils
+										.getElementAt(
+														DefaultContext
+																.getJvmFunctions()
+																.entrySet(),
+														index);
+								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									result = loadJvmFunction((Map.Entry<String, List<JvmFunction>>) entry);
+								}
+							}
+
+					if (!validIndex) {
+						return null;
+					}
+					else {
+						if (result == null) {
+							throw new NaftahBugError(
+														"""
+														حدث خطأ غير متوقع أثناء تحميل العنصر المطلوب من القائمة المحددة.
+														""");
+						}
+
+						target.add(result);
+						return result;
+					}
 				}
 			}
 
@@ -1014,14 +1380,17 @@ public final class Naftah {
 			 * @param lines the list of lines to display, paginated
 			 */
 			private void printPaginated(List<String> lines) {
-				int total = lines.size();
+				int total = getTotal(lines);
 				int printedLines = 0;
 				int currentIndex = 0;
 
 				outerLoop:
 				while (currentIndex < total) {
 					for (int i = 0; i < PAGE_SIZE && currentIndex < total; i++, currentIndex++) {
-						var current = lines.get(currentIndex);
+						var current = loadClassOrFunction(currentIndex, lines);
+						if (Objects.isNull(current)) {
+							break outerLoop;
+						}
 						var currentLines = current.lines().toList();
 						var currentLinesCount = currentLines.size();
 						int terminalHeight = Integer.getInteger(TERMINAL_HEIGHT_PROPERTY) - 1;
@@ -1086,7 +1455,7 @@ public final class Naftah {
 												.getFileName()
 												.toString()
 												.replaceFirst("[.][^.]+$", "")
-												.split("_"))
+												.split(UNDERSCORE))
 										.skip(1)
 										.collect(Collectors.joining("-"));
 
@@ -1123,7 +1492,7 @@ public final class Naftah {
 				padText("📖 الدليل: %s - %s"
 						.formatted(
 									ArabicUtils
-											.transliterateToArabicScriptDefault(false, topic)[0],
+											.transliterateToArabicScriptDefault(topic)[0],
 									topic), true);
 				padText("────────────────────────────────────────────", true);
 				printedLines += 2;
@@ -1172,18 +1541,20 @@ public final class Naftah {
 				classes
 						.entrySet()
 						.stream()
-						.map(JvmFunction -> """
-											---------------------------------------------------
-											%s
-											%s
-											---------------------------------------------------
-											"""
-								.formatted( JvmFunction.getKey(),
-											classToDetailedString(JvmFunction.getValue())
-								)
-						)
+						.map(this::loadDetailedClass)
 						.filter(Objects::nonNull)
 						.forEach(target::add);
+			}
+
+			private String loadDetailedClass(Map.Entry<String, Class<?>> JvmFunction) {
+				return """
+						---------------------------------------------------
+						%s
+						%s
+						---------------------------------------------------
+						"""
+						.formatted( JvmFunction.getKey(),
+									classToDetailedString(JvmFunction.getValue()));
 			}
 		}
 
@@ -1218,9 +1589,22 @@ public final class Naftah {
 
 				LineReader reader = getLineReader(terminal);
 
-				setupHistoryConfig(reader);
+				setupHistoryConfig(reader, ".naftah/.naftah_history");
 
 				setupKeyBindingsConfig(reader);
+
+				clearScreen();
+
+
+				padText("""
+						مرحبًا بك في الواجهة التفاعلية للكتيبات التقنية لنفطه.
+
+						يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
+						Alt+L → نسخ آخر نص مطبوع إلى الحافظة
+						Alt+V → لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
+
+						استمتع بالتجربة وتعلم بسرعة!
+						""", true);
 
 				StringBuilder fullLine = new StringBuilder();
 
@@ -1254,7 +1638,9 @@ public final class Naftah {
 						var result = doRun(parser, main.args);
 
 						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)) {
-							printPaddedToString(result);
+							var resultStr = getNaftahValueToString(result);
+							LAST_PRINTED.set(resultStr);
+							printPaddedToString(resultStr);
 						}
 						System.out.println();
 
@@ -1264,7 +1650,7 @@ public final class Naftah {
 						padText(closingMsg, true);
 						break;
 					}
-					catch (IndexOutOfBoundsException | EOFError ignored) {
+					catch (EOFError ignored) {
 						String currentLine = reader.getBuffer().atChar(reader.getBuffer().length() - 1) == '\n' ?
 								reader.getBuffer().substring(0, reader.getBuffer().length() - 2) :
 								reader.getBuffer().substring(0, reader.getBuffer().length() - 1);

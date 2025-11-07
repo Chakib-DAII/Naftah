@@ -41,6 +41,20 @@ public @interface NaftahFn {
 	String name();
 
 	/**
+	 * flags that the function names should be bound with the provider's name.
+	 *
+	 * @return true if we should use qualified name; false if not
+	 */
+	boolean useQualifiedName() default false;
+
+	/**
+	 * flags that the function aliases should be bound with the provider's name.
+	 *
+	 * @return true if we should use qualified name; false if not
+	 */
+	boolean useQualifiedAliases() default false;
+
+	/**
 	 * Alternative names (aliases) by which the function may also be referenced.
 	 *
 	 * <p>Aliases can be used to access the same function under different identifiers,

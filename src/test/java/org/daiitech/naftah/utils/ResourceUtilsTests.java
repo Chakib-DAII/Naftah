@@ -13,6 +13,9 @@ import java.util.Properties;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.Test;
 
+import static org.daiitech.naftah.Naftah.BUILTIN_CLASSES;
+import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES;
+import static org.daiitech.naftah.Naftah.CONFIG_FILE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -62,6 +65,16 @@ public class ResourceUtilsTests {
 		Properties props = ResourceUtils.getProperties(tempProps.toString());
 		assertEquals("1", props.getProperty("a"));
 		assertEquals("final", props.getProperty("c"));
+	}
+
+	@Test
+	void getPropertiesFromResourcesTest() throws IOException {
+		Properties props = ResourceUtils.getPropertiesFromResources(CONFIG_FILE);
+		assertEquals(   """
+						org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions, org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions""",
+						props.get(BUILTIN_CLASSES));
+		assertEquals(   "org.daiitech.naftah.builtin.functions",
+						props.get(BUILTIN_PACKAGES));
 	}
 
 	@Test

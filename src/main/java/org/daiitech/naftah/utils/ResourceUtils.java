@@ -2,6 +2,7 @@ package org.daiitech.naftah.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -97,6 +98,31 @@ public final class ResourceUtils {
 		try (FileInputStream input = new FileInputStream(filePath)) {
 			props.load(input);
 			resolvePlaceholders(props);
+		}
+		catch (IOException e) {
+			throw new NaftahBugError(e);
+		}
+		return props;
+	}
+
+	/**
+	 * Loads properties from a resource file located in the classpath.
+	 *
+	 * <p>The resource file must be accessible via the class loader. If the file
+	 * cannot be found or read, a {@link NaftahBugError} is thrown. The error
+	 * message is in Arabic for clarity when the file is missing.</p>
+	 *
+	 * @param filePath The path to the resource file in the classpath.
+	 * @return A {@link Properties} object containing all properties from the file.
+	 * @throws NaftahBugError If the file cannot be found or an I/O error occurs.
+	 */
+	public static Properties getPropertiesFromResources(String filePath) {
+		Properties props = new Properties();
+		try (InputStream configStream = JulLoggerConfig.class.getClassLoader().getResourceAsStream(filePath)) {
+			if (configStream == null) {
+				throw new FileNotFoundException("تعذر العثور على الملف: " + filePath);
+			}
+			props.load(configStream);
 		}
 		catch (IOException e) {
 			throw new NaftahBugError(e);

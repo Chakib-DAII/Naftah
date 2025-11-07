@@ -4,14 +4,16 @@ import java.util.Objects;
 
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.builtin.utils.FunctionUtils.allMatch;
+import static org.daiitech.naftah.builtin.utils.FunctionUtils.reduce;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
-import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
 import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
@@ -68,7 +70,17 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 										"إزاحة_إلى_اليمين",
 										"تقريب",
 										"جذر",
-										"زيادة_قبلية"
+										"زيادة_قبلية",
+										"و_منطقي",
+										"أو_منطقي",
+										"أس",
+										"جمع_عنصر_ب_عنصر",
+										"طرح_عنصر_ب_عنصر",
+										"ضرب_عنصر_ب_عنصر",
+										"قسمة_عنصر_ب_عنصر",
+										"باقي_القسمة_عنصر_ب_عنصر",
+										"عكس_الإشارة",
+										"نفي_منطقي"
 					})
 public final class Builtin {
 
@@ -144,7 +156,65 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object add(T x, T y) {
-		return applyOperation(x, y, ADD);
+		return reduce(applyOperation(x, y, BinaryOperation.ADD), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * Logical AND operation with short-circuit evaluation.
+	 * <p>
+	 * Returns the second operand if the first operand is "truthy"; otherwise returns the first operand.
+	 * <p>
+	 * Supports numbers, booleans, characters, and strings.
+	 * Uses custom "truthy" rules via {@code isTruthy()} to determine truthiness:
+	 * <ul>
+	 * <li>Numbers: non-zero values are truthy.</li>
+	 * <li>Booleans: {@code true} is truthy, {@code false} is falsy.</li>
+	 * <li>Characters: non-null, non-zero characters are truthy.</li>
+	 * <li>Strings: non-empty strings are truthy.</li>
+	 * </ul>
+	 *
+	 * @param <T> the type of operands (Number, Boolean, Character, String)
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the second operand if the first is truthy, otherwise the first operand
+	 */
+	@NaftahFn(  name = "و_منطقي",
+				description = """
+								إجراء عملية "و" المنطقية بين قيمتين. تُعيد الدالة القيمة الصحيحة فقط إذا كانت كلتا القيمتين صحيحتين، وتُستخدم في البرمجة والمنطق للتحقق من تحقق شرطين معًا.""",
+				usage = "و_منطقي(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object logicalAnd(T x, T y) {
+		return reduce(applyOperation(x, y, BinaryOperation.AND), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * Logical OR operation with short-circuit evaluation.
+	 * <p>
+	 * Returns the first operand if it is "truthy"; otherwise returns the second operand.
+	 * <p>
+	 * Supports numbers, booleans, characters, and strings.
+	 * Uses custom "truthy" rules via {@code isTruthy()} to determine truthiness:
+	 * <ul>
+	 * <li>Numbers: non-zero values are truthy.</li>
+	 * <li>Booleans: {@code true} is truthy, {@code false} is falsy.</li>
+	 * <li>Characters: non-null, non-zero characters are truthy.</li>
+	 * <li>Strings: non-empty strings are truthy.</li>
+	 * </ul>
+	 *
+	 * @param <T> the type of operands (Number, Boolean, Character, String)
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the first "truthy" operand, or the second operand if the first is falsy
+	 */
+	@NaftahFn(  name = "أو_منطقي",
+				description = """
+								إجراء عملية "أو" المنطقية بين قيمتين. تُعيد الدالة القيمة الصحيحة إذا كانت إحدى القيمتين أو كلتاهما صحيحتين، وتُستخدم في البرمجة والمنطق للتحقق من تحقق أحد الشرطين على الأقل.""",
+				usage = "أو_منطقي(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object logicalOr(T x, T y) {
+		return reduce(applyOperation(x, y, BinaryOperation.OR), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -162,7 +232,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object subtract(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.SUBTRACT);
+		return reduce(applyOperation(x, y, BinaryOperation.SUBTRACT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -180,7 +250,28 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object multiply(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.MULTIPLY);
+		return reduce(applyOperation(x, y, BinaryOperation.MULTIPLY), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * Raises a value to a given power.
+	 * <p>
+	 * Computes the result of raising the first operand (base) to the second operand (exponent).
+	 * Supports numbers and compatible numeric types.
+	 *
+	 * @param <T> the type of the operands
+	 * @param x   the base value
+	 * @param y   the exponent value
+	 * @return the result of x raised to the power of y
+	 */
+	@NaftahFn(  name = "أس",
+				description = """
+								رفع قيمة إلى قوة معينة. تُعيد الدالة النتيجة الناتجة عن رفع القيمة الأولى (الأساس) إلى القيمة الثانية (الأس)، وتُستخدم في الرياضيات والبرمجة لإجراء العمليات الأسية.""",
+				usage = "أس(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object pow(T x, T y) {
+		return reduce(applyOperation(x, y, BinaryOperation.POWER), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -198,7 +289,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object divide(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.DIVIDE);
+		return reduce(applyOperation(x, y, BinaryOperation.DIVIDE), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -216,7 +307,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object modulo(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.MODULO);
+		return reduce(applyOperation(x, y, BinaryOperation.MODULO), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -458,7 +549,7 @@ public final class Builtin {
 				returnType = Object.class)
 	public static <T> boolean equals(T x, T y) {
 		try {
-			return (boolean) applyOperation(x, y, BinaryOperation.EQUALS);
+			return allMatch(applyOperation(x, y, BinaryOperation.EQUALS), Boolean.TRUE::equals);
 		}
 		catch (NaftahBugError bug) {
 			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
@@ -486,7 +577,7 @@ public final class Builtin {
 				returnType = Object.class)
 	public static <T> boolean notEquals(T x, T y) {
 		try {
-			return (boolean) applyOperation(x, y, BinaryOperation.NOT_EQUALS);
+			return allMatch(applyOperation(x, y, BinaryOperation.NOT_EQUALS), Boolean.TRUE::equals);
 		}
 		catch (NaftahBugError bug) {
 			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
@@ -513,7 +604,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean lessThan(T x, T y) {
-		return (boolean) applyOperation(x, y, BinaryOperation.LESS_THAN);
+		return allMatch(applyOperation(x, y, BinaryOperation.LESS_THAN), Boolean.TRUE::equals);
 	}
 
 	/**
@@ -533,7 +624,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean lessThanEquals(T x, T y) {
-		return (boolean) applyOperation(x, y, BinaryOperation.LESS_THAN_EQUALS);
+		return allMatch(applyOperation(x, y, BinaryOperation.LESS_THAN_EQUALS), Boolean.TRUE::equals);
 	}
 
 	/**
@@ -553,7 +644,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean greaterThan(T x, T y) {
-		return (boolean) applyOperation(x, y, BinaryOperation.GREATER_THAN);
+		return allMatch(applyOperation(x, y, BinaryOperation.GREATER_THAN), Boolean.TRUE::equals);
 	}
 
 	/**
@@ -573,7 +664,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean greaterThanEquals(T x, T y) {
-		return (boolean) applyOperation(x, y, BinaryOperation.GREATER_THAN_EQUALS);
+		return allMatch(applyOperation(x, y, BinaryOperation.GREATER_THAN_EQUALS), Boolean.TRUE::equals);
 	}
 
 	/**
@@ -593,7 +684,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object and(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.BITWISE_AND);
+		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_AND), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -613,7 +704,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object or(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.BITWISE_OR);
+		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_OR), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -633,7 +724,105 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object xor(T x, T y) {
-		return applyOperation(x, y, BinaryOperation.BITWISE_XOR);
+		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_XOR), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * Performs element-wise addition of two values.
+	 * <p>
+	 * Applies addition to each element individually for numbers, strings, simple values,
+	 * arrays, and compatible collections.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise sum of x and y
+	 */
+	@NaftahFn(  name = "جمع_عنصر_ب_عنصر",
+				description = """
+								يُطبق الجمع عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا، نصوصًا، أو قيم بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية الجمع على كل عنصر مقابل حيثما أمكن.""",
+				usage = "جمع_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseAdd(T x, T y) {
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_ADD), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * Performs element-wise subtraction of two values.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise difference of x and y
+	 */
+	@NaftahFn(  name = "طرح_عنصر_ب_عنصر",
+				description = """
+								يُطبق الطرح عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا أو قيمًا بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية الطرح على كل عنصر مقابل حيثما أمكن.""",
+				usage = "طرح_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseSubtract(T x, T y) {
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_SUBTRACT), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * Performs element-wise multiplication of two values.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise product of x and y
+	 */
+	@NaftahFn(  name = "ضرب_عنصر_ب_عنصر",
+				description = """
+								يُطبق الضرب عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا أو قيمًا بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية الضرب على كل عنصر مقابل حيثما أمكن.""",
+				usage = "ضرب_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseMultiply(T x, T y) {
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_MULTIPLY), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * Performs element-wise division of two values.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise quotient of x and y
+	 */
+	@NaftahFn(  name = "قسمة_عنصر_ب_عنصر",
+				description = """
+								يُطبق القسمة عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا أو قيمًا بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية القسمة على كل عنصر مقابل حيثما أمكن.""",
+				usage = "قسمة_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseDivide(T x, T y) {
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_DIVIDE), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * Performs element-wise modulo of two values.
+	 *
+	 * @param <T> the type of operands
+	 * @param x   the first value
+	 * @param y   the second value
+	 * @return the element-wise remainder of x divided by y
+	 */
+	@NaftahFn(  name = "باقي_القسمة_عنصر_ب_عنصر",
+				description = """
+								يُطبق عملية باقي القسمة عنصرًا عن عنصر على القيم المعطاة، سواء كانت أرقامًا أو قيمًا بسيطة، بما في ذلك المصفوفات والمجموعات المتوافقة.
+								تُطبق الدالة عملية الباقي على كل عنصر مقابل حيثما أمكن.""",
+				usage = "باقي_القسمة_عنصر_ب_عنصر(س ، ص)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object elementWiseModulo(T x, T y) {
+		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_MODULO), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -652,7 +841,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object not(T x) {
-		return applyOperation(x, UnaryOperation.BITWISE_NOT);
+		return reduce(applyOperation(x, UnaryOperation.BITWISE_NOT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -730,7 +919,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object preIncrement(T x) {
-		return applyOperation(x, UnaryOperation.PRE_INCREMENT);
+		return reduce(applyOperation(x, UnaryOperation.PRE_INCREMENT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -747,7 +936,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object postIncrement(T x) {
-		return applyOperation(x, UnaryOperation.POST_INCREMENT);
+		return reduce(applyOperation(x, UnaryOperation.POST_INCREMENT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -764,7 +953,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object preDecrement(T x) {
-		return applyOperation(x, UnaryOperation.PRE_DECREMENT);
+		return reduce(applyOperation(x, UnaryOperation.PRE_DECREMENT), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -781,7 +970,53 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> Object postDecrement(T x) {
-		return applyOperation(x, UnaryOperation.POST_DECREMENT);
+		return reduce(applyOperation(x, UnaryOperation.POST_DECREMENT), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * The (negate) function returns the arithmetic negation of the given value.
+	 * <p>
+	 * It inverts the numeric sign of the value. For example:
+	 * <pre>{@code
+	 * negate(5)  → -5
+	 * negate(-2) → 2
+	 * }</pre>
+	 *
+	 * @param <T> The type of the object to negate
+	 * @param x   The object whose sign should be inverted
+	 * @return The negated value
+	 * @usage negate(x)
+	 */
+	@NaftahFn(  name = "عكس_الإشارة",
+				description = "الدالة (عكس_الإشارة) تُعيد معكوس إشارة القيمة المُعطاة.",
+				usage = "عكس_الإشارة(س)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object negate(T x) {
+		return reduce(applyOperation(x, UnaryOperation.MINUS), BinaryOperation.ADD::apply);
+	}
+
+	/**
+	 * The (logicalNot) function returns the logical negation of the given value.
+	 * <p>
+	 * It inverts a boolean value. For example:
+	 * <pre>{@code
+	 * logicalNot(true)  → false
+	 * logicalNot(false) → true
+	 * }</pre>
+	 *
+	 * @param <T> The type of the object to logically negate
+	 * @param x   The object to negate
+	 * @return The logical negation of the given value
+	 * @usage logicalNot(x)
+	 */
+	@NaftahFn(  name = "نفي_منطقي",
+				description = "الدالة (نفي_منطقي) تُعيد القيمة المنطقية المعاكسة للقيمة المُعطاة.",
+				usage = "نفي_منطقي(س)",
+				parameterTypes = {Object.class, Object.class},
+				returnType = Object.class)
+	public static <T> Object logicalNot(T x) {
+		return reduce(applyOperation(x, UnaryOperation.NOT), BinaryOperation.ADD::apply);
 	}
 
 	@NaftahFn(
@@ -796,6 +1031,25 @@ public final class Builtin {
 		String value = ArabicUtils
 				.convertArabicToLatinLetterByLetter(text);
 		return NumberUtils.parseDynamicNumber(value, radix, text);
+	}
+
+	@NaftahFn(
+				name = "حجم",
+				description = """
+								دالة (حجم) لحساب حجم الكائن.
+								- للمصفوفات: طول المصفوفة
+								- للقوائم والمجموعات: عدد العناصر
+								- للخرائط: عدد المدخلات
+								- للسلاسل: طول النص
+								- للأنواع العددية والمنطقية: 1
+								- للكائنات الأخرى: عدد الحقول غير الثابتة
+								""",
+				usage = "حجم(الكائن)",
+				parameterTypes = {Object.class},
+				returnType = Number.class
+	)
+	public static Number size(Object obj) {
+		return ObjectUtils.size(obj);
 	}
 
 }

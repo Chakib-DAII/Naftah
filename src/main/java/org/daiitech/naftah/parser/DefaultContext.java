@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -35,12 +37,17 @@ import org.daiitech.naftah.builtin.lang.ClassScanningResult;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
 
+import static org.daiitech.naftah.Naftah.BUILTIN_CLASSES_PROPERTY;
+import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
+import static org.daiitech.naftah.Naftah.CACHE_SCANNING_RESULTS_PROPERTY;
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
@@ -56,6 +63,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.filterClasses;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getArabicClassQualifiers;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinMethods;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassConstructors;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassMethods;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassQualifiers;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.loadClasses;
@@ -91,7 +99,7 @@ public class DefaultContext {
 	/**
 	 * The path used for caching runtime data.
 	 */
-	public static final Path CACHE_PATH = Paths.get("bin/.naftah_cache");
+	public static final Path CACHE_PATH = Paths.get(".naftah/.naftah_cache");
 
 	/**
 	 * Global map holding contexts indexed by their depth.
@@ -145,6 +153,13 @@ public class DefaultContext {
 			result.setAccessibleClasses(accessibleClassFuture.get());
 			result.setInstantiableClasses(instantiableClassFuture.get());
 
+			Callable<Map<String, List<JvmClassInitializer>>> jvmClassInitializerLoaderTask = () -> getClassConstructors(
+																														result
+																																.getInstantiableClasses());
+			var jvmClassInitializerFuture = internalExecutor.submit(jvmClassInitializerLoaderTask);
+
+			result.setJvmClassInitializers(jvmClassInitializerFuture.get());
+
 			var accessibleAndInstantiable = new HashMap<>(result.getAccessibleClasses()) {
 				{
 					putAll(result.getInstantiableClasses());
@@ -181,7 +196,8 @@ public class DefaultContext {
 	protected static Map<String, Class<?>> INSTANTIABLE_CLASSES;
 	// qualifiedCall -> Method
 	protected static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
-	protected static Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
+	protected static Map<String, List<JvmClassInitializer>> JVM_CLASS_INITIALIZERS;
+	protected static volatile Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
 	protected static volatile boolean SHOULD_BOOT_STRAP;
 	protected static volatile boolean FORCE_BOOT_STRAP;
 	protected static volatile boolean ASYNC_BOOT_STRAP;
@@ -199,7 +215,9 @@ public class DefaultContext {
 		}
 		else {
 			setContextFromClassScanningResult(result);
-			serializeClassScanningResult(result);
+			if (Boolean.getBoolean(CACHE_SCANNING_RESULTS_PROPERTY)) {
+				serializeClassScanningResult(result);
+			}
 		}
 	};
 
@@ -249,8 +267,7 @@ public class DefaultContext {
 	protected DefaultContext(   DefaultContext parent,
 								Map<String, DeclaredParameter> parameters,
 								Map<String, Object> arguments) {
-		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (CONTEXTS
-				.size() != 0)) {
+		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (!CONTEXTS.isEmpty())) {
 			throw newNaftahBugInvalidUsageError();
 		}
 		this.parent = parent;
@@ -531,8 +548,9 @@ public class DefaultContext {
 		CLASSES = result.getClasses();
 		ACCESSIBLE_CLASSES = result.getAccessibleClasses();
 		INSTANTIABLE_CLASSES = result.getInstantiableClasses();
+		JVM_CLASS_INITIALIZERS = result.getJvmClassInitializers();
 		JVM_FUNCTIONS = result.getJvmFunctions();
-		BUILTIN_FUNCTIONS = result.getBuiltinFunctions();
+		setBuiltinFunctions(result.getBuiltinFunctions());
 		BOOT_STRAPPED = true;
 	}
 
@@ -540,9 +558,77 @@ public class DefaultContext {
 	 * Loads the default builtin functions into the context.
 	 */
 	public static void defaultBootstrap() {
-		BUILTIN_FUNCTIONS = getBuiltinMethods(Builtin.class)
+		setBuiltinFunctions(getBuiltinMethods(Builtin.class)
 				.stream()
-				.collect(toAliasGroupedByName());
+				.collect(toAliasGroupedByName()));
+
+		Set<Class<?>> builtinClasses = new HashSet<>();
+
+		String builtinPropClasses = System.getProperty(BUILTIN_CLASSES_PROPERTY);
+
+		if (Objects.nonNull(builtinPropClasses)) {
+			processBuiltin(builtinPropClasses, className -> {
+				try {
+					Class<?> clazz = Class.forName(className);
+					builtinClasses.add(clazz);
+				}
+				catch (ClassNotFoundException e) {
+					padText("تعذر العثور على الفئة(class): " + className, true);
+				}
+			});
+		}
+
+		String builtinPropPackages = System.getProperty(BUILTIN_PACKAGES_PROPERTY);
+
+		if (Objects.nonNull(builtinPropPackages)) {
+			processBuiltin(builtinPropPackages, packageName -> {
+				try {
+					var classNames = RuntimeClassScanner.scanPackageCLasses(packageName);
+					var classes = RuntimeClassScanner.loadClasses(classNames, false);
+					builtinClasses.addAll(classes.values());
+				}
+				catch (Exception e) {
+					padText("تعذر العثور على الحزمة(package): " + packageName, true);
+				}
+			});
+		}
+
+		if (!builtinClasses.isEmpty()) {
+			putAllInBuiltinFunctions(getBuiltinMethods(builtinClasses)
+					.stream()
+					.collect(toAliasGroupedByName()));
+		}
+	}
+
+	/**
+	 * Processes a comma-separated list of built-in property names by applying the specified
+	 * {@link java.util.function.Consumer} to each non-empty, trimmed element.
+	 * <p>
+	 * This method splits the given string by commas (<code>,</code>), trims whitespace from each part,
+	 * filters out any empty entries, and then passes each resulting value to the provided consumer.
+	 * </p>
+	 *
+	 * <h3>Example:</h3>
+	 * <pre>{@code
+	 * processBuiltin("foo, bar, baz", System.out::println);
+	 * // Output:
+	 * // foo
+	 * // bar
+	 * // baz
+	 * }</pre>
+	 *
+	 * @param builtinProp     a comma-separated string of property names; may contain whitespace
+	 * @param builtinConsumer a {@link java.util.function.Consumer} that will process each non-empty, trimmed property
+	 *                        name
+	 * @throws NullPointerException if {@code builtinProp} or {@code builtinConsumer} is {@code null}
+	 */
+	private static void processBuiltin( String builtinProp,
+										Consumer<String> builtinConsumer) {
+		Arrays
+				.stream(builtinProp.split(","))
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.forEach(builtinConsumer);
 	}
 
 	/**
@@ -612,6 +698,9 @@ public class DefaultContext {
 	 * @return list of completion names
 	 */
 	public static List<String> getCompletions() {
+		if (Objects.isNull(BUILTIN_FUNCTIONS)) {
+			defaultBootstrap();
+		}
 		var runtimeCompletions = new ArrayList<>(BUILTIN_FUNCTIONS.keySet());
 		Optional
 				.ofNullable(JVM_FUNCTIONS)
@@ -706,10 +795,93 @@ public class DefaultContext {
 		return Object.class;
 	}
 
-	// variables
-
+	/**
+	 * Creates a new {@link NaftahBugError} indicating that a variable was not found
+	 * in the current context.
+	 *
+	 * <p>The error message is in Arabic and will include the variable name:
+	 * "المتغير '%s' غير موجود في السياق الحالي."
+	 * </p>
+	 *
+	 * @param name the name of the variable that was not found.
+	 * @return a new {@link NaftahBugError} with the formatted message.
+	 */
 	public static NaftahBugError newNaftahBugVariableNotFoundError(String name) {
 		return new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
+	}
+
+	/**
+	 * Adds all entries from the given map into the global built-in functions map.
+	 * <p>
+	 * This method is synchronized to ensure thread-safe updates.
+	 * </p>
+	 *
+	 * @param builtinFunctions a map of function names to lists of {@link BuiltinFunction} to add.
+	 */
+	public static synchronized void putAllInBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
+		BUILTIN_FUNCTIONS
+				.putAll(builtinFunctions);
+	}
+
+	/**
+	 * Returns the global map of built-in functions.
+	 *
+	 * @return an unmodifiable view or reference to the map of built-in functions.
+	 */
+	public static Map<String, List<BuiltinFunction>> getBuiltinFunctions() {
+		return BUILTIN_FUNCTIONS;
+	}
+
+	/**
+	 * Replaces the global built-in functions map with the provided one.
+	 * <p>
+	 * This method is synchronized to ensure thread-safe updates.
+	 * </p>
+	 *
+	 * @param builtinFunctions the new map of built-in functions to set.
+	 */
+	public static synchronized void setBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
+		BUILTIN_FUNCTIONS = builtinFunctions;
+	}
+
+	/**
+	 * Returns the global map of JVM functions.
+	 *
+	 * @return a map of function names to lists of {@link JvmFunction}.
+	 */
+	public static Map<String, List<JvmFunction>> getJvmFunctions() {
+		return JVM_FUNCTIONS;
+	}
+
+	public static Map<String, List<JvmClassInitializer>> getJvmClassInitializers() {
+		return JVM_CLASS_INITIALIZERS;
+	}
+
+	/**
+	 * Returns the global map of all registered classes.
+	 *
+	 * @return a map of class names to {@link Class} objects.
+	 */
+	public static Map<String, Class<?>> getClasses() {
+		return CLASSES;
+	}
+
+	/**
+	 * Returns the global map of classes that are marked as accessible.
+	 *
+	 * @return a map of class names to {@link Class} objects which are accessible.
+	 */
+	public static Map<String, Class<?>> getAccessibleClasses() {
+		return ACCESSIBLE_CLASSES;
+	}
+
+	/**
+	 * Returns the global map of classes that can be instantiated.
+	 *
+	 * @return a map of class names to {@link Class} objects that can be instantiated.
+	 */
+	public static Map<String, Class<?>> getInstantiableClasses() {
+		return INSTANTIABLE_CLASSES;
 	}
 
 	/**
@@ -823,7 +995,7 @@ public class DefaultContext {
 	public boolean containsFunction(String name) {
 		return functions.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name
 				.matches(
-							QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAPPED || JVM_FUNCTIONS != null && JVM_FUNCTIONS
+							QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
 									.containsKey(
 													name))) || parent != null && parent.containsFunction(name);
 	}
@@ -1471,25 +1643,5 @@ public class DefaultContext {
 	 */
 	public void setLoopLabel(String loopLabel) {
 		this.loopLabel = loopLabel;
-	}
-
-	public static Map<String, List<BuiltinFunction>> getBuiltinFunctions() {
-		return BUILTIN_FUNCTIONS;
-	}
-
-	public static Map<String, List<JvmFunction>> getJvmFunctions() {
-		return JVM_FUNCTIONS;
-	}
-
-	public static Map<String, Class<?>> getClasses() {
-		return CLASSES;
-	}
-
-	public static Map<String, Class<?>> getAccessibleClasses() {
-		return ACCESSIBLE_CLASSES;
-	}
-
-	public static Map<String, Class<?>> getInstantiableClasses() {
-		return INSTANTIABLE_CLASSES;
 	}
 }

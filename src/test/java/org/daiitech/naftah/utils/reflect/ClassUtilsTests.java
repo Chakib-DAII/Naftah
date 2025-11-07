@@ -7,10 +7,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.daiitech.naftah.builtin.Builtin;
+import org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions;
+import org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions;
+import org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions;
+import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClassUtilsTests {
@@ -37,6 +43,8 @@ public class ClassUtilsTests {
 		Method m = String.class.getMethod("trim");
 		String actual = ClassUtils.getQualifiedCall(qn, m);
 		assertTrue(actual.startsWith("جافا:لغة:سلسلة::تقليم"));
+		actual = ClassUtils.getQualifiedCall(qn, "getBytes");
+		assertTrue(actual.startsWith("جافا:لغة:سلسلة::گت_بايتس"));
 	}
 
 	@Test
@@ -97,6 +105,26 @@ public class ClassUtilsTests {
 	}
 
 	@Test
+	void getClassConstructorsTest() {
+		var methodsSingle = ClassUtils.getClassConstructors("جافا:لغة:سلسلة", String.class);
+		assertFalse(methodsSingle.isEmpty());
+
+		Map<String, Class<?>> classMap = Map.of("جافا:لغة:سلسلة", String.class);
+		var methodsFiltered = ClassUtils.getClassConstructors(classMap, ClassUtils::isInvocable);
+		assertTrue(methodsFiltered
+				.values()
+				.stream()
+				.flatMap(List::stream)
+				.anyMatch(jci -> jci.getQualifiedName().equals("جافا:لغة:سلسلة") && jci
+						.getClazz()
+						.equals(String.class) && jci
+								.getConstructor()
+								.getName()
+								.equals(String.class.getName()) && jci.isInvocable()
+				));
+	}
+
+	@Test
 	void isAccessibleInstantiableStaticInvocableTest() throws Exception {
 		assertTrue(ClassUtils.isAccessibleClass(Optional.class)); // static factory
 		assertTrue(ClassUtils.isInstantiableClass(String.class)); // public no-arg
@@ -114,4 +142,59 @@ public class ClassUtilsTests {
 		assertEquals(1, filtered.size());
 		assertTrue(filtered.containsKey("A"));
 	}
+
+	@Test
+	void getBuiltinMethodsTest() {
+		List<BuiltinFunction> builtinFunctions = ClassUtils
+				.getBuiltinMethods(Set
+						.of(SystemBuiltinFunctions.class,
+							RuntimeBuiltinFunctions.class,
+							CollectionBuiltinFunctions.class));
+		assertNotNull(builtinFunctions);
+		assertEquals(49, builtinFunctions.size());
+	}
+
+	@Test
+	void getBuiltinMethodsMapTest() {
+		Map<String, List<BuiltinFunction>> builtinFunctions = ClassUtils
+				.getBuiltinMethods(Map
+						.of("org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions",
+							SystemBuiltinFunctions.class,
+							"org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions",
+							RuntimeBuiltinFunctions.class,
+							"org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions",
+							CollectionBuiltinFunctions.class));
+		assertNotNull(builtinFunctions);
+		assertEquals(49, builtinFunctions.size());
+	}
+
+	@Test
+	void getBuiltinFunctionNameTest() {
+		String functionName = ClassUtils.getBuiltinFunctionName(true, "دوال الحزم", "و_منطقي", true);
+		assertNotNull(functionName);
+		assertEquals("دوال:الحزم::و_منطقي", functionName);
+	}
+
+	@Test
+	void classToDetailedStringTest() {
+		String builtinClassToDetailedString = ClassUtils.classToDetailedString(Builtin.class);
+		assertNotNull(builtinClassToDetailedString);
+		assertEquals(
+						"""
+							تفاصيل الصنف:
+								- الاسم الكامل: org.daiitech.naftah.builtin.Builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة:مدرجة_مدرجة
+								- الاسم المختصر: Builtin - مدرجة_مدرجة
+								- الحزمة: org.daiitech.naftah.builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة
+								- عام (public)؟: نعم
+								- مجرد (abstract)؟: لا
+								- واجهة (interface)؟: لا
+							- الصنف الأب (super classes): java.lang.Object - جافا:لغة:كائن
+								- تعداد (enum)؟: لا
+								- توصيف (annotation)؟: لا
+								- سجل (record)؟: لا
+								- نوع بدائي (primitive)؟: لا
+						""",
+						builtinClassToDetailedString);
+	}
+
 }

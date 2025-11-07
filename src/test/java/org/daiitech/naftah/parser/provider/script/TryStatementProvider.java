@@ -30,6 +30,31 @@ public class TryStatementProvider implements ArgumentsProvider {
 							.of(
 								true,
 								"""
+								حاول(1){
+									نجاح(أ) -> {
+									إطبع(أ)
+									ارجع أ
+									}
+									فشل إفعل إطبع("فشل")
+								}
+								""",
+								1,
+								null),
+					Arguments
+							.of(
+								true,
+								"""
+								حاول(1 قسمة 0){
+								نجاح(أ) -> إطبع(أ)
+								فشل إفعل إلى_نص("فشل")
+								}
+								""",
+								"فشل",
+								null),
+					Arguments
+							.of(
+								true,
+								"""
 								حاول(1 قسمة 0){
 								نجاح(أ) -> إطبع(أ)
 								فشل(ب) إفعل إلى_نص(ب)

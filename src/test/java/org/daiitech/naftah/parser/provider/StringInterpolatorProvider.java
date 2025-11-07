@@ -1,11 +1,11 @@
 package org.daiitech.naftah.parser.provider;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -61,73 +61,73 @@ public class StringInterpolatorProvider implements ArgumentsProvider {
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new int[]{1, 2}),
-								"قائمة: " + Arrays.toString(new int[]{1, 2}),
+								CollectionUtils.toString(new int[]{1, 2}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new long[]{1, 2}),
-								"قائمة: " + Arrays.toString(new long[]{1, 2}),
+								CollectionUtils.toString(new long[]{1, 2}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new double[]{1, 2.5}),
-								"قائمة: " + Arrays.toString(new double[]{1, 2.5}),
+								CollectionUtils.toString(new double[]{1, 2.5}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new float[]{1, 2.1F}),
-								"قائمة: " + Arrays.toString(new float[]{1, 2.1F}),
+								CollectionUtils.toString(new float[]{1, 2.1F}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new boolean[]{true, false}),
-								"قائمة: " + Arrays.toString(new boolean[]{true, false}),
+								CollectionUtils.toString(new boolean[]{true, false}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new char[]{1, 2}),
-								"قائمة: " + Arrays.toString(new char[]{1, 2}),
+								CollectionUtils.toString(new char[]{1, 2}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new byte[]{1, 2}),
-								"قائمة: " + Arrays.toString(new byte[]{1, 2}),
+								CollectionUtils.toString(new byte[]{1, 2}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new short[]{1, 2}),
-								"قائمة: " + Arrays.toString(new short[]{1, 2}),
+								CollectionUtils.toString(new short[]{1, 2}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", new Object[]{1, 2}),
-								"قائمة: " + Arrays.toString(new Object[]{1, 2}),
+								CollectionUtils.toString(new Object[]{1, 2}),
 								null),
 					Arguments
 							.of(true,
 								"${قائمة}",
 								Map.of("قائمة", List.of(1, 2)),
-								"قائمة: " + List.of(1, 2),
+								CollectionUtils.toString(List.of(1, 2)),
 								null),
 					Arguments
 							.of(true,
 								"${مجموعة}",
 								Map.of("مجموعة", Set.of(1, 2)),
-								"مجموعة: " + Set.of(1, 2),
+								CollectionUtils.toString(Set.of(1, 2)),
 								null),
 					Arguments
 							.of(true,
 								"${مصفوفة_ترابطية}",
 								Map.of("مصفوفة_ترابطية", Map.of(1, 2)),
-								"مصفوفة ترابطية: " + Map.of(1, 2),
+								CollectionUtils.toString(Map.of(1, 2)),
 								null)
 				);
 	}

@@ -16,6 +16,8 @@
   url: /language/control-flow
 - title: الدوال
   url: /language/functions
+- title: التكامل مع جافا
+  url: /language/java-interop
 - title: تشغيل نفطة
   url: /running-naftah
 - title: التوثيق (جاڤا)

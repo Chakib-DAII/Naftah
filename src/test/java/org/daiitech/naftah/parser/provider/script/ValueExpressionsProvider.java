@@ -2,10 +2,14 @@ package org.daiitech.naftah.parser.provider.script;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.lang.DeclaredVariable;
+import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -86,8 +90,8 @@ public class ValueExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, "غير_عددي", NaN.get(), null),
 					Arguments.of(true, "ليس_عددي", NaN.get(), null),
 					Arguments.of(true, "'ص'", 'ص', null),
-					Arguments.of(true, "\"ص\"", 'ص', null),
-					Arguments.of(true, "«ص»", 'ص', null),
+					Arguments.of(true, "\"ص\"", "ص", null),
+					Arguments.of(true, "«ص»", "ص", null),
 					Arguments.of(true, "\"اسم\"", "اسم", null),
 					Arguments.of(true, "«اسم»", "اسم", null),
 					Arguments.of(true, "ثمانية_بت «اسم»", new byte[]{-40, -89, -40, -77, -39, -123}, null),
@@ -140,10 +144,30 @@ public class ValueExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, """
 										"ت = {{ت:ت_فارغ}}، ش = {{ش:ش_فارغ}}، ع = {{ع:ع_فارغ}}، ي = {{ي:ي_فارغ}}"
 										""", "ت = ت_فارغ، ش = ش_فارغ، ع = ع_فارغ، ي = ي_فارغ", null),
-					Arguments.of(true, """
-										متغير أ تعيين {متغير أ تعيين ١ , متغير ب تعيين 4}
-										أ
-										""", Map.of("أ", 1, "ب", 4), null),
+					Arguments
+							.of(true,
+								"""
+								متغير أ تعيين {متغير أ تعيين ١ , متغير ب تعيين 4}
+								أ
+								""",
+								NaftahObject
+										.of(
+											new LinkedHashMap<>(Map
+													.of("أ",
+														DeclaredVariable
+																.of(null,
+																	"أ",
+																	false,
+																	null,
+																	DynamicNumber.of(1)),
+														"ب",
+														DeclaredVariable
+																.of(null,
+																	"ب",
+																	false,
+																	null,
+																	DynamicNumber.of(4))))),
+								null),
 					Arguments.of(true, """
 										متغير أ تعيين {متغير أ تعيين ١ , متغير ب تعيين 4}
 										أ:أ

@@ -704,6 +704,7 @@ default values, and void functions.
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [📦 تعريف الكائنات - Objects](./06_objects.md)
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
+* [⚙️ التوافق مع Java (Java Interop) في لغة نفطة - Java Interop](./09_java_interop.md)
 
 ---
 </div>

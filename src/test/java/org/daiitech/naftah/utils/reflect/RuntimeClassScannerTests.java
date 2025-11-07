@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -48,6 +49,17 @@ public class RuntimeClassScannerTests {
 		}
 		catch (Exception ignored) {
 		}
+	}
+
+
+	@Test
+	void scanPackageCLassesTest() {
+		Map<String, ClassLoader> classNames = RuntimeClassScanner
+				.scanPackageCLasses(
+									"org.daiitech.naftah.builtin.functions");
+		assertNotNull(classNames);
+		assertEquals(3, classNames.size());
+
 	}
 
 }

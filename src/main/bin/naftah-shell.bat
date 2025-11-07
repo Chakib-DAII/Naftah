@@ -66,7 +66,54 @@ set CMD_LINE_ARGS=%$
 set CLASSPATH=%NAFTAH_HOME%\lib\*
 
 @rem Append JVM options to JAVA_OPTS
-set JAVA_OPTS=%JAVA_OPTS% --add-modules=jdk.incubator.vector --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+set JAVA_OPTS=%JAVA_OPTS% --add-modules=jdk.incubator.vector ^
+--add-opens=java.base/java.lang=ALL-UNNAMED ^
+--add-opens=java.base/java.lang.invoke=ALL-UNNAMED ^
+--add-opens=java.base/java.lang.reflect=ALL-UNNAMED ^
+--add-opens=java.base/sun.invoke.util=ALL-UNNAMED ^
+--add-opens=java.base/java.util=ALL-UNNAMED ^
+--add-opens=java.base/java.util.concurrent=ALL-UNNAMED ^
+--add-opens=java.base/java.util.stream=ALL-UNNAMED ^
+--add-opens=java.base/java.time=ALL-UNNAMED ^
+--add-opens=java.base/java.io=ALL-UNNAMED ^
+--add-opens=java.base/java.net=ALL-UNNAMED ^
+--add-opens=java.base/sun.net=ALL-UNNAMED ^
+--add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED ^
+--add-opens=java.base/sun.net.www.protocol.file=ALL-UNNAMED ^
+--add-opens=java.base/java.util.zip=ALL-UNNAMED ^
+--add-opens=java.base/java.util.jar=ALL-UNNAMED ^
+--add-opens=java.base/java.security=ALL-UNNAMED ^
+--add-opens=java.base/sun.security.util=ALL-UNNAMED ^
+--add-opens=java.base/sun.security.x509=ALL-UNNAMED ^
+--add-opens=java.base/java.nio=ALL-UNNAMED ^
+--add-opens=java.base/java.nio.channels=ALL-UNNAMED ^
+--add-opens=java.base/java.nio.channels.spi=ALL-UNNAMED ^
+--add-opens=java.base/java.nio.charset=ALL-UNNAMED ^
+--add-opens=java.base/java.nio.file=ALL-UNNAMED ^
+--add-opens=java.base/java.nio.file.spi=ALL-UNNAMED ^
+--add-opens=java.base/java.nio.file.attribute=ALL-UNNAMED ^
+--add-opens=java.base/sun.nio=ALL-UNNAMED ^
+--add-opens=java.base/sun.nio.ch=ALL-UNNAMED ^
+--add-opens=java.base/sun.nio.fs=ALL-UNNAMED ^
+--add-opens=java.base/sun.nio.cs=ALL-UNNAMED ^
+--add-opens=java.base/sun.reflect=ALL-UNNAMED ^
+--add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED ^
+--add-opens=java.base/sun.misc=ALL-UNNAMED ^
+--add-opens=java.base/java.lang.ref=ALL-UNNAMED ^
+--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED ^
+--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED ^
+--add-opens=java.base/jdk.internal.vm=ALL-UNNAMED ^
+--add-opens=java.base/jdk.internal.logger=ALL-UNNAMED ^
+--add-opens=java.base/jdk.internal.event=ALL-UNNAMED ^
+--add-opens=java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED ^
+--add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED ^
+--add-opens=java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED ^
+--add-opens=java.xml/com.sun.org.apache.xalan.internal.xsltc.trax=ALL-UNNAMED ^
+--add-opens=java.desktop/java.awt=ALL-UNNAMED ^
+--add-opens=java.desktop/sun.awt=ALL-UNNAMED ^
+--add-opens=java.desktop/javax.swing=ALL-UNNAMED ^
+--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED ^
+--add-opens=java.desktop/sun.java2d=ALL-UNNAMED
 
 @if /I not "%DEBUG%" == "true" goto executeNoDebug
 

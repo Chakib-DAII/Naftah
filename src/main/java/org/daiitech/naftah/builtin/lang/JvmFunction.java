@@ -5,9 +5,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
@@ -25,7 +29,11 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
  *
  * @author Chakib Daii
  */
-public class JvmFunction implements Serializable {
+public final class JvmFunction implements Serializable, JvmExecutable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Fully qualified call signature of the method.
 	 */
@@ -40,6 +48,10 @@ public class JvmFunction implements Serializable {
 	 * The name of the method.
 	 */
 	private final String methodName;
+	/**
+	 * The method parameter types.
+	 */
+	private final Class<?>[] methodParameterTypes;
 
 	/**
 	 * Whether the method is static.
@@ -70,6 +82,7 @@ public class JvmFunction implements Serializable {
 		this.clazz = clazz;
 		this.method = method;
 		this.methodName = method.getName();
+		this.methodParameterTypes = method.getParameterTypes();
 		this.isStatic = isStatic;
 		this.isInvocable = isInvocable;
 	}
@@ -145,6 +158,14 @@ public class JvmFunction implements Serializable {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Executable getExecutable() {
+		return method;
+	}
+
+	/**
 	 * Custom serialization logic to write the object's non-transient fields.
 	 *
 	 * @param oos the object output stream
@@ -157,7 +178,7 @@ public class JvmFunction implements Serializable {
 
 	/**
 	 * Custom deserialization logic to restore the transient {@link Method}
-	 * by searching methods with matching name in the class.
+	 * by searching methods with matching name and parameter types in the class.
 	 *
 	 * @param ois the object input stream
 	 * @throws IOException            if an I/O error occurs
@@ -167,8 +188,8 @@ public class JvmFunction implements Serializable {
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		try {
 			ois.defaultReadObject();
-			for (Method m : clazz.getDeclaredMethods()) {
-				if (m.getName().equals(methodName)) {
+			for (Method m : clazz.getMethods()) {
+				if (m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), methodParameterTypes)) {
 					this.method = m;
 					break;
 				}
@@ -200,7 +221,7 @@ public class JvmFunction implements Serializable {
 	 * The output is structured in a human-readable Arabic format and includes
 	 * phonetic transliterations (into Arabic script) for class names, return types,
 	 * modifiers, and annotations using {@link ClassUtils#getQualifiedName(String)} or
-	 * {@link ArabicUtils#transliterateToArabicScriptDefaultCustom(String...)}.
+	 * {@link ArabicUtils#transliterateToArabicScriptDefault(String...)}.
 	 * <p>
 	 * The following information is included:
 	 * <ul>
@@ -236,7 +257,9 @@ public class JvmFunction implements Serializable {
 						"""
 						.formatted( clazz.getName(),
 									methodName,
-									ClassUtils.getQualifiedCall(clazz.getName(), methodName)));
+									ClassUtils
+											.getQualifiedCall(  ClassUtils.getQualifiedName(clazz.getName()),
+																methodName)));
 
 		if (Objects.nonNull(method)) {
 			detailedString
@@ -263,15 +286,18 @@ public class JvmFunction implements Serializable {
 			}
 
 			var modifiers = Modifier.toString(method.getModifiers());
+			var modifiersArray = modifiers.split("\\s");
+			var modifiersArabicArray = ArabicUtils
+					.transliterateToArabicScriptDefault(
+														modifiersArray.clone());
 			detailedString
 					.append("\t- المُعدّلات: ")
-					.append(modifiers)
-					.append(" - ")
-					.append(String
-							.join(  " ",
-									ArabicUtils
-											.transliterateToArabicScriptDefault(true,
-																				modifiers.split("\\s"))))
+					.append(IntStream
+							.range(0, modifiersArray.length)
+							.mapToObj(index -> "%s (%s)"
+									.formatted( modifiersArabicArray[index],
+												modifiersArray[index]))
+							.collect(Collectors.joining(" ")))
 					.append("\n");
 
 			var annotations = method.getDeclaredAnnotations();

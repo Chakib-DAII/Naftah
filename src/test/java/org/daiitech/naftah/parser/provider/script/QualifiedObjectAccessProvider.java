@@ -1,7 +1,9 @@
 package org.daiitech.naftah.parser.provider.script;
 
+import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,6 +17,14 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
 				.of(
+					Arguments
+							.of(true,
+								"""
+								متغير كائن_فارغ تعيين @{}
+								كائن_فارغ
+								""",
+								NaftahObject.of(new LinkedHashMap<>()),
+								null),
 					Arguments.of(true, """
 										متغير المدينة تعيين {
 										متغير الاسم تعيين "قبلي",
@@ -27,7 +37,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 										المدينة["البلدة"]["عدد_البيوت"]
 										""", 400, null),
 					Arguments.of(false, """
-										متغير المدينة تعيين {
+										متغير المدينة تعيين @{
 										متغير الاسم تعيين "قبلي",
 										متغير عدد_السكان تعيين 50000,
 										متغير البلدة تعيين {

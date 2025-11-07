@@ -122,6 +122,7 @@ define a simple object or explicitly specify its type.
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
 * [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
+* [⚙️ التوافق مع Java (Java Interop) في لغة نفطة - Java Interop](./09_java_interop.md)
 
 ---
 </div>

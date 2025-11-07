@@ -50,8 +50,11 @@ public final class ExceptionLocalizer {
 	public static String localizeException(Throwable e) {
 		e = getMostSpecificCause(e);
 		String key = e.getClass().getSimpleName();
+		boolean specificErrorMessageFound = BUNDLE.containsKey(key);
 		return String
-				.format(BUNDLE.containsKey(key) ? BUNDLE.getString(key) : BUNDLE.getString("default"),
-						e.getLocalizedMessage());
+				.format(specificErrorMessageFound ? BUNDLE.getString(key) : BUNDLE.getString("default"),
+						specificErrorMessageFound ?
+								e.getLocalizedMessage() :
+								e.getClass().getSimpleName() + ": " + e.getLocalizedMessage());
 	}
 }

@@ -25,26 +25,23 @@ options {
 }
 
 // Top-level rule: A Naftah program consists of statements
-program: statement+;
+program: (statement END?)+;
 
 // Statement: Can be an assignment, function call, or control flow
-statement: block END? #blockStatement
-         | ifStatement END? #ifStatementStatement
-         | forStatement END? #forStatementStatement
-         | whileStatement END? #whileStatementStatement
-         | repeatStatement END? #repeatStatementStatement
-         | caseStatement END? #caseStatementStatement
-         | tryStatement END? #tryStatementStatement
-         | functionDeclaration END? #functionDeclarationStatement
-         | functionCall END? #functionCallStatement
-         | objectAccess END? #objectAccessStatement
-         | collectionAccess END? #collectionAccessStatement
-         | declaration END? #declarationStatement
-         | assignment END? #assignmentStatement
-         | returnStatement END? #returnStatementStatement
-         | breakStatement END? #breakStatementStatement
-         | continueStatement END? #continueStatementStatement
-         | expression END? #expressionStatement
+statement: block #blockStatement
+         | ifStatement #ifStatementStatement
+         | forStatement #forStatementStatement
+         | whileStatement #whileStatementStatement
+         | repeatStatement #repeatStatementStatement
+         | caseStatement #caseStatementStatement
+         | tryStatement #tryStatementStatement
+         | functionDeclaration #functionDeclarationStatement
+         | declaration #declarationStatement
+         | assignment #assignmentStatement
+         | returnStatement #returnStatementStatement
+         | breakStatement #breakStatementStatement
+         | continueStatement #continueStatementStatement
+         | expression #expressionStatement
          ;
 
 // Declaration: variable or constant declaration
@@ -62,11 +59,38 @@ parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclarat
 // Parameter declaration : parameter id with optional type and assignment
 parameterDeclaration: CONSTANT? ID (COLON type)? (ASSIGN value)?;
 
-// Function call: Can have arguments and return values
-functionCall: (ID | qualifiedCall) LPAREN argumentList? RPAREN;
+/**
+* Chained Function calls: Can have arguments and return values
+* and the return value is piped to the next in case of chain
+*/
+functionCall: primaryCall callSegment*;
 
-// constructor call: Can have arguments and return the created object
-initCall: qualifiedName LPAREN argumentList? RPAREN;
+/**
+* constructor call: Can have arguments and return the created object
+* the object instance is piped to the next in case of chall chain
+*/
+initCall: qualifiedName targetExecutableIndex? LPAREN argumentList? RPAREN callSegment*;
+
+/**
+* Chained Function calls segment: Can have arguments and return values
+* in case of ::: we reuse the previous call qualified name as the same qualified for the current
+* and we don't in case of :: (where the qualified name can be provided for itself)
+*/
+callSegment: COLON COLON COLON? primaryCall;
+
+// Function call: Can have arguments and return values
+primaryCall: (ID | qualifiedCall) targetExecutableIndex? LPAREN argumentList? RPAREN;
+
+/**
+ * Represents the index of the target executable (method or constructor)
+ * in the case where multiple overloads exist for a given qualified call.
+ *
+ * <p>
+ * If the qualified call maps to a single executable, this index is ignored.
+ * Otherwise, it specifies which overloaded executable to invoke.
+ * </p>
+ */
+targetExecutableIndex: COLON NUMBER;
 
 // Argument list: Expressions separated by commas or semicolons
 argumentList: (ID ASSIGN)? expression ((COMMA | SEMI) (ID ASSIGN)? expression)*;
@@ -132,7 +156,7 @@ tryCases
 
 okCase: OK LPAREN ID RPAREN (DO | ARROW) (block | expression);
 
-errorCase: ERROR LPAREN ID RPAREN (DO | ARROW) (block | expression);
+errorCase: ERROR (LPAREN ID RPAREN)? (DO | ARROW) (block | expression);
 
 optionCases
   : someCase noneCase?
@@ -153,7 +177,7 @@ continueStatement: CONTINUE ID?;
 returnStatement: RETURN expression?;
 
 // Block: A block of statements enclosed in curly braces
-block: LBRACE statement* RBRACE;
+block: LBRACE (statement END?)* RBRACE;
 
 // Expressions: Can be value, binary operations
 expression: ternaryExpression;
@@ -182,7 +206,8 @@ unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unar
 
 postfixExpression: primary (INCREMENT | DECREMENT)?;
 
-primary: functionCall #functionCallExpression
+primary: initCall #initCallExpression
+	   | functionCall #functionCallExpression
        | object #objectExpression
        | collection #collectionExpression
        | objectAccess #objectAccessExpression
@@ -192,7 +217,9 @@ primary: functionCall #functionCallExpression
        ;
 
 // Object
-object: LBRACE objectFields? RBRACE;
+object: AT_SIGN LBRACE RBRACE #emptyObject
+	  | AT_SIGN? LBRACE objectFields RBRACE #objectValue;
+
 objectFields: assignment ((COMMA | SEMI) assignment)*;
 
 objectAccess: qualifiedName
@@ -200,14 +227,20 @@ objectAccess: qualifiedName
 
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
-          | LPAREN elements? RPAREN #tupleValue
-          | ORDERED? LBRACE elements? RBRACE #setValue
-          | ORDERED? LBRACE keyValuePairs? RBRACE #mapValue;
+          | LPAREN tupleElements? RPAREN #tupleValue
+          | ORDERED? HASH_SIGN LBRACE RBRACE #emptySet
+          | ORDERED? HASH_SIGN? LBRACE elements RBRACE #setValue
+          | ORDERED? DOLLAR_SIGN LBRACE RBRACE #emptyMap
+          | ORDERED? DOLLAR_SIGN? LBRACE keyValuePairs RBRACE #mapValue;
 
 // single value elements
-elements: expression (COMMA | SEMI) #singleElement
-        | expression ((COMMA | SEMI) expression)+ (COMMA | SEMI)? #multipleElements;
+elements: expression (COMMA | SEMI)? #singleElement
+        | collectionMultipleElements #multipleElements;
 
+tupleElements: expression (COMMA | SEMI) #tupleSingleElement
+        | collectionMultipleElements #tupleMultipleElements;
+
+collectionMultipleElements: expression ((COMMA | SEMI) expression)+ (COMMA | SEMI)?;
 
 // key=value value elements
 keyValuePairs: keyValue ((COMMA | SEMI) keyValue)* (COMMA | SEMI)?;

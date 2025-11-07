@@ -1,15 +1,15 @@
 package org.daiitech.naftah.builtin.utils;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -21,6 +21,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
@@ -28,6 +29,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
+import org.daiitech.naftah.utils.reflect.ClassUtils;
 
 import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -346,7 +348,7 @@ public final class ObjectUtils {
 			return false;
 		}
 		Class<?> cls = obj.getClass();
-		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class;
+		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class;
 	}
 
 	/**
@@ -367,7 +369,7 @@ public final class ObjectUtils {
 		Class<?> cls = obj.getClass();
 
 		return cls
-				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class || cls == Object.class;
+				.isPrimitive() || cls == String.class || cls == Integer.class || cls == Long.class || cls == Short.class || cls == Double.class || cls == Float.class || cls == Byte.class || cls == Boolean.class || cls == BigDecimal.class || cls == BigInteger.class || cls == Character.class || cls == Object.class || cls == Class.class;
 	}
 
 	/**
@@ -456,6 +458,16 @@ public final class ObjectUtils {
 			throw newNaftahBugNullInputError(false, left, right);
 		}
 
+		if (left instanceof NaftahObject naftahObject) {
+			left = naftahObject.get(false);
+			right = NaftahObject.get(right, false);
+		}
+
+		if (right instanceof NaftahObject naftahObject) {
+			left = NaftahObject.get(left, false);
+			right = naftahObject.get(false);
+		}
+
 		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
 		if ((NaN.isNaN(left) || NaN.isNaN(right)) || (None.isNone(left) || None
 				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String)) {
@@ -471,7 +483,7 @@ public final class ObjectUtils {
 
 			// Number vs Array (scalar multiplication)
 			if (right.getClass().isArray()) {
-				return CollectionUtils.applyOperation((Object[]) right, number, false, operation);
+				return CollectionUtils.applyOperation(CollectionUtils.toObjectArray(right), number, false, operation);
 			}
 
 			// Number vs Map (multiply all values by scalar)
@@ -490,7 +502,7 @@ public final class ObjectUtils {
 
 			// Array vs Number (scalar multiplication)
 			if (left.getClass().isArray()) {
-				return CollectionUtils.applyOperation((Object[]) left, number, true, operation);
+				return CollectionUtils.applyOperation(CollectionUtils.toObjectArray(left), number, true, operation);
 			}
 
 			// Map vs Number (multiply all values by scalar)
@@ -501,14 +513,33 @@ public final class ObjectUtils {
 			return operation.apply(left, number);
 		}
 
-		// Collection vs Collection (element-wise)
-		if (left instanceof Collection<?> collection1 && right instanceof Collection<?> collection2) {
-			return CollectionUtils.applyOperation(collection1, collection2, operation);
+		// Collection vs Collection or Array (element-wise)
+		if (left instanceof Collection<?> collection1) {
+			if (right instanceof Collection<?> collection2) {
+				return CollectionUtils.applyOperation(collection1, collection2, operation);
+			}
+			if (right.getClass().isArray()) {
+				return CollectionUtils
+						.applyOperation(collection1.toArray(Object[]::new),
+										CollectionUtils.toObjectArray(right),
+										operation);
+			}
 		}
 
-		// Array vs Array (element-wise)
-		if (left.getClass().isArray() && right.getClass().isArray()) {
-			return CollectionUtils.applyOperation((Object[]) left, (Object[]) right, operation);
+		// Array vs Collection or Array (element-wise)
+		if (left.getClass().isArray()) {
+			if (right.getClass().isArray()) {
+				return CollectionUtils
+						.applyOperation(CollectionUtils.toObjectArray(left),
+										CollectionUtils.toObjectArray(right),
+										operation);
+			}
+			if (right instanceof Collection<?> collection2) {
+				return CollectionUtils
+						.applyOperation(CollectionUtils.toObjectArray(left),
+										collection2.toArray(Object[]::new),
+										operation);
+			}
 		}
 
 		// Map vs Map (element-wise value multiplication)
@@ -532,6 +563,10 @@ public final class ObjectUtils {
 			throw newNaftahBugNullInputError(true, a);
 		}
 
+		if (a instanceof NaftahObject naftahObject) {
+			a = naftahObject.get(false);
+		}
+
 		// Number or Boolean or Character or String
 		if (NaN.isNaN(a) || None
 				.isNone(a) || a instanceof Number || a instanceof Boolean || a instanceof Character || a instanceof String) {
@@ -545,7 +580,7 @@ public final class ObjectUtils {
 
 		// Array
 		if (a.getClass().isArray()) {
-			return CollectionUtils.applyOperation((Object[]) a, operation);
+			return CollectionUtils.applyOperation(CollectionUtils.toObjectArray(a), operation);
 		}
 
 		// Map
@@ -587,53 +622,6 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Converts an array to a string representation, handling both primitive and object arrays.
-	 *
-	 * @param obj the array object
-	 * @return a string representation of the array
-	 */
-	public static String arrayToString(Object obj) {
-		if (obj == null) {
-			return NULL;
-		}
-
-		Class<?> objClass = obj.getClass();
-
-		if (!objClass.isArray()) {
-			return obj.toString(); // not an array
-		}
-		String prefix = "قائمة: ";
-		// Handle primitive arrays
-		if (obj instanceof int[]) {
-			return prefix + Arrays.toString((int[]) obj);
-		}
-		if (obj instanceof long[]) {
-			return prefix + Arrays.toString((long[]) obj);
-		}
-		if (obj instanceof double[]) {
-			return prefix + Arrays.toString((double[]) obj);
-		}
-		if (obj instanceof float[]) {
-			return prefix + Arrays.toString((float[]) obj);
-		}
-		if (obj instanceof boolean[]) {
-			return prefix + Arrays.toString((boolean[]) obj);
-		}
-		if (obj instanceof char[]) {
-			return prefix + Arrays.toString((char[]) obj);
-		}
-		if (obj instanceof byte[]) {
-			return prefix + Arrays.toString((byte[]) obj);
-		}
-		if (obj instanceof short[]) {
-			return prefix + Arrays.toString((short[]) obj);
-		}
-
-		// Handle object arrays
-		return prefix + replaceAllNulls(Arrays.toString((Object[]) obj));
-	}
-
-	/**
 	 * Converts a Naftah value into its string representation, using language-specific formatting.
 	 *
 	 * @param o the value to convert
@@ -643,41 +631,40 @@ public final class ObjectUtils {
 		if (o == null) {
 			return NULL;
 		}
+
+		String result;
+
 		if (o instanceof Number number) {
-			return numberToString(number);
+			result = numberToString(number);
 		}
-		if (o instanceof Boolean aBoolean) {
-			return booleanToString(aBoolean);
+		else if (o instanceof Boolean aBoolean) {
+			result = booleanToString(aBoolean);
 		}
-		if (o instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
-			return getNaftahValueToString(loopSignalDetails.result());
+		else if (o instanceof LoopSignal.LoopSignalDetails loopSignalDetails) {
+			result = getNaftahValueToString(loopSignalDetails.result());
 		}
-		if (o.getClass().isArray()) {
-			return arrayToString(o);
+		else if (o instanceof NaftahObject naftahObject) {
+			result = naftahObject.toString();
 		}
-
-		String result = replaceAllNulls(o.toString());
-
-		if (o instanceof Collection<?> collection) {
-			if (collection instanceof Tuple) {
-				return "تركيبة: " + result;
-			}
-			if (collection instanceof List<?>) {
-				return "قائمة: " + result;
-			}
-			if (collection instanceof Set<?>) {
-				return "مجموعة: " + result;
-			}
+		else if (CollectionUtils.isCollectionMapOrArray(o)) {
+			result = CollectionUtils.toString(o);
 		}
-
-		if (o instanceof Map<?, ?> map) {
-			if (map.values().stream().allMatch(value -> value instanceof DeclaredVariable)) {
-				return "كائن: " + result;
-			}
-			return "مصفوفة ترابطية: " + result;
+		else if (o instanceof Class<?> aClass) {
+			result = "فئة: " + ClassUtils.getQualifiedName(aClass.getName()) + " - " + aClass.getName();
+		}
+		else if (o.getClass().equals(Object.class)) {
+			result = """
+						الكائن من الفئة %s - %s، ذا رمز التجزئة: %s
+						"""
+					.formatted( ClassUtils.getQualifiedName(o.getClass().getName()),
+								o.getClass().getName(),
+								Integer.toHexString(o.hashCode()));
+		}
+		else {
+			result = o.toString();
 		}
 
-		return result;
+		return replaceAllNulls(result);
 	}
 
 	/**
@@ -719,5 +706,69 @@ public final class ObjectUtils {
 		else {
 			return latinNumberToArabicString(number);
 		}
+	}
+
+	/**
+	 * Returns the size or length of the given object, depending on its type.
+	 *
+	 * <p>This method provides a unified way to determine the "size" of various types
+	 * of objects commonly encountered in Java, including arrays, collections, maps,
+	 * strings, and arbitrary objects. The definition of size depends on the object's
+	 * runtime type as follows:</p>
+	 *
+	 * <ul>
+	 * <li><b>Arrays:</b> Returns the array's length via {@link java.lang.reflect.Array#getLength(Object)}.</li>
+	 * <li><b>Collections:</b> Returns the number of elements using {@link java.util.Collection#size()}.</li>
+	 * <li><b>Maps:</b> Returns the number of key-value mappings using {@link java.util.Map#size()}.</li>
+	 * <li><b>Strings:</b> Returns the number of characters using {@link java.lang.String#length()}.</li>
+	 * <li><b>Boxed primitives:</b> Returns 1 because primitives are considered as a single value counts.</li>
+	 * <li><b>Other objects:</b> Returns the count of non-static declared fields in the object's class.</li>
+	 * </ul>
+	 *
+	 * <p>If the provided object is {@code null}, this method returns {@code 0}.</p>
+	 *
+	 * @param obj the object whose size is to be determined; may be {@code null}
+	 * @return the size or length of the given object, or {@code 0} if {@code null}
+	 */
+	public static int size(Object obj) {
+		if (obj == null) {
+			return 0;
+		}
+
+		Class<?> clazz = obj.getClass();
+
+		// Array
+		if (clazz.isArray()) {
+			return Array.getLength(obj);
+		}
+
+		// Collection (List, Set, etc.)
+		if (obj instanceof Collection<?>) {
+			return ((Collection<?>) obj).size();
+		}
+
+		// Map
+		if (obj instanceof Map<?, ?>) {
+			return ((Map<?, ?>) obj).size();
+		}
+
+		// String
+		if (obj instanceof String) {
+			return ((String) obj).length();
+		}
+
+		// Boxed primitives: Integer, Double, Boolean, etc.
+		if (obj instanceof Number || obj instanceof Boolean || obj instanceof Character) {
+			return 1; // a single value counts as "size 1"
+		}
+
+		// Other Objects — count declared fields (excluding static)
+		int count = 0;
+		for (Field field : clazz.getDeclaredFields()) {
+			if (!Modifier.isStatic(field.getModifiers())) {
+				count++;
+			}
+		}
+		return count;
 	}
 }

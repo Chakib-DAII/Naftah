@@ -222,7 +222,10 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.DoubleQuotationMark,
 					org.daiitech.naftah.parser.NaftahLexer.DoubleQuotationMarkLeft,
 					org.daiitech.naftah.parser.NaftahLexer.DoubleQuotationMarkRight,
-					org.daiitech.naftah.parser.NaftahLexer.PUNCTUATION ->
+					org.daiitech.naftah.parser.NaftahLexer.PUNCTUATION,
+					org.daiitech.naftah.parser.NaftahLexer.HASH_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.AT_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.DOLLAR_SIGN ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.CYAN);
 			default -> AttributedStyle.BOLD.foreground(AttributedStyle.WHITE);
 		};
