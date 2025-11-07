@@ -10,9 +10,3 @@ gem "jekyll-feed", "~> 0.16" # RSS feed support
 gem "jekyll-seo-tag", "~> 2.8" # SEO metadata
 gem "jekyll-paginate", "~> 1.1" # pagination for blog
 gem "jekyll-relative-links", "~> 0.6" # Optional: relative link handling
-
-group :development do
-  gem "jekyll-watch", "~> 2.2"
-  gem "jekyll‑livereload", "~> 0.2.2"
-  gem "bundler", "~> 2.4"
-end
