@@ -1,4 +1,4 @@
-name: Generate and Deploy Javadoc
+name: Build and Deploy Docs Site with Javadoc
 
 on:
   push:
@@ -36,10 +36,21 @@ jobs:
       - name: Build project and generate Javadoc
         run: ./gradlew build javadoc -x compileTestJava -x test -x jacocoTestReport
 
-      - name: Copy Javadoc into website
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install Jekyll dependencies
         run: |
-          mkdir -p docs-site/javadoc
-          cp -r build/docs/javadoc/* docs-site/javadoc/
+          gem install bundler
+          bundle install
+
+      - name: Build Jekyll site
+        run: bundle exec jekyll build -d docs-site
+
+      - name: Copy Javadoc into Jekyll site
+        run: cp -r build/docs/javadoc docs-site/javadoc
 
       #TODO: Enable GitHub Pages
       #Go to your repo on GitHub
