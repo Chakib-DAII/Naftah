@@ -6,7 +6,6 @@ gem "jekyll", "~> 4.4"
 gem "webrick", "~> 1.8"  # required for Ruby 3+
 gem "minima", "~> 2.5.2" # base theme
 gem "jekyll-sass-converter", "~> 2.1" # SCSS compilation
-gem "jekyll-feed", "~> 0.16" # RSS feed support
 gem "jekyll-seo-tag", "~> 2.8" # SEO metadata
 gem "jekyll-paginate", "~> 1.1" # pagination for blog
 gem "jekyll-relative-links", "~> 0.6" # Optional: relative link handling
