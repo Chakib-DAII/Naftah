@@ -1453,7 +1453,7 @@ public final class NaftahParserHelper {
 										Collection<JvmExecutable> jvmFunctions,
 										List<Pair<String, Object>> naftahArgs,
 										int line,
-										int column) {
+										int column) throws NoSuchMethodException {
 		var bestMatch = findBestExecutable(jvmFunctions, new ArrayList<>(naftahArgs), true);
 
 		var selectedFunction = bestMatch.a;
@@ -1945,7 +1945,7 @@ public final class NaftahParserHelper {
 													List<JvmClassInitializer> jvmClassInitializers,
 													List<Pair<String, Object>> naftahArgs,
 													int line,
-													int column) {
+													int column) throws NoSuchMethodException {
 		var bestMatch = findBestExecutable(jvmClassInitializers, naftahArgs);
 		return invokeJvmClassInitializer(classInitializerName, bestMatch.a, bestMatch.b, naftahArgs, line, column);
 	}
@@ -1992,17 +1992,17 @@ public final class NaftahParserHelper {
 	 *
 	 *                                  <p><b>Example usage:</b></p>
 	 *                                  <pre>{@code
-	 *                                                                                                                                                                        visitFunctionCallInChain(
-	 *                                                                                                                                                                        0,
-	 *                                                                                                                                                                        visitor,
-	 *                                                                                                                                                                        context,
-	 *                                                                                                                                                                        "print",
-	 *                                                                                                                                                                         List.of(Pair.of("arg", "Hello, world!")),
-	 *                                                                                                                                                                         null,
-	 *                                                                                                                                                                         12,
-	 *                                                                                                                                                                         8
-	 *                                                                                                                                                                         );
-	 *                                                                                                                                                                                                                                                                                                             }</pre>
+	 *                                                                                                                                                                                                         visitFunctionCallInChain(
+	 *                                                                                                                                                                                                         0,
+	 *                                                                                                                                                                                                         visitor,
+	 *                                                                                                                                                                                                         context,
+	 *                                                                                                                                                                                                         "print",
+	 *                                                                                                                                                                                                          List.of(Pair.of("arg", "Hello, world!")),
+	 *                                                                                                                                                                                                          null,
+	 *                                                                                                                                                                                                          12,
+	 *                                                                                                                                                                                                          8
+	 *                                                                                                                                                                                                          );
+	 *                                                                                                                                                                                                                                                                                                                                              }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction
