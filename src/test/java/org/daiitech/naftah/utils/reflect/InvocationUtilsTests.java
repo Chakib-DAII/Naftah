@@ -177,7 +177,7 @@ class InvocationUtilsTests {
 	@Nested
 	class BestExecutableTests {
 		@Test
-		void findBestExecutableEmptyCandidatesTest() {
+		void findBestExecutableEmptyCandidatesTest() throws NoSuchMethodException {
 			List<JvmFunction> candidates = Collections.emptyList();
 			List<Pair<String, Object>> args = Collections.emptyList();
 			assertNull(InvocationUtils.findBestExecutable(candidates, args));

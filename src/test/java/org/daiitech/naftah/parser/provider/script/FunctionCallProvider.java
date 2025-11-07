@@ -1764,6 +1764,78 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								جافا:أدة:صفائف::نسخ_وف_النطاق([1؛2؛3]؛0؛2)
 								""",
 								NaftahObject.of(new Float[]{1.F, 2.F}),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.lang.String::length
+								جافا:لغة:سلسلة("مرحبا"):::لنگتهاي()
+								""",
+								NaftahObject.of(5),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.lang.String::substring
+								جافا:لغة:سلسلة("مرحبا"):::النفقة(1؛3)
+								""",
+								NaftahObject.of("رح"),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.lang.List::add
+								جافا:أدة:صفائف_القائمة([1؛100؛0]):::إضافة(100)
+								""",
+								NaftahObject.of(Boolean.TRUE),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.lang.List::get
+								جافا:أدة:صفائف_القائمة([1؛100؛0]):::گت(0)
+								""",
+								NaftahObject.of(1),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.lang.List::size
+								جافا:أدة:صفائف_القائمة([1؛100؛0]):::الحجم()
+								""",
+								NaftahObject.of(3),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Optional::get
+								جافا:أدة:اختياري::وف(10):::گت()
+								""",
+								NaftahObject.of(10),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.util.Optional::orElse
+								جافا:أدة:اختياري::وف_فارغابل(فارغ):::أو_لس("لغة نفطة")
+								""",
+								NaftahObject.of("لغة نفطة"),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								--- java.lang.String::toString
+								جافا:لغة:سلسلة("مرحبا"):::إلى_سلسلة()
+								""",
+								NaftahObject.of("مرحبا"),
 								null)
 				);
 	}
