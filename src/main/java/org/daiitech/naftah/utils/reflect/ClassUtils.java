@@ -55,6 +55,90 @@ public final class ClassUtils {
 	 */
 	public static final Pattern QUALIFIED_CALL_REGEX = Pattern.compile("^[^:]*::(?:[^:]*:)+[^:]*$");
 
+
+	/**
+	 * Commonly recognized <b>factory-style static method names</b> in Java.
+	 *
+	 * <p>These names are used by {@code hasFactoryMethod(Class<?>)} to detect
+	 * whether a class provides a static creation method that returns instances
+	 * of itself or its subclasses. This allows Naftah to treat such methods as
+	 * "constructors" in its interop layer.</p>
+	 *
+	 * <p>The list includes canonical JDK factories (e.g., {@code of}, {@code from}),
+	 * builder-style factories, parser/deserializer names, and provider patterns
+	 * from the JDK, Guava, Jackson, and Spring ecosystems.</p>
+	 */
+	private static final Set<String> FACTORY_NAMES = Set
+			.of(
+				"of",
+				"ofNullable",
+				"from",
+				"valueOf",
+				"newInstance",
+				"instance",
+				"getInstance",
+				"empty",
+				"singleton",
+				"copyOf",
+				"unmodifiable",
+				"immutable",
+				"noneOf",
+				"anyOf",
+				"allOf",
+				"builder",
+				"build",
+				"newBuilder",
+				"parse",
+				"parseFrom",
+				"parseValue",
+				"decode",
+				"encode",
+				"forName",
+				"fromString",
+				"fromJson",
+				"fromXml",
+				"open",
+				"load",
+				"read",
+				"connect",
+				"acquire",
+				"create",
+				"createFrom",
+				"createInstance",
+				"getDefault",
+				"defaultInstance",
+				"defaultFactory",
+				"provide",
+				"supply",
+				"with",
+				"withDefaults",
+				"using",
+				"usingDefaults",
+				"usingFactory",
+				"usingProvider"
+			);
+	/**
+	 * Common prefixes used to identify <b>factory-like methods</b> when scanning class members.
+	 *
+	 * <p>Unlike {@link #FACTORY_NAMES}, these are matched as prefixes,
+	 * so methods such as {@code newBuilder()}, {@code createStream()},
+	 * {@code fromJsonString()}, and {@code getInstanceSafe()} are also recognized.</p>
+	 *
+	 * <p>This prefix-based detection is useful for frameworks that
+	 * generate descriptive factory names dynamically or through code generation.</p>
+	 */
+	private static final String[] FACTORY_PREFIXES = {
+														"new",
+														"create",
+														"from",
+														"get",
+														"of",
+														"build",
+														"parse",
+														"with",
+														"using"
+	};
+
 	/**
 	 * Private constructor to prevent instantiation.
 	 * Always throws a {@link NaftahBugError} when called.
@@ -376,7 +460,7 @@ public final class ClassUtils {
 			// check if the class has any public constructor
 			var constructors = clazz.getConstructors();
 			if (constructors.length == 0) {
-				return false;
+				return hasFactoryMethod(clazz);
 			}
 			else {
 				return Arrays
@@ -384,6 +468,122 @@ public final class ClassUtils {
 						.anyMatch(constructor -> Modifier.isPublic(constructor.getModifiers()));
 			}
 		}
+	}
+
+	/**
+	 * Determines whether the specified class defines at least one
+	 * <b>public static factory method</b> capable of producing
+	 * an instance of that class (or a subclass of it).
+	 *
+	 * <p>This method is used by the Naftah Java interop layer to identify
+	 * Java types that are constructible through factory methods rather
+	 * than public constructors. Examples include:
+	 * {@code Optional.of()}, {@code LocalDate.parse()}, and
+	 * {@code List.copyOf()}.</p>
+	 *
+	 * <p>The detection relies on a curated set of known factory method names
+	 * and prefixes (see {@code FACTORY_NAMES} and {@code FACTORY_PREFIXES}).
+	 * The following conditions must all be satisfied for a method to be
+	 * recognized as a valid factory:</p>
+	 *
+	 * <ul>
+	 * <li>The method must be {@code public static}.</li>
+	 * <li>It must not be a compiler-generated bridge or synthetic method.</li>
+	 * <li>Its name must either match a known factory name
+	 * (e.g. {@code of}, {@code from}, {@code valueOf})
+	 * or begin with a recognized prefix (e.g. {@code create}, {@code new}, {@code build}).</li>
+	 * <li>It must return a non-{@code void} type assignable to the declaring class,
+	 * or whose simple name contains the declaring class’s simple name
+	 * (to support builder/wrapper patterns).</li>
+	 * </ul>
+	 *
+	 * <p>Example classes detected as factory-capable:</p>
+	 * <pre>{@code
+	 * Optional.of("value");
+	 * LocalDate.parse("2025-11-07");
+	 * List.copyOf(existingList);
+	 * EnumSet.noneOf(MyEnum.class);
+	 * HttpRequest.newBuilder().build();
+	 * }</pre>
+	 *
+	 * <p>Classes that are primitives, arrays, or {@code void} are excluded immediately.</p>
+	 *
+	 * @param clazz the class to inspect
+	 * @return {@code true} if the class declares at least one public static
+	 *         factory method that produces instances of itself or a compatible type;
+	 *         {@code false} otherwise
+	 */
+	public static boolean hasFactoryMethod(Class<?> clazz) {
+		// Skip primitive, void, and array types
+		if (clazz.isPrimitive() || clazz.isArray() || clazz == void.class) {
+			return false;
+		}
+
+		for (Method method : clazz.getDeclaredMethods()) {
+			int mods = method.getModifiers();
+
+			// Must be public static
+			if (!Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
+				continue;
+			}
+
+			// Ignore compiler-generated methods
+			if (method.isSynthetic() || method.isBridge()) {
+				continue;
+			}
+
+			String name = method.getName();
+
+			// Quick reject by name
+			if (!isFactoryName(name)) {
+				continue;
+			}
+
+			// Must return something usable
+			Class<?> returnType = method.getReturnType();
+			if (returnType == void.class) {
+				continue;
+			}
+
+			// Covariant return allowed: subclass or same type
+			if (clazz.isAssignableFrom(returnType)) {
+				return true;
+			}
+
+			// Optional: also consider wrapper or builder factories
+			if (returnType.getSimpleName().contains(clazz.getSimpleName())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines whether a given method name matches a known
+	 * factory method pattern.
+	 *
+	 * <p>This method checks whether the name appears in the
+	 * {@link #FACTORY_NAMES} set or begins with one of the
+	 * {@link #FACTORY_PREFIXES}. Matching is case-sensitive
+	 * and uses simple string comparison for efficiency.</p>
+	 *
+	 * @param name the method name to test
+	 * @return {@code true} if the name matches a known factory name or prefix,
+	 *         {@code false} otherwise
+	 */
+	private static boolean isFactoryName(String name) {
+		if (FACTORY_NAMES.contains(name)) {
+			return true;
+		}
+
+		for (String prefix : FACTORY_PREFIXES) {
+			if (name.startsWith(prefix)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

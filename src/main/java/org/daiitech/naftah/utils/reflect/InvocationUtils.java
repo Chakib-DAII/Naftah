@@ -131,7 +131,19 @@ public final class InvocationUtils {
 		Class<?>[] paramTypes = methodOrConstructor.getParameterTypes();
 
 		if (naftahArgs.size() != paramTypes.length) {
-			throw new IllegalArgumentException("Argument count mismatch");
+			// in case of varargs executable; try to workaround missing array arg if it is the case
+			if (methodOrConstructor.isVarArgs()) {
+				Object varargArray = getVarargArrayIfPossible(naftahArgs, paramTypes);
+
+				if (Objects.isNull(varargArray)) {
+					throw new IllegalArgumentException("Argument count mismatch");
+				}
+
+				naftahArgs.add(new Pair<>(null, varargArray));
+			}
+			else {
+				throw new IllegalArgumentException("Argument count mismatch");
+			}
 		}
 
 		Object[] executableArgs = new Object[naftahArgs.size()];
@@ -146,6 +158,50 @@ public final class InvocationUtils {
 		convertArgumentsBack(executableArgs, naftahArgs);
 
 		return result;
+	}
+
+	/**
+	 * Creates a varargs array from a list of arguments if the method parameters indicate a varargs parameter.
+	 * <p>
+	 * This method checks if the last parameter in the {@code paramTypes} array is an array (indicating a varargs
+	 * parameter)
+	 * and if there are enough arguments in {@code naftahArgs} to populate the normal parameters. If so, it creates
+	 * a new array for the varargs portion.
+	 * </p>
+	 *
+	 * <p>
+	 * Example usage:
+	 * <pre>
+	 * {@code
+	 * List<Pair<String, Object>> args = List.of(Pair.of("arg1", value1), Pair.of("arg2", value2));
+	 * Class<?>[] paramTypes = { String.class, Integer.class, String[].class }; // last is varargs
+	 * Object varargsArray = getVarargArrayIfPossible(args, paramTypes);
+	 * // varargsArray will be a String[0] if no extra arguments, or filled with remaining args otherwise
+	 * }
+	 * </pre>
+	 * </p>
+	 *
+	 * @param naftahArgs the list of arguments as pairs of name and value
+	 * @param paramTypes the array of parameter types for the target method, where the last element may be a varargs
+	 *                   array
+	 * @return a newly instantiated array of the varargs component type containing the extra arguments,
+	 *         or {@code null} if there are not enough arguments to reach the varargs parameter
+	 * @throws NullPointerException if {@code naftahArgs} or {@code paramTypes} is {@code null}
+	 * @see java.lang.reflect.Array#newInstance(Class, int)
+	 */
+	private static Object getVarargArrayIfPossible(List<Pair<String, Object>> naftahArgs, Class<?>[] paramTypes) {
+		// Varargs: the last parameter is an array type
+		int normalParamCount = paramTypes.length - 1;
+
+		// Too few parameters? skip
+		if (naftahArgs.size() < normalParamCount) {
+			return null;
+		}
+
+		// instantiate an empty array for varargs
+		Class<?> varargComponentType = paramTypes[normalParamCount].getComponentType();
+		int varargCount = naftahArgs.size() - normalParamCount;
+		return Array.newInstance(varargComponentType, varargCount);
 	}
 
 
@@ -351,7 +407,9 @@ public final class InvocationUtils {
 				return value;
 			}
 			if (targetType == char.class) {
-				return (value instanceof Character) ? value : value.toString().charAt(0);
+				return (value instanceof Character character) ?
+						character :
+						Character.valueOf(value.toString().charAt(0));
 			}
 			if (targetType == byte.class) {
 				return ((Number) value).byteValue();
@@ -619,7 +677,8 @@ public final class InvocationUtils {
 	 * @see #findBestExecutable(Collection, List, boolean)
 	 */
 	public static <T extends JvmExecutable> Pair<T, Object[]> findBestExecutable(   Collection<T> candidates,
-																					List<Pair<String, Object>> args) {
+																					List<Pair<String, Object>> args)
+			throws NoSuchMethodException {
 		return findBestExecutable(candidates, args, false);
 	}
 
@@ -654,7 +713,8 @@ public final class InvocationUtils {
 	 */
 	public static <T extends JvmExecutable> Pair<T, Object[]> findBestExecutable(   Collection<T> candidates,
 																					List<Pair<String, Object>> args,
-																					boolean removeInstanceArg) {
+																					boolean removeInstanceArg)
+			throws NoSuchMethodException {
 		if (candidates == null || candidates.isEmpty()) {
 			return null;
 		}
@@ -670,10 +730,23 @@ public final class InvocationUtils {
 			if (removeInstanceArg && jvmExecutable instanceof JvmFunction jvmFunction && !jvmFunction
 					.isStatic()) {
 				args.remove(0);
+				removeInstanceArg = false;
 			}
 
 			if (paramTypes.length != args.size()) {
-				continue;
+				// in case of varargs executable; try to workaround missing array arg if it is the case
+				if (executable.isVarArgs()) {
+					Object varargArray = getVarargArrayIfPossible(args, paramTypes);
+
+					if (Objects.isNull(varargArray)) {
+						continue;
+					}
+
+					args.add(new Pair<>(null, varargArray));
+				}
+				else {
+					continue;
+				}
 			}
 
 			Pair<Integer, Object[]> scoreAndArgs = matchScore(  executable,
@@ -684,6 +757,9 @@ public final class InvocationUtils {
 				best = new Pair<>(jvmExecutable, scoreAndArgs.b);
 				bestScore = scoreAndArgs.a;
 			}
+		}
+		if (Objects.isNull(best)) {
+			throw new NoSuchMethodException("No executable Found that matches the provided arguments.");
 		}
 		return best;
 	}
@@ -737,13 +813,44 @@ public final class InvocationUtils {
 				else if (param.isInstance(converted)) {
 					score += 0;
 				}
-				else //noinspection DataFlowIssue
-					if (Number.class.isAssignableFrom(param) && Number.class.isAssignableFrom(converted.getClass())) {
+				else if (Objects.nonNull(converted)) {
+					Class<?> convertedClass = converted.getClass();
+					if (param.isAssignableFrom(convertedClass)) {
 						score += 1;
 					}
-					else {
-						score += 3;
+					else if (Number.class.isAssignableFrom(convertedClass)) {
+						if (Number.class.isAssignableFrom(param)) {
+							score += 2;
+						}
+						else if (param.isPrimitive()) {
+							if (param == int.class && convertedClass == Integer.class || param == long.class && convertedClass == Long.class || param == float.class && convertedClass == Float.class || param == double.class && convertedClass == Double.class || param == short.class && convertedClass == Short.class || param == byte.class && convertedClass == Byte.class) {
+								score += 3;
+							}
+							else {
+								score += 4;
+							}
+						}
 					}
+					else if (convertedClass == Character.class) {
+						if (param == Character.class) {
+							score += 2;
+						}
+						else if (param.isPrimitive()) {
+							if (param == char.class) {
+								score += 3;
+							}
+							else {
+								score += 4;
+							}
+						}
+					}
+					else {
+						score += 5;
+					}
+				}
+				else {
+					score += 6;
+				}
 				executableArgs[i] = converted;
 			}
 			catch (Throwable ignored) {
