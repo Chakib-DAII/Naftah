@@ -87,8 +87,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">private static class </span><span class="element-name type-name-label">Naftah.NaftahCommand</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">The base command class for the Naftah CLI, implemented with picocli.
- Supports subcommands: run, init, and shell.
- TODO: add support for ManCammand (Manual), to list java apis in arabic (transliterated)</div>
+ Supports subcommands: run, init, and shell.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -154,32 +153,35 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>private boolean</code></div>
 <div class="col-second even-row-color"><code><a href="#helpRequested" class="member-name-link">helpRequested</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#NAME" class="member-name-link">NAME</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first odd-row-color"><code>private boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#loadClassesAndFunctions" class="member-name-link">loadClassesAndFunctions</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#NAME" class="member-name-link">NAME</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The main command name.</div>
 </div>
-<div class="col-first even-row-color"><code>private boolean</code></div>
-<div class="col-second even-row-color"><code><a href="#scanClasspath" class="member-name-link">scanClasspath</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#script" class="member-name-link">script</a></code></div>
+<div class="col-first odd-row-color"><code>private boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#scanClasspath" class="member-name-link">scanClasspath</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#systemProperties" class="member-name-link">systemProperties</a></code></div>
+<div class="col-first even-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#script" class="member-name-link">script</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#systemProperties" class="member-name-link">systemProperties</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>private boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#useArabicFormatter" class="member-name-link">useArabicFormatter</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>private boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#useArabicFormatter" class="member-name-link">useArabicFormatter</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#useArabicIndic" class="member-name-link">useArabicIndic</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>private boolean</code></div>
-<div class="col-second even-row-color"><code><a href="#useArabicIndic" class="member-name-link">useArabicIndic</a></code></div>
+<div class="col-second even-row-color"><code><a href="#useVectorApi" class="member-name-link">useVectorApi</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>private boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#useVectorApi" class="member-name-link">useVectorApi</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#versionRequested" class="member-name-link">versionRequested</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>private boolean</code></div>
-<div class="col-second even-row-color"><code><a href="#versionRequested" class="member-name-link">versionRequested</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -334,6 +336,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="useArabicIndic">
 <h3>useArabicIndic</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useArabicIndic</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="loadClassesAndFunctions">
+<h3>loadClassesAndFunctions</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">loadClassesAndFunctions</span></div>
 </section>
 </li>
 </ul>

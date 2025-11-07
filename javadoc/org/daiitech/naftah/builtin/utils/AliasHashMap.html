@@ -177,11 +177,26 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns <code>true</code> if this map contains a mapping for the specified key or any of its aliases.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get(java.lang.Object)" class="member-name-link">get</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;K,<wbr>
+V&gt;&nbsp;void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K,org.daiitech.naftah.builtin.lang.BuiltinFunction)" class="member-name-link">fillAliasToKeyMap</a><wbr>(<a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;K,<wbr>V&gt;&nbsp;map,
+ K&nbsp;alias,
+ K&nbsp;canonicalKey,
+ <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;fn)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Fills the alias-to-key mapping for a given <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get(java.lang.Object)" class="member-name-link">get</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value to which the specified key is mapped, or <code>null</code>
  if this map contains no mapping for the key or its aliases.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahAliasOverrideError(org.daiitech.naftah.builtin.lang.BuiltinFunction)" class="member-name-link">newNaftahAliasOverrideError</a><wbr>(<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;fn)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> to indicate that an attempt was made
+ to override a predefined function alias.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#put(K,V,K...)" class="member-name-link">put</a><wbr>(<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&nbsp;canonicalKey,
@@ -191,9 +206,14 @@ loadScripts(document, 'script');</script>
 <div class="block">Associates the specified value with the specified canonical key,
  and registers any number of alias keys that map to the same value.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link">Collector</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toAliasGroupedByName()" class="member-name-link">toAliasGroupedByName</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#putAll(java.util.Map)" class="member-name-link">putAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr>? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&nbsp;map)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Copies all mappings from the specified map into this map.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link">Collector</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toAliasGroupedByName()" class="member-name-link">toAliasGroupedByName</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link"><code>Collector</code></a> that groups <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> instances by their canonical function name,
  storing the results in an <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a> where:
  
@@ -209,7 +229,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.util.HashMap">Methods inherited from class&nbsp;java.util.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a></h3>
-<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#clear()" title="class or interface in java.util" class="external-link">clear</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#clone()" title="class or interface in java.util" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#compute(K,java.util.function.BiFunction)" title="class or interface in java.util" class="external-link">compute</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#computeIfAbsent(K,java.util.function.Function)" title="class or interface in java.util" class="external-link">computeIfAbsent</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#computeIfPresent(K,java.util.function.BiFunction)" title="class or interface in java.util" class="external-link">computeIfPresent</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#containsValue(java.lang.Object)" title="class or interface in java.util" class="external-link">containsValue</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#entrySet()" title="class or interface in java.util" class="external-link">entrySet</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#forEach(java.util.function.BiConsumer)" title="class or interface in java.util" class="external-link">forEach</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#getOrDefault(java.lang.Object,V)" title="class or interface in java.util" class="external-link">getOrDefault</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#isEmpty()" title="class or interface in java.util" class="external-link">isEmpty</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#keySet()" title="class or interface in java.util" class="external-link">keySet</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#merge(K,V,java.util.function.BiFunction)" title="class or interface in java.util" class="external-link">merge</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#put(K,V)" title="class or interface in java.util" class="external-link">put</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#putAll(java.util.Map)" title="class or interface in java.util" class="external-link">putAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#putIfAbsent(K,V)" title="class or interface in java.util" class="external-link">putIfAbsent</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#remove(java.lang.Object)" title="class or interface in java.util" class="external-link">remove</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#remove(java.lang.Object,java.lang.Object)" title="class or interface in java.util" class="external-link">remove</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#replace(K,V)" title="class or interface in java.util" class="external-link">replace</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#replace(K,V,V)" title="class or interface in java.util" class="external-link">replace</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#replaceAll(java.util.function.BiFunction)" title="class or interface in java.util" class="external-link">replaceAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#size()" title="class or interface in java.util" class="external-link">size</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#values()" title="class or interface in java.util" class="external-link">values</a></code></div>
+<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#clear()" title="class or interface in java.util" class="external-link">clear</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#clone()" title="class or interface in java.util" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#compute(K,java.util.function.BiFunction)" title="class or interface in java.util" class="external-link">compute</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#computeIfAbsent(K,java.util.function.Function)" title="class or interface in java.util" class="external-link">computeIfAbsent</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#computeIfPresent(K,java.util.function.BiFunction)" title="class or interface in java.util" class="external-link">computeIfPresent</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#containsValue(java.lang.Object)" title="class or interface in java.util" class="external-link">containsValue</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#entrySet()" title="class or interface in java.util" class="external-link">entrySet</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#forEach(java.util.function.BiConsumer)" title="class or interface in java.util" class="external-link">forEach</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#getOrDefault(java.lang.Object,V)" title="class or interface in java.util" class="external-link">getOrDefault</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#isEmpty()" title="class or interface in java.util" class="external-link">isEmpty</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#keySet()" title="class or interface in java.util" class="external-link">keySet</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#merge(K,V,java.util.function.BiFunction)" title="class or interface in java.util" class="external-link">merge</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#put(K,V)" title="class or interface in java.util" class="external-link">put</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#putIfAbsent(K,V)" title="class or interface in java.util" class="external-link">putIfAbsent</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#remove(java.lang.Object)" title="class or interface in java.util" class="external-link">remove</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#remove(java.lang.Object,java.lang.Object)" title="class or interface in java.util" class="external-link">remove</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#replace(K,V)" title="class or interface in java.util" class="external-link">replace</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#replace(K,V,V)" title="class or interface in java.util" class="external-link">replace</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#replaceAll(java.util.function.BiFunction)" title="class or interface in java.util" class="external-link">replaceAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#size()" title="class or interface in java.util" class="external-link">size</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#values()" title="class or interface in java.util" class="external-link">values</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.util.AbstractMap">Methods inherited from class&nbsp;java.util.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/AbstractMap.html" title="class or interface in java.util" class="external-link">AbstractMap</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/AbstractMap.html#equals(java.lang.Object)" title="class or interface in java.util" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/AbstractMap.html#hashCode()" title="class or interface in java.util" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/AbstractMap.html#toString()" title="class or interface in java.util" class="external-link">toString</a></code></div>
@@ -300,6 +320,65 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K,org.daiitech.naftah.builtin.lang.BuiltinFunction)">
+<h3 id="fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,java.lang.Object,java.lang.Object,org.daiitech.naftah.builtin.lang.BuiltinFunction)">fillAliasToKeyMap</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;K,<wbr>
+V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fillAliasToKeyMap</span><wbr><span class="parameters">(<a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;K,<wbr>V&gt;&nbsp;map,
+ K&nbsp;alias,
+ K&nbsp;canonicalKey,
+ <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;fn)</span></div>
+<div class="block">Fills the alias-to-key mapping for a given <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a>.
+ <p>
+ This method registers a mapping from a given alias to its canonical key.
+ If the alias already exists in the map, a <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> will be thrown to prevent
+ alias overriding.
+ </p>
+
+ <p>
+ Function aliases are intended to be immutable and globally unique. Attempting to override
+ or redefine an existing alias is considered a bug in the builtin function provider.
+ </p></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>K</code> - the type of keys (aliases and canonical keys)</dd>
+<dd><code>V</code> - the type of mapped values</dd>
+<dt>Parameters:</dt>
+<dd><code>map</code> - the <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a> to be updated</dd>
+<dd><code>alias</code> - the alias key to register</dd>
+<dd><code>canonicalKey</code> - the canonical key to which the alias refers</dd>
+<dd><code>fn</code> - the <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> context used for error reporting</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the alias is already defined in the map</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahAliasOverrideError(org.daiitech.naftah.builtin.lang.BuiltinFunction)">
+<h3>newNaftahAliasOverrideError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahAliasOverrideError</span><wbr><span class="parameters">(<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;fn)</span></div>
+<div class="block">Creates a new <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> to indicate that an attempt was made
+ to override a predefined function alias.
+ <p>
+ The error message explains that builtin function aliases are statically defined and
+ cannot be overridden by other providers. It suggests using
+ <code>useQualifiedAliases</code> or unique alias names for builtin extensions.
+ </p>
+
+ <p><strong>Arabic message:</strong></p>
+ <blockquote>
+ أسماء الدوال المستعارة (Function Aliases) معرفة بشكل ثابت، ولا يمكن لمزوّدين آخرين تعديلها أو تجاوزها.
+ إذا كنت بصدد إنشاء امتداد مضمّن (builtin extension)، يُرجى تمييزه باستخدام useQualifiedAliases أو التأكد من
+ استخدام أسماء مستعارة (aliases) فريدة من نوعها.
+ </blockquote></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>fn</code> - the <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> that triggered the alias conflict, may be <code>null</code></dd>
+<dt>Returns:</dt>
+<dd>a <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> with a detailed error message</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="put(K,V,K...)">
 <h3 id="put(java.lang.Object,java.lang.Object,java.lang.Object[])">put</h3>
 <div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/SafeVarargs.html" title="class or interface in java.lang" class="external-link">@SafeVarargs</a>
@@ -316,6 +395,39 @@ loadScripts(document, 'script');</script>
 <dd><code>canonicalKey</code> - The main key to associate with the value.</dd>
 <dd><code>value</code> - The value to be associated with the canonical key.</dd>
 <dd><code>aliases</code> - Optional alias keys that should also retrieve the same value.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="putAll(java.util.Map)">
+<h3>putAll</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">putAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr>? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&nbsp;map)</span></div>
+<div class="block">Copies all mappings from the specified map into this map.
+ <p>
+ This method behaves like <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#putAll(java.util.Map)" title="class or interface in java.util" class="external-link"><code>HashMap.putAll(Map)</code></a> for regular entries,
+ but also preserves alias relationships when the source map is an instance of
+ <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a>.
+ </p>
+
+ <p>When copying from another <code>AliasHashMap</code>, all alias-to-canonical-key
+ mappings from the source are merged into this map. If any alias already exists
+ in this map, a <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> will be thrown to prevent alias
+ overriding.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html#putAll(java.util.Map)" title="class or interface in java.util" class="external-link">putAll</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></dd>
+<dt>Overrides:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#putAll(java.util.Map)" title="class or interface in java.util" class="external-link">putAll</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>map</code> - The map whose mappings are to be copied into this map.</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if an alias conflict occurs during merging.</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="#fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K,org.daiitech.naftah.builtin.lang.BuiltinFunction)"><code>fillAliasToKeyMap(AliasHashMap, Object, Object, BuiltinFunction)</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>

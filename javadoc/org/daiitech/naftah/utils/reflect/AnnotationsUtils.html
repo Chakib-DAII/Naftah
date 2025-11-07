@@ -138,7 +138,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns a list of all annotations declared on the given method.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../builtin/lang/NaftahFunction.html" title="class in org.daiitech.naftah.builtin.lang">NaftahFunction</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getNaftahFunctionAnnotation(java.lang.reflect.Method)" class="member-name-link">getNaftahFunctionAnnotation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getNaftahFunctionAnnotation(java.lang.reflect.Method,boolean,boolean)" class="member-name-link">getNaftahFunctionAnnotation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method,
+ boolean&nbsp;useQualifiedName,
+ boolean&nbsp;useQualifiedAliases)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Extracts the custom <a href="../../builtin/lang/NaftahFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahFunction</code></a> representation from the
  <a href="../../builtin/NaftahFn.html" title="annotation interface in org.daiitech.naftah.builtin"><code>NaftahFn</code></a> annotation on the method.</div>
@@ -254,9 +256,11 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getNaftahFunctionAnnotation(java.lang.reflect.Method)">
+<section class="detail" id="getNaftahFunctionAnnotation(java.lang.reflect.Method,boolean,boolean)">
 <h3>getNaftahFunctionAnnotation</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../builtin/lang/NaftahFunction.html" title="class in org.daiitech.naftah.builtin.lang">NaftahFunction</a></span>&nbsp;<span class="element-name">getNaftahFunctionAnnotation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../builtin/lang/NaftahFunction.html" title="class in org.daiitech.naftah.builtin.lang">NaftahFunction</a></span>&nbsp;<span class="element-name">getNaftahFunctionAnnotation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method,
+ boolean&nbsp;useQualifiedName,
+ boolean&nbsp;useQualifiedAliases)</span></div>
 <div class="block">Extracts the custom <a href="../../builtin/lang/NaftahFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahFunction</code></a> representation from the
  <a href="../../builtin/NaftahFn.html" title="annotation interface in org.daiitech.naftah.builtin"><code>NaftahFn</code></a> annotation on the method.</div>
 <dl class="notes">

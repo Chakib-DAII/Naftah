@@ -164,11 +164,22 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Checks if the given input line matches any predefined management commands.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadAvailableTopics()" class="member-name-link">loadAvailableTopics</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTotal(java.util.List)" class="member-name-link">getTotal</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Determines the total number of elements in a target list, ensuring the count
+ is at least as large as the corresponding collection from <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadAvailableTopics()" class="member-name-link">loadAvailableTopics</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Loads all available manual topics from the <code>manualDir</code> directory
  and returns them as a map of topic keys to their corresponding file paths.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadBuiltinFunction(java.util.Map.Entry)" class="member-name-link">loadBuiltinFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;&nbsp;builtinFunction)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Builds a detailed textual representation of a single built-in function entry.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadClassesAndFunctions()" class="member-name-link">loadClassesAndFunctions</a>()</code></div>
@@ -176,6 +187,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Loads detailed metadata for classes and functions from the <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>
  in parallel using a fixed thread pool executor.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadClassOrFunction(int,java.util.List)" class="member-name-link">loadClassOrFunction</a><wbr>(int&nbsp;index,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves and formats the detailed information for a class or function
+ at a given index from the specified target list or its related context collection.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadDetailedClass(java.util.Map.Entry)" class="member-name-link">loadDetailedClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;JvmFunction)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadDetailedClasses(java.util.Map,java.util.List)" class="member-name-link">loadDetailedClasses</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</code></div>
@@ -183,21 +204,26 @@ loadScripts(document, 'script');</script>
 <div class="block">Loads detailed string representations of the provided classes and appends them
  to the given target list.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#printPaginated(java.util.List)" class="member-name-link">printPaginated</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadJvmFunction(java.util.Map.Entry)" class="member-name-link">loadJvmFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;&gt;&nbsp;jvmFunction)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Builds a detailed textual representation of a single JVM function entry.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#printPaginated(java.util.List)" class="member-name-link">printPaginated</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Prints a list of lines to the terminal in a paginated format, displaying
  a fixed number of lines per page and prompting the user to continue after each page.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#run(org.daiitech.naftah.Naftah,boolean)" class="member-name-link">run</a><wbr>(<a href="Naftah.html" title="class in org.daiitech.naftah">Naftah</a>&nbsp;main,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#run(org.daiitech.naftah.Naftah,boolean)" class="member-name-link">run</a><wbr>(<a href="Naftah.html" title="class in org.daiitech.naftah">Naftah</a>&nbsp;main,
  boolean&nbsp;bootstrapAsync)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Runs the command.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showManualTopic(java.lang.String)" class="member-name-link">showManualTopic</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;topic)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showManualTopic(java.lang.String)" class="member-name-link">showManualTopic</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;topic)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Displays the content of a manual topic in the terminal, formatted from Markdown.</div>
 </div>
 </div>
@@ -384,6 +410,88 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="loadBuiltinFunction(java.util.Map.Entry)">
+<h3>loadBuiltinFunction</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">loadBuiltinFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;&nbsp;builtinFunction)</span></div>
+<div class="block">Builds a detailed textual representation of a single built-in function entry.
+ <p>
+ The output includes the function group name (key) and a formatted list of one or
+ more <a href="builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> details separated by visual dividers for clarity.
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>builtinFunction</code> - a map entry containing the function group name as key and
+                        a list of <a href="builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> instances as value</dd>
+<dt>Returns:</dt>
+<dd>a formatted string containing a detailed description of the built-in functions</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="loadJvmFunction(java.util.Map.Entry)">
+<h3>loadJvmFunction</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">loadJvmFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;&gt;&nbsp;jvmFunction)</span></div>
+<div class="block">Builds a detailed textual representation of a single JVM function entry.
+ <p>
+ The output includes the function group name (key) and a formatted list of one or
+ more <a href="builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a> details separated by visual dividers for readability.
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>jvmFunction</code> - a map entry containing the function group name as key and
+                    a list of <a href="builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a> instances as value</dd>
+<dt>Returns:</dt>
+<dd>a formatted string containing a detailed description of the JVM functions</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getTotal(java.util.List)">
+<h3>getTotal</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getTotal</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</span></div>
+<div class="block">Determines the total number of elements in a target list, ensuring the count
+ is at least as large as the corresponding collection from <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>.
+ <p>
+ This helps synchronize manual or temporary lists with the runtime context
+ to avoid index mismatches when accessing elements.
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>target</code> - the list whose size should be compared to its related collection</dd>
+<dt>Returns:</dt>
+<dd>the maximum of the target's size and the associated context collection size</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="loadClassOrFunction(int,java.util.List)">
+<h3>loadClassOrFunction</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">loadClassOrFunction</span><wbr><span class="parameters">(int&nbsp;index,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</span></div>
+<div class="block">Retrieves and formats the detailed information for a class or function
+ at a given index from the specified target list or its related context collection.
+ <p>
+ If the requested index exceeds the target list’s current size, this method
+ attempts to fetch the corresponding element from the appropriate collection
+ in <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>. Depending on the target, it delegates to one of:
+ <ul>
+ <li><code>loadDetailedClass(Map.Entry)</code></li>
+ <li><code>loadBuiltinFunction(Map.Entry)</code></li>
+ <li><code>loadJvmFunction(Map.Entry)</code></li>
+ </ul>
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>index</code> - the index of the element to retrieve (0-based)</dd>
+<dd><code>target</code> - the list corresponding to one of the tracked element types</dd>
+<dt>Returns:</dt>
+<dd>a formatted string representing the detailed view of the element</dd>
+<dt>Throws:</dt>
+<dd><code><a href="errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if no valid element can be resolved for the given index</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="printPaginated(java.util.List)">
 <h3>printPaginated</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">printPaginated</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</span></div>
@@ -490,6 +598,12 @@ loadScripts(document, 'script');</script>
 <dd><code>classes</code> - a map of string keys (e.g., class labels or names) to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> objects</dd>
 <dd><code>target</code> - the list to which the formatted, detailed string representations will be added</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="loadDetailedClass(java.util.Map.Entry)">
+<h3>loadDetailedClass</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">loadDetailedClass</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;JvmFunction)</span></div>
 </section>
 </li>
 </ul>

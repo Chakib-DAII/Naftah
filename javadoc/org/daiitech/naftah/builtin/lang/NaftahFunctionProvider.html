@@ -80,6 +80,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Record Components:</dt>
 <dd><code><span id="param-name">name</span></code> - the provider's name</dd>
+<dd><code><span id="param-useQualifiedName">useQualifiedName</span></code> - flags that the function names should be bound with the provider's name</dd>
+<dd><code><span id="param-useQualifiedAliases">useQualifiedAliases</span></code> - flags that the function aliases should be bound with the provider's name</dd>
 <dd><code><span id="param-description">description</span></code> - a brief description of the provider</dd>
 <dd><code><span id="param-functionNames">functionNames</span></code> - a list of function names provided</dd>
 </dl>
@@ -88,7 +90,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">NaftahFunctionProvider</span>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;functionNames)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">NaftahFunctionProvider</span>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name, boolean&nbsp;useQualifiedName, boolean&nbsp;useQualifiedAliases, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;functionNames)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></span></div>
 <div class="block">Represents a provider of Naftah functions.
@@ -133,6 +135,19 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <div class="col-last even-row-color">
 <div class="block">The field for the <a href="#param-name"><code>name</code></a> record component.</div>
 </div>
+<div class="col-first odd-row-color"><code>private static final long</code></div>
+<div class="col-second odd-row-color"><code><a href="#serialVersionUID" class="member-name-link">serialVersionUID</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>private final boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#useQualifiedAliases" class="member-name-link">useQualifiedAliases</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The field for the <a href="#param-useQualifiedAliases"><code>useQualifiedAliases</code></a> record component.</div>
+</div>
+<div class="col-first odd-row-color"><code>private final boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#useQualifiedName" class="member-name-link">useQualifiedName</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The field for the <a href="#param-useQualifiedName"><code>useQualifiedName</code></a> record component.</div>
+</div>
 </div>
 </section>
 </li>
@@ -144,7 +159,9 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,java.lang.String,java.util.List)" class="member-name-link">NaftahFunctionProvider</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,boolean,boolean,java.lang.String,java.util.List)" class="member-name-link">NaftahFunctionProvider</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ boolean&nbsp;useQualifiedName,
+ boolean&nbsp;useQualifiedAliases,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;functionNames)</code></div>
 <div class="col-last even-row-color">
@@ -190,7 +207,9 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <div class="block">Returns the value of the <a href="#param-name"><code>name</code></a> record component.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahFunctionProvider.html" title="class in org.daiitech.naftah.builtin.lang">NaftahFunctionProvider</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String,java.lang.String,java.lang.String%5B%5D)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(java.lang.String,boolean,boolean,java.lang.String,java.lang.String%5B%5D)" class="member-name-link">of</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ boolean&nbsp;useQualifiedName,
+ boolean&nbsp;useQualifiedAliases,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;functionNames)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -200,6 +219,16 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a string representation of this record class.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useQualifiedAliases()" class="member-name-link">useQualifiedAliases</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <a href="#param-useQualifiedAliases"><code>useQualifiedAliases</code></a> record component.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useQualifiedName()" class="member-name-link">useQualifiedName</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <a href="#param-useQualifiedName"><code>useQualifiedName</code></a> record component.</div>
 </div>
 </div>
 </div>
@@ -226,6 +255,20 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 </section>
 </li>
 <li>
+<section class="detail" id="useQualifiedName">
+<h3>useQualifiedName</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useQualifiedName</span></div>
+<div class="block">The field for the <a href="#param-useQualifiedName"><code>useQualifiedName</code></a> record component.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="useQualifiedAliases">
+<h3>useQualifiedAliases</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useQualifiedAliases</span></div>
+<div class="block">The field for the <a href="#param-useQualifiedAliases"><code>useQualifiedAliases</code></a> record component.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="description">
 <h3>description</h3>
 <div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">description</span></div>
@@ -239,6 +282,20 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <div class="block">The field for the <a href="#param-functionNames"><code>functionNames</code></a> record component.</div>
 </section>
 </li>
+<li>
+<section class="detail" id="serialVersionUID">
+<h3>serialVersionUID</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type">long</span>&nbsp;<span class="element-name">serialVersionUID</span></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#org.daiitech.naftah.builtin.lang.NaftahFunctionProvider.serialVersionUID">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -248,15 +305,19 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(java.lang.String,java.lang.String,java.util.List)">
+<section class="detail" id="&lt;init&gt;(java.lang.String,boolean,boolean,java.lang.String,java.util.List)">
 <h3>NaftahFunctionProvider</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">NaftahFunctionProvider</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ boolean&nbsp;useQualifiedName,
+ boolean&nbsp;useQualifiedAliases,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;functionNames)</span></div>
 <div class="block">Creates an instance of a <code>NaftahFunctionProvider</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>name</code> - the value for the <a href="#param-name"><code>name</code></a> record component</dd>
+<dd><code>useQualifiedName</code> - the value for the <a href="#param-useQualifiedName"><code>useQualifiedName</code></a> record component</dd>
+<dd><code>useQualifiedAliases</code> - the value for the <a href="#param-useQualifiedAliases"><code>useQualifiedAliases</code></a> record component</dd>
 <dd><code>description</code> - the value for the <a href="#param-description"><code>description</code></a> record component</dd>
 <dd><code>functionNames</code> - the value for the <a href="#param-functionNames"><code>functionNames</code></a> record component</dd>
 </dl>
@@ -271,15 +332,19 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="of(java.lang.String,java.lang.String,java.lang.String[])">
+<section class="detail" id="of(java.lang.String,boolean,boolean,java.lang.String,java.lang.String[])">
 <h3>of</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahFunctionProvider.html" title="class in org.daiitech.naftah.builtin.lang">NaftahFunctionProvider</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ boolean&nbsp;useQualifiedName,
+ boolean&nbsp;useQualifiedAliases,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;description,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;functionNames)</span></div>
 <div class="block">Factory method to create a <code>NaftahFunctionProvider</code> instance.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>name</code> - the provider's name</dd>
+<dd><code>useQualifiedName</code> - flags that the function names should be bound with the provider's name</dd>
+<dd><code>useQualifiedAliases</code> - flags that the function aliases should be bound with the provider's name</dd>
 <dd><code>description</code> - a brief description of the provider</dd>
 <dd><code>functionNames</code> - an array of function names provided</dd>
 <dt>Returns:</dt>
@@ -317,7 +382,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <section class="detail" id="equals(java.lang.Object)">
 <h3>equals</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">equals</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</span></div>
-<div class="block">Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. All components in this record class are compared with <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Objects.html#equals(java.lang.Object,java.lang.Object)" title="class or interface in java.util" class="external-link"><code>Objects::equals(Object,Object)</code></a>.</div>
+<div class="block">Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. Reference components are compared with <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Objects.html#equals(java.lang.Object,java.lang.Object)" title="class or interface in java.util" class="external-link"><code>Objects::equals(Object,Object)</code></a>; primitive components are compared with '=='.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></code></dd>
@@ -336,6 +401,28 @@ implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value of the <a href="#param-name"><code>name</code></a> record component</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="useQualifiedName()">
+<h3>useQualifiedName</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useQualifiedName</span>()</div>
+<div class="block">Returns the value of the <a href="#param-useQualifiedName"><code>useQualifiedName</code></a> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <a href="#param-useQualifiedName"><code>useQualifiedName</code></a> record component</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="useQualifiedAliases()">
+<h3>useQualifiedAliases</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useQualifiedAliases</span>()</div>
+<div class="block">Returns the value of the <a href="#param-useQualifiedAliases"><code>useQualifiedAliases</code></a> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <a href="#param-useQualifiedAliases"><code>useQualifiedAliases</code></a> record component</dd>
 </dl>
 </section>
 </li>

@@ -102,14 +102,29 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Regex pattern to split class names by dot '.' or dollar '$' sign.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#QUALIFIED_CALL_SEPARATOR" class="member-name-link">QUALIFIED_CALL_SEPARATOR</a></code></div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#FACTORY_NAMES" class="member-name-link">FACTORY_NAMES</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Separator used to join qualified calls (class::method).</div>
+<div class="block">Commonly recognized <b>factory-style static method names</b> in Java.</div>
+</div>
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
+<div class="col-second even-row-color"><code><a href="#FACTORY_PREFIXES" class="member-name-link">FACTORY_PREFIXES</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Common prefixes used to identify <b>factory-like methods</b> when scanning class members.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/regex/Pattern.html" title="class or interface in java.util.regex" class="external-link">Pattern</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#QUALIFIED_CALL_REGEX" class="member-name-link">QUALIFIED_CALL_REGEX</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Regex to match strings with at least one ':' and exactly one '::', with '::' before the last segment.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#QUALIFIED_NAME_SEPARATOR" class="member-name-link">QUALIFIED_NAME_SEPARATOR</a></code></div>
+<div class="col-second even-row-color"><code><a href="#QUALIFIED_CALL_SEPARATOR" class="member-name-link">QUALIFIED_CALL_SEPARATOR</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Separator used to join qualified calls (class::method).</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#QUALIFIED_NAME_SEPARATOR" class="member-name-link">QUALIFIED_NAME_SEPARATOR</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Separator used to join qualified names.</div>
 </div>
 </div>
@@ -148,23 +163,40 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a detailed, Arabic-formatted string representation of the specified Java class.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#filterClasses(java.util.Map,java.util.function.Predicate)" class="member-name-link">filterClasses</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classPredicate)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#cleanBuiltinFunctionName(java.lang.String,java.lang.String,boolean)" class="member-name-link">cleanBuiltinFunctionName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;replacement,
+ boolean&nbsp;removeDiacritics)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Normalizes a function or provider name by optionally removing Arabic diacritics
+ and replacing whitespace with underscores.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#filterClasses(java.util.Map,java.util.function.Predicate)" class="member-name-link">filterClasses</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classPredicate)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Filters a map of classes by applying a predicate on the Class objects.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getArabicClassQualifiers(java.util.Collection)" class="member-name-link">getArabicClassQualifiers</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&gt;&nbsp;classQualifiers)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getArabicClassQualifiers(java.util.Collection)" class="member-name-link">getArabicClassQualifiers</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&gt;&nbsp;classQualifiers)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Transliterates a collection of class qualifiers parts arrays into Arabic
  qualified names.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getArabicClassQualifiersMapping(java.util.Collection)" class="member-name-link">getArabicClassQualifiersMapping</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&gt;&nbsp;classQualifiers)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getArabicClassQualifiersMapping(java.util.Collection)" class="member-name-link">getArabicClassQualifiersMapping</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&gt;&nbsp;classQualifiers)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a map from Arabic transliterated qualified class names to the
  original qualified names.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBuiltinFunctionName(boolean,java.lang.String,java.lang.String,boolean)" class="member-name-link">getBuiltinFunctionName</a><wbr>(boolean&nbsp;useQualifiedName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ boolean&nbsp;removeNameDiacritics)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Constructs the canonical name for a built-in function, optionally using a qualified name
+ that includes the provider name.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBuiltinMethods(java.lang.Class)" class="member-name-link">getBuiltinMethods</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</code></div>
@@ -183,6 +215,31 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Retrieves built-in methods annotated with @NaftahFn from classes annotated
  with @NaftahFnProvider, filtered by a method predicate.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBuiltinMethods(java.util.Set)" class="member-name-link">getBuiltinMethods</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves built-in functions from multiple classes annotated with <a href="../../builtin/NaftahFnProvider.html" title="annotation interface in org.daiitech.naftah.builtin"><code>NaftahFnProvider</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getClassConstructors(java.lang.String,java.lang.Class)" class="member-name-link">getClassConstructors</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;qualifiedName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves all public constructors of the specified class and wraps them
+ as <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> instances.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getClassConstructors(java.util.Map)" class="member-name-link">getClassConstructors</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves all public constructors from the given classes without applying any filtering,
+ mapping each qualified class name to a list of <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> wrappers.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getClassConstructors(java.util.Map,java.util.function.Predicate)" class="member-name-link">getClassConstructors</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link">Constructor</a>&lt;?&gt;&gt;&nbsp;constructorPredicate)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves and groups constructors from multiple classes, filtered by a specified predicate,
+ mapping each qualified class name to a list of <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> wrappers.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getClassMethods(java.lang.String,java.lang.Class)" class="member-name-link">getClassMethods</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;qualifiedName,
@@ -229,9 +286,22 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns a qualified name by transliterating each part of the class name to Arabic.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isAccessibleClass(java.lang.Class)" class="member-name-link">isAccessibleClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasFactoryMethod(java.lang.Class)" class="member-name-link">hasFactoryMethod</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Determines whether the specified class defines at least one
+ <b>public static factory method</b> capable of producing
+ an instance of that class (or a subclass of it).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isAccessibleClass(java.lang.Class)" class="member-name-link">isAccessibleClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the class has at least one public static factory method.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isFactoryName(java.lang.String)" class="member-name-link">isFactoryName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Determines whether a given method name matches a known
+ factory method pattern.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isInstantiableClass(java.lang.Class)" class="member-name-link">isInstantiableClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</code></div>
@@ -240,10 +310,9 @@ loadScripts(document, 'script');</script>
  and has a public no-arg constructor.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isInvocable(java.lang.reflect.Method)" class="member-name-link">isInvocable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isInvocable(java.lang.reflect.Executable)" class="member-name-link">isInvocable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&nbsp;methodOrConstructor)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Checks if a method is invocable: public, not synthetic or bridge,
- and either static or declared in an instantiable class.</div>
+<div class="block">Determines whether a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a> (method or constructor) can be invoked dynamically.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isStatic(java.lang.reflect.Method)" class="member-name-link">isStatic</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method)</code></div>
@@ -310,6 +379,43 @@ loadScripts(document, 'script');</script>
 </ul>
 </dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="QUALIFIED_CALL_REGEX">
+<h3>QUALIFIED_CALL_REGEX</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/regex/Pattern.html" title="class or interface in java.util.regex" class="external-link">Pattern</a></span>&nbsp;<span class="element-name">QUALIFIED_CALL_REGEX</span></div>
+<div class="block">Regex to match strings with at least one ':' and exactly one '::', with '::' before the last segment.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="FACTORY_NAMES">
+<h3>FACTORY_NAMES</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">FACTORY_NAMES</span></div>
+<div class="block">Commonly recognized <b>factory-style static method names</b> in Java.
+
+ <p>These names are used by <code>hasFactoryMethod(Class&lt;?&gt;)</code> to detect
+ whether a class provides a static creation method that returns instances
+ of itself or its subclasses. This allows Naftah to treat such methods as
+ "constructors" in its interop layer.</p>
+
+ <p>The list includes canonical JDK factories (e.g., <code>of</code>, <code>from</code>),
+ builder-style factories, parser/deserializer names, and provider patterns
+ from the JDK, Guava, Jackson, and Spring ecosystems.</p></div>
+</section>
+</li>
+<li>
+<section class="detail" id="FACTORY_PREFIXES">
+<h3>FACTORY_PREFIXES</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">FACTORY_PREFIXES</span></div>
+<div class="block">Common prefixes used to identify <b>factory-like methods</b> when scanning class members.
+
+ <p>Unlike <a href="#FACTORY_NAMES"><code>FACTORY_NAMES</code></a>, these are matched as prefixes,
+ so methods such as <code>newBuilder()</code>, <code>createStream()</code>,
+ <code>fromJsonString()</code>, and <code>getInstanceSafe()</code> are also recognized.</p>
+
+ <p>This prefix-based detection is useful for frameworks that
+ generate descriptive factory names dynamically or through code generation.</p></div>
 </section>
 </li>
 </ul>
@@ -460,6 +566,43 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getClassConstructors(java.util.Map,java.util.function.Predicate)">
+<h3>getClassConstructors</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&gt;</span>&nbsp;<span class="element-name">getClassConstructors</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link">Constructor</a>&lt;?&gt;&gt;&nbsp;constructorPredicate)</span></div>
+<div class="block">Retrieves and groups constructors from multiple classes, filtered by a specified predicate,
+ mapping each qualified class name to a list of <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> wrappers.
+ <p>
+ For each class in the provided map, this method inspects its public constructors (via
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html#getConstructors()" title="class or interface in java.lang" class="external-link"><code>Class.getConstructors()</code></a>), applies the given <code>constructorPredicate</code>, and wraps
+ all matching constructors as <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> instances. The results are then grouped
+ by their qualified class names.
+ <p>
+ Any classes or constructors that cannot be accessed or processed (e.g., due to security restrictions)
+ are silently skipped.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>classes</code> - a map where each key is the fully qualified class name
+                             (e.g., <code>"com.example.MyClass"</code>) and each value is the corresponding
+                             <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> object</dd>
+<dd><code>constructorPredicate</code> - a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link"><code>Predicate</code></a> used to filter which constructors should be included</dd>
+<dt>Returns:</dt>
+<dd>a map where each key is a qualified class name and each value is a list of
+         <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> instances representing all constructors of that class
+         that satisfy the given predicate</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>classes</code> or <code>constructorPredicate</code> is <code>null</code></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html#getConstructors()" title="class or interface in java.lang" class="external-link"><code>Class.getConstructors()</code></a></li>
+<li><a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="getClassMethods(java.lang.String,java.lang.Class)">
 <h3>getClassMethods</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;</span>&nbsp;<span class="element-name">getClassMethods</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;qualifiedName,
@@ -475,6 +618,28 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getClassConstructors(java.lang.String,java.lang.Class)">
+<h3>getClassConstructors</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;</span>&nbsp;<span class="element-name">getClassConstructors</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;qualifiedName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</span></div>
+<div class="block">Retrieves all public constructors of the specified class and wraps them
+ as <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> instances.
+ <p>
+ Each <code>JvmClassInitializer</code> represents a single constructor
+ and includes its qualified name and reflective metadata.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>qualifiedName</code> - the fully qualified name of the class
+                      (e.g., "com.example.MyClass")</dd>
+<dd><code>clazz</code> - the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> object representing the class whose constructors
+                      should be retrieved</dd>
+<dt>Returns:</dt>
+<dd>a list of <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> instances representing all public
+         constructors of the specified class</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="getClassMethods(java.util.Map)">
 <h3>getClassMethods</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;&gt;</span>&nbsp;<span class="element-name">getClassMethods</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes)</span></div>
@@ -484,6 +649,36 @@ loadScripts(document, 'script');</script>
 <dd><code>classes</code> - map of qualified class names to Class objects</dd>
 <dt>Returns:</dt>
 <dd>map from qualified call string to list of JvmFunction wrappers</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getClassConstructors(java.util.Map)">
+<h3>getClassConstructors</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&gt;</span>&nbsp;<span class="element-name">getClassConstructors</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes)</span></div>
+<div class="block">Retrieves all public constructors from the given classes without applying any filtering,
+ mapping each qualified class name to a list of <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> wrappers.
+ <p>
+ This method is a convenience overload of
+ <a href="#getClassConstructors(java.util.Map,java.util.function.Predicate)"><code>getClassConstructors(Map, java.util.function.Predicate)</code></a> that includes
+ all available constructors by default.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>classes</code> - a map where each key is the fully qualified class name
+                (e.g., <code>"com.example.MyClass"</code>) and each value is the corresponding
+                <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> object</dd>
+<dt>Returns:</dt>
+<dd>a map from qualified class names to lists of <a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> instances
+         representing all public constructors of the given classes</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>classes</code> is <code>null</code></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="#getClassConstructors(java.util.Map,java.util.function.Predicate)"><code>getClassConstructors(Map, java.util.function.Predicate)</code></a></li>
+<li><a href="../../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -515,6 +710,76 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="hasFactoryMethod(java.lang.Class)">
+<h3>hasFactoryMethod</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasFactoryMethod</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</span></div>
+<div class="block">Determines whether the specified class defines at least one
+ <b>public static factory method</b> capable of producing
+ an instance of that class (or a subclass of it).
+
+ <p>This method is used by the Naftah Java interop layer to identify
+ Java types that are constructible through factory methods rather
+ than public constructors. Examples include:
+ <code>Optional.of()</code>, <code>LocalDate.parse()</code>, and
+ <code>List.copyOf()</code>.</p>
+
+ <p>The detection relies on a curated set of known factory method names
+ and prefixes (see <code>FACTORY_NAMES</code> and <code>FACTORY_PREFIXES</code>).
+ The following conditions must all be satisfied for a method to be
+ recognized as a valid factory:</p>
+
+ <ul>
+ <li>The method must be <code>public static</code>.</li>
+ <li>It must not be a compiler-generated bridge or synthetic method.</li>
+ <li>Its name must either match a known factory name
+ (e.g. <code>of</code>, <code>from</code>, <code>valueOf</code>)
+ or begin with a recognized prefix (e.g. <code>create</code>, <code>new</code>, <code>build</code>).</li>
+ <li>It must return a non-<code>void</code> type assignable to the declaring class,
+ or whose simple name contains the declaring class’s simple name
+ (to support builder/wrapper patterns).</li>
+ </ul>
+
+ <p>Example classes detected as factory-capable:</p>
+ <pre><code>
+ Optional.of("value");
+ LocalDate.parse("2025-11-07");
+ List.copyOf(existingList);
+ EnumSet.noneOf(MyEnum.class);
+ HttpRequest.newBuilder().build();
+ </code></pre>
+
+ <p>Classes that are primitives, arrays, or <code>void</code> are excluded immediately.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>clazz</code> - the class to inspect</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if the class declares at least one public static
+         factory method that produces instances of itself or a compatible type;
+         <code>false</code> otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isFactoryName(java.lang.String)">
+<h3>isFactoryName</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isFactoryName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
+<div class="block">Determines whether a given method name matches a known
+ factory method pattern.
+
+ <p>This method checks whether the name appears in the
+ <a href="#FACTORY_NAMES"><code>FACTORY_NAMES</code></a> set or begins with one of the
+ <a href="#FACTORY_PREFIXES"><code>FACTORY_PREFIXES</code></a>. Matching is case-sensitive
+ and uses simple string comparison for efficiency.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - the method name to test</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if the name matches a known factory name or prefix,
+         <code>false</code> otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="isStatic(java.lang.reflect.Method)">
 <h3>isStatic</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isStatic</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method)</span></div>
@@ -528,16 +793,31 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="isInvocable(java.lang.reflect.Method)">
+<section class="detail" id="isInvocable(java.lang.reflect.Executable)">
 <h3>isInvocable</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isInvocable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method)</span></div>
-<div class="block">Checks if a method is invocable: public, not synthetic or bridge,
- and either static or declared in an instantiable class.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isInvocable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&nbsp;methodOrConstructor)</span></div>
+<div class="block">Determines whether a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a> (method or constructor) can be invoked dynamically.
+
+ <p>A member is considered <em>invocable</em> if it meets all of the following conditions:</p>
+ <ul>
+ <li>It is <code>public</code>.</li>
+ <li>It is not synthetic or compiler-generated (e.g., bridge methods).</li>
+ <li>If it is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a>, it is either <code>static</code> or declared in an instantiable class.</li>
+ <li>If it is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a>, it belongs to an instantiable class.</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>method</code> - the method to check</dd>
+<dd><code>methodOrConstructor</code> - the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a> (method or constructor) to check</dd>
 <dt>Returns:</dt>
-<dd>true if invocable, false otherwise</dd>
+<dd><code>true</code> if the executable can be invoked via reflection, otherwise <code>false</code></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html#isBridge()" title="class or interface in java.lang.reflect" class="external-link"><code>Method.isBridge()</code></a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html#isSynthetic()" title="class or interface in java.lang.reflect" class="external-link"><code>Executable.isSynthetic()</code></a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Modifier.html#isPublic(int)" title="class or interface in java.lang.reflect" class="external-link"><code>Modifier.isPublic(int)</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -573,6 +853,43 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getBuiltinFunctionName(boolean,java.lang.String,java.lang.String,boolean)">
+<h3>getBuiltinFunctionName</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getBuiltinFunctionName</span><wbr><span class="parameters">(boolean&nbsp;useQualifiedName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ boolean&nbsp;removeNameDiacritics)</span></div>
+<div class="block">Constructs the canonical name for a built-in function, optionally using a qualified name
+ that includes the provider name.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>useQualifiedName</code> - whether to qualify the function name with the provider name</dd>
+<dd><code>providerName</code> - the name of the function provider (e.g. extension or library name)</dd>
+<dd><code>functionName</code> - the actual function name</dd>
+<dd><code>removeNameDiacritics</code> - whether to remove Arabic diacritics from both provider and function names</dd>
+<dt>Returns:</dt>
+<dd>the cleaned and optionally qualified function name, with spaces replaced by underscores</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="cleanBuiltinFunctionName(java.lang.String,java.lang.String,boolean)">
+<h3>cleanBuiltinFunctionName</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">cleanBuiltinFunctionName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;replacement,
+ boolean&nbsp;removeDiacritics)</span></div>
+<div class="block">Normalizes a function or provider name by optionally removing Arabic diacritics
+ and replacing whitespace with underscores.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - the original name to clean</dd>
+<dd><code>removeDiacritics</code> - whether to remove Arabic diacritics from the name</dd>
+<dt>Returns:</dt>
+<dd>a sanitized string with optional diacritics removed and spaces replaced with underscores</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="getBuiltinMethods(java.util.Map)">
 <h3>getBuiltinMethods</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;</span>&nbsp;<span class="element-name">getBuiltinMethods</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes)</span></div>
@@ -600,6 +917,23 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getBuiltinMethods(java.util.Set)">
+<h3>getBuiltinMethods</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;</span>&nbsp;<span class="element-name">getBuiltinMethods</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes)</span></div>
+<div class="block">Retrieves built-in functions from multiple classes annotated with <a href="../../builtin/NaftahFnProvider.html" title="annotation interface in org.daiitech.naftah.builtin"><code>NaftahFnProvider</code></a>.
+ <p>
+ This method aggregates results from all provided classes by invoking
+ <a href="#getBuiltinMethods(java.lang.Class)"><code>getBuiltinMethods(Class)</code></a> on each one.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>classes</code> - the set of classes to inspect</dd>
+<dt>Returns:</dt>
+<dd>a combined list of <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> instances from all classes,
+         or an empty list if none are found</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="classToDetailedString(java.lang.Class)">
 <h3>classToDetailedString</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">classToDetailedString</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</span></div>
@@ -619,7 +953,7 @@ loadScripts(document, 'script');</script>
  <p>
  Additionally, the method includes Arabic transliteration (phonetic representation in Arabic script)
  for class names and package names, using <a href="#getQualifiedName(java.lang.String)"><code>getQualifiedName(String)</code></a>
- or <code>ArabicUtils#transliterateToArabicScriptDefaultCustom(String...)</code>.
+ or <a href="../arabic/ArabicUtils.html#transliterateToArabicScriptDefault(java.lang.String...)"><code>ArabicUtils.transliterateToArabicScriptDefault(String...)</code></a>.
  For example, the simple name <code>ArrayList</code> might appear as:
  <pre><code>
  ArrayList - أرَي لِسْتْ

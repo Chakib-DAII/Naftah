@@ -145,61 +145,101 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#args" class="member-name-link">args</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>private boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#debug" class="member-name-link">debug</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#DEBUG_PROPERTY" class="member-name-link">DEBUG_PROPERTY</a></code></div>
-<div class="col-last even-row-color">
-<div class="block">Property to enable debug mode.</div>
-</div>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#FILE_ENCODING_PROPERTY" class="member-name-link">FILE_ENCODING_PROPERTY</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#BUILTIN_CLASSES" class="member-name-link">BUILTIN_CLASSES</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Property key for file encoding.</div>
+<div class="block">Configuration key representing the classes of builtin function set.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#FORCE_CLASSPATH_PROPERTY" class="member-name-link">FORCE_CLASSPATH_PROPERTY</a></code></div>
+<div class="col-second even-row-color"><code><a href="#BUILTIN_CLASSES_PROPERTY" class="member-name-link">BUILTIN_CLASSES_PROPERTY</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Property to force scanning the Java classpath.</div>
+<div class="block">Property to specify which builtin function set to use in Naftah.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#INSIDE_INIT_PROPERTY" class="member-name-link">INSIDE_INIT_PROPERTY</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#BUILTIN_PACKAGES" class="member-name-link">BUILTIN_PACKAGES</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Property set when inside the init command.</div>
+<div class="block">Configuration key representing the packages of builtin function set.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#INSIDE_MAN_PROPERTY" class="member-name-link">INSIDE_MAN_PROPERTY</a></code></div>
+<div class="col-second even-row-color"><code><a href="#BUILTIN_PACKAGES_PROPERTY" class="member-name-link">BUILTIN_PACKAGES_PROPERTY</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Property set when inside the man command.</div>
+<div class="block">Property to specify which package of builtin function set to use in Naftah.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#INSIDE_REPL_PROPERTY" class="member-name-link">INSIDE_REPL_PROPERTY</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#CACHE_SCANNING_RESULTS_PROPERTY" class="member-name-link">CACHE_SCANNING_RESULTS_PROPERTY</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Property set when inside the REPL (shell).</div>
+<div class="block">Cache results of classpath and JDK scanning.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#INSIDE_RUN_PROPERTY" class="member-name-link">INSIDE_RUN_PROPERTY</a></code></div>
+<div class="col-second even-row-color"><code><a href="#CONFIG_FILE" class="member-name-link">CONFIG_FILE</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Property set when inside the run command.</div>
+<div class="block">Default filename for the Naftah configuration file.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#INTERPOLATION_CACHE_PROPERTY" class="member-name-link">INTERPOLATION_CACHE_PROPERTY</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#CONFIG_FILE_PROPERTY" class="member-name-link">CONFIG_FILE_PROPERTY</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Property to enable caching of string interpolation text processing in Naftah.</div>
+<div class="block">Property to specify the path to a Naftah configuration file.</div>
 </div>
 <div class="col-first even-row-color"><code>private boolean</code></div>
-<div class="col-second even-row-color"><code><a href="#isScriptFile" class="member-name-link">isScriptFile</a></code></div>
+<div class="col-second even-row-color"><code><a href="#debug" class="member-name-link">debug</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#JAVA_VERSION_PROPERTY" class="member-name-link">JAVA_VERSION_PROPERTY</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#DEBUG_PROPERTY" class="member-name-link">DEBUG_PROPERTY</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">System property key for the Java version.</div>
+<div class="block">Property to enable debug mode.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#JAVA_VM_VENDOR_PROPERTY" class="member-name-link">JAVA_VM_VENDOR_PROPERTY</a></code></div>
+<div class="col-second even-row-color"><code><a href="#FILE_ENCODING_PROPERTY" class="member-name-link">FILE_ENCODING_PROPERTY</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Property key for file encoding.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#FORCE_CLASSPATH_PROPERTY" class="member-name-link">FORCE_CLASSPATH_PROPERTY</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Property to force scanning the Java classpath.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#INSIDE_INIT_PROPERTY" class="member-name-link">INSIDE_INIT_PROPERTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Property set when inside the init command.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#INSIDE_MAN_PROPERTY" class="member-name-link">INSIDE_MAN_PROPERTY</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Property set when inside the man command.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#INSIDE_REPL_PROPERTY" class="member-name-link">INSIDE_REPL_PROPERTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Property set when inside the REPL (shell).</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#INSIDE_RUN_PROPERTY" class="member-name-link">INSIDE_RUN_PROPERTY</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Property set when inside the run command.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#INTERPOLATION_CACHE_PROPERTY" class="member-name-link">INTERPOLATION_CACHE_PROPERTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Property to enable caching of string interpolation text processing in Naftah.</div>
+</div>
+<div class="col-first odd-row-color"><code>private boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#isScriptFile" class="member-name-link">isScriptFile</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#JAVA_VERSION_PROPERTY" class="member-name-link">JAVA_VERSION_PROPERTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">System property key for the Java version.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#JAVA_VM_VENDOR_PROPERTY" class="member-name-link">JAVA_VM_VENDOR_PROPERTY</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">System property key for the Java Virtual Machine vendor.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#LOAD_CLASSES_AND_FUNCTIONS_PROPERTY" class="member-name-link">LOAD_CLASSES_AND_FUNCTIONS_PROPERTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Controls whether class and function definitions should be loaded on startup.</div>
 </div>
 <div class="col-first odd-row-color"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.logging/java/util/logging/Logger.html" title="class or interface in java.util.logging" class="external-link">Logger</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#LOGGER" class="member-name-link">LOGGER</a></code></div>
@@ -216,13 +256,23 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Property to enable scanning the Java classpath for Naftah types.</div>
 </div>
-<div class="col-first even-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#script" class="member-name-link">script</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second odd-row-color"><code><a href="#STANDARD_EXTENSIONS" class="member-name-link">STANDARD_EXTENSIONS</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#SCAN_JDK_PROPERTY" class="member-name-link">SCAN_JDK_PROPERTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Property to enable scanning the Jdk classes for Naftah types.</div>
+</div>
+<div class="col-first odd-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#script" class="member-name-link">script</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
+<div class="col-second even-row-color"><code><a href="#STANDARD_EXTENSIONS" class="member-name-link">STANDARD_EXTENSIONS</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The recognized standard file extensions for Naftah scripts.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#UNDERSCORE" class="member-name-link">UNDERSCORE</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Constant representing a single underscore character ("_").</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="#VECTOR_API_PROPERTY" class="member-name-link">VECTOR_API_PROPERTY</a></code></div>
@@ -260,30 +310,41 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#initLogger(boolean)" class="member-name-link">initLogger</a><wbr>(boolean&nbsp;debug)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#initConfig()" class="member-name-link">initConfig</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Initializes the Java Util Logging configuration.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#main(java.lang.String%5B%5D)" class="member-name-link">main</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;args)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Main method of the Naftah interpreter.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#printPaddedErrorMessageToString(java.lang.Throwable)" class="member-name-link">printPaddedErrorMessageToString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Prints the error message of the given throwable with padding applied.</div>
+<div class="block">Initializes Naftah configuration by loading default and optional external property files.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#printPaddedToString(java.lang.Object)" class="member-name-link">printPaddedToString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#initLogger(boolean)" class="member-name-link">initLogger</a><wbr>(boolean&nbsp;debug)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Prints the string representation of the given object with padding applied.</div>
+<div class="block">Initializes the Java Util Logging configuration.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#main(java.lang.String%5B%5D)" class="member-name-link">main</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;args)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Main method of the Naftah interpreter.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#printPaddedErrorMessageToString(java.lang.Throwable)" class="member-name-link">printPaddedErrorMessageToString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;t)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Prints the error message of the given throwable with padding applied.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#processArgs(java.lang.String%5B%5D)" class="member-name-link">processArgs</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;args)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#printPaddedToString(java.lang.Object)" class="member-name-link">printPaddedToString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Prints the string representation of the given object with padding applied.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#processArgs(java.lang.String%5B%5D)" class="member-name-link">processArgs</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;args)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Processes the command line arguments and dispatches the appropriate command.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#processConfig(java.util.Properties)" class="member-name-link">processConfig</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;properties)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Processes the given configuration properties and updates corresponding system properties
+ for built-in function classes and packages.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#run(org.daiitech.naftah.Naftah.NaftahCommand)" class="member-name-link">run</a><wbr>(<a href="Naftah.NaftahCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand</a>&nbsp;naftahCommand)</code></div>
@@ -368,6 +429,36 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="SCAN_JDK_PROPERTY">
+<h3>SCAN_JDK_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">SCAN_JDK_PROPERTY</span></div>
+<div class="block">Property to enable scanning the Jdk classes for Naftah types.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.SCAN_JDK_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CACHE_SCANNING_RESULTS_PROPERTY">
+<h3>CACHE_SCANNING_RESULTS_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">CACHE_SCANNING_RESULTS_PROPERTY</span></div>
+<div class="block">Cache results of classpath and JDK scanning.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.CACHE_SCANNING_RESULTS_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="DEBUG_PROPERTY">
 <h3>DEBUG_PROPERTY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">DEBUG_PROPERTY</span></div>
@@ -422,6 +513,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="see-list">
 <li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.INSIDE_MAN_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="LOAD_CLASSES_AND_FUNCTIONS_PROPERTY">
+<h3>LOAD_CLASSES_AND_FUNCTIONS_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">LOAD_CLASSES_AND_FUNCTIONS_PROPERTY</span></div>
+<div class="block">Controls whether class and function definitions should be loaded on startup.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.LOAD_CLASSES_AND_FUNCTIONS_PROPERTY">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
@@ -533,10 +639,115 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="CONFIG_FILE_PROPERTY">
+<h3>CONFIG_FILE_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">CONFIG_FILE_PROPERTY</span></div>
+<div class="block">Property to specify the path to a Naftah configuration file.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.CONFIG_FILE_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="BUILTIN_CLASSES_PROPERTY">
+<h3>BUILTIN_CLASSES_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">BUILTIN_CLASSES_PROPERTY</span></div>
+<div class="block">Property to specify which builtin function set to use in Naftah.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.BUILTIN_CLASSES_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="BUILTIN_PACKAGES_PROPERTY">
+<h3>BUILTIN_PACKAGES_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">BUILTIN_PACKAGES_PROPERTY</span></div>
+<div class="block">Property to specify which package of builtin function set to use in Naftah.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="BUILTIN_CLASSES">
+<h3>BUILTIN_CLASSES</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">BUILTIN_CLASSES</span></div>
+<div class="block">Configuration key representing the classes of builtin function set.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.BUILTIN_CLASSES">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="BUILTIN_PACKAGES">
+<h3>BUILTIN_PACKAGES</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">BUILTIN_PACKAGES</span></div>
+<div class="block">Configuration key representing the packages of builtin function set.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.BUILTIN_PACKAGES">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="CONFIG_FILE">
+<h3>CONFIG_FILE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">CONFIG_FILE</span></div>
+<div class="block">Default filename for the Naftah configuration file.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.CONFIG_FILE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="STANDARD_EXTENSIONS">
 <h3>STANDARD_EXTENSIONS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">STANDARD_EXTENSIONS</span></div>
 <div class="block">The recognized standard file extensions for Naftah scripts.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="UNDERSCORE">
+<h3>UNDERSCORE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">UNDERSCORE</span></div>
+<div class="block">Constant representing a single underscore character ("_").</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.UNDERSCORE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -618,9 +829,46 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="processConfig(java.util.Properties)">
+<h3>processConfig</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">processConfig</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;properties)</span></div>
+<div class="block">Processes the given configuration properties and updates corresponding system properties
+ for built-in function classes and packages.
+
+ <p>If the provided <code>properties</code> include entries for
+ <a href="#BUILTIN_CLASSES"><code>BUILTIN_CLASSES</code></a> or <a href="#BUILTIN_PACKAGES"><code>BUILTIN_PACKAGES</code></a>, their values are appended
+ to the existing system properties <a href="#BUILTIN_CLASSES_PROPERTY"><code>BUILTIN_CLASSES_PROPERTY</code></a> and
+ <a href="#BUILTIN_PACKAGES_PROPERTY"><code>BUILTIN_PACKAGES_PROPERTY</code></a>, respectively. This behavior ensures that
+ built-in configurations are cumulative—existing values are preserved and new ones are appended.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>properties</code> - the configuration properties to process; may be <code>null</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="initConfig()">
+<h3>initConfig</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">initConfig</span>()</div>
+<div class="block">Initializes Naftah configuration by loading default and optional external property files.
+
+ <p>The initialization process follows these steps:</p>
+ <ol>
+ <li>Load default configuration properties from the resource file <a href="#CONFIG_FILE"><code>CONFIG_FILE</code></a>.</li>
+ <li>Apply built-in configuration values via <a href="#processConfig(java.util.Properties)"><code>processConfig(Properties)</code></a>.</li>
+ <li>If a system property <a href="#CONFIG_FILE_PROPERTY"><code>CONFIG_FILE_PROPERTY</code></a> is defined, attempt to load
+ external configuration from the specified file. External values override defaults.</li>
+ <li>If loading fails (e.g., due to <a href="errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a>), fall back to default properties.</li>
+ </ol>
+
+ <p>All successfully processed properties update system properties, including
+ <a href="#BUILTIN_CLASSES_PROPERTY"><code>BUILTIN_CLASSES_PROPERTY</code></a> and <a href="#BUILTIN_PACKAGES_PROPERTY"><code>BUILTIN_PACKAGES_PROPERTY</code></a>.</p></div>
+</section>
+</li>
+<li>
 <section class="detail" id="processArgs(java.lang.String[])">
 <h3>processArgs</h3>
-<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">processArgs</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;args)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">processArgs</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;args)</span></div>
 <div class="block">Processes the command line arguments and dispatches the appropriate command.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

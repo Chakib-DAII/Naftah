@@ -59,6 +59,10 @@ loadScripts(document, 'script');</script>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.BuiltinFunction">
 <h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.BuiltinFunction</a></h3>
 <div class="type-signature">class BuiltinFunction extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
 <ul class="block-list">
 <li>
 <section class="detail">
@@ -117,6 +121,11 @@ loadScripts(document, 'script');</script>
 <div class="block">The name of the method.</div>
 </li>
 <li class="block-list">
+<h5>methodParameterTypes</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;[] methodParameterTypes</pre>
+<div class="block">The method parameter types.</div>
+</li>
+<li class="block-list">
 <h5>providerInfo</h5>
 <pre><a href="org/daiitech/naftah/builtin/lang/NaftahFunctionProvider.html" title="class in org.daiitech.naftah.builtin.lang">NaftahFunctionProvider</a> providerInfo</pre>
 <div class="block">Provider information for this function.</div>
@@ -131,6 +140,10 @@ loadScripts(document, 'script');</script>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.ClassScanningResult">
 <h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/ClassScanningResult.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.ClassScanningResult</a></h3>
 <div class="type-signature">class ClassScanningResult extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
 <ul class="block-list">
 <li>
 <section class="detail">
@@ -172,6 +185,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Subset of classes that can be instantiated (e.g., not abstract).</div>
 </li>
 <li class="block-list">
+<h5>jvmClassInitializers</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&gt; jvmClassInitializers</pre>
+<div class="block">Maps qualified Java class names to lists of <a href="org/daiitech/naftah/builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> constructors.</div>
+</li>
+<li class="block-list">
 <h5>jvmFunctions</h5>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;&gt; jvmFunctions</pre>
 <div class="block">Maps qualified method or function names to lists of JVM functions (methods).</div>
@@ -203,9 +221,87 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.JvmClassInitializer">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.JvmClassInitializer</a></h3>
+<div class="type-signature">class JvmClassInitializer extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+<ul class="block-list">
+<li>
+<section class="detail">
+<h4>Serialization Methods</h4>
+<ul class="block-list">
+<li class="block-list">
+<h5>readObject</h5>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">readObject</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/ObjectInputStream.html" title="class or interface in java.io" class="external-link">ObjectInputStream</a>&nbsp;ois)</span>
+                 throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a>,
+<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassNotFoundException.html" title="class or interface in java.lang" class="external-link">ClassNotFoundException</a></span></div>
+<div class="block">Custom deserialization logic for restoring the transient <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a>.
+ <p>After reading object data, this method searches the declaring class for
+ a constructor with matching parameter types and restores it.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>ois</code> - the object input stream</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if an I/O error occurs</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassNotFoundException.html" title="class or interface in java.lang" class="external-link">ClassNotFoundException</a></code> - if a class cannot be found during deserialization</dd>
+</dl>
+</li>
+<li class="block-list">
+<h5>writeObject</h5>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">writeObject</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/ObjectOutputStream.html" title="class or interface in java.io" class="external-link">ObjectOutputStream</a>&nbsp;oos)</span>
+                  throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Custom serialization logic for writing non-transient fields.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>oos</code> - the object output stream</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if an I/O error occurs</dd>
+</dl>
+</li>
+</ul>
+</section>
+</li>
+<li>
+<section class="detail">
+<h4>Serialized Fields</h4>
+<ul class="block-list">
+<li class="block-list">
+<h5>clazz</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt; clazz</pre>
+<div class="block">The class declaring this constructor.</div>
+</li>
+<li class="block-list">
+<h5>constructorParameterTypes</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;[] constructorParameterTypes</pre>
+<div class="block">The parameter types accepted by this constructor.</div>
+</li>
+<li class="block-list">
+<h5>isInvocable</h5>
+<pre>boolean isInvocable</pre>
+<div class="block">Whether this constructor is invocable (accessible and valid).</div>
+</li>
+<li class="block-list">
+<h5>qualifiedName</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a> qualifiedName</pre>
+<div class="block">The fully qualified signature identifying this constructor.</div>
+</li>
+</ul>
+</section>
+</li>
+</ul>
+</section>
+</li>
+<li>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.JvmFunction">
 <h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.JvmFunction</a></h3>
 <div class="type-signature">class JvmFunction extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
 <ul class="block-list">
 <li>
 <section class="detail">
@@ -217,7 +313,7 @@ loadScripts(document, 'script');</script>
                  throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a>,
 <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassNotFoundException.html" title="class or interface in java.lang" class="external-link">ClassNotFoundException</a></span></div>
 <div class="block">Custom deserialization logic to restore the transient <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a>
- by searching methods with matching name in the class.</div>
+ by searching methods with matching name and parameter types in the class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>ois</code> - the object input stream</dd>
@@ -266,6 +362,11 @@ loadScripts(document, 'script');</script>
 <div class="block">The name of the method.</div>
 </li>
 <li class="block-list">
+<h5>methodParameterTypes</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;[] methodParameterTypes</pre>
+<div class="block">The method parameter types.</div>
+</li>
+<li class="block-list">
 <h5>qualifiedCall</h5>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a> qualifiedCall</pre>
 <div class="block">Fully qualified call signature of the method.</div>
@@ -280,6 +381,10 @@ loadScripts(document, 'script');</script>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.NaftahFunction">
 <h3>Record Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/NaftahFunction.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.NaftahFunction</a></h3>
 <div class="type-signature">class NaftahFunction extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
 <ul class="block-list">
 <li>
 <section class="detail">
@@ -320,6 +425,16 @@ loadScripts(document, 'script');</script>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a> usage</pre>
 <div class="block">The field for the <a href="./org/daiitech/naftah/builtin/lang/NaftahFunction.html#param-usage"><code>usage</code></a> record component.</div>
 </li>
+<li class="block-list">
+<h5>useQualifiedAliases</h5>
+<pre>boolean useQualifiedAliases</pre>
+<div class="block">The field for the <a href="./org/daiitech/naftah/builtin/lang/NaftahFunction.html#param-useQualifiedAliases"><code>useQualifiedAliases</code></a> record component.</div>
+</li>
+<li class="block-list">
+<h5>useQualifiedName</h5>
+<pre>boolean useQualifiedName</pre>
+<div class="block">The field for the <a href="./org/daiitech/naftah/builtin/lang/NaftahFunction.html#param-useQualifiedName"><code>useQualifiedName</code></a> record component.</div>
+</li>
 </ul>
 </section>
 </li>
@@ -330,6 +445,10 @@ loadScripts(document, 'script');</script>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.NaftahFunctionProvider">
 <h3>Record Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/NaftahFunctionProvider.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.NaftahFunctionProvider</a></h3>
 <div class="type-signature">class NaftahFunctionProvider extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
 <ul class="block-list">
 <li>
 <section class="detail">
@@ -349,6 +468,16 @@ loadScripts(document, 'script');</script>
 <h5>name</h5>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a> name</pre>
 <div class="block">The field for the <a href="./org/daiitech/naftah/builtin/lang/NaftahFunctionProvider.html#param-name"><code>name</code></a> record component.</div>
+</li>
+<li class="block-list">
+<h5>useQualifiedAliases</h5>
+<pre>boolean useQualifiedAliases</pre>
+<div class="block">The field for the <a href="./org/daiitech/naftah/builtin/lang/NaftahFunctionProvider.html#param-useQualifiedAliases"><code>useQualifiedAliases</code></a> record component.</div>
+</li>
+<li class="block-list">
+<h5>useQualifiedName</h5>
+<pre>boolean useQualifiedName</pre>
+<div class="block">The field for the <a href="./org/daiitech/naftah/builtin/lang/NaftahFunctionProvider.html#param-useQualifiedName"><code>useQualifiedName</code></a> record component.</div>
 </li>
 </ul>
 </section>
@@ -387,6 +516,10 @@ loadScripts(document, 'script');</script>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.Tuple">
 <h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/Tuple.html" title="class in org.daiitech.naftah.builtin.utils">org.daiitech.naftah.builtin.utils.Tuple</a></h3>
 <div class="type-signature">class Tuple extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
 <ul class="block-list">
 <li>
 <section class="detail">

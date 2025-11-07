@@ -100,20 +100,40 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html" title="class or interface in java.lang" class="external-link">Character</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#ESCAPE_CHAR_SET" class="member-name-link">ESCAPE_CHAR_SET</a></code></div>
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#COPIED_TO_CLIPBOARD_MSG" class="member-name-link">COPIED_TO_CLIPBOARD_MSG</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Message displayed when text is successfully copied to the clipboard.</div>
+</div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND" class="member-name-link">COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Command name for copying the last printed output to the clipboard.</div>
+</div>
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#COPY_TO_CLIPBOARD_COMMAND" class="member-name-link">COPY_TO_CLIPBOARD_COMMAND</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Command name for copying text to the clipboard.</div>
+</div>
+<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html" title="class or interface in java.lang" class="external-link">Character</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#ESCAPE_CHAR_SET" class="member-name-link">ESCAPE_CHAR_SET</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Set form of the escape characters for faster lookup.</div>
 </div>
-<div class="col-first odd-row-color"><code>static char[]</code></div>
-<div class="col-second odd-row-color"><code><a href="#ESCAPE_CHARS" class="member-name-link">ESCAPE_CHARS</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static char[]</code></div>
+<div class="col-second even-row-color"><code><a href="#ESCAPE_CHARS" class="member-name-link">ESCAPE_CHARS</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Characters that can be used to escape other characters.</div>
 </div>
-<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#ESCAPE_CHARS_REGEX" class="member-name-link">ESCAPE_CHARS_REGEX</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#ESCAPE_CHARS_REGEX" class="member-name-link">ESCAPE_CHARS_REGEX</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Regex pattern for matching escape characters or escape + newline.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/atomic/AtomicReference.html" title="class or interface in java.util.concurrent.atomic" class="external-link">AtomicReference</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#LAST_PRINTED" class="member-name-link">LAST_PRINTED</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Holds the last printed output as a thread-safe reference.</div>
 </div>
 <div class="col-first odd-row-color"><code>static com.vladsch.flexmark.parser.Parser</code></div>
 <div class="col-second odd-row-color"><code><a href="#MARKDOWN_PARSER" class="member-name-link">MARKDOWN_PARSER</a></code></div>
@@ -126,49 +146,54 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Indicates if multiline mode is active in the REPL.</div>
 </div>
-<div class="col-first odd-row-color"><code>static char[]</code></div>
-<div class="col-second odd-row-color"><code><a href="#QUOTE_CHARS" class="member-name-link">QUOTE_CHARS</a></code></div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#PASTE_FROM_CLIPBOARD_COMMAND" class="member-name-link">PASTE_FROM_CLIPBOARD_COMMAND</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Command name for pasting text from the clipboard.</div>
+</div>
+<div class="col-first even-row-color"><code>static char[]</code></div>
+<div class="col-second even-row-color"><code><a href="#QUOTE_CHARS" class="member-name-link">QUOTE_CHARS</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Quotation characters allowed in the REPL.</div>
 </div>
-<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#REGEX_COMMAND" class="member-name-link">REGEX_COMMAND</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#REGEX_COMMAND" class="member-name-link">REGEX_COMMAND</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Regex for matching command names.</div>
 </div>
-<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#REGEX_VARIABLE" class="member-name-link">REGEX_VARIABLE</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#REGEX_VARIABLE" class="member-name-link">REGEX_VARIABLE</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Regex for matching variable names.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#RTL_MULTILINE_PROMPT" class="member-name-link">RTL_MULTILINE_PROMPT</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#RTL_MULTILINE_PROMPT" class="member-name-link">RTL_MULTILINE_PROMPT</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Public RTL multiline prompt with optional reshaping for display.</div>
 </div>
-<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#RTL_MULTILINE_PROMPT_VALUE" class="member-name-link">RTL_MULTILINE_PROMPT_VALUE</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#RTL_MULTILINE_PROMPT_VALUE" class="member-name-link">RTL_MULTILINE_PROMPT_VALUE</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Right-to-left multiline prompt marker value.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#RTL_PAGINATION_PROMPT" class="member-name-link">RTL_PAGINATION_PROMPT</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#RTL_PAGINATION_PROMPT" class="member-name-link">RTL_PAGINATION_PROMPT</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The formatted RTL pagination prompt displayed to the user.</div>
 </div>
-<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#RTL_PAGINATION_PROMPT_VALUE" class="member-name-link">RTL_PAGINATION_PROMPT_VALUE</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#RTL_PAGINATION_PROMPT_VALUE" class="member-name-link">RTL_PAGINATION_PROMPT_VALUE</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The raw prompt message (in Arabic) used during right-to-left (RTL) pagination.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#RTL_PROMPT" class="member-name-link">RTL_PROMPT</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#RTL_PROMPT" class="member-name-link">RTL_PROMPT</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Public RTL prompt with optional reshaping for display.</div>
 </div>
-<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#RTL_PROMPT_VALUE" class="member-name-link">RTL_PROMPT_VALUE</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#RTL_PROMPT_VALUE" class="member-name-link">RTL_PROMPT_VALUE</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Right-to-left prompt value.</div>
 </div>
 </div>
@@ -202,6 +227,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearScreen()" class="member-name-link">clearScreen</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Clears the console screen using ANSI escape codes.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#copyToClipboard(java.lang.String)" class="member-name-link">copyToClipboard</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Copies the given text to the system clipboard.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.jline.reader.LineReader</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getLineReader(org.jline.terminal.Terminal)" class="member-name-link">getLineReader</a><wbr>(org.jline.terminal.Terminal&nbsp;terminal)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -233,47 +268,55 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Builds and returns a configured <code>Terminal</code> for use in the REPL.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#print(org.jline.terminal.Terminal,java.lang.String)" class="member-name-link">print</a><wbr>(org.jline.terminal.Terminal&nbsp;terminal,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;str)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pasteFromClipboard()" class="member-name-link">pasteFromClipboard</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Writes the given string to the terminal output without a newline.</div>
+<div class="block">Retrieves text content from the system clipboard.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#println(org.jline.reader.LineReader)" class="member-name-link">println</a><wbr>(org.jline.reader.LineReader&nbsp;reader)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#print(org.jline.terminal.Terminal,java.lang.String)" class="member-name-link">print</a><wbr>(org.jline.terminal.Terminal&nbsp;terminal,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;str)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Prints a platform-dependent newline to the terminal.</div>
+<div class="block">Writes the given string to the terminal output without a newline.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#println(org.jline.reader.LineReader,java.lang.String)" class="member-name-link">println</a><wbr>(org.jline.reader.LineReader&nbsp;reader,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#println(org.jline.reader.LineReader)" class="member-name-link">println</a><wbr>(org.jline.reader.LineReader&nbsp;reader)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Prints a platform-dependent newline to the terminal.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#println(org.jline.reader.LineReader,java.lang.String)" class="member-name-link">println</a><wbr>(org.jline.reader.LineReader&nbsp;reader,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Prints the given string followed by a newline to the terminal via the line reader.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.jline.utils.AttributedString</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rightAlign(org.jline.utils.AttributedString,int)" class="member-name-link">rightAlign</a><wbr>(org.jline.utils.AttributedString&nbsp;str,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.jline.utils.AttributedString</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rightAlign(org.jline.utils.AttributedString,int)" class="member-name-link">rightAlign</a><wbr>(org.jline.utils.AttributedString&nbsp;str,
  int&nbsp;width)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Aligns the given attributed string to the right side of the terminal,
  applying appropriate spacing and appending the prompt.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setupHistoryConfig(org.jline.reader.LineReader)" class="member-name-link">setupHistoryConfig</a><wbr>(org.jline.reader.LineReader&nbsp;reader)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setupHistoryConfig(org.jline.reader.LineReader,java.lang.String)" class="member-name-link">setupHistoryConfig</a><wbr>(org.jline.reader.LineReader&nbsp;reader,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;historyPath)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Configures history settings for the REPL, including history file path,
  size limits, and duplicate entry handling.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setupKeyBindingsConfig(org.jline.reader.LineReader)" class="member-name-link">setupKeyBindingsConfig</a><wbr>(org.jline.reader.LineReader&nbsp;reader)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setupTerminalCapabilities(org.jline.terminal.Terminal)" class="member-name-link">setupTerminalCapabilities</a><wbr>(org.jline.terminal.Terminal&nbsp;terminal)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setupKeyBindingsConfig(org.jline.reader.LineReader)" class="member-name-link">setupKeyBindingsConfig</a><wbr>(org.jline.reader.LineReader&nbsp;reader)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Configures custom key bindings and clipboard-related widgets for a given <code>LineReader</code>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setupTerminalCapabilities(org.jline.terminal.Terminal)" class="member-name-link">setupTerminalCapabilities</a><wbr>(org.jline.terminal.Terminal&nbsp;terminal)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Configures terminal capabilities, e.g., making the cursor invisible.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shouldQuit(org.jline.reader.LineReader)" class="member-name-link">shouldQuit</a><wbr>(org.jline.reader.LineReader&nbsp;reader)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shouldQuit(org.jline.reader.LineReader)" class="member-name-link">shouldQuit</a><wbr>(org.jline.reader.LineReader&nbsp;reader)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Prompts the user with a localized RTL pagination message asking whether to continue or quit.</div>
 </div>
 </div>
@@ -293,6 +336,17 @@ loadScripts(document, 'script');</script>
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="LAST_PRINTED">
+<h3>LAST_PRINTED</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/atomic/AtomicReference.html" title="class or interface in java.util.concurrent.atomic" class="external-link">AtomicReference</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">LAST_PRINTED</span></div>
+<div class="block">Holds the last printed output as a thread-safe reference.
+ <p>
+ This can be used for operations such as copying the last output to the clipboard
+ or accessing it programmatically. The use of <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/atomic/AtomicReference.html" title="class or interface in java.util.concurrent.atomic" class="external-link"><code>AtomicReference</code></a> ensures
+ that updates to the last printed value are thread-safe.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="RTL_PROMPT_VALUE">
 <h3>RTL_PROMPT_VALUE</h3>
@@ -365,6 +419,67 @@ loadScripts(document, 'script');</script>
  If Arabic text shaping is enabled (via <code>shouldReshape()</code>), this version
  uses a reshaped (visually adjusted) version of <a href="#RTL_PAGINATION_PROMPT_VALUE"><code>RTL_PAGINATION_PROMPT_VALUE</code></a>.
  Otherwise, it falls back to the original raw form.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="COPY_TO_CLIPBOARD_COMMAND">
+<h3>COPY_TO_CLIPBOARD_COMMAND</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">COPY_TO_CLIPBOARD_COMMAND</span></div>
+<div class="block">Command name for copying text to the clipboard.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#org.daiitech.naftah.utils.repl.REPLHelper.COPY_TO_CLIPBOARD_COMMAND">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="COPIED_TO_CLIPBOARD_MSG">
+<h3>COPIED_TO_CLIPBOARD_MSG</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">COPIED_TO_CLIPBOARD_MSG</span></div>
+<div class="block">Message displayed when text is successfully copied to the clipboard.
+ Arabic: "[تم النسخ إلى ذاكرة النسخ بنجاح]"</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#org.daiitech.naftah.utils.repl.REPLHelper.COPIED_TO_CLIPBOARD_MSG">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND">
+<h3>COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND</span></div>
+<div class="block">Command name for copying the last printed output to the clipboard.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#org.daiitech.naftah.utils.repl.REPLHelper.COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="PASTE_FROM_CLIPBOARD_COMMAND">
+<h3>PASTE_FROM_CLIPBOARD_COMMAND</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">PASTE_FROM_CLIPBOARD_COMMAND</span></div>
+<div class="block">Command name for pasting text from the clipboard.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#org.daiitech.naftah.utils.repl.REPLHelper.PASTE_FROM_CLIPBOARD_COMMAND">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -520,14 +635,16 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="setupHistoryConfig(org.jline.reader.LineReader)">
+<section class="detail" id="setupHistoryConfig(org.jline.reader.LineReader,java.lang.String)">
 <h3>setupHistoryConfig</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setupHistoryConfig</span><wbr><span class="parameters">(org.jline.reader.LineReader&nbsp;reader)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setupHistoryConfig</span><wbr><span class="parameters">(org.jline.reader.LineReader&nbsp;reader,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;historyPath)</span></div>
 <div class="block">Configures history settings for the REPL, including history file path,
  size limits, and duplicate entry handling.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>reader</code> - the LineReader to configure</dd>
+<dd><code>historyPath</code> - the path of history to use</dd>
 </dl>
 </section>
 </li>
@@ -535,6 +652,35 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setupKeyBindingsConfig(org.jline.reader.LineReader)">
 <h3>setupKeyBindingsConfig</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setupKeyBindingsConfig</span><wbr><span class="parameters">(org.jline.reader.LineReader&nbsp;reader)</span></div>
+<div class="block">Configures custom key bindings and clipboard-related widgets for a given <code>LineReader</code>.
+ <p>
+ This method performs the following actions:
+ <ul>
+ <li>Swaps the left and right arrow keys for cursor movement.</li>
+ <li>Adds widgets for clipboard operations:
+ <ul>
+ <li><code>copy-to-clipboard</code>: Copies the current buffer to the clipboard.</li>
+ <li><code>copy-last-output</code>: Copies the last printed output to the clipboard.</li>
+ <li><code>paste-from-clipboard</code>: Pastes clipboard content into the current buffer at the cursor
+ position.</li>
+ </ul>
+ </li>
+ <li>Binds keyboard shortcuts for clipboard and text editing operations:
+ <ul>
+ <li>Alt+C = copy current buffer</li>
+ <li>Alt+L = copy last printed output</li>
+ <li>Alt+V = paste from clipboard</li>
+ <li>Alt+M = mark start</li>
+ <li>Alt+X = cut selected region</li>
+ <li>Alt+K = copy selected region</li>
+ <li>Alt+Y = paste (yank)</li>
+ </ul>
+ </li>
+ </ul></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>reader</code> - the <code>LineReader</code> to configure with custom key bindings and clipboard widgets</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -576,6 +722,30 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="copyToClipboard(java.lang.String)">
+<h3>copyToClipboard</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">copyToClipboard</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</span></div>
+<div class="block">Copies the given text to the system clipboard.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>text</code> - the text to copy</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="pasteFromClipboard()">
+<h3>pasteFromClipboard</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">pasteFromClipboard</span>()</div>
+<div class="block">Retrieves text content from the system clipboard.
+ <p>
+ If the clipboard does not contain a string or an error occurs, an empty string is returned.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the text from the clipboard, or an empty string if unavailable</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="rightAlign(org.jline.utils.AttributedString,int)">
 <h3>rightAlign</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">org.jline.utils.AttributedString</span>&nbsp;<span class="element-name">rightAlign</span><wbr><span class="parameters">(org.jline.utils.AttributedString&nbsp;str,
@@ -604,6 +774,14 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd><code>true</code> if the input matches "q", "quit", or "خروج" (case-insensitive), otherwise <code>false</code></dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="clearScreen()">
+<h3>clearScreen</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearScreen</span>()</div>
+<div class="block">Clears the console screen using ANSI escape codes.
+ Moves the cursor to the top-left corner.</div>
 </section>
 </li>
 <li>

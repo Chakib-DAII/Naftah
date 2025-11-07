@@ -83,8 +83,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">This is the base package of Naftah programming language core classes and functions.</div>
 </div>
-<div class="col-first odd-row-color"><a href="../utils/package-summary.html">org.daiitech.naftah.builtin.utils</a></div>
+<div class="col-first odd-row-color"><a href="../functions/package-summary.html">org.daiitech.naftah.builtin.functions</a></div>
 <div class="col-last odd-row-color">
+<div class="block">This is the base package of Naftah programming language builtin functions.</div>
+</div>
+<div class="col-first even-row-color"><a href="../utils/package-summary.html">org.daiitech.naftah.builtin.utils</a></div>
+<div class="col-last even-row-color">
 <div class="block">This is the base package of Naftah programming language utilities.</div>
 </div>
 </div>
@@ -123,6 +127,15 @@ loadScripts(document, 'script');</script>
  provides utility methods for type checking, conversion, promotion,
  and normalization of numbers.</div>
 </div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Represents a Java class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> that can be invoked dynamically.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Represents any executable entity in the JVM runtime model, such as a method,
+ a constructor, or a class initializer (clinit block).</div>
+</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Represents a Java method that can be invoked dynamically.</div>
@@ -135,29 +148,34 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color class-summary class-summary-tab4">
 <div class="block">Represents a provider of Naftah functions.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="NaN.html" title="class in org.daiitech.naftah.builtin.lang">NaN</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="block">Represents a dynamic "Naftah" object — a flexible wrapper that can encapsulate
+ either a native Java object or a declarative structure of named fields.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="NaN.html" title="class in org.daiitech.naftah.builtin.lang">NaN</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Represents a singleton instance of a non-numeric value (NaN).</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="None.html" title="class in org.daiitech.naftah.builtin.lang">None</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="None.html" title="class in org.daiitech.naftah.builtin.lang">None</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">this class represents a singleton value indicating the absence of a value.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="Result.html" title="interface in org.daiitech.naftah.builtin.lang">Result</a>&lt;T,<wbr>E&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="Result.html" title="interface in org.daiitech.naftah.builtin.lang">Result</a>&lt;T,<wbr>E&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
 <div class="block">A sealed interface representing the result of a computation that may either succeed (Ok)
  or fail (Error).</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Result.Error.html" title="class in org.daiitech.naftah.builtin.lang">Result.Error</a>&lt;T,<wbr>E&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Result.Error.html" title="class in org.daiitech.naftah.builtin.lang">Result.Error</a>&lt;T,<wbr>E&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Represents a failed result containing an error value of type <code>E</code>.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Result.Ok.html" title="class in org.daiitech.naftah.builtin.lang">Result.Ok</a>&lt;T,<wbr>E&gt;</div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Result.Ok.html" title="class in org.daiitech.naftah.builtin.lang">Result.Ok</a>&lt;T,<wbr>E&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Represents a successful result containing a value of type <code>T</code>.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="ScannedClass.html" title="class in org.daiitech.naftah.builtin.lang">ScannedClass</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab4">Deprecated.
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="ScannedClass.html" title="class in org.daiitech.naftah.builtin.lang">ScannedClass</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">Deprecated.
 <div class="deprecation-comment">This class is deprecated and may be removed in future versions.</div>
 </div>
 </div>

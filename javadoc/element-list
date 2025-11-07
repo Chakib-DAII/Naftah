@@ -1,5 +1,6 @@
 org.daiitech.naftah
 org.daiitech.naftah.builtin
+org.daiitech.naftah.builtin.functions
 org.daiitech.naftah.builtin.lang
 org.daiitech.naftah.builtin.utils
 org.daiitech.naftah.builtin.utils.op

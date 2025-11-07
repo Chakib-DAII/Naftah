@@ -118,10 +118,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Error message indicating an overflow in a decimal number.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#NAN_DECIMAL_ERROR" class="member-name-link">NAN_DECIMAL_ERROR</a></code></div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#INVALID_INSTANCE_METHOD_CALL_MSG" class="member-name-link">INVALID_INSTANCE_METHOD_CALL_MSG</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Generates an error message indicating that an instance method was called incorrectly.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#NAN_DECIMAL_ERROR" class="member-name-link">NAN_DECIMAL_ERROR</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Error message indicating that the value is Not-a-Number (NaN).</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#NOTE" class="member-name-link">NOTE</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Note prefix used in error messages.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="#UNSUPPORTED_BITWISE_DECIMAL_ERROR" class="member-name-link">UNSUPPORTED_BITWISE_DECIMAL_ERROR</a></code></div>
@@ -235,16 +245,81 @@ loadScripts(document, 'script');</script>
  numeric types are unsupported.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahKeyNotFoundError(java.lang.Object)" class="member-name-link">newNaftahKeyNotFoundError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahIllegalArgumentError(java.lang.String,java.lang.String,int,int,java.lang.String,java.lang.Exception,int,int)" class="member-name-link">newNaftahIllegalArgumentError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerClassName,
+ int&nbsp;paramCount,
+ int&nbsp;argCount,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionDetailedString,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;e,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for illegal argument count or mismatched argument types.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahInstantiationError(java.lang.String,java.lang.String,java.lang.Exception,int,int)" class="member-name-link">newNaftahInstantiationError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionDetailedString,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;e,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> when object instantiation fails.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;<br><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahInvocableListFoundError(java.lang.String,java.util.Collection,java.lang.Throwable,int,int)" class="member-name-link">newNaftahInvocableListFoundError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;functionsOrClassInitializers,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;exception,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates and throws a <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> when a collection of invocable
+ functions or class initializers is found, but the caller did not specify
+ an index to select which one to invoke.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahInvocableNotFoundError(java.lang.String,int,int)" class="member-name-link">newNaftahInvocableNotFoundError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates and throws a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> when the requested invocable
+ (method or constructor) cannot be found in the current context.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahInvocationError(java.lang.String,java.lang.String,java.lang.Exception,int,int)" class="member-name-link">newNaftahInvocationError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionDetailedString,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;e,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for errors occurring during function invocation.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahKeyNotFoundError(java.lang.Object)" class="member-name-link">newNaftahKeyNotFoundError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that the specified key
  was not found in the associative array.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahNegativeNumberError()" class="member-name-link">newNaftahNegativeNumberError</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahNegativeNumberError()" class="member-name-link">newNaftahNegativeNumberError</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that negative numbers
  are not allowed.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahNonInvocableFunctionError(java.lang.String,java.lang.String,int,int)" class="member-name-link">newNaftahNonInvocableFunctionError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionDetailedString,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for functions that are not invocable.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahUnsupportedFunctionError(java.lang.String,java.lang.Class,int,int)" class="member-name-link">newNaftahUnsupportedFunctionError</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;functionClass,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that the specified function is not supported.</div>
 </div>
 </div>
 </div>
@@ -344,6 +419,48 @@ loadScripts(document, 'script');</script>
 </ul>
 </dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="NOTE">
+<h3>NOTE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NOTE</span></div>
+<div class="block">Note prefix used in error messages.
+ <p>
+ Arabic: "ملاحظة:"
+ </p></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.errors.ExceptionUtils.NOTE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="INVALID_INSTANCE_METHOD_CALL_MSG">
+<h3>INVALID_INSTANCE_METHOD_CALL_MSG</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BiFunction.html" title="class or interface in java.util.function" class="external-link">BiFunction</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">INVALID_INSTANCE_METHOD_CALL_MSG</span></div>
+<div class="block">Generates an error message indicating that an instance method was called incorrectly.
+ <p>
+ The message is in Arabic and explains that the method is not static and requires the
+ first argument (or second if the method is from a list of functions) to be the instance
+ on which the method will be invoked.
+ </p>
+
+ <p>Usage example:
+ <pre>
+ String msg = INVALID_INSTANCE_METHOD_CALL_MSG.apply("methodName", additionalInfo);
+ </pre>
+ </p>
+ <p>
+ Parameters:
+ <ul>
+ <li>First: the method name (<code>%s</code>)</li>
+ <li>Second: additional context or details (<code>%s</code>)</li>
+ </ul></div>
 </section>
 </li>
 </ul>
@@ -594,6 +711,171 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>a <code>NaftahBugError</code> describing the disallowed negative number error</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahUnsupportedFunctionError(java.lang.String,java.lang.Class,int,int)">
+<h3>newNaftahUnsupportedFunctionError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahUnsupportedFunctionError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;functionClass,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> indicating that the specified function is not supported.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the unsupported function.</dd>
+<dd><code>functionClass</code> - the class providing the function.</dd>
+<dd><code>line</code> - the line number in the source code where the error occurred.</dd>
+<dd><code>column</code> - the column number in the source code where the error occurred.</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> describing the unsupported function.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahIllegalArgumentError(java.lang.String,java.lang.String,int,int,java.lang.String,java.lang.Exception,int,int)">
+<h3>newNaftahIllegalArgumentError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahIllegalArgumentError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerClassName,
+ int&nbsp;paramCount,
+ int&nbsp;argCount,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionDetailedString,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;e,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for illegal argument count or mismatched argument types.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function being invoked.</dd>
+<dd><code>providerClassName</code> - the class providing the function.</dd>
+<dd><code>paramCount</code> - the expected number of parameters.</dd>
+<dd><code>argCount</code> - the actual number of arguments provided.</dd>
+<dd><code>functionDetailedString</code> - detailed string representation of the function.</dd>
+<dd><code>e</code> - the underlying exception, if any.</dd>
+<dd><code>line</code> - the line number where the error occurred.</dd>
+<dd><code>column</code> - the column number where the error occurred.</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> describing the illegal argument error.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahInvocationError(java.lang.String,java.lang.String,java.lang.Exception,int,int)">
+<h3>newNaftahInvocationError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahInvocationError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionDetailedString,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;e,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for errors occurring during function invocation.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function being invoked.</dd>
+<dd><code>functionDetailedString</code> - detailed string representation of the function.</dd>
+<dd><code>e</code> - the underlying exception.</dd>
+<dd><code>line</code> - the line number where the error occurred.</dd>
+<dd><code>column</code> - the column number where the error occurred.</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> describing the invocation error.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahNonInvocableFunctionError(java.lang.String,java.lang.String,int,int)">
+<h3>newNaftahNonInvocableFunctionError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahNonInvocableFunctionError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionDetailedString,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> for functions that are not invocable.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function.</dd>
+<dd><code>functionDetailedString</code> - detailed string representation of the function.</dd>
+<dd><code>line</code> - the line number where the error occurred.</dd>
+<dd><code>column</code> - the column number where the error occurred.</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> describing the non-invocable function error.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahInstantiationError(java.lang.String,java.lang.String,java.lang.Exception,int,int)">
+<h3>newNaftahInstantiationError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahInstantiationError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionDetailedString,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a>&nbsp;e,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Creates a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> when object instantiation fails.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function triggering instantiation.</dd>
+<dd><code>functionDetailedString</code> - detailed string representation of the function.</dd>
+<dd><code>e</code> - the underlying exception.</dd>
+<dd><code>line</code> - the line number where the error occurred.</dd>
+<dd><code>column</code> - the column number where the error occurred.</dd>
+<dt>Returns:</dt>
+<dd>a <code>NaftahBugError</code> describing the instantiation failure.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahInvocableNotFoundError(java.lang.String,int,int)">
+<h3>newNaftahInvocableNotFoundError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahInvocableNotFoundError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Creates and throws a new <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> when the requested invocable
+ (method or constructor) cannot be found in the current context.
+
+ <p>The generated error message (in Arabic) indicates that the target
+ callable symbol is undefined or inaccessible.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the missing invocable (method or constructor).</dd>
+<dd><code>line</code> - the source line number where the error occurred.</dd>
+<dd><code>column</code> - the source column number where the error occurred.</dd>
+<dt>Returns:</dt>
+<dd>this method never returns normally; it always throws a <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a>.</dd>
+<dt>Throws:</dt>
+<dd><code><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - always thrown to indicate a missing invocable.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="newNaftahInvocableListFoundError(java.lang.String,java.util.Collection,java.lang.Throwable,int,int)">
+<h3>newNaftahInvocableListFoundError</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;</span>
+<span class="return-type"><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahInvocableListFoundError</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;functionsOrClassInitializers,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" title="class or interface in java.lang" class="external-link">Throwable</a>&nbsp;exception,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Creates and throws a <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> when a collection of invocable
+ functions or class initializers is found, but the caller did not specify
+ an index to select which one to invoke.
+
+ <p>This is typically used for overloaded or indexed functions. The generated
+ error message (in Arabic) explains how to select a specific version using
+ a numeric index appended after the function name with a colon.</p>
+
+ <p>The message includes a numbered list of all available invocable versions
+ for reference.</p></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - type of <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> in the collection</dd>
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function or class initializer</dd>
+<dd><code>functionsOrClassInitializers</code> - a collection of available overloaded or indexed invocables</dd>
+<dd><code>exception</code> - the original exception that triggered this error, for context</dd>
+<dd><code>line</code> - the source line number where the error occurred</dd>
+<dd><code>column</code> - the source column number where the error occurred</dd>
+<dt>Returns:</dt>
+<dd>this method never returns normally; it always throws a <a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a></dd>
+<dt>Throws:</dt>
+<dd><code><a href="NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - always thrown to indicate ambiguity in the invocable list</dd>
 </dl>
 </section>
 </li>

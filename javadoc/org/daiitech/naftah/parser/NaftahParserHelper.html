@@ -228,64 +228,75 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Executes the parser by visiting the parse tree and returning the result.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAllChildren(org.antlr.v4.runtime.tree.ParseTree)" class="member-name-link">getAllChildren</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#FunctionToString(T)" class="member-name-link">FunctionToString</a><wbr>(T&nbsp;currentFunction)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Converts a function-like object into a detailed string representation for debugging or logging purposes.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAllChildren(org.antlr.v4.runtime.tree.ParseTree)" class="member-name-link">getAllChildren</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Collects all nodes in the subtree rooted at the given parse tree node, including itself.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAllChildrenOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">getAllChildrenOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.tree.Tree&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.tree.ParseTree&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAllChildrenOfType(org.antlr.v4.runtime.tree.ParseTree,java.lang.Class)" class="member-name-link">getAllChildrenOfType</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;ctx,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Retrieves all children of the given parse tree node that are of the specified type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBlockContext(org.daiitech.naftah.parser.NaftahParser.BlockContext,org.daiitech.naftah.parser.DefaultContext)" class="member-name-link">getBlockContext</a><wbr>(<a href="NaftahParser.BlockContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.BlockContext</a>&nbsp;ctx,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBlockContext(org.daiitech.naftah.parser.NaftahParser.BlockContext,org.daiitech.naftah.parser.DefaultContext)" class="member-name-link">getBlockContext</a><wbr>(<a href="NaftahParser.BlockContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.BlockContext</a>&nbsp;ctx,
  <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Supplies or updates the <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a> for a <code>Block</code> node.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CharStream</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCharStream(boolean,java.lang.String)" class="member-name-link">getCharStream</a><wbr>(boolean&nbsp;isScriptFile,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CharStream</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCharStream(boolean,java.lang.String)" class="member-name-link">getCharStream</a><wbr>(boolean&nbsp;isScriptFile,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;script)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Obtains a CharStream from a script string or script file path.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CommonTokenStream</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CommonTokenStream</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Gets a CommonTokenStream from the given character stream with no error listeners.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.misc.Pair&lt;<a href="NaftahLexer.html" title="class in org.daiitech.naftah.parser">NaftahLexer</a>,<wbr>org.antlr.v4.runtime.CommonTokenStream&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream,java.util.List)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.misc.Pair&lt;<a href="NaftahLexer.html" title="class in org.daiitech.naftah.parser">NaftahLexer</a>,<wbr>org.antlr.v4.runtime.CommonTokenStream&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream,java.util.List)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.ANTLRErrorListener&gt;&nbsp;errorListeners)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a lexer and CommonTokenStream from the given character stream and error listeners.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CommonTokenStream</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.antlr.v4.runtime.CommonTokenStream</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getCommonTokenStream(org.antlr.v4.runtime.CharStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">getCommonTokenStream</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;charStream,
  org.antlr.v4.runtime.ANTLRErrorListener&nbsp;errorListener)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Gets a CommonTokenStream from the given character stream and a single error listener.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getDisplayName(org.antlr.v4.runtime.tree.ParseTree,org.antlr.v4.runtime.Vocabulary)" class="member-name-link">getDisplayName</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;node,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getDisplayName(org.antlr.v4.runtime.tree.ParseTree,org.antlr.v4.runtime.Vocabulary)" class="member-name-link">getDisplayName</a><wbr>(org.antlr.v4.runtime.tree.ParseTree&nbsp;node,
  org.antlr.v4.runtime.Vocabulary&nbsp;vocabulary)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the display name of a token using the given ANTLR vocabulary.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFormattedTokenSymbols(java.lang.String,boolean)" class="member-name-link">getFormattedTokenSymbols</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tokenName,
- boolean&nbsp;ln)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns a formatted string of token symbols based on the token name.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFormattedTokenSymbols(org.antlr.v4.runtime.Vocabulary,int,boolean)" class="member-name-link">getFormattedTokenSymbols</a><wbr>(org.antlr.v4.runtime.Vocabulary&nbsp;vocabulary,
- int&nbsp;tokenType,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFormattedTokenSymbols(java.lang.String,boolean)" class="member-name-link">getFormattedTokenSymbols</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;tokenName,
  boolean&nbsp;ln)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a formatted string of token symbols based on the token name.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFormattedTokenSymbols(org.antlr.v4.runtime.Vocabulary,int,boolean)" class="member-name-link">getFormattedTokenSymbols</a><wbr>(org.antlr.v4.runtime.Vocabulary&nbsp;vocabulary,
+ int&nbsp;tokenType,
+ boolean&nbsp;ln)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a formatted string of token symbols based on the token type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;<br>T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFunction(java.util.Collection,java.lang.Number)" class="member-name-link">getFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;functions,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;functionIndex)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves a function (or executable) from a collection by its index.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getParser(org.antlr.v4.runtime.CommonTokenStream,java.util.List)" class="member-name-link">getParser</a><wbr>(org.antlr.v4.runtime.CommonTokenStream&nbsp;commonTokenStream,
@@ -366,109 +377,233 @@ T1 extends org.antlr.v4.runtime.tree.Tree&gt;<br>boolean</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if the given parse tree node has a direct parent of the specified type.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareDeclaredFunction(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.builtin.lang.DeclaredFunction)" class="member-name-link">prepareDeclaredFunction</a><wbr>(<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
- <a href="../builtin/lang/DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredFunction</a>&nbsp;function)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeBuiltinFunction(java.lang.String,org.daiitech.naftah.builtin.lang.BuiltinFunction,java.lang.Object%5B%5D,java.util.List,int,int)" class="member-name-link">invokeBuiltinFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;builtinFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Prepares a declared function by visiting and setting its parameters and return type if not already set.</div>
+<div class="block">Invokes a built-in function with either pre-prepared argument array or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> of <code>Pair</code> arguments.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareDeclaredFunctionArguments(java.util.List,java.util.List)" class="member-name-link">prepareDeclaredFunctionArguments</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../builtin/lang/DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a>&gt;&nbsp;parameters,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;arguments)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeBuiltinFunction(java.lang.String,org.daiitech.naftah.builtin.lang.BuiltinFunction,java.util.List,int,int)" class="member-name-link">invokeBuiltinFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;builtinFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Prepares a map of argument names to their values for a declared function.</div>
+<div class="block">Invokes a built-in function via reflection with automatic argument conversion.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeDeclaredFunction(org.daiitech.naftah.builtin.lang.DeclaredFunction,org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.util.List,org.daiitech.naftah.parser.DefaultContext)" class="member-name-link">invokeDeclaredFunction</a><wbr>(<a href="../builtin/lang/DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredFunction</a>&nbsp;declaredFunction,
+ <a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>&nbsp;defaultNaftahParserVisitor,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+ <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Prepares a parser instance from the given input character stream with no error listeners.</div>
+<div class="block">Invokes a declared function with provided arguments in the given context.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream,java.util.List)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.ANTLRErrorListener&gt;&nbsp;errorListeners)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeFunction(java.lang.String,java.util.Collection,java.util.List,int,int)" class="member-name-link">invokeFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;&nbsp;jvmFunctions,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Prepares a parser instance from the given input character stream with multiple error listeners.</div>
+<div class="block">Dynamically finds and invokes a function by name from a collection of <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> objects.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input,
- org.antlr.v4.runtime.ANTLRErrorListener&nbsp;errorListener)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmExecutable,java.lang.Object%5B%5D,java.util.List,java.lang.Object,int,int)" class="member-name-link">invokeFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&nbsp;selectedFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;possibleInstance,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Prepares a parser instance from the given input character stream with a single error listener.</div>
+<div class="block">Invokes a specific <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a>, either a <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> or <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmExecutable,java.util.List,java.lang.Object,int,int)" class="member-name-link">invokeFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&nbsp;selectedFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;possibleInstance,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Invokes a specific <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a>, either a <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> or <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmClassInitializer(java.lang.String,java.util.List,java.util.List,int,int)" class="member-name-link">invokeJvmClassInitializer</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classInitializerName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&nbsp;jvmClassInitializers,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Selects the best matching JVM class initializer from a collection and invokes it with automatic argument
+ conversion.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmClassInitializer(java.lang.String,org.daiitech.naftah.builtin.lang.JvmClassInitializer,java.lang.Object%5B%5D,java.util.List,int,int)" class="member-name-link">invokeJvmClassInitializer</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classInitializerName,
+ <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&nbsp;jvmClassInitializer,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Invokes a JVM class initializer with either pre-prepared argument array or a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> of
+ <code>Pair</code> arguments.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmClassInitializer(java.lang.String,org.daiitech.naftah.builtin.lang.JvmClassInitializer,java.util.List,int,int)" class="member-name-link">invokeJvmClassInitializer</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classInitializerName,
+ <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&nbsp;jvmClassInitializer,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Invokes a specific JVM class initializer (constructor) with automatic argument conversion.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmFunction,java.lang.Object%5B%5D,java.util.List,java.lang.Object,int,int)" class="member-name-link">invokeJvmFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&nbsp;jvmFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;possibleInstance,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Invokes a JVM function with either pre-prepared argument array or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> of <code>Pair</code> arguments.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmFunction,java.util.List,java.lang.Object,int,int)" class="member-name-link">invokeJvmFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&nbsp;jvmFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;possibleInstance,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Invokes a JVM function (static or instance) with automatic argument conversion.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolvePlaceholders(java.util.Properties)" class="member-name-link">resolvePlaceholders</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;props)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareDeclaredFunction(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.builtin.lang.DeclaredFunction)" class="member-name-link">prepareDeclaredFunction</a><wbr>(<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
+ <a href="../builtin/lang/DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredFunction</a>&nbsp;function)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Prepares a declared function by visiting and setting its parameters and return type if not already set.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareDeclaredFunctionArguments(java.util.List,java.util.List)" class="member-name-link">prepareDeclaredFunctionArguments</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../builtin/lang/DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a>&gt;&nbsp;parameters,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;arguments)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Prepares a map of argument names to their values for a declared function.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Prepares a parser instance from the given input character stream with no error listeners.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream,java.util.List)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.ANTLRErrorListener&gt;&nbsp;errorListeners)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Prepares a parser instance from the given input character stream with multiple error listeners.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="NaftahParser.html" title="class in org.daiitech.naftah.parser">NaftahParser</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareRun(org.antlr.v4.runtime.CharStream,org.antlr.v4.runtime.ANTLRErrorListener)" class="member-name-link">prepareRun</a><wbr>(org.antlr.v4.runtime.CharStream&nbsp;input,
+ org.antlr.v4.runtime.ANTLRErrorListener&nbsp;errorListener)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Prepares a parser instance from the given input character stream with a single error listener.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolvePlaceholders(java.util.Properties)" class="member-name-link">resolvePlaceholders</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;props)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Resolves placeholders in the properties values by replacing them with their corresponding
  property values.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolveValue(java.lang.String,java.util.Properties)" class="member-name-link">resolveValue</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolveValue(java.lang.String,java.util.Properties)" class="member-name-link">resolveValue</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a>&nbsp;props)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Resolves placeholders within a string value using the given properties.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#searchForNaftahScriptFile(java.lang.String)" class="member-name-link">searchForNaftahScriptFile</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#searchForNaftahScriptFile(java.lang.String)" class="member-name-link">searchForNaftahScriptFile</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;input)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Searches for a Naftah script file based on a given name, trying multiple extensions.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setForeachVariables(org.daiitech.naftah.parser.DefaultContext,java.lang.Class,org.daiitech.naftah.builtin.utils.Tuple,org.daiitech.naftah.builtin.utils.Tuple)" class="member-name-link">setForeachVariables</a><wbr>(<a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setForeachVariables(org.daiitech.naftah.parser.DefaultContext,java.lang.Class,org.daiitech.naftah.builtin.utils.Tuple,org.daiitech.naftah.builtin.utils.Tuple)" class="member-name-link">setForeachVariables</a><wbr>(<a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;? extends <a href="NaftahParser.ForeachTargetContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ForeachTargetContext</a>&gt;&nbsp;foreachTargetClass,
  <a href="../builtin/utils/Tuple.html" title="class in org.daiitech.naftah.builtin.utils">Tuple</a>&nbsp;variableNames,
  <a href="../builtin/utils/Tuple.html" title="class in org.daiitech.naftah.builtin.utils">Tuple</a>&nbsp;targetValues)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setObjectUsingQualifiedName(java.lang.String,org.daiitech.naftah.parser.DefaultContext,java.lang.Object)" class="member-name-link">setObjectUsingQualifiedName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;qualifiedName,
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setObjectUsingQualifiedName(java.lang.String,org.daiitech.naftah.parser.DefaultContext,java.lang.Object)" class="member-name-link">setObjectUsingQualifiedName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;qualifiedName,
  <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;newValue)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sets the value of a variable or nested property based on a qualified name string.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shouldBreakStatementsLoop(org.daiitech.naftah.parser.DefaultContext,org.antlr.v4.runtime.tree.ParseTree,java.lang.Object)" class="member-name-link">shouldBreakStatementsLoop</a><wbr>(<a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shouldBreakStatementsLoop(org.daiitech.naftah.parser.DefaultContext,org.antlr.v4.runtime.tree.ParseTree,java.lang.Object)" class="member-name-link">shouldBreakStatementsLoop</a><wbr>(<a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  org.antlr.v4.runtime.tree.ParseTree&nbsp;currentStatement,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;result)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Determines whether to break out of a loop based on the current context, statement, and result.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#typeMismatch(java.lang.Class,java.lang.Class)" class="member-name-link">typeMismatch</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;valueType,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;declarationType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Checks if there is a type mismatch between two classes.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#typeMismatch(java.lang.Object,java.lang.Class,java.lang.Class)" class="member-name-link">typeMismatch</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;valueType,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#typeMismatch(java.lang.Class,java.lang.Class)" class="member-name-link">typeMismatch</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;valueType,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;declarationType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks if there is a type mismatch between two classes.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#typeMismatch(java.lang.Object,java.lang.Class,java.lang.Class)" class="member-name-link">typeMismatch</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;valueType,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;declarationType)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks if there is a type mismatch between the given value and the declared type.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#visit(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.antlr.v4.runtime.tree.ParseTree)" class="member-name-link">visit</a><wbr>(<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#visit(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.antlr.v4.runtime.tree.ParseTree)" class="member-name-link">visit</a><wbr>(<a href="NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
  org.antlr.v4.runtime.tree.ParseTree&nbsp;tree)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Visits the given parse tree using the provided Naftah parser visitor.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.ParserRuleContext&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#visitContext(org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.lang.String,org.daiitech.naftah.parser.DefaultContext,T,org.daiitech.naftah.utils.function.TriFunction)" class="member-name-link">visitContext</a><wbr>(<a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>&nbsp;defaultNaftahParserVisitor,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.ParserRuleContext&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#visitContext(org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.lang.String,org.daiitech.naftah.parser.DefaultContext,T,org.daiitech.naftah.utils.function.TriFunction)" class="member-name-link">visitContext</a><wbr>(<a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>&nbsp;defaultNaftahParserVisitor,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;methodName,
  <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  T&nbsp;ctx,
  <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function">TriFunction</a>&lt;<a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>,<wbr><a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>,<wbr>T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;visitFunction)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.ParserRuleContext,<wbr>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Simplified overload of
+ <a href="#visitContext(org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.lang.String,org.daiitech.naftah.parser.DefaultContext,T,org.daiitech.naftah.utils.function.TriFunction,java.lang.Class)"><code>visitContext(DefaultNaftahParserVisitor, String, DefaultContext, ParserRuleContext, TriFunction, Class)</code></a>
+ that defaults to returning an <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends org.antlr.v4.runtime.ParserRuleContext,<wbr>
 R&gt;<br>R</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#visitContext(org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.lang.String,org.daiitech.naftah.parser.DefaultContext,T,org.daiitech.naftah.utils.function.TriFunction,java.lang.Class)" class="member-name-link">visitContext</a><wbr>(<a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>&nbsp;defaultNaftahParserVisitor,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#visitContext(org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.lang.String,org.daiitech.naftah.parser.DefaultContext,T,org.daiitech.naftah.utils.function.TriFunction,java.lang.Class)" class="member-name-link">visitContext</a><wbr>(<a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>&nbsp;defaultNaftahParserVisitor,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;methodName,
  <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  T&nbsp;ctx,
  <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function">TriFunction</a>&lt;<a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>,<wbr><a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>,<wbr>T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;visitFunction,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;R&gt;&nbsp;returnType)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Visits a specific parser rule context by applying a custom <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a>,
+ while automatically handling logging, debugging, and execution tracking.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#visitFunctionCallInChain(int,org.daiitech.naftah.parser.DefaultNaftahParserVisitor,org.daiitech.naftah.parser.DefaultContext,java.lang.String,java.util.List,java.lang.Number,int,int)" class="member-name-link">visitFunctionCallInChain</a><wbr>(int&nbsp;depth,
+ <a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>&nbsp;defaultNaftahParserVisitor,
+ <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;functionIndex,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Visits a specific parser context by applying a custom <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a> and handling
- logging and context execution tracking uniformly.</div>
+<div class="block">Resolves and executes a function call within a potential chain of calls.</div>
 </div>
 </div>
 </div>
@@ -1256,29 +1391,48 @@ R&gt;</span>
  T&nbsp;ctx,
  <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function">TriFunction</a>&lt;<a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>,<wbr><a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>,<wbr>T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;visitFunction,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;R&gt;&nbsp;returnType)</span></div>
-<div class="block">Visits a specific parser context by applying a custom <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a> and handling
- logging and context execution tracking uniformly.
+<div class="block">Visits a specific parser rule context by applying a custom <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a>,
+ while automatically handling logging, debugging, and execution tracking.
 
- <p>This method:
+ <p>This method provides a uniform mechanism for visiting ANTLR parser rule contexts
+ in the Naftah parsing system. It ensures that every context visit is logged and
+ marked as executed, and that a provided visitor function is safely applied to
+ the current context.</p>
+
+ <h3>Behavior summary</h3>
  <ul>
- <li>Logs debugging information about the current rule context</li>
- <li>Logs execution entry for the context</li>
- <li>Applies the provided visit function using the current visitor and context</li>
- <li>Marks the context as executed in the current context object</li>
- </ul></div>
+ <li>Logs debugging information for the current rule context (via <code>debugCurrentContextVisit</code>).</li>
+ <li>Logs execution entry for the context (via <code>logExecution</code>).</li>
+ <li>Applies the provided <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a> using the visitor, context, and parser rule.</li>
+ <li>Marks the context as executed in the <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a> instance.</li>
+ <li>Casts the visit result to the specified <code>returnType</code>.</li>
+ </ul>
+
+ <p>This version provides type safety by allowing the caller to specify
+ the expected return type.</p></div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>T</code> - a subclass of <code>ParserRuleContext</code> representing the current rule context</dd>
-<dd><code>R</code> - th return type of the parsed result</dd>
+<dd><code>T</code> - the type of the <code>ParserRuleContext</code> being visited</dd>
+<dd><code>R</code> - the result type returned by the visitor function</dd>
 <dt>Parameters:</dt>
-<dd><code>defaultNaftahParserVisitor</code> - the visitor instance used to process the parse tree node</dd>
-<dd><code>methodName</code> - the name of the calling method (for logging/debugging purposes)</dd>
-<dd><code>currentContext</code> - the current <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a> used during traversal</dd>
-<dd><code>ctx</code> - the current <code>ParserRuleContext</code> being visited</dd>
-<dd><code>visitFunction</code> - a <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a> that processes the visitor, context, and parse rule to
-                                   return a result</dd>
+<dd><code>defaultNaftahParserVisitor</code> - the active <a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser"><code>DefaultNaftahParserVisitor</code></a> handling the traversal</dd>
+<dd><code>methodName</code> - the name of the visitor method being invoked (for logging and debugging)</dd>
+<dd><code>currentContext</code> - the <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a> associated with the current traversal scope</dd>
+<dd><code>ctx</code> - the current <code>ParserRuleContext</code> node being visited</dd>
+<dd><code>visitFunction</code> - a <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a> that takes the visitor, context, and rule, and returns
+                                   a result</dd>
+<dd><code>returnType</code> - the expected type of the returned value</dd>
 <dt>Returns:</dt>
-<dd>the result of applying the visit function</dd>
+<dd>the result of applying the <code>visitFunction</code>, cast to the specified return type</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser"><code>DefaultNaftahParserVisitor</code></a></li>
+<li><a href="DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a></li>
+<li><code>ParserRuleContext</code></li>
+<li><a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -1291,6 +1445,33 @@ R&gt;</span>
  <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  T&nbsp;ctx,
  <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function">TriFunction</a>&lt;<a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>,<wbr><a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>,<wbr>T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;visitFunction)</span></div>
+<div class="block">Simplified overload of
+ <a href="#visitContext(org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.lang.String,org.daiitech.naftah.parser.DefaultContext,T,org.daiitech.naftah.utils.function.TriFunction,java.lang.Class)"><code>visitContext(DefaultNaftahParserVisitor, String, DefaultContext, ParserRuleContext, TriFunction, Class)</code></a>
+ that defaults to returning an <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a>.
+
+ <p>This variant is useful when the expected result type is not known in advance
+ or when generic type casting is unnecessary.</p></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the <code>ParserRuleContext</code> being visited</dd>
+<dt>Parameters:</dt>
+<dd><code>defaultNaftahParserVisitor</code> - the active <a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser"><code>DefaultNaftahParserVisitor</code></a> handling the traversal</dd>
+<dd><code>methodName</code> - the name of the visitor method being invoked (for logging and debugging)</dd>
+<dd><code>currentContext</code> - the <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a> associated with the current traversal scope</dd>
+<dd><code>ctx</code> - the current <code>ParserRuleContext</code> node being visited</dd>
+<dd><code>visitFunction</code> - a <a href="../utils/function/TriFunction.html" title="interface in org.daiitech.naftah.utils.function"><code>TriFunction</code></a> that takes the visitor, context, and rule, and returns
+                                   a result</dd>
+<dt>Returns:</dt>
+<dd>the result of applying the <code>visitFunction</code>, as a generic <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="#visitContext(org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.lang.String,org.daiitech.naftah.parser.DefaultContext,T,org.daiitech.naftah.utils.function.TriFunction,java.lang.Class)"><code>visitContext(DefaultNaftahParserVisitor, String, DefaultContext, ParserRuleContext, TriFunction, Class)</code></a></li>
+<li><a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser"><code>DefaultNaftahParserVisitor</code></a></li>
+<li><a href="DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a></li>
+</ul>
+</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -1418,6 +1599,480 @@ R&gt;</span>
 <dd>the top-level <a href="../builtin/lang/DeclaredVariable.html" title="class in org.daiitech.naftah.builtin.lang"><code>DeclaredVariable</code></a> (even if nested values were updated)</dd>
 <dt>Throws:</dt>
 <dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if a non-optional intermediate or final variable is not found</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="FunctionToString(T)">
+<h3 id="FunctionToString(java.lang.Object)">FunctionToString</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">FunctionToString</span><wbr><span class="parameters">(T&nbsp;currentFunction)</span></div>
+<div class="block">Converts a function-like object into a detailed string representation for debugging or logging purposes.
+
+ <p>This utility handles multiple kinds of function representations:
+ <ul>
+ <li><a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> — returns the detailed string via <a href="../builtin/lang/BuiltinFunction.html#toDetailedString()"><code>BuiltinFunction.toDetailedString()</code></a>.</li>
+ <li><a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a> — returns the detailed string via <a href="../builtin/lang/JvmFunction.html#toDetailedString()"><code>JvmFunction.toDetailedString()</code></a>.</li>
+ <li><a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> — returns the detailed string via
+ <a href="../builtin/lang/JvmClassInitializer.html#toDetailedString()"><code>JvmClassInitializer.toDetailedString()</code></a>.</li>
+ <li>Other objects — defaults to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link"><code>Object.toString()</code></a> if the type is unrecognized.</li>
+ </ul>
+
+ <p>This method is useful for introspection, debugging, or logging information about
+ function objects in a consistent and human-readable format.</p></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the function object</dd>
+<dt>Parameters:</dt>
+<dd><code>currentFunction</code> - the function object to convert; may be a built-in, JVM function, JVM class initializer,
+                        or any other object</dd>
+<dt>Returns:</dt>
+<dd>a detailed string representation of the function, or the default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link"><code>Object.toString()</code></a> for unknown
+         types</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getFunction(java.util.Collection,java.lang.Number)">
+<h3>getFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">getFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;functions,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;functionIndex)</span></div>
+<div class="block">Retrieves a function (or executable) from a collection by its index.
+
+ <p>This method works with any collection of <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> objects
+ and efficiently handles both <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> and generic <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a> implementations:
+ <ul>
+ <li>If the collection is a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a>, the function is accessed directly by index.</li>
+ <li>If the collection is a generic <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a>, the method iterates to the
+ specified index using <a href="../builtin/utils/CollectionUtils.html#getElementAt(java.util.Collection,int)"><code>CollectionUtils.getElementAt(Collection, int)</code></a>
+ .</li>
+ </ul>
+
+ <p>The function index is provided as a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> and converted to an integer internally.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of function, extending <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a></dd>
+<dt>Parameters:</dt>
+<dd><code>functions</code> - the collection of function objects</dd>
+<dd><code>functionIndex</code> - the index of the function to retrieve (as a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a>)</dd>
+<dt>Returns:</dt>
+<dd>the function object at the specified index</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IndexOutOfBoundsException.html" title="class or interface in java.lang" class="external-link">IndexOutOfBoundsException</a></code> - if the index is out of range</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeFunction(java.lang.String,java.util.Collection,java.util.List,int,int)">
+<h3>invokeFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;&nbsp;jvmFunctions,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</span>
+                             throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></span></div>
+<div class="block">Dynamically finds and invokes a function by name from a collection of <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> objects.
+
+ <p>This method performs the following steps:
+ <ol>
+ <li>Finds the best matching executable using
+ <a href="../utils/reflect/InvocationUtils.html#findBestExecutable(java.util.Collection,java.util.List)"><code>InvocationUtils.findBestExecutable(java.util.Collection&lt;T&gt;, java.util.List&lt;org.antlr.v4.runtime.misc.Pair&lt;java.lang.String, java.lang.Object&gt;&gt;)</code></a> based on the provided
+ arguments.</li>
+ <li>If the selected function is a non-static <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a>, the first argument is treated as the
+ instance.</li>
+ <li>Delegates the actual invocation to
+ <a href="#invokeFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmExecutable,java.lang.Object%5B%5D,java.util.List,java.lang.Object,int,int)"><code>invokeFunction(String, JvmExecutable, Object[], List, Object, int, int)</code></a>.</li>
+ </ol></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function to invoke (used for error reporting)</dd>
+<dd><code>jvmFunctions</code> - the collection of available <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> functions</dd>
+<dd><code>naftahArgs</code> - the list of arguments as <code>Pair</code>, where the first element may be the instance for
+                     non-static methods</dd>
+<dd><code>line</code> - the source line number for error reporting</dd>
+<dd><code>column</code> - the source column number for error reporting</dd>
+<dt>Returns:</dt>
+<dd>the result of the function invocation</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if no suitable function is found or invocation fails</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmExecutable,java.util.List,java.lang.Object,int,int)">
+<h3>invokeFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&nbsp;selectedFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;possibleInstance,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Invokes a specific <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a>, either a <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> or <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a>.
+
+ <p>This overload delegates to the more general method with <code>executableArgs</code> set to <code>null</code>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function for error reporting</dd>
+<dd><code>selectedFunction</code> - the executable to invoke</dd>
+<dd><code>naftahArgs</code> - the arguments prepared for the executable</dd>
+<dd><code>possibleInstance</code> - the instance to invoke on, or <code>null</code> for static methods</dd>
+<dd><code>line</code> - the source line number for error reporting</dd>
+<dd><code>column</code> - the source column number for error reporting</dd>
+<dt>Returns:</dt>
+<dd>the result of the invocation</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the function type is unsupported or invocation fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmExecutable,java.lang.Object[],java.util.List,java.lang.Object,int,int)">
+<h3>invokeFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&nbsp;selectedFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;possibleInstance,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Invokes a specific <a href="../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a>, either a <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> or <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a>.
+
+ <p>This is the core method handling actual execution:
+ <ul>
+ <li><a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> invocation via <a href="#invokeBuiltinFunction(java.lang.String,org.daiitech.naftah.builtin.lang.BuiltinFunction,java.util.List,int,int)"><code>invokeBuiltinFunction(java.lang.String, org.daiitech.naftah.builtin.lang.BuiltinFunction, java.util.List&lt;org.antlr.v4.runtime.misc.Pair&lt;java.lang.String, java.lang.Object&gt;&gt;, int, int)</code></a></li>
+ <li><a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a> invocation via <a href="#invokeJvmFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmFunction,java.util.List,java.lang.Object,int,int)"><code>invokeJvmFunction(java.lang.String, org.daiitech.naftah.builtin.lang.JvmFunction, java.util.List&lt;org.antlr.v4.runtime.misc.Pair&lt;java.lang.String, java.lang.Object&gt;&gt;, java.lang.Object, int, int)</code></a></li>
+ <li>Throws <a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> if the function type is unsupported</li>
+ </ul></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function for error reporting</dd>
+<dd><code>selectedFunction</code> - the executable to invoke</dd>
+<dd><code>executableArgs</code> - the prepared arguments array for the executable (may be <code>null</code>)</dd>
+<dd><code>naftahArgs</code> - the original list of <code>Pair</code> arguments</dd>
+<dd><code>possibleInstance</code> - the instance to invoke on, or <code>null</code> for static methods</dd>
+<dd><code>line</code> - the source line number for error reporting</dd>
+<dd><code>column</code> - the source column number for error reporting</dd>
+<dt>Returns:</dt>
+<dd>the result of the invocation</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the function type is unsupported or invocation fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeDeclaredFunction(org.daiitech.naftah.builtin.lang.DeclaredFunction,org.daiitech.naftah.parser.DefaultNaftahParserVisitor,java.util.List,org.daiitech.naftah.parser.DefaultContext)">
+<h3>invokeDeclaredFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeDeclaredFunction</span><wbr><span class="parameters">(<a href="../builtin/lang/DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredFunction</a>&nbsp;declaredFunction,
+ <a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>&nbsp;defaultNaftahParserVisitor,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+ <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext)</span></div>
+<div class="block">Invokes a declared function with provided arguments in the given context.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>declaredFunction</code> - the declared function to invoke</dd>
+<dd><code>defaultNaftahParserVisitor</code> - the visitor used to evaluate the function body</dd>
+<dd><code>args</code> - the list of argument name/value pairs</dd>
+<dd><code>currentContext</code> - the current execution context</dd>
+<dt>Returns:</dt>
+<dd>the result of invoking the declared function</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeBuiltinFunction(java.lang.String,org.daiitech.naftah.builtin.lang.BuiltinFunction,java.util.List,int,int)">
+<h3>invokeBuiltinFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeBuiltinFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;builtinFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Invokes a built-in function via reflection with automatic argument conversion.
+
+ <p>This method supports two types of argument inputs:
+ <ul>
+ <li>If <code>executableArgs</code> is provided, it is passed directly to the underlying
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a>.</li>
+ <li>If <code>naftahArgs</code> is provided as a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> of <code>Pair</code> objects (name/value pairs),
+ each argument is automatically converted to match the parameter type using
+ <a href="../utils/reflect/InvocationUtils.html#invokeJvmExecutable(java.lang.Object,T,java.util.List,java.lang.Class,boolean)"><code>InvocationUtils.invokeJvmExecutable(java.lang.Object, T, java.util.List&lt;org.antlr.v4.runtime.misc.Pair&lt;java.lang.String, java.lang.Object&gt;&gt;, java.lang.Class&lt;?&gt;, boolean)</code></a>.</li>
+ </ul>
+
+ <p>Supports conversions for primitives, arrays, collections, and generic types. If conversion fails or the
+ argument count does not match, detailed runtime errors including line and column are thrown.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function for error reporting</dd>
+<dd><code>builtinFunction</code> - the <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> to invoke</dd>
+<dd><code>naftahArgs</code> - a list of arguments as <code>Pair</code> name/value pairs</dd>
+<dd><code>line</code> - the source line number for error reporting</dd>
+<dd><code>column</code> - the source column number for error reporting</dd>
+<dt>Returns:</dt>
+<dd>the result of the function, or <a href="../builtin/lang/None.html#get()"><code>None.get()</code></a> if the function returns <code>void</code> or <code>null</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if argument types/count do not match, invocation fails, or instantiation fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeBuiltinFunction(java.lang.String,org.daiitech.naftah.builtin.lang.BuiltinFunction,java.lang.Object[],java.util.List,int,int)">
+<h3>invokeBuiltinFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeBuiltinFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;builtinFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Invokes a built-in function with either pre-prepared argument array or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> of <code>Pair</code> arguments.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function for error reporting</dd>
+<dd><code>builtinFunction</code> - the <a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> to invoke</dd>
+<dd><code>executableArgs</code> - the pre-prepared argument array (nullable)</dd>
+<dd><code>naftahArgs</code> - a list of arguments as <code>Pair</code> name/value pairs</dd>
+<dd><code>line</code> - the source line number</dd>
+<dd><code>column</code> - the source column number</dd>
+<dt>Returns:</dt>
+<dd>the result of the function, or <a href="../builtin/lang/None.html#get()"><code>None.get()</code></a> if <code>void</code> or <code>null</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if argument types/count do not match, invocation fails, or instantiation fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeJvmFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmFunction,java.util.List,java.lang.Object,int,int)">
+<h3>invokeJvmFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&nbsp;jvmFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;possibleInstance,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Invokes a JVM function (static or instance) with automatic argument conversion.
+
+ <p>For instance methods, the first argument must be the object instance. Arguments are converted to match
+ the method parameter types, including primitives, arrays, collections, and generic types.
+
+ <p>The result is wrapped in a <a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a>. If the method returns <code>void</code> or <code>null</code>,
+ a <a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> representing <code>null</code> is returned.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function for error reporting</dd>
+<dd><code>jvmFunction</code> - the <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a> to invoke</dd>
+<dd><code>naftahArgs</code> - a list of arguments as <code>Pair</code> name/value pairs</dd>
+<dd><code>possibleInstance</code> - the instance for instance methods; <code>null</code> for static methods</dd>
+<dd><code>line</code> - the source line number</dd>
+<dd><code>column</code> - the source column number</dd>
+<dt>Returns:</dt>
+<dd>a <a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> wrapping the result</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if instance is missing, arguments mismatch, invocation fails, instantiation fails, or
+                        the function is non-invocable</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeJvmFunction(java.lang.String,org.daiitech.naftah.builtin.lang.JvmFunction,java.lang.Object[],java.util.List,java.lang.Object,int,int)">
+<h3>invokeJvmFunction</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmFunction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&nbsp;jvmFunction,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;possibleInstance,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Invokes a JVM function with either pre-prepared argument array or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> of <code>Pair</code> arguments.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>functionName</code> - the name of the function for error reporting</dd>
+<dd><code>jvmFunction</code> - the <a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a> to invoke</dd>
+<dd><code>executableArgs</code> - the pre-prepared argument array (nullable)</dd>
+<dd><code>naftahArgs</code> - a list of arguments as <code>Pair</code> name/value pairs</dd>
+<dd><code>possibleInstance</code> - the instance for instance methods; <code>null</code> for static methods</dd>
+<dd><code>line</code> - the source line number</dd>
+<dd><code>column</code> - the source column number</dd>
+<dt>Returns:</dt>
+<dd>a <a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> wrapping the result</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if instance is missing, arguments mismatch, invocation fails, instantiation fails, or
+                        the function is non-invocable</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeJvmClassInitializer(java.lang.String,org.daiitech.naftah.builtin.lang.JvmClassInitializer,java.util.List,int,int)">
+<h3>invokeJvmClassInitializer</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmClassInitializer</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classInitializerName,
+ <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&nbsp;jvmClassInitializer,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Invokes a specific JVM class initializer (constructor) with automatic argument conversion.
+
+ <p>Creates a new instance of the class represented by the provided <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a>. Arguments
+ are automatically converted to match the constructor's parameter types. The resulting instance is wrapped
+ in a <a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a>.
+
+ <p>Reflection exceptions are caught and rethrown as detailed Naftah-specific errors, including the
+ class name, constructor signature, and source location (line/column).</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>classInitializerName</code> - the name of the class initializer (for error reporting)</dd>
+<dd><code>jvmClassInitializer</code> - the <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> representing the constructor</dd>
+<dd><code>naftahArgs</code> - a list of arguments as <code>Pair</code> name/value pairs</dd>
+<dd><code>line</code> - the source line number</dd>
+<dd><code>column</code> - the source column number</dd>
+<dt>Returns:</dt>
+<dd>a <a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> containing the newly created instance</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if arguments do not match, constructor cannot be accessed, or instantiation fails</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a></li>
+<li><a href="../utils/reflect/InvocationUtils.html#invokeJvmConstructor(T,java.util.List,java.lang.Class,boolean)"><code>InvocationUtils.invokeJvmConstructor(T, java.util.List&lt;org.antlr.v4.runtime.misc.Pair&lt;java.lang.String, java.lang.Object&gt;&gt;, java.lang.Class&lt;?&gt;, boolean)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeJvmClassInitializer(java.lang.String,org.daiitech.naftah.builtin.lang.JvmClassInitializer,java.lang.Object[],java.util.List,int,int)">
+<h3>invokeJvmClassInitializer</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmClassInitializer</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classInitializerName,
+ <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&nbsp;jvmClassInitializer,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Invokes a JVM class initializer with either pre-prepared argument array or a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link"><code>List</code></a> of
+ <code>Pair</code> arguments.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>classInitializerName</code> - the name of the class initializer (for error reporting)</dd>
+<dd><code>jvmClassInitializer</code> - the <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> representing the constructor</dd>
+<dd><code>executableArgs</code> - the pre-prepared argument array (nullable)</dd>
+<dd><code>naftahArgs</code> - a list of arguments as <code>Pair</code> name/value pairs</dd>
+<dd><code>line</code> - the source line number</dd>
+<dd><code>column</code> - the source column number</dd>
+<dt>Returns:</dt>
+<dd>a <a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> containing the newly created instance</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if arguments do not match, constructor cannot be accessed, or instantiation fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="invokeJvmClassInitializer(java.lang.String,java.util.List,java.util.List,int,int)">
+<h3>invokeJvmClassInitializer</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmClassInitializer</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classInitializerName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&nbsp;jvmClassInitializers,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ int&nbsp;line,
+ int&nbsp;column)</span>
+                                        throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></span></div>
+<div class="block">Selects the best matching JVM class initializer from a collection and invokes it with automatic argument
+ conversion.
+
+ <p>Evaluates all provided <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> instances, selects the one whose parameters best
+ match the provided arguments, and then invokes it using
+ <a href="#invokeJvmClassInitializer(java.lang.String,org.daiitech.naftah.builtin.lang.JvmClassInitializer,java.lang.Object%5B%5D,java.util.List,int,int)"><code>invokeJvmClassInitializer(String, JvmClassInitializer, Object[], List, int, int)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>classInitializerName</code> - the name of the class initializer (for error reporting)</dd>
+<dd><code>jvmClassInitializers</code> - the collection of candidate <a href="../builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> instances</dd>
+<dd><code>naftahArgs</code> - a list of arguments as <code>Pair</code> name/value pairs</dd>
+<dd><code>line</code> - the source line number</dd>
+<dd><code>column</code> - the source column number</dd>
+<dt>Returns:</dt>
+<dd>a <a href="../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> containing the newly created instance</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if no suitable constructor is found or invocation fails</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></code></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="#invokeJvmClassInitializer(java.lang.String,org.daiitech.naftah.builtin.lang.JvmClassInitializer,java.lang.Object%5B%5D,java.util.List,int,int)"><code>invokeJvmClassInitializer(String, JvmClassInitializer, Object[], List, int, int)</code></a></li>
+<li><a href="../utils/reflect/InvocationUtils.html#findBestExecutable(java.util.Collection,java.util.List)"><code>InvocationUtils.findBestExecutable(Collection, List)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitFunctionCallInChain(int,org.daiitech.naftah.parser.DefaultNaftahParserVisitor,org.daiitech.naftah.parser.DefaultContext,java.lang.String,java.util.List,java.lang.Number,int,int)">
+<h3>visitFunctionCallInChain</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">visitFunctionCallInChain</span><wbr><span class="parameters">(int&nbsp;depth,
+ <a href="DefaultNaftahParserVisitor.html" title="class in org.daiitech.naftah.parser">DefaultNaftahParserVisitor</a>&nbsp;defaultNaftahParserVisitor,
+ <a href="DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;functionName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;functionIndex,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Resolves and executes a function call within a potential chain of calls.
+
+ <p>This method identifies the correct function type from the current context and
+ invokes it, handling the following cases:</p>
+
+ <ul>
+ <li><a href="../builtin/lang/DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>DeclaredFunction</code></a> — user-defined functions stored in the current context</li>
+ <li><a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> — internal built-in language functions</li>
+ <li><a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a> — Java-reflected methods (static or instance) accessible from Naftah</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a> — a group of callable functions (overloaded or indexed) where a
+ numeric index may be required to select the target</li>
+ </ul>
+
+ <p>The method supports both instance and static JVM functions. For instance methods,
+ the first argument in <code>args</code> is treated as the target instance. For collections of
+ functions, the <code>functionIndex</code> parameter selects which function to invoke. If omitted,
+ the method attempts to resolve the best match automatically.</p>
+
+ <p>During execution, a unique function call ID is generated for the current context to
+ support tracing and debugging.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>depth</code> - the current recursion or call depth, used to generate a unique call ID</dd>
+<dd><code>defaultNaftahParserVisitor</code> - the parser visitor driving the execution</dd>
+<dd><code>currentContext</code> - the execution context containing functions, variables, and state</dd>
+<dd><code>functionName</code> - the name of the function to invoke</dd>
+<dd><code>args</code> - a list of <code>Pair&lt;String, Object&gt;</code> representing the function arguments</dd>
+<dd><code>functionIndex</code> - an optional numeric index for selecting a function from a collection of
+                                   overloaded or indexed functions; may be <code>null</code></dd>
+<dd><code>line</code> - the source line number for error reporting</dd>
+<dd><code>column</code> - the source column number for error reporting</dd>
+<dt>Returns:</dt>
+<dd>the result of executing the resolved function</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the function cannot be invoked or the instance for an instance method is
+                                  missing</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if argument counts or types do not match the target function</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if required context or arguments are missing</dd>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the function object is not invocable</dd>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if a collection of functions cannot be resolved to a single invocable</dd>
+<dd><code><a href="../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if no function exists with the given name in the current context
+
+                                  <p><b>Example usage:</b></p>
+                                  <pre><code>
+                                                                                                                                                                                                         visitFunctionCallInChain(
+                                                                                                                                                                                                         0,
+                                                                                                                                                                                                         visitor,
+                                                                                                                                                                                                         context,
+                                                                                                                                                                                                         "print",
+                                                                                                                                                                                                          List.of(Pair.of("arg", "Hello, world!")),
+                                                                                                                                                                                                          null,
+                                                                                                                                                                                                          12,
+                                                                                                                                                                                                          8
+                                                                                                                                                                                                          );
+                                                                                                                                                                                                                                                                                                                                              </code></pre></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../builtin/lang/DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>DeclaredFunction</code></a></li>
+<li><a href="../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a></li>
+<li><a href="../builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmFunction</code></a></li>
+<li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>

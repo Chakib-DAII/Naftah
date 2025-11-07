@@ -120,14 +120,29 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Property key for the implementation version.</div>
 </div>
-<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a></code></div>
-<div class="col-second even-row-color"><code><a href="#RELEASE_INFO" class="member-name-link">RELEASE_INFO</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#NAFTAH_VERSION_DATE_PROPERTY" class="member-name-link">NAFTAH_VERSION_DATE_PROPERTY</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">System property key representing the Naftah build/release date.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#NAFTAH_VERSION_PROPERTY" class="member-name-link">NAFTAH_VERSION_PROPERTY</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">System property key representing the Naftah version.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#NAFTAH_VERSION_TIME_PROPERTY" class="member-name-link">NAFTAH_VERSION_TIME_PROPERTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">System property key representing the Naftah framework build/release time.</div>
+</div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link">Properties</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#RELEASE_INFO" class="member-name-link">RELEASE_INFO</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The loaded release information properties.</div>
 </div>
-<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#RELEASE_INFO_FILE" class="member-name-link">RELEASE_INFO_FILE</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#RELEASE_INFO_FILE" class="member-name-link">RELEASE_INFO_FILE</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Path to the release info properties file inside the JAR.</div>
 </div>
 </div>
@@ -208,6 +223,51 @@ loadScripts(document, 'script');</script>
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="NAFTAH_VERSION_PROPERTY">
+<h3>NAFTAH_VERSION_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NAFTAH_VERSION_PROPERTY</span></div>
+<div class="block">System property key representing the Naftah version.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.ReleaseInfo.NAFTAH_VERSION_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="NAFTAH_VERSION_DATE_PROPERTY">
+<h3>NAFTAH_VERSION_DATE_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NAFTAH_VERSION_DATE_PROPERTY</span></div>
+<div class="block">System property key representing the Naftah build/release date.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.ReleaseInfo.NAFTAH_VERSION_DATE_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="NAFTAH_VERSION_TIME_PROPERTY">
+<h3>NAFTAH_VERSION_TIME_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NAFTAH_VERSION_TIME_PROPERTY</span></div>
+<div class="block">System property key representing the Naftah framework build/release time.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.ReleaseInfo.NAFTAH_VERSION_TIME_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="RELEASE_INFO">
 <h3>RELEASE_INFO</h3>
