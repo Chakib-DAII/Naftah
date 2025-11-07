@@ -1,74 +1,303 @@
-# ⚙️ التوافق مع Java (Java Interop) في لغة نفطة
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+	<meta charset="UTF-8"/>
+	<meta content="width=device-width, initial-scale=1" name="viewport"/>
+	<title>Java Interoperability | Naftah Language Documentation - مستندات لغة نفطه</title>
+	<link href="/assets/css/main.css" rel="stylesheet">
+	  <!-- used by jekyll-seo-tag plugin -->
+</head>
+<body>
+<header class="site-header">
+	<img alt="NaftahLang" src="/assets/images/logo.png"
+		 style="height: 40px; vertical-align: middle; margin-right: 10px;">
+	<h1>
+		<a href="/">
+			Naftah Language Documentation - مستندات لغة نفطه
+		</a>
+	</h1>
+</header>
 
-هذا الملف يوضح كيفية **التعامل مع مكتبات جافا** في لغة **نفطة**، بما يشمل:
+<main class="site-content">
+	<nav>
+	<ul>
+		
+		<li><a href="/">الرئيسية</a></li>
+		
+		<li><a href="/language/keywords">الكلمات المفتاحية</a></li>
+		
+		<li><a href="/language/primitives-and-variables">الأنواع الأولية</a></li>
+		
+		<li><a href="/language/collections">بُنى المعطيات</a></li>
+		
+		<li><a href="/language/expressions">التعبيرات</a></li>
+		
+		<li><a href="/language/radix-numbers">الأعداد بأنظمة العد المختلفة</a></li>
+		
+		<li><a href="/language/objects">الكائنات</a></li>
+		
+		<li><a href="/language/control-flow">التحكم في تدفق البرنامج</a></li>
+		
+		<li><a href="/language/functions">الدوال</a></li>
+		
+		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
+		
+		<li><a href="/running-naftah">تشغيل نفطة</a></li>
+		
+		<li><a href="/java-doc">التوثيق (جاڤا)</a></li>
+		
+		<li><a href="/benchmarks">المقارنات المعيارية</a></li>
+		
+		<li><a href="/about">حول نفطة</a></li>
+		
+	</ul>
+</nav>
 
-* **إنشاء الكائنات (Object Creation)**
-* **استدعاء الدوال الثابتة (Static Methods)**
-* **استدعاء الدوال على الكائنات (Instance Methods)**
-* **التعامل مع Optional، List، UUID، وأنواع رقمية مختلفة**
-* **تحويل الأنواع بين نفطة وجافا**
+	<div dir="rtl">
 
----
 
-## 📌 إنشاء الكائنات (Object Creation)
 
-| نوع الكائن                    | الطريقة في نفطة                              | مثال عملي                                                                                   |
-|-------------------------------|----------------------------------------------|---------------------------------------------------------------------------------------------|
-| Object عام                    | `جافا:لغة:كائن()`                            | `ثابت كائن = جافا:لغة:كائن()`                                                               |
-| UUID من قيم ثابتة             | `جافا:أدة:معرف_مستخدم(long, long)`           | `ثابت معرف_مستخدم = جافا:أدة:معرف_مستخدم(6161415689025233999؛5488940234982179551)`          |
-| UUID عشوائي                   | `جافا:أدة:معرف_مستخدم::عشوائي_معرف_مستخدم()` | `ثابت معرف_مستخدم = جافا:أدة:معرف_مستخدم::عشوائي_معرف_مستخدم()`                             |
-| UUID من سلسلة                 | `جافا:أدة:معرف_مستخدم::من_سلسلة("...")`      | `ثابت معرف_مستخدم = جافا:أدة:معرف_مستخدم::من_سلسلة("550e8400-e29b-41d4-a716-446655440000")` |
-| Optional فارغ                 | `جافا:أدة:اختياري::فارغ_()`                  | `ثابت اختياري = جافا:أدة:اختياري::فارغ_()`                                                  |
-| Optional من قيمة              | `جافا:أدة:اختياري::وف(value)`                | `ثابت اختياري = جافا:أدة:اختياري::وف(10)`                                                   |
-| Optional من كائن قد يكون فارغ | `جافا:أدة:اختياري::وف_فارغابل(value)`        | `ثابت اختياري = جافا:أدة:اختياري::وف_فارغابل(فارغ)`                                         |
-| ArrayList فارغ                | `جافا:أدة:صفائف_القائمة()`                   | `ثابت قائمة = جافا:أدة:صفائف_القائمة()`                                                     |
-| ArrayList بحجم محدد           | `جافا:أدة:صفائف_القائمة(size)`               | `ثابت قائمة = جافا:أدة:صفائف_القائمة(11000)`                                                |
-| ArrayList من عناصر محددة      | `جافا:أدة:صفائف_القائمة([1؛2؛3])`            | `ثابت قائمة = جافا:أدة:صفائف_القائمة([1؛100؛0])`                                            |
+<h1 id="️-التوافق-مع-java-java-interop-في-لغة-نفطة">⚙️ التوافق مع Java (Java Interop) في لغة نفطة</h1>
 
----
+<p>هذا الملف يوضح كيفية <strong>التعامل مع مكتبات جافا</strong> في لغة <strong>نفطة</strong>، بما يشمل:</p>
 
-## 📌 التعامل مع الأنواع الرقمية (Integer, Double, Long, Boolean)
+<ul>
+  <li><strong>إنشاء الكائنات (Object Creation)</strong></li>
+  <li><strong>استدعاء الدوال الثابتة (Static Methods)</strong></li>
+  <li><strong>استدعاء الدوال على الكائنات (Instance Methods)</strong></li>
+  <li><strong>التعامل مع Optional، List، UUID، وأنواع رقمية مختلفة</strong></li>
+  <li><strong>تحويل الأنواع بين نفطة وجافا</strong></li>
+</ul>
 
-| النوع   | إنشاء من سلسلة                     | إنشاء من قيمة ثابتة | تحويل إلى سلسلة                    | مثال عملي                                  |
-|---------|------------------------------------|---------------------|------------------------------------|--------------------------------------------|
-| Integer | `جافا:لغة:مزدوج::قيمة_وف("100")`   | `100`               | `جافا:لغة:فيتگر::إلى_سلسلة(100)`   | `ثابت أ = جافا:لغة:مزدوج::قيمة_وف("100")`  |
-| Long    | `جافا:لغة:طويل_::قيمة_وف("100")`   | `100L`              | `جافا:لغة:طويل_::إلى_سلسلة(100)`   | `ثابت ظ = جافا:لغة:طويل_::قيمة_وف("100")`  |
-| Double  | `جافا:لغة:مزدوج::قيمة_وف("100.5")` | `100.5`             | `جافا:لغة:مزدوج::إلى_سلسلة(100.5)` | `ثابت د = جافا:لغة:مزدوج::قيمة_وف"100.5")` |
-| Boolean | `جافا:لغة:بوولان::قيمة_وف(صحيح)`   | `صحيح` / `خطأ`      | `جافا:لغة:بوولان::إلى_سلسلة(صحيح)` | `ثابت ب = جافا:لغة:بوولان::قيمة_وف(صحيح)`  |
+<hr />
 
----
+<h2 id="-إنشاء-الكائنات-object-creation">📌 إنشاء الكائنات (Object Creation)</h2>
 
-## 📌 استدعاء الدوال الثابتة من جافا
+<table>
+  <thead>
+    <tr>
+      <th>نوع الكائن</th>
+      <th>الطريقة في نفطة</th>
+      <th>مثال عملي</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Object عام</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:كائن()</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت كائن = جافا:لغة:كائن()</code></td>
+    </tr>
+    <tr>
+      <td>UUID من قيم ثابتة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:معرف_مستخدم(long, long)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت معرف_مستخدم = جافا:أدة:معرف_مستخدم(6161415689025233999؛5488940234982179551)</code></td>
+    </tr>
+    <tr>
+      <td>UUID عشوائي</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:معرف_مستخدم::عشوائي_معرف_مستخدم()</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت معرف_مستخدم = جافا:أدة:معرف_مستخدم::عشوائي_معرف_مستخدم()</code></td>
+    </tr>
+    <tr>
+      <td>UUID من سلسلة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:معرف_مستخدم::من_سلسلة("...")</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت معرف_مستخدم = جافا:أدة:معرف_مستخدم::من_سلسلة("550e8400-e29b-41d4-a716-446655440000")</code></td>
+    </tr>
+    <tr>
+      <td>Optional فارغ</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:اختياري::فارغ_()</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت اختياري = جافا:أدة:اختياري::فارغ_()</code></td>
+    </tr>
+    <tr>
+      <td>Optional من قيمة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:اختياري::وف(value)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت اختياري = جافا:أدة:اختياري::وف(10)</code></td>
+    </tr>
+    <tr>
+      <td>Optional من كائن قد يكون فارغ</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:اختياري::وف_فارغابل(value)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت اختياري = جافا:أدة:اختياري::وف_فارغابل(فارغ)</code></td>
+    </tr>
+    <tr>
+      <td>ArrayList فارغ</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:صفائف_القائمة()</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت قائمة = جافا:أدة:صفائف_القائمة()</code></td>
+    </tr>
+    <tr>
+      <td>ArrayList بحجم محدد</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:صفائف_القائمة(size)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت قائمة = جافا:أدة:صفائف_القائمة(11000)</code></td>
+    </tr>
+    <tr>
+      <td>ArrayList من عناصر محددة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:صفائف_القائمة([1؛2؛3])</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت قائمة = جافا:أدة:صفائف_القائمة([1؛100؛0])</code></td>
+    </tr>
+  </tbody>
+</table>
 
-| الكلاس في جافا | الدالة                                             | شرح الاستخدام                            | مثال عملي                                                                                                                      |
-|----------------|----------------------------------------------------|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| Math           | `abs`                                              | القيمة المطلقة                           | `جافا:لغة:الرياضيات::ابس(-5)`                                                                                                  |
-| Math           | `pow`                                              | رفع رقم إلى قوة                          | `جافا:لغة:الرياضيات::أس(2؛3)`                                                                                                  |
-| Math           | `floor` / `ceil`                                   | تقريب للأسفل / الأعلى                    | `جافا:لغة:الرياضيات::فلوأو(3،9)` و `جافا:لغة:الرياضيات::سيل(3،14)`                                                             |
-| Integer / Long | `parseInt` / `parseLong`                           | تحويل سلسلة إلى عدد                      | `جافا:لغة:فيتگر::البريد_فيت("100")` و `جافا:لغة:طويل_::البريد_طويل("100")`                                                     |
-| Integer / Long | `toBinaryString` / `toHexString` / `toOctalString` | تحويل عدد إلى نظام ثنائي / سداسي / ثماني | `جافا:لغة:طويل_::إلى_ثنائية_سلسلة(100)` و `جافا:لغة:طويل_::إلى_هوكس_سلسلة(100)` و`جافا:لغة:طويل_::إلى_وكتالألبانيا_سلسلة(100)` |
+<hr />
 
----
+<h2 id="-التعامل-مع-الأنواع-الرقمية-integer-double-long-boolean">📌 التعامل مع الأنواع الرقمية (Integer, Double, Long, Boolean)</h2>
 
-## 📌 استدعاء الدوال على الكائنات (Instance Methods)
+<table>
+  <thead>
+    <tr>
+      <th>النوع</th>
+      <th>إنشاء من سلسلة</th>
+      <th>إنشاء من قيمة ثابتة</th>
+      <th>تحويل إلى سلسلة</th>
+      <th>مثال عملي</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Integer</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:مزدوج::قيمة_وف("100")</code></td>
+      <td><code class="language-plaintext highlighter-rouge">100</code></td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:فيتگر::إلى_سلسلة(100)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت أ = جافا:لغة:مزدوج::قيمة_وف("100")</code></td>
+    </tr>
+    <tr>
+      <td>Long</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:طويل_::قيمة_وف("100")</code></td>
+      <td><code class="language-plaintext highlighter-rouge">100L</code></td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:طويل_::إلى_سلسلة(100)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت ظ = جافا:لغة:طويل_::قيمة_وف("100")</code></td>
+    </tr>
+    <tr>
+      <td>Double</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:مزدوج::قيمة_وف("100.5")</code></td>
+      <td><code class="language-plaintext highlighter-rouge">100.5</code></td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:مزدوج::إلى_سلسلة(100.5)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت د = جافا:لغة:مزدوج::قيمة_وف"100.5")</code></td>
+    </tr>
+    <tr>
+      <td>Boolean</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:بوولان::قيمة_وف(صحيح)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">صحيح</code> / <code class="language-plaintext highlighter-rouge">خطأ</code></td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:بوولان::إلى_سلسلة(صحيح)</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ثابت ب = جافا:لغة:بوولان::قيمة_وف(صحيح)</code></td>
+    </tr>
+  </tbody>
+</table>
 
-| الكائن / النوع      | الدالة                  | شرح الاستخدام                      | مثال عملي                                                  |
-|---------------------|-------------------------|------------------------------------|------------------------------------------------------------|
-| String (سلسلة نصية) | `length`                | طول السلسلة                        | `جافا:لغة:سلسلة("مرحبا"):::لنگتهاي()` → 5                  |
-| String              | `substring(start, end)` | استخراج جزء من السلسلة             | `جافا:لغة:سلسلة("مرحبا"):::النفقة(1؛3)` → `"رح"`           |
-| List                | `add(element)`          | إضافة عنصر للقائمة                 | `جافا:أدة:صفائف_القائمة([1؛100؛0]):::إضافة(100)`           |
-| List                | `get(index)`            | الحصول على عنصر من القائمة         | `جافا:أدة:صفائف_القائمة([1؛100؛0]):::گت(0)`                |
-| List                | `size`                  | عدد العناصر في القائمة             | `جافا:أدة:صفائف_القائمة([1؛100؛0]):::الحجم()`              |
-| Optional            | `get`                   | الحصول على القيمة إذا كانت موجودة  | `جافا:أدة:اختياري::وف(10):::گت()`                          |
-| Optional            | `orElse(defaultValue)`  | الحصول على القيمة أو قيمة افتراضية | `جافا:أدة:اختياري::فارغ_():::أو_لس("لغة نفطة")`            |
-| UUID                | `toString`              | تحويل UUID إلى سلسلة               | `جافا:أدة:معرف_مستخدم::عشوائي_معرف_مستخدم():::إلى_سلسلة()` |
+<hr />
 
----
+<h2 id="-استدعاء-الدوال-الثابتة-من-جافا">📌 استدعاء الدوال الثابتة من جافا</h2>
 
-## ✅ أمثلة عملية
+<table>
+  <thead>
+    <tr>
+      <th>الكلاس في جافا</th>
+      <th>الدالة</th>
+      <th>شرح الاستخدام</th>
+      <th>مثال عملي</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Math</td>
+      <td><code class="language-plaintext highlighter-rouge">abs</code></td>
+      <td>القيمة المطلقة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:الرياضيات::ابس(-5)</code></td>
+    </tr>
+    <tr>
+      <td>Math</td>
+      <td><code class="language-plaintext highlighter-rouge">pow</code></td>
+      <td>رفع رقم إلى قوة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:الرياضيات::أس(2؛3)</code></td>
+    </tr>
+    <tr>
+      <td>Math</td>
+      <td><code class="language-plaintext highlighter-rouge">floor</code> / <code class="language-plaintext highlighter-rouge">ceil</code></td>
+      <td>تقريب للأسفل / الأعلى</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:الرياضيات::فلوأو(3،9)</code> و <code class="language-plaintext highlighter-rouge">جافا:لغة:الرياضيات::سيل(3،14)</code></td>
+    </tr>
+    <tr>
+      <td>Integer / Long</td>
+      <td><code class="language-plaintext highlighter-rouge">parseInt</code> / <code class="language-plaintext highlighter-rouge">parseLong</code></td>
+      <td>تحويل سلسلة إلى عدد</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:فيتگر::البريد_فيت("100")</code> و <code class="language-plaintext highlighter-rouge">جافا:لغة:طويل_::البريد_طويل("100")</code></td>
+    </tr>
+    <tr>
+      <td>Integer / Long</td>
+      <td><code class="language-plaintext highlighter-rouge">toBinaryString</code> / <code class="language-plaintext highlighter-rouge">toHexString</code> / <code class="language-plaintext highlighter-rouge">toOctalString</code></td>
+      <td>تحويل عدد إلى نظام ثنائي / سداسي / ثماني</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:طويل_::إلى_ثنائية_سلسلة(100)</code> و <code class="language-plaintext highlighter-rouge">جافا:لغة:طويل_::إلى_هوكس_سلسلة(100)</code> و<code class="language-plaintext highlighter-rouge">جافا:لغة:طويل_::إلى_وكتالألبانيا_سلسلة(100)</code></td>
+    </tr>
+  </tbody>
+</table>
 
-```naftah
+<hr />
 
+<h2 id="-استدعاء-الدوال-على-الكائنات-instance-methods">📌 استدعاء الدوال على الكائنات (Instance Methods)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>الكائن / النوع</th>
+      <th>الدالة</th>
+      <th>شرح الاستخدام</th>
+      <th>مثال عملي</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>String (سلسلة نصية)</td>
+      <td><code class="language-plaintext highlighter-rouge">length</code></td>
+      <td>طول السلسلة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:سلسلة("مرحبا"):::لنگتهاي()</code> → 5</td>
+    </tr>
+    <tr>
+      <td>String</td>
+      <td><code class="language-plaintext highlighter-rouge">substring(start, end)</code></td>
+      <td>استخراج جزء من السلسلة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:لغة:سلسلة("مرحبا"):::النفقة(1؛3)</code> → <code class="language-plaintext highlighter-rouge">"رح"</code></td>
+    </tr>
+    <tr>
+      <td>List</td>
+      <td><code class="language-plaintext highlighter-rouge">add(element)</code></td>
+      <td>إضافة عنصر للقائمة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:صفائف_القائمة([1؛100؛0]):::إضافة(100)</code></td>
+    </tr>
+    <tr>
+      <td>List</td>
+      <td><code class="language-plaintext highlighter-rouge">get(index)</code></td>
+      <td>الحصول على عنصر من القائمة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:صفائف_القائمة([1؛100؛0]):::گت(0)</code></td>
+    </tr>
+    <tr>
+      <td>List</td>
+      <td><code class="language-plaintext highlighter-rouge">size</code></td>
+      <td>عدد العناصر في القائمة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:صفائف_القائمة([1؛100؛0]):::الحجم()</code></td>
+    </tr>
+    <tr>
+      <td>Optional</td>
+      <td><code class="language-plaintext highlighter-rouge">get</code></td>
+      <td>الحصول على القيمة إذا كانت موجودة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:اختياري::وف(10):::گت()</code></td>
+    </tr>
+    <tr>
+      <td>Optional</td>
+      <td><code class="language-plaintext highlighter-rouge">orElse(defaultValue)</code></td>
+      <td>الحصول على القيمة أو قيمة افتراضية</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:اختياري::فارغ_():::أو_لس("لغة نفطة")</code></td>
+    </tr>
+    <tr>
+      <td>UUID</td>
+      <td><code class="language-plaintext highlighter-rouge">toString</code></td>
+      <td>تحويل UUID إلى سلسلة</td>
+      <td><code class="language-plaintext highlighter-rouge">جافا:أدة:معرف_مستخدم::عشوائي_معرف_مستخدم():::إلى_سلسلة()</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-أمثلة-عملية">✅ أمثلة عملية</h2>
+
+<pre><code class="language-naftah">
 ---*
 مكتبة الرياضيات في جافا
 java.lang.Math
@@ -263,7 +492,7 @@ java.util.Objects::requireNonNull
 
 --- استدعاء على قيمة فارغة للتجربة مع try-catch
  حاول(جافا:أدة:الكائنات::الاحتياجات_غير_فارغ(فارغ)){
-نجاح(أ) -> إطبع(أ)
+نجاح(أ) -&gt; إطبع(أ)
 فشل(ب) إفعل إطبع("فشل")
  }
 
@@ -278,7 +507,7 @@ java.util.Objects::requireNonNullElse
 ---*
 نداء مؤهل لدالة toString
 java.util.Objects::toString
-استدعاء Objects.toString(1) -> "1"
+استدعاء Objects.toString(1) -&gt; "1"
 ---*
 جافا:أدة:الكائنات::إلى_سلسلة(1)
 
@@ -295,7 +524,7 @@ java.util.Objects::toString
 ---*
 نداء مؤهل لدالة isNull
 java.util.Objects::isNull
-استدعاء Objects.isNull(null) -> true
+استدعاء Objects.isNull(null) -&gt; true
 ---*
 جافا:أدة:الكائنات::هو_فارغ(فارغ)
 
@@ -305,7 +534,7 @@ java.util.Objects::isNull
 ---*
 نداء مؤهل لدالة nonNull
 java.util.Objects::nonNull
-استدعاء Objects.nonNull(null) -> false
+استدعاء Objects.nonNull(null) -&gt; false
 ---*
 جافا:أدة:الكائنات::غير_فارغ(فارغ)
 
@@ -317,7 +546,7 @@ java.util.Objects::nonNull
 نداء مؤهل لدالة compare باستخدام Comparator طبيعي
 java.util.Objects::compare
 استخدام java.util.Comparator::naturalOrder
-استدعاء Objects.compare("جافا", "جافا", مقارن_الترتيب_الطبيعي) -> 0
+استدعاء Objects.compare("جافا", "جافا", مقارن_الترتيب_الطبيعي) -&gt; 0
 ---*
 ثابت مقارن_الترتيب_الطبيعي تعيين جافا:أدة:مقارن::الطبيعية_الأمر()
 جافا:أدة:الكائنات::المقارنة("جافا"؛"جافا"؛مقارن_الترتيب_الطبيعي)
@@ -967,30 +1196,40 @@ java.util.ArrayList إنشاء ---
 --- إنشاء قائمة من عناصر محددة
 جافا:أدة:صفائف_القائمة([1؛100؛0])
 
-```
+</code></pre>
 
----
+<hr />
 
-## 🧠 ملاحظات
+<h2 id="-ملاحظات">🧠 ملاحظات</h2>
 
-* يمكن استدعاء **الدوال الثابتة والمثيلة** من مكتبات جافا مباشرة داخل نفطة.
-* يدعم إنشاء الكائنات مثل **Object، UUID، Optional، ArrayList** بطرق متعددة (فارغ، من قيمة، من سلسلة).
-* التعامل مع الأنواع الرقمية مثل **Integer، Long، Double، Boolean** مع إمكانية التحويل من وإلى السلاسل النصية.
-* يمكن استخدام **الدوال على الكائنات** مثل `length`، `substring`، `add`، `get`، `size`، و`toString`.
-* يدعم **Optional** للتحقق من وجود القيم أو استخدام قيمة افتراضية (`orElse`).
-* أسماء الدوال في نفطة عربية مع إمكانية التعامل مع **الأرقام الصحيحة والعشرية** و**char/Character**.
-* التوافقية مع **primitive ↔ wrapper** تجعل استدعاءات الدوال مرنة وموثوقة.
-* الصياغة تعتمد على:
+<ul>
+  <li>يمكن استدعاء <strong>الدوال الثابتة والمثيلة</strong> من مكتبات جافا مباشرة داخل نفطة.</li>
+  <li>يدعم إنشاء الكائنات مثل <strong>Object، UUID، Optional، ArrayList</strong> بطرق متعددة (فارغ، من قيمة، من سلسلة).</li>
+  <li>التعامل مع الأنواع الرقمية مثل <strong>Integer، Long، Double، Boolean</strong> مع إمكانية التحويل من وإلى السلاسل النصية.</li>
+  <li>يمكن استخدام <strong>الدوال على الكائنات</strong> مثل <code class="language-plaintext highlighter-rouge">length</code>، <code class="language-plaintext highlighter-rouge">substring</code>، <code class="language-plaintext highlighter-rouge">add</code>، <code class="language-plaintext highlighter-rouge">get</code>، <code class="language-plaintext highlighter-rouge">size</code>، و<code class="language-plaintext highlighter-rouge">toString</code>.</li>
+  <li>يدعم <strong>Optional</strong> للتحقق من وجود القيم أو استخدام قيمة افتراضية (<code class="language-plaintext highlighter-rouge">orElse</code>).</li>
+  <li>أسماء الدوال في نفطة عربية مع إمكانية التعامل مع <strong>الأرقام الصحيحة والعشرية</strong> و<strong>char/Character</strong>.</li>
+  <li>التوافقية مع <strong>primitive ↔ wrapper</strong> تجعل استدعاءات الدوال مرنة وموثوقة.</li>
+  <li>
+    <p>الصياغة تعتمد على:</p>
 
-	* `::` لاستدعاء **الدوال الثابتة (Static Methods)** و**البُنى (Constructors)**.
-	* `:::` لاستدعاء **الدوال على الكائنات (Instance Methods)**.
-* يدعم **الدوال المتسلسلة (Chained Calls)** بحيث:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">::</code> لاستدعاء <strong>الدوال الثابتة (Static Methods)</strong> و<strong>البُنى (Constructors)</strong>.</li>
+      <li><code class="language-plaintext highlighter-rouge">:::</code> لاستدعاء <strong>الدوال على الكائنات (Instance Methods)</strong>.</li>
+    </ul>
+  </li>
+  <li>
+    <p>يدعم <strong>الدوال المتسلسلة (Chained Calls)</strong> بحيث:</p>
 
-	* عند استخدام `:::` يتم إعادة استخدام الاسم المؤهل من الاستدعاء السابق.
-	* عند استخدام `::` يتم استخدام الاسم المؤهل الخاص بالدالة فقط.
-* يسهل كتابة كود **واضح وقابل للقراءة بالعربية** مع دعم المعاملات الاختيارية والقيم الافتراضية.
+    <ul>
+      <li>عند استخدام <code class="language-plaintext highlighter-rouge">:::</code> يتم إعادة استخدام الاسم المؤهل من الاستدعاء السابق.</li>
+      <li>عند استخدام <code class="language-plaintext highlighter-rouge">::</code> يتم استخدام الاسم المؤهل الخاص بالدالة فقط.</li>
+    </ul>
+  </li>
+  <li>يسهل كتابة كود <strong>واضح وقابل للقراءة بالعربية</strong> مع دعم المعاملات الاختيارية والقيم الافتراضية.</li>
+</ul>
 
----
+<hr />
 <!-- HIDDEN-SECTION-START -->
 <div class="hidden-in-html">
 
@@ -1011,3 +1250,13 @@ java.util.ArrayList إنشاء ---
 <!-- HIDDEN-SECTION-END -->
 
 
+
+</div>
+
+</main>
+
+<footer class="site-footer">
+	&copy; 2025 Naftah Lang - لغة برمجة نفطه
+</footer>
+</body>
+</html>

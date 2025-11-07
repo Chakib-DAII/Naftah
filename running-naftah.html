@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+	<meta charset="UTF-8"/>
+	<meta content="width=device-width, initial-scale=1" name="viewport"/>
+	<title>Running Naftah | Naftah Language Documentation - مستندات لغة نفطه</title>
+	<link href="/assets/css/main.css" rel="stylesheet">
+	  <!-- used by jekyll-seo-tag plugin -->
+</head>
+<body>
+<header class="site-header">
+	<img alt="NaftahLang" src="/assets/images/logo.png"
+		 style="height: 40px; vertical-align: middle; margin-right: 10px;">
+	<h1>
+		<a href="/">
+			Naftah Language Documentation - مستندات لغة نفطه
+		</a>
+	</h1>
+</header>
+
+<main class="site-content">
+	<nav>
+	<ul>
+		
+		<li><a href="/">الرئيسية</a></li>
+		
+		<li><a href="/language/keywords">الكلمات المفتاحية</a></li>
+		
+		<li><a href="/language/primitives-and-variables">الأنواع الأولية</a></li>
+		
+		<li><a href="/language/collections">بُنى المعطيات</a></li>
+		
+		<li><a href="/language/expressions">التعبيرات</a></li>
+		
+		<li><a href="/language/radix-numbers">الأعداد بأنظمة العد المختلفة</a></li>
+		
+		<li><a href="/language/objects">الكائنات</a></li>
+		
+		<li><a href="/language/control-flow">التحكم في تدفق البرنامج</a></li>
+		
+		<li><a href="/language/functions">الدوال</a></li>
+		
+		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
+		
+		<li><a href="/running-naftah">تشغيل نفطة</a></li>
+		
+		<li><a href="/java-doc">التوثيق (جاڤا)</a></li>
+		
+		<li><a href="/benchmarks">المقارنات المعيارية</a></li>
+		
+		<li><a href="/about">حول نفطة</a></li>
+		
+	</ul>
+</nav>
+
+	<h1 id="-running-naftah-scripts-repl-initialization-and-manual">🚀 Running Naftah: Scripts, REPL, Initialization and Manual</h1>
+
+<p>Naftah comes with cross-platform CLI tools that allow you to run scripts, start an interactive shell, or initialize the
+system to work with existing Java/Kotlin/Groovy libraries.</p>
+
+<hr />
+
+<h2 id="-prerequisites">🔧 Prerequisites</h2>
+
+<ul>
+  <li><strong>Java 17 or higher</strong> (ensure <code class="language-plaintext highlighter-rouge">JAVA_HOME</code> is set correctly)</li>
+  <li>Naftah distribution folder with:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">lib/</code> – containing core and optional <code class="language-plaintext highlighter-rouge">.jar</code> files</li>
+      <li>Shell/BAT scripts: <code class="language-plaintext highlighter-rouge">naftah.sh</code>, <code class="language-plaintext highlighter-rouge">naftah-repl.sh</code>, <code class="language-plaintext highlighter-rouge">naftah-init.sh</code>, etc.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="️-available-scripts">🗂️ Available Scripts</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Script Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">naftah.sh</code> / <code class="language-plaintext highlighter-rouge">.bat</code></td>
+      <td>Default entry point (runs a script by default)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">naftah-repl.sh</code> / <code class="language-plaintext highlighter-rouge">.bat</code></td>
+      <td>Starts REPL (interactive shell)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">naftah-init.sh</code> / <code class="language-plaintext highlighter-rouge">.bat</code></td>
+      <td>Initializes Java classpath libraries</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">naftah-man.sh</code> / <code class="language-plaintext highlighter-rouge">.bat</code></td>
+      <td>Naftah language manual</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>🖥️ Use <code class="language-plaintext highlighter-rouge">.bat</code> files on <strong>Windows</strong> and <code class="language-plaintext highlighter-rouge">.sh</code> scripts on <strong>Linux/macOS</strong>.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="-1-run-a-naftah-script">✅ 1. Run a Naftah Script</h2>
+
+<p>To execute a <code class="language-plaintext highlighter-rouge">.naftah</code> file:</p>
+
+<h3 id="linux--macos">Linux / macOS</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-shell.sh run hello.naftah
+</code></pre></div></div>
+
+<p>Or directly (default subcommand is <code class="language-plaintext highlighter-rouge">run</code>):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah.sh hello.naftah
+</code></pre></div></div>
+
+<h3 id="windows">Windows</h3>
+
+<pre><code class="language-cmd">naftah-shell.bat run hello.naftah
+</code></pre>
+
+<p>Or simply:</p>
+
+<pre><code class="language-cmd">naftah.bat hello.naftah
+</code></pre>
+
+<hr />
+
+<h2 id="-2-start-the-interactive-shell-repl">💬 2. Start the Interactive Shell (REPL)</h2>
+
+<p>The REPL allows you to experiment with Naftah code line-by-line in a terminal.</p>
+
+<h3 id="linux--macos-1">Linux / macOS</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-repl.sh
+</code></pre></div></div>
+
+<p>Or:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-shell.sh shell
+</code></pre></div></div>
+
+<h3 id="windows-1">Windows</h3>
+
+<pre><code class="language-cmd">naftah-repl.bat
+</code></pre>
+
+<p>Or:</p>
+
+<pre><code class="language-cmd">naftah.bat shell
+</code></pre>
+
+<h3 id="features">Features:</h3>
+
+<ul>
+  <li>Multi-line code support</li>
+  <li>Auto history and arrow key navigation</li>
+  <li>Live feedback with Arabic-style syntax</li>
+</ul>
+
+<hr />
+
+<h2 id="️-3-initialize-java-libraries-for-use-in-naftah">⚙️ 3. Initialize Java Libraries for Use in Naftah</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">init</code> command processes all <code class="language-plaintext highlighter-rouge">.jar</code> files inside the <code class="language-plaintext highlighter-rouge">lib/</code> folder and adds them to Naftah’s reflection system.
+This enables:</p>
+
+<ul>
+  <li>Using Java/Kotlin/Groovy classes inside <code class="language-plaintext highlighter-rouge">.naftah</code> scripts.</li>
+  <li>Interacting with them via Arabic transliterated syntax.</li>
+  <li>Seamless interop without additional build steps.</li>
+</ul>
+
+<h3 id="linux--macos-2">Linux / macOS</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-init.sh
+</code></pre></div></div>
+
+<p>Or:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah.sh init
+</code></pre></div></div>
+
+<h3 id="windows-2">Windows</h3>
+
+<pre><code class="language-cmd">naftah-init.bat
+</code></pre>
+
+<p>Or:</p>
+
+<pre><code class="language-cmd">naftah.bat init
+</code></pre>
+
+<blockquote>
+  <p>🔍 By default, <code class="language-plaintext highlighter-rouge">init</code> <strong>scans all <code class="language-plaintext highlighter-rouge">.jar</code> files under <code class="language-plaintext highlighter-rouge">lib/</code></strong> and builds type metadata for use in Naftah scripts.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="-4-use-the-naftah-manual-dynamic-cli-help">📚 4. Use the Naftah Manual (Dynamic CLI Help)</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">man</code> command launches <strong>Naftah’s interactive manual system</strong>, which supports exploring all built-in commands,
+functions, and Java interop metadata — in both <strong>Arabic and English</strong>.</p>
+
+<p>It behaves like a smart REPL-based help system, not just a static manual:</p>
+
+<h3 id="-features">🔍 Features:</h3>
+
+<ul>
+  <li>⌨️ Type <code class="language-plaintext highlighter-rouge">usage</code> / <code class="language-plaintext highlighter-rouge">مساعدة</code> to view all supported commands</li>
+  <li>📁 Use <code class="language-plaintext highlighter-rouge">list</code> / <code class="language-plaintext highlighter-rouge">المواضيع</code> to browse available help topics</li>
+  <li>📚 Type any topic name to open its Markdown-based guide</li>
+  <li>🏷️ Type any Java class name (fully-qualified) to view its <strong>Arabic-qualified alias</strong></li>
+  <li>📦 Explore Java interop using:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">classes</code> / <code class="language-plaintext highlighter-rouge">الأصناف</code> — All known classes</li>
+      <li><code class="language-plaintext highlighter-rouge">accessible-classes</code> / <code class="language-plaintext highlighter-rouge">الأصناف-المتاحة</code> — Public classes only</li>
+      <li><code class="language-plaintext highlighter-rouge">instantiable-classes</code> / <code class="language-plaintext highlighter-rouge">الأصناف-القابلة-للتهيئة</code> — Instantiable classes</li>
+    </ul>
+  </li>
+  <li>⚙️ View runtime and built-in functions using:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">builtin-functions</code> / <code class="language-plaintext highlighter-rouge">الدوال-المدمجة</code></li>
+      <li><code class="language-plaintext highlighter-rouge">jvm-functions</code> / <code class="language-plaintext highlighter-rouge">دوال-جافا</code></li>
+    </ul>
+  </li>
+  <li>❌ Type <code class="language-plaintext highlighter-rouge">exit</code> / <code class="language-plaintext highlighter-rouge">خروج</code> to quit the manual session at any time</li>
+</ul>
+
+<hr />
+
+<h3 id="linux--macos-3">Linux / macOS</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-man.sh
+</code></pre></div></div>
+
+<p>Or:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah.sh man
+</code></pre></div></div>
+
+<h3 id="windows-3">Windows</h3>
+
+<pre><code class="language-cmd">naftah-man.bat
+</code></pre>
+
+<p>Or:</p>
+
+<pre><code class="language-cmd">naftah.bat man
+</code></pre>
+
+<blockquote>
+  <p>💡 You can use this command as a lightweight alternative to browsing the docs online — it’s fully terminal-friendly and
+supports Arabic output with pagination.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="-example-workflow">🧪 Example Workflow</h2>
+
+<ol>
+  <li>Add your Java/Kotlin/Groovy <code class="language-plaintext highlighter-rouge">.jar</code> files under <code class="language-plaintext highlighter-rouge">lib/</code></li>
+  <li>Run <code class="language-plaintext highlighter-rouge">naftah-init</code> to scan and index classes</li>
+  <li>Start REPL or run a <code class="language-plaintext highlighter-rouge">.naftah</code> file that uses those classes</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Add your JAR</span>
+<span class="nb">cp </span>mylib.jar lib/
+
+<span class="c"># Initialize classpath</span>
+./naftah-init.sh
+
+<span class="c"># Run a script</span>
+./naftah.sh myscript.naftah
+
+<span class="c"># Start REPL</span>
+./naftah-repl.sh
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-cli-usage-summary">📄 CLI Usage Summary</h2>
+
+<h3 id="available-subcommands">Available Subcommands:</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Command</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">run</code></td>
+      <td>Runs a <code class="language-plaintext highlighter-rouge">.naftah</code> script or inline code</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">shell</code></td>
+      <td>Starts interactive REPL</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">init</code></td>
+      <td>Scans Java/Kotlin/Groovy <code class="language-plaintext highlighter-rouge">.jar</code>s under <code class="language-plaintext highlighter-rouge">lib/</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">man</code></td>
+      <td>launches Naftah’s interactive manual system</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="global-options">Global Options:</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-e "&lt;script&gt;"</code></td>
+      <td>Run inline Naftah code (instead of providing a filename)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-cp, --classpath &lt;path&gt;</code></td>
+      <td>Add custom entries to the Java classpath</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-D &lt;key=value&gt;</code></td>
+      <td>Define system properties, available via <code class="language-plaintext highlighter-rouge">System.getProperty(...)</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--scan-classpath</code> (<code class="language-plaintext highlighter-rouge">-scp</code>)</td>
+      <td>Enable reuse of Java types from classpath in your Naftah script</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--force-scan-classpath</code></td>
+      <td>Force classpath re-scan even if already initialized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--enable-cache=M,I</code></td>
+      <td>Enable performance caches: <code class="language-plaintext highlighter-rouge">M</code> for multiline strings, <code class="language-plaintext highlighter-rouge">I</code> for interpolation</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--arabic_formatting</code></td>
+      <td>Use Arabic-style number formatting (e.g., decimal separator)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--arabic_indic</code></td>
+      <td>Use Arabic-Indic digit shapes (٠١٢٣٤٥٦٧٨٩)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-d, --debug</code></td>
+      <td>Enable debug mode (prints stack traces)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-c, --encoding &lt;charset&gt;</code></td>
+      <td>Specify character encoding (e.g., <code class="language-plaintext highlighter-rouge">UTF-8</code>, <code class="language-plaintext highlighter-rouge">windows-1256</code>)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--vector</code></td>
+      <td>Enable experimental Vector API optimizations (JDK incubator)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-h, --help</code></td>
+      <td>Show help message and exit</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-v, --version</code></td>
+      <td>Show version and exit</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h3 id="-examples">🧠 Examples</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Run a Naftah script file</span>
+naftah run myscript.naftah
+
+<span class="c"># Run Naftah inline code</span>
+naftah run <span class="nt">-e</span> <span class="s2">"اطبع(</span><span class="se">\"</span><span class="s2">السلام عليكم</span><span class="se">\"</span><span class="s2">)"</span>
+
+<span class="c"># Start interactive shell</span>
+naftah shell
+
+<span class="c"># Initialize classpath types for reuse</span>
+naftah init <span class="nt">-cp</span> lib/my.jar <span class="nt">--scan-classpath</span>
+
+<span class="c"># Use Arabic-Indic numerals</span>
+naftah run script.naftah <span class="nt">--arabic_indic</span>
+
+<span class="c"># Enable both caches (multiline + interpolation)</span>
+naftah run script.naftah <span class="nt">--enable-cache</span><span class="o">=</span>M,I
+</code></pre></div></div>
+
+<hr />
+
+
+</main>
+
+<footer class="site-footer">
+	&copy; 2025 Naftah Lang - لغة برمجة نفطه
+</footer>
+</body>
+</html>

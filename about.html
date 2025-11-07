@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+	<meta charset="UTF-8"/>
+	<meta content="width=device-width, initial-scale=1" name="viewport"/>
+	<title>About Naftah | Naftah Language Documentation - مستندات لغة نفطه</title>
+	<link href="/assets/css/main.css" rel="stylesheet">
+	  <!-- used by jekyll-seo-tag plugin -->
+</head>
+<body>
+<header class="site-header">
+	<img alt="NaftahLang" src="/assets/images/logo.png"
+		 style="height: 40px; vertical-align: middle; margin-right: 10px;">
+	<h1>
+		<a href="/">
+			Naftah Language Documentation - مستندات لغة نفطه
+		</a>
+	</h1>
+</header>
+
+<main class="site-content">
+	<nav>
+	<ul>
+		
+		<li><a href="/">الرئيسية</a></li>
+		
+		<li><a href="/language/keywords">الكلمات المفتاحية</a></li>
+		
+		<li><a href="/language/primitives-and-variables">الأنواع الأولية</a></li>
+		
+		<li><a href="/language/collections">بُنى المعطيات</a></li>
+		
+		<li><a href="/language/expressions">التعبيرات</a></li>
+		
+		<li><a href="/language/radix-numbers">الأعداد بأنظمة العد المختلفة</a></li>
+		
+		<li><a href="/language/objects">الكائنات</a></li>
+		
+		<li><a href="/language/control-flow">التحكم في تدفق البرنامج</a></li>
+		
+		<li><a href="/language/functions">الدوال</a></li>
+		
+		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
+		
+		<li><a href="/running-naftah">تشغيل نفطة</a></li>
+		
+		<li><a href="/java-doc">التوثيق (جاڤا)</a></li>
+		
+		<li><a href="/benchmarks">المقارنات المعيارية</a></li>
+		
+		<li><a href="/about">حول نفطة</a></li>
+		
+	</ul>
+</nav>
+
+	<h1 id="about-نفطه">About نفطه</h1>
+
+<p>Naftah is a programming language that brings the Arabic language into modern programming, aiming to make code more
+natural and expressive for Arabic-speaking developers.</p>
+
+<p>نفطه هي لغة برمجة تهدف إلى جلب اللغة العربية إلى البرمجة الحديثة، لتجعل كتابة الشيفرة أكثر طبيعية ووضوحاً للمطورين
+الناطقين بالعربية.</p>
+
+<hr />
+
+<h2 id="-motivation-why-i-created-naftah">🌟 Motivation: Why I Created Naftah</h2>
+
+<p>As a <strong>Tunisian</strong> and an <strong>Arabic speaker</strong> passionate about programming, I was always searching for a programming
+language that uses <strong>Arabic naturally</strong> — not just in keywords, but in structure, logic, and <strong>support for dialects</strong>,
+including my own Tunisian dialect.
+I wanted something that makes programming feel <strong>familiar, intuitive, and accessible</strong>,
+especially for those of us who <strong>don’t speak English fluently</strong>.</p>
+
+<p>But after years of searching, I found that <strong>no existing Arabic programming language truly met those needs</strong>. Most were
+limited, overly simplistic, or not designed with real-world learning and development in mind. None of them made me feel
+like I could write code the way I speak and think in Arabic.</p>
+
+<p>What pushed me even more was seeing how many people around me — <strong>students, kids, and even adults</strong> — struggle to learn
+programming <strong>not because it’s too hard</strong>, but because of the <strong>language barrier</strong>. Most programming resources,
+documentation, and languages are in English. And for many, especially <strong>young kids</strong>, this makes it almost impossible to
+start.</p>
+
+<blockquote>
+  <p>You shouldn’t have to learn a foreign language just to learn how to think logically or create something with code.</p>
+</blockquote>
+
+<p>That’s why I created <strong>Naftah</strong> — a modern, expressive, and educational programming language written <strong>entirely in
+Arabic</strong>, with built-in support for <strong>dialects</strong>, including <strong>Tunisian Arabic</strong>. Naftah allows people to write code in a
+way that feels close to how they speak, think, and understand the world around them.</p>
+
+<p>I built Naftah using the <strong>best ideas and syntax patterns from popular programming languages</strong>,
+blending them with the <strong>richness of the Arabic language</strong>and the <strong>diversity of dialects</strong>.
+My goal is to make programming accessible to <strong>everyone</strong>, regardless of their level of English.</p>
+
+<blockquote>
+  <p><strong>Naftah is not just a language. It’s an invitation to learn, explore, and build — in our own words.</strong></p>
+</blockquote>
+
+<hr />
+
+<p>بصفتي تونسيًّا ناطقًا باللغة العربية ومحبًا لعلم البرمجة، لطالما كنت أبحث عن لغة برمجة تعتمد
+<strong>اللغة العربية بشكل طبيعي</strong> — ليس فقط في الكلمات المفتاحية، بل في البنية والأسلوب،
+وتدعم حتى <strong>اللهجات المحكية</strong>، بما في ذلك <strong>اللهجة التونسية</strong>
+التي أعبّر بها يوميًا.</p>
+
+<p>كنت أريد لغة تجعل البرمجة <strong>أقرب للفهم، وأسهل للتعلّم، وأكثر ألفة</strong>، خصوصًا لأولئك الذين لا يُجيدون الإنجليزية بطلاقة.
+لكن بعد سنوات من البحث، لم أجد لغة برمجة عربية تلبي هذه الحاجة بجدّية. معظم ما وُجد إما بسيط للغاية، أو غير عملي، أو لا
+يدعم التعليم بشكل فعّال، ولم أشعر يومًا أن بإمكاني “كتابة كود” كما أفكر وأتحدث باللغة العربية.</p>
+
+<p>ما دفعني أكثر هو الواقع المؤلم الذي أراه حولي: <strong>أشخاص كثيرون — طلاب، أطفال، حتى بالغون — يعانون في تعلّم البرمجة</strong>،
+<strong>ليس لصعوبتها ذاتها، بل بسبب حاجز اللغة</strong>. معظم المصادر والمفاهيم البرمجية مكتوبة بالإنجليزية، وهذا يجعل التعلّم
+<strong>أشبه بالمستحيل بالنسبة للأطفال</strong> أو من ليست لديهم خلفية لغوية قوية.</p>
+
+<blockquote>
+  <p><strong>لا ينبغي أن يكون تعلّم البرمجة مرهونًا بإتقان لغة أجنبية.</strong></p>
+</blockquote>
+
+<p>لذلك قررت إنشاء “<strong>نفطه</strong>” — لغة برمجة حديثة، معبّرة، وتعليميّة، مكتوبة بالكامل باللغة العربية، وتدعم <strong>اللهجات</strong> أيضًا،
+بما في ذلك <strong>اللهجة التونسية</strong>. تهدف “نفطه” إلى تمكين الجميع من <strong>كتابة الكود كما يتحدثون ويفكرون ويفهمون</strong>.</p>
+
+<p>لقد بنيت “نفطه” اعتمادًا على خبرتي في البرمجة، وأخذت من لغات البرمجة العالمية <strong>أفضل المفاهيم، والبنى، وأنماط الكتابة</strong>،
+ثم <strong>صغتها بالعربية</strong>، بأسلوب يجعل التعلّم والتطوير <strong>أكثر قربًا وسلاسة</strong>.</p>
+
+<blockquote>
+  <p><strong>نفطه ليست مجرد لغة، بل هي دعوة مفتوحة للتعلّم، والاكتشاف، والإبداع — بلغتنا، وعلى طريقتنا.</strong></p>
+</blockquote>
+
+<hr />
+
+<h2 id="️-why-build-naftah-on-top-of-java-jvm">⚙️ Why Build Naftah on Top of Java (JVM)?</h2>
+
+<p>One of the most important decisions in designing a new programming language is <strong>choosing the right foundation</strong>.
+For <strong>Naftah</strong>, that foundation is the <strong>Java Virtual Machine (JVM)</strong> — and that choice was very intentional.</p>
+
+<p>The <strong>JVM is one of the most mature, stable, and high-performance platforms</strong> in the world of software development.
+By building Naftah on top of the JVM, we gain access to <strong>decades of engineering, optimization, and innovation</strong>, while
+making sure Naftah remains:</p>
+
+<ul>
+  <li>🔒 <strong>Secure</strong></li>
+  <li>⚡ <strong>Fast</strong></li>
+  <li>🌍 <strong>Cross-platform</strong></li>
+  <li>🔌 <strong>Easily integrated</strong> with existing tools and libraries</li>
+</ul>
+
+<h3 id="-benefits-of-the-jvm-for-naftah">🚀 Benefits of the JVM for Naftah</h3>
+
+<h4 id="-massive-ecosystem">✅ Massive Ecosystem</h4>
+
+<p>Java has one of the <strong>largest and most battle-tested ecosystems</strong> out there.
+By using the JVM, Naftah can interact with thousands of existing <strong>Java libraries</strong>, <strong>APIs</strong>,…</p>
+
+<h4 id="️-performance--optimization">🛠️ Performance &amp; Optimization</h4>
+
+<p>The JVM is <strong>highly optimized for performance</strong>, thanks to <strong>JIT (Just-In-Time) compilation</strong>, <strong>garbage collection</strong>,
+and decades of improvements.</p>
+
+<p>Naftah code runs with the <strong>speed and efficiency</strong> of Java code, making it suitable not just for education, but also for
+<strong>real-world applications</strong>.</p>
+
+<h4 id="-full-interoperability-with-java">🔗 Full Interoperability with Java</h4>
+
+<p>Naftah is <strong>fully interoperable with the Java ecosystem</strong>, making it an ideal <strong>gateway language</strong> for Arabic speakers
+entering the world of modern software development.</p>
+
+<h5 id="-what-this-means">✅ What This Means:</h5>
+
+<ul>
+  <li>You can <strong>Java classes</strong> and use them inside your Naftah code in arabic (via transliteration).</li>
+  <li>You can build <strong>hybrid applications</strong> — with parts written in Naftah, others in Java or Kotlin…</li>
+  <li>You can write <strong>Java extension libraries</strong> and expose them as <strong>Naftah functions</strong> via a powerful, annotation-based
+system.</li>
+</ul>
+
+<hr />
+
+<h5 id="-write-java-use-it-in-naftah--seamlessly">🧩 Write Java, Use It in Naftah — Seamlessly</h5>
+
+<p>Thanks to Naftah’s <strong>plugin discovery system</strong> based on reflection, you can:</p>
+
+<ul>
+  <li>Write Java classes using Arabic method names (or dialects).</li>
+  <li>Annotate them using <code class="language-plaintext highlighter-rouge">@NaftahFn</code> and <code class="language-plaintext highlighter-rouge">@NaftahFnProvider</code>.</li>
+  <li>Naftah will <strong>automatically detect</strong>, <strong>register</strong>, and <strong>expose</strong> those methods as native Naftah functions.</li>
+</ul>
+
+<h5 id="-you-can-even-transliterate-java-code-to-feel-like-arabic">🔠 You can even transliterate Java code to feel like Arabic</h5>
+
+<p>Want to write Java that <em>looks</em> like Naftah code? You can do that too:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@NaftahFn</span><span class="o">(</span>
+		<span class="n">name</span> <span class="o">=</span> <span class="s">"إجمع"</span><span class="o">,</span>
+		<span class="n">description</span> <span class="o">=</span> <span class="s">"يجمع رقمين"</span><span class="o">,</span>
+		<span class="n">usage</span> <span class="o">=</span> <span class="s">"إجمع(أ ، ب)"</span><span class="o">,</span>
+		<span class="n">parameterTypes</span> <span class="o">=</span> <span class="o">{</span><span class="kt">int</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="kt">int</span><span class="o">.</span><span class="na">class</span><span class="o">},</span>
+		<span class="n">returnType</span> <span class="o">=</span> <span class="kt">int</span><span class="o">.</span><span class="na">class</span>
+<span class="o">)</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">sum</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span> <span class="kt">int</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>This code:</p>
+
+<ul>
+  <li>Is <strong>pure Java</strong></li>
+  <li>Can be compiled with any Java build tool (Maven, Gradle, etc.)</li>
+  <li>And becomes immediately usable inside a Naftah script:</li>
+</ul>
+
+<pre><code class="language-naftah">إطبع("مجموع ١ و ٢ هو: " + إلى_نص(إجمع(1، 2)))
+</code></pre>
+
+<hr />
+
+<h5 id="-why-this-matters">🚀 Why This Matters</h5>
+
+<ul>
+  <li>You can <strong>start programming in Arabic</strong>, then gradually shift to more advanced Java/Kotlin/Groovy systems.</li>
+  <li>You gain access to the <strong>entire JVM ecosystem</strong>: libraries, frameworks, tools.</li>
+  <li>You don’t have to choose between <strong>expressiveness</strong> and <strong>power</strong> — with Naftah, you get both.</li>
+</ul>
+
+<blockquote>
+  <p>Whether you’re teaching children, building local apps, or writing serious libraries — Naftah gives you a voice in your
+language, and the power of the Java world behind it.</p>
+</blockquote>
+
+<h4 id="-portability">🌐 Portability</h4>
+
+<p>The JVM is <strong>cross-platform by design</strong>:
+Code written in Naftah runs on <strong>Windows, macOS, Linux</strong>, and even on <strong>mobile devices</strong> via JVM-compatible platforms.</p>
+
+<p>This means developers can <strong>build once and run anywhere</strong>.</p>
+
+<h3 id="-why-not-build-a-new-vm-from-scratch">🧠 Why Not Build a New VM From Scratch?</h3>
+
+<p>Building a virtual machine from scratch is possible, but it takes <strong>years of effort</strong>, and the result may lack
+performance, stability, or community adoption.</p>
+
+<p>By standing on the shoulders of a giant like the JVM, Naftah gets:</p>
+
+<ul>
+  <li>A <strong>reliable runtime</strong></li>
+  <li>Compatibility with modern systems</li>
+  <li>Tools that developers already know and trust</li>
+  <li>Time to focus on what matters: <strong>a great Arabic programming experience</strong></li>
+</ul>
+
+<blockquote>
+  <p>We didn’t want to reinvent the wheel — we wanted to <strong>drive it in our direction</strong>.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="-javakotlingroovy-interoperability">🧩 Java/Kotlin/Groovy Interoperability</h2>
+
+<p>Naftah allows full access to Java libraries:</p>
+
+<ul>
+  <li>After running <code class="language-plaintext highlighter-rouge">init</code>, all Java classes in <code class="language-plaintext highlighter-rouge">lib/</code> become usable.</li>
+  <li>You can use transliterated Arabic method names to call them.</li>
+  <li>Java extensions can be written once and reused inside Naftah without recompilation.</li>
+</ul>
+
+<p>This makes Naftah a <strong>gateway language</strong> — start in Arabic, scale into Java as needed.</p>
+
+<hr />
+
+</main>
+
+<footer class="site-footer">
+	&copy; 2025 Naftah Lang - لغة برمجة نفطه
+</footer>
+</body>
+</html>
