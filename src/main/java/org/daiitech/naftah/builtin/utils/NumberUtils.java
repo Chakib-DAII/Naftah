@@ -233,13 +233,10 @@ public final class NumberUtils {
 		}
 		catch (NumberFormatException ex) {
 			throw radix == 10 ?
-					newNaftahBugInvalidNumberValueError(text) :
+					newNaftahBugInvalidNumberValueError(text, ex) :
 					newNaftahBugInvalidNumberValueError(Objects.nonNull(originalText) ?
 							new Pair<>(text, originalText) :
-							text, radix);
-//			throw radix == 10 ?
-//				  newNaftahBugInvalidNumberValueError(text, ex) :
-//				  newNaftahBugInvalidNumberValueError(text, radix, ex);
+							text, radix, ex);
 		}
 		return dx;
 	}

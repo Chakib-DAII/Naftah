@@ -843,7 +843,13 @@ public class NumberUtilsTests {
 							Arguments.of(true, "1000000000000000", results[10], null),
 							Arguments.of(false, null, results[11], newNaftahBugNullInputError(true, null)),
 							Arguments.of(true, 2, results[12], null),
-							Arguments.of(false, "abc", results[13], newNaftahBugInvalidNumberValueError("abc")),
+							Arguments
+									.of(false,
+										"abc",
+										results[13],
+										newNaftahBugInvalidNumberValueError("abc",
+																			new NumberFormatException(
+																										"For input string: \"abc\""))),
 							Arguments.of(false, true, results[14], newNaftahBugInvalidNumberValueError(true)),
 							Arguments.of(false, false, results[15], newNaftahBugInvalidNumberValueError(false))
 						) :
@@ -862,7 +868,14 @@ public class NumberUtilsTests {
 							Arguments.of(true, "1000000000000000", "3", results[10], null),
 							Arguments.of(false, null, 1, results[1], newNaftahBugNullInputError(true, null)),
 							Arguments.of(false, 2, null, results[12], newNaftahBugNullInputError(true, null)),
-							Arguments.of(false, "abc", 2, results[13], newNaftahBugInvalidNumberValueError("abc")),
+							Arguments
+									.of(false,
+										"abc",
+										2,
+										results[13],
+										newNaftahBugInvalidNumberValueError("abc",
+																			new NumberFormatException(
+																										"For input string: \"abc\""))),
 							Arguments.of(false, true, 2, results[14], newNaftahBugInvalidNumberValueError(true)),
 							Arguments.of(false, false, 2, results[15], newNaftahBugInvalidNumberValueError(false))
 						);

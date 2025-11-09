@@ -18,7 +18,6 @@ public class QualifiedNameProvider implements ArgumentsProvider {
 										ثابت ت : جڤ:لنگ:لنگ تعيين 2
 										ت
 										""", 2, null),
-//				Arguments.of(true, "جڤ:لنگ:سيستم::گك()", null, null), TODO: fix
 					Arguments.of(true, """
 										متغير أ تعيين {متغير أ تعيين ١ , متغير ب تعيين 4}
 										أ:أ
