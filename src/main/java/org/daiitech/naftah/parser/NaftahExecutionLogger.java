@@ -285,9 +285,6 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ParenthesisExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
-		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectContext context) {
-			result = logExecution(doLog, context);
-		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -367,6 +364,12 @@ public final class NaftahExecutionLogger {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedNameTypeContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SimpleCallContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedNameCallContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.BuiltInContext context) {
@@ -882,16 +885,38 @@ public final class NaftahExecutionLogger {
 	}
 
 	public static String logExecution(  boolean doLog,
-										org.daiitech.naftah.parser.NaftahParser.QualifiedCallContext ctx) {
+										org.daiitech.naftah.parser.NaftahParser.SimpleCallContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											QualifiedCallContext::qualifiedName -> {
+											SimpleCallContext::ID -> %s
+											SimpleCallContext::COLON -> %s
+											SimpleCallContext::COLON -> %s
+											SimpleCallContext::ID -> %s
+											"""
+										.formatted(
+													Objects.nonNull(context.ID()) ? context.ID(0).getText() : null,
+													Objects.nonNull(context.COLON(0)) ?
+															context.COLON(0).getText() :
+															null,
+													Objects.nonNull(context.COLON(1)) ?
+															context.COLON(1).getText() :
+															null,
+													Objects.nonNull(context.ID()) ? context.ID(1).getText() : null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.QualifiedNameCallContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											QualifiedNameCallContext::qualifiedName -> {
 												%s
 											}
-											QualifiedCallContext::COLON -> %s
-											QualifiedCallContext::COLON -> %s
-											QualifiedCallContext::ID -> %s
+											QualifiedNameCallContext::COLON -> %s
+											QualifiedNameCallContext::COLON -> %s
+											QualifiedNameCallContext::ID -> %s
 											"""
 										.formatted( Objects.nonNull(context.qualifiedName()) ?
 															context.qualifiedName().getText() :
