@@ -232,7 +232,7 @@ public final class ExceptionUtils {
 	 * that caused the failure (e.g., {@code NumberFormatException}).
 	 *
 	 * @param object    the invalid numeric value
-	 * @param exception the underlying exception (may be {@code null})
+	 * @param exception the underlying exception (can be {@code null})
 	 * @return a {@code NaftahBugError} describing the error with the given cause
 	 */
 	public static NaftahBugError newNaftahBugInvalidNumberValueError(Object object, Exception exception) {

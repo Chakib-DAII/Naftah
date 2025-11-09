@@ -160,7 +160,8 @@ public final class RuntimeClassScanner1 {
 	public static Class<?> loadClass(String className, URLClassLoader classLoader) {
 		var loaders = Arrays.copyOf(CLASS_LOADERS, CLASS_LOADERS.length + (Objects.nonNull(classLoader) ? 0 : 1));
 		if (Objects.nonNull(classLoader)) {
-			loaders[CLASS_LOADERS.length + 1] = classLoader;
+			//noinspection DataFlowIssue
+			loaders[CLASS_LOADERS.length] = classLoader;
 		}
 
 		for (ClassLoader cl : loaders) {

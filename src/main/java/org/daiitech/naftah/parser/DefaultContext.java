@@ -257,7 +257,7 @@ public class DefaultContext {
 	/**
 	 * Constructs a context with a parent context, parameters, and arguments.
 	 * <p>
-	 * Throws a {@link NaftahBugError} if instantiated outside of allowed conditions
+	 * Throws a {@link NaftahBugError} if instantiated outside allowed conditions
 	 * (e.g., outside REPL and without a parent context when contexts already exist).
 	 *
 	 * @param parent     the parent context, or null if none

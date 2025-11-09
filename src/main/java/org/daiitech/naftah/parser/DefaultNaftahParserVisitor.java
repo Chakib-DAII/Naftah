@@ -597,6 +597,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 															.collectionAccessIndex(
 																					i));
 											if (variable instanceof List && !(variable instanceof Tuple)) {
+												// noinspection unchecked
 												List<Object> list = (List<Object>) variable;
 												if (i < size - 1) {
 													variable = list.get(number.intValue());
@@ -606,6 +607,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												}
 											}
 											else if (variable instanceof Set) {
+												// noinspection unchecked
 												Set<Object> set = (Set<Object>) variable;
 												if (i < size - 1) {
 													variable = getElementAt(set, number.intValue());
@@ -2955,6 +2957,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										new LinkedHashMap<>() :
 										new HashMap<>();
 								Set<Class<?>> keyTypes = new HashSet<>();
+								//noinspection MismatchedQueryAndUpdateOfCollection
 								Set<Class<?>> valueTypes = new HashSet<>();
 								for (int i = 0; i < keyValuePairsContext.keyValue().size(); i++) {
 									var entry = (Map.Entry<?, ?>) defaultNaftahParserVisitor

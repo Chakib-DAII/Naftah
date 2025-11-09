@@ -2,6 +2,8 @@ package org.daiitech.naftah.utils;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static java.lang.Thread.sleep;
+
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.repl.REPLHelper.clearScreen;
@@ -62,7 +64,8 @@ public final class ConsoleLoader {
 														SPINNER[j++ % SPINNER.length]),
 										false));
 				try {
-					Thread.sleep(150); // control speed
+					//noinspection BusyWait
+					sleep(150); // control speed
 				}
 				catch (InterruptedException e) {
 					Thread.currentThread().interrupt();

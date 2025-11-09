@@ -144,10 +144,10 @@ public final class Builtin {
 	/**
 	 * Adds two values and returns their sum.
 	 *
-	 * @param <T> the type of the operands
-	 * @param x   the first value
-	 * @param y   the second value
-	 * @return the sum of x and y
+	 * @param <T>   the type of the operands
+	 * @param left  the first value
+	 * @param right the second value
+	 * @return the sum of left and right
 	 */
 	@NaftahFn(  name = "إجمع",
 				description = """
@@ -155,8 +155,8 @@ public final class Builtin {
 				usage = "إجمع(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object add(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.ADD), BinaryOperation.ADD::apply);
+	public static <T> Object add(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.ADD), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -173,9 +173,9 @@ public final class Builtin {
 	 * <li>Strings: non-empty strings are truthy.</li>
 	 * </ul>
 	 *
-	 * @param <T> the type of operands (Number, Boolean, Character, String)
-	 * @param x   the first value
-	 * @param y   the second value
+	 * @param <T>   the type of operands (Number, Boolean, Character, String)
+	 * @param left  the first value
+	 * @param right the second value
 	 * @return the second operand if the first is truthy, otherwise the first operand
 	 */
 	@NaftahFn(  name = "و_منطقي",
@@ -184,8 +184,8 @@ public final class Builtin {
 				usage = "و_منطقي(س ، ص)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object logicalAnd(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.AND), BinaryOperation.ADD::apply);
+	public static <T> Object logicalAnd(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.AND), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -202,9 +202,9 @@ public final class Builtin {
 	 * <li>Strings: non-empty strings are truthy.</li>
 	 * </ul>
 	 *
-	 * @param <T> the type of operands (Number, Boolean, Character, String)
-	 * @param x   the first value
-	 * @param y   the second value
+	 * @param <T>   the type of operands (Number, Boolean, Character, String)
+	 * @param left  the first value
+	 * @param right the second value
 	 * @return the first "truthy" operand, or the second operand if the first is falsy
 	 */
 	@NaftahFn(  name = "أو_منطقي",
@@ -213,17 +213,17 @@ public final class Builtin {
 				usage = "أو_منطقي(س ، ص)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object logicalOr(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.OR), BinaryOperation.ADD::apply);
+	public static <T> Object logicalOr(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.OR), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * Subtracts the second value from the first and returns the difference.
 	 *
-	 * @param <T> the type of the operands
-	 * @param x   the minuend
-	 * @param y   the subtrahend
-	 * @return the difference between x and y
+	 * @param <T>   the type of the operands
+	 * @param left  the minuend
+	 * @param right the subtrahend
+	 * @return the difference between left and right
 	 */
 	@NaftahFn(  name = "إطرح",
 				description = """
@@ -231,17 +231,17 @@ public final class Builtin {
 				usage = "إطرح(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object subtract(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.SUBTRACT), BinaryOperation.ADD::apply);
+	public static <T> Object subtract(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.SUBTRACT), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * Multiplies two values and returns the product.
 	 *
-	 * @param <T> the type of the operands
-	 * @param x   the first factor
-	 * @param y   the second factor
-	 * @return the product of x and y
+	 * @param <T>   the type of the operands
+	 * @param left  the first factor
+	 * @param right the second factor
+	 * @return the product of left and right
 	 */
 	@NaftahFn(  name = "إضرب",
 				description = """
@@ -249,8 +249,8 @@ public final class Builtin {
 				usage = "إضرب(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object multiply(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.MULTIPLY), BinaryOperation.ADD::apply);
+	public static <T> Object multiply(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.MULTIPLY), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -259,10 +259,10 @@ public final class Builtin {
 	 * Computes the result of raising the first operand (base) to the second operand (exponent).
 	 * Supports numbers and compatible numeric types.
 	 *
-	 * @param <T> the type of the operands
-	 * @param x   the base value
-	 * @param y   the exponent value
-	 * @return the result of x raised to the power of y
+	 * @param <T>   the type of the operands
+	 * @param left  the base value
+	 * @param right the exponent value
+	 * @return the result of left raised to the power of right
 	 */
 	@NaftahFn(  name = "أس",
 				description = """
@@ -270,17 +270,17 @@ public final class Builtin {
 				usage = "أس(س ، ص)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object pow(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.POWER), BinaryOperation.ADD::apply);
+	public static <T> Object pow(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.POWER), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * Divides the first value by the second and returns the quotient.
 	 *
-	 * @param <T> the type of the operands
-	 * @param x   the dividend
-	 * @param y   the divisor
-	 * @return the quotient of x divided by y
+	 * @param <T>   the type of the operands
+	 * @param left  the dividend
+	 * @param right the divisor
+	 * @return the quotient of left divided by right
 	 */
 	@NaftahFn(  name = "إقسم",
 				description = """
@@ -288,17 +288,17 @@ public final class Builtin {
 				usage = "إقسم(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object divide(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.DIVIDE), BinaryOperation.ADD::apply);
+	public static <T> Object divide(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.DIVIDE), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * Calculates the remainder of the division of the first value by the second.
 	 *
-	 * @param <T> the type of the operands
-	 * @param x   the dividend
-	 * @param y   the divisor
-	 * @return the remainder after dividing x by y
+	 * @param <T>   the type of the operands
+	 * @param left  the dividend
+	 * @param right the divisor
+	 * @return the remainder after dividing left by right
 	 */
 	@NaftahFn(  name = "باقي_القسمة",
 				description = """
@@ -306,19 +306,19 @@ public final class Builtin {
 				usage = "باقي_القسمة(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object modulo(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.MODULO), BinaryOperation.ADD::apply);
+	public static <T> Object modulo(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.MODULO), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * The (max) function is used to compare two numbers and return the larger one.
 	 * This operation is useful for determining the higher value when comparing two numeric values.
 	 *
-	 * @param <T> The type of number, must be Number or a subclass
-	 * @param x   The first number to compare
-	 * @param y   The second number to compare
-	 * @return The larger number between x and y
-	 * @usage max(x, y)
+	 * @param <T>   The type of number, must be Number or a subclass
+	 * @param left  The first number to compare
+	 * @param right The second number to compare
+	 * @return The larger number between left and right
+	 * @usage max(left, right)
 	 */
 	@NaftahFn(  name = "الأكبر",
 				description = """
@@ -326,8 +326,8 @@ public final class Builtin {
 				usage = "الأكبر(ش ، ي)",
 				parameterTypes = {Number.class, Number.class},
 				returnType = Number.class)
-	public static <T extends Number> Number max(T x, T y) {
-		return NumberUtils.max(x, y);
+	public static <T extends Number> Number max(T left, T right) {
+		return NumberUtils.max(left, right);
 	}
 
 
@@ -335,11 +335,11 @@ public final class Builtin {
 	 * The (min) function is used to compare two numbers and return the smaller one.
 	 * This operation is useful for determining the lower value when comparing two numeric values.
 	 *
-	 * @param <T> The type of number, must be Number or a subclass
-	 * @param x   The first number to compare
-	 * @param y   The second number to compare
-	 * @return The smaller number between x and y
-	 * @usage min(x, y)
+	 * @param <T>   The type of number, must be Number or a subclass
+	 * @param left  The first number to compare
+	 * @param right The second number to compare
+	 * @return The smaller number between left and right
+	 * @usage min(left, right)
 	 */
 	@NaftahFn(  name = "الأصغر",
 				description = """
@@ -347,8 +347,8 @@ public final class Builtin {
 				usage = "الأصغر(ش ، ي)",
 				parameterTypes = {Number.class, Number.class},
 				returnType = Number.class)
-	public static <T extends Number> Number min(T x, T y) {
-		return NumberUtils.min(x, y);
+	public static <T extends Number> Number min(T left, T right) {
+		return NumberUtils.min(left, right);
 	}
 
 
@@ -535,11 +535,11 @@ public final class Builtin {
 	 * The (equals) function compares two values to check if they are equal.
 	 * Returns true if both are equal, false otherwise.
 	 *
-	 * @param <T> The type of the objects being compared
-	 * @param x   The first object
-	 * @param y   The second object
-	 * @return true if x equals y, false otherwise
-	 * @usage equals(x, y)
+	 * @param <T>   The type of the objects being compared
+	 * @param left  The first object
+	 * @param right The second object
+	 * @return true if left equals right, false otherwise
+	 * @usage equals(left, right)
 	 */
 	@NaftahFn(  name = "هل_يساوي",
 				description = """
@@ -547,15 +547,15 @@ public final class Builtin {
 				usage = "هل_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> boolean equals(T x, T y) {
+	public static <T> boolean equals(T left, T right) {
 		try {
-			return allMatch(applyOperation(x, y, BinaryOperation.EQUALS), Boolean.TRUE::equals);
+			return allMatch(applyOperation(left, right, BinaryOperation.EQUALS), Boolean.TRUE::equals);
 		}
 		catch (NaftahBugError bug) {
-			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
+			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(left, right))) {
 				throw bug;
 			}
-			return x.equals(y);
+			return left.equals(right);
 		}
 	}
 
@@ -563,11 +563,11 @@ public final class Builtin {
 	 * The (notEquals) function compares two values to check if they are not equal.
 	 * Returns true if they are different, false otherwise.
 	 *
-	 * @param <T> The type of the objects being compared
-	 * @param x   The first object
-	 * @param y   The second object
-	 * @return true if x does not equal y, false otherwise
-	 * @usage notEquals(x, y)
+	 * @param <T>   The type of the objects being compared
+	 * @param left  The first object
+	 * @param right The second object
+	 * @return true if left does not equal right, false otherwise
+	 * @usage notEquals(left, right)
 	 */
 	@NaftahFn(  name = "هل_لا_يساوي",
 				description = """
@@ -575,27 +575,27 @@ public final class Builtin {
 				usage = "هل_لا_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> boolean notEquals(T x, T y) {
+	public static <T> boolean notEquals(T left, T right) {
 		try {
-			return allMatch(applyOperation(x, y, BinaryOperation.NOT_EQUALS), Boolean.TRUE::equals);
+			return allMatch(applyOperation(left, right, BinaryOperation.NOT_EQUALS), Boolean.TRUE::equals);
 		}
 		catch (NaftahBugError bug) {
-			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(x, y))) {
+			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(left, right))) {
 				throw bug;
 			}
-			return !x.equals(y);
+			return !left.equals(right);
 		}
 	}
 
 	/**
 	 * The (lessThan) function checks if the first value is less than the second.
-	 * Returns true if x is less than y, false otherwise.
+	 * Returns true if left is less than right, false otherwise.
 	 *
-	 * @param <T> The type of the objects being compared
-	 * @param x   The first object
-	 * @param y   The second object
-	 * @return true if x &lt; y, false otherwise
-	 * @usage lessThan(x, y)
+	 * @param <T>   The type of the objects being compared
+	 * @param left  The first object
+	 * @param right The second object
+	 * @return true if left &lt; right, false otherwise
+	 * @usage lessThan(left, right)
 	 */
 	@NaftahFn(  name = "هل_أصغر_من",
 				description = """
@@ -603,19 +603,19 @@ public final class Builtin {
 				usage = "هل_أصغر_من(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> boolean lessThan(T x, T y) {
-		return allMatch(applyOperation(x, y, BinaryOperation.LESS_THAN), Boolean.TRUE::equals);
+	public static <T> boolean lessThan(T left, T right) {
+		return allMatch(applyOperation(left, right, BinaryOperation.LESS_THAN), Boolean.TRUE::equals);
 	}
 
 	/**
 	 * The (lessThanEquals) function checks if the first value is less than or equal to the second.
-	 * Returns true if x ≤ y, false otherwise.
+	 * Returns true if left ≤ right, false otherwise.
 	 *
-	 * @param <T> The type of the objects being compared
-	 * @param x   The first object
-	 * @param y   The second object
-	 * @return true if x ≤ y, false otherwise
-	 * @usage lessThanEquals(x, y)
+	 * @param <T>   The type of the objects being compared
+	 * @param left  The first object
+	 * @param right The second object
+	 * @return true if left ≤ right, false otherwise
+	 * @usage lessThanEquals(left, right)
 	 */
 	@NaftahFn(  name = "هل_أصغر_أو_يساوي",
 				description = """
@@ -623,19 +623,19 @@ public final class Builtin {
 				usage = "هل_أصغر_أو_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> boolean lessThanEquals(T x, T y) {
-		return allMatch(applyOperation(x, y, BinaryOperation.LESS_THAN_EQUALS), Boolean.TRUE::equals);
+	public static <T> boolean lessThanEquals(T left, T right) {
+		return allMatch(applyOperation(left, right, BinaryOperation.LESS_THAN_EQUALS), Boolean.TRUE::equals);
 	}
 
 	/**
 	 * The (greaterThan) function checks if the first value is greater than the second.
-	 * Returns true if x > y, false otherwise.
+	 * Returns true if left > right, false otherwise.
 	 *
-	 * @param <T> The type of the objects being compared
-	 * @param x   The first object
-	 * @param y   The second object
-	 * @return true if x > y, false otherwise
-	 * @usage greaterThan(x, y)
+	 * @param <T>   The type of the objects being compared
+	 * @param left  The first object
+	 * @param right The second object
+	 * @return true if left > right, false otherwise
+	 * @usage greaterThan(left, right)
 	 */
 	@NaftahFn(  name = "هل_أكبر_من",
 				description = """
@@ -643,19 +643,19 @@ public final class Builtin {
 				usage = "هل_أكبر_من(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> boolean greaterThan(T x, T y) {
-		return allMatch(applyOperation(x, y, BinaryOperation.GREATER_THAN), Boolean.TRUE::equals);
+	public static <T> boolean greaterThan(T left, T right) {
+		return allMatch(applyOperation(left, right, BinaryOperation.GREATER_THAN), Boolean.TRUE::equals);
 	}
 
 	/**
 	 * The (greaterThanEquals) function checks if the first value is greater than or equal to the second.
-	 * Returns true if x ≥ y, false otherwise.
+	 * Returns true if left ≥ right, false otherwise.
 	 *
-	 * @param <T> The type of the objects being compared
-	 * @param x   The first object
-	 * @param y   The second object
-	 * @return true if x ≥ y, false otherwise
-	 * @usage greaterThanEquals(x, y)
+	 * @param <T>   The type of the objects being compared
+	 * @param left  The first object
+	 * @param right The second object
+	 * @return true if left ≥ right, false otherwise
+	 * @usage greaterThanEquals(left, right)
 	 */
 	@NaftahFn(  name = "هل_أكبر_أو_يساوي",
 				description = """
@@ -663,19 +663,19 @@ public final class Builtin {
 				usage = "هل_أكبر_أو_يساوي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> boolean greaterThanEquals(T x, T y) {
-		return allMatch(applyOperation(x, y, BinaryOperation.GREATER_THAN_EQUALS), Boolean.TRUE::equals);
+	public static <T> boolean greaterThanEquals(T left, T right) {
+		return allMatch(applyOperation(left, right, BinaryOperation.GREATER_THAN_EQUALS), Boolean.TRUE::equals);
 	}
 
 	/**
 	 * The (and) function performs a bitwise AND operation on the given numbers.
 	 * Returns the result of the bitwise AND between the two numbers.
 	 *
-	 * @param <T> The type of the objects being operated on
-	 * @param x   The first number
-	 * @param y   The second number
+	 * @param <T>   The type of the objects being operated on
+	 * @param left  The first number
+	 * @param right The second number
 	 * @return The result of bitwise AND operation
-	 * @usage and(x, y)
+	 * @usage and(left, right)
 	 */
 	@NaftahFn(  name = "و_بتي",
 				description = """
@@ -683,19 +683,19 @@ public final class Builtin {
 				usage = "و_بتي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object and(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_AND), BinaryOperation.ADD::apply);
+	public static <T> Object and(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.BITWISE_AND), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * The (or) function performs a bitwise OR operation on the given numbers.
 	 * Returns the result of the bitwise OR between the two numbers.
 	 *
-	 * @param <T> The type of the objects being operated on
-	 * @param x   The first number
-	 * @param y   The second number
+	 * @param <T>   The type of the objects being operated on
+	 * @param left  The first number
+	 * @param right The second number
 	 * @return The result of bitwise OR operation
-	 * @usage or(x, y)
+	 * @usage or(left, right)
 	 */
 	@NaftahFn(  name = "أو_بتي",
 				description = """
@@ -703,19 +703,19 @@ public final class Builtin {
 				usage = "أو_بتي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object or(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_OR), BinaryOperation.ADD::apply);
+	public static <T> Object or(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.BITWISE_OR), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * The (xor) function performs a bitwise XOR operation on the given numbers.
 	 * Returns the result of the bitwise exclusive OR between the two numbers.
 	 *
-	 * @param <T> The type of the objects being operated on
-	 * @param x   The first number
-	 * @param y   The second number
+	 * @param <T>   The type of the objects being operated on
+	 * @param left  The first number
+	 * @param right The second number
 	 * @return The result of bitwise XOR operation
-	 * @usage xor(x, y)
+	 * @usage xor(left, right)
 	 */
 	@NaftahFn(  name = "حصري_أو_بتي",
 				description = """
@@ -723,8 +723,8 @@ public final class Builtin {
 				usage = "حصري_أو_بتي(ش ، ي)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object xor(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.BITWISE_XOR), BinaryOperation.ADD::apply);
+	public static <T> Object xor(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.BITWISE_XOR), BinaryOperation.ADD::apply);
 	}
 
 	/**
@@ -733,10 +733,10 @@ public final class Builtin {
 	 * Applies addition to each element individually for numbers, strings, simple values,
 	 * arrays, and compatible collections.
 	 *
-	 * @param <T> the type of operands
-	 * @param x   the first value
-	 * @param y   the second value
-	 * @return the element-wise sum of x and y
+	 * @param <T>   the type of operands
+	 * @param left  the first value
+	 * @param right the second value
+	 * @return the element-wise sum of left and right
 	 */
 	@NaftahFn(  name = "جمع_عنصر_ب_عنصر",
 				description = """
@@ -745,17 +745,17 @@ public final class Builtin {
 				usage = "جمع_عنصر_ب_عنصر(س ، ص)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseAdd(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_ADD), BinaryOperation.ADD::apply);
+	public static <T> Object elementWiseAdd(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.ELEMENTWISE_ADD), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * Performs element-wise subtraction of two values.
 	 *
-	 * @param <T> the type of operands
-	 * @param x   the first value
-	 * @param y   the second value
-	 * @return the element-wise difference of x and y
+	 * @param <T>   the type of operands
+	 * @param left  the first value
+	 * @param right the second value
+	 * @return the element-wise difference of left and right
 	 */
 	@NaftahFn(  name = "طرح_عنصر_ب_عنصر",
 				description = """
@@ -764,17 +764,17 @@ public final class Builtin {
 				usage = "طرح_عنصر_ب_عنصر(س ، ص)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseSubtract(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_SUBTRACT), BinaryOperation.ADD::apply);
+	public static <T> Object elementWiseSubtract(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.ELEMENTWISE_SUBTRACT), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * Performs element-wise multiplication of two values.
 	 *
-	 * @param <T> the type of operands
-	 * @param x   the first value
-	 * @param y   the second value
-	 * @return the element-wise product of x and y
+	 * @param <T>   the type of operands
+	 * @param left  the first value
+	 * @param right the second value
+	 * @return the element-wise product of left and right
 	 */
 	@NaftahFn(  name = "ضرب_عنصر_ب_عنصر",
 				description = """
@@ -783,17 +783,17 @@ public final class Builtin {
 				usage = "ضرب_عنصر_ب_عنصر(س ، ص)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseMultiply(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_MULTIPLY), BinaryOperation.ADD::apply);
+	public static <T> Object elementWiseMultiply(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.ELEMENTWISE_MULTIPLY), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * Performs element-wise division of two values.
 	 *
-	 * @param <T> the type of operands
-	 * @param x   the first value
-	 * @param y   the second value
-	 * @return the element-wise quotient of x and y
+	 * @param <T>   the type of operands
+	 * @param left  the first value
+	 * @param right the second value
+	 * @return the element-wise quotient of left and right
 	 */
 	@NaftahFn(  name = "قسمة_عنصر_ب_عنصر",
 				description = """
@@ -802,17 +802,17 @@ public final class Builtin {
 				usage = "قسمة_عنصر_ب_عنصر(س ، ص)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseDivide(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_DIVIDE), BinaryOperation.ADD::apply);
+	public static <T> Object elementWiseDivide(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.ELEMENTWISE_DIVIDE), BinaryOperation.ADD::apply);
 	}
 
 	/**
 	 * Performs element-wise modulo of two values.
 	 *
-	 * @param <T> the type of operands
-	 * @param x   the first value
-	 * @param y   the second value
-	 * @return the element-wise remainder of x divided by y
+	 * @param <T>   the type of operands
+	 * @param left  the first value
+	 * @param right the second value
+	 * @return the element-wise remainder of left divided by right
 	 */
 	@NaftahFn(  name = "باقي_القسمة_عنصر_ب_عنصر",
 				description = """
@@ -821,8 +821,8 @@ public final class Builtin {
 				usage = "باقي_القسمة_عنصر_ب_عنصر(س ، ص)",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseModulo(T x, T y) {
-		return reduce(applyOperation(x, y, BinaryOperation.ELEMENTWISE_MODULO), BinaryOperation.ADD::apply);
+	public static <T> Object elementWiseModulo(T left, T right) {
+		return reduce(applyOperation(left, right, BinaryOperation.ELEMENTWISE_MODULO), BinaryOperation.ADD::apply);
 	}
 
 	/**

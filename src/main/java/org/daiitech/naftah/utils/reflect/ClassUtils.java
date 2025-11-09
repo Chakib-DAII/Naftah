@@ -664,14 +664,6 @@ public final class ClassUtils {
 	 * @param methodPredicate predicate to filter methods
 	 * @return map of function names to lists of BuiltinFunction instances
 	 */
-	/**
-	 * Retrieves built-in methods annotated with @NaftahFn from classes annotated
-	 * with @NaftahFnProvider, filtered by a method predicate.
-	 *
-	 * @param classes         map of qualified class names to Class objects
-	 * @param methodPredicate predicate to filter methods
-	 * @return map of function names to lists of BuiltinFunction instances
-	 */
 	public static Map<String, List<BuiltinFunction>> getBuiltinMethods( Map<String, Class<?>> classes,
 																		Predicate<Method> methodPredicate) {
 		return classes

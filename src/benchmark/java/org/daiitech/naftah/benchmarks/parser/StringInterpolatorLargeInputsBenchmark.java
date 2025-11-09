@@ -24,8 +24,8 @@ import org.openjdk.jmh.annotations.Warmup;
 @State(Scope.Thread)
 public class StringInterpolatorLargeInputsBenchmark {
 
-	String largeInput = generateTemplate(1_000_000);
-	String largeInput1 = generateTemplate(10_000_000);
+	final String largeInput = generateTemplate(1_000_000);
+	final String largeInput1 = generateTemplate(10_000_000);
 
 	Map<String, Object> context;
 
