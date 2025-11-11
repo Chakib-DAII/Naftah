@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gradle-checkstyle-report
-          path: build/reports/checkstyle
+          path: naftah-lang/build/reports/checkstyle
 
   build:
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gradle-problems-report
-          path: build/reports/problems
+          path: naftah-lang/build/reports/problems
 
   test:
     runs-on: ubuntu-latest
@@ -122,19 +122,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gradle-test-results
-          path: build/reports/tests/test
+          path: naftah-lang/build/reports/tests/test
 
       - name: Upload JaCoCo HTML coverage report
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-html-report
-          path: build/reports/jacoco/test/html
+          path: naftah-lang/build/reports/jacoco/test/html
 
       - name: Upload JaCoCo XML report
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-xml-report
-          path: build/reports/jacoco/test/jacocoTestReport.xml
+          path: naftah-lang/build/reports/jacoco/test/jacocoTestReport.xml
 
   report:
     runs-on: ubuntu-latest
@@ -145,32 +145,32 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: gradle-checkstyle-report
-          path: build/reports/checkstyle
+          path: naftah-lang/build/reports/checkstyle
 
       - name: Download problems report artifact
         if: needs.build.result == 'failure'
         uses: actions/download-artifact@v4
         with:
           name: gradle-problems-report
-          path: build/reports/problems
+          path: naftah-lang/build/reports/problems
 
       - name: Download Gradle test results artifact
         if: needs.test.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: gradle-test-results
-          path: build/reports/tests/test
+          path: naftah-lang/build/reports/tests/test
 
       - name: Download JaCoCo HTML report
         if: needs.test.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: jacoco-html-report
-          path: build/reports/jacoco/test/html
+          path: naftah-lang/build/reports/jacoco/test/html
 
       - name: Download JaCoCo XML report
         if: needs.test.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: jacoco-xml-report
-          path: build/reports/jacoco/test/jacocoTestReport.xml
+          path: naftah-lang/build/reports/jacoco/test/jacocoTestReport.xml
