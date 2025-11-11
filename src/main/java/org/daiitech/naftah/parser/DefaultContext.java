@@ -50,6 +50,7 @@ import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
 import static org.daiitech.naftah.Naftah.CACHE_SCANNING_RESULTS_PROPERTY;
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.Naftah.INCLUDE_ALL_IN_COMPLETIONS_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_MAN_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
@@ -760,12 +761,16 @@ public class DefaultContext {
 			defaultBootstrap();
 		}
 		var runtimeCompletions = new ArrayList<>(BUILTIN_FUNCTIONS.keySet());
-		Optional
-				.ofNullable(JVM_FUNCTIONS)
-				.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
-		Optional
-				.ofNullable(INSTANTIABLE_CLASSES)
-				.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+
+		if (Boolean.getBoolean(INCLUDE_ALL_IN_COMPLETIONS_PROPERTY)) {
+			Optional
+					.ofNullable(JVM_FUNCTIONS)
+					.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+			Optional
+					.ofNullable(INSTANTIABLE_CLASSES)
+					.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+		}
+
 		return runtimeCompletions;
 	}
 

@@ -135,6 +135,10 @@ public final class Naftah {
 	 */
 	public static final String FORCE_CLASSPATH_PROPERTY = "naftah.forceClassPathScan";
 	/**
+	 * Property to include jvm functions and instantiatable classes in repl completions, disabled by default.
+	 */
+	public static final String INCLUDE_ALL_IN_COMPLETIONS_PROPERTY = "naftah.repl.includeAllInCompletions";
+	/**
 	 * Property to enable scanning the Jdk classes for Naftah types.
 	 */
 	public static final String SCAN_JDK_PROPERTY = "naftah.scanJDK";
