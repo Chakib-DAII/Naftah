@@ -67,7 +67,7 @@ INCREMENT  : '++' | 'زد';
 MINUS      : '-' | 'ناقص';
 DECREMENT  : '--' | 'نقص';
 MUL        : STAR_SIGN | 'ضارب';
-POW        : MUL MUL | 'رفع';
+POW        : STAR_SIGN STAR_SIGN | 'رفع';
 DIV        : '/' | 'قسمة';
 MOD        : '%' | 'باقي';
 ASSIGN     : '=' | 'تعيين';
