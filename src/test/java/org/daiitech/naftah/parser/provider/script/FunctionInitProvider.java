@@ -19,14 +19,14 @@ public class FunctionInitProvider implements ArgumentsProvider {
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
 				.of(Arguments
-							.of(false,
-								"""
-								جافا:لغة:ابكديفجهجكلمنوبكرستيفوكسز()
-								""",
-								null,
-								newNaftahInvocableNotFoundError("جافا:لغة:ابكديفجهجكلمنوبكرستيفوكسز",
-																1,
-																0)),
+						.of(false,
+							"""
+							جافا:لغة:ابكديفجهجكلمنوبكرستيفوكسز()
+							""",
+							null,
+							newNaftahInvocableNotFoundError("جافا:لغة:ابكديفجهجكلمنوبكرستيفوكسز",
+															1,
+															0)),
 					Arguments
 							.of(true,
 								"""
