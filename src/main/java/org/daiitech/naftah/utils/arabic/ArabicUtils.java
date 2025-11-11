@@ -67,7 +67,7 @@ public final class ArabicUtils {
 	/**
 	 * Regular expression matching Arabic diacritic marks in Unicode.
 	 */
-	public static final String ARABIC_DIACRITICS_REGEX = "[\u0610-\u061A\u064B-\u0652\u0670]";
+	public static final String ARABIC_DIACRITICS_REGEX = "[ًٌٍَُِّْؐ-ًٌؚ-ًٌٍَُِّْْٰ]";
 	/**
 	 * ANSI escape sequence to clear the screen.
 	 */
@@ -97,6 +97,10 @@ public final class ArabicUtils {
 	 * Pattern to detect lines in multiline text, capturing line content and newline characters.
 	 */
 	public static final Pattern TEXT_MULTILINE_PATTERN = Pattern.compile("(.+?)(\\r\\n|\\n|\\r|$)");
+	/**
+	 * a key set of custom transliteration rules for Arabic.
+	 */
+	public static final Set<String> CUSTOM_RULES_KEYS = new HashSet<>();
 	/**
 	 * Regular expression used to split identifiers into components based on transitions between uppercase letters,
 	 * digits, and lowercase letters.
@@ -250,10 +254,6 @@ public final class ArabicUtils {
 				"Common",
 				"Inherited"
 			);
-	/**
-	 * a key set of custom transliteration rules for Arabic.
-	 */
-	public static Set<String> CUSTOM_RULES_KEYS = new HashSet<>();
 	/**
 	 * A reusable {@link NumberFormat} instance configured for the Arabic locale.
 	 * <p>

@@ -241,12 +241,13 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 		if (super.containsKey(key)) {
 			return super.get(key);
 		}
-		else if (aliasToKeyMap.containsKey(key)) {
-			return super.get(aliasToKeyMap.get(key));
-		}
-		else {
-			return null;
-		}
+		else //noinspection SuspiciousMethodCalls
+			if (aliasToKeyMap.containsKey(key)) {
+				return super.get(aliasToKeyMap.get(key));
+			}
+			else {
+				return null;
+			}
 	}
 
 	/**

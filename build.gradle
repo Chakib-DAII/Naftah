@@ -105,9 +105,9 @@ tasks.register('extractLexerLiterals') {
 	description = 'Extracts all literal strings from lexer grammar rules.'
 
 	def lexerFile = file('src/main/antlr/NaftahLexer.g4')
-	def outputFile = file("$buildDir/libs/lexer-literals")
+	def outputFile = layout.buildDirectory.file("libs/lexer-literals").get().asFile
 
-	def tokensFile = file("$buildDir/libs/tokens-symbols.properties")
+	def tokensFile = layout.buildDirectory.file("libs/tokens-symbols.properties").get().asFile
 
 	doLast {
 		// literals processing
@@ -152,6 +152,7 @@ tasks.register('extractLexerLiterals') {
 		def tokens = new Properties()
 
 		lexerFile.withReader('UTF-8') { reader ->
+			//noinspection GroovyMissingReturnStatement
 			reader.eachLine { line ->
 				// processing literals
 				if (line.contains(":")) {
@@ -185,7 +186,9 @@ tasks.register('extractLexerLiterals') {
 					def matcher = line =~ tokensPattern
 
 					if (matcher.matches()) {
-						def token = matcher[0][1]
+						//noinspection GroovyAssignabilityCheck
+						String token = matcher[0][1]
+						//noinspection GroovyAssignabilityCheck
 						def tokensGroup = matcher[0][2]
 
 						// Extract all quoted tokens
@@ -197,7 +200,9 @@ tasks.register('extractLexerLiterals') {
 					} else {
 						def tokensAndPlaceholderMatcher = line =~ tokensAndPlaceholderPattern
 						if (tokensAndPlaceholderMatcher.matches()) {
-							def token = tokensAndPlaceholderMatcher[0][1]
+							//noinspection GroovyAssignabilityCheck
+							String token = tokensAndPlaceholderMatcher[0][1]
+							//noinspection GroovyAssignabilityCheck
 							def tokensGroup = tokensAndPlaceholderMatcher[0][2]
 
 							// Extract all quoted tokens
@@ -207,12 +212,14 @@ tasks.register('extractLexerLiterals') {
 								symbols << match[0]
 							}
 
+							//noinspection GroovyAssignabilityCheck
 							def placeholderParts = tokensGroup.split(/\s*\|\s*/).findAll { part ->
 								!(part =~ literalsPattern)
 							}
 
 							placeholderParts.each { placeholderPart ->
 								// Split tokens by whitespace (since no pipes here)
+								//noinspection GroovyAssignabilityCheck
 								def symbolsList = placeholderPart.split(/\s+/).collect { "PLACEHOLDER(${it.trim()})" }
 
 								// Remove single quotes if any (none here but safe)
@@ -230,7 +237,9 @@ tasks.register('extractLexerLiterals') {
 
 		outputFile.parentFile.mkdirs()
 		outputFile.withWriter('UTF-8') { writer ->
-			literals.each { writer.writeLine(it) }
+			literals.each { //noinspection GroovyAssignabilityCheck
+				writer.writeLine(it)
+			}
 		}
 
 		tokensFile.withOutputStream { stream ->
@@ -245,7 +254,7 @@ tasks.register('writeResolvedJars') {
 	description = 'Writes resolved JAR file names to build/libs/original-dependencies'
 
 	doLast {
-		def outputFile = file("$buildDir/libs/original-dependencies")
+		def outputFile = layout.buildDirectory.file("libs/original-dependencies").get().asFile
 		outputFile.text = ""
 
 		configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.each { artifact ->
@@ -435,7 +444,7 @@ tasks.register('lintAndFormat') {
 
 tasks.register('generateReleasePropertiesFile') {
 	doLast {
-		def outputFile = new File("$buildDir/resources/main/META-INF/naftah-release-info.properties")
+		def outputFile = layout.buildDirectory.file("resources/main/META-INF/naftah-release-info.properties").get().asFile
 
 		// Create properties file and set properties
 		outputFile.parentFile.mkdirs()  // Create the META-INF directory if it doesn't exist
@@ -502,7 +511,7 @@ jar {
 // Task to copy dependencies to /build/libs/lib/
 tasks.register('copyDependencies', Copy) {
 	from configurations.runtimeClasspath
-	into "$buildDir/libs/lib"
+	into layout.buildDirectory.file("libs/lib").get().asFile
 }
 
 jar.dependsOn processResources
@@ -510,7 +519,7 @@ jar.finalizedBy copyDependencies
 
 tasks.register('fatJar', Jar) {
 	archiveBaseName = "${project.name}-standalone"
-	destinationDirectory.set(file("$buildDir/libs/"))
+	destinationDirectory.set(layout.buildDirectory.file("libs/").get().asFile)
 	manifest {
 		attributes(
 				'Main-Class': 'org.daiitech.naftah.Naftah',
@@ -533,7 +542,7 @@ def zipBaseFolder = 'naftah'
 
 tasks.register('baseDistZip', Zip) {
 	// Set the name of the output zip file
-	destinationDirectory.set(file("$buildDir/distributions"))
+	destinationDirectory.set(layout.buildDirectory.file("distributions").get().asFile)
 	archiveBaseName.set("${project.name}")
 
 	from('.') {
@@ -553,7 +562,7 @@ tasks.register('baseDistZip', Zip) {
 		into "${zipBaseFolder}/manual"
 	}
 
-	from("$buildDir/libs") {
+	from(layout.buildDirectory.file("libs").get().asFile) {
 		include 'lexer-literals', 'original-dependencies', 'tokens-symbols.properties'
 		into "${zipBaseFolder}/lib"
 	}
@@ -569,9 +578,10 @@ tasks.register('dist', Zip) {
 
 	archiveVersion.set("${project.version}-bin")
 
+	//noinspection GroovyAssignabilityCheck
 	with tasks.named("baseDistZip").get()
 
-	from("$buildDir/libs") {
+	from(layout.buildDirectory.file("libs").get().asFile) {
 		include 'lib/*.jar', "${project.name}-${project.version}.jar"
 		into "${zipBaseFolder}/lib"
 	}
@@ -585,9 +595,10 @@ tasks.register('distStandalone', Zip) {
 
 	archiveVersion.set("${project.version}-standalone-bin")
 
+	//noinspection GroovyAssignabilityCheck
 	with tasks.named("baseDistZip").get()
 
-	from("$buildDir/libs") {
+	from(layout.buildDirectory.file("libs").get().asFile) {
 		include "${project.name}-standalone-${project.version}.jar"
 		into "${zipBaseFolder}/lib"
 	}
@@ -597,7 +608,7 @@ tasks.register('compileJmh', JavaCompile) {
 	dependsOn tasks.named('generateBenchmarkGrammarSource')
 	source = sourceSets.benchmark.java
 	classpath = sourceSets.benchmark.compileClasspath
-	destinationDirectory = file("$buildDir/classes/benchmark")
+	destinationDirectory = layout.buildDirectory.file("classes/benchmark").get().asFile
 	options.annotationProcessorPath = configurations.annotationProcessor
 }
 
@@ -611,7 +622,7 @@ tasks.register('runJmh', JavaExec) {
 	)
 
 	// Output directory for benchmark results
-	def outputDir = file("$buildDir/reports/benchmarks")
+	def outputDir = layout.buildDirectory.file("reports/benchmarks").get().asFile
 	def resultFileJson = file("$outputDir/jmh-results.json")
 
 	doFirst {
@@ -632,7 +643,7 @@ tasks.withType(Javadoc).configureEach {
 	dependsOn tasks.named("generateGrammarSource")
 	source = sourceSets.main.allJava
 	classpath = sourceSets.main.compileClasspath
-	destinationDir = file("$buildDir/docs/javadoc")
+	destinationDir = layout.buildDirectory.file("docs/javadoc").get().asFile
 	options {
 		encoding = 'UTF-8'
 		charSet = 'UTF-8'

@@ -58,14 +58,16 @@ OK         : 'نجاح';
 ERROR      : 'فشل';
 SOME       : 'بعض';
 NONE	   : 'معدوم';
+IMPORT     : 'استيراد' |  'جلب' | 'إجلب';
+AS         : 'تحت_إسم' | 'مثل';
 
 // Operators
 PLUS       : '+' | 'زائد';
 INCREMENT  : '++' | 'زد';
 MINUS      : '-' | 'ناقص';
 DECREMENT  : '--' | 'نقص';
-MUL        : '*' | 'ضارب';
-POW        : MUL MUL | 'رفع';
+MUL        : STAR_SIGN | 'ضارب';
+POW        : STAR_SIGN STAR_SIGN | 'رفع';
 DIV        : '/' | 'قسمة';
 MOD        : '%' | 'باقي';
 ASSIGN     : '=' | 'تعيين';
@@ -103,6 +105,7 @@ ORDERED     : 'مرتب';
 HASH_SIGN   : '#';
 AT_SIGN     : '@';
 DOLLAR_SIGN : '$';
+STAR_SIGN   : '*';
 
 
 // Types

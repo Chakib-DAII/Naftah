@@ -78,6 +78,27 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.BlockStatementContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ImportStatementStatementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ImportStatementAsAliasContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.GroupedImportStatementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedCallImportStatementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ImportsContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.CallableImportElementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ImportAliasContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.IfStatementStatementContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -285,9 +306,6 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ParenthesisExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
-		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectContext context) {
-			result = logExecution(doLog, context);
-		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -367,6 +385,12 @@ public final class NaftahExecutionLogger {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedNameTypeContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SimpleCallContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedNameCallContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.BuiltInContext context) {
@@ -722,6 +746,161 @@ public final class NaftahExecutionLogger {
 
 	}
 
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ImportStatementStatementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ImportStatementStatementContext::importStatement -> {
+												%s
+											}
+											"""
+										.formatted(Objects.nonNull(context.importStatement()) ?
+												context.importStatement() :
+												null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ImportStatementAsAliasContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ImportStatementAsAliasContext::IMPORT -> %s
+											ImportStatementAsAliasContext::ID -> %s
+											ImportStatementAsAliasContext::importAlias -> %s
+											"""
+										.formatted( Objects.nonNull(context.IMPORT()) ?
+															context.IMPORT() :
+															null,
+													Objects.nonNull(context.ID()) ?
+															context.ID() :
+															null,
+													Objects.nonNull(context.importAlias()) ?
+															context.importAlias() :
+															null)
+		);
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.GroupedImportStatementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											GroupedImportStatementContext::IMPORT -> %s
+											GroupedImportStatementContext::qualifiedName -> %s
+											GroupedImportStatementContext::COLON -> {
+												%s
+											}
+											GroupedImportStatementContext::imports -> %s
+											"""
+										.formatted( Objects.nonNull(context.IMPORT()) ?
+															context.IMPORT() :
+															null,
+													Objects.nonNull(context.qualifiedName()) ?
+															context.qualifiedName() :
+															null,
+													join(context.COLON()),
+													Objects.nonNull(context.imports()) ?
+															context.imports() :
+															null)
+		);
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.QualifiedCallImportStatementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											QualifiedCallImportStatementContext::IMPORT -> %s
+											QualifiedCallImportStatementContext::qualifiedCall -> %s
+											QualifiedCallImportStatementContext::importAlias -> %s
+											"""
+										.formatted( Objects.nonNull(context.IMPORT()) ?
+															context.IMPORT() :
+															null,
+													Objects.nonNull(context.qualifiedCall()) ?
+															context.qualifiedCall() :
+															null,
+													Objects.nonNull(context.importAlias()) ?
+															context.importAlias() :
+															null)
+		);
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ImportsContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ImportsContext::LBRACK -> %s
+											ImportsContext::importElements -> %s
+											ImportsContext::RBRACK -> %s
+											ImportsContext::callableImportElement -> %s
+											"""
+										.formatted( Objects.nonNull(context.LBRACK()) ?
+															context.LBRACK() :
+															null,
+													Objects.nonNull(context.importElements()) ?
+															context.importElements() :
+															null,
+													Objects.nonNull(context.RBRACK()) ?
+															context.RBRACK() :
+															null,
+													Objects.nonNull(context.callableImportElement()) ?
+															context.callableImportElement() :
+															null)
+		);
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.CallableImportElementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											CallableImportElementContext::ID -> %s
+											CallableImportElementContext::qualifiedName -> %s
+											CallableImportElementContext::qualifiedCall -> %s
+											CallableImportElementContext::importAlias -> %s
+											"""
+										.formatted( Objects.nonNull(context.ID()) ?
+															context.ID() :
+															null,
+													Objects.nonNull(context.qualifiedName()) ?
+															context.qualifiedName() :
+															null,
+													Objects.nonNull(context.qualifiedCall()) ?
+															context.qualifiedCall() :
+															null,
+													Objects.nonNull(context.importAlias()) ?
+															context.importAlias() :
+															null)
+		);
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ImportAliasContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ImportAliasContext::AS -> %s
+											ImportAliasContext::ID -> %s
+											"""
+										.formatted( Objects.nonNull(context.AS()) ?
+															context.AS() :
+															null,
+													Objects.nonNull(context.ID()) ?
+															context.ID() :
+															null)
+		);
+
+	}
+
 	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
@@ -882,16 +1061,38 @@ public final class NaftahExecutionLogger {
 	}
 
 	public static String logExecution(  boolean doLog,
-										org.daiitech.naftah.parser.NaftahParser.QualifiedCallContext ctx) {
+										org.daiitech.naftah.parser.NaftahParser.SimpleCallContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											QualifiedCallContext::qualifiedName -> {
+											SimpleCallContext::ID -> %s
+											SimpleCallContext::COLON -> %s
+											SimpleCallContext::COLON -> %s
+											SimpleCallContext::ID -> %s
+											"""
+										.formatted(
+													Objects.nonNull(context.ID()) ? context.ID(0).getText() : null,
+													Objects.nonNull(context.COLON(0)) ?
+															context.COLON(0).getText() :
+															null,
+													Objects.nonNull(context.COLON(1)) ?
+															context.COLON(1).getText() :
+															null,
+													Objects.nonNull(context.ID()) ? context.ID(1).getText() : null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.QualifiedNameCallContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											QualifiedNameCallContext::qualifiedName -> {
 												%s
 											}
-											QualifiedCallContext::COLON -> %s
-											QualifiedCallContext::COLON -> %s
-											QualifiedCallContext::ID -> %s
+											QualifiedNameCallContext::COLON -> %s
+											QualifiedNameCallContext::COLON -> %s
+											QualifiedNameCallContext::ID -> %s
 											"""
 										.formatted( Objects.nonNull(context.qualifiedName()) ?
 															context.qualifiedName().getText() :
@@ -940,6 +1141,8 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
+																		InitCallContext::AT_SIGN -> %s
+																		InitCallContext::ID -> %s
 																		InitCallContext::qualifiedName -> %s
 																		InitCallContext::targetExecutableIndex -> %s
 																		InitCallContext::LPAREN -> %s
@@ -951,7 +1154,13 @@ public final class NaftahExecutionLogger {
 												%s
 											}
 																		"""
-										.formatted( Objects.nonNull(context.qualifiedName()) ?
+										.formatted( Objects.nonNull(context.AT_SIGN()) ?
+															context.AT_SIGN().getText() :
+															null,
+													Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
+													Objects.nonNull(context.qualifiedName()) ?
 															context.qualifiedName().getText() :
 															null,
 													Objects.nonNull(context.targetExecutableIndex()) ?
@@ -1321,11 +1530,15 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
+											QualifiedNameTypeContext::ID -> %s
 											QualifiedNameTypeContext::qualifiedName -> %s
 											"""
-										.formatted(Objects.nonNull(context.qualifiedName()) ?
-												context.qualifiedName().getText() :
-												null));
+										.formatted( Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
+													Objects.nonNull(context.qualifiedName()) ?
+															context.qualifiedName().getText() :
+															null));
 
 	}
 

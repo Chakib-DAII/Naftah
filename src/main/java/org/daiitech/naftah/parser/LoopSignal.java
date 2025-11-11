@@ -60,9 +60,9 @@ public enum LoopSignal {
 		 * specified.
 		 *
 		 * @param signal      the control signal (non-null)
-		 * @param sourceLabel the source label (may be {@code null})
-		 * @param targetLabel the target label (may be {@code null})
-		 * @param result      the result object (may be {@code null})
+		 * @param sourceLabel the source label (can be {@code null})
+		 * @param targetLabel the target label (can be {@code null})
+		 * @param result      the result object (can be {@code null})
 		 * @return a new instance of {@link LoopSignalDetails}
 		 */
 		public static LoopSignalDetails of(LoopSignal signal, String sourceLabel, String targetLabel, Object result) {
@@ -73,8 +73,8 @@ public enum LoopSignal {
 		 * Factory method to create a {@link LoopSignalDetails} with no result value.
 		 *
 		 * @param signal      the control signal (non-null)
-		 * @param sourceLabel the source label (may be {@code null})
-		 * @param targetLabel the target label (may be {@code null})
+		 * @param sourceLabel the source label (can be {@code null})
+		 * @param targetLabel the target label (can be {@code null})
 		 * @return a new instance of {@link LoopSignalDetails}
 		 */
 		public static LoopSignalDetails of(LoopSignal signal, String sourceLabel, String targetLabel) {
@@ -86,7 +86,7 @@ public enum LoopSignal {
 		 * result.
 		 *
 		 * @param signal the control signal (non-null)
-		 * @param result the result object (may be {@code null})
+		 * @param result the result object (can be {@code null})
 		 * @return a new instance of {@link LoopSignalDetails}
 		 */
 		public static LoopSignalDetails of(LoopSignal signal, Object result) {

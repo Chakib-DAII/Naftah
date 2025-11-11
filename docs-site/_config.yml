@@ -7,7 +7,7 @@ url:   # TODO: GitHub Pages URL
 
 permalink: pretty      # nice clean URLs without .html
 theme: minima          # built-in simple theme (easy to customize)
-markdown: kramdown     # recommended markdown parser
+markdown: kramdown     # recommended Markdown parser
 kramdown:
   input: GFM           # GitHub Flavored Markdown
 

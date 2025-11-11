@@ -37,6 +37,13 @@ public class FunctionInitProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
+								@جافا:لغة:كائن() لا_يساوي فارغ
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
 								ثابت معرف_مستخدم : جافا:أدة:معرف_مستخدم تعيين جافا:أدة:معرف_مستخدم(6161415689025233999؛5488940234982179551)
 								معرف_مستخدم
 								""",
@@ -52,7 +59,7 @@ public class FunctionInitProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم("01033301")
+								@أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم("01033301")
 								""",
 								NaftahObject.of(DynamicNumber.of("01033301")),
 								null),
@@ -73,7 +80,7 @@ public class FunctionInitProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								جافا:أدة:صفائف_القائمة([1؛100؛0])
+								@جافا:أدة:صفائف_القائمة([1؛100؛0])
 								""",
 								NaftahObject.of(new ArrayList<>(List.of(1, 100, 0))),
 								null));

@@ -50,6 +50,7 @@ import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
 import static org.daiitech.naftah.Naftah.CACHE_SCANNING_RESULTS_PROPERTY;
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.Naftah.INCLUDE_ALL_IN_COMPLETIONS_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_MAN_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
@@ -57,9 +58,11 @@ import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
+import static org.daiitech.naftah.parser.NaftahParserHelper.hasAnyParentOfType;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
 import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.filterClasses;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getArabicClassQualifiers;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinMethods;
@@ -197,6 +200,7 @@ public class DefaultContext {
 	// qualifiedCall -> Method
 	protected static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
 	protected static Map<String, List<JvmClassInitializer>> JVM_CLASS_INITIALIZERS;
+	protected static Map<String, String> IMPORTS = new HashMap<>();
 	protected static volatile Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
 	protected static volatile boolean SHOULD_BOOT_STRAP;
 	protected static volatile boolean FORCE_BOOT_STRAP;
@@ -234,14 +238,15 @@ public class DefaultContext {
 	protected String loopLabel; // current loop label in execution inside a context
 	protected Map<String, Object> loopVariables; // only use in loop execution context
 	protected NaftahParseTreeProperty<Boolean> parseTreeExecution;
+	protected Map<String, String> blockImports;
 	protected Map<String, DeclaredParameter> parameters; // only use in function call context
 	protected Map<String, Object> arguments; // only use in function call context
 
 	/**
-	 * Constructs a default context with no parent, parameters, or arguments.
+	 * Constructs a default context with no parent, block imports, parameters, or arguments.
 	 */
 	protected DefaultContext() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	/**
@@ -251,20 +256,22 @@ public class DefaultContext {
 	 * @param arguments  function arguments map
 	 */
 	protected DefaultContext(Map<String, DeclaredParameter> parameters, Map<String, Object> arguments) {
-		this(null, parameters, arguments);
+		this(null, null, parameters, arguments);
 	}
 
 	/**
-	 * Constructs a context with a parent context, parameters, and arguments.
+	 * Constructs a context with a parent context, block imports, parameters, and arguments.
 	 * <p>
-	 * Throws a {@link NaftahBugError} if instantiated outside of allowed conditions
+	 * Throws a {@link NaftahBugError} if instantiated outside allowed conditions
 	 * (e.g., outside REPL and without a parent context when contexts already exist).
 	 *
-	 * @param parent     the parent context, or null if none
-	 * @param parameters function parameters map
-	 * @param arguments  function arguments map
+	 * @param parent       the parent context, or null if none
+	 * @param blockImports block imports map
+	 * @param parameters   function parameters map
+	 * @param arguments    function arguments map
 	 */
 	protected DefaultContext(   DefaultContext parent,
+								Map<String, String> blockImports,
 								Map<String, DeclaredParameter> parameters,
 								Map<String, Object> arguments) {
 		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (!CONTEXTS.isEmpty())) {
@@ -272,8 +279,9 @@ public class DefaultContext {
 		}
 		this.parent = parent;
 		this.depth = parent == null ? 0 : parent.getDepth() + 1;
-		this.arguments = arguments;
+		this.blockImports = blockImports;
 		this.parameters = parameters;
+		this.arguments = arguments;
 		CONTEXTS.put(depth, this);
 	}
 
@@ -398,27 +406,78 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Registers a new default context with the specified parent context.
+	 * Registers a new {@link DefaultContext} with the specified parent context.
+	 * <p>
+	 * This method creates a new context instance that inherits settings, variables,
+	 * and configurations from the given parent context.
+	 * </p>
 	 *
-	 * @param parent the parent {@link DefaultContext}
-	 * @return a new {@link DefaultContext} instance
+	 * @param parent the parent {@link DefaultContext} to inherit from; may be {@code null}
+	 * @return a newly created {@link DefaultContext} instance
 	 */
 	public static DefaultContext registerContext(DefaultContext parent) {
-		return new DefaultContext(parent, null, null);
+		return new DefaultContext(parent, null, null, null);
 	}
 
 	/**
-	 * Registers a new default context with the specified parent, parameters, and arguments.
+	 * Registers a new {@link DefaultContext} with the specified parent context
+	 * and a custom set of block imports.
+	 * <p>
+	 * This method allows specifying a map of block imports that will be associated
+	 * with the new context in addition to inheriting properties from the parent.
+	 * </p>
 	 *
-	 * @param parent     the parent {@link DefaultContext}
-	 * @param parameters the function parameters map
-	 * @param arguments  the function arguments map
-	 * @return a new {@link DefaultContext} instance
+	 * @param parent       the parent {@link DefaultContext} to inherit from; may be {@code null}
+	 * @param blockImports a map of block import definitions for the new context; may be {@code null}
+	 * @return a newly created {@link DefaultContext} instance
+	 */
+	public static DefaultContext registerContext(DefaultContext parent, Map<String, String> blockImports) {
+		return new DefaultContext(parent, blockImports, null, null);
+	}
+
+	/**
+	 * Creates and registers a new {@link DefaultContext} instance with the specified parent context,
+	 * parameters, and arguments.
+	 * <p>
+	 * This overload can be used when no explicit block imports are required.
+	 * The created context inherits any imports from its parent.
+	 * </p>
+	 *
+	 * @param parent     the parent {@link DefaultContext} to associate with this new context;
+	 *                   may be {@code null} if this is the root context
+	 * @param parameters a map of declared function parameters, where keys are parameter names
+	 *                   and values are {@link DeclaredParameter} definitions
+	 * @param arguments  a map of argument values corresponding to the provided parameters
+	 * @return a new {@link DefaultContext} instance linked to the given parent
 	 */
 	public static DefaultContext registerContext(   DefaultContext parent,
 													Map<String, DeclaredParameter> parameters,
 													Map<String, Object> arguments) {
-		return new DefaultContext(parent, parameters, arguments);
+		return new DefaultContext(parent, null, parameters, arguments);
+	}
+
+	/**
+	 * Creates and registers a new {@link DefaultContext} instance with the specified parent context,
+	 * block imports, parameters, and arguments.
+	 * <p>
+	 * This overload allows specifying custom imports that will be available within
+	 * the new context, such as additional modules or namespaces.
+	 * </p>
+	 *
+	 * @param parent       the parent {@link DefaultContext} to associate with this new context;
+	 *                     may be {@code null} if this is the root context
+	 * @param blockImports a map of imported blocks or namespaces, where keys represent import names
+	 *                     and values represent their corresponding qualified paths
+	 * @param parameters   a map of declared function parameters, where keys are parameter names
+	 *                     and values are {@link DeclaredParameter} definitions
+	 * @param arguments    a map of argument values corresponding to the provided parameters
+	 * @return a new {@link DefaultContext} instance linked to the given parent and imports
+	 */
+	public static DefaultContext registerContext(   DefaultContext parent,
+													Map<String, String> blockImports,
+													Map<String, DeclaredParameter> parameters,
+													Map<String, Object> arguments) {
+		return new DefaultContext(parent, blockImports, parameters, arguments);
 	}
 
 	/**
@@ -702,12 +761,16 @@ public class DefaultContext {
 			defaultBootstrap();
 		}
 		var runtimeCompletions = new ArrayList<>(BUILTIN_FUNCTIONS.keySet());
-		Optional
-				.ofNullable(JVM_FUNCTIONS)
-				.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
-		Optional
-				.ofNullable(INSTANTIABLE_CLASSES)
-				.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+
+		if (Boolean.getBoolean(INCLUDE_ALL_IN_COMPLETIONS_PROPERTY)) {
+			Optional
+					.ofNullable(JVM_FUNCTIONS)
+					.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+			Optional
+					.ofNullable(INSTANTIABLE_CLASSES)
+					.ifPresent(stringListMap -> runtimeCompletions.addAll(stringListMap.keySet()));
+		}
+
 		return runtimeCompletions;
 	}
 
@@ -882,6 +945,33 @@ public class DefaultContext {
 	 */
 	public static Map<String, Class<?>> getInstantiableClasses() {
 		return INSTANTIABLE_CLASSES;
+	}
+
+	/**
+	 * Defines an import within the given {@link DefaultContext}, handling both
+	 * block-level and global imports.
+	 * <p>
+	 * If the provided {@code ctx} (parse context) is part of a block (i.e., has a
+	 * parent of type {@code NaftahParser.BlockContext}), the import is registered
+	 * as a block-level import within the current context. Otherwise, the import is
+	 * added to the global {@code IMPORTS} map.
+	 * </p>
+	 *
+	 * @param currentContext the active {@link DefaultContext} where the import should be defined
+	 * @param ctx            the current {@link ParserRuleContext} representing the parse location
+	 * @param alias          the alias to associate with the imported element (e.g., a shorthand name)
+	 * @param importElement  the fully qualified name or path of the element being imported
+	 */
+	public static void defineImport(DefaultContext currentContext,
+									ParserRuleContext ctx,
+									String alias,
+									String importElement) {
+		if (hasAnyParentOfType(ctx, org.daiitech.naftah.parser.NaftahParser.BlockContext.class)) {
+			currentContext.defineBlockImport(alias, importElement);
+		}
+		else {
+			IMPORTS.put(alias, importElement);
+		}
 	}
 
 	/**
@@ -1643,5 +1733,69 @@ public class DefaultContext {
 	 */
 	public void setLoopLabel(String loopLabel) {
 		this.loopLabel = loopLabel;
+	}
+
+	/**
+	 * Defines a block-level import for this context.
+	 * <p>
+	 * The specified alias is associated with the given import element
+	 * and stored in the local {@code blockImports} map. This import will
+	 * only be visible within the current block or its child contexts.
+	 * </p>
+	 *
+	 * @param alias         the alias used to reference the imported element
+	 * @param importElement the fully qualified name or path of the element being imported
+	 */
+	private void defineBlockImport(String alias, String importElement) {
+		blockImports.put(alias, importElement);
+	}
+
+
+	/**
+	 * Resolves the fully qualified import corresponding to the specified alias.
+	 * <p>
+	 * This method attempts to match the alias against local block imports,
+	 * parent contexts, and finally the global import registry. It supports
+	 * qualified aliases (e.g., {@code my.module.Class}) by recursively matching
+	 * the base part of the alias and appending the remainder if a match is found.
+	 * </p>
+	 *
+	 * @param alias the alias or qualified name to resolve
+	 * @return the fully qualified import path if found; otherwise {@code null}
+	 */
+	public String matchImport(String alias) {
+		var aliasParts = alias.split(QUALIFIED_NAME_SEPARATOR);
+		String base = aliasParts[0];
+		if (aliasParts.length > 1) {
+			String matchedImport = doMatchImport(base);
+			return Objects.nonNull(matchedImport) ? matchedImport + alias.replaceFirst(base, "") : null;
+		}
+		return doMatchImport(base);
+	}
+
+	/**
+	 * Recursively searches for an import matching the given alias.
+	 * <p>
+	 * The search order is:
+	 * </p>
+	 * <ol>
+	 * <li>Local block imports in the current context</li>
+	 * <li>Parent context (if available)</li>
+	 * <li>Global imports</li>
+	 * </ol>
+	 *
+	 * @param alias the alias to match
+	 * @return the fully qualified import path if found; otherwise {@code null}
+	 */
+	private String doMatchImport(String alias) {
+		if (Objects.nonNull(blockImports) && blockImports.containsKey(alias)) {
+			return blockImports.get(alias);
+		}
+		else if (parent != null) {
+			return parent.doMatchImport(alias);
+		}
+		else {
+			return IMPORTS.get(alias);
+		}
 	}
 }

@@ -63,18 +63,18 @@ body {
 
 nav {
   width: 100%;
-  padding: 0.3rem 1vw;
+  padding: 0.15rem 0.6vw;
   box-sizing: border-box;
 
   ul {
     direction: rtl;
     list-style: none;
     padding: 0;
-    margin: 0 0 1rem 0;
+    margin: 0 0 0.5rem 0;
     display: flex;
     flex-wrap: nowrap; /* Prevents wrapping to multiple lines */
     justify-content: center;
-    gap: 0.3rem;
+    gap: 0.2rem;
     border-bottom: 1px solid $border-color !important;
     overflow-x: auto; /* Allows horizontal scroll if still too wide */
     white-space: nowrap;
@@ -82,11 +82,11 @@ nav {
     li {
       a {
         font-weight: 500;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         color: $link-color !important;
-        padding: 0.2rem 0.4rem;
+        padding: 0.15rem 0.3rem;
         border-radius: 3px;
-        transition: background-color 0.25s ease, color 0.25s ease;
+        transition: background-color 0.2s ease, color 0.2s ease;
         display: inline-block;
 
         &:hover,

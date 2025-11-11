@@ -109,6 +109,7 @@ public final class StringInterpolator {
 			return interpolate(input, defaultContext);
 		}
 		else if (context instanceof Map<?, ?> map) {
+			//noinspection unchecked
 			return interpolate(input, (Map<String, Object>) map);
 		}
 		else {

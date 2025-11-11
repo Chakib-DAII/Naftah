@@ -2,7 +2,10 @@ name: Build and Deploy Docs Site with Javadoc
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+    tags:
+      - '*'
 
 jobs:
   build-docs-site-and-javadoc:
@@ -35,6 +38,12 @@ jobs:
 
       - name: Build project and generate Javadoc
         run: ./gradlew build javadoc -x compileTestJava -x test -x jacocoTestReport
+
+      - name: Fetch GitHub Releases for Jekyll
+        run: |
+          curl -s https://api.github.com/repos/${{ github.repository }}/releases \
+            > docs-site/_data/releases.json
+        shell: bash
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

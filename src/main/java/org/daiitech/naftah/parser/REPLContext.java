@@ -59,22 +59,67 @@ public class REPLContext extends DefaultContext {
 	 */
 	public static DefaultContext registerContext(   Map<String, DeclaredParameter> parameters,
 													Map<String, Object> arguments) {
-		DefaultContext context = new DefaultContext(ETERNAL_CONTEXT, parameters, arguments);
+		DefaultContext context = new DefaultContext(ETERNAL_CONTEXT, null, parameters, arguments);
 		context.prepareParseTreeExecution();
 		return context;
 	}
 
 	/**
-	 * Registers a new context with the specified parent context.
+	 * Registers a new {@link DefaultContext} with the specified parent context.
 	 * <p>
-	 * The new context is prepared for parse tree execution before returning.
+	 * The new context inherits configuration and state from the parent context,
+	 * and is automatically prepared for parse tree execution before being returned.
 	 * </p>
 	 *
-	 * @param parent the parent {@link DefaultContext} of the new context
-	 * @return a new {@link DefaultContext} instance with the specified parent
+	 * @param parent the parent {@link DefaultContext} of the new context; may be {@code null}
+	 * @return a new {@link DefaultContext} instance linked to the specified parent
 	 */
 	public static DefaultContext registerContext(DefaultContext parent) {
-		DefaultContext context = new DefaultContext(parent, null, null);
+		DefaultContext context = new DefaultContext(parent, null, null, null);
+		context.prepareParseTreeExecution();
+		return context;
+	}
+
+	/**
+	 * Registers a new {@link DefaultContext} with the specified parent context and
+	 * an initial set of block imports.
+	 * <p>
+	 * The new context inherits its parent’s configuration and is initialized with
+	 * the provided {@code blockImports} mapping. It is automatically prepared for
+	 * parse tree execution before being returned.
+	 * </p>
+	 *
+	 * @param parent       the parent {@link DefaultContext} of the new context; may be {@code null}
+	 * @param blockImports a map of block-level imports to associate with the new context; may be {@code null}
+	 * @return a new {@link DefaultContext} instance configured with the specified parent and block imports
+	 */
+	public static DefaultContext registerContext(DefaultContext parent, Map<String, String> blockImports) {
+		DefaultContext context = new DefaultContext(parent, blockImports, null, null);
+		context.prepareParseTreeExecution();
+		return context;
+	}
+
+	/**
+	 * Registers a fully configured {@link DefaultContext} with the specified parent context,
+	 * block imports, declared parameters, and argument values.
+	 * <p>
+	 * This method provides the most flexible initialization for new contexts. The created
+	 * context inherits from its parent, applies the given block imports, parameters, and
+	 * argument mappings, and is automatically prepared for parse tree execution before
+	 * being returned.
+	 * </p>
+	 *
+	 * @param parent       the parent {@link DefaultContext} of the new context; may be {@code null}
+	 * @param blockImports a map of block-level imports to associate with the new context; may be {@code null}
+	 * @param parameters   a map of declared parameters to register with the new context; may be {@code null}
+	 * @param arguments    a map of argument values corresponding to the declared parameters; may be {@code null}
+	 * @return a new {@link DefaultContext} instance initialized with the specified configuration
+	 */
+	public static DefaultContext registerContext(   DefaultContext parent,
+													Map<String, String> blockImports,
+													Map<String, DeclaredParameter> parameters,
+													Map<String, Object> arguments) {
+		DefaultContext context = new DefaultContext(parent, blockImports, parameters, arguments);
 		context.prepareParseTreeExecution();
 		return context;
 	}

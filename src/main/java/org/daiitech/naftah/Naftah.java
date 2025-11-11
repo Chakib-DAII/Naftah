@@ -135,6 +135,10 @@ public final class Naftah {
 	 */
 	public static final String FORCE_CLASSPATH_PROPERTY = "naftah.forceClassPathScan";
 	/**
+	 * Property to include jvm functions and instantiatable classes in repl completions, disabled by default.
+	 */
+	public static final String INCLUDE_ALL_IN_COMPLETIONS_PROPERTY = "naftah.repl.includeAllInCompletions";
+	/**
 	 * Property to enable scanning the Jdk classes for Naftah types.
 	 */
 	public static final String SCAN_JDK_PROPERTY = "naftah.scanJDK";
@@ -435,8 +439,8 @@ public final class Naftah {
 			// TODO: pad output
 			ex.getCommandLine().usage(System.err);
 		}
-		catch (IOException ioe) {
-			printPaddedErrorMessageToString(ioe);
+		catch (Exception e) {
+			printPaddedErrorMessageToString(e);
 		}
 	}
 
@@ -530,15 +534,10 @@ public final class Naftah {
 		 * The main command name.
 		 */
 		private static final String NAME = "naftah";
-
-		@Option(names = {"-D", "--define"},
-				paramLabel = "<property=value>",
-				description = {"Define a system property", "تعريف خاصية نظام"})
-		private final Map<String, String> systemProperties = new LinkedHashMap<>();
-
 		@Unmatched
-		List<String> arguments = new ArrayList<>();
+		final List<String> arguments = new ArrayList<>();
 
+		@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 		@Option(
 				names = "--enable-cache",
 				split = ",",
@@ -551,7 +550,14 @@ public final class Naftah {
 								"""
 				}
 		)
-		List<String> enabledCaches = new ArrayList<>();
+		final List<String> enabledCaches = new ArrayList<>();
+
+		@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+		@Option(names = {"-D", "--define"},
+				paramLabel = "<property=value>",
+				description = { "Define a system property",
+								"تعريف خاصية نظام"})
+		private final Map<String, String> systemProperties = new LinkedHashMap<>();
 
 		@Option(names = {"-cp", "-classpath", "--classpath"},
 				paramLabel = "<path>",
@@ -645,9 +651,8 @@ public final class Naftah {
 		 * @param parseResult the parsed command line result
 		 * @return true if processing succeeded; false otherwise
 		 * @throws ParameterException if the command line is invalid
-		 * @throws IOException        if an I/O error occurs
 		 */
-		private boolean process(ParseResult parseResult) throws ParameterException, IOException {
+		private boolean process(ParseResult parseResult) throws ParameterException {
 			var matchedCommand = (NaftahCommand) parseResult.commandSpec().userObject();
 			// append to classpath
 			if (Objects.nonNull(matchedCommand.classpath)) {
@@ -1283,6 +1288,7 @@ public final class Naftah {
 														.entrySet(),
 												index);
 						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+							//noinspection unchecked
 							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
 						}
 					}
@@ -1297,6 +1303,7 @@ public final class Naftah {
 																.entrySet(),
 														index);
 								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									//noinspection unchecked
 									result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
 								}
 							}
@@ -1311,6 +1318,7 @@ public final class Naftah {
 																.entrySet(),
 														index);
 								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									//noinspection unchecked
 									result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
 								}
 							}
@@ -1325,6 +1333,7 @@ public final class Naftah {
 																.entrySet(),
 														index);
 								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									//noinspection unchecked
 									result = loadBuiltinFunction((Map.Entry<String, List<BuiltinFunction>>) entry);
 								}
 							}
@@ -1339,6 +1348,7 @@ public final class Naftah {
 																.entrySet(),
 														index);
 								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
+									//noinspection unchecked
 									result = loadJvmFunction((Map.Entry<String, List<JvmFunction>>) entry);
 								}
 							}

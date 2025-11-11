@@ -25,7 +25,7 @@ public abstract class BaseHighlighter implements Highlighter {
 	/**
 	 * The original highlighter to delegate to.
 	 */
-	protected Highlighter originalHighlighter;
+	protected final Highlighter originalHighlighter;
 
 	/**
 	 * Constructs a new BaseHighlighter with the given original highlighter.
@@ -40,7 +40,7 @@ public abstract class BaseHighlighter implements Highlighter {
 	 * Merges two {@link AttributedString} objects, combining their character styles.
 	 * If one string is longer than the other, the remaining portion is appended as-is.
 	 *
-	 * @param base    the base attributed string (may be {@code null})
+	 * @param base    the base attributed string (can be {@code null})
 	 * @param overlay the string to overlay on top of the base
 	 * @return a new merged {@link AttributedString}
 	 */

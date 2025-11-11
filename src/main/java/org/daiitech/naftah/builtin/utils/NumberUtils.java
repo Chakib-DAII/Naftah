@@ -157,7 +157,7 @@ public final class NumberUtils {
 	 */
 	public static Number parseDynamicNumber(String text, int radix, String originalText) {
 		if (text == null) {
-			throw newNaftahBugNullInputError(true, text);
+			throw newNaftahBugNullInputError(true, (Object) null);
 		}
 		DynamicNumber dx = DynamicNumber.of(Double.NaN);
 		// Replace all decimal-like characters with a dot
@@ -233,13 +233,10 @@ public final class NumberUtils {
 		}
 		catch (NumberFormatException ex) {
 			throw radix == 10 ?
-					newNaftahBugInvalidNumberValueError(text) :
+					newNaftahBugInvalidNumberValueError(text, ex) :
 					newNaftahBugInvalidNumberValueError(Objects.nonNull(originalText) ?
 							new Pair<>(text, originalText) :
-							text, radix);
-//			throw radix == 10 ?
-//				  newNaftahBugInvalidNumberValueError(text, ex) :
-//				  newNaftahBugInvalidNumberValueError(text, radix, ex);
+							text, radix, ex);
 		}
 		return dx;
 	}
@@ -349,27 +346,27 @@ public final class NumberUtils {
 	/**
 	 * Adds two {@link Number} values.
 	 *
-	 * @param x   left operand
-	 * @param y   right operand
-	 * @param <T> concrete type that extends @{@link Number}
+	 * @param left  left operand
+	 * @param right right operand
+	 * @param <T>   concrete type that extends @{@link Number}
 	 * @return the result of addition
 	 */
-	public static <T extends Number> Number add(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number add(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return add(dx, dy);
 	}
 
 	/**
 	 * Adds two numeric values represented as strings.
 	 *
-	 * @param x left operand
-	 * @param y right operand
+	 * @param left  left operand
+	 * @param right right operand
 	 * @return the result of addition
 	 */
-	public static Number add(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number add(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return add(dx, dy);
 	}
 
@@ -452,27 +449,27 @@ public final class NumberUtils {
 	/**
 	 * Subtracts two {@link Number} values.
 	 *
-	 * @param x   left operand
-	 * @param y   right operand
-	 * @param <T> concrete type that extends @{@link Number}
+	 * @param left  left operand
+	 * @param right right operand
+	 * @param <T>   concrete type that extends @{@link Number}
 	 * @return the result of subtraction
 	 */
-	public static <T extends Number> Number subtract(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number subtract(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return subtract(dx, dy);
 	}
 
 	/**
 	 * Subtracts two numeric values represented as strings.
 	 *
-	 * @param x left operand
-	 * @param y right operand
+	 * @param left  left operand
+	 * @param right right operand
 	 * @return the result of subtraction
 	 */
-	public static Number subtract(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number subtract(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return subtract(dx, dy);
 	}
 
@@ -552,27 +549,27 @@ public final class NumberUtils {
 	/**
 	 * Multiplies two {@link Number} values.
 	 *
-	 * @param x   left operand
-	 * @param y   right operand
-	 * @param <T> concrete type that extends @{@link Number}
+	 * @param left  left operand
+	 * @param right right operand
+	 * @param <T>   concrete type that extends @{@link Number}
 	 * @return the result of multiplication
 	 */
-	public static <T extends Number> Number multiply(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number multiply(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return multiply(dx, dy);
 	}
 
 	/**
 	 * Multiplies two numeric values represented as strings.
 	 *
-	 * @param x left operand
-	 * @param y right operand
+	 * @param left  left operand
+	 * @param right right operand
 	 * @return the result of multiplication
 	 */
-	public static Number multiply(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number multiply(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return multiply(dx, dy);
 	}
 
@@ -664,27 +661,27 @@ public final class NumberUtils {
 	/**
 	 * Divides two {@link Number} values.
 	 *
-	 * @param x   the dividend
-	 * @param y   the divisor
-	 * @param <T> concrete type that extends @{@link Number}
+	 * @param left  the dividend
+	 * @param right the divisor
+	 * @param <T>   concrete type that extends @{@link Number}
 	 * @return the result of division
 	 */
-	public static <T extends Number> Number divide(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number divide(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return divide(dx, dy);
 	}
 
 	/**
 	 * Divides two numeric values represented as strings.
 	 *
-	 * @param x the dividend
-	 * @param y the divisor
+	 * @param left  the dividend
+	 * @param right the divisor
 	 * @return the result of division
 	 */
-	public static Number divide(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number divide(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return divide(dx, dy);
 	}
 
@@ -734,27 +731,27 @@ public final class NumberUtils {
 	/**
 	 * Computes the modulo (remainder) of two {@link Number} values.
 	 *
-	 * @param x   the dividend
-	 * @param y   the divisor
-	 * @param <T> concrete type that extends @{@link Number}
+	 * @param left  the dividend
+	 * @param right the divisor
+	 * @param <T>   concrete type that extends @{@link Number}
 	 * @return the result of division
 	 */
-	public static <T extends Number> Number modulo(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number modulo(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return modulo(dx, dy);
 	}
 
 	/**
 	 * Computes the modulo (remainder) of two numeric values represented as strings.
 	 *
-	 * @param x the dividend
-	 * @param y the divisor
+	 * @param left  the dividend
+	 * @param right the divisor
 	 * @return the result of division
 	 */
-	public static Number modulo(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number modulo(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return modulo(dx, dy);
 	}
 
@@ -805,27 +802,27 @@ public final class NumberUtils {
 	/**
 	 * Returns the greater of two {@link Number} values.
 	 *
-	 * @param x   the first number
-	 * @param y   the second number
-	 * @param <T> concrete type that extends @{@link Number}
-	 * @return the greatest of {@code x} and {@code y}, as a {@code Number}
+	 * @param left  the first number
+	 * @param right the second number
+	 * @param <T>   concrete type that extends @{@link Number}
+	 * @return the greatest of {@code left} and {@code right}, as a {@code Number}
 	 */
-	public static <T extends Number> Number max(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number max(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return max(dx, dy);
 	}
 
 	/**
 	 * Returns the greater of two numeric values represented as strings.
 	 *
-	 * @param x the first number
-	 * @param y the second number
-	 * @return the greatest of {@code x} and {@code y}, as a {@code Number}
+	 * @param left  the first number
+	 * @param right the second number
+	 * @return the greatest of {@code left} and {@code right}, as a {@code Number}
 	 */
-	public static Number max(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number max(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return max(dx, dy);
 	}
 
@@ -870,27 +867,27 @@ public final class NumberUtils {
 	/**
 	 * Returns the lesser of two {@link Number} values.
 	 *
-	 * @param x   the first number
-	 * @param y   the second number
-	 * @param <T> concrete type that extends @{@link Number}
-	 * @return the least of {@code x} and {@code y}, as a {@code Number}
+	 * @param left  the first number
+	 * @param right the second number
+	 * @param <T>   concrete type that extends @{@link Number}
+	 * @return the least of {@code left} and {@code right}, as a {@code Number}
 	 */
-	public static <T extends Number> Number min(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number min(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return min(dx, dy);
 	}
 
 	/**
 	 * Returns the lesser of two numeric values represented as strings.
 	 *
-	 * @param x the first number
-	 * @param y the second number
-	 * @return the least of {@code x} and {@code y}, as a {@code Number}
+	 * @param left  the first number
+	 * @param right the second number
+	 * @return the least of {@code left} and {@code right}, as a {@code Number}
 	 */
-	public static Number min(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number min(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return min(dx, dy);
 	}
 
@@ -1009,6 +1006,7 @@ public final class NumberUtils {
 					// Promote to BigDecimal for negative exponent
 					BigDecimal bdBase = new BigDecimal(base.asBigInteger());
 					BigDecimal pow = DynamicNumber.of(doPow(bdBase, -exponent)).asBigDecimal();
+					//noinspection BigDecimalMethodWithoutRoundingCalled
 					dr.set(BigDecimal.ONE.divide(pow));
 				}
 				else {
@@ -1023,6 +1021,7 @@ public final class NumberUtils {
 							// Promote to BigDecimal for negative exponent
 							BigDecimal bdBase = new BigDecimal(base.asBigInteger());
 							BigDecimal pow = DynamicNumber.of(doPow(bdBase, -exponent)).asBigDecimal();
+							//noinspection BigDecimalMethodWithoutRoundingCalled
 							dr.set(BigDecimal.ONE.divide(pow));
 						}
 						else {
@@ -1506,29 +1505,29 @@ public final class NumberUtils {
 	/**
 	 * Checks if two numbers {@link Number} are equal.
 	 *
-	 * @param x   the first number
-	 * @param y   the second number
-	 * @param <T> concrete type that extends @{@link Number}
-	 * @return {@code true} if {@code x} and {@code y} are equal in value;
+	 * @param left  the first number
+	 * @param right the second number
+	 * @param <T>   concrete type that extends @{@link Number}
+	 * @return {@code true} if {@code left} and {@code right} are equal in value;
 	 *         {@code false} otherwise
 	 */
-	public static <T extends Number> boolean equals(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> boolean equals(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return equals(dx, dy);
 	}
 
 	/**
 	 * Checks if two numbers, represented as strings, are equal.
 	 *
-	 * @param x the first number
-	 * @param y the second number
-	 * @return {@code true} if {@code x} and {@code y} are equal in value;
+	 * @param left  the first number
+	 * @param right the second number
+	 * @return {@code true} if {@code left} and {@code right} are equal in value;
 	 *         {@code false} otherwise
 	 */
-	public static boolean equals(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static boolean equals(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return equals(dx, dy);
 	}
 
@@ -1550,29 +1549,29 @@ public final class NumberUtils {
 	/**
 	 * Compares two numbers {@link Number}.
 	 *
-	 * @param x   the first number
-	 * @param y   the second number
-	 * @param <T> concrete type that extends @{@link Number}
-	 * @return a negative integer if {@code x < y}; zero if {@code x == y}; a
-	 *         positive integer if {@code x > y}
+	 * @param left  the first number
+	 * @param right the second number
+	 * @param <T>   concrete type that extends @{@link Number}
+	 * @return a negative integer if {@code left < right}; zero if {@code left == right}; a
+	 *         positive integer if {@code left > right}
 	 */
-	public static <T extends Number> int compare(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> int compare(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return compare(dx, dy);
 	}
 
 	/**
 	 * Compares two numbers, represented as strings.
 	 *
-	 * @param x the first number
-	 * @param y the second number
-	 * @return a negative integer if {@code x < y}; zero if {@code x == y}; a
-	 *         positive integer if {@code x > y}
+	 * @param left  the first number
+	 * @param right the second number
+	 * @return a negative integer if {@code left < right}; zero if {@code left == right}; a
+	 *         positive integer if {@code left > right}
 	 */
-	public static int compare(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static int compare(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return compare(dx, dy);
 	}
 
@@ -1626,17 +1625,17 @@ public final class NumberUtils {
 	 * that can be safely converted into {@code DynamicNumber} and that allow bitwise operations.
 	 * </p>
 	 *
-	 * @param <T> the type of the input numbers, which must extend {@link Number}.
-	 * @param x   the first operand.
-	 * @param y   the second operand.
+	 * @param <T>   the type of the input numbers, which must extend {@link Number}.
+	 * @param left  the first operand.
+	 * @param right the second operand.
 	 * @return the result of the bitwise AND operation as a {@link Number}.
 	 * @throws NaftahBugError if the underlying number types do not support bitwise operations.
 	 * @see DynamicNumber#of(Number)
 	 * @see #and(DynamicNumber, DynamicNumber)
 	 */
-	public static <T extends Number> Number and(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number and(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return and(dx, dy);
 	}
 
@@ -1649,17 +1648,17 @@ public final class NumberUtils {
 	 * types.
 	 * </p>
 	 *
-	 * @param x the first operand; expected to be convertible to a {@link DynamicNumber}.
-	 * @param y the second operand; expected to be convertible to a {@link DynamicNumber}.
+	 * @param left  the first operand; expected to be convertible to a {@link DynamicNumber}.
+	 * @param right the second operand; expected to be convertible to a {@link DynamicNumber}.
 	 * @return the result of the bitwise AND operation as a {@link Number}.
 	 * @throws NaftahBugError if either input is not a valid number or if bitwise operations are not supported on the
 	 *                        types.
 	 * @see DynamicNumber#of(Object)
 	 * @see #and(DynamicNumber, DynamicNumber)
 	 */
-	public static Number and(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number and(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return and(dx, dy);
 	}
 
@@ -1668,7 +1667,7 @@ public final class NumberUtils {
 	 *
 	 * @param dx the first number
 	 * @param dy the first number
-	 * @return the number representing {@code x & y}
+	 * @return the number representing {@code left & right}
 	 */
 	public static Number and(DynamicNumber dx, DynamicNumber dy) {
 		DynamicNumber dr = dx.clone();
@@ -1704,17 +1703,17 @@ public final class NumberUtils {
 	 * numeric values that support bitwise logic (e.g., integers).
 	 * </p>
 	 *
-	 * @param <T> the type of the input numbers, extending {@link Number}.
-	 * @param x   the first operand.
-	 * @param y   the second operand.
+	 * @param <T>   the type of the input numbers, extending {@link Number}.
+	 * @param left  the first operand.
+	 * @param right the second operand.
 	 * @return the result of the bitwise OR operation as a {@link Number}.
 	 * @throws NaftahBugError if bitwise operations are not supported on the operand types.
 	 * @see DynamicNumber#of(Number)
 	 * @see #or(DynamicNumber, DynamicNumber)
 	 */
-	public static <T extends Number> Number or(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number or(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return or(dx, dy);
 	}
 
@@ -1726,16 +1725,16 @@ public final class NumberUtils {
 	 * It is designed for dynamic contexts where the input types may vary at runtime.
 	 * </p>
 	 *
-	 * @param x the first operand; must be convertible to a {@link DynamicNumber}.
-	 * @param y the second operand; must be convertible to a {@link DynamicNumber}.
+	 * @param left  the first operand; must be convertible to a {@link DynamicNumber}.
+	 * @param right the second operand; must be convertible to a {@link DynamicNumber}.
 	 * @return the result of the bitwise OR operation as a {@link Number}.
 	 * @throws NaftahBugError if either operand is not a valid numeric value or bitwise operations are not supported.
 	 * @see DynamicNumber#of(Object)
 	 * @see #or(DynamicNumber, DynamicNumber)
 	 */
-	public static Number or(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number or(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return or(dx, dy);
 	}
 
@@ -1744,7 +1743,7 @@ public final class NumberUtils {
 	 *
 	 * @param dx the first number
 	 * @param dy the first number
-	 * @return the number representing {@code x | y}
+	 * @return the number representing {@code left | right}
 	 */
 	public static Number or(DynamicNumber dx, DynamicNumber dy) {
 		DynamicNumber dr = dx.clone();
@@ -1780,17 +1779,17 @@ public final class NumberUtils {
 	 * that allow such operations (typically integers).
 	 * </p>
 	 *
-	 * @param <T> the type of the input numbers, extending {@link Number}.
-	 * @param x   the first operand.
-	 * @param y   the second operand.
+	 * @param <T>   the type of the input numbers, extending {@link Number}.
+	 * @param left  the first operand.
+	 * @param right the second operand.
 	 * @return the result of the bitwise XOR operation as a {@link Number}.
 	 * @throws NaftahBugError if the operand types do not support bitwise operations.
 	 * @see DynamicNumber#of(Number)
 	 * @see #xor(DynamicNumber, DynamicNumber)
 	 */
-	public static <T extends Number> Number xor(T x, T y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static <T extends Number> Number xor(T left, T right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return xor(dx, dy);
 	}
 
@@ -1802,16 +1801,16 @@ public final class NumberUtils {
 	 * It is suitable for dynamic contexts where inputs may vary in type (e.g., {@link Number}, {@link String}, etc.).
 	 * </p>
 	 *
-	 * @param x the first operand; must be convertible to a {@link DynamicNumber}.
-	 * @param y the second operand; must be convertible to a {@link DynamicNumber}.
+	 * @param left  the first operand; must be convertible to a {@link DynamicNumber}.
+	 * @param right the second operand; must be convertible to a {@link DynamicNumber}.
 	 * @return the result of the bitwise XOR operation as a {@link Number}.
 	 * @throws NaftahBugError if either input is not a valid numeric type or does not support bitwise operations.
 	 * @see DynamicNumber#of(Object)
 	 * @see #xor(DynamicNumber, DynamicNumber)
 	 */
-	public static Number xor(Object x, Object y) {
-		DynamicNumber dx = DynamicNumber.of(x);
-		DynamicNumber dy = DynamicNumber.of(y);
+	public static Number xor(Object left, Object right) {
+		DynamicNumber dx = DynamicNumber.of(left);
+		DynamicNumber dy = DynamicNumber.of(right);
 		return xor(dx, dy);
 	}
 
@@ -1820,7 +1819,7 @@ public final class NumberUtils {
 	 *
 	 * @param dx the first number
 	 * @param dy the first number
-	 * @return the number representing {@code x ^ y}
+	 * @return the number representing {@code left ^ right}
 	 */
 	public static Number xor(DynamicNumber dx, DynamicNumber dy) {
 		DynamicNumber dr = dx.clone();

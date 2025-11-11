@@ -18,6 +18,7 @@ import org.daiitech.naftah.parser.provider.script.FunctionCallProvider;
 import org.daiitech.naftah.parser.provider.script.FunctionDeclarationProvider;
 import org.daiitech.naftah.parser.provider.script.FunctionInitProvider;
 import org.daiitech.naftah.parser.provider.script.IfStatementProvider;
+import org.daiitech.naftah.parser.provider.script.ImportStatementProvider;
 import org.daiitech.naftah.parser.provider.script.LogicalExpressionsProvider;
 import org.daiitech.naftah.parser.provider.script.QualifiedNameProvider;
 import org.daiitech.naftah.parser.provider.script.QualifiedObjectAccessProvider;
@@ -55,7 +56,7 @@ public class DefaultNaftahParserVisitorTests {
 
 		String originalClassPath = System.getProperty(CLASS_PATH_PROPERTY);
 		String tempPaths = System
-				.getProperty(JAVA_HOME_PROPERTY) + File.pathSeparator + "jmods" + File.pathSeparator + "java.base.jmod" + File.pathSeparator + Arrays
+				.getProperty(JAVA_HOME_PROPERTY) + File.pathSeparator + "jmods" + File.pathSeparator + "java.base" + ".jmod" + File.pathSeparator + Arrays
 						.stream((originalClassPath).split(File.pathSeparator))
 						.filter(path -> path.contains("Naftah") && path.contains("java") && path.contains("main"))
 						.collect(Collectors.joining(File.pathSeparator));
@@ -89,6 +90,15 @@ public class DefaultNaftahParserVisitorTests {
 	@BeforeEach
 	void setup() {
 		CONTEXTS.clear();
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(ImportStatementProvider.class)
+	void importStatementTests(  boolean validScript,
+								String script,
+								Object expectedValue,
+								NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
 	@ParameterizedTest

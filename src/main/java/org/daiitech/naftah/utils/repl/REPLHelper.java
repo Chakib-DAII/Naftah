@@ -79,6 +79,45 @@ public final class REPLHelper {
 	 */
 	public static final AtomicReference<String> LAST_PRINTED = new AtomicReference<>();
 	/**
+	 * A reusable instance of {@link Parser} from the Flexmark library used for parsing
+	 * Markdown content into an abstract syntax tree (AST).
+	 * <p>
+	 * This parser can be used to convert raw Markdown strings into a structured {@link Node}
+	 * tree that can be traversed or rendered.
+	 * <p>
+	 * It is recommended to reuse this instance instead of creating new ones for performance.
+	 */
+	public static final Parser MARKDOWN_PARSER = Parser.builder().build();
+	/**
+	 * Regex for matching variable names.
+	 */
+	public static final String REGEX_VARIABLE = "[\\p{L}_][\\p{L}0-9_-]*";
+	/**
+	 * Regex for matching command names.
+	 */
+	public static final String REGEX_COMMAND = "[:]?[\\p{L}]+[\\p{L}0-9_-]*";
+	/**
+	 * Characters that can be used to escape other characters.
+	 */
+	public static final char[] ESCAPE_CHARS = new char[]{'N', '\\'};
+	/**
+	 * Set form of the escape characters for faster lookup.
+	 */
+	public static final Set<Character> ESCAPE_CHAR_SET = Set.of('N', '\\');
+	/**
+	 * Regex pattern for matching escape characters or escape + newline.
+	 */
+	public static final String ESCAPE_CHARS_REGEX = String
+			.join(  "|",
+					ESCAPE_CHAR_SET
+							.stream()
+							.flatMap(character -> Stream.of(String.valueOf(character), character + "\n"))
+							.toArray(String[]::new));
+	/**
+	 * Quotation characters allowed in the REPL.
+	 */
+	public static final char[] QUOTE_CHARS = new char[]{'"', '«', '»'};
+	/**
 	 * Right-to-left prompt value.
 	 */
 	private static final String RTL_PROMPT_VALUE = "< نفطة >";
@@ -137,45 +176,6 @@ public final class REPLHelper {
 	 * Indicates if multiline mode is active in the REPL.
 	 */
 	public static boolean MULTILINE_IS_ACTIVE = false;
-	/**
-	 * A reusable instance of {@link Parser} from the Flexmark library used for parsing
-	 * Markdown content into an abstract syntax tree (AST).
-	 * <p>
-	 * This parser can be used to convert raw Markdown strings into a structured {@link Node}
-	 * tree that can be traversed or rendered.
-	 * <p>
-	 * It is recommended to reuse this instance instead of creating new ones for performance.
-	 */
-	public static Parser MARKDOWN_PARSER = Parser.builder().build();
-	/**
-	 * Regex for matching variable names.
-	 */
-	public static String REGEX_VARIABLE = "[\\p{L}_][\\p{L}0-9_-]*";
-	/**
-	 * Regex for matching command names.
-	 */
-	public static String REGEX_COMMAND = "[:]?[\\p{L}]+[\\p{L}0-9_-]*";
-	/**
-	 * Characters that can be used to escape other characters.
-	 */
-	public static char[] ESCAPE_CHARS = new char[]{'N', '\\'};
-	/**
-	 * Set form of the escape characters for faster lookup.
-	 */
-	public static Set<Character> ESCAPE_CHAR_SET = Set.of('N', '\\');
-	/**
-	 * Regex pattern for matching escape characters or escape + newline.
-	 */
-	public static String ESCAPE_CHARS_REGEX = String
-			.join(  "|",
-					ESCAPE_CHAR_SET
-							.stream()
-							.flatMap(character -> Stream.of(String.valueOf(character), character + "\n"))
-							.toArray(String[]::new));
-	/**
-	 * Quotation characters allowed in the REPL.
-	 */
-	public static char[] QUOTE_CHARS = new char[]{'"', '«', '»'};
 
 	/**
 	 * Private constructor to prevent instantiation.

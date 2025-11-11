@@ -47,7 +47,7 @@ public final class FunctionUtils {
 	 */
 	public static <T> boolean allMatch(Object input, Predicate<T> predicate) {
 		if (input == null) {
-			throw newNaftahBugNullInputError(true, input);
+			throw newNaftahBugNullInputError(true, (Object) null);
 		}
 
 		// Collection
@@ -65,6 +65,7 @@ public final class FunctionUtils {
 			return CollectionUtils.allMatch((Object[]) input, predicate);
 		}
 
+		//noinspection unchecked
 		return predicate.test((T) input);
 	}
 
@@ -81,6 +82,7 @@ public final class FunctionUtils {
 	 * @return {@code true} if no elements match the predicate; {@code false} otherwise
 	 */
 	public static <T> boolean noneMatch(Object input, Predicate<T> predicate) {
+		//noinspection unchecked
 		return allMatch(input, element -> !predicate.test((T) element));
 	}
 
@@ -118,6 +120,7 @@ public final class FunctionUtils {
 
 		// Collection
 		if (input instanceof Collection<?> collection) {
+			//noinspection unchecked
 			return CollectionUtils.reduce((Collection<Object>) collection, combiner);
 		}
 
@@ -128,6 +131,7 @@ public final class FunctionUtils {
 
 		// Map
 		if (input instanceof Map<?, ?> map) {
+			//noinspection unchecked
 			return CollectionUtils.reduce((Map<?, Object>) map, combiner);
 		}
 

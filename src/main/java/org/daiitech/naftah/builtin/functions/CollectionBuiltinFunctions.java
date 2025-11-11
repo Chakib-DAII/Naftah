@@ -67,9 +67,9 @@ public final class CollectionBuiltinFunctions {
 	/**
 	 * Adds two values element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first operand
-	 * @param y   second operand
-	 * @param <T> type of operands
+	 * @param left  first operand
+	 * @param right second operand
+	 * @param <T>   type of operands
 	 * @return collection element-wise sum
 	 */
 	@NaftahFn(
@@ -86,17 +86,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object add(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.ADD);
+	public static <T> Object add(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.ADD);
 	}
 
 	/**
 	 * Performs logical AND element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first operand
-	 * @param y   second operand
-	 * @param <T> type of operands
+	 * @param left  first operand
+	 * @param right second operand
+	 * @param <T>   type of operands
 	 * @return collection logical AND results
 	 */
 	@NaftahFn(  name = "و_منطقي",
@@ -112,17 +112,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object logicalAnd(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.AND);
+	public static <T> Object logicalAnd(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.AND);
 	}
 
 	/**
 	 * Performs logical OR element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first operand
-	 * @param y   second operand
-	 * @param <T> type of operands
+	 * @param left  first operand
+	 * @param right second operand
+	 * @param <T>   type of operands
 	 * @return collection of logical OR results
 	 */
 	@NaftahFn(  name = "أو_منطقي",
@@ -138,18 +138,18 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object logicalOr(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.OR);
+	public static <T> Object logicalOr(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.OR);
 	}
 
 	/**
 	 * Subtracts the second value from the first element by element of collection, map with themselves or with simple
 	 * value.
 	 *
-	 * @param x   first operand
-	 * @param y   second operand
-	 * @param <T> type of operands
+	 * @param left  first operand
+	 * @param right second operand
+	 * @param <T>   type of operands
 	 * @return subtraction result
 	 */
 	@NaftahFn(  name = "إطرح",
@@ -165,17 +165,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object subtract(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.SUBTRACT);
+	public static <T> Object subtract(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.SUBTRACT);
 	}
 
 	/**
 	 * Multiplies two values element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first operand
-	 * @param y   second operand
-	 * @param <T> type of operands
+	 * @param left  first operand
+	 * @param right second operand
+	 * @param <T>   type of operands
 	 * @return multiplication result
 	 */
 	@NaftahFn(  name = "إضرب",
@@ -191,18 +191,18 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object multiply(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.MULTIPLY);
+	public static <T> Object multiply(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.MULTIPLY);
 	}
 
 	/**
 	 * Raises the first value to the power of the second value element by element of collection, map with themselves
 	 * or with simple value.
 	 *
-	 * @param x   base
-	 * @param y   exponent
-	 * @param <T> type of operands
+	 * @param left  base
+	 * @param right exponent
+	 * @param <T>   type of operands
 	 * @return result of exponentiation
 	 */
 	@NaftahFn(  name = "أس",
@@ -218,18 +218,18 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object pow(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.POWER);
+	public static <T> Object pow(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.POWER);
 	}
 
 	/**
 	 * Divides the first value by the second value element by element of collection, map with themselves or with
 	 * simple value.
 	 *
-	 * @param x   numerator
-	 * @param y   denominator
-	 * @param <T> type of operands
+	 * @param left  numerator
+	 * @param right denominator
+	 * @param <T>   type of operands
 	 * @return division result
 	 */
 	@NaftahFn(  name = "إقسم",
@@ -245,18 +245,18 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object divide(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.DIVIDE);
+	public static <T> Object divide(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.DIVIDE);
 	}
 
 	/**
 	 * Computes the modulo (remainder) of the first value divided by the second element by element of collection, map
 	 * with themselves or with simple value.
 	 *
-	 * @param x   dividend
-	 * @param y   divisor
-	 * @param <T> type of operands
+	 * @param left  dividend
+	 * @param right divisor
+	 * @param <T>   type of operands
 	 * @return remainder after division
 	 */
 	@NaftahFn(  name = "باقي_القسمة",
@@ -272,17 +272,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object modulo(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.MODULO);
+	public static <T> Object modulo(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.MODULO);
 	}
 
 	/**
 	 * Checks if two values are equal element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return collection of booleans
 	 */
 	@NaftahFn(  name = "هل_يساوي",
@@ -298,17 +298,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object equals(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.EQUALS);
+	public static <T> Object equals(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.EQUALS);
 	}
 
 	/**
 	 * Checks if two values are not equal element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return collection of booleans
 	 */
 	@NaftahFn(  name = "هل_لا_يساوي",
@@ -324,18 +324,18 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object notEquals(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.NOT_EQUALS);
+	public static <T> Object notEquals(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.NOT_EQUALS);
 	}
 
 	/**
 	 * Checks if the first value is less than the second element by element of collection, map with themselves or with
 	 * simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return collection of booleans
 	 */
 	@NaftahFn(  name = "هل_أصغر_من",
@@ -351,18 +351,18 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object lessThan(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.LESS_THAN);
+	public static <T> Object lessThan(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.LESS_THAN);
 	}
 
 	/**
 	 * Checks if the first value is less than or equal to the second element by element of collection, map with
 	 * themselves or with simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return collection of booleans
 	 */
 	@NaftahFn(  name = "هل_أصغر_أو_يساوي",
@@ -378,18 +378,18 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object lessThanEquals(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.LESS_THAN_EQUALS);
+	public static <T> Object lessThanEquals(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.LESS_THAN_EQUALS);
 	}
 
 	/**
 	 * Checks if the first value is greater than the second element by element of collection, map with themselves or
 	 * with simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return collection of booleans
 	 */
 	@NaftahFn(  name = "هل_أكبر_من",
@@ -405,18 +405,18 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object greaterThan(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.GREATER_THAN);
+	public static <T> Object greaterThan(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.GREATER_THAN);
 	}
 
 	/**
 	 * Checks if the first value is greater than or equal to the second element by element of collection, map with
 	 * themselves or with simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return collection of booleans
 	 */
 	@NaftahFn(  name = "هل_أكبر_أو_يساوي",
@@ -432,17 +432,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object greaterThanEquals(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.GREATER_THAN_EQUALS);
+	public static <T> Object greaterThanEquals(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.GREATER_THAN_EQUALS);
 	}
 
 	/**
 	 * Performs bitwise AND operation element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return result of bitwise AND
 	 */
 	@NaftahFn(  name = "و_بتي",
@@ -458,17 +458,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object and(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.BITWISE_AND);
+	public static <T> Object and(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.BITWISE_AND);
 	}
 
 	/**
 	 * Performs bitwise OR operation element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return result of bitwise OR
 	 */
 	@NaftahFn(  name = "أو_بتي",
@@ -484,17 +484,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object or(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.BITWISE_OR);
+	public static <T> Object or(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.BITWISE_OR);
 	}
 
 	/**
 	 * Performs bitwise XOR operation element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first value
-	 * @param y   second value
-	 * @param <T> type of operands
+	 * @param left  first value
+	 * @param right second value
+	 * @param <T>   type of operands
 	 * @return result of bitwise XOR
 	 */
 	@NaftahFn(  name = "حصري_أو_بتي",
@@ -510,17 +510,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object xor(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.BITWISE_XOR);
+	public static <T> Object xor(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.BITWISE_XOR);
 	}
 
 	/**
 	 * Performs element-wise addition element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first collection or value
-	 * @param y   second collection or value
-	 * @param <T> type of operands
+	 * @param left  first collection or value
+	 * @param right second collection or value
+	 * @param <T>   type of operands
 	 * @return element-wise addition result
 	 */
 	@NaftahFn(  name = "جمع_عنصر_ب_عنصر",
@@ -537,17 +537,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseAdd(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_ADD);
+	public static <T> Object elementWiseAdd(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.ELEMENTWISE_ADD);
 	}
 
 	/**
 	 * Performs element-wise subtraction element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first collection or value
-	 * @param y   second collection or value
-	 * @param <T> type of operands
+	 * @param left  first collection or value
+	 * @param right second collection or value
+	 * @param <T>   type of operands
 	 * @return element-wise subtraction result
 	 */
 	@NaftahFn(  name = "طرح_عنصر_ب_عنصر",
@@ -564,17 +564,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseSubtract(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_SUBTRACT);
+	public static <T> Object elementWiseSubtract(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.ELEMENTWISE_SUBTRACT);
 	}
 
 	/**
 	 * Performs element-wise multiplication element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first collection or value
-	 * @param y   second collection or value
-	 * @param <T> type of operands
+	 * @param left  first collection or value
+	 * @param right second collection or value
+	 * @param <T>   type of operands
 	 * @return element-wise multiplication result
 	 */
 	@NaftahFn(  name = "ضرب_عنصر_ب_عنصر",
@@ -591,17 +591,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseMultiply(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_MULTIPLY);
+	public static <T> Object elementWiseMultiply(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.ELEMENTWISE_MULTIPLY);
 	}
 
 	/**
 	 * Performs element-wise division element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first collection or value
-	 * @param y   second collection or value
-	 * @param <T> type of operands
+	 * @param left  first collection or value
+	 * @param right second collection or value
+	 * @param <T>   type of operands
 	 * @return element-wise division result
 	 */
 	@NaftahFn(  name = "قسمة_عنصر_ب_عنصر",
@@ -618,17 +618,17 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseDivide(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_DIVIDE);
+	public static <T> Object elementWiseDivide(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.ELEMENTWISE_DIVIDE);
 	}
 
 	/**
 	 * Performs element-wise modulo element by element of collection, map with themselves or with simple value.
 	 *
-	 * @param x   first collection or value
-	 * @param y   second collection or value
-	 * @param <T> type of operands
+	 * @param left  first collection or value
+	 * @param right second collection or value
+	 * @param <T>   type of operands
 	 * @return element-wise modulo result
 	 */
 	@NaftahFn(  name = "باقي_القسمة_عنصر_ب_عنصر",
@@ -645,9 +645,9 @@ public final class CollectionBuiltinFunctions {
 						""",
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
-	public static <T> Object elementWiseModulo(T x, T y) {
-		checkParams(x, y);
-		return applyOperation(x, y, BinaryOperation.ELEMENTWISE_MODULO);
+	public static <T> Object elementWiseModulo(T left, T right) {
+		checkParams(left, right);
+		return applyOperation(left, right, BinaryOperation.ELEMENTWISE_MODULO);
 	}
 
 	/**
@@ -856,13 +856,13 @@ public final class CollectionBuiltinFunctions {
 	 * Checks if at least one of the two parameters is a collection, map, or array.
 	 * Throws a NaftahBugError with an Arabic message if the check fails.
 	 *
-	 * @param x   first value to check
-	 * @param y   second value to check
-	 * @param <T> type of operands
-	 * @throws NaftahBugError if neither x nor y is a collection, map, or array
+	 * @param left  first value to check
+	 * @param right second value to check
+	 * @param <T>   type of operands
+	 * @throws NaftahBugError if neither left nor right is a collection, map, or array
 	 */
-	private static <T> void checkParams(T x, T y) {
-		if (!(CollectionUtils.isCollectionMapOrArray(x) || CollectionUtils.isCollectionMapOrArray(y))) {
+	private static <T> void checkParams(T left, T right) {
+		if (!(CollectionUtils.isCollectionMapOrArray(left) || CollectionUtils.isCollectionMapOrArray(right))) {
 			throw newNaftahNotCollectionOrMapArgumentError(false);
 		}
 	}

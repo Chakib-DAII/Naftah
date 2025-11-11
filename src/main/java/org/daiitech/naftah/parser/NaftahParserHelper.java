@@ -82,6 +82,7 @@ import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.findBestExecutable;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.invokeJvmConstructor;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.invokeJvmExecutable;
@@ -486,8 +487,8 @@ public final class NaftahParserHelper {
 
 		for (int i = 0; i < ctx.propertyAccess().size(); i++) {
 			String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
-					ctx.QUESTION(i).getText() + ":" :
-					":";
+					ctx.QUESTION(i).getText() + QUALIFIED_NAME_SEPARATOR :
+					QUALIFIED_NAME_SEPARATOR;
 			result.get().append(qualifier);
 
 			final var currentPropertyAccess = ctx.propertyAccess(i);
@@ -1065,16 +1066,23 @@ public final class NaftahParserHelper {
 		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
 			return hasChildOrSubChildOfType(ctx,
 											org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
-													registerContext(currentContext, new HashMap<>(), new HashMap<>()) :
-													REPLContext.registerContext(currentContext);
+													REPLContext
+															.registerContext(   currentContext,
+																				new HashMap<>(),
+																				new HashMap<>(),
+																				new HashMap<>()) :
+													REPLContext.registerContext(currentContext, new HashMap<>());
+
 		}
 		else {
 			return hasChildOrSubChildOfType(ctx,
 											org.daiitech.naftah.parser.NaftahParser.FunctionCallExpressionContext.class) ?
 													registerContext(currentContext,
 																	new HashMap<>(),
+																	new HashMap<>(),
 																	new HashMap<>()) :
-													registerContext(currentContext);
+													registerContext(currentContext,
+																	new HashMap<>());
 		}
 	}
 
@@ -1168,7 +1176,7 @@ public final class NaftahParserHelper {
 	 */
 	public static Object accessObjectUsingQualifiedName(String qualifiedName, DefaultContext currentContext) {
 		Object result = None.get();
-		var accessArray = qualifiedName.split(":");
+		var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
 		boolean[] optional = new boolean[accessArray.length - 1];
 
 		if (accessArray[0].endsWith("؟")) {
@@ -1242,7 +1250,7 @@ public final class NaftahParserHelper {
 											"؟" :
 											"") :
 									""))
-							.collect(Collectors.joining(":"));
+							.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
 					throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
 				}
 			}
@@ -1282,7 +1290,7 @@ public final class NaftahParserHelper {
 	public static Object setObjectUsingQualifiedName(   String qualifiedName,
 														DefaultContext currentContext,
 														Object newValue) {
-		var accessArray = qualifiedName.split(":");
+		var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
 		boolean[] optional = new boolean[accessArray.length - 1];
 
 		if (accessArray[0].endsWith("؟")) {
@@ -1353,7 +1361,7 @@ public final class NaftahParserHelper {
 										"؟" :
 										"") :
 								""))
-						.collect(Collectors.joining(":"));
+						.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
 				throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
 			}
 		}
@@ -1992,17 +2000,17 @@ public final class NaftahParserHelper {
 	 *
 	 *                                  <p><b>Example usage:</b></p>
 	 *                                  <pre>{@code
-	 *                                                                                                                                                                                                         visitFunctionCallInChain(
-	 *                                                                                                                                                                                                         0,
-	 *                                                                                                                                                                                                         visitor,
-	 *                                                                                                                                                                                                         context,
-	 *                                                                                                                                                                                                         "print",
-	 *                                                                                                                                                                                                          List.of(Pair.of("arg", "Hello, world!")),
-	 *                                                                                                                                                                                                          null,
-	 *                                                                                                                                                                                                          12,
-	 *                                                                                                                                                                                                          8
-	 *                                                                                                                                                                                                          );
-	 *                                                                                                                                                                                                                                                                                                                                              }</pre>
+	 *                                                                                                                                                                                                                                                                                                            visitFunctionCallInChain(
+	 *                                                                                                                                                                                                                                                                                                            0,
+	 *                                                                                                                                                                                                                                                                                                            visitor,
+	 *                                                                                                                                                                                                                                                                                                            context,
+	 *                                                                                                                                                                                                                                                                                                            "print",
+	 *                                                                                                                                                                                                                                                                                                             List.of(Pair.of("arg", "Hello, world!")),
+	 *                                                                                                                                                                                                                                                                                                             null,
+	 *                                                                                                                                                                                                                                                                                                             12,
+	 *                                                                                                                                                                                                                                                                                                             8
+	 *                                                                                                                                                                                                                                                                                                             );
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                 }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction
