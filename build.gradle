@@ -319,8 +319,8 @@ test {
 			'--add-opens', 'java.base/sun.nio.fs=ALL-UNNAMED',
 
 			// Reflection utilities
-			'--add-opens', 'java.base/sun.reflect=ALL-UNNAMED',
 			'--add-opens', 'java.base/sun.reflect.annotation=ALL-UNNAMED',
+			'--add-opens', 'java.base/sun.reflect.misc=ALL-UNNAMED',
 
 			// XML / JAXP
 			'--add-opens', 'java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED',
@@ -343,8 +343,7 @@ test {
 			'--add-opens', 'java.base/jdk.internal.misc=ALL-UNNAMED',
 			'--add-opens', 'java.base/jdk.internal.vm=ALL-UNNAMED',
 			'--add-opens', 'java.base/jdk.internal.logger=ALL-UNNAMED',
-			'--add-opens', 'java.base/jdk.internal.event=ALL-UNNAMED',
-			'--add-opens', 'java.base/sun.misc=ALL-UNNAMED'
+			'--add-opens', 'java.base/jdk.internal.event=ALL-UNNAMED'
 	]
 	useJUnitPlatform()
 	testLogging {
