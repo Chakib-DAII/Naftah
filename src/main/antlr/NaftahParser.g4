@@ -90,7 +90,7 @@ functionCall: primaryCall callSegment*;
 * constructor call: Can have arguments and return the created object
 * the object instance is piped to the next in case of chall chain
 */
-initCall: qualifiedName targetExecutableIndex? LPAREN argumentList? RPAREN callSegment*;
+initCall: ((AT_SIGN ID) | (AT_SIGN? qualifiedName)) targetExecutableIndex? LPAREN argumentList? RPAREN callSegment*;
 
 /**
 * Chained Function calls segment: Can have arguments and return values
@@ -287,7 +287,7 @@ returnType: VOID #voidReturnType
 // Type: Can be any, builtinType or qualifiedName
 type: VAR #varType
     | builtIn #builtInType
-    | qualifiedName #qualifiedNameType
+    | (ID | qualifiedName) #qualifiedNameType
     ;
 
 builtIn: BOOLEAN
