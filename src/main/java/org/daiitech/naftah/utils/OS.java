@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 
 /**
  * Utility class for detecting the current operating system's properties,
@@ -314,8 +315,9 @@ public final class OS {
 					isFamily = OS_NAME.contains("nonstop_kernel");
 				}
 				else if (family.equals(FAMILY_UNIX)) {
-					isFamily = PATH_SEP.equals(":") && !isFamily(FAMILY_OPENVMS) && (!isFamily(FAMILY_MAC) || OS_NAME
-							.endsWith("x"));
+					isFamily = PATH_SEP.equals(QUALIFIED_NAME_SEPARATOR) && !isFamily(FAMILY_OPENVMS) && (!isFamily(
+																													FAMILY_MAC) || OS_NAME
+																															.endsWith("x"));
 				}
 				else if (family.equals(FAMILY_WIN9X)) {
 					isFamily = isFamily(FAMILY_WINDOWS) && (OS_NAME.contains("95") || OS_NAME.contains("98") || OS_NAME
