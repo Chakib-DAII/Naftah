@@ -1,0 +1,8 @@
+plugins {
+	id 'java-library'
+}
+
+java {
+	withJavadocJar()
+	withSourcesJar()
+}
