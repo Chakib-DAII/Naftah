@@ -29,6 +29,7 @@ program: (statement END?)+;
 
 // Statement: Can be an assignment, function call, or control flow
 statement: block #blockStatement
+         | importStatement #importStatementStatement
          | ifStatement #ifStatementStatement
          | forStatement #forStatementStatement
          | whileStatement #whileStatementStatement
@@ -43,6 +44,26 @@ statement: block #blockStatement
          | continueStatement #continueStatementStatement
          | expression #expressionStatement
          ;
+
+/**
+ * Top-level import statement.
+ * Supports:
+ *  - Single element import
+ *  - Import with specification (colon + list or single import)
+ *  - Qualified callable import
+ */
+importStatement: IMPORT ID importAlias #importStatementAsAlias
+			   | IMPORT qualifiedName ((COLON COLON? imports) | importAlias)? #groupedImportStatement
+			   | IMPORT qualifiedCall importAlias? #qualifiedCallImportStatement;
+
+imports: LBRACK importElements RBRACK
+	   | callableImportElement;
+
+importElements: callableImportElement ((COMMA | SEMI) callableImportElement)+ (COMMA | SEMI)?;
+
+callableImportElement: (ID | qualifiedName | qualifiedCall) importAlias?;
+
+importAlias: AS ID;
 
 // Declaration: variable or constant declaration
 declaration: (VARIABLE | CONSTANT) ID (COLON type)?;
@@ -283,7 +304,8 @@ builtIn: BOOLEAN
 // QualifiedName: ID separated by COLONs
 qualifiedName: ID (QUESTION? COLON ID)+;
 
-qualifiedCall: qualifiedName COLON COLON ID;
+qualifiedCall: ID COLON COLON ID #simpleCall
+			| qualifiedName COLON COLON ID #qualifiedNameCall;
 
 qualifiedObjectAccess: ID (QUESTION? propertyAccess)+;
 
