@@ -174,8 +174,8 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.RETURN, org.daiitech.naftah.parser.NaftahLexer.THEN,
 					org.daiitech.naftah.parser.NaftahLexer.UNTIL, org.daiitech.naftah.parser.NaftahLexer.WHILE,
 					org.daiitech.naftah.parser.NaftahLexer.CASE, org.daiitech.naftah.parser.NaftahLexer.OF,
-					org.daiitech.naftah.parser.NaftahLexer.ID, org.daiitech.naftah.parser.NaftahLexer.TRY,
-					org.daiitech.naftah.parser.NaftahLexer.ARROW ->
+					org.daiitech.naftah.parser.NaftahLexer.TRY, org.daiitech.naftah.parser.NaftahLexer.ARROW,
+					org.daiitech.naftah.parser.NaftahLexer.IMPORT, org.daiitech.naftah.parser.NaftahLexer.AS ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.BLUE);
 			case org.daiitech.naftah.parser.NaftahLexer.VAR, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN,
 					org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, org.daiitech.naftah.parser.NaftahLexer.CHAR,
@@ -189,7 +189,7 @@ public class SyntaxHighlighter extends BaseHighlighter {
 				AttributedStyle.BOLD.foreground(AttributedStyle.GREEN);
 			case org.daiitech.naftah.parser.NaftahLexer.LINE_COMMENT,
 					org.daiitech.naftah.parser.NaftahLexer.BLOCK_COMMENT ->
-				AttributedStyle.DEFAULT.italic().foreground(AttributedStyle.YELLOW);
+				AttributedStyle.DEFAULT.italic().foreground(AttributedStyle.BRIGHT);
 			case org.daiitech.naftah.parser.NaftahLexer.PLUS, org.daiitech.naftah.parser.NaftahLexer.INCREMENT,
 					org.daiitech.naftah.parser.NaftahLexer.MINUS, org.daiitech.naftah.parser.NaftahLexer.DECREMENT,
 					org.daiitech.naftah.parser.NaftahLexer.MUL, org.daiitech.naftah.parser.NaftahLexer.DIV,
@@ -225,8 +225,10 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.PUNCTUATION,
 					org.daiitech.naftah.parser.NaftahLexer.HASH_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.AT_SIGN,
-					org.daiitech.naftah.parser.NaftahLexer.DOLLAR_SIGN ->
+					org.daiitech.naftah.parser.NaftahLexer.DOLLAR_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.STAR_SIGN ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.CYAN);
+			case org.daiitech.naftah.parser.NaftahLexer.ID -> AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW);
 			default -> AttributedStyle.BOLD.foreground(AttributedStyle.WHITE);
 		};
 	}
