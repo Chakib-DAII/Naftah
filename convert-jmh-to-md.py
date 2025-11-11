@@ -6,7 +6,7 @@ from collections import defaultdict
 from pathlib import Path
 
 # Input/output paths
-input_file = Path("build/reports/benchmarks/jmh-results.json")
+input_file = Path("naftah-lang/build/reports/benchmarks/jmh-results.json")
 output_file = Path("docs-site/benchmarks.md")
 
 # Create graph output directory
