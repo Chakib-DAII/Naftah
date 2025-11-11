@@ -19,18 +19,25 @@ public class FunctionInitProvider implements ArgumentsProvider {
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
 				.of(Arguments
-						.of(false,
-							"""
-							جافا:لغة:ابكديفجهجكلمنوبكرستيفوكسز()
-							""",
-							null,
-							newNaftahInvocableNotFoundError("جافا:لغة:ابكديفجهجكلمنوبكرستيفوكسز",
-															1,
-															0)),
+							.of(false,
+								"""
+								جافا:لغة:ابكديفجهجكلمنوبكرستيفوكسز()
+								""",
+								null,
+								newNaftahInvocableNotFoundError("جافا:لغة:ابكديفجهجكلمنوبكرستيفوكسز",
+																1,
+																0)),
 					Arguments
 							.of(true,
 								"""
 								جافا:لغة:كائن() لا_يساوي فارغ
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								@جافا:لغة:كائن() لا_يساوي فارغ
 								""",
 								true,
 								null),
@@ -52,7 +59,7 @@ public class FunctionInitProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم("01033301")
+								@أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم("01033301")
 								""",
 								NaftahObject.of(DynamicNumber.of("01033301")),
 								null),
@@ -73,7 +80,7 @@ public class FunctionInitProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								جافا:أدة:صفائف_القائمة([1؛100؛0])
+								@جافا:أدة:صفائف_القائمة([1؛100؛0])
 								""",
 								NaftahObject.of(new ArrayList<>(List.of(1, 100, 0))),
 								null));
