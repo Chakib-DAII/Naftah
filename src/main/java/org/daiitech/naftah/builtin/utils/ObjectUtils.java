@@ -193,7 +193,7 @@ public final class ObjectUtils {
 	 * @param naftahTypeContext the parser context for the type
 	 * @return the corresponding Java {@link Class}, or {@code Object.class} if unknown
 	 */
-	public static Class<?> getJavaType(ParserRuleContext naftahTypeContext) {
+	public static Class<?> getJavaType(DefaultContext currentContext, ParserRuleContext naftahTypeContext) {
 		if (naftahTypeContext instanceof NaftahParser.ReturnTypeContext returnTypeContext) {
 			if (returnTypeContext instanceof NaftahParser.VoidReturnTypeContext) {
 				return Void.class;
@@ -207,9 +207,7 @@ public final class ObjectUtils {
 					return getJavaType(builtInTypeContext.builtIn());
 				}
 				else if (typeContext instanceof NaftahParser.QualifiedNameTypeContext qualifiedNameTypeContext) {
-					NaftahParser.QualifiedNameContext qualifiedNameContext = qualifiedNameTypeContext.qualifiedName();
-					var qualifiedName = getQualifiedName(qualifiedNameContext);
-					return DefaultContext.getJavaType(qualifiedName);
+					getJavaType(currentContext, qualifiedNameTypeContext);
 				}
 			}
 		}
@@ -223,15 +221,37 @@ public final class ObjectUtils {
 			return getJavaType(builtInContext);
 		}
 		else if (naftahTypeContext instanceof NaftahParser.QualifiedNameTypeContext qualifiedNameTypeContext) {
-			NaftahParser.QualifiedNameContext qualifiedNameContext = qualifiedNameTypeContext.qualifiedName();
-			var qualifiedName = getQualifiedName(qualifiedNameContext);
-			return DefaultContext.getJavaType(qualifiedName);
+			getJavaType(currentContext, qualifiedNameTypeContext);
 		}
 		else if (naftahTypeContext instanceof NaftahParser.QualifiedNameContext qualifiedNameContext) {
 			var qualifiedName = getQualifiedName(qualifiedNameContext);
+
+			var matchedImport = currentContext.matchImport(qualifiedName);
+			if (Objects.nonNull(matchedImport)) {
+				qualifiedName = matchedImport;
+			}
+
 			return DefaultContext.getJavaType(qualifiedName);
 		}
 		return Object.class;
+	}
+
+	public static Class<?> getJavaType( DefaultContext currentContext,
+										NaftahParser.QualifiedNameTypeContext qualifiedNameTypeContext) {
+		boolean hasQualifiedName = hasChild(qualifiedNameTypeContext
+				.qualifiedName());
+
+		String type = hasQualifiedName ?
+				getQualifiedName(qualifiedNameTypeContext.qualifiedName()) :
+				qualifiedNameTypeContext.ID().getText();
+
+
+		var matchedImport = currentContext.matchImport(type);
+		if (Objects.nonNull(matchedImport)) {
+			type = matchedImport;
+		}
+
+		return DefaultContext.getJavaType(type);
 	}
 
 	/**

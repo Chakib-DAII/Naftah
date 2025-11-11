@@ -979,11 +979,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, initCallContext) -> {
+								boolean hasQualifiedName = hasChild(initCallContext
+										.qualifiedName());
+
 								currentContext.setParsingFunctionCallId(true);
 
-								String functionName = (String) defaultNaftahParserVisitor
-										.visit(initCallContext
-												.qualifiedName());
+								String functionName = hasQualifiedName ?
+										(String) defaultNaftahParserVisitor
+												.visit(initCallContext
+														.qualifiedName()) :
+										initCallContext.ID().getText();
 
 								var matchedImport = currentContext.matchImport(functionName);
 								if (Objects.nonNull(matchedImport)) {
@@ -3612,6 +3617,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, voidReturnTypeContext) -> getJavaType(
+																												currentContext,
 																												voidReturnTypeContext),
 							Class.class
 		);
@@ -3647,7 +3653,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							"visitVarType",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, varTypeContext) -> getJavaType(varTypeContext),
+							(defaultNaftahParserVisitor, currentContext, varTypeContext) -> getJavaType(currentContext,
+																										varTypeContext),
 							Class.class
 		);
 	}
@@ -3699,10 +3706,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							"visitQualifiedNameType",
 							getContextByDepth(depth),
 							ctx,
-							(defaultNaftahParserVisitor, currentContext, qualifiedNameTypeContext) -> {
-								// TODO: think about using id to variable or necessary other elements
-								return defaultNaftahParserVisitor.visit(qualifiedNameTypeContext.qualifiedName());
-							}
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								qualifiedNameTypeContext) -> getJavaType(currentContext, qualifiedNameTypeContext)
 		);
 	}
 
@@ -3737,7 +3743,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 								else {
-									result = getJavaType(qualifiedNameContext);
+									result = getJavaType(currentContext, qualifiedNameContext);
 								}
 
 								return result;

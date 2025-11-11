@@ -1141,6 +1141,8 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
+																		InitCallContext::AT_SIGN -> %s
+																		InitCallContext::ID -> %s
 																		InitCallContext::qualifiedName -> %s
 																		InitCallContext::targetExecutableIndex -> %s
 																		InitCallContext::LPAREN -> %s
@@ -1152,7 +1154,13 @@ public final class NaftahExecutionLogger {
 												%s
 											}
 																		"""
-										.formatted( Objects.nonNull(context.qualifiedName()) ?
+										.formatted( Objects.nonNull(context.AT_SIGN()) ?
+															context.AT_SIGN().getText() :
+															null,
+													Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
+													Objects.nonNull(context.qualifiedName()) ?
 															context.qualifiedName().getText() :
 															null,
 													Objects.nonNull(context.targetExecutableIndex()) ?
@@ -1522,11 +1530,15 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
+											QualifiedNameTypeContext::ID -> %s
 											QualifiedNameTypeContext::qualifiedName -> %s
 											"""
-										.formatted(Objects.nonNull(context.qualifiedName()) ?
-												context.qualifiedName().getText() :
-												null));
+										.formatted( Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
+													Objects.nonNull(context.qualifiedName()) ?
+															context.qualifiedName().getText() :
+															null));
 
 	}
 
