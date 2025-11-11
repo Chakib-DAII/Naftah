@@ -60,6 +60,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableListFo
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.parser.DefaultContext.LOOP_STACK;
 import static org.daiitech.naftah.parser.DefaultContext.currentLoopLabel;
+import static org.daiitech.naftah.parser.DefaultContext.defineImport;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getContextByDepth;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
@@ -90,6 +91,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.typeMismatch;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitContext;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitFunctionCallInChain;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 
 /**
  * The default implementation of the Naftah language visitor.
@@ -197,6 +199,253 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitImportStatementStatement(org.daiitech.naftah.parser.NaftahParser.ImportStatementStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitImportStatementStatement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								importStatementStatementContext) -> defaultNaftahParserVisitor
+										.visit(
+												importStatementStatementContext.importStatement())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitImportStatementAsAlias(org.daiitech.naftah.parser.NaftahParser.ImportStatementAsAliasContext ctx) {
+		return visitContext(
+							this,
+							"visitImportStatementAsAlias",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								importStatementAsAliasContext) -> {
+								String id = importStatementAsAliasContext.ID().getText();
+								String alias = importStatementAsAliasContext.importAlias().ID().getText();
+								defineImport(currentContext, importStatementAsAliasContext, alias, id);
+								return None.get();
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitGroupedImportStatement(org.daiitech.naftah.parser.NaftahParser.GroupedImportStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitGroupedImportStatement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								groupedImportStatementContext) -> {
+								String qualifiedName = (String) defaultNaftahParserVisitor
+										.visit(groupedImportStatementContext.qualifiedName());
+								if (Objects.nonNull(groupedImportStatementContext.imports())) {
+									// pair of alias -> id
+									//noinspection unchecked
+									var imports = (Set<Pair<String, String>>) defaultNaftahParserVisitor
+											.visit(groupedImportStatementContext.imports());
+
+
+									imports
+											.forEach(currentImport -> defineImport( currentContext,
+																					groupedImportStatementContext,
+																					Objects.nonNull(currentImport.a) ?
+																							currentImport.a :
+																							currentImport.b,
+																					String
+																							.join(
+																									groupedImportStatementContext
+																											.COLON()
+																											.size() == 1 ?
+																													QUALIFIED_NAME_SEPARATOR :
+																													QUALIFIED_CALL_SEPARATOR,
+																									qualifiedName,
+																									currentImport.b)));
+								}
+								else {
+									if (Objects.nonNull(groupedImportStatementContext.importAlias())) {
+										String alias = groupedImportStatementContext.importAlias().ID().getText();
+										defineImport(   currentContext,
+														groupedImportStatementContext,
+														alias,
+														qualifiedName);
+									}
+									else {
+										var qualifiedNameParts = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
+										String alias = qualifiedNameParts[qualifiedNameParts.length - 1];
+										defineImport(   currentContext,
+														groupedImportStatementContext,
+														alias,
+														qualifiedName);
+									}
+								}
+								return None.get();
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitQualifiedCallImportStatement(org.daiitech.naftah.parser.NaftahParser.QualifiedCallImportStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitQualifiedCallImportStatement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								qualifiedCallImportStatementContext) -> {
+								String qualifiedCall = (String) defaultNaftahParserVisitor
+										.visit(qualifiedCallImportStatementContext.qualifiedCall());
+								if (Objects.nonNull(qualifiedCallImportStatementContext.importAlias())) {
+									String alias = qualifiedCallImportStatementContext.importAlias().ID().getText();
+									defineImport(   currentContext,
+													qualifiedCallImportStatementContext,
+													alias,
+													qualifiedCall);
+								}
+								else {
+									var qualifiedCallParts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
+									String alias = qualifiedCallParts[qualifiedCallParts.length - 1];
+									defineImport(   currentContext,
+													qualifiedCallImportStatementContext,
+													alias,
+													qualifiedCall);
+								}
+								return None.get();
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitImports(org.daiitech.naftah.parser.NaftahParser.ImportsContext ctx) {
+		return visitContext(
+							this,
+							"visitImports",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								importsContext) -> {
+								var imports = new HashSet<Pair<String, String>>();
+								if (Objects.nonNull(importsContext.importElements())) {
+									for (org.daiitech.naftah.parser.NaftahParser.CallableImportElementContext callableImportElementContext : importsContext
+											.importElements()
+											.callableImportElement()) {
+										//noinspection unchecked
+										imports
+												.add((Pair<String, String>) defaultNaftahParserVisitor
+														.visit(callableImportElementContext));
+									}
+								}
+								else {
+									//noinspection unchecked
+									imports
+											.add((Pair<String, String>) defaultNaftahParserVisitor
+													.visit(
+															importsContext.callableImportElement()));
+								}
+								return imports;
+							},
+							Set.class
+		);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitCallableImportElement(org.daiitech.naftah.parser.NaftahParser.CallableImportElementContext ctx) {
+		return visitContext(
+							this,
+							"visitCallableImportElement",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								callableImportElementContext) -> {
+								String alias = null;
+								String importElement;
+								if (Objects
+										.nonNull(callableImportElementContext.importAlias())) {
+									alias = callableImportElementContext
+											.importAlias()
+											.ID()
+											.getText();
+								}
+
+								if (Objects.nonNull(callableImportElementContext.ID())) {
+									importElement = callableImportElementContext.ID().getText();
+									if (Objects.isNull(alias)) {
+										alias = importElement;
+									}
+								}
+								else if (Objects
+										.nonNull(callableImportElementContext
+												.qualifiedName())) {
+													importElement = (String) defaultNaftahParserVisitor
+															.visit(callableImportElementContext
+																	.qualifiedName());
+
+													if (Objects.isNull(alias)) {
+														var qualifiedNameParts = importElement
+																.split(QUALIFIED_NAME_SEPARATOR);
+														alias = qualifiedNameParts[qualifiedNameParts.length - 1];
+													}
+												}
+								else {
+									importElement = (String) defaultNaftahParserVisitor
+											.visit(callableImportElementContext
+													.qualifiedCall());
+
+									if (Objects.isNull(alias)) {
+										var qualifiedCallParts = importElement.split(QUALIFIED_CALL_SEPARATOR);
+										alias = qualifiedCallParts[qualifiedCallParts.length - 1];
+									}
+								}
+
+								return new Pair<>(alias, importElement);
+							},
+							Pair.class
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String visitImportAlias(org.daiitech.naftah.parser.NaftahParser.ImportAliasContext ctx) {
+		return visitContext(
+							this,
+							"visitImportAlias",
+							getContextByDepth(depth),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								importAliasContext) -> importAliasContext.ID().getText(),
+							String.class
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -736,6 +985,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.visit(initCallContext
 												.qualifiedName());
 
+								var matchedImport = currentContext.matchImport(functionName);
+								if (Objects.nonNull(matchedImport)) {
+									functionName = matchedImport;
+								}
 
 								List<Pair<String, Object>> args = new ArrayList<>();
 
@@ -858,8 +1111,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																.qualifiedCall()) :
 												callSegmentContext.primaryCall().ID().getText();
 
-
-										if (Objects.nonNull(qualifiedName) && !qualifiedName.isBlank()) {
+										matchedImport = currentContext.matchImport(functionName);
+										if (Objects.nonNull(matchedImport)) {
+											functionName = matchedImport;
+										}
+										else if (Objects.nonNull(qualifiedName) && !qualifiedName.isBlank()) {
 											functionName = qualifiedName + QUALIFIED_CALL_SEPARATOR + functionName;
 										}
 
@@ -928,6 +1184,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 														.qualifiedCall()) :
 										functionCallContext.primaryCall().ID().getText();
 
+								var matchedImport = currentContext.matchImport(functionName);
+								if (Objects.nonNull(matchedImport)) {
+									functionName = matchedImport;
+								}
+
 								List<Pair<String, Object>> args = new ArrayList<>();
 
 								if (hasChild(functionCallContext.primaryCall().argumentList())) {
@@ -983,8 +1244,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																.qualifiedCall()) :
 												callSegmentContext.primaryCall().ID().getText();
 
-
-										if (Objects.nonNull(qualifiedName) && !qualifiedName.isBlank()) {
+										matchedImport = currentContext.matchImport(functionName);
+										if (Objects.nonNull(matchedImport)) {
+											functionName = matchedImport;
+										}
+										else if (Objects.nonNull(qualifiedName) && !qualifiedName.isBlank()) {
 											functionName = qualifiedName + QUALIFIED_CALL_SEPARATOR + functionName;
 										}
 
@@ -3458,13 +3722,19 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								boolean accessingObjectField = hasAnyParentOfType(
 																					qualifiedNameContext,
 																					org.daiitech.naftah.parser.NaftahParser.ObjectAccessExpressionContext.class);
+								boolean definingImport = hasAnyParentOfType(
+																			qualifiedNameContext,
+																			org.daiitech.naftah.parser.NaftahParser.ImportStatementContext.class);
+
 								if (accessingObjectField) {
 									var qualifiedName = getQualifiedName(qualifiedNameContext);
 									result = accessObjectUsingQualifiedName(qualifiedName, currentContext);
 								}
-								else if (currentContext.isParsingFunctionCallId()) {
+								else if (definingImport || currentContext.isParsingFunctionCallId()) {
 									result = getQualifiedName(qualifiedNameContext);
-									currentContext.setParsingFunctionCallId(false);
+									if (currentContext.isParsingFunctionCallId()) {
+										currentContext.setParsingFunctionCallId(false);
+									}
 								}
 								else {
 									result = getJavaType(qualifiedNameContext);
