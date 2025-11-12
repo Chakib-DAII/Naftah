@@ -18,7 +18,7 @@
   url: /language/functions
 - title: التكامل مع جافا
   url: /language/java-interop
-- title: تشغيل نفطة
+- title: تشغيل نفطه
   url: /running-naftah
 - title: التوثيق (جاڤا)
   url: /java-doc
@@ -26,5 +26,5 @@
   url: /benchmarks
 - title: الإصدارات
   url: /releases
-- title: حول نفطة
+- title: حول نفطه
   url: /about
