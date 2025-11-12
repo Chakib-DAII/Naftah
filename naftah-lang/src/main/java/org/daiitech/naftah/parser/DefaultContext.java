@@ -70,7 +70,7 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassConstructors;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassMethods;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassQualifiers;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.loadClasses;
-import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanCLasses;
+import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanClasses;
 
 /**
  * Represents the default execution context used to manage variables, functions, loops,
@@ -124,7 +124,7 @@ public class DefaultContext {
 	protected static final Supplier<ClassScanningResult> LOADER_TASK = () -> {
 		ExecutorService internalExecutor = Executors.newFixedThreadPool(2);
 		ClassScanningResult result = new ClassScanningResult();
-		var classNames = scanCLasses();
+		var classNames = scanClasses();
 		result.setClassNames(classNames);
 
 		try {
