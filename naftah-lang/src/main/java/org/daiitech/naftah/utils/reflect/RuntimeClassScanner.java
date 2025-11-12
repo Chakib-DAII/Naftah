@@ -150,8 +150,8 @@ public final class RuntimeClassScanner {
 	 *
 	 * @return a map of fully qualified class names to their corresponding class loaders (may be null if default)
 	 */
-	public static Map<String, ClassLoader> scanCLasses() {
-		return scanCLasses(PATHS, null);
+	public static Map<String, ClassLoader> scanClasses() {
+		return scanClasses(PATHS, null);
 	}
 
 	/**
@@ -160,10 +160,10 @@ public final class RuntimeClassScanner {
 	 * @param paths an array of file system paths (directories or JAR files) to scan for classes
 	 * @return a map of fully qualified class names to their corresponding class loaders (may be null if default)
 	 */
-	public static Map<String, ClassLoader> scanCLasses(String[] paths, String packagePath) {
+	public static Map<String, ClassLoader> scanClasses(String[] paths, String packagePath) {
 		Map<String, ClassLoader> classNames = new HashMap<>();
 		for (String path : paths) {
-			classNames.putAll(scanCLasses(path, packagePath));
+			classNames.putAll(scanClasses(path, packagePath));
 		}
 		return classNames;
 	}
@@ -175,7 +175,7 @@ public final class RuntimeClassScanner {
 	 * @return a map of fully qualified class names to their corresponding {@link ClassLoader}s;
 	 *         may be {@code null} if default
 	 */
-	public static Map<String, ClassLoader> scanCLasses(String path, String packagePath) {
+	public static Map<String, ClassLoader> scanClasses(String path, String packagePath) {
 		Map<String, ClassLoader> classNames = new HashMap<>();
 		File file = new File(path);
 		if (file.exists()) {
@@ -212,14 +212,14 @@ public final class RuntimeClassScanner {
 			String protocol = resource.getProtocol();
 
 			if ("file".equals(protocol)) {
-				return scanCLasses(resource.getFile(), packagePath);
+				return scanClasses(resource.getFile(), packagePath);
 			}
 			else if ("jar".equals(protocol)) {
 				String url = resource.toString();
 				int separatorIndex = url.indexOf("!/");
 				String jarPath = url.substring(url.indexOf("file:") + 5, separatorIndex);
 				String insidePath = url.substring(separatorIndex + 2);
-				return scanCLasses(jarPath, insidePath);
+				return scanClasses(jarPath, insidePath);
 			}
 		}
 		throw new IllegalArgumentException();

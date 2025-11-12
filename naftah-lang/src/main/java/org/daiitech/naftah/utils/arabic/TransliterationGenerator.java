@@ -21,7 +21,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.CUSTOM_RULES_BUNDLE;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.splitIdentifier;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.CLASS_SEPARATORS_REGEX;
-import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanCLasses;
+import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanClasses;
 
 /**
  * A utility class that scans Java class names, splits them into component words,
@@ -119,7 +119,7 @@ public final class TransliterationGenerator {
 
 		HttpClient client = HttpClient.newHttpClient();
 
-		var classNames = scanCLasses();
+		var classNames = scanClasses();
 		var words = classNames
 				.keySet()
 				.stream()

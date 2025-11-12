@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="TransliterationGenerator" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="org.daiitech.naftah.utils.arabic.TransliterationGenerator" />
-    <module name="naftah.main" />
+    <module name="naftah.naftah-lang.main" />
     <option name="PROGRAM_PARAMETERS" value="http://localhost:5000/translate en ar" />
     <extension name="coverage">
       <pattern>

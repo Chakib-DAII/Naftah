@@ -39,7 +39,7 @@ public class RuntimeClassScannerTests {
 	@Test
 	void scanCLassesTest() {
 		try {
-			Map<String, ClassLoader> classNames = RuntimeClassScanner.scanCLasses();
+			Map<String, ClassLoader> classNames = RuntimeClassScanner.scanClasses();
 			assertNotNull(classNames);
 			Set<Class<?>> accessibleClasses = RuntimeClassScanner.loadClassSet(classNames, true);
 			Set<Class<?>> allClasses = RuntimeClassScanner.loadClassSet(classNames, false);
