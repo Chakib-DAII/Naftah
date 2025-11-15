@@ -28,8 +28,13 @@ body {
 }
 
 .site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   background-color: $header-bg !important;
   color: $accent-color !important;
+  z-index: 1000;
   padding: 0.6rem 1rem;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -52,14 +57,6 @@ body {
     }
   }
 }
-
-.site-content {
-  width: 100%;
-  margin: 1.5rem auto 3rem auto;
-  padding: 0 1.5vw;
-  box-sizing: border-box;
-}
-
 
 nav {
   width: 100%;
@@ -98,6 +95,13 @@ nav {
       }
     }
   }
+}
+
+.site-content {
+  width: 100%;
+  margin: 1.5rem auto 3rem auto;
+  padding: 6rem 1.5vw 3rem 1.5vw; // top padding = header + nav
+  box-sizing: border-box;
 }
 
 h1, h2, h3 {
