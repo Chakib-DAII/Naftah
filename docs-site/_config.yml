@@ -13,7 +13,6 @@ kramdown:
 
 plugins:
   - jekyll-seo-tag    # for SEO improvements
-#  - jekyll-paginate
 
 exclude:
   - Gemfile
@@ -21,6 +20,6 @@ exclude:
   - node_modules
   - vendor
 
-# pagination
-#paginate: 5
-#paginate_path: "/page:num"
+copy_data_files:
+  - jvm-class-initializers.json
+  - jvm-functions.json
