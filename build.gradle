@@ -5,55 +5,15 @@ plugins {
 	id 'com.diffplug.spotless' version '6.21.0'
 }
 
-group = 'org.daiitech'
-version = '0.0.1-SNAPSHOT'
+allprojects {
+	group = 'org.daiitech'
+	version = '0.0.1-SNAPSHOT'
+}
 
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
-}
-
-tasks.register('javadocAll', Javadoc) {
-	description = 'Generates combined Javadoc for all subprojects (annotations + main)'
-	group = 'documentation'
-
-	// Collect all Java sources from subprojects
-	source subprojects.collect { it.sourceSets.main.allJava }
-
-	// Combine all compile classpaths
-	classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
-
-	// Output directory
-	destinationDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
-
-	// Reuse your same options
-	options {
-		encoding = 'UTF-8'
-		charSet = 'UTF-8'
-		memberLevel = JavadocMemberLevel.PRIVATE
-		author = true
-		version = true
-		windowTitle = "${rootProject.name} ${rootProject.version} API"
-		docTitle = "${rootProject.name} API Documentation"
-		addBooleanOption('Xdoclint:none', true)
-	}
-
-	options.addStringOption('--enable-preview')
-	options.addStringOption('-add-modules', 'jdk.incubator.vector')
-
-	// Ensure all subprojects are compiled first
-	dependsOn subprojects.collect { it.tasks.named('classes') }
-}
-
-tasks.register('copyJavadocAll', Copy) {
-	description = 'Copies combined Javadoc to docs-site/javadoc'
-	group = 'documentation'
-
-	dependsOn tasks.named('javadocAll')
-
-	from tasks.named('javadocAll').get().destinationDir
-	into "$rootDir/docs-site/javadoc"
 }
 
 repositories {
@@ -135,6 +95,48 @@ ext.sharedJvmArgs = [
 		'--add-opens', 'java.base/jdk.internal.logger=ALL-UNNAMED',
 		'--add-opens', 'java.base/jdk.internal.event=ALL-UNNAMED'
 ]
+
+tasks.register('javadocAll', Javadoc) {
+	description = 'Generates combined Javadoc for all subprojects (annotations + main)'
+	group = 'documentation'
+
+	// Collect all Java sources from subprojects
+	source subprojects.collect { it.sourceSets.main.allJava }
+
+	// Combine all compile classpaths
+	classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+
+	// Output directory
+	destinationDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
+
+	// Reuse your same options
+	options {
+		encoding = 'UTF-8'
+		charSet = 'UTF-8'
+		memberLevel = JavadocMemberLevel.PRIVATE
+		author = true
+		version = true
+		windowTitle = "${rootProject.name} ${rootProject.version} API"
+		docTitle = "${rootProject.name} API Documentation"
+		addBooleanOption('Xdoclint:none', true)
+	}
+
+	options.addStringOption('--enable-preview')
+	options.addStringOption('-add-modules', 'jdk.incubator.vector')
+
+	// Ensure all subprojects are compiled first
+	dependsOn subprojects.collect { it.tasks.named('classes') }
+}
+
+tasks.register('copyJavadocAll', Copy) {
+	description = 'Copies combined Javadoc to docs-site/javadoc'
+	group = 'documentation'
+
+	dependsOn tasks.named('javadocAll')
+
+	from tasks.named('javadocAll').get().destinationDir
+	into "$rootDir/docs-site/javadoc"
+}
 
 subprojects {
 	apply plugin: 'java'
