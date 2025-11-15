@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -125,16 +126,7 @@ public final class RuntimeClassScanner {
 	static {
 		// Get the classpath and java home files
 		String[] tempPaths = (CLASS_PATH + (SCAN_JDK ? File.pathSeparator + JAVA_HOME : "")).split(File.pathSeparator);
-		try {
-			var ignoredJars = readFileLines(getJarDirectory() + "/original-dependencies");
-			tempPaths = Arrays
-					.stream(tempPaths)
-					.filter(path -> ignoredJars.stream().noneMatch(path::contains))
-					.toArray(String[]::new);
-		}
-		catch (IOException ignored) {
-		}
-		PATHS = tempPaths;
+		PATHS = getPaths(tempPaths);
 	}
 
 	/**
@@ -143,6 +135,37 @@ public final class RuntimeClassScanner {
 	 */
 	private RuntimeClassScanner() {
 		throw newNaftahBugInvalidUsageError();
+	}
+
+	/**
+	 * Filters out paths that match any of the ignored JARs.
+	 *
+	 * @param tempPaths   the array of paths to filter
+	 * @param ignoredJars a list of JAR names to ignore
+	 * @return a filtered array of paths
+	 */
+	public static String[] getPaths(String[] tempPaths, List<String> ignoredJars) {
+		return Arrays
+				.stream(tempPaths)
+				.filter(path -> ignoredJars.stream().noneMatch(path::contains))
+				.toArray(String[]::new);
+	}
+
+	/**
+	 * Returns classpath paths while excluding ignored JARs defined in the
+	 * "original-dependencies" file.
+	 *
+	 * @param tempPaths the array of paths to filter
+	 * @return a filtered array of paths
+	 */
+	public static String[] getPaths(String[] tempPaths) {
+		try {
+			var ignoredJars = readFileLines(getJarDirectory() + "/original-dependencies");
+			tempPaths = getPaths(tempPaths, ignoredJars);
+		}
+		catch (IOException ignored) {
+		}
+		return tempPaths;
 	}
 
 	/**
@@ -246,12 +269,27 @@ public final class RuntimeClassScanner {
 	 * @return a map of qualified class names to their loaded Class objects
 	 */
 	public static Map<String, Class<?>> loadClasses(Map<String, ClassLoader> classNames, boolean instantiableOnly) {
+		return loadClasses(classNames, CLASS_LOADERS, instantiableOnly);
+	}
+
+	/**
+	 * Loads classes from the given map of class names and their associated class loaders using the specified
+	 * array of class loaders, optionally filtering by instantiability.
+	 *
+	 * @param classNames       a map of class names to their respective class loaders
+	 * @param classLoaders     an array of {@link ClassLoader} instances to attempt loading classes from
+	 * @param instantiableOnly if true, only includes classes that can be instantiated; if false, includes all classes
+	 * @return a map of fully qualified class names to their loaded {@link Class} objects
+	 */
+	public static Map<String, Class<?>> loadClasses(Map<String, ClassLoader> classNames,
+													ClassLoader[] classLoaders,
+													boolean instantiableOnly) {
 		// Try to load each class and store Class objects
 		Map<String, Class<?>> loadedClasses = new HashMap<>();
 		for (var nameEntry : classNames.entrySet()) {
 			var classLoaderOptional = Optional.ofNullable(nameEntry.getValue());
-			var loaders = Arrays.copyOf(CLASS_LOADERS, CLASS_LOADERS.length + (classLoaderOptional.isEmpty() ? 0 : 1));
-			classLoaderOptional.ifPresent(classLoader -> loaders[CLASS_LOADERS.length] = classLoader);
+			var loaders = Arrays.copyOf(classLoaders, classLoaders.length + (classLoaderOptional.isEmpty() ? 0 : 1));
+			classLoaderOptional.ifPresent(classLoader -> loaders[classLoaders.length] = classLoader);
 			for (ClassLoader cl : loaders) {
 				try {
 					if (Objects.isNull(cl)) {

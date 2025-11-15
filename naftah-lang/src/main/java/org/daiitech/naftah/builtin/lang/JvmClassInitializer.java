@@ -140,6 +140,15 @@ public final class JvmClassInitializer implements Serializable, JvmExecutable {
 	}
 
 	/**
+	 * Returns the parameter types accepted by this constructor.
+	 *
+	 * @return an array of {@link Class} objects representing the constructor's parameter types
+	 */
+	public Class<?>[] getConstructorParameterTypes() {
+		return constructorParameterTypes;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

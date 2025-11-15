@@ -140,6 +140,15 @@ public final class JvmFunction implements Serializable, JvmExecutable {
 	}
 
 	/**
+	 * Returns the parameter types accepted by this method.
+	 *
+	 * @return an array of {@link Class} objects representing the method's parameter types
+	 */
+	public Class<?>[] getMethodParameterTypes() {
+		return methodParameterTypes;
+	}
+
+	/**
 	 * Checks if the method is static.
 	 *
 	 * @return true if static, false otherwise
