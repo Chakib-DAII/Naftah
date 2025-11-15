@@ -39,6 +39,9 @@ jobs:
       - name: Build project and generate Javadoc
         run: ./gradlew build javadocAll -x compileTestJava -x test -x jacocoTestReport
 
+      - name: export Naftah Functions, JVM Functions and Initializers for Jekyll
+        run: ./gradlew exportNaftahFunctions
+
       - name: Fetch GitHub Releases for Jekyll
         run: |
           curl -s https://api.github.com/repos/${{ github.repository }}/releases \
