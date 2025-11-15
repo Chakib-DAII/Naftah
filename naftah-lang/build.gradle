@@ -517,6 +517,149 @@ tasks.withType(Javadoc).configureEach {
 	options.addStringOption('-add-modules', 'jdk.incubator.vector')
 }
 
+tasks.register('exportNaftahFunctions') {
+	dependsOn classes, tasks.named("writeResolvedJars")
+	doLast {
+		// Collect directories and runtime JARs
+		def classFiles = sourceSets.main.output.classesDirs.files
+		def runtimeJars = sourceSets.main.runtimeClasspath.files
+
+		// Combine as paths
+		def scanPaths = (classFiles + runtimeJars).collect { it.absolutePath } as String[]
+
+		def ignoredJarsFile = layout.buildDirectory.file("libs/original-dependencies").get().asFile
+
+		// Read all lines as a list of strings
+		def ignoredJars = ignoredJarsFile.readLines()
+
+		// pass project reference and scan paths as a binding
+		def binding = new Binding()
+		binding.setVariable("scanPaths", scanPaths)
+		binding.setVariable("rootProjectDir", rootProject.projectDir)
+		binding.setVariable("ignoredJars", ignoredJars)
+
+		// Convert the runtimeClasspath (FileCollection) to an array of URLs
+		def urls = runtimeJars.collect { it.toURI().toURL() } as URL[]
+
+		// Create a GroovyClassLoader with the URLs
+		def gcl = new GroovyClassLoader(this.class.classLoader)
+		urls.each { gcl.addURL(it) }
+		binding.setVariable("gcl", gcl)
+
+		def shell = new GroovyShell(gcl, binding)
+
+		shell.evaluate('''
+            import groovy.json.JsonOutput
+            import org.daiitech.naftah.builtin.NaftahFn
+            import org.daiitech.naftah.builtin.NaftahFnProvider
+            import org.daiitech.naftah.utils.reflect.RuntimeClassScanner
+            import org.daiitech.naftah.utils.reflect.ClassUtils
+            import org.daiitech.naftah.utils.reflect.AnnotationsUtils
+
+			def loaders = [
+					gcl,
+					ClassLoader.getSystemClassLoader(),
+					ClassLoader.getPlatformClassLoader(),
+					Thread.currentThread().getContextClassLoader()
+				] as ClassLoader[]
+
+			scanPaths = scanPaths + [RuntimeClassScanner.JAVA_HOME] as String[]
+            def classNames = RuntimeClassScanner.scanClasses(RuntimeClassScanner.getPaths(scanPaths, ignoredJars), null)
+            def classes = RuntimeClassScanner.loadClasses(classNames, loaders, false)
+            def accessibleClasses = ClassUtils.filterClasses(classes, ClassUtils::isAccessibleClass)
+            def providerClasses = ClassUtils.filterClasses(accessibleClasses, clazz -> AnnotationsUtils.isAnnotationsPresent(clazz, NaftahFnProvider))
+
+            def providers = []
+
+            providerClasses.values().each { clazz ->
+                def provider = clazz.getAnnotation(NaftahFnProvider)
+                if (provider) {
+                    def providerData = [
+                        provider: provider.name(),
+                        description: provider.description().trim(),
+                        functions: []
+                    ]
+
+                    Arrays.stream(clazz.declaredMethods)
+						  .filter { method -> AnnotationsUtils.isAnnotationsPresent(method, NaftahFn) }
+						  .forEach { method ->
+								def fn = method.getAnnotation(NaftahFn)
+								if (fn) {
+										providerData.functions << [
+											name: ClassUtils.getBuiltinFunctionName(provider.useQualifiedName() | fn.useQualifiedName(), provider.name(), fn.name(), true),
+											description: fn.description(),
+											usage: fn.usage(),
+											aliases: fn.aliases().collect { alias ->
+												ClassUtils.getBuiltinFunctionName(
+													provider.useQualifiedAliases() | fn.useQualifiedAliases(),
+													provider.name(),
+													alias,
+													false
+												)
+											},
+											returnType: "${ClassUtils.getQualifiedName(fn.returnType().name)} (${fn.returnType().name})",
+											parameterTypes: fn.parameterTypes().collect {
+														"${ClassUtils.getQualifiedName(it.name)} (${it.name})"
+														 }
+										]
+									}
+                   			 	}
+                    providers << providerData
+                }
+            }
+
+            def dataDir = new File("${rootProjectDir}/docs-site/_data")
+            new File(dataDir, "builtin-functions.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(providers))
+            println "Exported ${providers.size()} builtin providers to ${dataDir}/builtin-functions.json"
+
+            def instantiableClasses = ClassUtils.filterClasses(classes, ClassUtils::isInstantiableClass)
+			def jvmClassInitializers = ClassUtils.getClassConstructors(instantiableClasses)
+
+            def initializers = []
+
+			jvmClassInitializers.values().flatten().each { jvmClassInitializer ->
+				try {
+				initializers << [
+									className: jvmClassInitializer.getClazz().name,
+									qualifiedName: jvmClassInitializer.getQualifiedName(),
+									constructorParameterTypes: jvmClassInitializer.getConstructorParameterTypes().collect {
+																"${ClassUtils.getQualifiedName(it.name)} (${it.name})"
+														 	},
+									isInvocable: jvmClassInitializer.isInvocable()
+								]
+				} catch (Throwable ignored) {}
+			}
+
+            new File(dataDir, "jvm-class-initializers.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(initializers))
+            println "Exported ${initializers.size()} JVM class initializers to ${dataDir}/jvm-class-initializers.json"
+
+            def accessibleAndInstantiable = accessibleClasses + instantiableClasses
+            def jvmFunctions = ClassUtils.getClassMethods(accessibleAndInstantiable)
+
+            def functions = []
+
+			jvmFunctions.values().flatten().each { jvmFunction ->
+				try {
+				functions << [
+									className: jvmFunction.getClazz().name,
+									methodName: jvmFunction.getMethodName(),
+									qualifiedCall: jvmFunction.getQualifiedCall(),
+									methodParameterTypes: jvmFunction.getMethodParameterTypes().collect {
+																"${ClassUtils.getQualifiedName(it.name)} (${it.name})"
+														 	},
+									isStatic: jvmFunction.isStatic(),
+									isInvocable: jvmFunction.isInvocable()
+								]
+				} catch (Throwable ignored) {}
+			}
+
+            new File(dataDir, "jvm-functions.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(functions))
+            println "Exported ${functions.size()} JVM functions to ${dataDir}/jvm-functions.json"
+
+        ''')
+	}
+}
+
 //TODO: create maven central account
 // https://central.sonatype.org/register/central-portal/
 // https://central.sonatype.com/
