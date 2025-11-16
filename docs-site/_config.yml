@@ -1,0 +1,27 @@
+# _config.yml
+
+title: "Naftah Language Documentation - مستندات لغة نفطه"
+description: "Documentation and guides for Naftah programming language"
+baseurl: ""
+url:   # TODO: GitHub Pages URL
+
+permalink: pretty      # nice clean URLs without .html
+theme: minima          # built-in simple theme (easy to customize)
+markdown: kramdown     # recommended Markdown parser
+kramdown:
+  input: GFM           # GitHub Flavored Markdown
+
+plugins:
+  - jekyll-seo-tag    # for SEO improvements
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+
+copy_data_files:
+  - file: jvm-class-initializers.json
+  - file: jvm-functions.json
+    compress: true
+

@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Naftah - typed-assignment.nfth" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.daiitech.naftah.Naftah" />
-    <module name="naftah.main" />
+    <module name="naftah.naftah-lang.main" />
     <option name="PROGRAM_PARAMETERS" value=".\learn-by-example\typed-assignment.nfth" />
     <option name="VM_PARAMETERS" value="-Dfile.encoding=UTF-8 -Djava.util.logging.config.file=logging.properties -DscanClassPath=false" />
     <extension name="coverage">

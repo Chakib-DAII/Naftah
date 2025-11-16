@@ -161,7 +161,6 @@ ij_java_place_assignment_sign_on_next_line = false
 ij_java_prefer_longer_names = true
 ij_java_prefer_parameters_wrap = false
 ij_java_record_components_wrap = on_every_item
-ij_java_repeat_annotations =
 ij_java_repeat_synchronized = true
 ij_java_replace_instanceof_and_cast = false
 ij_java_replace_null_check = true

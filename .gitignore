@@ -43,3 +43,17 @@ out/
 /src/main/gen/
 /logs/
 /node_modules/
+/docs-site/.jekyll-cache/
+/docs-site/_site/
+/docs-site/.jekyll-metadata
+/docs-site/javadoc/
+/docs-site/Gemfile.lock
+/naftah-lang/src/main/antlr/gen/
+/naftah-lang/src/main/gen/
+/naftah-lang/logs/
+/naftah-lang/.naftah/
+/.jekyll-cache/
+/.naftah/
+/docs-site/_data/builtin-functions.json
+/docs-site/_data/jvm-class-initializers.json
+/docs-site/_data/jvm-functions.json

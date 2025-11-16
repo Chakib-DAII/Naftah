@@ -1,0 +1,99 @@
+package org.daiitech.naftah.parser.provider.script;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+
+public class LogicalExpressionsProvider implements ArgumentsProvider {
+	@Override
+	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
+		return Stream
+				.of(Arguments.of(true, "ليس صحيح", false, null),
+					Arguments.of(true, "ليس صائب", false, null),
+					Arguments.of(true, "ليس حقيقي", false, null),
+					Arguments.of(true, "ليس خطأ", true, null),
+					Arguments.of(true, "ليس خاطئ", true, null),
+					Arguments.of(true, "ليس زائف", true, null),
+					Arguments.of(true, "ليس فارغ", true, null),
+					Arguments.of(true, "ليس باطل", true, null),
+					Arguments.of(true, "ليس لاشيء", true, null),
+					Arguments.of(true, "ليس 'ص'", '溜', null),
+					Arguments.of(true, "ليس «»", true, null),
+					Arguments.of(true, "ليس «اسم»", false, null),
+					Arguments.of(true, "ليس 2", -2, null),
+					Arguments.of(true, "2 و 2", 2, null),
+					Arguments.of(true, "2 أيضا 2", 2, null),
+					Arguments.of(true, "2 ايضا ٢", 2, null),
+					Arguments.of(true, "2 أيضا ٢", 2, null),
+					Arguments.of(true, "2 او 2", 2, null),
+					Arguments.of(true, "2 أو 2", 2, null),
+					Arguments.of(true, "2 وإلا ٢", 2, null),
+					Arguments.of(true, "2 والا ٢", 2, null),
+					Arguments.of(true, "2 ولا 2", 2, null),
+					Arguments.of(true, "-2 أو 2", 2, null),
+					Arguments.of(true, "2 أو -2", 2, null),
+					Arguments.of(true, "-2 وإلا ٢", 2, null),
+					Arguments.of(true, "2 والا -٢", 2, null),
+					Arguments.of(true, "-2 ولا 2", 2, null),
+					Arguments.of(true, "-2 او 2", 2, null),
+					Arguments.of(true, "2 أو -2", 2, null),
+					Arguments.of(true, "-2 وإلا 2", 2, null),
+					Arguments.of(true, "2 والا -2", 2, null),
+					Arguments.of(true, "-2 ولا 2", 2, null),
+					Arguments.of(true, "2 او -2", 2, null),
+					Arguments.of(true, "-2 أو 2", 2, null),
+					Arguments.of(true, "-2 وإلا 2", 2, null),
+					Arguments.of(true, "2 والا -2", 2, null),
+					Arguments.of(true, "2 ولا -2", 2, null),
+					Arguments.of(true, "2 > 2", false, null),
+					Arguments.of(true, "2 أصغر_من 2", false, null),
+					Arguments.of(true, "2 => 2", true, null),
+					Arguments.of(true, "2 أصغر_أو_يساوي 2", true, null),
+					Arguments.of(true, "2 >= 2", true, null),
+					Arguments.of(true, "2 أكبر_أو_يساوي 2", true, null),
+					Arguments.of(true, "2 =! 2", false, null),
+					Arguments.of(true, "2 لا_يساوي 2", false, null),
+					Arguments.of(true, "2 == 2", true, null),
+					Arguments.of(true, "2 يساوي 2", true, null),
+					Arguments.of(true, "2 > 3", true, null),
+					Arguments.of(true, "2 أصغر_من 3", true, null),
+					Arguments.of(true, "2 < 3", false, null),
+					Arguments.of(true, "2 أكبر_من 3", false, null),
+					Arguments.of(true, "2 بت_و 2", 2, null),
+					Arguments.of(true, "بت_ليس صحيح", false, null),
+					Arguments.of(true, "بت_ليس صائب", false, null),
+					Arguments.of(true, "بت_ليس حقيقي", false, null),
+					Arguments.of(true, "بت_ليس خطأ", true, null),
+					Arguments.of(true, "بت_ليس خاطئ", true, null),
+					Arguments.of(true, "بت_ليس زائف", true, null),
+					Arguments.of(true, "بت_ليس فارغ", -1, null),
+					Arguments.of(true, "بت_ليس باطل", -1, null),
+					Arguments.of(true, "بت_ليس لاشيء", -1, null),
+					Arguments.of(true, "بت_ليس 'ص'", '流', null),
+					Arguments.of(true, "بت_ليس «»", "", null),
+					Arguments.of(true, "بت_ليس «اسم»", "律琉了", null),
+					Arguments.of(true, "بت_ليس 2", -3, null),
+					Arguments.of(true, "~2", -3, null),
+					Arguments.of(true, "2 بت_ايضا 2", 2, null),
+					Arguments.of(true, "2 بت_أيضا 2", 2, null),
+					Arguments.of(true, "2 | 2", 2, null),
+					Arguments.of(true, "2 بت_أو 2", 2, null),
+					Arguments.of(true, "2 بت_او 2", 2, null),
+					Arguments.of(true, "2 بت_وإلا 2", 2, null),
+					Arguments.of(true, "2 بت_والا 2", 2, null),
+					Arguments.of(true, "2 بت_ولا 2", 2, null),
+					Arguments.of(true, "2 ^ 2", 0, null),
+					Arguments.of(true, "2 بت_أو_حصري 2", 0, null),
+					Arguments.of(true, "2 بت_او_حصري 2", 0, null),
+					Arguments.of(true, "2 بت_وإلا_حصري 2", 0, null),
+					Arguments.of(true, "2 بت_والا_حصري 2", 0, null),
+					Arguments.of(true, "2 بت_ولا_حصري 2", 0, null), // TODO:
+					// add
+					// more
+					// composite
+					// expressions
+					Arguments.of(true, "~((2 بت_ولا_حصري 2) بت_او (2 بت_ولا 2))", -3, null));
+	}
+}

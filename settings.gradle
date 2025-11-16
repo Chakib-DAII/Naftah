@@ -1,1 +1,4 @@
 rootProject.name = 'naftah'
+
+include("naftah-builtin-core", "naftah-lang")
+
