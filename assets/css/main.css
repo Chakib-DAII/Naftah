@@ -1,7 +1,7 @@
 @use "minima" as *;
 body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background-color: #1f2a30 !important; color: #e8e3d3 !important; font-size: 0.85rem; line-height: 1.4; margin: 0; padding: 0 1rem; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-.site-header { background-color: #263238 !important; color: #ffb347 !important; padding: 0.6rem 1rem; text-align: center; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); }
+.site-header { position: fixed; top: 0; left: 0; width: 100%; background-color: #263238 !important; color: #ffb347 !important; z-index: 1000; padding: 0.6rem 1rem; text-align: center; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); }
 
 .site-header h1 { margin: 0; font-weight: 700; font-size: 1.2rem; }
 
@@ -9,15 +9,15 @@ body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background-
 
 .site-header a:hover, .site-header a:focus { color: #ffc87a !important; outline: none; }
 
-.site-content { width: 100%; margin: 1.5rem auto 3rem auto; padding: 0 1.5vw; box-sizing: border-box; }
+nav { width: 100%; padding: 0.15rem 0.6vw; box-sizing: border-box; }
 
-nav { width: 100%; padding: 0.3rem 1vw; box-sizing: border-box; }
+nav ul { direction: rtl; list-style: none; padding: 0; margin: 0 0 0.5rem 0; display: flex; flex-wrap: nowrap; /* Prevents wrapping to multiple lines */ justify-content: center; gap: 0.2rem; border-bottom: 1px solid #3c4f53 !important; overflow-x: auto; /* Allows horizontal scroll if still too wide */ white-space: nowrap; }
 
-nav ul { direction: rtl; list-style: none; padding: 0; margin: 0 0 1rem 0; display: flex; flex-wrap: nowrap; /* Prevents wrapping to multiple lines */ justify-content: center; gap: 0.3rem; border-bottom: 1px solid #3c4f53 !important; overflow-x: auto; /* Allows horizontal scroll if still too wide */ white-space: nowrap; }
-
-nav ul li a { font-weight: 500; font-size: 0.85rem; color: #66c2a5 !important; padding: 0.2rem 0.4rem; border-radius: 3px; transition: background-color 0.25s ease, color 0.25s ease; display: inline-block; }
+nav ul li a { font-weight: 500; font-size: 0.9rem; color: #66c2a5 !important; padding: 0.15rem 0.3rem; border-radius: 3px; transition: background-color 0.2s ease, color 0.2s ease; display: inline-block; }
 
 nav ul li a:hover, nav ul li a:focus { background-color: #66c2a5 !important; color: #1f2a30 !important; outline: none; }
+
+.site-content { width: 100%; margin: 1.5rem auto 3rem auto; padding: 6rem 1.5vw 3rem 1.5vw; box-sizing: border-box; }
 
 h1, h2, h3 { color: #ffb347 !important; margin-top: 1.2rem; margin-bottom: 0.75rem; line-height: 1.3; }
 

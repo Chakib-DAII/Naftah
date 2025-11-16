@@ -110,7 +110,7 @@ implements org.jline.reader.Highlighter</span></div>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected org.jline.reader.Highlighter</code></div>
+<div class="col-first even-row-color"><code>protected final org.jline.reader.Highlighter</code></div>
 <div class="col-second even-row-color"><code><a href="#originalHighlighter" class="member-name-link">originalHighlighter</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">The original highlighter to delegate to.</div>
@@ -189,7 +189,7 @@ implements org.jline.reader.Highlighter</span></div>
 <li>
 <section class="detail" id="originalHighlighter">
 <h3>originalHighlighter</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">org.jline.reader.Highlighter</span>&nbsp;<span class="element-name">originalHighlighter</span></div>
+<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">org.jline.reader.Highlighter</span>&nbsp;<span class="element-name">originalHighlighter</span></div>
 <div class="block">The original highlighter to delegate to.</div>
 </section>
 </li>
@@ -229,7 +229,7 @@ implements org.jline.reader.Highlighter</span></div>
  If one string is longer than the other, the remaining portion is appended as-is.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>base</code> - the base attributed string (may be <code>null</code>)</dd>
+<dd><code>base</code> - the base attributed string (can be <code>null</code>)</dd>
 <dd><code>overlay</code> - the string to overlay on top of the base</dd>
 <dt>Returns:</dt>
 <dd>a new merged <code>AttributedString</code></dd>

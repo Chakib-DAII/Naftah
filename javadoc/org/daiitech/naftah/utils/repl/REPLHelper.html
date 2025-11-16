@@ -115,17 +115,17 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Command name for copying text to the clipboard.</div>
 </div>
-<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html" title="class or interface in java.lang" class="external-link">Character</a>&gt;</code></div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html" title="class or interface in java.lang" class="external-link">Character</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#ESCAPE_CHAR_SET" class="member-name-link">ESCAPE_CHAR_SET</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Set form of the escape characters for faster lookup.</div>
 </div>
-<div class="col-first even-row-color"><code>static char[]</code></div>
+<div class="col-first even-row-color"><code>static final char[]</code></div>
 <div class="col-second even-row-color"><code><a href="#ESCAPE_CHARS" class="member-name-link">ESCAPE_CHARS</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Characters that can be used to escape other characters.</div>
 </div>
-<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#ESCAPE_CHARS_REGEX" class="member-name-link">ESCAPE_CHARS_REGEX</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Regex pattern for matching escape characters or escape + newline.</div>
@@ -135,7 +135,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Holds the last printed output as a thread-safe reference.</div>
 </div>
-<div class="col-first odd-row-color"><code>static com.vladsch.flexmark.parser.Parser</code></div>
+<div class="col-first odd-row-color"><code>static final com.vladsch.flexmark.parser.Parser</code></div>
 <div class="col-second odd-row-color"><code><a href="#MARKDOWN_PARSER" class="member-name-link">MARKDOWN_PARSER</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">A reusable instance of <code>Parser</code> from the Flexmark library used for parsing
@@ -151,17 +151,17 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">Command name for pasting text from the clipboard.</div>
 </div>
-<div class="col-first even-row-color"><code>static char[]</code></div>
+<div class="col-first even-row-color"><code>static final char[]</code></div>
 <div class="col-second even-row-color"><code><a href="#QUOTE_CHARS" class="member-name-link">QUOTE_CHARS</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Quotation characters allowed in the REPL.</div>
 </div>
-<div class="col-first odd-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#REGEX_COMMAND" class="member-name-link">REGEX_COMMAND</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">Regex for matching command names.</div>
 </div>
-<div class="col-first even-row-color"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="#REGEX_VARIABLE" class="member-name-link">REGEX_VARIABLE</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Regex for matching variable names.</div>
@@ -348,6 +348,77 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="MARKDOWN_PARSER">
+<h3>MARKDOWN_PARSER</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">com.vladsch.flexmark.parser.Parser</span>&nbsp;<span class="element-name">MARKDOWN_PARSER</span></div>
+<div class="block">A reusable instance of <code>Parser</code> from the Flexmark library used for parsing
+ Markdown content into an abstract syntax tree (AST).
+ <p>
+ This parser can be used to convert raw Markdown strings into a structured <code>Node</code>
+ tree that can be traversed or rendered.
+ <p>
+ It is recommended to reuse this instance instead of creating new ones for performance.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="REGEX_VARIABLE">
+<h3>REGEX_VARIABLE</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">REGEX_VARIABLE</span></div>
+<div class="block">Regex for matching variable names.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#org.daiitech.naftah.utils.repl.REPLHelper.REGEX_VARIABLE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="REGEX_COMMAND">
+<h3>REGEX_COMMAND</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">REGEX_COMMAND</span></div>
+<div class="block">Regex for matching command names.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../../constant-values.html#org.daiitech.naftah.utils.repl.REPLHelper.REGEX_COMMAND">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="ESCAPE_CHARS">
+<h3>ESCAPE_CHARS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">char[]</span>&nbsp;<span class="element-name">ESCAPE_CHARS</span></div>
+<div class="block">Characters that can be used to escape other characters.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ESCAPE_CHAR_SET">
+<h3>ESCAPE_CHAR_SET</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html" title="class or interface in java.lang" class="external-link">Character</a>&gt;</span>&nbsp;<span class="element-name">ESCAPE_CHAR_SET</span></div>
+<div class="block">Set form of the escape characters for faster lookup.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="ESCAPE_CHARS_REGEX">
+<h3>ESCAPE_CHARS_REGEX</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">ESCAPE_CHARS_REGEX</span></div>
+<div class="block">Regex pattern for matching escape characters or escape + newline.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="QUOTE_CHARS">
+<h3>QUOTE_CHARS</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">char[]</span>&nbsp;<span class="element-name">QUOTE_CHARS</span></div>
+<div class="block">Quotation characters allowed in the REPL.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="RTL_PROMPT_VALUE">
 <h3>RTL_PROMPT_VALUE</h3>
 <div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">RTL_PROMPT_VALUE</span></div>
@@ -487,61 +558,6 @@ loadScripts(document, 'script');</script>
 <h3>MULTILINE_IS_ACTIVE</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">MULTILINE_IS_ACTIVE</span></div>
 <div class="block">Indicates if multiline mode is active in the REPL.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="MARKDOWN_PARSER">
-<h3>MARKDOWN_PARSER</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">com.vladsch.flexmark.parser.Parser</span>&nbsp;<span class="element-name">MARKDOWN_PARSER</span></div>
-<div class="block">A reusable instance of <code>Parser</code> from the Flexmark library used for parsing
- Markdown content into an abstract syntax tree (AST).
- <p>
- This parser can be used to convert raw Markdown strings into a structured <code>Node</code>
- tree that can be traversed or rendered.
- <p>
- It is recommended to reuse this instance instead of creating new ones for performance.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="REGEX_VARIABLE">
-<h3>REGEX_VARIABLE</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">REGEX_VARIABLE</span></div>
-<div class="block">Regex for matching variable names.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="REGEX_COMMAND">
-<h3>REGEX_COMMAND</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">REGEX_COMMAND</span></div>
-<div class="block">Regex for matching command names.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="ESCAPE_CHARS">
-<h3>ESCAPE_CHARS</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">char[]</span>&nbsp;<span class="element-name">ESCAPE_CHARS</span></div>
-<div class="block">Characters that can be used to escape other characters.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="ESCAPE_CHAR_SET">
-<h3>ESCAPE_CHAR_SET</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html" title="class or interface in java.lang" class="external-link">Character</a>&gt;</span>&nbsp;<span class="element-name">ESCAPE_CHAR_SET</span></div>
-<div class="block">Set form of the escape characters for faster lookup.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="ESCAPE_CHARS_REGEX">
-<h3>ESCAPE_CHARS_REGEX</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">ESCAPE_CHARS_REGEX</span></div>
-<div class="block">Regex pattern for matching escape characters or escape + newline.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="QUOTE_CHARS">
-<h3>QUOTE_CHARS</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">char[]</span>&nbsp;<span class="element-name">QUOTE_CHARS</span></div>
-<div class="block">Quotation characters allowed in the REPL.</div>
 </section>
 </li>
 </ul>

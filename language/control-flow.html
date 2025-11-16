@@ -5,6 +5,15 @@
 	<meta content="width=device-width, initial-scale=1" name="viewport"/>
 	<title>Naftah Control Flow | Naftah Language Documentation - مستندات لغة نفطه</title>
 	<link href="/assets/css/main.css" rel="stylesheet">
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<!-- DataTables CSS & JS -->
+	<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
 	  <!-- used by jekyll-seo-tag plugin -->
 </head>
 <body>
@@ -16,9 +25,7 @@
 			Naftah Language Documentation - مستندات لغة نفطه
 		</a>
 	</h1>
-</header>
-
-<main class="site-content">
+	<br>
 	<nav>
 	<ul>
 		
@@ -42,22 +49,27 @@
 		
 		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
 		
-		<li><a href="/running-naftah">تشغيل نفطة</a></li>
+		<li><a href="/running-naftah">تشغيل نفطه</a></li>
 		
 		<li><a href="/java-doc">التوثيق (جاڤا)</a></li>
 		
 		<li><a href="/benchmarks">المقارنات المعيارية</a></li>
 		
-		<li><a href="/about">حول نفطة</a></li>
+		<li><a href="/releases">الإصدارات</a></li>
+		
+		<li><a href="/about">حول نفطه</a></li>
 		
 	</ul>
 </nav>
 
+</header>
+
+<main class="site-content">
 	<div dir="rtl">
 
 
 
-<h1 id="-التحكم-في-تدفق-البرنامج-في-لغة-نفطة-control-flow">🌀 التحكم في تدفق البرنامج في لغة نفطة (Control Flow)</h1>
+<h1 id="-التحكم-في-تدفق-البرنامج-في-لغة-نفطه-control-flow">🌀 التحكم في تدفق البرنامج في لغة نفطه (Control Flow)</h1>
 
 <p>هذا الملف يشرح كيفية استخدام أوامر التحكم في تدفق البرنامج في لغة نفطة، التي تشمل:
 <code class="language-plaintext highlighter-rouge">if</code> مع <code class="language-plaintext highlighter-rouge">elseif</code> و <code class="language-plaintext highlighter-rouge">else</code>، حلقات التكرار المختلفة (<code class="language-plaintext highlighter-rouge">for</code>, <code class="language-plaintext highlighter-rouge">foreach</code>, <code class="language-plaintext highlighter-rouge">while</code>, <code class="language-plaintext highlighter-rouge">repeat-until</code>)،

@@ -5,6 +5,15 @@
 	<meta content="width=device-width, initial-scale=1" name="viewport"/>
 	<title>Naftah Keywords | Naftah Language Documentation - مستندات لغة نفطه</title>
 	<link href="/assets/css/main.css" rel="stylesheet">
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<!-- DataTables CSS & JS -->
+	<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
 	  <!-- used by jekyll-seo-tag plugin -->
 </head>
 <body>
@@ -16,9 +25,7 @@
 			Naftah Language Documentation - مستندات لغة نفطه
 		</a>
 	</h1>
-</header>
-
-<main class="site-content">
+	<br>
 	<nav>
 	<ul>
 		
@@ -42,28 +49,59 @@
 		
 		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
 		
-		<li><a href="/running-naftah">تشغيل نفطة</a></li>
+		<li><a href="/running-naftah">تشغيل نفطه</a></li>
 		
 		<li><a href="/java-doc">التوثيق (جاڤا)</a></li>
 		
 		<li><a href="/benchmarks">المقارنات المعيارية</a></li>
 		
-		<li><a href="/about">حول نفطة</a></li>
+		<li><a href="/releases">الإصدارات</a></li>
+		
+		<li><a href="/about">حول نفطه</a></li>
 		
 	</ul>
 </nav>
 
+</header>
+
+<main class="site-content">
 	<div dir="rtl">
 
 
 
-<h1 id="-الكلمات-المفتاحية-في-لغة-نفطة-naftah-keywords">🔑 الكلمات المفتاحية في لغة نفطة (Naftah Keywords)</h1>
+<h1 id="-الكلمات-المفتاحية-في-لغة-نفطه-naftah-keywords">🔑 الكلمات المفتاحية في لغة نفطه (Naftah Keywords)</h1>
 
-<p>هذا الملف يوثّق جميع الكلمات المفتاحية (Keywords) المدعومة في لغة <strong>نفطة</strong>، بما في ذلك مرادفاتها المختلفة، كما تم
+<p>هذا الملف يوثّق جميع الكلمات المفتاحية (Keywords) المدعومة في لغة <strong>نفطه</strong>، بما في ذلك مرادفاتها المختلفة، كما تم
 تعريفها في ملف الـ lexer. تُستخدم هذه الكلمات لتحديد البُنى الأساسية في اللغة، مثل الحلقات، الشروط، التعاريف، وغيرها.</p>
 
 <p>The file documents all the <strong>keywords</strong> supported by the <strong>Naftah</strong> language, including their <strong>synonyms</strong>, as defined
 in the lexer.</p>
+
+<hr />
+
+<h2 id="-الاستيراد-imports">📦 الاستيراد (Imports)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>الكلمة</th>
+      <th>مرادفات</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">استيراد</code></td>
+      <td><code class="language-plaintext highlighter-rouge">استيراد</code>, <code class="language-plaintext highlighter-rouge">جلب</code>, <code class="language-plaintext highlighter-rouge">إجلب</code></td>
+      <td>استيراد مكتبة أو وحدة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">تحت_إسم</code></td>
+      <td><code class="language-plaintext highlighter-rouge">تحت_إسم</code>, <code class="language-plaintext highlighter-rouge">مثل</code></td>
+      <td>إعطاء اسم مستعار للوحدة المستوردة</td>
+    </tr>
+  </tbody>
+</table>
 
 <hr />
 
@@ -357,7 +395,7 @@ in the lexer.</p>
 <h2 id="-ملاحظات">🧠 ملاحظات</h2>
 
 <ul>
-  <li>يمكن استخدام أي من المرادفات المدرجة لكل كلمة مفتاحية داخل كود نفطة.</li>
+  <li>يمكن استخدام أي من المرادفات المدرجة لكل كلمة مفتاحية داخل كود نفطه.</li>
   <li>هذا يدعم مرونة لغوية واستيعاب المستخدمين من خلفيات لغوية مختلفة.</li>
   <li>بعض الكلمات مثل <code class="language-plaintext highlighter-rouge">ارجع</code> يمكن أن تظهر في أكثر من سياق (دالة، شرط، قوالب نصية).</li>
 </ul>
@@ -375,8 +413,8 @@ in the lexer.</p>
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [📦 تعريف الكائنات - Objects](./06_objects.md)
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
-* [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
-* [⚙️ التوافق مع Java (Java Interop) في لغة نفطة - Java Interop](./09_java_interop.md)
+* [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
+* [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
 
 ---
 </div>
