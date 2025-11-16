@@ -7,13 +7,12 @@ url:   # TODO: GitHub Pages URL
 
 permalink: pretty      # nice clean URLs without .html
 theme: minima          # built-in simple theme (easy to customize)
-markdown: kramdown     # recommended markdown parser
+markdown: kramdown     # recommended Markdown parser
 kramdown:
   input: GFM           # GitHub Flavored Markdown
 
 plugins:
   - jekyll-seo-tag    # for SEO improvements
-#  - jekyll-paginate
 
 exclude:
   - Gemfile
@@ -21,6 +20,6 @@ exclude:
   - node_modules
   - vendor
 
-# pagination
-#paginate: 5
-#paginate_path: "/page:num"
+copy_data_files:
+  - jvm-class-initializers.json
+  - jvm-functions.json

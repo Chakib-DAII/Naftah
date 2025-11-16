@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Naftah - run script" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="org.daiitech.naftah.Naftah" />
-    <module name="naftah.main" />
+    <module name="naftah.naftah-lang.main" />
     <option name="PROGRAM_PARAMETERS" value="run --encoding=UTF-8 -d -scp -e إطبع(&quot;مرحباً أيها العالم!&quot;)" />
     <option name="VM_PARAMETERS" value="-Dfile.encoding=UTF-8 " />
     <extension name="coverage">
