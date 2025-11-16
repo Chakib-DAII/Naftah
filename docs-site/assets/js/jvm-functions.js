@@ -23,9 +23,24 @@ function scrollToJvmFunctionsTable() {
 $(document).ready(function() {
     // JVM Functions
      var table = $('#jvm-functions-table').DataTable({
-        ajax: {
-            url: '/assets/data/jvm-functions.json',
-            dataSrc: ''
+        ajax: function(data, callback, settings) {
+                fetch('/assets/data/jvm-functions.json.gz')
+				.then(resp => {
+					if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
+					return resp.arrayBuffer();
+				})
+				.then(buffer => {
+					// Decompress GZIP with pako
+					const decompressed = pako.inflate(new Uint8Array(buffer), { to: 'string' });
+					let json = JSON.parse(decompressed);
+
+					// DataTables expects an object with `data` key if dataSrc is default
+					callback({ data: Array.isArray(json) ? json : [] });
+				})
+				.catch(err => {
+					console.error("Failed to load compressed JSON:", err);
+					callback({ data: [] });
+				});
         },
         deferRender: true,
         processing: true,

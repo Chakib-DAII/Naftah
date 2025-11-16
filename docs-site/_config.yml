@@ -21,5 +21,7 @@ exclude:
   - vendor
 
 copy_data_files:
-  - jvm-class-initializers.json
-  - jvm-functions.json
+  - file: jvm-class-initializers.json
+  - file: jvm-functions.json
+    compress: true
+
