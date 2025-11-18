@@ -73,12 +73,12 @@ import static org.daiitech.naftah.parser.LoopSignal.RETURN;
 import static org.daiitech.naftah.parser.NaftahParserHelper.accessObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkInsideLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkLoopSignal;
-import static org.daiitech.naftah.parser.NaftahParserHelper.createDeclaredVariable;
 import static org.daiitech.naftah.parser.NaftahParserHelper.deregisterContextByDepth;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getBlockContext;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getRootContext;
+import static org.daiitech.naftah.parser.NaftahParserHelper.handleDeclaration;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasAnyParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChildOrSubChildOfType;
@@ -710,62 +710,91 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getContextByDepth(depth),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, declarationContext) -> {
-								String variableName = declarationContext.ID().getText();
-								// variable -> new : flags if this is a new variable or not
-								Pair<DeclaredVariable, Boolean> declaredVariable;
-								boolean isConstant = hasChild(declarationContext.CONSTANT());
-								boolean isConstantOrVariable = isConstant || hasChild(declarationContext.VARIABLE());
-								boolean hasType = hasChild(declarationContext.type());
-								boolean creatingObject = currentContext.isCreatingObject();
-								boolean creatingObjectField = hasAnyParentOfType(   declarationContext,
-																					org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
-								if (isConstantOrVariable || hasType || creatingObjectField) {
-									if (creatingObject && hasType) {
-										Class<?> type = (Class<?>) defaultNaftahParserVisitor
-												.visit(declarationContext.type());
-										if (Objects.nonNull(type) && !Object.class.equals(type)) {
-											throw new NaftahBugError(
-																		("""
-																			لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع الأنواع (%s).""")
-																				.formatted( variableName,
-																							getNaftahType(  defaultNaftahParserVisitor.parser,
-																											type),
-																							getNaftahType(  defaultNaftahParserVisitor.parser,
-																											Object.class)),
-																		declarationContext.getStart().getLine(),
-																		declarationContext
-																				.getStart()
-																				.getCharPositionInLine());
-										}
-									}
-									declaredVariable = createDeclaredVariable(  defaultNaftahParserVisitor,
-																				declarationContext,
-																				variableName,
-																				isConstant,
-																				hasType);
-									// TODO: check if inside function to check if it matches any argument /
-									// parameter or
-									// previously
-									// declared and update if possible
-									if (!creatingObjectField) {
-										currentContext.defineVariable(variableName, declaredVariable.a);
-									}
+								Object result;
+								if (Objects.nonNull(declarationContext.singleDeclaration())) {
+									result = defaultNaftahParserVisitor.visit(declarationContext.singleDeclaration());
 								}
 								else {
-									declaredVariable = Optional
-											.ofNullable(currentContext.getVariable(variableName, true))
-											.map(alreadyDeclaredVariable -> new Pair<>(alreadyDeclaredVariable.b, true))
-											.orElse(createDeclaredVariable( defaultNaftahParserVisitor,
-																			declarationContext,
-																			variableName,
-																			false,
-																			false));
+									result = defaultNaftahParserVisitor
+											.visit(declarationContext.multipleDeclarations());
 								}
-								return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.a;
+								return result;
 							}
 		);
 	}
 
+	@Override
+	public Object visitSingleDeclaration(org.daiitech.naftah.parser.NaftahParser.SingleDeclarationContext ctx) {
+		return visitContext(
+							this,
+							"visitSingleDeclaration",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, singleDeclarationContext) -> {
+								// variable -> new : flags if this is a new variable or not
+								boolean hasType = hasChild(singleDeclarationContext.type());
+								return handleDeclaration(   currentContext,
+															singleDeclarationContext,
+															singleDeclarationContext.ID().getText(),
+															hasChild(((org.daiitech.naftah.parser.NaftahParser.DeclarationContext) singleDeclarationContext
+																	.getParent()).CONSTANT()),
+															hasChild(((org.daiitech.naftah.parser.NaftahParser.DeclarationContext) singleDeclarationContext
+																	.getParent()).VARIABLE()),
+															hasType,
+															hasType ?
+																	(Class<?>) NaftahParserHelper
+																			.visit( defaultNaftahParserVisitor,
+																					ctx.type()) :
+																	Object.class
+								);
+							}
+		);
+	}
+
+	@Override
+	public Object visitMultipleDeclarations(org.daiitech.naftah.parser.NaftahParser.MultipleDeclarationsContext ctx) {
+		return visitContext(
+							this,
+							"visitMultipleDeclarations",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, multipleDeclarationsContext) -> {
+								boolean hasConstant = hasChild(((org.daiitech.naftah.parser.NaftahParser.DeclarationContext) multipleDeclarationsContext
+										.getParent()).CONSTANT());
+								boolean hasVariable = hasChild(((org.daiitech.naftah.parser.NaftahParser.DeclarationContext) multipleDeclarationsContext
+										.getParent()).VARIABLE());
+								var variableNames = multipleDeclarationsContext.ID();
+								var possibleSpecifiedTypes = multipleDeclarationsContext.type();
+								boolean hasType = !possibleSpecifiedTypes.isEmpty();
+								List<Object> declarations = new ArrayList<>();
+								for (int i = 0; i < variableNames.size(); i++) {
+									declarations
+											.add(handleDeclaration( currentContext,
+																	multipleDeclarationsContext,
+																	variableNames.get(i).getText(),
+																	hasConstant,
+																	hasVariable,
+																	hasType,
+																	hasType ?
+																			(Class<?>) (i < possibleSpecifiedTypes
+																					.size() ?
+																							NaftahParserHelper
+																									.visit( defaultNaftahParserVisitor,
+																											possibleSpecifiedTypes
+																													.get(i)) :
+																							NaftahParserHelper
+																									.visit( defaultNaftahParserVisitor,
+																											possibleSpecifiedTypes
+																													.get(
+																															possibleSpecifiedTypes
+																																	.size() - 1))) :
+																			Object.class
+											));
+								}
+								return Tuple.of(declarations);
+							}
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -2553,16 +2582,53 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, returnStatementContext) -> {
 								boolean insideLoop = !LOOP_STACK.isEmpty() || checkInsideLoop(returnStatementContext);
-								Object result = None.get();
-								if (hasChild(returnStatementContext.expression())) {
-									// Evaluate and return the result
-									result = defaultNaftahParserVisitor.visit(returnStatementContext.expression());
+								Object result;
+								if (Objects.nonNull(returnStatementContext.singleReturn())) {
+									result = defaultNaftahParserVisitor.visit(returnStatementContext.singleReturn());
+								}
+								else {
+									result = defaultNaftahParserVisitor.visit(returnStatementContext.multipleReturns());
 								}
 								return insideLoop ? LoopSignal.LoopSignalDetails.of(RETURN, result) : result;
 							}
 		);
 	}
 
+	@Override
+	public Object visitSingleReturn(org.daiitech.naftah.parser.NaftahParser.SingleReturnContext ctx) {
+		return visitContext(
+							this,
+							"visitSingleReturn",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, returnStatementContext) -> {
+								Object result = None.get();
+								if (hasChild(returnStatementContext.expression())) {
+									// Evaluate and return the result
+									result = defaultNaftahParserVisitor.visit(returnStatementContext.expression());
+								}
+								return result;
+							}
+		);
+	}
+
+	@Override
+	public Object visitMultipleReturns(org.daiitech.naftah.parser.NaftahParser.MultipleReturnsContext ctx) {
+		return visitContext(
+							this,
+							"visitMultipleReturns",
+							getContextByDepth(depth),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, returnStatementContext) -> {
+								Object result = None.get();
+								if (hasChild(returnStatementContext.tupleElements())) {
+									// Evaluate and return the result
+									result = defaultNaftahParserVisitor.visit(returnStatementContext.tupleElements());
+								}
+								return result;
+							}
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
