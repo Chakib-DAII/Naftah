@@ -150,6 +150,12 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.DeclarationContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SingleDeclarationContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.MultipleDeclarationsContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.AssignmentContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -235,6 +241,12 @@ public final class NaftahExecutionLogger {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ReturnStatementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SingleReturnContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.MultipleReturnsContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.BlockContext context) {
@@ -717,8 +729,27 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											ReturnStatementContext::RETURN -> %s
-											ReturnStatementContext::expression -> {
+											ReturnStatementContext::singleReturn -> %s
+											ReturnStatementContext::multipleReturns -> {
+												%s
+											}
+											"""
+										.formatted( Objects.nonNull(context.singleReturn()) ?
+															context.singleReturn().getText() :
+															null,
+													Objects.nonNull(context.multipleReturns()) ?
+															context.multipleReturns().getText() :
+															null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.SingleReturnContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											SingleReturnContext::RETURN -> %s
+											SingleReturnContext::expression -> {
 												%s
 											}
 											"""
@@ -727,6 +758,33 @@ public final class NaftahExecutionLogger {
 															null,
 													Objects.nonNull(context.expression()) ?
 															context.expression().getText() :
+															null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.MultipleReturnsContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											MultipleReturnsContext::RETURN -> %s
+											MultipleReturnsContext::LPAREN -> %s
+											MultipleReturnsContext::tupleElements -> {
+												%s
+											}
+											MultipleReturnsContext::RPAREN -> %s
+											"""
+										.formatted( Objects.nonNull(context.RETURN()) ?
+															context.RETURN().getText() :
+															null,
+													Objects.nonNull(context.LPAREN()) ?
+															context.LPAREN().getText() :
+															null,
+													Objects.nonNull(context.tupleElements()) ?
+															context.tupleElements().getText() :
+															null,
+													Objects.nonNull(context.RPAREN()) ?
+															context.RPAREN().getText() :
 															null));
 
 	}
@@ -907,11 +965,8 @@ public final class NaftahExecutionLogger {
 								context -> """
 											DeclarationContext::VARIABLE -> %s
 											DeclarationContext::CONSTANT -> %s
-											DeclarationContext::ID -> %s
-											DeclarationContext::COLON -> %s
-											DeclarationContext::type -> {
-												%s
-											}
+											DeclarationContext::singleDeclaration -> %s
+											DeclarationContext::multipleDeclarations -> %s
 											"""
 										.formatted( Objects.nonNull(context.VARIABLE()) ?
 															context.VARIABLE().getText() :
@@ -919,9 +974,56 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.CONSTANT()) ?
 															context.CONSTANT().getText() :
 															null,
-													Objects.nonNull(context.ID()) ? context.ID().getText() : null,
+													Objects.nonNull(context.singleDeclaration()) ?
+															context.singleDeclaration().getText() :
+															null,
+													Objects.nonNull(context.multipleDeclarations()) ?
+															context.multipleDeclarations().getText() :
+															null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.SingleDeclarationContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											SingleDeclarationContext::ID -> %s
+											SingleDeclarationContext::COLON -> %s
+											SingleDeclarationContext::type -> {
+												%s
+											}
+											"""
+										.formatted( Objects.nonNull(context.ID()) ? context.ID().getText() : null,
 													Objects.nonNull(context.COLON()) ? context.COLON().getText() : null,
 													Objects.nonNull(context.type()) ? context.type().getText() : null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.MultipleDeclarationsContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											MultipleDeclarationsContext::ID ->  {
+												%s
+											}
+											MultipleDeclarationsContext::COMMA ->  {
+												%s
+											}
+											MultipleDeclarationsContext::SEMI ->  {
+												%s
+											}
+											MultipleDeclarationsContext::COLON -> %s
+											MultipleDeclarationsContext::type -> {
+												%s
+											}
+											"""
+										.formatted( join(context.ID()),
+													join(context.COMMA()),
+													join(context.SEMI()),
+													Objects.nonNull(context.COLON()) ? context.COLON().getText() : null,
+													join(context.type())));
 
 	}
 
