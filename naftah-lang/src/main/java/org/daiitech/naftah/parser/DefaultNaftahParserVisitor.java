@@ -3515,17 +3515,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, stringValueContext) -> {
 								String value = stringValueContext.STRING().getText();
 								Object result;
-								if (Objects.isNull(stringValueContext.RAW()) && Objects
-										.isNull(stringValueContext.BYTE_ARRAY())) {
-									result = StringInterpolator.process(value, currentContext);
+								if (Objects.nonNull(stringValueContext.RAW())) {
+									result = StringInterpolator.cleanInput(value);
 								}
 								else {
-									value = StringInterpolator.cleanInput(value);
-									if (Objects.nonNull(stringValueContext.BYTE_ARRAY())) {
-										result = value.getBytes(StandardCharsets.UTF_8);
+									result = StringInterpolator.process(value, currentContext);
+									if (Objects.nonNull(stringValueContext.DATE())) {
+										// TODO: call the date specific parser to handle them
 									}
-									else {
-										result = value;
+									else if (Objects.nonNull(stringValueContext.BYTE_ARRAY())) {
+										result = value.getBytes(StandardCharsets.UTF_8);
 									}
 								}
 
