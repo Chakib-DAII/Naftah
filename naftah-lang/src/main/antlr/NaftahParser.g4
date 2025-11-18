@@ -66,10 +66,22 @@ callableImportElement: (ID | qualifiedName | qualifiedCall) importAlias?;
 importAlias: AS ID;
 
 // Declaration: variable or constant declaration
-declaration: (VARIABLE | CONSTANT) ID (COLON type)?;
+declaration: (VARIABLE | CONSTANT) (singleDeclaration | multipleDeclarations);
+
+singleDeclaration: ID (COLON type)?;
+
+multipleDeclarations: ID ((COMMA | SEMI) ID)+ (COLON type ((COMMA | SEMI) type)+)?;
 
 // Assignment: variable or constant assignment, object field or collection element
-assignment: (declaration | ID | qualifiedName | qualifiedObjectAccess | collectionAccess) ASSIGN expression;
+assignment: singleAssignmentExpression | multipleAssignmentsExpression;
+
+singleAssignmentExpression: (singleDeclaration | singleAssignment) ASSIGN expression;
+
+multipleAssignmentsExpression: (multipleDeclarations | multipleAssignments) ASSIGN expression ((COMMA | SEMI) expression)+;
+
+singleAssignment: ID | qualifiedName | qualifiedObjectAccess | collectionAccess;
+
+multipleAssignments: singleAssignment ((COMMA | SEMI) singleAssignment)+;
 
 // Function declaration: Can have parameters and return values
 functionDeclaration: FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
@@ -195,7 +207,11 @@ breakStatement: BREAK ID?;
 continueStatement: CONTINUE ID?;
 
 // Return statement: 'return' followed by an optional expression
-returnStatement: RETURN expression?;
+returnStatement: singleReturn | multipleReturns;
+
+singleReturn: RETURN expression?;
+
+multipleReturns: RETURN ((LPAREN tupleElements? RPAREN) | tupleElements);
 
 // Block: A block of statements enclosed in curly braces
 block: LBRACE (statement END?)* RBRACE;
