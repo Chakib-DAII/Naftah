@@ -128,6 +128,7 @@ NUMBER      : Digit+ (COMMA Digit+)?;
 NAN			: 'ليس_رقم' | 'قيمة_غير_رقمية' | 'رقم_غير_صالح' | 'غير_عددي' | 'ليس_عددي';
 CHARACTER   : QuotationMark Character QuotationMark;
 RAW		    : 'خام' | 'نص_خام'| 'سلسلة_خام';
+DATE		: 'تاريخ';
 BYTE_ARRAY	: 'ثمانية_بت' | 'بايتات' |'سلسلة_ثمانية_بت' |'مصفوفة_ثمانية_بت' | 'سلسلة_بايتات'| 'مصفوفة_بايتات';
 STRING      : DoubleQuotationMark String DoubleQuotationMark
 			| DoubleQuotationMarkLeft String DoubleQuotationMarkRight;

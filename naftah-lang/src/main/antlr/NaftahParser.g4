@@ -274,7 +274,7 @@ value: NUMBER #numberValue
      | FALSE #falseValue
      | NULL #nullValue
      | CHARACTER #characterValue
-     | (RAW | BYTE_ARRAY)? STRING #stringValue
+     | (RAW | DATE | BYTE_ARRAY)? STRING #stringValue
      | NAN #nanValue
      | ID #idValue
      ;
