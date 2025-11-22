@@ -1,12 +1,16 @@
 package org.daiitech.naftah.utils.reflect;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
@@ -69,12 +73,21 @@ public final class ObjectAccessUtils {
 	 * <p>If a {@code getter} method is provided, it will be invoked. Otherwise,
 	 * the method will attempt to access the field directly using reflection.
 	 *
-	 * @param target the object from which to retrieve the value; may be null
-	 * @param name   the field name; may be null
-	 * @param getter optional getter {@link Method} to invoke; may be null
+	 * @param target   the object from which to retrieve the value; may be null
+	 * @param name     the field name; may be null
+	 * @param getter   optional getter {@link Method} to invoke; may be null
+	 * @param safe     whether to swallow any exceptions and return {@code null}
+	 * @param failFast whether to throw immediately on resolution errors during getter execution
 	 * @return the value of the field or property, or {@code null} if not found
 	 */
-	public static Object get(Object target, String name, Method getter) {
+	public static Object get(   Object target,
+								String name,
+								Method getter,
+								boolean safe,
+								boolean failFast)
+			throws InvocationTargetException,
+			InstantiationException,
+			IllegalAccessException {
 		if (target == null || name == null) {
 			return null;
 		}
@@ -88,21 +101,31 @@ public final class ObjectAccessUtils {
 												List.of(),
 												getter.getReturnType());
 			}
-			catch (Exception ignored) {
+			catch (Throwable th) {
+				if (failFast) {
+					throw th;
+				}
 			}
 		}
 
 		Class<?> cls = target.getClass();
 
 		// Field
-		Field field = findField(cls, name);
+		Field field = findField(cls, name, safe);
 		if (field != null) {
 			try {
 				field.setAccessible(true);
 				return field.get(target);
 			}
-			catch (Exception ignored) {
+			catch (Throwable th) {
+				if (!safe) {
+					throw th;
+				}
 			}
+		}
+
+		if (!safe) {
+			throw newNaftahNoSuchFieldError(name);
 		}
 
 		return null;
@@ -114,13 +137,23 @@ public final class ObjectAccessUtils {
 	 * <p>If a {@code setter} method is provided, it will be invoked. Otherwise,
 	 * the method will attempt to access the field directly using reflection.
 	 *
-	 * @param target the object on which to set the value; may be null
-	 * @param name   the field name; may be null
-	 * @param setter optional setter {@link Method} to invoke; may be null
-	 * @param value  the value to assign to the field
+	 * @param target   the object on which to set the value; may be null
+	 * @param name     the field name; may be null
+	 * @param setter   optional setter {@link Method} to invoke; may be null
+	 * @param safe     whether to swallow any exceptions and return {@code null}
+	 * @param failFast whether to throw immediately on resolution errors during setter execution
+	 * @param value    the value to assign to the field
 	 * @return {@code true} if the value was successfully set, {@code false} otherwise
 	 */
-	public static boolean set(Object target, String name, Method setter, Object value) {
+	public static boolean set(  Object target,
+								String name,
+								Method setter,
+								Object value,
+								boolean safe,
+								boolean failFast)
+			throws InvocationTargetException,
+			InstantiationException,
+			IllegalAccessException {
 		if (target == null || name == null) {
 			return false;
 		}
@@ -135,22 +168,32 @@ public final class ObjectAccessUtils {
 												false);
 				return true;
 			}
-			catch (Exception ignored) {
+			catch (Throwable th) {
+				if (failFast) {
+					throw th;
+				}
 			}
 		}
 
 		Class<?> cls = target.getClass();
 
 		// Field
-		Field field = findField(cls, name);
+		Field field = findField(cls, name, safe);
 		if (field != null) {
 			try {
 				field.setAccessible(true);
 				field.set(target, value);
 				return true;
 			}
-			catch (Exception ignored) {
+			catch (Throwable th) {
+				if (!safe) {
+					throw th;
+				}
 			}
+		}
+
+		if (!safe) {
+			throw newNaftahNoSuchFieldError(name);
 		}
 
 		return false;
@@ -163,16 +206,27 @@ public final class ObjectAccessUtils {
 	 * @param name the field name
 	 * @return the {@link Field} if found, otherwise {@code null}
 	 */
-	private static Field findField(Class<?> cls, String name) {
+	public static Field findField(Class<?> cls, String name, boolean safe) {
 		Class<?> current = cls;
 		while (current != null && current != Object.class) {
 			try {
-				return current.getDeclaredField(name);
+				return Arrays
+						.stream(current.getDeclaredFields())
+						.filter(f -> !Modifier.isStatic(f.getModifiers()) && (ArabicUtils
+								.transliterateToArabicScriptDefault(f.getName())[0]
+								.equals(name) || f.getName().equals(name)))
+						.findFirst()
+						.orElseThrow(() -> newNaftahNoSuchFieldError(name));
 			}
-			catch (NoSuchFieldException ignored) {
+			catch (NaftahBugError ignored) {
 				current = current.getSuperclass();
 			}
 		}
+
+		if (!safe) {
+			throw newNaftahNoSuchFieldError(name);
+		}
+
 		return null;
 	}
 
@@ -186,6 +240,21 @@ public final class ObjectAccessUtils {
 		if (str == null || str.isEmpty()) {
 			return str;
 		}
-		return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+		return ArabicUtils.isArabic(str) ? str : Character.toUpperCase(str.charAt(0)) + str.substring(1);
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} when a field with the given name
+	 * cannot be found.
+	 *
+	 * <p>The field name is expected to be in Arabic. This wraps the
+	 * standard {@link NoSuchFieldException} inside a {@link NaftahBugError}.</p>
+	 *
+	 * @param name the Arabic name of the field that was not found
+	 * @return a {@link NaftahBugError} indicating that the field does not exist
+	 * @throws NaftahBugError always thrown to indicate the missing field
+	 */
+	private static NaftahBugError newNaftahNoSuchFieldError(String name) {
+		return new NaftahBugError("لم يتم العثور على الحقل باسم عربي: " + name, new NoSuchFieldException(name));
 	}
 }
