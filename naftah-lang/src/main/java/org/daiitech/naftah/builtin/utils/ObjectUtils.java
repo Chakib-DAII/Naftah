@@ -32,6 +32,8 @@ import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 
 import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
+import static org.daiitech.naftah.builtin.utils.FunctionUtils.allMatch;
+import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
@@ -68,13 +70,20 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Checks whether the given object is considered "truthy".
-	 * <p>
-	 * This method returns {@code false} for {@code null}, {@code false} booleans,
-	 * numeric zero, NaN, blank strings, empty arrays, collections, and maps.
-	 * For all other objects, it returns {@code true}.
+	 * Determines whether the given object is considered "truthy".
 	 *
-	 * @param obj the object to evaluate
+	 * <p>The following objects are considered <b>falsy</b> (return {@code false}):
+	 * <ul>
+	 * <li>{@code null}</li>
+	 * <li>{@code Boolean.FALSE}</li>
+	 * <li>Numeric zero or {@code NaN} values</li>
+	 * <li>Blank strings (empty or only whitespace)</li>
+	 * <li>Empty arrays</li>
+	 * <li>Empty collections or maps</li>
+	 * </ul>
+	 * For all other objects, this method returns {@code true}.
+	 *
+	 * @param obj the object to evaluate for truthiness
 	 * @return {@code true} if the object is considered truthy; {@code false} otherwise
 	 */
 	public static boolean isTruthy(Object obj) {
@@ -117,6 +126,38 @@ public final class ObjectUtils {
 		}
 
 		return !(NaN.isNaN(obj) || None.isNone(obj));
+	}
+
+	/**
+	 * Safely compares two objects for equality using custom dynamic operations.
+	 *
+	 * <p>This method attempts to evaluate {@code left} and {@code right} using
+	 * the internal {@link BinaryOperation#EQUALS} operation and checks that all
+	 * results are {@code true}. If an internal {@link NaftahBugError} occurs,
+	 * it falls back to {@code left.equals(right)}, unless the error matches a
+	 * known empty-arguments condition and {@code safe} is {@code true}, in which
+	 * case it returns {@code true}.
+	 *
+	 * @param <T>   the type of the objects being compared
+	 * @param left  the first object to compare
+	 * @param right the second object to compare
+	 * @param safe  whether to treat certain internal evaluation errors as equality
+	 * @return {@code true} if the objects are considered equal; {@code false} otherwise
+	 * @throws NaftahBugError if a comparison fails and {@code safe} is {@code false} for certain internal errors
+	 */
+	public static <T> boolean equals(T left, T right, boolean safe) {
+		try {
+			return allMatch(applyOperation(left, right, BinaryOperation.EQUALS), Boolean.TRUE::equals);
+		}
+		catch (NaftahBugError bug) {
+			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(left, right))) {
+				if (safe) {
+					return true;
+				}
+				throw bug;
+			}
+			return left.equals(right);
+		}
 	}
 
 	/**
@@ -479,13 +520,13 @@ public final class ObjectUtils {
 		}
 
 		if (left instanceof NaftahObject naftahObject) {
-			left = naftahObject.get(false);
+			left = naftahObject.get();
 			right = NaftahObject.get(right, false);
 		}
 
 		if (right instanceof NaftahObject naftahObject) {
 			left = NaftahObject.get(left, false);
-			right = naftahObject.get(false);
+			right = naftahObject.get();
 		}
 
 		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
@@ -584,7 +625,7 @@ public final class ObjectUtils {
 		}
 
 		if (a instanceof NaftahObject naftahObject) {
-			a = naftahObject.get(false);
+			a = naftahObject.get();
 		}
 
 		// Number or Boolean or Character or String
