@@ -592,8 +592,8 @@ public final class ExceptionUtils {
 	 * @return this method never returns normally; it always throws {@link NaftahBugError}
 	 * @throws NaftahBugError always thrown to indicate an invalid assignment expression
 	 */
-	public static NaftahBugError newSingleExpressionAssignmentError(int line,
-																	int column) {
+	public static NaftahBugError newNaftahSingleExpressionAssignmentError(  int line,
+																			int column) {
 		return new NaftahBugError(  """
 									يجب أن تكون عبارة الإسناد تركيبة (Tuple) من العناصر في حالة الإسناد بقيمة واحدة أو بقيم متعددة مفصولة بفواصل في حالة الإسناد بقيم متعددة.
 									""",
@@ -617,8 +617,8 @@ public final class ExceptionUtils {
 	 * @return this method never returns normally; it always throws {@link NaftahBugError}
 	 * @throws NaftahBugError always thrown to indicate a mismatch between declarations and expressions
 	 */
-	public static NaftahBugError newExpressionsDeclarationsSizeMismatchErrorError(  int line,
-																					int column) {
+	public static NaftahBugError newNaftahExpressionsDeclarationsSizeMismatchErrorError(int line,
+																						int column) {
 		return new NaftahBugError(  """
 									يجب أن يتطابق عدد العبارات مع عدد التصريحات.
 									""",
@@ -642,12 +642,79 @@ public final class ExceptionUtils {
 	 * @return this method never returns normally; it always throws {@link NaftahBugError}
 	 * @throws NaftahBugError always thrown to indicate a types-to-variables mismatch
 	 */
-	public static NaftahBugError newSpecifiedTypesExceedVariableNamesError( int line,
-																			int column) {
+	public static NaftahBugError newNaftahSpecifiedTypesExceedVariableNamesError(   int line,
+																					int column) {
 		return new NaftahBugError(  """
 									عدد الأنواع المحددة لا يجوز أن يتجاوز عدد أسماء المتغيرات.
 									""",
 									line,
 									column);
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an attempt was made to
+	 * reassign a constant (final or otherwise immutable) variable.
+	 *
+	 * <p>This overload simply delegates to
+	 * {@link #newNaftahSettingConstantError(String, Throwable)} with a null cause.</p>
+	 *
+	 * <p>The generated error message (written in Arabic) includes the name of the
+	 * constant that was attempted to be reassigned.</p>
+	 *
+	 * @param name the name of the constant variable being reassigned
+	 * @return a new {@link NaftahBugError} describing the constant reassignment error
+	 * @throws NaftahBugError this method always creates an error instance;
+	 *                        intended to be thrown by the caller
+	 */
+	public static NaftahBugError newNaftahSettingConstantError(String name) {
+		return newNaftahSettingConstantError(name, null);
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an attempt was made to
+	 * reassign a constant (final or otherwise immutable) variable, optionally
+	 * wrapping the underlying cause.
+	 *
+	 * <p>If a non-null {@code Throwable} is provided, an {@link IllegalArgumentException}
+	 * will be created and chained with an {@link IllegalAccessException} whose message
+	 * mirrors the original cause. This preserves the original error context while
+	 * signaling that a constant value cannot be modified.</p>
+	 *
+	 * <p>The generated error message (in Arabic) includes the name of the constant
+	 * that was attempted to be reassigned:</p>
+	 *
+	 * <pre>
+	 * "حدث خطأ أثناء إعادة تعيين القيمة الثابتة: '%s'. لا يمكن إعادة تعيين ثابت."
+	 * </pre>
+	 *
+	 * @param name the name of the constant variable being reassigned
+	 * @param th   an optional underlying cause; may be {@code null}
+	 * @return a new {@link NaftahBugError} describing the constant reassignment error
+	 * @throws NaftahBugError this method creates an error instance; intended to be thrown by the caller
+	 */
+	public static NaftahBugError newNaftahSettingConstantError(String name, Throwable th) {
+		return new NaftahBugError(
+									"حدث خطأ أثناء إعادة تعيين القيمة الثابتة: '%s'. لا يمكن إعادة تعيين ثابت."
+											.formatted(name),
+									Objects.nonNull(th) ? th : null);
+	}
+
+	/**
+	 * Creates an {@link IllegalAccessException} indicating that a reflective
+	 * write to a constant (final/static) field was ignored by the JVM.
+	 *
+	 * <p>This can happen when attempting to modify a field that the JVM
+	 * treats as immutable, such as a final field, where the write is silently
+	 * ignored without throwing an exception.</p>
+	 *
+	 * @param fieldName the name of the field that was attempted to be modified
+	 * @return an {@link IllegalAccessException} describing the failed reflective write
+	 */
+	public static IllegalAccessException newIllegalFieldAccessException(String fieldName) {
+		return new IllegalAccessException(
+											"""
+											JVM ignored reflective write to constant field '%s'.
+											"""
+													.formatted(fieldName));
 	}
 }
