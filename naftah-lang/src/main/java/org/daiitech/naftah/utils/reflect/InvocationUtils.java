@@ -22,7 +22,6 @@ import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
-import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createCollection;
@@ -543,12 +542,8 @@ public final class InvocationUtils {
 			}
 
 			// Skip if logically equal (value equal)
-			try {
-				if (Boolean.TRUE.equals(ObjectUtils.applyOperation(original, converted, BinaryOperation.EQUALS))) {
-					continue;
-				}
-			}
-			catch (Throwable ignored) {
+			if (ObjectUtils.equals(original, converted, true)) {
+				continue;
 			}
 
 			var merged = convertArgumentBack(original, converted);

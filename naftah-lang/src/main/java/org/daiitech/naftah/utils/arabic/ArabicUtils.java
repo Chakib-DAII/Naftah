@@ -723,7 +723,7 @@ public final class ArabicUtils {
 												String... text) {
 		Transliterator transliterator = null;
 
-		if (Objects.nonNull(customRules) && !customRules.isEmpty() && !customRules.isBlank()) {
+		if (Objects.nonNull(customRules) && !customRules.isBlank()) {
 			String customTransliteratorID = hashString(customRules, "SHA-1");
 
 			try {
@@ -950,13 +950,29 @@ public final class ArabicUtils {
 	}
 
 	/**
-	 * Checks if the given text contains any Arabic characters.
+	 * Checks if the given text contains <strong>any</strong> Arabic characters.
 	 *
-	 * @param text the text to check
-	 * @return true if the text contains one or more Arabic characters, false otherwise
+	 * <p>This method returns {@code true} if at least one character in the string
+	 * is identified as an Arabic character according to {@link #isArabicChar(int)}.
+	 *
+	 * @param text the text to check; may be {@code null} (treated as empty)
+	 * @return {@code true} if the text contains one or more Arabic characters, {@code false} otherwise
 	 */
 	public static boolean containsArabic(String text) {
 		return text.codePoints().anyMatch(ArabicUtils::isArabicChar);
+	}
+
+	/**
+	 * Checks if the given text consists entirely of Arabic characters.
+	 *
+	 * <p>This method returns {@code true} only if every character in the string
+	 * is an Arabic character according to {@link #isArabicChar(int)}.
+	 *
+	 * @param text the text to check; may be {@code null} (treated as empty)
+	 * @return {@code true} if all characters in the text are Arabic, {@code false} otherwise
+	 */
+	public static boolean isArabic(String text) {
+		return text.codePoints().allMatch(ArabicUtils::isArabicChar);
 	}
 
 	/**

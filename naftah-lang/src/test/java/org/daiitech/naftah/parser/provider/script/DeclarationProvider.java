@@ -1,7 +1,9 @@
 package org.daiitech.naftah.parser.provider.script;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.errors.ExceptionUtils;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -53,7 +55,7 @@ public class DeclarationProvider implements ArgumentsProvider {
 					Arguments.of(true, """
 										ثابت ه : عدد_صحيح
 										ه
-												""", null, null),
+										""", null, null),
 					Arguments.of(true, """
 										ثابت ض : عدد_صحيح
 										ض
@@ -73,6 +75,54 @@ public class DeclarationProvider implements ArgumentsProvider {
 					Arguments.of(true, """
 										ثابت ك : عدد_عائم_طويل
 										ك
-											""", null, null));
+										""", null, null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق
+								[ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق]
+								""",
+								Arrays.asList(null, null, null, null, null, null, null, null, null, null),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق: منطقي
+								[
+								ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق
+								]
+								""",
+								Arrays.asList(null, null, null, null, null, null, null, null, null, null),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق: منطقي؛تسلسل_رموز؛عدد_طويل؛عدد_عائم_طويل؛عدد_عائم؛عدد_صحيح؛رمز؛عدد_قصير_جدا؛عدد_قصير؛منطقي
+								[
+								ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق
+								]
+								""",
+								Arrays.asList(null, null, null, null, null, null, null, null, null, null),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق: منطقي؛تسلسل_رموز؛عدد_طويل؛عدد_عائم_طويل
+								[
+								ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق
+								]
+								""",
+								Arrays.asList(null, null, null, null, null, null, null, null, null, null),
+								null),
+					Arguments
+							.of(false,
+								"""
+								ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق: منطقي٫تسلسل_رموز٫عدد_طويل٫عدد_عائم_طويل٫منطقي٫تسلسل_رموز٫عدد_طويل٫عدد_عائم_طويل٫منطقي٫تسلسل_رموز٫عدد_طويل٫عدد_عائم_طويل٫منطقي٫تسلسل_رموز٫عدد_طويل٫منطقي٫تسلسل_رموز٫عدد_طويل٫عدد_عائم_طويل٫منطقي٫تسلسل_رموز٫عدد_طويل٫عدد_عائم_طويل٫منطقي٫تسلسل_رموز٫عدد_طويل٫عدد_عائم_طويل٫منطقي٫تسلسل_رموز٫عدد_طويل٫عدد_عائم_طويل٫عدد_عائم_طويل
+								[
+								ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق
+								]
+								""",
+								null,
+								ExceptionUtils.newNaftahSpecifiedTypesExceedVariableNamesError(1, 0)));
 	}
 }

@@ -346,6 +346,19 @@ public record NaftahObject(
 	}
 
 	/**
+	 * Returns the evaluated representation of this object.
+	 *
+	 * <p>This is equivalent to calling {@link #get(boolean)} with
+	 * {@code original = false}.</p>
+	 *
+	 * @return the evaluated representation of this object
+	 */
+	public Object get() {
+		return get(false);
+	}
+
+
+	/**
 	 * Compares this {@code NaftahObject} to another object for equality.
 	 *
 	 * <p>Two {@code NaftahObject} instances are considered equal if and only if:
@@ -413,16 +426,17 @@ public record NaftahObject(
 	 * @return a human-readable Arabic/Latin mixed representation of the object
 	 */
 	@Override
+	@SuppressWarnings("NullableProblems")
 	public String toString() {
 		if (fromJava) {
 			if (isCollectionMapOrArray(javaObject)) {
-				return CollectionUtils.toString(get(false));
+				return CollectionUtils.toString(get());
 			}
 			if (None.isNone(javaObject) || isSimpleType(javaObject) || isBuiltinType(javaObject)) {
 				return ObjectUtils.getNaftahValueToString(javaObject);
 			}
 			else {
-				return "كائن: " + CollectionUtils.toString((Map<?, ?>) get(false), '{', '}');
+				return "كائن: " + CollectionUtils.toString((Map<?, ?>) get(), '{', '}');
 			}
 		}
 		else {

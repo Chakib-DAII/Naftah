@@ -548,15 +548,7 @@ public final class Builtin {
 				parameterTypes = {Object.class, Object.class},
 				returnType = Object.class)
 	public static <T> boolean equals(T left, T right) {
-		try {
-			return allMatch(applyOperation(left, right, BinaryOperation.EQUALS), Boolean.TRUE::equals);
-		}
-		catch (NaftahBugError bug) {
-			if (bug.getBugText().equals(EMPTY_ARGUMENTS_ERROR.formatted(left, right))) {
-				throw bug;
-			}
-			return left.equals(right);
-		}
+		return ObjectUtils.equals(left, right, false);
 	}
 
 	/**

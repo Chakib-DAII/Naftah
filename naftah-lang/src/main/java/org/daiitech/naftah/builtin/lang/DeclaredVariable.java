@@ -3,6 +3,7 @@ package org.daiitech.naftah.builtin.lang;
 import java.util.Objects;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 
@@ -167,9 +168,7 @@ public final class DeclaredVariable {
 	 */
 	public void setValue(Object currentValue) {
 		if (constant) {
-			throw new NaftahBugError(
-										"حدث خطأ أثناء إعادة تعيين القيمة الثابتة: '%s'. لا يمكن إعادة تعيين ثابت."
-												.formatted(name));
+			throw ExceptionUtils.newNaftahSettingConstantError(name);
 		}
 		this.currentValue = currentValue;
 		if (!updatedCurrentValue) {

@@ -57,6 +57,7 @@ import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasAnyParentOfType;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
@@ -274,7 +275,7 @@ public class DefaultContext {
 								Map<String, String> blockImports,
 								Map<String, DeclaredParameter> parameters,
 								Map<String, Object> arguments) {
-		if (Boolean.FALSE.equals(Boolean.getBoolean(INSIDE_REPL_PROPERTY)) && parent == null && (!CONTEXTS.isEmpty())) {
+		if (!Boolean.getBoolean(INSIDE_REPL_PROPERTY) && parent == null && (!CONTEXTS.isEmpty())) {
 			throw newNaftahBugInvalidUsageError();
 		}
 		this.parent = parent;
@@ -862,15 +863,39 @@ public class DefaultContext {
 	 * Creates a new {@link NaftahBugError} indicating that a variable was not found
 	 * in the current context.
 	 *
-	 * <p>The error message is in Arabic and will include the variable name:
-	 * "المتغير '%s' غير موجود في السياق الحالي."
+	 * <p>The error message is in Arabic and includes the variable name in the form:
+	 * <br>
+	 * {@code "المتغير '%s' غير موجود في السياق الحالي."}
 	 * </p>
 	 *
-	 * @param name the name of the variable that was not found.
-	 * @return a new {@link NaftahBugError} with the formatted message.
+	 * <p>This overload does not include line or column information and uses
+	 * {@code -1} for both.</p>
+	 *
+	 * @param name the name of the variable that was not found
+	 * @return a new {@link NaftahBugError} with the formatted message
 	 */
 	public static NaftahBugError newNaftahBugVariableNotFoundError(String name) {
-		return new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name));
+		return newNaftahInvocableNotFoundError(name, -1, -1);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} indicating that a variable was not found
+	 * at a specific source location.
+	 *
+	 * <p>The error message is in Arabic and includes the variable name in the form:
+	 * <br>
+	 * {@code "المتغير '%s' غير موجود في السياق الحالي."}
+	 * </p>
+	 *
+	 * @param name   the name of the variable that was not found
+	 * @param line   the source line number where the error occurred, or {@code -1} if unknown
+	 * @param column the source column number where the error occurred, or {@code -1} if unknown
+	 * @return a new {@link NaftahBugError} with the formatted message and position data
+	 */
+	public static NaftahBugError newNaftahBugVariableNotFoundError( String name,
+																	int line,
+																	int column) {
+		return new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي.".formatted(name), line, column);
 	}
 
 	/**
