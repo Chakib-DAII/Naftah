@@ -876,6 +876,40 @@ public final class NaftahParserHelper {
 					null), true);
 	}
 
+	/**
+	 * Handles the declaration of a variable or constant in the current execution context.
+	 *
+	 * <p>This method manages both standard variable/constant declarations and
+	 * special cases like object field declarations. It also performs type validation
+	 * when creating objects with a specific type.</p>
+	 *
+	 * <p>Behavior:</p>
+	 * <ul>
+	 * <li>If the declaration includes a constant, variable, type, or is part of
+	 * an object field, a new {@link DeclaredVariable} is created.</li>
+	 * <li>If the context is inside an object creation and a type is specified,
+	 * it ensures that the object type is compatible with all types (i.e., Object.class).</li>
+	 * <li>If the variable is not part of an object field, it is registered in the
+	 * {@link DefaultContext}.</li>
+	 * <li>If none of the declaration flags are set, it checks for a previously
+	 * declared variable with the same name and reuses it if found. Otherwise,
+	 * it creates a generic variable of type {@link Object}.</li>
+	 * </ul>
+	 *
+	 * <p>The method returns either the {@link DeclaredVariable} or a pair containing
+	 * it and a boolean flag if the context is parsing an assignment.</p>
+	 *
+	 * @param currentContext the execution context where the variable is declared
+	 * @param ctx            the parser context corresponding to the variable declaration
+	 * @param variableName   the name of the variable to declare or retrieve
+	 * @param hasConstant    true if the declaration includes a constant modifier
+	 * @param hasVariable    true if the declaration includes a variable modifier
+	 * @param hasType        true if the declaration specifies a type
+	 * @param type           the Java {@link Class} representing the type of the variable, if any
+	 * @return a {@link DeclaredVariable} object, or a {@link Pair} of the variable and a boolean if parsing an
+	 *         * assignment
+	 * @throws NaftahBugError if an invalid type is specified for an object creation context
+	 */
 	public static Object handleDeclaration( DefaultContext currentContext,
 											ParserRuleContext ctx,
 											String variableName,
@@ -1157,6 +1191,39 @@ public final class NaftahParserHelper {
 		}
 	}
 
+	/**
+	 * Sets loop variables in the {@link DefaultContext} for a Naftah `foreach` iteration.
+	 *
+	 * <p>This method inspects the type of the {@code foreachTargetClass} to determine
+	 * how to assign values from the {@code targetValues} tuple to the corresponding
+	 * loop variables in the {@code currentContext}.</p>
+	 *
+	 * <p>Supported target contexts and their behavior:</p>
+	 * <ul>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext}:
+	 * Only a value variable is set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext}:
+	 * Both key and value variables are set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext}:
+	 * Index and value variables are set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext}:
+	 * Index, key, and value variables are all set.</li>
+	 * </ul>
+	 *
+	 * <p>The mapping from {@code variableNames} to {@code targetValues} is as follows:</p>
+	 * <ul>
+	 * <li>For value-only iteration: {@code variableNames[0]} → {@code targetValues[1]}</li>
+	 * <li>For key-value iteration: {@code variableNames[0]} → key, {@code variableNames[1]} → value</li>
+	 * <li>For index-value iteration: {@code variableNames[0]} → index, {@code variableNames[1]} → value</li>
+	 * <li>For index-key-value iteration: {@code variableNames[0]} → index, {@code variableNames[1]} → key,
+	 * * {@code variableNames[2]} → value</li>
+	 * </ul>
+	 *
+	 * @param currentContext     the execution context in which loop variables will be set
+	 * @param foreachTargetClass the class type of the parsed `foreach` target, determines how variables are mapped
+	 * @param variableNames      a {@link Tuple} of loop variable names extracted from the `foreach` declaration
+	 * @param targetValues       a {@link Tuple} of values to assign to the loop variables
+	 */
 	public static void setForeachVariables( DefaultContext currentContext,
 											Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass,
 											Tuple variableNames,
@@ -2055,17 +2122,17 @@ public final class NaftahParserHelper {
 	 *
 	 *                                  <p><b>Example usage:</b></p>
 	 *                                  <pre>{@code
-	 *                                                                                                                                                                                                                                                                                                                                           visitFunctionCallInChain(
-	 *                                                                                                                                                                                                                                                                                                                                           0,
-	 *                                                                                                                                                                                                                                                                                                                                           visitor,
-	 *                                                                                                                                                                                                                                                                                                                                           context,
-	 *                                                                                                                                                                                                                                                                                                                                           "print",
-	 *                                                                                                                                                                                                                                                                                                                                            List.of(Pair.of("arg", "Hello, world!")),
-	 *                                                                                                                                                                                                                                                                                                                                            null,
-	 *                                                                                                                                                                                                                                                                                                                                            12,
-	 *                                                                                                                                                                                                                                                                                                                                            8
-	 *                                                                                                                                                                                                                                                                                                                                            );
-	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }</pre>
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              visitFunctionCallInChain(
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              0,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              visitor,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              context,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              "print",
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               List.of(Pair.of("arg", "Hello, world!")),
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               null,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               12,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               8
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               );
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction
