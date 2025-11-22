@@ -150,7 +150,19 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.DeclarationContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SingleDeclarationContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.MultipleDeclarationsContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.AssignmentContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SingleAssignmentExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.MultipleAssignmentsExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext context) {
@@ -235,6 +247,12 @@ public final class NaftahExecutionLogger {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ReturnStatementContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SingleReturnContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.MultipleReturnsContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.BlockContext context) {
@@ -424,7 +442,7 @@ public final class NaftahExecutionLogger {
 											ProgramContext::END -> {
 											%s
 											}
-													"""
+											"""
 										.formatted( join(context.statement()),
 													join(context.END())));
 	}
@@ -717,8 +735,27 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											ReturnStatementContext::RETURN -> %s
-											ReturnStatementContext::expression -> {
+											ReturnStatementContext::singleReturn -> %s
+											ReturnStatementContext::multipleReturns -> {
+												%s
+											}
+											"""
+										.formatted( Objects.nonNull(context.singleReturn()) ?
+															context.singleReturn().getText() :
+															null,
+													Objects.nonNull(context.multipleReturns()) ?
+															context.multipleReturns().getText() :
+															null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.SingleReturnContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											SingleReturnContext::RETURN -> %s
+											SingleReturnContext::expression -> {
 												%s
 											}
 											"""
@@ -727,6 +764,33 @@ public final class NaftahExecutionLogger {
 															null,
 													Objects.nonNull(context.expression()) ?
 															context.expression().getText() :
+															null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.MultipleReturnsContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											MultipleReturnsContext::RETURN -> %s
+											MultipleReturnsContext::LPAREN -> %s
+											MultipleReturnsContext::tupleElements -> {
+												%s
+											}
+											MultipleReturnsContext::RPAREN -> %s
+											"""
+										.formatted( Objects.nonNull(context.RETURN()) ?
+															context.RETURN().getText() :
+															null,
+													Objects.nonNull(context.LPAREN()) ?
+															context.LPAREN().getText() :
+															null,
+													Objects.nonNull(context.tupleElements()) ?
+															context.tupleElements().getText() :
+															null,
+													Objects.nonNull(context.RPAREN()) ?
+															context.RPAREN().getText() :
 															null));
 
 	}
@@ -905,11 +969,29 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											DeclarationContext::VARIABLE -> %s
-											DeclarationContext::CONSTANT -> %s
-											DeclarationContext::ID -> %s
-											DeclarationContext::COLON -> %s
-											DeclarationContext::type -> {
+											DeclarationContext::singleDeclaration -> %s
+											DeclarationContext::multipleDeclarations -> %s
+											"""
+										.formatted(
+													Objects.nonNull(context.singleDeclaration()) ?
+															context.singleDeclaration().getText() :
+															null,
+													Objects.nonNull(context.multipleDeclarations()) ?
+															context.multipleDeclarations().getText() :
+															null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.SingleDeclarationContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											SingleDeclarationContext::VARIABLE -> %s
+											SingleDeclarationContext::CONSTANT -> %s
+											SingleDeclarationContext::ID -> %s
+											SingleDeclarationContext::COLON -> %s
+											SingleDeclarationContext::type -> {
 												%s
 											}
 											"""
@@ -925,50 +1007,159 @@ public final class NaftahExecutionLogger {
 
 	}
 
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.MultipleDeclarationsContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											MultipleDeclarationsContext::VARIABLE -> %s
+											MultipleDeclarationsContext::CONSTANT -> %s
+											MultipleDeclarationsContext::ID ->  {
+												%s
+											}
+											MultipleDeclarationsContext::COMMA ->  {
+												%s
+											}
+											MultipleDeclarationsContext::SEMI ->  {
+												%s
+											}
+											MultipleDeclarationsContext::COLON -> %s
+											MultipleDeclarationsContext::type -> {
+												%s
+											}
+											"""
+										.formatted( Objects.nonNull(context.VARIABLE()) ?
+															context.VARIABLE().getText() :
+															null,
+													Objects.nonNull(context.CONSTANT()) ?
+															context.CONSTANT().getText() :
+															null,
+													join(context.ID()),
+													join(context.COMMA()),
+													join(context.SEMI()),
+													Objects.nonNull(context.COLON()) ? context.COLON().getText() : null,
+													join(context.type())));
+
+	}
+
 	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.AssignmentContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											AssignmentContext::declaration -> {
+											AssignmentContext::singleAssignmentExpression -> %s
+											AssignmentContext::multipleAssignmentsExpression -> %s
+											"""
+										.formatted(
+													Objects.nonNull(context.singleAssignmentExpression()) ?
+															context.singleAssignmentExpression().getText() :
+															null,
+													Objects.nonNull(context.multipleAssignmentsExpression()) ?
+															context.multipleAssignmentsExpression().getText() :
+															null));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.SingleAssignmentExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											SingleAssignmentExpressionContext::singleDeclaration -> {
 												%s
 											}
-											AssignmentContext::ID -> {
+											SingleAssignmentExpressionContext::singleAssignment::ID -> {
 												%s
 											}
-											AssignmentContext::qualifiedName -> {
+											SingleAssignmentExpressionContext::singleAssignment::qualifiedName -> {
 												%s
 											}
-											AssignmentContext::qualifiedObjectAccess -> {
+											SingleAssignmentExpressionContext::singleAssignment::qualifiedObjectAccess -> {
 												%s
 											}
-											AssignmentContext::collectionAccess -> {
+											SingleAssignmentExpressionContext::singleAssignment::collectionAccess -> {
 												%s
 											}
-											AssignmentContext::ASSIGN -> %s
-											AssignmentContext::expression -> {
+											SingleAssignmentExpressionContext::ASSIGN -> %s
+											SingleAssignmentExpressionContext::expression -> {
 												%s
 											}
 											"""
-										.formatted( Objects.nonNull(context.declaration()) ?
-															context.declaration().getText() :
+										.formatted( Objects.nonNull(context.singleDeclaration()) ?
+															context.singleDeclaration().getText() :
 															null,
-													Objects.nonNull(context.ID()) ?
-															context.ID().getText() :
-															null,
-													Objects.nonNull(context.qualifiedName()) ?
-															context.qualifiedName().getText() :
-															null,
-													Objects.nonNull(context.qualifiedObjectAccess()) ?
-															context.qualifiedObjectAccess().getText() :
-															null,
-													Objects.nonNull(context.collectionAccess()) ?
-															context.collectionAccess().getText() :
-															null,
+													Objects.nonNull(context.singleAssignment()) && Objects
+															.nonNull(context
+																	.singleAssignment()
+																	.ID()) ?
+																			context.singleAssignment().ID().getText() :
+																			null,
+													Objects.nonNull(context.singleAssignment()) && Objects
+															.nonNull(context
+																	.singleAssignment()
+																	.qualifiedName()) ?
+																			context
+																					.singleAssignment()
+																					.qualifiedName()
+																					.getText() :
+																			null,
+													Objects.nonNull(context.singleAssignment()) && Objects
+															.nonNull(context
+																	.singleAssignment()
+																	.qualifiedObjectAccess()) ?
+																			context
+																					.singleAssignment()
+																					.qualifiedObjectAccess()
+																					.getText() :
+																			null,
+													Objects.nonNull(context.singleAssignment()) && Objects
+															.nonNull(context
+																	.singleAssignment()
+																	.collectionAccess()) ?
+																			context
+																					.singleAssignment()
+																					.collectionAccess()
+																					.getText() :
+																			null,
 													Objects.nonNull(context.ASSIGN()) ?
 															context.ASSIGN().getText() :
 															null,
 													Objects.nonNull(context.expression()) ?
 															context.expression().getText() :
+															null));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.MultipleAssignmentsExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											MultipleAssignmentsExpressionContext::multipleDeclarations -> {
+												%s
+											}
+											MultipleAssignmentsExpressionContext::multipleAssignments -> {
+												%s
+											}
+											MultipleAssignmentsExpressionContext::ASSIGN -> %s
+											MultipleAssignmentsExpressionContext::expression -> {
+												%s
+											}
+											"""
+										.formatted( Objects.nonNull(context.multipleDeclarations()) ?
+															context.multipleDeclarations().getText() :
+															null,
+													Objects.nonNull(context.multipleAssignments()) && Objects
+															.nonNull(
+																		context
+																				.multipleAssignments()
+																				.singleAssignment()) ?
+																						join(context
+																								.multipleAssignments()
+																								.singleAssignment()) :
+																						null,
+													Objects.nonNull(context.ASSIGN()) ?
+															context.ASSIGN().getText() :
+															null,
+													Objects.nonNull(context.expression()) ?
+															join(context.expression()) :
 															null));
 
 	}
@@ -1153,7 +1344,7 @@ public final class NaftahExecutionLogger {
 											InitCallContext::callSegment -> {
 												%s
 											}
-																		"""
+											"""
 										.formatted( Objects.nonNull(context.AT_SIGN()) ?
 															context.AT_SIGN().getText() :
 															null,
@@ -1828,7 +2019,7 @@ public final class NaftahExecutionLogger {
 											FunctionCallExpressionContext::functionCall -> {
 											%s
 											}
-													"""
+											"""
 										.formatted(Objects.nonNull(context.functionCall()) ?
 												context.functionCall().getText() :
 												null));
@@ -1842,7 +2033,7 @@ public final class NaftahExecutionLogger {
 											ObjectExpressionContext::object -> {
 											%s
 											}
-													"""
+											"""
 										.formatted(Objects.nonNull(context.object()) ?
 												context.object().getText() :
 												null));
@@ -1856,7 +2047,7 @@ public final class NaftahExecutionLogger {
 											CollectionExpressionContext::collection -> {
 											%s
 											}
-														"""
+											"""
 										.formatted(Objects.nonNull(context.collection()) ?
 												context.collection().getText() :
 												null));
@@ -1870,7 +2061,7 @@ public final class NaftahExecutionLogger {
 											CollectionAccessExpressionContext::collectionAccess -> {
 											%s
 											}
-														"""
+											"""
 										.formatted(Objects.nonNull(context.collectionAccess()) ?
 												context.collectionAccess().getText() :
 												null));
@@ -1918,7 +2109,7 @@ public final class NaftahExecutionLogger {
 											ObjectAccessExpressionContext::objectAccess -> {
 											%s
 											}
-														"""
+											"""
 										.formatted(Objects.nonNull(context.objectAccess()) ?
 												context.objectAccess().getText() :
 												null));
@@ -1932,7 +2123,7 @@ public final class NaftahExecutionLogger {
 											EmptyObjectContext::AT_SIGN -> %s
 											EmptyObjectContext::LBRACE -> %s
 											EmptyObjectContext::RBRACE -> %s
-														"""
+											"""
 										.formatted(
 													Objects.nonNull(context.AT_SIGN()) ?
 															context.AT_SIGN().getText() :
@@ -1957,7 +2148,7 @@ public final class NaftahExecutionLogger {
 											%s
 											}
 											ObjectValueContext::RBRACE -> %s
-														"""
+											"""
 										.formatted(
 													Objects.nonNull(context.AT_SIGN()) ?
 															context.AT_SIGN().getText() :
@@ -1988,7 +2179,7 @@ public final class NaftahExecutionLogger {
 											ObjectFieldsContext::SEMI -> {
 											%s
 											}
-														"""
+											"""
 										.formatted(
 													join(context.assignment()),
 													join(context.COMMA()),
@@ -2006,7 +2197,7 @@ public final class NaftahExecutionLogger {
 											%s
 											}
 											ListValueContext::RBRACK -> %s
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.LBRACK()) ?
 															context.LBRACK().getText() :
@@ -2030,7 +2221,7 @@ public final class NaftahExecutionLogger {
 											%s
 											}
 											TupleValueContext::RPAREN -> %s
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.LPAREN()) ?
 															context.LPAREN().getText() :
@@ -2053,7 +2244,7 @@ public final class NaftahExecutionLogger {
 											EmptySetContext::HASH_SIGN -> %s
 											EmptySetContext::LBRACE -> %s
 											EmptySetContext::RBRACE -> %s
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.ORDERED()) ?
 															context.ORDERED().getText() :
@@ -2082,7 +2273,7 @@ public final class NaftahExecutionLogger {
 											%s
 											}
 											SetValueContext::RBRACE -> %s
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.ORDERED()) ?
 															context.ORDERED().getText() :
@@ -2111,7 +2302,7 @@ public final class NaftahExecutionLogger {
 											EmptyMapContext::DOLLAR_SIGN -> %s
 											EmptyMapContext::LBRACE -> %s
 											EmptyMapContext::RBRACE -> %s
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.ORDERED()) ?
 															context.ORDERED().getText() :
@@ -2140,7 +2331,7 @@ public final class NaftahExecutionLogger {
 											%s
 											}
 											MapValueContext::RBRACE -> %s
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.ORDERED()) ?
 															context.ORDERED().getText() :
@@ -2541,7 +2732,7 @@ public final class NaftahExecutionLogger {
 											}
 											CaseLabelListContext::COMMA -> %s
 											CaseLabelListContext::SEMI -> %s
-													"""
+											"""
 										.formatted(
 													join(context.expression()),
 													join(context.COMMA()),
@@ -2558,7 +2749,7 @@ public final class NaftahExecutionLogger {
 											TryStatementStatementContext::tryStatement -> {
 											%s
 											}
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.tryStatement()) ?
 															context.tryStatement().getText() :
@@ -2583,7 +2774,7 @@ public final class NaftahExecutionLogger {
 											%s
 											}
 											TryStatementWithTryCasesContext::RBRACE -> %s
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.TRY()) ? context.TRY().getText() : null,
 													Objects.nonNull(context.LPAREN()) ?
@@ -2625,7 +2816,7 @@ public final class NaftahExecutionLogger {
 											OkCaseContext::expression -> {
 											%s
 											}
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.OK()) ? context.OK().getText() : null,
 													Objects.nonNull(context.LPAREN()) ?
@@ -2662,7 +2853,7 @@ public final class NaftahExecutionLogger {
 											ErrorCaseContext::expression -> {
 											%s
 											}
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.ERROR()) ? context.ERROR().getText() : null,
 													Objects.nonNull(context.LPAREN()) ?
@@ -2697,7 +2888,7 @@ public final class NaftahExecutionLogger {
 											%s
 											}
 											TryStatementWithOptionCasesContext::RBRACE -> %s
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.TRY()) ? context.TRY().getText() : null,
 													Objects.nonNull(context.LPAREN()) ?
@@ -2739,7 +2930,7 @@ public final class NaftahExecutionLogger {
 											SomeCaseContext::expression -> {
 											%s
 											}
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.SOME()) ? context.SOME().getText() : null,
 													Objects.nonNull(context.LPAREN()) ?
@@ -2774,7 +2965,7 @@ public final class NaftahExecutionLogger {
 											OkCaseContext::expression -> {
 											%s
 											}
-													"""
+											"""
 										.formatted(
 													Objects.nonNull(context.NONE()) ? context.NONE().getText() : null,
 													Objects.nonNull(context.DO()) ? context.DO().getText() : null,

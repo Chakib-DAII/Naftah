@@ -2,9 +2,11 @@ package org.daiitech.naftah.parser;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +50,7 @@ import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.reflect.ObjectAccessUtils;
 
 import com.ibm.icu.text.Normalizer2;
 
@@ -55,6 +58,7 @@ import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.errors.ExceptionUtils.INVALID_INSTANCE_METHOD_CALL_MSG;
 import static org.daiitech.naftah.errors.ExceptionUtils.NOTE;
@@ -75,6 +79,7 @@ import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
 import static org.daiitech.naftah.parser.DefaultContext.registerContext;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
 import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
@@ -851,26 +856,110 @@ public final class NaftahParserHelper {
 	/**
 	 * Creates a declared variable instance from the parser context.
 	 *
-	 * @param naftahParserBaseVisitor The base visitor for the parser.
-	 * @param ctx                     The declaration context.
-	 * @param variableName            The variable name.
-	 * @param isConstant              True if the variable is constant.
-	 * @param hasType                 True if the variable has an explicit type.
+	 * @param ctx          The declaration context.
+	 * @param variableName The variable name.
+	 * @param isConstant   True if the variable is constant.
+	 * @param type         the variable type, default {@code Object.class}.
 	 * @return A pair containing the declared variable and a boolean flag.
 	 */
 	public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(
-																			org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
-																			org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx,
+																			ParserRuleContext ctx,
 																			String variableName,
 																			boolean isConstant,
-																			boolean hasType) {
+																			Class<?> type) {
 
 		return new Pair<>(DeclaredVariable
 				.of(ctx,
 					variableName,
 					isConstant,
-					hasType ? (Class<?>) visit(naftahParserBaseVisitor, ctx.type()) : null,
+					type,
 					null), true);
+	}
+
+	/**
+	 * Handles the declaration of a variable or constant in the current execution context.
+	 *
+	 * <p>This method manages both standard variable/constant declarations and
+	 * special cases like object field declarations. It also performs type validation
+	 * when creating objects with a specific type.</p>
+	 *
+	 * <p>Behavior:</p>
+	 * <ul>
+	 * <li>If the declaration includes a constant, variable, type, or is part of
+	 * an object field, a new {@link DeclaredVariable} is created.</li>
+	 * <li>If the context is inside an object creation and a type is specified,
+	 * it ensures that the object type is compatible with all types (i.e., Object.class).</li>
+	 * <li>If the variable is not part of an object field, it is registered in the
+	 * {@link DefaultContext}.</li>
+	 * <li>If none of the declaration flags are set, it checks for a previously
+	 * declared variable with the same name and reuses it if found. Otherwise,
+	 * it creates a generic variable of type {@link Object}.</li>
+	 * </ul>
+	 *
+	 * <p>The method returns either the {@link DeclaredVariable} or a pair containing
+	 * it and a boolean flag if the context is parsing an assignment.</p>
+	 *
+	 * @param currentContext the execution context where the variable is declared
+	 * @param ctx            the parser context corresponding to the variable declaration
+	 * @param variableName   the name of the variable to declare or retrieve
+	 * @param hasConstant    true if the declaration includes a constant modifier
+	 * @param hasVariable    true if the declaration includes a variable modifier
+	 * @param hasType        true if the declaration specifies a type
+	 * @param type           the Java {@link Class} representing the type of the variable, if any
+	 * @return a {@link DeclaredVariable} object, or a {@link Pair} of the variable and a boolean if parsing an
+	 *         * assignment
+	 * @throws NaftahBugError if an invalid type is specified for an object creation context
+	 */
+	public static Object handleDeclaration( DefaultContext currentContext,
+											ParserRuleContext ctx,
+											String variableName,
+											boolean hasConstant,
+											boolean hasVariable,
+											boolean hasType,
+											Class<?> type) {
+		Pair<DeclaredVariable, Boolean> declaredVariable;
+		boolean creatingObject = currentContext.isCreatingObject();
+		boolean creatingObjectField = hasAnyParentOfType(   ctx,
+															org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
+		if (hasConstant || hasVariable || hasType || creatingObjectField) {
+			if (creatingObject && hasType) {
+				if (Objects.nonNull(type) && !Object.class.equals(type)) {
+					throw new NaftahBugError(
+												("""
+													لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع الأنواع (%s).""")
+														.formatted( variableName,
+																	getNaftahType(  PARSER_VOCABULARY,
+																					type),
+																	getNaftahType(  PARSER_VOCABULARY,
+																					Object.class)),
+												ctx.getStart().getLine(),
+												ctx
+														.getStart()
+														.getCharPositionInLine());
+				}
+			}
+			declaredVariable = createDeclaredVariable(  ctx,
+														variableName,
+														hasConstant,
+														type);
+			// TODO: check if inside function to check if it matches any argument /
+			// parameter or
+			// previously
+			// declared and update if possible
+			if (!creatingObjectField) {
+				currentContext.defineVariable(variableName, declaredVariable.a);
+			}
+		}
+		else {
+			declaredVariable = Optional
+					.ofNullable(currentContext.getVariable(variableName, true))
+					.map(alreadyDeclaredVariable -> new Pair<>(alreadyDeclaredVariable.b, true))
+					.orElse(createDeclaredVariable( ctx,
+													variableName,
+													false,
+													Object.class));
+		}
+		return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.a;
 	}
 
 	/**
@@ -1102,6 +1191,39 @@ public final class NaftahParserHelper {
 		}
 	}
 
+	/**
+	 * Sets loop variables in the {@link DefaultContext} for a Naftah `foreach` iteration.
+	 *
+	 * <p>This method inspects the type of the {@code foreachTargetClass} to determine
+	 * how to assign values from the {@code targetValues} tuple to the corresponding
+	 * loop variables in the {@code currentContext}.</p>
+	 *
+	 * <p>Supported target contexts and their behavior:</p>
+	 * <ul>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext}:
+	 * Only a value variable is set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext}:
+	 * Both key and value variables are set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext}:
+	 * Index and value variables are set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext}:
+	 * Index, key, and value variables are all set.</li>
+	 * </ul>
+	 *
+	 * <p>The mapping from {@code variableNames} to {@code targetValues} is as follows:</p>
+	 * <ul>
+	 * <li>For value-only iteration: {@code variableNames[0]} → {@code targetValues[1]}</li>
+	 * <li>For key-value iteration: {@code variableNames[0]} → key, {@code variableNames[1]} → value</li>
+	 * <li>For index-value iteration: {@code variableNames[0]} → index, {@code variableNames[1]} → value</li>
+	 * <li>For index-key-value iteration: {@code variableNames[0]} → index, {@code variableNames[1]} → key,
+	 * * {@code variableNames[2]} → value</li>
+	 * </ul>
+	 *
+	 * @param currentContext     the execution context in which loop variables will be set
+	 * @param foreachTargetClass the class type of the parsed `foreach` target, determines how variables are mapped
+	 * @param variableNames      a {@link Tuple} of loop variable names extracted from the `foreach` declaration
+	 * @param targetValues       a {@link Tuple} of values to assign to the loop variables
+	 */
 	public static void setForeachVariables( DefaultContext currentContext,
 											Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass,
 											Tuple variableNames,
@@ -2000,17 +2122,17 @@ public final class NaftahParserHelper {
 	 *
 	 *                                  <p><b>Example usage:</b></p>
 	 *                                  <pre>{@code
-	 *                                                                                                                                                                                                                                                                                                            visitFunctionCallInChain(
-	 *                                                                                                                                                                                                                                                                                                            0,
-	 *                                                                                                                                                                                                                                                                                                            visitor,
-	 *                                                                                                                                                                                                                                                                                                            context,
-	 *                                                                                                                                                                                                                                                                                                            "print",
-	 *                                                                                                                                                                                                                                                                                                             List.of(Pair.of("arg", "Hello, world!")),
-	 *                                                                                                                                                                                                                                                                                                             null,
-	 *                                                                                                                                                                                                                                                                                                             12,
-	 *                                                                                                                                                                                                                                                                                                             8
-	 *                                                                                                                                                                                                                                                                                                             );
-	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                 }</pre>
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              visitFunctionCallInChain(
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              0,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              visitor,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              context,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                              "print",
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               List.of(Pair.of("arg", "Hello, world!")),
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               null,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               12,
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               8
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                               );
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction
@@ -2104,5 +2226,170 @@ public final class NaftahParserHelper {
 		}
 		currentContext.setFunctionCallId(null);
 		return result;
+	}
+
+	/**
+	 * Retrieves the value of a field from a target object.
+	 *
+	 * <p>This method first attempts to find a corresponding getter method
+	 * in the {@link DefaultContext}. If multiple overloaded methods exist,
+	 * it selects the best match based on the signature. If no suitable getter
+	 * is found, it falls back to direct field access using reflection.
+	 *
+	 * @param currentContext the current evaluation context containing available functions
+	 * @param target         the object from which to retrieve the field value; may not be null
+	 * @param fieldName      the name of the field to retrieve
+	 * @param line           source line number (used for error reporting)
+	 * @param column         source column number (used for error reporting)
+	 * @return the value of the field, or {@code null} if not found
+	 * @throws NaftahBugError if an unsupported function type is encountered
+	 * @throws NaftahBugError if an ambiguous set of overloaded invocables is found
+	 */
+	public static Object getObjectField(DefaultContext currentContext,
+										Object target,
+										String fieldName,
+										int line,
+										int column) {
+		Set<String> functionNames = Arrays
+				.stream(ObjectAccessUtils.BUILD_GETTERS.apply(fieldName))
+				.map(functionName -> ClassUtils
+						.getQualifiedCall(  ClassUtils.getQualifiedName(target.getClass().getName()),
+											functionName))
+				.collect(Collectors.toSet());
+
+		for (String functionName : functionNames) {
+
+			if (!currentContext.containsFunction(functionName)) {
+				continue;
+			}
+
+			try {
+				Object function = currentContext.getFunction(functionName, false).b;
+				if (function instanceof JvmFunction jvmFunction) {
+					return ObjectAccessUtils.get(target, fieldName, jvmFunction.getMethod());
+				}
+				else if (function instanceof Collection<?> functions) {
+					//noinspection unchecked
+					var jvmExecutables = (Collection<JvmExecutable>) functions;
+					try {
+						var bestMatch = findBestExecutable(jvmExecutables, List.of(), true);
+
+						return ObjectAccessUtils
+								.set(   target,
+										fieldName,
+										(Method) bestMatch.a.getExecutable(),
+										bestMatch.b[0]);
+					}
+					catch (Throwable th) {
+						throw newNaftahInvocableListFoundError( functionName,
+																jvmExecutables,
+																th,
+																line,
+																column);
+					}
+				}
+				else {
+					throw newNaftahUnsupportedFunctionError(functionName,
+															function.getClass(),
+															line,
+															column);
+				}
+			}
+			catch (Throwable ignored) {
+			}
+
+		}
+
+		return ObjectAccessUtils.get(target, fieldName, null);
+	}
+
+	/**
+	 * Sets the value of a field on a target object.
+	 *
+	 * <p>This method first attempts to find a corresponding setter method
+	 * in the {@link DefaultContext}. If multiple overloaded methods exist,
+	 * it selects the best match based on the value type. If no suitable setter
+	 * is found, it falls back to direct field access using reflection.
+	 *
+	 * @param currentContext the current evaluation context containing available functions
+	 * @param target         the object on which to set the field value; may not be null
+	 * @param fieldName      the name of the field to set
+	 * @param value          the value to assign to the field
+	 * @param line           source line number (used for error reporting)
+	 * @param column         source column number (used for error reporting)
+	 * @throws NaftahBugError if an unsupported function type is encountered
+	 * @throws NaftahBugError if an ambiguous set of overloaded invocables is found
+	 */
+	public static void setObjectField(  DefaultContext currentContext,
+										Object target,
+										String fieldName,
+										Object value,
+										int line,
+										int column) {
+		String functionName = ClassUtils
+				.getQualifiedCall(  ClassUtils.getQualifiedName(target.getClass().getName()),
+									ObjectAccessUtils.BUILD_SETTER.apply(fieldName));
+
+		if (currentContext.containsFunction(functionName)) {
+			Object function = currentContext.getFunction(functionName, false).b;
+			if (function instanceof JvmFunction jvmFunction) {
+				ObjectAccessUtils.set(target, fieldName, jvmFunction.getMethod(), value);
+			}
+			else if (function instanceof Collection<?> functions) {
+				//noinspection unchecked
+				var jvmExecutables = (Collection<JvmExecutable>) functions;
+				try {
+					var bestMatch = findBestExecutable(jvmExecutables, List.of(new Pair<>(null, value)), true);
+
+					ObjectAccessUtils.set(target, fieldName, (Method) bestMatch.a.getExecutable(), bestMatch.b[0]);
+				}
+				catch (Throwable th) {
+					throw newNaftahInvocableListFoundError( functionName,
+															jvmExecutables,
+															th,
+															line,
+															column);
+				}
+			}
+			else {
+				throw newNaftahUnsupportedFunctionError(functionName,
+														function.getClass(),
+														line,
+														column);
+			}
+		}
+		else {
+			ObjectAccessUtils.set(target, fieldName, null, value);
+		}
+	}
+
+	/**
+	 * Visits each expression inside a {@link org.daiitech.naftah.parser.NaftahParser.CollectionMultipleElementsContext}
+	 * and collects the evaluated results into a list.
+	 *
+	 * <p>This method iterates over all expression nodes contained in the provided
+	 * {@code collectionMultipleElements} context, invokes the given
+	 * {@code defaultNaftahParserVisitor} on each one, and stores the returned values
+	 * in order inside a newly created {@link java.util.ArrayList}.</p>
+	 *
+	 * @param defaultNaftahParserVisitor the visitor used to evaluate each expression in the collection
+	 * @param collectionMultipleElements the parse-tree context containing multiple expression elements to visit
+	 * @return a list of objects representing the evaluated results of each expression
+	 */
+	public static List<Object> visitCollectionMultipleElements( DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+																org.daiitech.naftah.parser.NaftahParser.CollectionMultipleElementsContext collectionMultipleElements) {
+		List<Object> elements = new ArrayList<>();
+
+		for (   int i = 0;
+				i < collectionMultipleElements
+						.expression()
+						.size();
+				i++) {
+			var elementValue = defaultNaftahParserVisitor
+					.visit(collectionMultipleElements
+							.expression(i));
+			elements.add(elementValue);
+		}
+		return elements;
 	}
 }

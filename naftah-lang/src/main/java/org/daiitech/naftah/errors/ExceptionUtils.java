@@ -572,4 +572,82 @@ public final class ExceptionUtils {
 									line,
 									column);
 	}
+
+	/**
+	 * Creates and throws a {@link NaftahBugError} when an assignment expression
+	 * is invalid because it is not provided as a tuple of elements.
+	 *
+	 * <p>This error is triggered in situations where the user provides either:</p>
+	 * <ul>
+	 * <li>a single value for assignment instead of a tuple, or</li>
+	 * <li>multiple comma-separated values that are not wrapped in a tuple structure.</li>
+	 * </ul>
+	 *
+	 * <p>The generated message (in Arabic) informs the user that an assignment
+	 * expression must always be represented as a tuple, regardless of whether the
+	 * assignment involves a single value or multiple values.</p>
+	 *
+	 * @param line   the source line number where the error occurred
+	 * @param column the source column number where the error occurred
+	 * @return this method never returns normally; it always throws {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate an invalid assignment expression
+	 */
+	public static NaftahBugError newSingleExpressionAssignmentError(int line,
+																	int column) {
+		return new NaftahBugError(  """
+									يجب أن تكون عبارة الإسناد تركيبة (Tuple) من العناصر في حالة الإسناد بقيمة واحدة أو بقيم متعددة مفصولة بفواصل في حالة الإسناد بقيم متعددة.
+									""",
+									line,
+									column);
+	}
+
+	/**
+	 * Creates and throws a {@link NaftahBugError} when the number of assignment
+	 * expressions does not match the number of declared variables.
+	 *
+	 * <p>This typically occurs when performing multiple assignments or tuple-based
+	 * destructuring, and the left-hand side declarations and right-hand side
+	 * expressions do not align in count.</p>
+	 *
+	 * <p>The generated message (in Arabic) clarifies that both sides must have an
+	 * equal number of elements.</p>
+	 *
+	 * @param line   the source line number where the error occurred
+	 * @param column the source column number where the error occurred
+	 * @return this method never returns normally; it always throws {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate a mismatch between declarations and expressions
+	 */
+	public static NaftahBugError newExpressionsDeclarationsSizeMismatchErrorError(  int line,
+																					int column) {
+		return new NaftahBugError(  """
+									يجب أن يتطابق عدد العبارات مع عدد التصريحات.
+									""",
+									line,
+									column);
+	}
+
+	/**
+	 * Creates and throws a {@link NaftahBugError} when the parser encounters
+	 * multiple variable declarations where the number of explicitly specified
+	 * types exceeds the number of declared variable names.
+	 *
+	 * <p>This situation is invalid because each declared variable may have at most
+	 * one corresponding type, and extra types cannot be mapped to any variable.</p>
+	 *
+	 * <p>The generated message (in Arabic) explains that the number of specified
+	 * types cannot be greater than the number of variable names.</p>
+	 *
+	 * @param line   the source line number where the error occurred
+	 * @param column the source column number where the error occurred
+	 * @return this method never returns normally; it always throws {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate a types-to-variables mismatch
+	 */
+	public static NaftahBugError newSpecifiedTypesExceedVariableNamesError( int line,
+																			int column) {
+		return new NaftahBugError(  """
+									عدد الأنواع المحددة لا يجوز أن يتجاوز عدد أسماء المتغيرات.
+									""",
+									line,
+									column);
+	}
 }
