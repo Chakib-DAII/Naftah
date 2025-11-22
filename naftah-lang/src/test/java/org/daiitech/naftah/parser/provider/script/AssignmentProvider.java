@@ -7,14 +7,16 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-import static org.daiitech.naftah.errors.ExceptionUtils.newExpressionsDeclarationsSizeMismatchErrorError;
-import static org.daiitech.naftah.errors.ExceptionUtils.newSingleExpressionAssignmentError;
-import static org.daiitech.naftah.errors.ExceptionUtils.newSpecifiedTypesExceedVariableNamesError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newIllegalFieldAccessException;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahExpressionsDeclarationsSizeMismatchErrorError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahSingleExpressionAssignmentError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahSpecifiedTypesExceedVariableNamesError;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
 
 public class AssignmentProvider implements ArgumentsProvider {
@@ -175,7 +177,7 @@ public class AssignmentProvider implements ArgumentsProvider {
 										}
 										المدينة؟:ء:عدد_البيوت = 50
 										المدينة؟:ء:عدد_البيوت
-										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء")),
+										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء", 9, 0)),
 					Arguments.of(true, """
 										متغير المدينة تعيين {
 										متغير الاسم تعيين "قبلي",
@@ -199,7 +201,7 @@ public class AssignmentProvider implements ArgumentsProvider {
 										}
 										المدينة؟["ء"]:عدد_البيوت = 50
 										المدينة؟["ء"]:عدد_البيوت
-										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء")),
+										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء", 9, 0)),
 					Arguments.of(true, """
 										ثابت ت٫ش٬ع،ي تعيين "قبلي"؛400؛9223372036854775807؛(٣٢، ٤٥)
 										(ت٫ش٬ع،ي)
@@ -221,7 +223,7 @@ public class AssignmentProvider implements ArgumentsProvider {
 								)
 								""",
 								null,
-								newExpressionsDeclarationsSizeMismatchErrorError(1, 0)
+								newNaftahExpressionsDeclarationsSizeMismatchErrorError(1, 0)
 							),
 					Arguments
 							.of(false,
@@ -232,7 +234,7 @@ public class AssignmentProvider implements ArgumentsProvider {
 								)
 								""",
 								null,
-								newSpecifiedTypesExceedVariableNamesError(1, 0)
+								newNaftahSpecifiedTypesExceedVariableNamesError(1, 0)
 							),
 					Arguments
 							.of(true,
@@ -276,7 +278,7 @@ public class AssignmentProvider implements ArgumentsProvider {
 								متغير أ؛ب تعيين ٣٢
 								""",
 								null,
-								newSingleExpressionAssignmentError(1, 0)),
+								newNaftahSingleExpressionAssignmentError(1, 0)),
 					Arguments
 							.of(true,
 								"""
@@ -293,7 +295,7 @@ public class AssignmentProvider implements ArgumentsProvider {
 								أ؛ب تعيين ٣٢
 								""",
 								null,
-								newSingleExpressionAssignmentError(2, 0)),
+								newNaftahSingleExpressionAssignmentError(2, 0)),
 					Arguments
 							.of(true,
 								"""
@@ -317,7 +319,72 @@ public class AssignmentProvider implements ArgumentsProvider {
 								(أ , ب)
 								""",
 								Tuple.of(32, 45),
-								null)
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت معرف_مستخدم تعيين جافا:أدة:معرف_مستخدم(6161415689025233999؛5488940234982179551)
+								--- تعديل أكثر_سيغ_بتات في معرف_مستخدم إلى 1 (باستخدام الصيغة النقطية بـ :)
+								معرف_مستخدم:أكثر_سيغ_بتات تعيين 1
+								--- تعديل لشرقا_سيغ_بتات في معرف_مستخدم إلى 10 (باستخدام الصيغة النقطية بـ :)
+								معرف_مستخدم:لشرقا_سيغ_بتات تعيين 10
+
+								--- تعديل القيم باستخدام الصيغة المربعة
+								معرف_مستخدم["أكثر_سيغ_بتات"] تعيين 1000
+								معرف_مستخدم["لشرقا_سيغ_بتات"] تعيين 500
+								(
+								--- أمثلة على الوصول المشروط والاختياري مع وجود علامات استفهام
+								معرف_مستخدم:أكثر_سيغ_بتات,
+								معرف_مستخدم:لشرقا_سيغ_بتات,
+
+								--- أمثلة على الوصول إلى الحقول باستخدام الأقواس المربعة []
+								معرف_مستخدم["أكثر_سيغ_بتات"],
+								معرف_مستخدم["لشرقا_سيغ_بتات"]
+								)
+								""",
+								Tuple
+										.of(1000,
+											500,
+											1000,
+											500),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ديناميك_رقم تعيين أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم(1)
+								--- تعديل قيمة في ديناميك_رقم إلى 10 (باستخدام الصيغة النقطية بـ :)
+								ديناميك_رقم؟:قيمة = 10
+
+								--- تعديل القيمة باستخدام الصيغة المربعة
+								ديناميك_رقم؟["قيمة"] = 10
+
+								(
+								--- أمثلة على الوصول المشروط والاختياري مع وجود علامات استفهام
+								ديناميك_رقم؟:قيمة,
+
+								--- أمثلة على الوصول إلى الحقول باستخدام الأقواس المربعة []
+								ديناميك_رقم؟["قيمة"]
+								)
+								""",
+								Tuple.of(10, 10),
+								null),
+					Arguments
+							.of(false,
+								"""
+								ثابت قائمة تعيين جافا:أدة:صفائف_القائمة([1؛100؛0])
+								--- تعديل الحجم في قائمة إلى 2 (باستخدام الصيغة النقطية بـ :)
+								قائمة:الحجم = 2
+								--- تعديل عنصر_بيانات في قائمة إلى [100؛0] (باستخدام الصيغة النقطية بـ :)
+								قائمة:عنصر_بيانات = [100؛0]
+
+								--- تعديل القيم باستخدام الصيغة المربعة
+								قائمة["الحجم"] = 2
+								قائمة["عنصر_بيانات"] = [100؛0]
+								""",
+								null,
+								ExceptionUtils
+										.newNaftahSettingConstantError( "قائمة:الحجم",
+																		newIllegalFieldAccessException("size")))
 				);
 	}
 }
