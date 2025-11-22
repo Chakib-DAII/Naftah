@@ -66,18 +66,18 @@ callableImportElement: (ID | qualifiedName | qualifiedCall) importAlias?;
 importAlias: AS ID;
 
 // Declaration: variable or constant declaration
-declaration: (VARIABLE | CONSTANT) (singleDeclaration | multipleDeclarations);
+declaration: singleDeclaration | multipleDeclarations;
 
-singleDeclaration: ID (COLON type)?;
+singleDeclaration: (VARIABLE | CONSTANT) ID (COLON type)?;
 
-multipleDeclarations: ID ((COMMA | SEMI) ID)+ (COLON type ((COMMA | SEMI) type)+)?;
+multipleDeclarations: (VARIABLE | CONSTANT) ID ((COMMA | SEMI) ID)+ (COLON type ((COMMA | SEMI) type)*)?;
 
 // Assignment: variable or constant assignment, object field or collection element
 assignment: singleAssignmentExpression | multipleAssignmentsExpression;
 
 singleAssignmentExpression: (singleDeclaration | singleAssignment) ASSIGN expression;
 
-multipleAssignmentsExpression: (multipleDeclarations | multipleAssignments) ASSIGN expression ((COMMA | SEMI) expression)+;
+multipleAssignmentsExpression: (multipleDeclarations | multipleAssignments) ASSIGN expression ((COMMA | SEMI) expression)*;
 
 singleAssignment: ID | qualifiedName | qualifiedObjectAccess | collectionAccess;
 
@@ -211,7 +211,7 @@ returnStatement: singleReturn | multipleReturns;
 
 singleReturn: RETURN expression?;
 
-multipleReturns: RETURN ((LPAREN tupleElements? RPAREN) | tupleElements);
+multipleReturns: RETURN ((LPAREN tupleElements? RPAREN) | collectionMultipleElements);
 
 // Block: A block of statements enclosed in curly braces
 block: LBRACE (statement END?)* RBRACE;
