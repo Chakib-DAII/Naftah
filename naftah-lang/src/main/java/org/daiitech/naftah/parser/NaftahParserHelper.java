@@ -2055,17 +2055,17 @@ public final class NaftahParserHelper {
 	 *
 	 *                                  <p><b>Example usage:</b></p>
 	 *                                  <pre>{@code
-	 *                                                                                                                                                                                                       visitFunctionCallInChain(
-	 *                                                                                                                                                                                                       0,
-	 *                                                                                                                                                                                                       visitor,
-	 *                                                                                                                                                                                                       context,
-	 *                                                                                                                                                                                                       "print",
-	 *                                                                                                                                                                                                        List.of(Pair.of("arg", "Hello, world!")),
-	 *                                                                                                                                                                                                        null,
-	 *                                                                                                                                                                                                        12,
-	 *                                                                                                                                                                                                        8
-	 *                                                                                                                                                                                                        );
-	 *                                                                                                                                                                                                                                                                                                                                            }</pre>
+	 *                                                                                                                                                                                                                                                                         visitFunctionCallInChain(
+	 *                                                                                                                                                                                                                                                                         0,
+	 *                                                                                                                                                                                                                                                                         visitor,
+	 *                                                                                                                                                                                                                                                                         context,
+	 *                                                                                                                                                                                                                                                                         "print",
+	 *                                                                                                                                                                                                                                                                          List.of(Pair.of("arg", "Hello, world!")),
+	 *                                                                                                                                                                                                                                                                          null,
+	 *                                                                                                                                                                                                                                                                          12,
+	 *                                                                                                                                                                                                                                                                          8
+	 *                                                                                                                                                                                                                                                                          );
+	 *                                                                                                                                                                                                                                                                                                                                                                                                              }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction
@@ -2260,5 +2260,35 @@ public final class NaftahParserHelper {
 		else {
 			ObjectAccessUtils.set(target, fieldName, null, value);
 		}
+	}
+
+	/**
+	 * Visits each expression inside a {@link org.daiitech.naftah.parser.NaftahParser.CollectionMultipleElementsContext}
+	 * and collects the evaluated results into a list.
+	 *
+	 * <p>This method iterates over all expression nodes contained in the provided
+	 * {@code collectionMultipleElements} context, invokes the given
+	 * {@code defaultNaftahParserVisitor} on each one, and stores the returned values
+	 * in order inside a newly created {@link java.util.ArrayList}.</p>
+	 *
+	 * @param defaultNaftahParserVisitor the visitor used to evaluate each expression in the collection
+	 * @param collectionMultipleElements the parse-tree context containing multiple expression elements to visit
+	 * @return a list of objects representing the evaluated results of each expression
+	 */
+	public static List<Object> visitCollectionMultipleElements( DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+																org.daiitech.naftah.parser.NaftahParser.CollectionMultipleElementsContext collectionMultipleElements) {
+		List<Object> elements = new ArrayList<>();
+
+		for (   int i = 0;
+				i < collectionMultipleElements
+						.expression()
+						.size();
+				i++) {
+			var elementValue = defaultNaftahParserVisitor
+					.visit(collectionMultipleElements
+							.expression(i));
+			elements.add(elementValue);
+		}
+		return elements;
 	}
 }
