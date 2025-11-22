@@ -2055,17 +2055,17 @@ public final class NaftahParserHelper {
 	 *
 	 *                                  <p><b>Example usage:</b></p>
 	 *                                  <pre>{@code
-	 *                                                                                                                                                                                                                                                                         visitFunctionCallInChain(
-	 *                                                                                                                                                                                                                                                                         0,
-	 *                                                                                                                                                                                                                                                                         visitor,
-	 *                                                                                                                                                                                                                                                                         context,
-	 *                                                                                                                                                                                                                                                                         "print",
-	 *                                                                                                                                                                                                                                                                          List.of(Pair.of("arg", "Hello, world!")),
-	 *                                                                                                                                                                                                                                                                          null,
-	 *                                                                                                                                                                                                                                                                          12,
-	 *                                                                                                                                                                                                                                                                          8
-	 *                                                                                                                                                                                                                                                                          );
-	 *                                                                                                                                                                                                                                                                                                                                                                                                              }</pre>
+	 *                                                                                                                                                                                                                                                                                                                                           visitFunctionCallInChain(
+	 *                                                                                                                                                                                                                                                                                                                                           0,
+	 *                                                                                                                                                                                                                                                                                                                                           visitor,
+	 *                                                                                                                                                                                                                                                                                                                                           context,
+	 *                                                                                                                                                                                                                                                                                                                                           "print",
+	 *                                                                                                                                                                                                                                                                                                                                            List.of(Pair.of("arg", "Hello, world!")),
+	 *                                                                                                                                                                                                                                                                                                                                            null,
+	 *                                                                                                                                                                                                                                                                                                                                            12,
+	 *                                                                                                                                                                                                                                                                                                                                            8
+	 *                                                                                                                                                                                                                                                                                                                                            );
+	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction
@@ -2161,6 +2161,23 @@ public final class NaftahParserHelper {
 		return result;
 	}
 
+	/**
+	 * Retrieves the value of a field from a target object.
+	 *
+	 * <p>This method first attempts to find a corresponding getter method
+	 * in the {@link DefaultContext}. If multiple overloaded methods exist,
+	 * it selects the best match based on the signature. If no suitable getter
+	 * is found, it falls back to direct field access using reflection.
+	 *
+	 * @param currentContext the current evaluation context containing available functions
+	 * @param target         the object from which to retrieve the field value; may not be null
+	 * @param fieldName      the name of the field to retrieve
+	 * @param line           source line number (used for error reporting)
+	 * @param column         source column number (used for error reporting)
+	 * @return the value of the field, or {@code null} if not found
+	 * @throws NaftahBugError if an unsupported function type is encountered
+	 * @throws NaftahBugError if an ambiguous set of overloaded invocables is found
+	 */
 	public static Object getObjectField(DefaultContext currentContext,
 										Object target,
 										String fieldName,
@@ -2219,6 +2236,23 @@ public final class NaftahParserHelper {
 		return ObjectAccessUtils.get(target, fieldName, null);
 	}
 
+	/**
+	 * Sets the value of a field on a target object.
+	 *
+	 * <p>This method first attempts to find a corresponding setter method
+	 * in the {@link DefaultContext}. If multiple overloaded methods exist,
+	 * it selects the best match based on the value type. If no suitable setter
+	 * is found, it falls back to direct field access using reflection.
+	 *
+	 * @param currentContext the current evaluation context containing available functions
+	 * @param target         the object on which to set the field value; may not be null
+	 * @param fieldName      the name of the field to set
+	 * @param value          the value to assign to the field
+	 * @param line           source line number (used for error reporting)
+	 * @param column         source column number (used for error reporting)
+	 * @throws NaftahBugError if an unsupported function type is encountered
+	 * @throws NaftahBugError if an ambiguous set of overloaded invocables is found
+	 */
 	public static void setObjectField(  DefaultContext currentContext,
 										Object target,
 										String fieldName,
