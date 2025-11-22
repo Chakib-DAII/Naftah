@@ -123,6 +123,6 @@ public class DeclarationProvider implements ArgumentsProvider {
 								]
 								""",
 								null,
-								ExceptionUtils.newSpecifiedTypesExceedVariableNamesError(1, 0)));
+								ExceptionUtils.newNaftahSpecifiedTypesExceedVariableNamesError(1, 0)));
 	}
 }
