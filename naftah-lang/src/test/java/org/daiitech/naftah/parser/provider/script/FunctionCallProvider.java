@@ -10,6 +10,7 @@ import org.daiitech.naftah.NaftahSystem;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -1836,6 +1837,67 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								جافا:لغة:سلسلة("مرحبا"):::إلى_سلسلة()
 								""",
 								NaftahObject.of("مرحبا"),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت سلسلة تعيين جافا:لغة:سلسلة("مرحبا")
+
+								(
+								--- java.lang.String::length
+								سلسلة::لنگتهاي(),
+								--- java.lang.String::substring
+								سلسلة::النفقة(1؛3),
+								--- java.lang.String::toString
+								سلسلة::إلى_سلسلة()
+								)
+								""",
+								Tuple
+										.of(
+											NaftahObject.of(5),
+											NaftahObject.of("رح"),
+											NaftahObject.of("مرحبا")
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت قائمة تعيين جافا:أدة:صفائف_القائمة([1؛100؛0])
+
+								(
+								--- java.lang.List::add
+								قائمة::إضافة(100),
+								--- java.lang.List::get
+								قائمة::گت(0),
+								--- java.lang.List::size
+								قائمة::الحجم()
+								)
+								""",
+								Tuple
+										.of(
+											NaftahObject.of(Boolean.TRUE),
+											NaftahObject.of(1),
+											NaftahObject.of(3)
+										),
+								null),
+					Arguments
+							.of(true,
+
+								"""
+								ثابت اختياري تعيين جافا:أدة:اختياري::وف(10)
+
+								(
+								--- java.util.Optional::get
+								اختياري::گت(),
+								--- java.util.Optional::orElse
+								اختياري::أو_لس("لغة نفطة")
+								)
+								""",
+								Tuple
+										.of(
+											NaftahObject.of(10),
+											NaftahObject.of(10)
+										),
 								null)
 				);
 	}
