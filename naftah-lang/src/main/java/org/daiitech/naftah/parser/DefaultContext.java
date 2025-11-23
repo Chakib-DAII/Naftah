@@ -39,6 +39,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
@@ -63,6 +64,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasAnyParentOfType;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
 import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.filterClasses;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getArabicClassQualifiers;
@@ -70,6 +72,8 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinMethods;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassConstructors;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassMethods;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassQualifiers;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedCall;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.loadClasses;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanClasses;
 
@@ -1822,5 +1826,53 @@ public class DefaultContext {
 		else {
 			return IMPORTS.get(alias);
 		}
+	}
+
+	/**
+	 * Attempts to resolve a variable reference into a fully qualified call and
+	 * retrieve its underlying value.
+	 *
+	 * <p>This method processes expressions of the form:
+	 * {@code variableId:propertyName}. If the identifier corresponds to a known
+	 * variable within this context (or any parent context), the method produces:</p>
+	 *
+	 * <ul>
+	 * <li>A fully qualified call of the form:
+	 * <pre>qualifiedVariableClassName:propertyName</pre>
+	 * </li>
+	 * <li>The actual value of the variable, with automatic unwrapping of
+	 * {@link NaftahObject} instances.</li>
+	 * </ul>
+	 *
+	 * <p>The result is returned as a {@link Pair}, where:</p>
+	 *
+	 * <ul>
+	 * <li><b>pair.a</b> — the fully qualified call string</li>
+	 * <li><b>pair.b</b> — the resolved variable value</li>
+	 * </ul>
+	 *
+	 * <p>If the identifier does not correspond to a known variable, or if the
+	 * input does not match the {@code id:property} pattern, this method returns
+	 * {@code null}.</p>
+	 *
+	 * @param qualifiedCall a variable reference in the form {@code id:property}
+	 * @return a {@link Pair} containing the fully qualified call and the variable's
+	 *         underlying value; or {@code null} if resolution fails
+	 */
+	public Pair<String, Object> matchVariable(String qualifiedCall) {
+		String[] parts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
+		String id = parts.length == 2 ? parts[0] : null;
+		if (Objects.nonNull(id) && !id.contains(QUALIFIED_NAME_SEPARATOR)) {
+			var variable = getVariable(id, this);
+			if (variable.isFound()) {
+				Object variableValue = variable.get();
+				if (variableValue instanceof NaftahObject naftahObject) {
+					variableValue = naftahObject.get(true);
+				}
+				return new Pair<>(  getQualifiedCall(getQualifiedName(variableValue.getClass().getName()), parts[1]),
+									variableValue);
+			}
+		}
+		return null;
 	}
 }
