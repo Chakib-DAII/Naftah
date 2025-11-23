@@ -887,8 +887,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 						}
 						else {
 							org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext collectionAccessContext =
-							 singleAssignment
-									.collectionAccess();
+									singleAssignment
+											.collectionAccess();
 							Object variable = result = getVariable(collectionAccessContext.ID().getText(),
 																   currentContext).get();
 							Number number = -1;
@@ -953,8 +953,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																		 org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
 						//noinspection unchecked
 						Pair<DeclaredVariable, Boolean> declaredVariable =
-						 (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
-								.visit(singleDeclaration);
+								(Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
+										.visit(singleDeclaration);
 						currentContext.setDeclarationOfAssignment(declaredVariable);
 						var newValue = defaultNaftahParserVisitor
 								.visit(singleAssignmentExpressionContext.expression());
@@ -1188,9 +1188,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 						for (int i = 0; i < declaredVariables.size(); i++) {
 							//noinspection unchecked
 							Pair<DeclaredVariable, Boolean> declaredVariable =
-							 (Pair<DeclaredVariable, Boolean>) declaredVariables
-									.get(
-											i);
+									(Pair<DeclaredVariable, Boolean>) declaredVariables
+											.get(
+													i);
 							currentContext.setDeclarationOfAssignment(declaredVariable);
 
 							var newValue = singleTupleValue ?
@@ -1263,8 +1263,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 				(defaultNaftahParserVisitor, currentContext, parameterDeclarationListContext) -> {
 					List<DeclaredParameter> args = new ArrayList<>();
 					for (org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext argumentDeclaration :
-					 parameterDeclarationListContext
-							.parameterDeclaration()) {
+							parameterDeclarationListContext
+									.parameterDeclaration()) {
 						args.add((DeclaredParameter) defaultNaftahParserVisitor.visit(argumentDeclaration));
 					}
 					return args;
@@ -1422,8 +1422,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 						boolean hasQualifiedCall;
 
 						for (org.daiitech.naftah.parser.NaftahParser.CallSegmentContext callSegmentContext :
-						 initCallContext
-								.callSegment()) {
+								initCallContext
+										.callSegment()) {
 							if (firstSegment) {
 								qualifiedName = callSegmentContext.COLON().size() == 3 ?
 												functionName :
@@ -1566,8 +1566,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 						String qualifiedName;
 
 						for (org.daiitech.naftah.parser.NaftahParser.CallSegmentContext callSegmentContext :
-						 functionCallContext
-								.callSegment()) {
+								functionCallContext
+										.callSegment()) {
 							parts = functionName.split(QUALIFIED_CALL_SEPARATOR);
 							qualifiedName = parts.length == 2 && callSegmentContext.COLON().size() == 3 ?
 											parts[0] :
@@ -2020,11 +2020,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 					// Loop target
 					org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext foreachTarget =
-					 forEachLoopStatementContext
-							.foreachTarget();
+							forEachLoopStatementContext
+									.foreachTarget();
 					Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass =
-					 foreachTarget
-							.getClass();
+							foreachTarget
+									.getClass();
 					Tuple target;
 					Tuple targetValues;
 
@@ -3612,8 +3612,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 					}
 					// process entries
 					org.daiitech.naftah.parser.NaftahParser.MapValueContext mapValueContext =
-					 (org.daiitech.naftah.parser.NaftahParser.MapValueContext) keyValuePairsContext
-							.getParent();
+							(org.daiitech.naftah.parser.NaftahParser.MapValueContext) keyValuePairsContext
+									.getParent();
 					Map<Object, Object> map = Objects.nonNull(mapValueContext.ORDERED()) ?
 											  new LinkedHashMap<>() :
 											  new HashMap<>();
