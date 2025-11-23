@@ -1518,12 +1518,27 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 														.qualifiedCall()) :
 										functionCallContext.primaryCall().ID().getText();
 
-								var matchedImport = currentContext.matchImport(functionName);
-								if (Objects.nonNull(matchedImport)) {
-									functionName = matchedImport;
+								Pair<String, Object> matchedVariableQualifiedCallAndValue = null;
+								if (hasQualifiedCall) {
+									matchedVariableQualifiedCallAndValue = currentContext.matchVariable(functionName);
+									if (Objects.nonNull(matchedVariableQualifiedCallAndValue)) {
+										functionName = matchedVariableQualifiedCallAndValue.a;
+									}
 								}
 
+								String matchedImport;
 								List<Pair<String, Object>> args = new ArrayList<>();
+
+								if (Objects.isNull(matchedVariableQualifiedCallAndValue)) {
+									matchedImport = currentContext.matchImport(functionName);
+									if (Objects.nonNull(matchedImport)) {
+										functionName = matchedImport;
+									}
+								}
+								else {
+									// the variable value to perform the current function on it
+									args.add(new Pair<>(null, matchedVariableQualifiedCallAndValue.b));
+								}
 
 								if (hasChild(functionCallContext.primaryCall().argumentList())) {
 									//noinspection unchecked
