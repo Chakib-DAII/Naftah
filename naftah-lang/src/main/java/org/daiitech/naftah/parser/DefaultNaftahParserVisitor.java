@@ -1542,8 +1542,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								if (hasChild(functionCallContext.primaryCall().argumentList())) {
 									//noinspection unchecked
-									args = (List<Pair<String, Object>>) defaultNaftahParserVisitor
-											.visit(functionCallContext.primaryCall().argumentList());
+									args
+											.addAll((List<Pair<String, Object>>) defaultNaftahParserVisitor
+													.visit(functionCallContext.primaryCall().argumentList()));
 								}
 
 								Number jvmFunctionIndex = Objects
