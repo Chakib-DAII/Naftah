@@ -461,7 +461,7 @@ public final class Naftah {
 	 *
 	 * @param t the throwable whose error message will be printed with padding
 	 */
-	private static void printPaddedErrorMessageToString(Throwable t) {
+	public static void printPaddedErrorMessageToString(Throwable t) {
 		Throwable throwable = t;
 		if (!(throwable instanceof NaftahBugError)) {
 			throwable = new NaftahBugError(throwable);
@@ -1279,7 +1279,6 @@ public final class Naftah {
 					boolean validIndex = true;
 					if (classes.equals(target) && (validIndex = DefaultContext
 							.getClasses()
-							.entrySet()
 							.size() > index)) {
 						var element = CollectionUtils
 								.getElementAt(
@@ -1294,7 +1293,6 @@ public final class Naftah {
 					}
 					else if (accessibleClasses.equals(target) && (validIndex = DefaultContext
 							.getAccessibleClasses()
-							.entrySet()
 							.size() > index)) {
 								var element = CollectionUtils
 										.getElementAt(
@@ -1309,7 +1307,6 @@ public final class Naftah {
 							}
 					else if (instantiableClasses.equals(target) && (validIndex = DefaultContext
 							.getInstantiableClasses()
-							.entrySet()
 							.size() > index)) {
 								var element = CollectionUtils
 										.getElementAt(
@@ -1324,7 +1321,6 @@ public final class Naftah {
 							}
 					else if (builtinFunctions.equals(target) && (validIndex = DefaultContext
 							.getBuiltinFunctions()
-							.entrySet()
 							.size() > index)) {
 								var element = CollectionUtils
 										.getElementAt(
@@ -1339,7 +1335,6 @@ public final class Naftah {
 							}
 					else if (jvmFunctions.equals(target) && (validIndex = DefaultContext
 							.getJvmFunctions()
-							.entrySet()
 							.size() > index)) {
 								var element = CollectionUtils
 										.getElementAt(
