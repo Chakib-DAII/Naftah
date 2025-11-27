@@ -1,0 +1,25 @@
+# Memory
+-Xms200m                     # initial heap size
+-Xmx1G                       # maximum heap size
+-Xss512k                      # thread stack size
+
+# Garbage Collector
+-XX:+UseG1GC                 # enable G1 garbage collector
+-XX:MaxGCPauseMillis=100     # target max GC pause in ms
+-XX:InitiatingHeapOccupancyPercent=45  # start concurrent GC at 45% heap usage
+-XX:+ParallelRefProcEnabled  # parallel processing of references during GC
+
+# GC Logging
+-XX:+PrintGC                  # print basic GC info
+-XX:+PrintGCDetails           # print detailed GC info
+-Xloggc:gc.log                # path for GC log file
+
+# Logging / Diagnostics
+-XX:+PrintCommandLineFlags    # print resolved JVM flags on startup
+-XX:+UnlockDiagnosticVMOptions # unlock advanced diagnostic options
+-XX:+PrintFlagsFinal           # print final values of all JVM flags
+-Xlog:gc*,safepoint,class+load=info  # unified logging for GC, safepoints, and class loading
+
+# Safety
+-XX:+HeapDumpOnOutOfMemoryError  # generate heap dump on OOM
+-XX:HeapDumpPath=heap.hprof      # path for heap dump file
