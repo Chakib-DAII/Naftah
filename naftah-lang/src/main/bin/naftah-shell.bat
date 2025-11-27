@@ -65,8 +65,42 @@ set CMD_LINE_ARGS=%$
 @rem Setup the command line
 set CLASSPATH=%NAFTAH_HOME%\lib\*
 
+@rem Load all .vmoptions files in NAFTAH_HOME
+
+@rem Enable delayed expansion
+setlocal enabledelayedexpansion
+
+set VM_OPTS=
+
+for %%F in ("%NAFTAH_HOME%\*.vmoptions") do (
+    if exist "%%F" (
+        for /f "usebackq tokens=* delims=" %%L in ("%%F") do (
+
+            rem Skip full-line comments
+            echo %%L | findstr /b "#" >nul
+            if errorlevel 1 (
+
+                rem Strip inline comments: everything after first #
+                set "LINE=%%L"
+                for /f "tokens=1 delims=#" %%C in ("!LINE!") do (
+                    set "CLEAN=%%C"
+                )
+
+                rem Trim clean string
+                for /f "tokens=* delims= " %%T in ("!CLEAN!") do set "CLEAN=%%T"
+                for /l %%I in (1,1,100) do if "!CLEAN:~-1!"==" " set "CLEAN=!CLEAN:~0,-1!"
+
+                rem Append cleaned option (skip empty lines)
+                if not "!CLEAN!"=="" (
+                    set "VM_OPTS=!VM_OPTS! !CLEAN!"
+                )
+            )
+        )
+    )
+)
+
 @rem Append JVM options to JAVA_OPTS
-set JAVA_OPTS=%JAVA_OPTS% --add-modules=jdk.incubator.vector ^
+set JAVA_OPTS=%JAVA_OPTS% !VM_OPTS! --add-modules=jdk.incubator.vector ^
 --add-opens=java.base/java.lang=ALL-UNNAMED ^
 --add-opens=java.base/java.lang.invoke=ALL-UNNAMED ^
 --add-opens=java.base/java.lang.reflect=ALL-UNNAMED ^
@@ -113,6 +147,8 @@ set JAVA_OPTS=%JAVA_OPTS% --add-modules=jdk.incubator.vector ^
 --add-opens=java.desktop/javax.swing=ALL-UNNAMED ^
 --add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED ^
 --add-opens=java.desktop/sun.java2d=ALL-UNNAMED
+
+endlocal & set "JAVA_OPTS=%JAVA_OPTS%"
 
 @if /I not "%DEBUG%" == "true" goto executeNoDebug
 
