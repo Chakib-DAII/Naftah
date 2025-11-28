@@ -64,13 +64,13 @@ public class SuppliedInheritableThreadLocal<T> extends InheritableThreadLocal<T>
 	 *
 	 * @param supplier       the supplier for initial values; must not be null
 	 * @param shareParentRef ignored if {@code copyFunction} is provided; if no copy function, controls reference
-	 * * sharing
+	 *                       * sharing
 	 * @param copyFunction   a function to copy/transform the parent value for child threads; must not be null
 	 * @throws NullPointerException if either supplier or copyFunction is null
 	 */
-	private SuppliedInheritableThreadLocal(Supplier<? extends T> supplier,
-										   boolean shareParentRef,
-										   Function<T, T> copyFunction) {
+	private SuppliedInheritableThreadLocal( Supplier<? extends T> supplier,
+											boolean shareParentRef,
+											Function<T, T> copyFunction) {
 		this(supplier, shareParentRef);
 		this.copyFunction = Objects.requireNonNull(copyFunction);
 	}
@@ -94,7 +94,7 @@ public class SuppliedInheritableThreadLocal<T> extends InheritableThreadLocal<T>
 	 * @param <S>            the type of the thread-local's value
 	 * @param supplier       the supplier for initial values; must not be null
 	 * @param shareParentRef if true, child threads inherit the parent's value by reference; otherwise a new value
-	 * * from the supplier
+	 *                       * from the supplier
 	 * @return a new {@link InheritableThreadLocal} instance
 	 * @throws NullPointerException if the supplier is null
 	 */
