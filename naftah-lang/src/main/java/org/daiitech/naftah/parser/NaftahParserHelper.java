@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,6 +48,7 @@ import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
@@ -73,7 +75,6 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFou
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocationError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNonInvocableFunctionError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedFunctionError;
-import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
@@ -1179,18 +1180,22 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Deregisters (removes) a context by its depth level.
-	 * <p>
-	 * Handles REPL mode or standard context cleanup depending on the system property.
+	 * Deregisters (removes) the current context based on the execution mode.
 	 *
-	 * @param depth the depth level of the context to be deregistered
+	 * <p>If the system is running in REPL mode (indicated by the system property
+	 * {@value org.daiitech.naftah.Naftah#INSIDE_REPL_PROPERTY}), the deregistration is delegated to
+	 * {@link REPLContext#deregisterContext()}. Otherwise, it calls the standard
+	 * context cleanup via {@link DefaultContext#deregisterContext()}.</p>
+	 *
+	 * <p>This method abstracts context cleanup so that callers do not need
+	 * to distinguish between REPL and non-REPL modes.</p>
 	 */
-	public static void deregisterContextByDepth(int depth) {
+	public static void deregisterContext() {
 		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
-			REPLContext.deregisterContext(depth);
+			REPLContext.deregisterContext();
 		}
 		else {
-			deregisterContext(depth);
+			DefaultContext.deregisterContext();
 		}
 	}
 
@@ -1789,18 +1794,87 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Invokes a declared function with provided arguments in the given context.
+	 * Invokes a declared function within the current execution context, supporting
+	 * both synchronous and asynchronous execution models.
 	 *
-	 * @param declaredFunction           the declared function to invoke
+	 * <p>This method prepares the function’s parameters, binds argument values,
+	 * updates the execution context, and then invokes the function body using the
+	 * provided {@link DefaultNaftahParserVisitor}. If the function is declared as
+	 * asynchronous, its body is executed inside a spawned {@link Task} and the
+	 * task object is returned immediately. For synchronous functions, the body is
+	 * executed directly and the returned value becomes the result.</p>
+	 *
+	 * <p>All function calls are recorded in the context’s call stack using
+	 * {@link DefaultContext#pushCall}, and removed afterward via
+	 * {@link DefaultContext#popCall}, ensuring proper debugging and stack-trace
+	 * fidelity. For asynchronous functions, thread-local cleanup is performed
+	 * after execution via {@code currentContext.cleanThreadLocals()}.</p>
+	 *
+	 * @param depth                      the current recursion or call depth, used to generate a unique call ID
+	 * @param functionName               the name of the function to invoke
+	 * @param declaredFunction           the function to invoke; must not be null
 	 * @param defaultNaftahParserVisitor the visitor used to evaluate the function body
-	 * @param args                       the list of argument name/value pairs
-	 * @param currentContext             the current execution context
-	 * @return the result of invoking the declared function
+	 * @param args                       the list of (name, value) argument pairs to supply to the function
+	 * @param currentContext             the active execution context
+	 * @return for synchronous functions, the evaluated return value; for asynchronous
+	 *         functions, a {@link Task} representing the pending computation
+	 * @throws RuntimeException if evaluation of the function body fails
 	 */
-	public static Object invokeDeclaredFunction(DeclaredFunction declaredFunction,
+	public static Object invokeDeclaredFunction(
+												int depth,
+												String functionName,
+												DeclaredFunction declaredFunction,
 												DefaultNaftahParserVisitor defaultNaftahParserVisitor,
 												List<Pair<String, Object>> args,
 												DefaultContext currentContext
+	) {
+		if (declaredFunction.isAsync()) {
+			return spawnTask(   currentContext,
+								() -> {
+									var ctx = DefaultContext.getCurrentContext();
+									String functionCallId = generateCallId(depth, functionName);
+									ctx.setFunctionCallId(functionCallId);
+									Object result = doInvokeDeclaredFunction(   declaredFunction,
+																				defaultNaftahParserVisitor,
+																				args,
+																				currentContext);
+									ctx.setFunctionCallId(null);
+									return result;
+								},
+								currentContext::cleanThreadLocals);
+		}
+		else {
+			return doInvokeDeclaredFunction(declaredFunction, defaultNaftahParserVisitor, args, currentContext);
+		}
+	}
+
+	/**
+	 * Performs the actual execution of a declared function within the given context.
+	 *
+	 * <p>This method handles parameter preparation, argument binding, and call-stack
+	 * management, then evaluates the function body via the provided visitor. It is
+	 * intended to be called either directly (for synchronous functions) or inside a
+	 * spawned task (for asynchronous functions).</p>
+	 *
+	 * <p>The method must be invoked after {@link #prepareDeclaredFunction} has set up
+	 * prerequisites for execution. It binds both the function’s parameter metadata
+	 * and the evaluated argument map into the current context, ensuring that the
+	 * body resolves variable and parameter references correctly.</p>
+	 *
+	 * <p>The function call is pushed onto the context call stack before evaluation
+	 * and popped afterward, guaranteeing proper stack tracking even in failure
+	 * scenarios.</p>
+	 *
+	 * @param declaredFunction           the function being executed
+	 * @param defaultNaftahParserVisitor the visitor evaluating the function body
+	 * @param args                       the raw argument name/value pairs passed to the function
+	 * @param currentContext             the execution context associated with the call
+	 * @return the evaluated result of the function body
+	 */
+	public static Object doInvokeDeclaredFunction(  DeclaredFunction declaredFunction,
+													DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+													List<Pair<String, Object>> args,
+													DefaultContext currentContext
 	) {
 		boolean functionInStack = false;
 		try {
@@ -2259,7 +2333,9 @@ public final class NaftahParserHelper {
 		if (currentContext.containsFunction(functionName)) {
 			Object function = currentContext.getFunction(functionName, false).b;
 			if (function instanceof DeclaredFunction declaredFunction) {
-				result = invokeDeclaredFunction(declaredFunction,
+				result = invokeDeclaredFunction(depth,
+												functionName,
+												declaredFunction,
 												defaultNaftahParserVisitor,
 												args,
 												currentContext);
@@ -2648,5 +2724,32 @@ public final class NaftahParserHelper {
 			elements.add(elementValue);
 		}
 		return elements;
+	}
+
+	/**
+	 * Spawns a new asynchronous task within the given execution context.
+	 *
+	 * <p>This method wraps the provided {@link Supplier} in a {@link Task},
+	 * registers it with the current context, executes it asynchronously,
+	 * and optionally tracks it in the current scope stack.</p>
+	 *
+	 * <p>The context's pending task counter is incremented, so that the context
+	 * will not be deregistered until all spawned tasks complete.</p>
+	 *
+	 * @param currentContext the context in which the task should execute
+	 * @param supplier       a {@link Supplier} providing the task's computation
+	 * @param cleaner        a {@link Runnable} to clean up thread-local state
+	 *                       or other resources after the task completes
+	 * @return the spawned {@link Task} object representing the asynchronous computation
+	 */
+	public static Task<Object> spawnTask(
+											DefaultContext currentContext,
+											Supplier<Object> supplier,
+											Runnable cleaner) {
+		Task<Object> task = Task.of(currentContext, supplier, cleaner);
+
+		task.spawn();
+
+		return task;
 	}
 }
