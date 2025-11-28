@@ -83,6 +83,7 @@ public class Task<T> implements Awaitable<T> {
 		this.future = new FutureTask<>(callable);
 		Thread thread = cleanableThreadSupplier.get();
 		thread.start();
+		context.registerTask(this);
 	}
 
 	/**
@@ -93,9 +94,19 @@ public class Task<T> implements Awaitable<T> {
 	 * @throws IllegalStateException if the task has not been spawned
 	 */
 	@Override
-	public T await() throws Exception {
-		checkSpawned();
-		return future.get();
+	public T await() throws NaftahBugError {
+		try {
+			checkSpawned();
+			return future.get();
+		}
+		catch (Throwable th) {
+			throw th instanceof NaftahBugError naftahBugError ?
+					naftahBugError :
+					new NaftahBugError(th);
+		}
+		finally {
+			context.completeTask();
+		}
 	}
 
 	/**
