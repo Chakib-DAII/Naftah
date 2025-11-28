@@ -3,6 +3,7 @@ package org.daiitech.naftah.builtin.lang;
 import java.util.List;
 
 import org.daiitech.naftah.parser.NaftahParser;
+import org.daiitech.naftah.parser.NaftahParserHelper;
 
 /**
  * Definition of a function declared in the Naftah script.
@@ -24,6 +25,11 @@ public final class DeclaredFunction {
 	 * The name of the function.
 	 */
 	private final String name;
+
+	/**
+	 * Indicates whether the function is declared as asynchronous.
+	 */
+	private final boolean async;
 
 	/**
 	 * The parse context for the parameter declaration list.
@@ -58,6 +64,7 @@ public final class DeclaredFunction {
 	private DeclaredFunction(NaftahParser.FunctionDeclarationContext originalContext) {
 		this.originalContext = originalContext;
 		this.name = originalContext.ID().getText();
+		this.async = NaftahParserHelper.hasChild(originalContext.ASYNC());
 		this.parametersContext = originalContext.parameterDeclarationList();
 		this.body = originalContext.block();
 		this.returnTypeContext = originalContext.returnType();
@@ -89,6 +96,18 @@ public final class DeclaredFunction {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Returns whether this function is asynchronous.
+	 * <p>
+	 * An asynchronous function executes in its own task and must be awaited
+	 * if its result is required before proceeding.
+	 *
+	 * @return {@code true} if the function is asynchronous; {@code false} otherwise
+	 */
+	public boolean isAsync() {
+		return async;
 	}
 
 	/**
