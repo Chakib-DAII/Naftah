@@ -1,5 +1,7 @@
 package org.daiitech.naftah.builtin.utils.concurrent;
 
+import org.daiitech.naftah.errors.NaftahBugError;
+
 /**
  * Represents an asynchronous or deferred computation whose result can be awaited.
  *
@@ -20,8 +22,8 @@ public interface Awaitable<T> {
 	 * {@link IllegalStateException}, depending on the implementation.</p>
 	 *
 	 * @return the result of the computation
-	 * @throws Exception             if the computation throws an exception during execution
+	 * @throws NaftahBugError        if the computation throws an exception during execution
 	 * @throws IllegalStateException if the computation has not been spawned or is otherwise unavailable
 	 */
-	T await() throws Exception;
+	T await() throws NaftahBugError;
 }
