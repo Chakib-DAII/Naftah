@@ -2,6 +2,7 @@ package org.daiitech.naftah.parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 
@@ -29,7 +30,6 @@ public class REPLContext extends DefaultContext {
 
 	static {
 		ETERNAL_CONTEXT = DefaultContext.registerContext(new HashMap<>(), new HashMap<>());
-		ETERNAL_CONTEXT.prepareParseTreeExecution();
 	}
 
 	/**
@@ -41,9 +41,7 @@ public class REPLContext extends DefaultContext {
 	 * @return a new {@link DefaultContext} instance with {@link #ETERNAL_CONTEXT} as parent
 	 */
 	public static DefaultContext registerContext() {
-		DefaultContext context = registerContext(ETERNAL_CONTEXT);
-		context.prepareParseTreeExecution();
-		return context;
+		return registerContext(ETERNAL_CONTEXT);
 	}
 
 	/**
@@ -59,9 +57,7 @@ public class REPLContext extends DefaultContext {
 	 */
 	public static DefaultContext registerContext(   Map<String, DeclaredParameter> parameters,
 													Map<String, Object> arguments) {
-		DefaultContext context = new DefaultContext(ETERNAL_CONTEXT, null, parameters, arguments);
-		context.prepareParseTreeExecution();
-		return context;
+		return new DefaultContext(ETERNAL_CONTEXT, null, parameters, arguments);
 	}
 
 	/**
@@ -75,9 +71,7 @@ public class REPLContext extends DefaultContext {
 	 * @return a new {@link DefaultContext} instance linked to the specified parent
 	 */
 	public static DefaultContext registerContext(DefaultContext parent) {
-		DefaultContext context = new DefaultContext(parent, null, null, null);
-		context.prepareParseTreeExecution();
-		return context;
+		return new DefaultContext(parent, null, null, null);
 	}
 
 	/**
@@ -94,9 +88,7 @@ public class REPLContext extends DefaultContext {
 	 * @return a new {@link DefaultContext} instance configured with the specified parent and block imports
 	 */
 	public static DefaultContext registerContext(DefaultContext parent, Map<String, String> blockImports) {
-		DefaultContext context = new DefaultContext(parent, blockImports, null, null);
-		context.prepareParseTreeExecution();
-		return context;
+		return new DefaultContext(parent, blockImports, null, null);
 	}
 
 	/**
@@ -119,36 +111,54 @@ public class REPLContext extends DefaultContext {
 													Map<String, String> blockImports,
 													Map<String, DeclaredParameter> parameters,
 													Map<String, Object> arguments) {
-		DefaultContext context = new DefaultContext(parent, blockImports, parameters, arguments);
-		context.prepareParseTreeExecution();
-		return context;
+		return new DefaultContext(parent, blockImports, parameters, arguments);
 	}
 
 	/**
-	 * Deregisters a context at the given depth.
+	 * Deregisters the current context from the context management system.
 	 * <p>
-	 * If the depth is greater than zero, removes the context from the static
-	 * {@code CONTEXTS} map and merges its variables, functions, and parse tree
-	 * execution state into its parent context.
+	 * This method retrieves the {@link DefaultContext} associated with the current
+	 * thread (via {@code CURRENT_CONTEXT}) and removes it if possible.
+	 * If the context has a parent, its variables, functions, and parse tree execution
+	 * state are merged into the parent before removal.
+	 * </p>
 	 * <p>
-	 * If the depth is zero or less, returns the context at depth zero.
+	 * The actual removal is attempted only if there are no pending tasks in this context
+	 * or its descendants. Otherwise, the context may be marked for later removal.
+	 * </p>
+	 */
+	public static void deregisterContext() {
+		DefaultContext currentContext = CURRENT_CONTEXT.get();
+		deregisterContext(currentContext);
+	}
+
+	/**
+	 * Deregisters the specified {@link DefaultContext}.
+	 * <p>
+	 * If the context has a parent and can be safely removed (i.e., it has no pending tasks
+	 * and its children are idle), this method will:
+	 * <ul>
+	 * <li>Remove the context from the static {@code CONTEXTS} map.</li>
+	 * <li>Merge the context's variables and functions into its parent.</li>
+	 * <li>Copy the parse tree execution state to the parent, if available.</li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * If the context cannot be removed (because it has pending tasks), this method will
+	 * leave it in place and may mark it for removal later.
 	 * </p>
 	 *
-	 * @param depth the depth index of the context to deregister
-	 * @return the deregistered context if depth > 0, otherwise the context at depth zero
+	 * @param context the {@link DefaultContext} to deregister; must not be {@code null}
 	 */
-	public static DefaultContext deregisterContext(int depth) {
-		if (depth > 0) {
-			DefaultContext context = CONTEXTS.remove(depth);
-			if (context.parent != null) {
-				context.parent.variables.putAll(context.variables);
-				context.parent.functions.putAll(context.functions);
-				if (context.parseTreeExecution != null) {
-					context.parent.parseTreeExecution.copyFrom(context.parseTreeExecution);
-				}
+	public static void deregisterContext(DefaultContext context) {
+		if (Objects.nonNull(context) && Objects.nonNull(context.parent) && tryDeregisterContext(
+																								context)) {
+			context.parent.variables.get().putAll(context.variables.get());
+			context.parent.functions.get().putAll(context.functions.get());
+			if (Objects.nonNull(context.parseTreeExecution) && Objects
+					.nonNull(context.parent.parseTreeExecution)) {
+				context.parent.parseTreeExecution.get().copyFrom(context.parseTreeExecution.get());
 			}
-			return context;
 		}
-		return CONTEXTS.get(0);
 	}
 }
