@@ -928,13 +928,29 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, actorDeclarationContext) -> {
 								String name = actorDeclarationContext.ID(0).getText();
 
-								Actor<Object> actor = Actor.of(name, currentContext, (message) -> {
+								String msgVariableName = Optional
+										.ofNullable(actorDeclarationContext.ID(1))
+										.map(ParseTree::getText)
+										.orElse(ACTOR_MESSAGE);
+
+								Actor<Object> actor = Actor.of(name, currentContext, () -> {
 									var cctx = DefaultContext.getCurrentContext();
 
-									String msgVariableName = Optional
-											.ofNullable(actorDeclarationContext.ID(1))
-											.map(ParseTree::getText)
-											.orElse(ACTOR_MESSAGE);
+									var declaredVariable = DeclaredVariable
+											.of(actorDeclarationContext,
+												msgVariableName,
+												false,
+												Object.class,
+												null);
+
+									cctx.defineVariable(msgVariableName, declaredVariable);
+
+									if (Objects.nonNull(actorDeclarationContext.objectFields())) {
+										defaultNaftahParserVisitor.visit(actorDeclarationContext.objectFields());
+									}
+
+								}, (message) -> {
+									var cctx = DefaultContext.getCurrentContext();
 
 									var declaredVariable = DeclaredVariable
 											.of(actorDeclarationContext,
@@ -3253,6 +3269,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 */
 	@Override
 	public Object visitObjectValue(org.daiitech.naftah.parser.NaftahParser.ObjectValueContext ctx) {
+		//noinspection unchecked
 		return visitContext(
 							this,
 							"visitObjectValue",
@@ -3260,9 +3277,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								objectValueContext) -> defaultNaftahParserVisitor
-										.visit(
-												objectValueContext.objectFields())
+								objectValueContext) -> NaftahObject
+										.of((Map<String, DeclaredVariable>) defaultNaftahParserVisitor
+												.visit(objectValueContext.objectFields())),
+							NaftahObject.class
 		);
 	}
 
@@ -3271,28 +3289,34 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitObjectFields(org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext ctx) {
-		return visitContext(
-							this,
-							"visitObjectFields",
-							getCurrentContext(),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, objectFieldsContext) -> {
-								var result = new LinkedHashMap<String, DeclaredVariable>();
+	public Map<String, DeclaredVariable> visitObjectFields(org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext ctx) {
+		//noinspection unchecked
+		return (Map<String, DeclaredVariable>) visitContext(
+															this,
+															"visitObjectFields",
+															getCurrentContext(),
+															ctx,
+															(   defaultNaftahParserVisitor,
+																currentContext,
+																objectFieldsContext) -> {
+																var result = new LinkedHashMap<String, DeclaredVariable>();
 
-								for (int i = 0; i < objectFieldsContext.assignment().size(); i++) {
-									//noinspection unchecked
-									var field = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
-											.visit(
-													objectFieldsContext.assignment(i));
-									var fieldName = field.a.getName();
-									result.put(fieldName, field.a);
-								}
+																for (   int i = 0;
+																		i < objectFieldsContext.assignment().size();
+																		i++) {
+																	//noinspection unchecked
+																	var field = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
+																			.visit(
+																					objectFieldsContext.assignment(i));
+																	var fieldName = field.a.getName();
+																	result.put(fieldName, field.a);
+																}
 
-								currentContext.setCreatingObject(false);
+																currentContext.setCreatingObject(false);
 
-								return NaftahObject.of(result);
-							}
+																return result;
+															},
+															Map.class
 		);
 	}
 
