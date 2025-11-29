@@ -295,6 +295,45 @@ public final class NaftahParserHelper {
 	}
 
 	/**
+	 * Recursively searches the given parse tree node and its descendants for the
+	 * first occurrence of a child whose type matches the specified class.
+	 * <p>
+	 * The search is performed in a pre-order, depth-first manner:
+	 * <ul>
+	 * <li>First, the current {@code node} itself is checked.</li>
+	 * <li>If it matches the requested {@code type}, it is returned immediately.</li>
+	 * <li>Otherwise, each child is visited in the order they appear in the tree.</li>
+	 * </ul>
+	 * <p>
+	 * This method does <b>not</b> restrict the search to direct children; it will
+	 * return the first matching descendant at any depth.
+	 *
+	 * @param node the root of the subtree to search; may be {@code null}
+	 * @param type the class object representing the desired parse tree type
+	 * @param <T>  the expected parse tree subtype
+	 * @return the first node (including {@code node} itself) that is an instance
+	 *         of {@code type}, or {@code null} if no matching node is found
+	 */
+	public static <T extends ParseTree> T getFirstChildOfType(ParseTree node, Class<T> type) {
+		if (node == null) {
+			return null;
+		}
+
+		if (type.isInstance(node)) {
+			return type.cast(node);
+		}
+
+		for (int i = 0; i < node.getChildCount(); i++) {
+			T child = getFirstChildOfType(node.getChild(i), type);
+			if (child != null) {
+				return child;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Collects all nodes in the subtree rooted at the given parse tree node, including itself.
 	 * Uses an internal cache to optimize repeated calls on the same node.
 	 *
@@ -1687,19 +1726,22 @@ public final class NaftahParserHelper {
 	 * <li>If the selected function is a non-static {@link JvmFunction}, the first argument is treated as the
 	 * instance.</li>
 	 * <li>Delegates the actual invocation to
-	 * {@link #invokeFunction(String, JvmExecutable, Object[], List, Object, int, int)}.</li>
+	 * {@link #invokeFunction(String, boolean, JvmExecutable, Object[], List, Object, int, int)}.</li>
 	 * </ol>
 	 *
-	 * @param functionName the name of the function to invoke (used for error reporting)
-	 * @param jvmFunctions the collection of available {@link JvmExecutable} functions
-	 * @param naftahArgs   the list of arguments as {@link Pair}, where the first element may be the instance for
-	 *                     non-static methods
-	 * @param line         the source line number for error reporting
-	 * @param column       the source column number for error reporting
+	 * @param functionName    the name of the function to invoke (used for error reporting)
+	 * @param forceInvocation true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                        default
+	 * @param jvmFunctions    the collection of available {@link JvmExecutable} functions
+	 * @param naftahArgs      the list of arguments as {@link Pair}, where the first element may be the instance for
+	 *                        non-static methods
+	 * @param line            the source line number for error reporting
+	 * @param column          the source column number for error reporting
 	 * @return the result of the function invocation
 	 * @throws NaftahBugError if no suitable function is found or invocation fails
 	 */
 	public static Object invokeFunction(String functionName,
+										boolean forceInvocation,
 										Collection<JvmExecutable> jvmFunctions,
 										List<Pair<String, Object>> naftahArgs,
 										int line,
@@ -1710,7 +1752,14 @@ public final class NaftahParserHelper {
 		Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
 				.isStatic() ? null : naftahArgs.remove(0).b;
 
-		return invokeFunction(functionName, selectedFunction, bestMatch.b, naftahArgs, possibleInstance, line, column);
+		return invokeFunction(  functionName,
+								forceInvocation,
+								selectedFunction,
+								bestMatch.b,
+								naftahArgs,
+								possibleInstance,
+								line,
+								column);
 	}
 
 
@@ -1720,6 +1769,8 @@ public final class NaftahParserHelper {
 	 * <p>This overload delegates to the more general method with {@code executableArgs} set to {@code null}.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param selectedFunction the executable to invoke
 	 * @param naftahArgs       the arguments prepared for the executable
 	 * @param possibleInstance the instance to invoke on, or {@code null} for static methods
@@ -1730,12 +1781,20 @@ public final class NaftahParserHelper {
 	 */
 	public static Object invokeFunction(
 										String functionName,
+										boolean forceInvocation,
 										JvmExecutable selectedFunction,
 										List<Pair<String, Object>> naftahArgs,
 										Object possibleInstance,
 										int line,
 										int column) {
-		return invokeFunction(functionName, selectedFunction, null, naftahArgs, possibleInstance, line, column);
+		return invokeFunction(  functionName,
+								forceInvocation,
+								selectedFunction,
+								null,
+								naftahArgs,
+								possibleInstance,
+								line,
+								column);
 	}
 
 	/**
@@ -1749,6 +1808,8 @@ public final class NaftahParserHelper {
 	 * </ul>
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param selectedFunction the executable to invoke
 	 * @param executableArgs   the prepared arguments array for the executable (may be {@code null})
 	 * @param naftahArgs       the original list of {@link Pair} arguments
@@ -1760,6 +1821,7 @@ public final class NaftahParserHelper {
 	 */
 	public static Object invokeFunction(
 										String functionName,
+										boolean forceInvocation,
 										JvmExecutable selectedFunction,
 										Object[] executableArgs,
 										List<Pair<String, Object>> naftahArgs,
@@ -1777,6 +1839,7 @@ public final class NaftahParserHelper {
 		}
 		else if (selectedFunction instanceof JvmFunction jvmFunction) {
 			result = invokeJvmFunction( functionName,
+										forceInvocation,
 										jvmFunction,
 										executableArgs,
 										naftahArgs,
@@ -1837,7 +1900,7 @@ public final class NaftahParserHelper {
 									Object result = doInvokeDeclaredFunction(   declaredFunction,
 																				defaultNaftahParserVisitor,
 																				args,
-																				currentContext);
+																				ctx);
 									ctx.setFunctionCallId(null);
 									return result;
 								},
@@ -2025,6 +2088,8 @@ public final class NaftahParserHelper {
 	 * a {@link NaftahObject} representing {@code null} is returned.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param jvmFunction      the {@link JvmFunction} to invoke
 	 * @param naftahArgs       a list of arguments as {@link Pair} name/value pairs
 	 * @param possibleInstance the instance for instance methods; {@code null} for static methods
@@ -2035,18 +2100,28 @@ public final class NaftahParserHelper {
 	 *                        the function is non-invocable
 	 */
 	public static Object invokeJvmFunction( String functionName,
+											boolean forceInvocation,
 											JvmFunction jvmFunction,
 											List<Pair<String, Object>> naftahArgs,
 											Object possibleInstance,
 											int line,
 											int column) {
-		return invokeJvmFunction(functionName, jvmFunction, null, naftahArgs, possibleInstance, line, column);
+		return invokeJvmFunction(   functionName,
+									forceInvocation,
+									jvmFunction,
+									null,
+									naftahArgs,
+									possibleInstance,
+									line,
+									column);
 	}
 
 	/**
 	 * Invokes a JVM function with either pre-prepared argument array or {@link List} of {@link Pair} arguments.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param jvmFunction      the {@link JvmFunction} to invoke
 	 * @param executableArgs   the pre-prepared argument array (nullable)
 	 * @param naftahArgs       a list of arguments as {@link Pair} name/value pairs
@@ -2058,6 +2133,7 @@ public final class NaftahParserHelper {
 	 *                        the function is non-invocable
 	 */
 	public static Object invokeJvmFunction( String functionName,
+											boolean forceInvocation,
 											JvmFunction jvmFunction,
 											Object[] executableArgs,
 											List<Pair<String, Object>> naftahArgs,
@@ -2065,7 +2141,7 @@ public final class NaftahParserHelper {
 											int line,
 											int column) {
 
-		if (jvmFunction.isInvocable()) {
+		if (forceInvocation || jvmFunction.isInvocable()) {
 			if (!jvmFunction.isStatic() && Objects.isNull(naftahArgs)) {
 				throw new NaftahBugError(INVALID_INSTANCE_METHOD_CALL_MSG
 						.apply( functionName,
@@ -2295,6 +2371,8 @@ public final class NaftahParserHelper {
 	 * @param defaultNaftahParserVisitor the parser visitor driving the execution
 	 * @param currentContext             the execution context containing functions, variables, and state
 	 * @param functionName               the name of the function to invoke
+	 * @param forceInvocation            true in case of forcing invocation in case the {@link JvmExecutable} is not
+	 *                                   invocable by default
 	 * @param args                       a list of {@code Pair<String, Object>} representing the function arguments
 	 * @param functionIndex              an optional numeric index for selecting a function from a collection of
 	 *                                   overloaded or indexed functions; may be {@code null}
@@ -2321,6 +2399,7 @@ public final class NaftahParserHelper {
 													DefaultNaftahParserVisitor defaultNaftahParserVisitor,
 													DefaultContext currentContext,
 													String functionName,
+													boolean forceInvocation,
 													List<Pair<String, Object>> args,
 													Number functionIndex,
 													int line,
@@ -2351,6 +2430,7 @@ public final class NaftahParserHelper {
 				Object possibleInstance = jvmFunction.isStatic() ? null : args.remove(0).b;
 
 				result = invokeJvmFunction( functionName,
+											forceInvocation,
 											jvmFunction,
 											args,
 											possibleInstance,
@@ -2368,6 +2448,7 @@ public final class NaftahParserHelper {
 								.isStatic() ? null : args.remove(0).b;
 
 						result = invokeFunction(functionName,
+												forceInvocation,
 												selectedFunction,
 												args,
 												possibleInstance,
@@ -2376,6 +2457,7 @@ public final class NaftahParserHelper {
 					}
 					else {
 						result = invokeFunction(functionName,
+												forceInvocation,
 												jvmExecutables,
 												args,
 												line,
