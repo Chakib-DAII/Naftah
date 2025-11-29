@@ -32,18 +32,24 @@ public abstract class Actor<T> implements Runnable {
 	private final Thread thread;
 	private final String name;
 	private final DefaultContext context;
+	private final Runnable initBlock;
 	private boolean running = true;
 
 	/**
 	 * Constructs an actor with a given name and a cleanup task.
 	 *
-	 * @param name    the name of the actor
-	 * @param context the execution context
-	 * @param cleaner a cleanup runnable to execute when the actor terminates
+	 * @param name      the name of the actor
+	 * @param context   the execution context
+	 * @param initBlock the code block that initiates the actor
+	 * @param cleaner   a cleanup runnable to execute when the actor terminates
 	 */
-	private Actor(String name, DefaultContext context, Runnable cleaner) {
+	private Actor(  String name,
+					DefaultContext context,
+					Runnable initBlock,
+					Runnable cleaner) {
 		this.name = name;
 		this.context = context;
+		this.initBlock = initBlock;
 		thread = new CleanableThread(this, cleaner);
 		thread.start();
 	}
@@ -51,18 +57,20 @@ public abstract class Actor<T> implements Runnable {
 	/**
 	 * Creates a simple actor from a {@link Consumer} for handling messages.
 	 *
-	 * @param name     the name of the actor
-	 * @param context  the execution context
-	 * @param consumer a consumer that processes messages
-	 * @param cleaner  a cleanup task executed when the actor stops
-	 * @param <T>      the message type
+	 * @param name      the name of the actor
+	 * @param context   the execution context
+	 * @param initBlock the codee block that initiates the actor
+	 * @param consumer  a consumer that processes messages
+	 * @param cleaner   a cleanup task executed when the actor stops
+	 * @param <T>       the message type
 	 * @return a new {@link Actor} instance
 	 */
 	public static <T> Actor<T> of(  String name,
 									DefaultContext context,
+									Runnable initBlock,
 									Consumer<T> consumer,
 									Runnable cleaner) {
-		return new Actor<>(name, context, cleaner) {
+		return new Actor<>(name, context, initBlock, cleaner) {
 			@Override
 			public void handle(T message) throws Exception {
 				consumer.accept(message);
@@ -106,6 +114,7 @@ public abstract class Actor<T> implements Runnable {
 	public void run() {
 		try {
 			DefaultContext.setCurrentContext(context);
+			initBlock.run();
 			while (running) {
 				T msg = receive();
 				handle(msg);
