@@ -1095,7 +1095,7 @@ public final class NaftahExecutionLogger {
 											ActorDeclarationContext::type -> %s
 											ActorDeclarationContext::COMMA -> %s
 											ActorDeclarationContext::SEMI -> %s
-											ActorDeclarationContext::parameterDeclarationList -> {
+											ActorDeclarationContext::objectFields -> {
 											%s
 											}
 											ActorDeclarationContext::RPAREN -> {
@@ -1120,8 +1120,8 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.SEMI()) ?
 															context.SEMI().getText() :
 															null,
-													Objects.nonNull(context.parameterDeclarationList()) ?
-															context.parameterDeclarationList().getText() :
+													Objects.nonNull(context.objectFields()) ?
+															context.objectFields().getText() :
 															null,
 													join(context.RPAREN())
 
