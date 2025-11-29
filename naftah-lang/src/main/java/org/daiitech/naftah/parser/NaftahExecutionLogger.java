@@ -285,6 +285,12 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.PrefixUnaryExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.SpawnUnaryExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.AwaitUnaryExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.PostfixUnaryExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -1975,6 +1981,42 @@ public final class NaftahExecutionLogger {
 															context.unaryExpression().getText() :
 															null
 										));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.SpawnUnaryExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											SpawnUnaryExpressionContext::SPAWN -> %s
+											SpawnUnaryExpressionContext::unaryExpression -> {
+											%s
+											}
+											"""
+										.formatted( Objects.nonNull(context.SPAWN()) ?
+															context.SPAWN().getText() :
+															null,
+													Objects.nonNull(context.unaryExpression()) ?
+															context.unaryExpression().getText() :
+															null));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.AwaitUnaryExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											AwaitUnaryExpressionContext::AWAIT -> %s
+											AwaitUnaryExpressionContext::unaryExpression -> {
+											%s
+											}
+											"""
+										.formatted( Objects.nonNull(context.AWAIT()) ?
+															context.AWAIT().getText() :
+															null,
+													Objects.nonNull(context.unaryExpression()) ?
+															context.unaryExpression().getText() :
+															null));
 	}
 
 	public static String logExecution(  boolean doLog,
