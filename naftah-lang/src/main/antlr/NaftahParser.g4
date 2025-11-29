@@ -204,12 +204,12 @@ someCase: SOME LPAREN ID RPAREN (DO | ARROW) (block | expression);
 noneCase: NONE (DO | ARROW) (block | expression);
 
 // Concurrency Scope Block
-scopeBlock: SCOPE block;
+scopeBlock: SCOPE ORDERED? block;
 
 // Concurrency Channel / Actor
 channelDeclaration: CHANNEL ID (COLON type)?;
 
-actorDeclaration: ACTOR ID LPAREN ID (COLON type)? RPAREN block;
+actorDeclaration: ACTOR ID (LPAREN ID (COLON type)? RPAREN)? block;
 
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;
@@ -228,7 +228,7 @@ multipleReturns: RETURN ((LPAREN tupleElements? RPAREN) | collectionMultipleElem
 block: LBRACE (statement END?)* RBRACE;
 
 // Expressions: Can be value, binary operations... with optional Concurrency Spawn / Await
-expression: ((SPAWN (COLON type)?) | AWAIT)? ternaryExpression;
+expression: ternaryExpression;
 
 ternaryExpression: nullishExpression (QUESTION expression COLON ternaryExpression)?;
 
@@ -248,7 +248,9 @@ multiplicativeExpression: powerExpression ((MUL | DIV | MOD | ELEMENTWISE_MUL | 
 
 powerExpression: unaryExpression (POW powerExpression)?;
 
-unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression #prefixUnaryExpression
+unaryExpression: SPAWN (COLON type)? unaryExpression #spawnUnaryExpression
+               | AWAIT unaryExpression #awaitUnaryExpression
+			   | (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression #prefixUnaryExpression
     		   | postfixExpression #postfixUnaryExpression
      		   ;
 
