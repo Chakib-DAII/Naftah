@@ -36,7 +36,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
-import org.daiitech.naftah.builtin.lang.ClassScanningResult;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
@@ -49,6 +48,7 @@ import org.daiitech.naftah.builtin.utils.concurrent.SuppliedInheritableThreadLoc
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
+import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
 
