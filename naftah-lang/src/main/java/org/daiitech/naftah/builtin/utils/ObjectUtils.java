@@ -23,6 +23,9 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.utils.concurrent.Actor;
+import org.daiitech.naftah.builtin.utils.concurrent.Channel;
+import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -126,6 +129,43 @@ public final class ObjectUtils {
 		}
 
 		return !(NaN.isNaN(obj) || None.isNone(obj));
+	}
+
+	/**
+	 * Compares two {@link Comparable} objects in a null-safe manner.
+	 *
+	 * <p>Rules for comparison:</p>
+	 * <ul>
+	 * <li>If both {@code left} and {@code right} are the same object (including both {@code null}), returns 0.</li>
+	 * <li>A {@code null} value is considered less than any non-null value (nulls-first).</li>
+	 * <li>If both values are non-null, their natural ordering (via {@link Comparable#compareTo}) is used.</li>
+	 * </ul>
+	 *
+	 * <p>Examples:</p>
+	 * <pre>
+	 * compare(null, null) = 0
+	 * compare(null, "abc") = -1
+	 * compare("abc", null) = 1
+	 * compare("abc", "def") = "abc".compareTo("def")
+	 * </pre>
+	 *
+	 * @param <T>   the type of objects being compared; must implement {@link Comparable}
+	 * @param left  the first object to compare, may be {@code null}
+	 * @param right the second object to compare, may be {@code null}
+	 * @return a negative integer, zero, or a positive integer if {@code left} is less than, equal to,
+	 *         or greater than {@code right}, respectively
+	 */
+	public static <T extends Comparable<T>> int compare(T left, T right) {
+		if (left == right) {
+			return 0;
+		}
+		if (left == null) {
+			return -1;   // nulls-first
+		}
+		if (right == null) {
+			return 1;
+		}
+		return left.compareTo(right);
 	}
 
 	/**
@@ -409,7 +449,8 @@ public final class ObjectUtils {
 			return false;
 		}
 		Class<?> cls = obj.getClass();
-		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class;
+		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class || cls == Task.class || cls == Channel.class || Actor.class
+				.isAssignableFrom(cls);
 	}
 
 	/**
