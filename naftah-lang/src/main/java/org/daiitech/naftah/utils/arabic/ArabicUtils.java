@@ -620,17 +620,20 @@ public final class ArabicUtils {
 
 		for (String word : words) {
 			if (currentLine.length() + word.length() + (!currentLine.isEmpty() ? 1 : 0) > terminalWidth) {
-				// Line is full, store it and start a new one
-				String result = addPadding(currentLine, terminalWidth);
+				var wordChunks = chunk(word, terminalWidth);
+				for (String wordChunk : wordChunks) {
+					// Line is full, store it and start a new one
+					String result = addPadding(currentLine, terminalWidth);
 
-				if (print) {
-					System.out.println(result);
-				}
-				else {
-					lines.add(result);
-				}
+					if (print) {
+						System.out.println(result);
+					}
+					else {
+						lines.add(result);
+					}
 
-				currentLine = new StringBuilder(word);
+					currentLine = new StringBuilder(wordChunk);
+				}
 			}
 			else {
 				if (!currentLine.isEmpty()) {
@@ -693,6 +696,34 @@ public final class ArabicUtils {
 		// fixes, like
 		// above)
 		return containsArabic(input) ? input + " ".repeat(padding) : " ".repeat(padding) + input;
+	}
+
+	/**
+	 * Splits the given string into consecutive substrings of the specified size.
+	 *
+	 * <p>Each chunk is created using {@link String#substring(int, int)}. The last
+	 * chunk may be shorter than {@code size} if the input string's length is not
+	 * evenly divisible by the chunk size.</p>
+	 *
+	 * <p>Examples:</p>
+	 * <ul>
+	 * <li>{@code chunk("abcdef", 2)} → {@code ["ab", "cd", "ef"]}</li>
+	 * <li>{@code chunk("abcde", 2)} → {@code ["ab", "cd", "e"]}</li>
+	 * </ul>
+	 *
+	 * @param input the string to split; must not be {@code null}
+	 * @param size  the size of each chunk; must be greater than zero
+	 * @return a list containing the resulting substrings, in order
+	 * @throws IllegalArgumentException if {@code size} is less than 1
+	 */
+	public static List<String> chunk(String input, int size) {
+		List<String> chunks = new ArrayList<>();
+
+		for (int i = 0; i < input.length(); i += size) {
+			chunks.add(input.substring(i, Math.min(input.length(), i + size)));
+		}
+
+		return chunks;
 	}
 
 	/**
