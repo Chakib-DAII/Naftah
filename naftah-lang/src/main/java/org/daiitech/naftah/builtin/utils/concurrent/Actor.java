@@ -58,10 +58,10 @@ public abstract class Actor<T> implements Runnable {
 	 * @param <T>      the message type
 	 * @return a new {@link Actor} instance
 	 */
-	public static <T> Actor<T> of(String name,
-								  DefaultContext context,
-								  Consumer<T> consumer,
-								  Runnable cleaner) {
+	public static <T> Actor<T> of(  String name,
+									DefaultContext context,
+									Consumer<T> consumer,
+									Runnable cleaner) {
 		return new Actor<>(name, context, cleaner) {
 			@Override
 			public void handle(T message) throws Exception {
