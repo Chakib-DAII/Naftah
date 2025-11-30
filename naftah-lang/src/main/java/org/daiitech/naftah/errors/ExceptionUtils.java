@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmExecutable;
@@ -717,36 +716,5 @@ public final class ExceptionUtils {
 											JVM ignored reflective write to constant field '%s'.
 											"""
 													.formatted(fieldName));
-	}
-
-	/**
-	 * Creates a {@link NaftahBugError} indicating that an asynchronous function (async)
-	 * was incorrectly invoked using the <code>spawn</code> keyword.
-	 * <p>
-	 * This error is typically triggered when a user attempts to run a non-spawnable
-	 * async function via the SPAWN token in Naftah language syntax. The message
-	 * includes the function name and a formatted representation of the offending token.
-	 * </p>
-	 *
-	 * @param functionName the name of the async function that was incorrectly invoked
-	 * @param vocabulary   the ANTLR vocabulary used for formatting the SPAWN token symbol
-	 * @param line         the source code line where the error occurred
-	 * @param column       the source code column where the error occurred
-	 * @return a {@link NaftahBugError} describing the invalid async function spawn attempt
-	 */
-	public static NaftahBugError newNaftahAsyncFunctionSpawningError(   String functionName,
-																		Vocabulary vocabulary,
-																		int line,
-																		int column) {
-		return new NaftahBugError(
-									"الدالة غير المتزامنة (async) '%s' لا يمكن تشغيلها باستخدام أمر '%s'."
-											.formatted(
-														functionName,
-														getFormattedTokenSymbols(   vocabulary,
-																					org.daiitech.naftah.parser.NaftahLexer.SPAWN,
-																					false)),
-									line,
-									column
-		);
 	}
 }
