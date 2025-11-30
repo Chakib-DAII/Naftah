@@ -182,9 +182,9 @@ public class ClassUtilsTests {
 		assertEquals(
 						"""
 							تفاصيل الصنف:
-								- الاسم الكامل: org.daiitech.naftah.builtin.Builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة:مدرجة_مدرجة
+								- الاسم الكامل: org.daiitech.naftah.builtin.Builtin - أورغ:داعيتاك:نفطه:مدرجة_مدرجة:مدرجة_مدرجة
 								- الاسم المختصر: Builtin - مدرجة_مدرجة
-								- الحزمة: org.daiitech.naftah.builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة
+								- الحزمة: org.daiitech.naftah.builtin - أورغ:داعيتاك:نفطه:مدرجة_مدرجة
 								- عام (public)؟: نعم
 								- مجرد (abstract)؟: لا
 								- واجهة (interface)؟: لا

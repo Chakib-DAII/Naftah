@@ -276,7 +276,7 @@ public final class ArabicUtils {
 	 * For example, "com > كوم" transliterates "com" to Arabic "كوم".
 	 */
 	public static String CUSTOM_RULES = """
-										naftah > نفطة;
+										naftah > نفطه;
 										com > كوم;
 										org > أورغ;
 										co > كو;

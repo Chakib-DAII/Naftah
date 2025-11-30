@@ -120,7 +120,7 @@ public final class REPLHelper {
 	/**
 	 * Right-to-left prompt value.
 	 */
-	private static final String RTL_PROMPT_VALUE = "< نفطة >";
+	private static final String RTL_PROMPT_VALUE = "< نفطه >";
 	/**
 	 * Public RTL prompt with optional reshaping for display.
 	 */

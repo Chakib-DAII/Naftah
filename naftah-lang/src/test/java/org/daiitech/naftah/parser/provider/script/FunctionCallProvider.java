@@ -627,8 +627,8 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "اقرأ_خاصية(\"os.name\")", System.getProperty("os.name"), null),
 					Arguments.of(true, "اكتب_خاصية(\"my.prop\", \"value\")", None.get(), null),
 					Arguments.of(true, "نسخة_جافا()", System.getProperty("java.version"), null),
-					Arguments.of(true, "إصدار_نفطة()", NaftahSystem.getVersion(), null),
-//					Arguments.of(true, "إصدار_قصير_نفطة()", NaftahSystem.getShortVersion(), null),
+					Arguments.of(true, "إصدار_نفطه()", NaftahSystem.getVersion(), null),
+//					Arguments.of(true, "إصدار_قصير_نفطه()", NaftahSystem.getShortVersion(), null),
 					Arguments.of(true, "اسم_النظام()", System.getProperty(OS_NAME_PROPERTY), null),
 					Arguments.of(true, "إسم_المستخدم()", System.getProperty("user.name"), null),
 					Arguments.of(true, "مجلد_المستخدم()", System.getProperty("user.home"), null),
@@ -1825,9 +1825,9 @@ public class FunctionCallProvider implements ArgumentsProvider {
 
 								"""
 								--- java.util.Optional::orElse
-								جافا:أدة:اختياري::وف_فارغابل(فارغ):::أو_لس("لغة نفطة")
+								جافا:أدة:اختياري::وف_فارغابل(فارغ):::أو_لس("لغة نفطه")
 								""",
-								NaftahObject.of("لغة نفطة"),
+								NaftahObject.of("لغة نفطه"),
 								null),
 					Arguments
 							.of(true,
@@ -1890,7 +1890,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								--- java.util.Optional::get
 								اختياري::گت(),
 								--- java.util.Optional::orElse
-								اختياري::أو_لس("لغة نفطة")
+								اختياري::أو_لس("لغة نفطه")
 								)
 								""",
 								Tuple
