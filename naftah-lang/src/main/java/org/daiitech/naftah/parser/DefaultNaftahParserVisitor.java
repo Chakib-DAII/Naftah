@@ -209,6 +209,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										break;
 									}
 								}
+								currentContext.cleanThreadLocals();
 								deregisterContext();
 								return result;
 							}

@@ -1220,8 +1220,9 @@ public class DefaultContext {
 		pendingTasks.incrementAndGet();
 
 		// Add to the current thread's active scope if it exists
-		if (Objects.nonNull(CURRENT_TASK_SCOPE)) {
-			Objects.requireNonNull(CURRENT_TASK_SCOPE.get()).add(task);
+		List<Task<?>> currentTaskScope;
+		if (Objects.nonNull(CURRENT_TASK_SCOPE) && Objects.nonNull(currentTaskScope = CURRENT_TASK_SCOPE.get())) {
+			currentTaskScope.add(task);
 		}
 	}
 
@@ -1272,6 +1273,12 @@ public class DefaultContext {
 	 * registry—it only clears thread-local execution state.</p>
 	 */
 	public void cleanThreadLocals() {
+		CALL_STACK.remove();
+		LOOP_STACK.remove();
+		CURRENT_CONTEXT.remove();
+		if (Objects.nonNull(CURRENT_TASK_SCOPE)) {
+			CURRENT_TASK_SCOPE.remove();
+		}
 		this.variables.remove();
 		this.functions.remove();
 		if (Objects.nonNull(this.functionCallId)) {
