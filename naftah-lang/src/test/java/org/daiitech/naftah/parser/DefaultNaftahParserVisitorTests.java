@@ -3,6 +3,7 @@ package org.daiitech.naftah.parser;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -12,6 +13,7 @@ import org.daiitech.naftah.parser.provider.script.BlockProvider;
 import org.daiitech.naftah.parser.provider.script.CaseStatementProvider;
 import org.daiitech.naftah.parser.provider.script.CollectionAccessProvider;
 import org.daiitech.naftah.parser.provider.script.CollectionExpressionProvider;
+import org.daiitech.naftah.parser.provider.script.ConcurrencyProvider;
 import org.daiitech.naftah.parser.provider.script.DeclarationProvider;
 import org.daiitech.naftah.parser.provider.script.ForStatementProvider;
 import org.daiitech.naftah.parser.provider.script.FunctionCallProvider;
@@ -29,6 +31,10 @@ import org.daiitech.naftah.parser.provider.script.ValueExpressionsProvider;
 import org.daiitech.naftah.parser.provider.script.WhileStatementProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -41,7 +47,11 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.TestUtils.assertBugEquals;
 import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.TestUtils.runScript;
+import static org.daiitech.naftah.parser.DefaultContext.CALL_STACK;
 import static org.daiitech.naftah.parser.DefaultContext.CONTEXTS;
+import static org.daiitech.naftah.parser.DefaultContext.CURRENT_CONTEXT;
+import static org.daiitech.naftah.parser.DefaultContext.CURRENT_TASK_SCOPE;
+import static org.daiitech.naftah.parser.DefaultContext.LOOP_STACK;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
 import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
@@ -90,6 +100,12 @@ public class DefaultNaftahParserVisitorTests {
 	@BeforeEach
 	void setup() {
 		CONTEXTS.clear();
+		CALL_STACK.remove();
+		LOOP_STACK.remove();
+		CURRENT_CONTEXT.remove();
+		if (Objects.nonNull(CURRENT_TASK_SCOPE)) {
+			CURRENT_TASK_SCOPE.remove();
+		}
 	}
 
 	@ParameterizedTest
@@ -278,5 +294,25 @@ public class DefaultNaftahParserVisitorTests {
 							Object expectedValue,
 							NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@Nested
+	@Isolated
+	@Execution(ExecutionMode.SAME_THREAD)
+	class ConcurrencyTests {
+
+		@BeforeEach
+		void setup() {
+			DefaultNaftahParserVisitorTests.this.setup();
+		}
+
+		@ParameterizedTest
+		@ArgumentsSource(ConcurrencyProvider.class)
+		void concurrencyTests(  boolean validScript,
+								String script,
+								Object expectedValue,
+								NaftahBugError expectedNaftahBugError) throws Exception {
+			runTest(validScript, script, expectedValue, expectedNaftahBugError);
+		}
 	}
 }
