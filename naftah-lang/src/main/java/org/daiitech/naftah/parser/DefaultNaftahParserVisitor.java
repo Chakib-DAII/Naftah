@@ -62,6 +62,7 @@ import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_DECREMENT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_INCREMENT;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahAsyncFunctionSpawningError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidLoopLabelError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahExpressionsDeclarationsSizeMismatchErrorError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableListFoundError;
@@ -4724,21 +4725,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											Object function = currentContext.getFunction(functionName, false).b;
 											if (function instanceof DeclaredFunction declaredFunction && declaredFunction
 													.isAsync()) {
-												throw new NaftahBugError(
-																			"الدالة غير المتزامنة (async) '%s' لا يمكن تشغيلها باستخدام أمر '%s'."
-																					.formatted(
-																								functionName,
-																								getFormattedTokenSymbols(
-																															defaultNaftahParserVisitor.parser
-																																	.getVocabulary(),
-																															org.daiitech.naftah.parser.NaftahLexer.AWAIT,
-																															false)),
-																			possibleFunctionCallContext
-																					.getStart()
-																					.getLine(),
-																			possibleFunctionCallContext
-																					.getStart()
-																					.getCharPositionInLine()
+												throw newNaftahAsyncFunctionSpawningError(
+																							functionName,
+																							defaultNaftahParserVisitor.parser
+																									.getVocabulary(),
+																							possibleFunctionCallContext
+																									.getStart()
+																									.getLine(),
+																							possibleFunctionCallContext
+																									.getStart()
+																									.getCharPositionInLine()
 												);
 											}
 										}
