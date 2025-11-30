@@ -276,6 +276,7 @@ public final class ArabicUtils {
 	 * For example, "com > كوم" transliterates "com" to Arabic "كوم".
 	 */
 	public static String CUSTOM_RULES = """
+										daiitech > داعيتاك;
 										naftah > نفطه;
 										com > كوم;
 										org > أورغ;
@@ -781,7 +782,7 @@ public final class ArabicUtils {
 		Transliterator transliterator = null;
 
 		if (Objects.nonNull(customRules) && !customRules.isBlank()) {
-			String customTransliteratorID = hashString(customRules, "SHA-1");
+			String customTransliteratorID = "Naftah" + hashString(customRules, "SHA-1");
 
 			try {
 				// Try to get an instance of the transliterator by ID
@@ -791,7 +792,9 @@ public final class ArabicUtils {
 			catch (IllegalArgumentException e) {
 				// Create a transliterator to convert based on ID with the custom rules
 				Transliterator customTransliterator = Transliterator
-						.createFromRules(customTransliteratorID, customRules, Transliterator.FORWARD);
+						.createFromRules(   customTransliteratorID,
+											customRules,
+											Transliterator.FORWARD);
 				Transliterator.registerInstance(customTransliterator);
 
 				// get an instance of the transliterator by ID
