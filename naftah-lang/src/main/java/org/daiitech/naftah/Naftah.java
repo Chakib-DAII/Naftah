@@ -191,6 +191,10 @@ public final class Naftah {
 	 */
 	public static final String MULTILINE_CACHE_PROPERTY = "naftah.cache.multiline.active";
 	/**
+	 * Property to enable chunks of long words in text processing in Naftah.
+	 */
+	public static final String WORD_CHUNK_PROPERTY = "naftah.word.chunk.active";
+	/**
 	 * Property to enable caching of string interpolation text processing in Naftah.
 	 */
 	public static final String INTERPOLATION_CACHE_PROPERTY = "naftah.cache.interpolation.active";
@@ -638,6 +642,7 @@ public final class Naftah {
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
 			System.setProperty(SCAN_JDK_PROPERTY, Boolean.toString(true));
 			System.setProperty(CACHE_SCANNING_RESULTS_PROPERTY, Boolean.toString(true));
+			System.setProperty(WORD_CHUNK_PROPERTY, Boolean.toString(true));
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
 			}
