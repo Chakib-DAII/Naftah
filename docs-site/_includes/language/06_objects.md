@@ -171,8 +171,9 @@ define a simple object or explicitly specify its type.
 * [🧮 التعبيرات - Expressions](./04_expressions.md)
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
-* [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
-* [⚙️ التوافق مع Java (Java Interop) في لغة نفطة - Java Interop](./09_java_interop.md)
+* [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
+* [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
+* [⚡ التعامل مع التزامن في نفطه – Concurrency](./10_concurrency.md)
 
 ---
 </div>
