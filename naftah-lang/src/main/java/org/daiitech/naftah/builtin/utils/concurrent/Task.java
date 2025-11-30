@@ -39,6 +39,7 @@ public class Task<T> implements Awaitable<T> {
 	private final DefaultContext context;
 	private final Callable<T> callable;
 	private final Supplier<CleanableThread> cleanableThreadSupplier;
+	private Thread thread;
 	private FutureTask<T> future;
 
 	/**
@@ -81,7 +82,7 @@ public class Task<T> implements Awaitable<T> {
 			throw new NaftahBugError("تم تشغيل المهمة مسبقًا ولا يمكن تشغيلها مرة أخرى.");
 		}
 		this.future = new FutureTask<>(callable);
-		Thread thread = cleanableThreadSupplier.get();
+		thread = cleanableThreadSupplier.get();
 		thread.start();
 		context.registerTask(this);
 	}
@@ -100,6 +101,9 @@ public class Task<T> implements Awaitable<T> {
 			return future.get();
 		}
 		catch (Throwable th) {
+			if (th instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			throw th instanceof NaftahBugError naftahBugError ?
 					naftahBugError :
 					new NaftahBugError(th);
@@ -185,6 +189,56 @@ public class Task<T> implements Awaitable<T> {
 	 */
 	public DefaultContext getContext() {
 		return context;
+	}
+
+	/**
+	 * Returns the unique identifier of this task.
+	 *
+	 * <p>
+	 * Each task is assigned a unique ID at creation time, which can be used
+	 * for logging, debugging, monitoring, or distinguishing between multiple tasks
+	 * running concurrently.
+	 * </p>
+	 *
+	 * @return the unique task ID
+	 */
+	public long getTaskId() {
+		return taskId;
+	}
+
+	/**
+	 * Stops this task gracefully by setting the running flag to false
+	 * and interrupting its thread.
+	 */
+	public void stop() {
+		thread.interrupt();
+	}
+
+	/**
+	 * Waits for the task thread to terminate.
+	 *
+	 * @throws InterruptedException if interrupted while waiting
+	 */
+	public void join() throws InterruptedException {
+		thread.join();
+	}
+
+	/**
+	 * Checks whether the task's thread is alive.
+	 *
+	 * @return true if the thread is alive, false otherwise
+	 */
+	public boolean isAlive() {
+		return thread.isAlive();
+	}
+
+	/**
+	 * Returns the underlying thread of this task.
+	 *
+	 * @return the task's thread
+	 */
+	public Thread getThread() {
+		return thread;
 	}
 
 	/**

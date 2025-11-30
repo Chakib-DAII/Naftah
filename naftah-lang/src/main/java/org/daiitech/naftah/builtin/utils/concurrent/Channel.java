@@ -66,6 +66,21 @@ public class Channel<T> {
 	}
 
 	/**
+	 * Returns the name of this channel.
+	 *
+	 * <p>
+	 * The name is assigned when the channel is created using {@link #of(String)}.
+	 * It is used primarily for identification and debugging, especially when
+	 * multiple channels are involved in concurrent operations.
+	 * </p>
+	 *
+	 * @return the name of the channel
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
 	 * Returns a string representation of the channel.
 	 *
 	 * @return a string in the format "&lt;قناة name&gt;"
