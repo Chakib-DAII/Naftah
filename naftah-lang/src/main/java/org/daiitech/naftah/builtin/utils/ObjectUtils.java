@@ -801,10 +801,7 @@ public final class ObjectUtils {
 	 */
 	public static String numberToString(Number number) {
 		if (Boolean.getBoolean(ARABIC_NUMBER_FORMATTER_PROPERTY)) {
-			//noinspection SynchronizeOnNonFinalField
-			synchronized (ARABIC_NUMBER_FORMAT) {
-				return ARABIC_NUMBER_FORMAT.format(number);
-			}
+			return ARABIC_NUMBER_FORMAT.get().format(number);
 		}
 		else {
 			return latinNumberToArabicString(number);
