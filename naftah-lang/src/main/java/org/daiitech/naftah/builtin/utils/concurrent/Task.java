@@ -34,7 +34,7 @@ import org.daiitech.naftah.parser.DefaultContext;
  * @param <T> the type of result produced by the task
  * @author Chakib Daii
  */
-public class Task<T> implements Awaitable<T> {
+public final class Task<T> implements Awaitable<T> {
 	private final long taskId;
 	private final DefaultContext context;
 	private final Callable<T> callable;

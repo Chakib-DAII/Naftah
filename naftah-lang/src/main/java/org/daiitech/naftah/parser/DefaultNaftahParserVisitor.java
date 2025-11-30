@@ -4707,50 +4707,48 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, spawnUnaryExpressionContext) -> {
-								{
-									var possibleFunctionCallContext = getFirstChildOfType(  spawnUnaryExpressionContext,
-																							org.daiitech.naftah.parser.NaftahParser.FunctionCallContext.class);
-									if (Objects.nonNull(possibleFunctionCallContext)) {
-										boolean hasQualifiedCall = hasChild(possibleFunctionCallContext
-												.primaryCall()
-												.qualifiedCall());
-										String functionName = hasQualifiedCall ?
-												(String) defaultNaftahParserVisitor
-														.visit(possibleFunctionCallContext
-																.primaryCall()
-																.qualifiedCall()) :
-												possibleFunctionCallContext.primaryCall().ID().getText();
+								var possibleFunctionCallContext = getFirstChildOfType(  spawnUnaryExpressionContext,
+																						org.daiitech.naftah.parser.NaftahParser.FunctionCallContext.class);
+								if (Objects.nonNull(possibleFunctionCallContext)) {
+									boolean hasQualifiedCall = hasChild(possibleFunctionCallContext
+											.primaryCall()
+											.qualifiedCall());
+									String functionName = hasQualifiedCall ?
+											(String) defaultNaftahParserVisitor
+													.visit(possibleFunctionCallContext
+															.primaryCall()
+															.qualifiedCall()) :
+											possibleFunctionCallContext.primaryCall().ID().getText();
 
-										if (currentContext.containsFunction(functionName)) {
-											Object function = currentContext.getFunction(functionName, false).b;
-											if (function instanceof DeclaredFunction declaredFunction && declaredFunction
-													.isAsync()) {
-												throw new NaftahBugError(
-																			"""
-																			الدالة غير المتزامنة (async) '%s' لا يمكن تشغيلها باستخدام أمر '%s'.
-																			"""
-																					.formatted(
-																								functionName,
-																								getFormattedTokenSymbols(
-																															defaultNaftahParserVisitor.parser
-																																	.getVocabulary(),
-																															org.daiitech.naftah.parser.NaftahLexer.AWAIT,
-																															false)),
-																			possibleFunctionCallContext
-																					.getStart()
-																					.getLine(),
-																			possibleFunctionCallContext
-																					.getStart()
-																					.getCharPositionInLine()
-												);
-											}
+									if (currentContext.containsFunction(functionName)) {
+										Object function = currentContext.getFunction(functionName, false).b;
+										if (function instanceof DeclaredFunction declaredFunction && declaredFunction
+												.isAsync()) {
+											throw new NaftahBugError(
+																		"""
+																		الدالة غير المتزامنة (async) '%s' لا يمكن تشغيلها باستخدام أمر '%s'.
+																		"""
+																				.formatted(
+																							functionName,
+																							getFormattedTokenSymbols(
+																														defaultNaftahParserVisitor.parser
+																																.getVocabulary(),
+																														org.daiitech.naftah.parser.NaftahLexer.AWAIT,
+																														false)),
+																		possibleFunctionCallContext
+																				.getStart()
+																				.getLine(),
+																		possibleFunctionCallContext
+																				.getStart()
+																				.getCharPositionInLine()
+											);
 										}
 									}
-									return spawnTask(   currentContext,
-														() -> defaultNaftahParserVisitor
-																.visit(spawnUnaryExpressionContext.unaryExpression()),
-														currentContext::cleanThreadLocals);
 								}
+								return spawnTask(   currentContext,
+													() -> defaultNaftahParserVisitor
+															.visit(spawnUnaryExpressionContext.unaryExpression()),
+													currentContext::cleanThreadLocals);
 							});
 	}
 

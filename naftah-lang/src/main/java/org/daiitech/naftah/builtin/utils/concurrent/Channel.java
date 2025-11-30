@@ -21,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @param <T> the type of values sent through the channel
  * @author Chakib Daii
  */
-public class Channel<T> {
+public final class Channel<T> {
 	private final BlockingQueue<T> queue = new LinkedBlockingQueue<>();
 	private final String name;
 

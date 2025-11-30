@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  * @param <T> the type of value stored in the thread-local variable
  * @author Chakib Daii
  */
-public class SuppliedInheritableThreadLocal<T> extends InheritableThreadLocal<T> {
+public final class SuppliedInheritableThreadLocal<T> extends InheritableThreadLocal<T> {
 
 	private final Supplier<? extends T> supplier;
 	private final boolean shareParentRef;

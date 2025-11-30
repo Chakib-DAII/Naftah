@@ -566,7 +566,6 @@ public class DefaultContext {
 	 * If the removed context and its parent both have parse tree execution properties,
 	 * copies the parse tree execution state from the removed context to its parent.
 	 *
-	 * @return the removed {@link DefaultContext}
 	 */
 	public static void deregisterContext() {
 		DefaultContext currentContext = CURRENT_CONTEXT.get();
