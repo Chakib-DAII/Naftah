@@ -26,7 +26,7 @@ public class ForStatementProvider implements ArgumentsProvider {
 								}
 							أنهي
 							""",
-							None.get(),
+							null,
 							null),
 					Arguments
 							.of(
@@ -65,7 +65,7 @@ public class ForStatementProvider implements ArgumentsProvider {
 								}
 										أنهي
 								""",
-								None.get(),
+								null,
 								null
 							),
 					Arguments
@@ -105,7 +105,7 @@ public class ForStatementProvider implements ArgumentsProvider {
 								}
 										أنهي
 								""",
-								None.get(),
+								null,
 								null
 							),
 					Arguments
