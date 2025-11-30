@@ -902,7 +902,7 @@ public class DefaultContext {
 			Throwable thr = null;
 			try {
 				startLoader("""
-							تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد يستغرق الأمر عدة دقائق حسب الإعدادات."""
+							تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطه. قد يستغرق الأمر عدة دقائق حسب الإعدادات."""
 				);
 				classScanningResult = LOADER_TASK.get();
 				stopLoader();
