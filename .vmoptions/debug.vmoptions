@@ -3,36 +3,11 @@
 -Xmx1G                       # Maximum heap size
 -Xss512k                      # Thread stack size
 
-# ================================
 # Garbage Collector
-# ================================
-
-# Serial GC (single-threaded, small heaps)
-# -XX:+UseSerialGC
-
-# Parallel GC (multi-threaded, high throughput)
-# -XX:+UseParallelGC
-
-# G1 GC (default for Java 11+, balanced latency)
-# -XX:+UseG1GC
-# -XX:MaxGCPauseMillis=200
-# -XX:InitiatingHeapOccupancyPercent=45
-# -XX:+ParallelRefProcEnabled
-
-# Shenandoah GC (low pause, concurrent compaction)
-# -XX:+UseShenandoahGC
-
-# ZGC (low pause, large heaps)
-# -XX:+UseZGC
-
-# Epsilon GC (no-op, benchmarking only)
-# -XX:+UseEpsilonGC
-
-
+-XX:+UseG1GC                  # Use G1 Garbage Collector
 -XX:MaxGCPauseMillis=100      # Target maximum GC pause time
 -XX:InitiatingHeapOccupancyPercent=45   # Trigger concurrent GC at 45% heap occupancy
 -XX:+ParallelRefProcEnabled   # Parallel processing of soft/weak/phantom references
-# ================================
 
 # Logging
 -XX:+UnlockDiagnosticVMOptions # Enable advanced diagnostic options
