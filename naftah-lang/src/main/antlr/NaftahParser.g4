@@ -209,7 +209,11 @@ scopeBlock: SCOPE ORDERED? block;
 // Concurrency Channel / Actor
 channelDeclaration: CHANNEL ID (COLON type)?;
 
-actorDeclaration: ACTOR ID (LPAREN (ID (COLON type)? (COMMA | SEMI))? (LPAREN objectFields RPAREN)? RPAREN)? block;
+actorDeclaration: ACTOR ID
+	(LPAREN (
+			 (ID (COLON type)? ((COMMA | SEMI) LPAREN objectFields RPAREN)?)
+     		 | (LPAREN objectFields RPAREN)
+     ) RPAREN)? block;
 
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;
