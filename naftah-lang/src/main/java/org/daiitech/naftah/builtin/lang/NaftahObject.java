@@ -2,6 +2,7 @@ package org.daiitech.naftah.builtin.lang;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
@@ -201,14 +202,24 @@ public record NaftahObject(
 				if (Modifier.isStatic(field.getModifiers())) {
 					continue;
 				}
-				field.setAccessible(true);
 				try {
+					if (!field.canAccess(obj)) {
+						try {
+							field.setAccessible(true);
+						}
+						catch (InaccessibleObjectException e) {
+							result
+									.put(   formatKeyOrFieldName(field.getName()),
+											FIELD_ERROR_FORMAT.formatted(e.getMessage()));
+							continue;
+						}
+					}
 					Object value = field.get(obj);
 					if (!skipNulls || value != null) {
 						result.put(formatKeyOrFieldName(field.getName()), convertValue(value, visited, skipNulls));
 					}
 				}
-				catch (IllegalAccessException e) {
+				catch (Exception e) {
 					result.put(formatKeyOrFieldName(field.getName()), FIELD_ERROR_FORMAT.formatted(e.getMessage()));
 				}
 			}
