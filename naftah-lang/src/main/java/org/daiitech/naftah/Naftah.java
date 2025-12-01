@@ -211,6 +211,18 @@ public final class Naftah {
 	 */
 	public static final String BUILTIN_PACKAGES_PROPERTY = "naftah.builtinPackages";
 	/**
+	 * System property enabling or disabling deep reflection for Java object mapping.
+	 */
+	public static final String JAVA_OBJECT_REFLECT_ACTIVE_PROPERTY = "naftah.javaObject.deepReflect.active";
+	/**
+	 * System property specifying the maximum depth allowed during deep reflection.
+	 */
+	public static final String JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY = "naftah.javaObject.deepReflect.maxDepth";
+	/**
+	 * System property controlling whether null fields are skipped during reflection.
+	 */
+	public static final String JAVA_OBJECT_REFLECT_SKIP_NULLS_PROPERTY = "naftah.javaObject.deepReflect.skipNulls";
+	/**
 	 * Configuration key representing the classes of builtin function set.
 	 */
 	public static final String BUILTIN_CLASSES = "builtinClasses";
