@@ -138,6 +138,8 @@ set JAVA_OPTS=%JAVA_OPTS% !VM_OPTS! --add-modules=jdk.incubator.vector ^
 --add-opens=java.base/jdk.internal.vm=ALL-UNNAMED ^
 --add-opens=java.base/jdk.internal.logger=ALL-UNNAMED ^
 --add-opens=java.base/jdk.internal.event=ALL-UNNAMED ^
+--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED ^
+--add-opens=java.base/jdk.internal.module=ALL-UNNAMED ^
 --add-opens=java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED ^
 --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED ^
 --add-opens=java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED ^
