@@ -1376,13 +1376,44 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Checks if the variable with the given name exists in the current context or any parent context.
+	 * Determines whether a variable with the given name exists in this context
+	 * or in any of its ancestor contexts.
 	 *
-	 * @param name the variable name
-	 * @return true if the variable exists, false otherwise
+	 * <p>This method performs a hierarchical lookup: it first checks the current
+	 * context's variable map, and if not found, recursively checks parent
+	 * contexts. This allows child contexts to inherit variables from their
+	 * enclosing execution scopes.</p>
+	 *
+	 * @param name the name of the variable to look up
+	 * @return {@code true} if the variable exists in this context or any parent
+	 *         context; {@code false} otherwise
 	 */
 	public boolean containsVariable(String name) {
-		return variables.get().containsKey(name) || (parent != null && parent.containsVariable(name));
+		return variables.get().containsKey(name) || (Objects.nonNull(parent) && parent.containsVariable(name));
+	}
+
+	/**
+	 * Checks whether a variable with the given name exists in the provided local
+	 * variable map or in any sibling contexts.
+	 *
+	 * <p>This method performs a “horizontal” lookup: it does not traverse upward
+	 * to parent contexts but instead inspects the current context's variable map
+	 * (the provided {@code variableMap}) and then the variable maps of sibling
+	 * contexts returned by {@link #getSiblings(boolean)}.</p>
+	 *
+	 * <p>This is useful in block-level or parallel-scope visibility rules where
+	 * sibling contexts may share declarations that should not be inherited from
+	 * parent scopes but must still be detected to prevent name conflicts.</p>
+	 *
+	 * @param variableMap  the variable map belonging to the current context
+	 * @param variableName the variable name to check
+	 * @return {@code true} if the variable exists locally or in any sibling
+	 *         context; {@code false} otherwise
+	 */
+	public boolean containsLocalVariable(Map<String, DeclaredVariable> variableMap, String variableName) {
+		List<DefaultContext> siblings;
+		return variableMap.containsKey(variableName) || (Objects.nonNull(siblings = getSiblings(false)) && !siblings
+				.isEmpty() && siblings.stream().anyMatch(sibling -> sibling.variables.get().containsKey(variableName)));
 	}
 
 	/**
@@ -1450,7 +1481,7 @@ public class DefaultContext {
 	 */
 	public void defineVariable(String name, DeclaredVariable value) {
 		var variableMap = variables.get();
-		if (variableMap.containsKey(name)) {
+		if (containsLocalVariable(variableMap, name)) {
 			throw new NaftahBugError("المتغير '%s' موجود في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
 		}
 		variableMap.put(name, value); // force local
@@ -1464,7 +1495,7 @@ public class DefaultContext {
 	 */
 	public void defineVariables(Map<String, DeclaredVariable> variables) {
 		var variableMap = this.variables.get();
-		if (variables.keySet().stream().anyMatch(variableMap::containsKey)) {
+		if (variables.keySet().stream().anyMatch(name -> containsLocalVariable(variableMap, name))) {
 			throw new NaftahBugError("المتغير موجود في السياق الحالي. لا يمكن إعادة إعلانه.");
 		}
 		variableMap.putAll(variables); // force local
