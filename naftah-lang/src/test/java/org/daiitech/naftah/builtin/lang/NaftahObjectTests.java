@@ -5,8 +5,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.daiitech.naftah.Naftah.JAVA_OBJECT_REFLECT_ACTIVE_PROPERTY;
+import static org.daiitech.naftah.Naftah.JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -14,6 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NaftahObjectTests {
+
+	@BeforeAll
+	static void setupAll() {
+		System.setProperty(JAVA_OBJECT_REFLECT_ACTIVE_PROPERTY, Boolean.toString(true));
+		System.setProperty(JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY, Integer.toString(999));
+	}
+
 	@Test
 	void testGetWithCollection() {
 		List<String> data = List.of("a", "b");
