@@ -212,8 +212,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 								deregisterContext();
-								currentContext.cleanThreadLocals();
 								if (!Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+									currentContext.cleanThreadLocals();
 									cleanClassThreadLocals();
 								}
 								return result;
