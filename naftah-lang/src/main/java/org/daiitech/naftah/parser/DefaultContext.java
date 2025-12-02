@@ -1196,6 +1196,31 @@ public class DefaultContext {
 	}
 
 	/**
+	 * Clears all static {@link ThreadLocal} fields used by this class,
+	 * removing global per-thread interpreter state such as the execution
+	 * call stack, loop stack, and the currently active evaluation context.
+	 *
+	 * <p>This method should be called when global per-thread state is no
+	 * longer needed—for example, when shutting down an interpreter instance,
+	 * resetting internal state between isolated evaluations, or cleaning up
+	 * after thread reuse in pooled environments.</p>
+	 *
+	 * <p>Only thread-local data for the current thread is removed. This method
+	 * does not modify shared global structures or affect the state of other
+	 * threads. If the class maintains optional ThreadLocal fields, they are
+	 * removed only when non-null to ensure safe cleanup regardless of
+	 * initialization order.</p>
+	 */
+	public static void cleanClassThreadLocals() {
+		CALL_STACK.remove();
+		LOOP_STACK.remove();
+		CURRENT_CONTEXT.remove();
+		if (Objects.nonNull(CURRENT_TASK_SCOPE)) {
+			CURRENT_TASK_SCOPE.remove();
+		}
+	}
+
+	/**
 	 * Registers a newly created asynchronous task in both the current task scope
 	 * and the associated execution context.
 	 *
@@ -1272,12 +1297,6 @@ public class DefaultContext {
 	 * registry—it only clears thread-local execution state.</p>
 	 */
 	public void cleanThreadLocals() {
-		CALL_STACK.remove();
-		LOOP_STACK.remove();
-		CURRENT_CONTEXT.remove();
-		if (Objects.nonNull(CURRENT_TASK_SCOPE)) {
-			CURRENT_TASK_SCOPE.remove();
-		}
 		this.variables.remove();
 		this.functions.remove();
 		if (Objects.nonNull(this.functionCallId)) {

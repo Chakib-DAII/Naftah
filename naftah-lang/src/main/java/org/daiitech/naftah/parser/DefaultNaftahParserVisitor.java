@@ -43,6 +43,7 @@ import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.newNaftahIndexOutOfBoundsBugError;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.setElementAt;
@@ -70,6 +71,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahSingleExpressio
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahSpecifiedTypesExceedVariableNamesError;
 import static org.daiitech.naftah.parser.DefaultContext.CURRENT_TASK_SCOPE;
 import static org.daiitech.naftah.parser.DefaultContext.LOOP_STACK;
+import static org.daiitech.naftah.parser.DefaultContext.cleanClassThreadLocals;
 import static org.daiitech.naftah.parser.DefaultContext.currentLoopLabel;
 import static org.daiitech.naftah.parser.DefaultContext.defineImport;
 import static org.daiitech.naftah.parser.DefaultContext.endScope;
@@ -209,8 +211,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										break;
 									}
 								}
-								currentContext.cleanThreadLocals();
 								deregisterContext();
+								currentContext.cleanThreadLocals();
+								if (!Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+									cleanClassThreadLocals();
+								}
 								return result;
 							}
 		);
