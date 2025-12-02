@@ -2,7 +2,6 @@ package org.daiitech.naftah.parser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 
@@ -130,35 +129,5 @@ public class REPLContext extends DefaultContext {
 	public static void deregisterContext() {
 		DefaultContext currentContext = CURRENT_CONTEXT.get();
 		deregisterContext(currentContext);
-	}
-
-	/**
-	 * Deregisters the specified {@link DefaultContext}.
-	 * <p>
-	 * If the context has a parent and can be safely removed (i.e., it has no pending tasks
-	 * and its children are idle), this method will:
-	 * <ul>
-	 * <li>Remove the context from the static {@code CONTEXTS} map.</li>
-	 * <li>Merge the context's variables and functions into its parent.</li>
-	 * <li>Copy the parse tree execution state to the parent, if available.</li>
-	 * </ul>
-	 * </p>
-	 * <p>
-	 * If the context cannot be removed (because it has pending tasks), this method will
-	 * leave it in place and may mark it for removal later.
-	 * </p>
-	 *
-	 * @param context the {@link DefaultContext} to deregister; must not be {@code null}
-	 */
-	public static void deregisterContext(DefaultContext context) {
-		if (Objects.nonNull(context) && Objects.nonNull(context.parent) && tryDeregisterContext(
-																								context)) {
-			context.parent.variables.get().putAll(context.variables.get());
-			context.parent.functions.get().putAll(context.functions.get());
-			if (Objects.nonNull(context.parseTreeExecution) && Objects
-					.nonNull(context.parent.parseTreeExecution)) {
-				context.parent.parseTreeExecution.get().copyFrom(context.parseTreeExecution.get());
-			}
-		}
 	}
 }

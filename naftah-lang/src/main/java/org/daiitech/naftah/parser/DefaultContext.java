@@ -573,30 +573,68 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Attempts to deregister the specified context and, if removal succeeds,
-	 * propagate parse-tree execution state to its parent (when applicable).
+	 * Attempts to detach the given {@link DefaultContext} from its parent context,
+	 * performing state propagation when necessary.
 	 *
-	 * <p>If the context cannot yet be removed due to pending tasks in itself
-	 * or in any descendant, it is marked for deferred cleanup and the method
-	 * returns without removing it.</p>
+	 * <p>If the context can be safely deregistered (i.e., no pending tasks and
+	 * no unresolved execution state), {@link #tryDeregisterContext(DefaultContext)}
+	 * is invoked. When deregistration succeeds, any active parse-tree execution
+	 * metadata from the child context is copied into the parent to preserve
+	 * execution continuity.</p>
 	 *
-	 * <p>When removal is successful and both the context and its parent have
-	 * a {@code parseTreeExecution} field, the parent's state is updated
-	 * by copying from the child.</p>
+	 * <p>If deregistration fails—typically due to pending asynchronous tasks or
+	 * execution markers that must remain valid—the method falls back to
+	 * {@link #copyDeclarationsToParent(DefaultContext)} to propagate variable and
+	 * function declarations from the child context into the parent. This prevents
+	 * redefinition conflicts or loss of symbol information while the child context
+	 * remains active.</p>
 	 *
-	 * <p>This method does not throw exceptions for unsuccessful attempts;
-	 * callers should rely on the return value of
-	 * {@link #tryDeregisterContext(DefaultContext)} if they require
-	 * confirmation of removal.</p>
+	 * <p>Calling this method has no effect if the given context is {@code null} or
+	 * has no parent.</p>
 	 *
-	 * @param context the context to remove
+	 * @param context the context to deregister; may be {@code null}
 	 */
 	public static void deregisterContext(DefaultContext context) {
-		if (Objects.nonNull(context) && tryDeregisterContext(context) && (Objects
-				.nonNull(context.parent) && Objects.nonNull(context.parseTreeExecution) && Objects
-						.nonNull(context.parent.parseTreeExecution))) {
-			context.parent.parseTreeExecution.get().copyFrom(context.parseTreeExecution.get());
+		if (Objects.nonNull(context) && Objects.nonNull(context.parent)) {
+			if (tryDeregisterContext(context)) {
+				copyDeclarationsToParent(context);
+				if (Objects.nonNull(context.parseTreeExecution) && Objects
+						.nonNull(context.parent.parseTreeExecution)) {
+					context.parent.parseTreeExecution.get().copyFrom(context.parseTreeExecution.get());
+				}
+			}
+			else {
+				// copy declarations of context with pending tasks in case of deregistration failure to parent
+				// as prevention of creation of variable with the same name
+				copyDeclarationsToParent(context);
+			}
 		}
+	}
+
+	/**
+	 * Copies the variable and function declarations from the specified context
+	 * into its parent context.
+	 *
+	 * <p>This method is used as a fallback when a context cannot be safely
+	 * deregistered due to pending tasks or incomplete cleanup. By copying
+	 * declarations upward, the parent context gains visibility into all symbols
+	 * introduced by the child context, preventing name collisions or symbol
+	 * shadowing when the child remains active longer than expected.</p>
+	 *
+	 * <p>Only non-cleaned thread-local state is copied: if the context's
+	 * {@code threadLocalsCleaned} flag indicates that cleanup has already
+	 * occurred, no declarations are propagated. This ensures consistent and
+	 * deterministic state transfer.</p>
+	 *
+	 * <p>The method requires that the context and its parent both be non-null.</p>
+	 *
+	 * @param context the child context whose declarations should be copied
+	 * @throws NullPointerException if {@code context} or its parent is {@code null}
+	 */
+	public static void copyDeclarationsToParent(DefaultContext context) {
+		Objects.requireNonNull(Objects.requireNonNull(context).parent);
+		context.parent.variables.get().putAll(context.variables.get());
+		context.parent.functions.get().putAll(context.functions.get());
 	}
 
 	/**
