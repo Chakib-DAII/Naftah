@@ -48,14 +48,15 @@ public record NaftahFunction(
 	private static final long serialVersionUID = 1L;
 
 	public NaftahFunction {
-		if (Objects.nonNull(LEXER_LITERALS) && (!useQualifiedName && LEXER_LITERALS.contains(name) || Arrays
+		if (Objects.nonNull(LEXER_LITERALS) && (LEXER_LITERALS.contains(name) || Arrays
 				.stream(aliases)
-				.anyMatch(alias -> !useQualifiedAliases && LEXER_LITERALS.contains(alias)))) {
+				.anyMatch(alias -> LEXER_LITERALS.contains(alias)))) {
 			throw new NaftahBugError(
 										String
 												.format("اسم الدالة المضمّنة '%s' %s لا يجوز أن يتطابق مع كلمة مفتاحية في اللغة.",
 														name,
-														aliases.length > 0 ? " : " + Arrays.toString(aliases) : ""));
+														aliases.length > 0 ? " : " + Arrays.toString(aliases) : ""),
+										true);
 		}
 	}
 
