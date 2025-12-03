@@ -842,7 +842,7 @@ public final class CollectionBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "تعيين_عنصر",
-				aliases = {"تعيين", "استبدال_عنصر"},
+				aliases = {"استبدال_عنصر"},
 				description = "استبدال عنصر في مجموعة عند فهرس معين.",
 				usage = """
 						دوال:الحزم::تعيين_عنصر([1 , 2 , 3], 1 , 99)
