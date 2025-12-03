@@ -55,8 +55,7 @@ public record NaftahFunction(
 										String
 												.format("اسم الدالة المضمّنة '%s' %s لا يجوز أن يتطابق مع كلمة مفتاحية في اللغة.",
 														name,
-														aliases.length > 0 ? " : " + Arrays.toString(aliases) : ""),
-										true);
+														aliases.length > 0 ? " : " + Arrays.toString(aliases) : ""));
 		}
 	}
 
