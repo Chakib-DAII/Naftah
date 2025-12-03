@@ -185,7 +185,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, programContext) -> {
 								currentContext
-										.defineVariable(ARGS_VAR_NAME,
+										.setVariable(   ARGS_VAR_NAME,
 														DeclaredVariable
 																.of(programContext,
 																	ARGS_VAR_NAME,
@@ -193,7 +193,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																	Tuple.class,
 																	args));
 								currentContext
-										.defineVariable(ARGS_SIZE,
+										.setVariable(   ARGS_SIZE,
 														DeclaredVariable
 																.of(programContext,
 																	ARGS_SIZE,
@@ -203,20 +203,25 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								defaultNaftahParserVisitor.depth = currentContext.getDepth();
 								Object result = None.get();
-								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
-										.statement()) {
-									result = defaultNaftahParserVisitor.visit(statement); // Visit each statement in the program
-									// break program after executing a return statement
-									if (shouldBreakStatementsLoop(currentContext, statement, result)) {
-										break;
+								try {
+									for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
+											.statement()) {
+										result = defaultNaftahParserVisitor.visit(statement); // Visit each statement in the
+										// program
+										// break program after executing a return statement
+										if (shouldBreakStatementsLoop(currentContext, statement, result)) {
+											break;
+										}
+									}
+									return result;
+								}
+								finally {
+									deregisterContext();
+									if (!Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+										currentContext.cleanThreadLocals();
+										cleanClassThreadLocals();
 									}
 								}
-								deregisterContext();
-								if (!Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
-									currentContext.cleanThreadLocals();
-									cleanClassThreadLocals();
-								}
-								return result;
 							}
 		);
 	}
@@ -818,6 +823,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, singleDeclarationContext) -> {
+								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
 								// variable -> new : flags if this is a new variable or not
 								boolean hasType = hasChild(singleDeclarationContext.type());
 								return handleDeclaration(   currentContext,
@@ -848,6 +854,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multipleDeclarationsContext) -> {
+								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
 								var variableNames = multipleDeclarationsContext.ID();
 								var possibleSpecifiedTypes = multipleDeclarationsContext.type();
 
@@ -1019,6 +1026,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, singleAssignmentExpressionContext) -> {
+								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
 								Object result;
 								if (Objects.nonNull(singleAssignmentExpressionContext.singleAssignment())) {
 									var singleAssignment = singleAssignmentExpressionContext.singleAssignment();
@@ -1166,6 +1174,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multipleAssignmentsExpressionContext) -> {
+								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is
+								//  failure).
 								if (Objects.nonNull(multipleAssignmentsExpressionContext.multipleAssignments())) {
 									var multipleAssignments = multipleAssignmentsExpressionContext
 											.multipleAssignments();
@@ -1407,6 +1417,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, functionDeclarationContext) -> {
+								// TODO: check function existence first
 								String functionName = functionDeclarationContext.ID().getText();
 								DeclaredFunction declaredFunction = DeclaredFunction.of(functionDeclarationContext);
 								currentContext.defineFunction(functionName, declaredFunction);
@@ -1428,6 +1439,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, parameterDeclarationListContext) -> {
+								// TODO: check parameters existence first
 								List<DeclaredParameter> args = new ArrayList<>();
 								for (org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext argumentDeclaration : parameterDeclarationListContext
 										.parameterDeclaration()) {
@@ -1450,6 +1462,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, parameterDeclarationContext) -> {
+								// TODO: check parameters existence first
 								String argumentName = parameterDeclarationContext.ID().getText();
 								return DeclaredParameter
 										.of(parameterDeclarationContext,
@@ -1883,6 +1896,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, argumentListContext) -> {
+								// TODO: check args existence first
 								List<Pair<String, Object>> args = new ArrayList<>();
 								for (int i = 0; i < argumentListContext.expression().size(); i++) {
 									String name = hasChild(argumentListContext.ID(i)) ?
@@ -2214,6 +2228,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext.setLoopLabel(label);
 
 								// Loop target
+								// TODO: check duplications existence first
 								org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext foreachTarget = forEachLoopStatementContext
 										.foreachTarget();
 								Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass = foreachTarget
@@ -2285,6 +2300,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											targetValues = Tuple.of(index, value);
 										}
 
+										// TODO: check duplications existence first
 										setForeachVariables(currentContext, foreachTargetClass, target, targetValues);
 
 										defaultNaftahParserVisitor.visit(loopBlock);
@@ -3220,18 +3236,23 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, nextContext, blockContext) -> {
 								defaultNaftahParserVisitor.depth = nextContext.getDepth();
 								Object result = None.get();
-								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : blockContext
-										.statement()) {
-									// Visit each statement in the block
-									result = defaultNaftahParserVisitor.visit(statement);
-									// break program after executing a return statement
-									if (shouldBreakStatementsLoop(nextContext, statement, result)) {
-										break;
+								try {
+									for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : blockContext
+											.statement()) {
+										// Visit each statement in the block
+										result = defaultNaftahParserVisitor.visit(statement);
+										// break program after executing a return statement
+										if (shouldBreakStatementsLoop(nextContext, statement, result)) {
+											break;
+										}
 									}
+
+									return result;
 								}
-								deregisterContext();
-								defaultNaftahParserVisitor.depth--;
-								return result;
+								finally {
+									deregisterContext();
+									defaultNaftahParserVisitor.depth--;
+								}
 							}
 		);
 	}
