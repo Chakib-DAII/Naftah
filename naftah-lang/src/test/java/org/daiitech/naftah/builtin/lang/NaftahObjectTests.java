@@ -21,7 +21,7 @@ class NaftahObjectTests {
 	@BeforeAll
 	static void setupAll() {
 		System.setProperty(JAVA_OBJECT_REFLECT_ACTIVE_PROPERTY, Boolean.toString(true));
-		System.setProperty(JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY, Integer.toString(999));
+		System.setProperty(JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY, Integer.toString(1));
 	}
 
 	@Test
