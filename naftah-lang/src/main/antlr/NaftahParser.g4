@@ -28,7 +28,8 @@ options {
 program: (statement END?)+;
 
 // Statement: Can be an assignment, function call, or control flow
-statement: block #blockStatement
+statement: scopeBlock #scopeBlockStatement
+		 | block #blockStatement
          | importStatement #importStatementStatement
          | ifStatement #ifStatementStatement
          | forStatement #forStatementStatement
@@ -38,6 +39,8 @@ statement: block #blockStatement
          | tryStatement #tryStatementStatement
          | functionDeclaration #functionDeclarationStatement
          | declaration #declarationStatement
+         | channelDeclaration #channelDeclarationStatement
+         | actorDeclaration #actorDeclarationStatement
          | assignment #assignmentStatement
          | returnStatement #returnStatementStatement
          | breakStatement #breakStatementStatement
@@ -84,7 +87,7 @@ singleAssignment: ID | qualifiedName | qualifiedObjectAccess | collectionAccess;
 multipleAssignments: singleAssignment ((COMMA | SEMI) singleAssignment)+;
 
 // Function declaration: Can have parameters and return values
-functionDeclaration: FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
+functionDeclaration: ASYNC? FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
 
 // Function declaration parameter list: parameterDeclarations separated by commas or semicolons
 parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclaration)*;
@@ -200,6 +203,18 @@ someCase: SOME LPAREN ID RPAREN (DO | ARROW) (block | expression);
 
 noneCase: NONE (DO | ARROW) (block | expression);
 
+// Concurrency Scope Block
+scopeBlock: SCOPE ORDERED? block;
+
+// Concurrency Channel / Actor
+channelDeclaration: CHANNEL ID (COLON type)?;
+
+actorDeclaration: ACTOR ID
+	(LPAREN (
+			 (ID (COLON type)? ((COMMA | SEMI) LPAREN objectFields RPAREN)?)
+     		 | (LPAREN objectFields RPAREN)
+     ) RPAREN)? block;
+
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;
 
@@ -216,7 +231,7 @@ multipleReturns: RETURN ((LPAREN tupleElements? RPAREN) | collectionMultipleElem
 // Block: A block of statements enclosed in curly braces
 block: LBRACE (statement END?)* RBRACE;
 
-// Expressions: Can be value, binary operations
+// Expressions: Can be value, binary operations... with optional Concurrency Spawn / Await
 expression: ternaryExpression;
 
 ternaryExpression: nullishExpression (QUESTION expression COLON ternaryExpression)?;
@@ -237,7 +252,9 @@ multiplicativeExpression: powerExpression ((MUL | DIV | MOD | ELEMENTWISE_MUL | 
 
 powerExpression: unaryExpression (POW powerExpression)?;
 
-unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression #prefixUnaryExpression
+unaryExpression: SPAWN (COLON type)? unaryExpression #spawnUnaryExpression
+               | AWAIT unaryExpression #awaitUnaryExpression
+			   | (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression #prefixUnaryExpression
     		   | postfixExpression #postfixUnaryExpression
      		   ;
 

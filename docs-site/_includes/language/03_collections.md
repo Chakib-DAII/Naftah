@@ -194,6 +194,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
 * [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
 * [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
+* [⚡ التعامل مع التزامن في نفطه – Concurrency](./10_concurrency.md)
 
 ---
 </div>

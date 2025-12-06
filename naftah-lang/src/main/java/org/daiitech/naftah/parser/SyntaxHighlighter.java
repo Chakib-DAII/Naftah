@@ -175,7 +175,10 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.UNTIL, org.daiitech.naftah.parser.NaftahLexer.WHILE,
 					org.daiitech.naftah.parser.NaftahLexer.CASE, org.daiitech.naftah.parser.NaftahLexer.OF,
 					org.daiitech.naftah.parser.NaftahLexer.TRY, org.daiitech.naftah.parser.NaftahLexer.ARROW,
-					org.daiitech.naftah.parser.NaftahLexer.IMPORT, org.daiitech.naftah.parser.NaftahLexer.AS ->
+					org.daiitech.naftah.parser.NaftahLexer.IMPORT, org.daiitech.naftah.parser.NaftahLexer.AS,
+					org.daiitech.naftah.parser.NaftahLexer.ASYNC, org.daiitech.naftah.parser.NaftahLexer.SPAWN,
+					org.daiitech.naftah.parser.NaftahLexer.AWAIT, org.daiitech.naftah.parser.NaftahLexer.SCOPE,
+					org.daiitech.naftah.parser.NaftahLexer.CHANNEL, org.daiitech.naftah.parser.NaftahLexer.ACTOR ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.BLUE);
 			case org.daiitech.naftah.parser.NaftahLexer.VAR, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN,
 					org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, org.daiitech.naftah.parser.NaftahLexer.CHAR,
@@ -211,8 +214,8 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.RAW, org.daiitech.naftah.parser.NaftahLexer.BYTE_ARRAY,
 					org.daiitech.naftah.parser.NaftahLexer.OK, org.daiitech.naftah.parser.NaftahLexer.ERROR,
 					org.daiitech.naftah.parser.NaftahLexer.SOME, org.daiitech.naftah.parser.NaftahLexer.NONE,
-					org.daiitech.naftah.parser.NaftahLexer.ORDERED ->
-				AttributedStyle.BOLD.foreground(AttributedStyle.RED);
+					org.daiitech.naftah.parser.NaftahLexer.ORDERED -> AttributedStyle.BOLD
+							.foreground(AttributedStyle.RED);
 			case org.daiitech.naftah.parser.NaftahLexer.LPAREN, org.daiitech.naftah.parser.NaftahLexer.RPAREN,
 					org.daiitech.naftah.parser.NaftahLexer.LBRACE, org.daiitech.naftah.parser.NaftahLexer.RBRACE,
 					org.daiitech.naftah.parser.NaftahLexer.LBRACK, org.daiitech.naftah.parser.NaftahLexer.RBRACK,

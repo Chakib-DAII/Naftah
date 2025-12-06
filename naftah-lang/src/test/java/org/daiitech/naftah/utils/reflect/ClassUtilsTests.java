@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions;
+import org.daiitech.naftah.builtin.functions.ConcurrencyBuiltinFunctions;
 import org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions;
 import org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
@@ -149,9 +150,11 @@ public class ClassUtilsTests {
 				.getBuiltinMethods(Set
 						.of(SystemBuiltinFunctions.class,
 							RuntimeBuiltinFunctions.class,
-							CollectionBuiltinFunctions.class));
+							CollectionBuiltinFunctions.class,
+							ConcurrencyBuiltinFunctions.class
+						));
 		assertNotNull(builtinFunctions);
-		assertEquals(49, builtinFunctions.size());
+		assertEquals(93, builtinFunctions.size());
 	}
 
 	@Test
@@ -163,9 +166,11 @@ public class ClassUtilsTests {
 							"org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions",
 							RuntimeBuiltinFunctions.class,
 							"org.daiitech.naftah.builtin.functions.CollectionBuiltinFunctions",
-							CollectionBuiltinFunctions.class));
+							CollectionBuiltinFunctions.class,
+							"org.daiitech.naftah.builtin.functions.ConcurrencyBuiltinFunctions",
+							ConcurrencyBuiltinFunctions.class));
 		assertNotNull(builtinFunctions);
-		assertEquals(49, builtinFunctions.size());
+		assertEquals(93, builtinFunctions.size());
 	}
 
 	@Test
@@ -182,9 +187,9 @@ public class ClassUtilsTests {
 		assertEquals(
 						"""
 							تفاصيل الصنف:
-								- الاسم الكامل: org.daiitech.naftah.builtin.Builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة:مدرجة_مدرجة
+								- الاسم الكامل: org.daiitech.naftah.builtin.Builtin - أورغ:داعيتاك:نفطه:مدرجة_مدرجة:مدرجة_مدرجة
 								- الاسم المختصر: Builtin - مدرجة_مدرجة
-								- الحزمة: org.daiitech.naftah.builtin - أورغ:داعيتاك:نفطة:مدرجة_مدرجة
+								- الحزمة: org.daiitech.naftah.builtin - أورغ:داعيتاك:نفطه:مدرجة_مدرجة
 								- عام (public)؟: نعم
 								- مجرد (abstract)؟: لا
 								- واجهة (interface)؟: لا

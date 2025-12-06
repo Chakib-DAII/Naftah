@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,6 +48,7 @@ import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
@@ -73,7 +75,6 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFou
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocationError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNonInvocableFunctionError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedFunctionError;
-import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
@@ -291,6 +292,45 @@ public final class NaftahParserHelper {
 		return !ObjectUtils.isEmpty(children) ?
 				children.stream().filter(child -> hasChildOfType(child, type)).toList() :
 				List.of();
+	}
+
+	/**
+	 * Recursively searches the given parse tree node and its descendants for the
+	 * first occurrence of a child whose type matches the specified class.
+	 * <p>
+	 * The search is performed in a pre-order, depth-first manner:
+	 * <ul>
+	 * <li>First, the current {@code node} itself is checked.</li>
+	 * <li>If it matches the requested {@code type}, it is returned immediately.</li>
+	 * <li>Otherwise, each child is visited in the order they appear in the tree.</li>
+	 * </ul>
+	 * <p>
+	 * This method does <b>not</b> restrict the search to direct children; it will
+	 * return the first matching descendant at any depth.
+	 *
+	 * @param node the root of the subtree to search; may be {@code null}
+	 * @param type the class object representing the desired parse tree type
+	 * @param <T>  the expected parse tree subtype
+	 * @return the first node (including {@code node} itself) that is an instance
+	 *         of {@code type}, or {@code null} if no matching node is found
+	 */
+	public static <T extends ParseTree> T getFirstChildOfType(ParseTree node, Class<T> type) {
+		if (node == null) {
+			return null;
+		}
+
+		if (type.isInstance(node)) {
+			return type.cast(node);
+		}
+
+		for (int i = 0; i < node.getChildCount(); i++) {
+			T child = getFirstChildOfType(node.getChild(i), type);
+			if (child != null) {
+				return child;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -1179,18 +1219,22 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Deregisters (removes) a context by its depth level.
-	 * <p>
-	 * Handles REPL mode or standard context cleanup depending on the system property.
+	 * Deregisters (removes) the current context based on the execution mode.
 	 *
-	 * @param depth the depth level of the context to be deregistered
+	 * <p>If the system is running in REPL mode (indicated by the system property
+	 * {@value org.daiitech.naftah.Naftah#INSIDE_REPL_PROPERTY}), the deregistration is delegated to
+	 * {@link REPLContext#deregisterContext()}. Otherwise, it calls the standard
+	 * context cleanup via {@link DefaultContext#deregisterContext()}.</p>
+	 *
+	 * <p>This method abstracts context cleanup so that callers do not need
+	 * to distinguish between REPL and non-REPL modes.</p>
 	 */
-	public static void deregisterContextByDepth(int depth) {
+	public static void deregisterContext() {
 		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
-			REPLContext.deregisterContext(depth);
+			REPLContext.deregisterContext();
 		}
 		else {
-			deregisterContext(depth);
+			DefaultContext.deregisterContext();
 		}
 	}
 
@@ -1682,19 +1726,22 @@ public final class NaftahParserHelper {
 	 * <li>If the selected function is a non-static {@link JvmFunction}, the first argument is treated as the
 	 * instance.</li>
 	 * <li>Delegates the actual invocation to
-	 * {@link #invokeFunction(String, JvmExecutable, Object[], List, Object, int, int)}.</li>
+	 * {@link #invokeFunction(String, boolean, JvmExecutable, Object[], List, Object, int, int)}.</li>
 	 * </ol>
 	 *
-	 * @param functionName the name of the function to invoke (used for error reporting)
-	 * @param jvmFunctions the collection of available {@link JvmExecutable} functions
-	 * @param naftahArgs   the list of arguments as {@link Pair}, where the first element may be the instance for
-	 *                     non-static methods
-	 * @param line         the source line number for error reporting
-	 * @param column       the source column number for error reporting
+	 * @param functionName    the name of the function to invoke (used for error reporting)
+	 * @param forceInvocation true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                        default
+	 * @param jvmFunctions    the collection of available {@link JvmExecutable} functions
+	 * @param naftahArgs      the list of arguments as {@link Pair}, where the first element may be the instance for
+	 *                        non-static methods
+	 * @param line            the source line number for error reporting
+	 * @param column          the source column number for error reporting
 	 * @return the result of the function invocation
 	 * @throws NaftahBugError if no suitable function is found or invocation fails
 	 */
 	public static Object invokeFunction(String functionName,
+										boolean forceInvocation,
 										Collection<JvmExecutable> jvmFunctions,
 										List<Pair<String, Object>> naftahArgs,
 										int line,
@@ -1705,7 +1752,14 @@ public final class NaftahParserHelper {
 		Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
 				.isStatic() ? null : naftahArgs.remove(0).b;
 
-		return invokeFunction(functionName, selectedFunction, bestMatch.b, naftahArgs, possibleInstance, line, column);
+		return invokeFunction(  functionName,
+								forceInvocation,
+								selectedFunction,
+								bestMatch.b,
+								naftahArgs,
+								possibleInstance,
+								line,
+								column);
 	}
 
 
@@ -1715,6 +1769,8 @@ public final class NaftahParserHelper {
 	 * <p>This overload delegates to the more general method with {@code executableArgs} set to {@code null}.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param selectedFunction the executable to invoke
 	 * @param naftahArgs       the arguments prepared for the executable
 	 * @param possibleInstance the instance to invoke on, or {@code null} for static methods
@@ -1725,12 +1781,20 @@ public final class NaftahParserHelper {
 	 */
 	public static Object invokeFunction(
 										String functionName,
+										boolean forceInvocation,
 										JvmExecutable selectedFunction,
 										List<Pair<String, Object>> naftahArgs,
 										Object possibleInstance,
 										int line,
 										int column) {
-		return invokeFunction(functionName, selectedFunction, null, naftahArgs, possibleInstance, line, column);
+		return invokeFunction(  functionName,
+								forceInvocation,
+								selectedFunction,
+								null,
+								naftahArgs,
+								possibleInstance,
+								line,
+								column);
 	}
 
 	/**
@@ -1744,6 +1808,8 @@ public final class NaftahParserHelper {
 	 * </ul>
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param selectedFunction the executable to invoke
 	 * @param executableArgs   the prepared arguments array for the executable (may be {@code null})
 	 * @param naftahArgs       the original list of {@link Pair} arguments
@@ -1755,6 +1821,7 @@ public final class NaftahParserHelper {
 	 */
 	public static Object invokeFunction(
 										String functionName,
+										boolean forceInvocation,
 										JvmExecutable selectedFunction,
 										Object[] executableArgs,
 										List<Pair<String, Object>> naftahArgs,
@@ -1772,6 +1839,7 @@ public final class NaftahParserHelper {
 		}
 		else if (selectedFunction instanceof JvmFunction jvmFunction) {
 			result = invokeJvmFunction( functionName,
+										forceInvocation,
 										jvmFunction,
 										executableArgs,
 										naftahArgs,
@@ -1789,18 +1857,87 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Invokes a declared function with provided arguments in the given context.
+	 * Invokes a declared function within the current execution context, supporting
+	 * both synchronous and asynchronous execution models.
 	 *
-	 * @param declaredFunction           the declared function to invoke
+	 * <p>This method prepares the function’s parameters, binds argument values,
+	 * updates the execution context, and then invokes the function body using the
+	 * provided {@link DefaultNaftahParserVisitor}. If the function is declared as
+	 * asynchronous, its body is executed inside a spawned {@link Task} and the
+	 * task object is returned immediately. For synchronous functions, the body is
+	 * executed directly and the returned value becomes the result.</p>
+	 *
+	 * <p>All function calls are recorded in the context’s call stack using
+	 * {@link DefaultContext#pushCall}, and removed afterward via
+	 * {@link DefaultContext#popCall}, ensuring proper debugging and stack-trace
+	 * fidelity. For asynchronous functions, thread-local cleanup is performed
+	 * after execution via {@code currentContext.cleanThreadLocals()}.</p>
+	 *
+	 * @param depth                      the current recursion or call depth, used to generate a unique call ID
+	 * @param functionName               the name of the function to invoke
+	 * @param declaredFunction           the function to invoke; must not be null
 	 * @param defaultNaftahParserVisitor the visitor used to evaluate the function body
-	 * @param args                       the list of argument name/value pairs
-	 * @param currentContext             the current execution context
-	 * @return the result of invoking the declared function
+	 * @param args                       the list of (name, value) argument pairs to supply to the function
+	 * @param currentContext             the active execution context
+	 * @return for synchronous functions, the evaluated return value; for asynchronous
+	 *         functions, a {@link Task} representing the pending computation
+	 * @throws RuntimeException if evaluation of the function body fails
 	 */
-	public static Object invokeDeclaredFunction(DeclaredFunction declaredFunction,
+	public static Object invokeDeclaredFunction(
+												int depth,
+												String functionName,
+												DeclaredFunction declaredFunction,
 												DefaultNaftahParserVisitor defaultNaftahParserVisitor,
 												List<Pair<String, Object>> args,
 												DefaultContext currentContext
+	) {
+		if (declaredFunction.isAsync()) {
+			return spawnTask(   currentContext,
+								() -> {
+									var ctx = DefaultContext.getCurrentContext();
+									String functionCallId = generateCallId(depth, functionName);
+									ctx.setFunctionCallId(functionCallId);
+									Object result = doInvokeDeclaredFunction(   declaredFunction,
+																				defaultNaftahParserVisitor,
+																				args,
+																				ctx);
+									ctx.setFunctionCallId(null);
+									return result;
+								},
+								currentContext::cleanThreadLocals);
+		}
+		else {
+			return doInvokeDeclaredFunction(declaredFunction, defaultNaftahParserVisitor, args, currentContext);
+		}
+	}
+
+	/**
+	 * Performs the actual execution of a declared function within the given context.
+	 *
+	 * <p>This method handles parameter preparation, argument binding, and call-stack
+	 * management, then evaluates the function body via the provided visitor. It is
+	 * intended to be called either directly (for synchronous functions) or inside a
+	 * spawned task (for asynchronous functions).</p>
+	 *
+	 * <p>The method must be invoked after {@link #prepareDeclaredFunction} has set up
+	 * prerequisites for execution. It binds both the function’s parameter metadata
+	 * and the evaluated argument map into the current context, ensuring that the
+	 * body resolves variable and parameter references correctly.</p>
+	 *
+	 * <p>The function call is pushed onto the context call stack before evaluation
+	 * and popped afterward, guaranteeing proper stack tracking even in failure
+	 * scenarios.</p>
+	 *
+	 * @param declaredFunction           the function being executed
+	 * @param defaultNaftahParserVisitor the visitor evaluating the function body
+	 * @param args                       the raw argument name/value pairs passed to the function
+	 * @param currentContext             the execution context associated with the call
+	 * @return the evaluated result of the function body
+	 */
+	public static Object doInvokeDeclaredFunction(  DeclaredFunction declaredFunction,
+													DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+													List<Pair<String, Object>> args,
+													DefaultContext currentContext
 	) {
 		boolean functionInStack = false;
 		try {
@@ -1951,6 +2088,8 @@ public final class NaftahParserHelper {
 	 * a {@link NaftahObject} representing {@code null} is returned.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param jvmFunction      the {@link JvmFunction} to invoke
 	 * @param naftahArgs       a list of arguments as {@link Pair} name/value pairs
 	 * @param possibleInstance the instance for instance methods; {@code null} for static methods
@@ -1961,18 +2100,28 @@ public final class NaftahParserHelper {
 	 *                        the function is non-invocable
 	 */
 	public static Object invokeJvmFunction( String functionName,
+											boolean forceInvocation,
 											JvmFunction jvmFunction,
 											List<Pair<String, Object>> naftahArgs,
 											Object possibleInstance,
 											int line,
 											int column) {
-		return invokeJvmFunction(functionName, jvmFunction, null, naftahArgs, possibleInstance, line, column);
+		return invokeJvmFunction(   functionName,
+									forceInvocation,
+									jvmFunction,
+									null,
+									naftahArgs,
+									possibleInstance,
+									line,
+									column);
 	}
 
 	/**
 	 * Invokes a JVM function with either pre-prepared argument array or {@link List} of {@link Pair} arguments.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param jvmFunction      the {@link JvmFunction} to invoke
 	 * @param executableArgs   the pre-prepared argument array (nullable)
 	 * @param naftahArgs       a list of arguments as {@link Pair} name/value pairs
@@ -1984,6 +2133,7 @@ public final class NaftahParserHelper {
 	 *                        the function is non-invocable
 	 */
 	public static Object invokeJvmFunction( String functionName,
+											boolean forceInvocation,
 											JvmFunction jvmFunction,
 											Object[] executableArgs,
 											List<Pair<String, Object>> naftahArgs,
@@ -1991,7 +2141,7 @@ public final class NaftahParserHelper {
 											int line,
 											int column) {
 
-		if (jvmFunction.isInvocable()) {
+		if (forceInvocation || jvmFunction.isInvocable()) {
 			if (!jvmFunction.isStatic() && Objects.isNull(naftahArgs)) {
 				throw new NaftahBugError(INVALID_INSTANCE_METHOD_CALL_MSG
 						.apply( functionName,
@@ -2221,6 +2371,8 @@ public final class NaftahParserHelper {
 	 * @param defaultNaftahParserVisitor the parser visitor driving the execution
 	 * @param currentContext             the execution context containing functions, variables, and state
 	 * @param functionName               the name of the function to invoke
+	 * @param forceInvocation            true in case of forcing invocation in case the {@link JvmExecutable} is not
+	 *                                   invocable by default
 	 * @param args                       a list of {@code Pair<String, Object>} representing the function arguments
 	 * @param functionIndex              an optional numeric index for selecting a function from a collection of
 	 *                                   overloaded or indexed functions; may be {@code null}
@@ -2247,6 +2399,7 @@ public final class NaftahParserHelper {
 													DefaultNaftahParserVisitor defaultNaftahParserVisitor,
 													DefaultContext currentContext,
 													String functionName,
+													boolean forceInvocation,
 													List<Pair<String, Object>> args,
 													Number functionIndex,
 													int line,
@@ -2259,7 +2412,9 @@ public final class NaftahParserHelper {
 		if (currentContext.containsFunction(functionName)) {
 			Object function = currentContext.getFunction(functionName, false).b;
 			if (function instanceof DeclaredFunction declaredFunction) {
-				result = invokeDeclaredFunction(declaredFunction,
+				result = invokeDeclaredFunction(depth,
+												functionName,
+												declaredFunction,
 												defaultNaftahParserVisitor,
 												args,
 												currentContext);
@@ -2275,6 +2430,7 @@ public final class NaftahParserHelper {
 				Object possibleInstance = jvmFunction.isStatic() ? null : args.remove(0).b;
 
 				result = invokeJvmFunction( functionName,
+											forceInvocation,
 											jvmFunction,
 											args,
 											possibleInstance,
@@ -2292,6 +2448,7 @@ public final class NaftahParserHelper {
 								.isStatic() ? null : args.remove(0).b;
 
 						result = invokeFunction(functionName,
+												forceInvocation,
 												selectedFunction,
 												args,
 												possibleInstance,
@@ -2300,6 +2457,7 @@ public final class NaftahParserHelper {
 					}
 					else {
 						result = invokeFunction(functionName,
+												forceInvocation,
 												jvmExecutables,
 												args,
 												line,
@@ -2648,5 +2806,32 @@ public final class NaftahParserHelper {
 			elements.add(elementValue);
 		}
 		return elements;
+	}
+
+	/**
+	 * Spawns a new asynchronous task within the given execution context.
+	 *
+	 * <p>This method wraps the provided {@link Supplier} in a {@link Task},
+	 * registers it with the current context, executes it asynchronously,
+	 * and optionally tracks it in the current scope stack.</p>
+	 *
+	 * <p>The context's pending task counter is incremented, so that the context
+	 * will not be deregistered until all spawned tasks complete.</p>
+	 *
+	 * @param currentContext the context in which the task should execute
+	 * @param supplier       a {@link Supplier} providing the task's computation
+	 * @param cleaner        a {@link Runnable} to clean up thread-local state
+	 *                       or other resources after the task completes
+	 * @return the spawned {@link Task} object representing the asynchronous computation
+	 */
+	public static Task<Object> spawnTask(
+											DefaultContext currentContext,
+											Supplier<Object> supplier,
+											Runnable cleaner) {
+		Task<Object> task = Task.of(currentContext, supplier, cleaner);
+
+		task.spawn();
+
+		return task;
 	}
 }

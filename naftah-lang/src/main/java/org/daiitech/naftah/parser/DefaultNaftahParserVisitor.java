@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.antlr.v4.runtime.Vocabulary;
@@ -31,11 +35,15 @@ import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.lang.Result;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.concurrent.Actor;
+import org.daiitech.naftah.builtin.utils.concurrent.Channel;
+import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.newNaftahIndexOutOfBoundsBugError;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.setElementAt;
@@ -61,23 +69,28 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableListFo
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahSingleExpressionAssignmentError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahSpecifiedTypesExceedVariableNamesError;
+import static org.daiitech.naftah.parser.DefaultContext.CURRENT_TASK_SCOPE;
 import static org.daiitech.naftah.parser.DefaultContext.LOOP_STACK;
+import static org.daiitech.naftah.parser.DefaultContext.cleanClassThreadLocals;
 import static org.daiitech.naftah.parser.DefaultContext.currentLoopLabel;
 import static org.daiitech.naftah.parser.DefaultContext.defineImport;
+import static org.daiitech.naftah.parser.DefaultContext.endScope;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
-import static org.daiitech.naftah.parser.DefaultContext.getContextByDepth;
+import static org.daiitech.naftah.parser.DefaultContext.getCurrentContext;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.loopContainsLabel;
 import static org.daiitech.naftah.parser.DefaultContext.popLoop;
 import static org.daiitech.naftah.parser.DefaultContext.pushLoop;
+import static org.daiitech.naftah.parser.DefaultContext.startScope;
 import static org.daiitech.naftah.parser.LoopSignal.BREAK;
 import static org.daiitech.naftah.parser.LoopSignal.CONTINUE;
 import static org.daiitech.naftah.parser.LoopSignal.RETURN;
 import static org.daiitech.naftah.parser.NaftahParserHelper.accessObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkInsideLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkLoopSignal;
-import static org.daiitech.naftah.parser.NaftahParserHelper.deregisterContextByDepth;
+import static org.daiitech.naftah.parser.NaftahParserHelper.deregisterContext;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getBlockContext;
+import static org.daiitech.naftah.parser.NaftahParserHelper.getFirstChildOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getRootContext;
@@ -90,6 +103,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.invokeJvmClassInitia
 import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
+import static org.daiitech.naftah.parser.NaftahParserHelper.spawnTask;
 import static org.daiitech.naftah.parser.NaftahParserHelper.typeMismatch;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitContext;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitFunctionCallInChain;
@@ -130,6 +144,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	private final Tuple args;
 	private final String ARGS_VAR_NAME = "وسائط";
 	private final String ARGS_SIZE = "عدد_الوسائط";
+	private final String ACTOR_MESSAGE = "رسالة_الممثل";
 	/**
 	 * Current depth in the parse tree traversal.
 	 */
@@ -170,7 +185,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, programContext) -> {
 								currentContext
-										.defineVariable(ARGS_VAR_NAME,
+										.setVariable(   ARGS_VAR_NAME,
 														DeclaredVariable
 																.of(programContext,
 																	ARGS_VAR_NAME,
@@ -178,7 +193,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																	Tuple.class,
 																	args));
 								currentContext
-										.defineVariable(ARGS_SIZE,
+										.setVariable(   ARGS_SIZE,
 														DeclaredVariable
 																.of(programContext,
 																	ARGS_SIZE,
@@ -188,16 +203,25 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								defaultNaftahParserVisitor.depth = currentContext.getDepth();
 								Object result = None.get();
-								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
-										.statement()) {
-									result = defaultNaftahParserVisitor.visit(statement); // Visit each statement in the program
-									// break program after executing a return statement
-									if (shouldBreakStatementsLoop(currentContext, statement, result)) {
-										break;
+								try {
+									for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
+											.statement()) {
+										result = defaultNaftahParserVisitor.visit(statement); // Visit each statement in the
+										// program
+										// break program after executing a return statement
+										if (shouldBreakStatementsLoop(currentContext, statement, result)) {
+											break;
+										}
+									}
+									return result;
+								}
+								finally {
+									deregisterContext();
+									if (!Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+										currentContext.cleanThreadLocals();
+										cleanClassThreadLocals();
 									}
 								}
-								deregisterContextByDepth(defaultNaftahParserVisitor.depth);
-								return result;
 							}
 		);
 	}
@@ -210,7 +234,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitImportStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -228,7 +252,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitImportStatementAsAlias",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -249,7 +273,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitGroupedImportStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -309,7 +333,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitQualifiedCallImportStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -344,7 +368,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitImports",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -382,7 +406,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitCallableImportElement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -441,7 +465,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitImportAlias",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -458,7 +482,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitDeclarationStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -468,6 +492,41 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitChannelDeclarationStatement(org.daiitech.naftah.parser.NaftahParser.ChannelDeclarationStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitChannelDeclarationStatement",
+							getCurrentContext(),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								channelDeclarationStatementContext) -> defaultNaftahParserVisitor
+										.visit(
+												channelDeclarationStatementContext.channelDeclaration())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitActorDeclarationStatement(org.daiitech.naftah.parser.NaftahParser.ActorDeclarationStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitDeclarationStatement",
+							getCurrentContext(),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								actorDeclarationStatementContext) -> defaultNaftahParserVisitor
+										.visit(
+												actorDeclarationStatementContext.actorDeclaration())
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -477,7 +536,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitAssignmentStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, assignmentStatementContext) -> {
 								boolean creatingObject = hasChildOrSubChildOfType(  assignmentStatementContext,
@@ -498,7 +557,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitFunctionDeclarationStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -516,7 +575,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitIfStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -535,7 +594,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitForStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -555,7 +614,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitWhileStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -575,7 +634,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitRepeatStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -594,7 +653,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitCaseStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -613,7 +672,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTryStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -632,7 +691,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitBreakStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -652,7 +711,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitContinueStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -672,7 +731,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitReturnStatementStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -682,6 +741,33 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitScopeBlockStatement(org.daiitech.naftah.parser.NaftahParser.ScopeBlockStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitScopeBlockStatement",
+							getCurrentContext(),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								scopeBlockStatementContext) -> {
+								if (Objects.nonNull(CURRENT_TASK_SCOPE) && Objects.nonNull(CURRENT_TASK_SCOPE.get())) {
+									return spawnTask(   currentContext,
+														() -> defaultNaftahParserVisitor
+																.visit(
+																		scopeBlockStatementContext.scopeBlock()),
+														currentContext::cleanThreadLocals);
+								}
+								else {
+									return defaultNaftahParserVisitor
+											.visit(
+													scopeBlockStatementContext.scopeBlock());
+								}
+							});
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -691,7 +777,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitBlockStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -710,7 +796,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitDeclaration",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, declarationContext) -> {
 								Object result;
@@ -734,9 +820,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitSingleDeclaration",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, singleDeclarationContext) -> {
+								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
 								// variable -> new : flags if this is a new variable or not
 								boolean hasType = hasChild(singleDeclarationContext.type());
 								return handleDeclaration(   currentContext,
@@ -764,9 +851,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitMultipleDeclarations",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multipleDeclarationsContext) -> {
+								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
 								var variableNames = multipleDeclarationsContext.ID();
 								var possibleSpecifiedTypes = multipleDeclarationsContext.type();
 
@@ -816,11 +904,102 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Object visitChannelDeclaration(org.daiitech.naftah.parser.NaftahParser.ChannelDeclarationContext ctx) {
+		return visitContext(
+							this,
+							"visitChannelDeclaration",
+							getCurrentContext(),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, channelDeclarationContext) -> {
+								String name = channelDeclarationContext.ID().getText();
+								Channel<Object> channel = Channel.of(name);
+
+								var declaredVariable = DeclaredVariable
+										.of(channelDeclarationContext,
+											name,
+											true,
+											Channel.class,
+											channel);
+
+								currentContext.defineVariable(name, declaredVariable);
+
+								return declaredVariable;
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitActorDeclaration(org.daiitech.naftah.parser.NaftahParser.ActorDeclarationContext ctx) {
+		return visitContext(
+							this,
+							"visitActorDeclaration",
+							getCurrentContext(),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, actorDeclarationContext) -> {
+								String name = actorDeclarationContext.ID(0).getText();
+
+								String msgVariableName = Optional
+										.ofNullable(actorDeclarationContext.ID(1))
+										.map(ParseTree::getText)
+										.orElse(ACTOR_MESSAGE);
+
+								Actor<Object> actor = Actor.of(name, currentContext, () -> {
+									var cctx = DefaultContext.getCurrentContext();
+
+									var declaredVariable = DeclaredVariable
+											.of(actorDeclarationContext,
+												msgVariableName,
+												false,
+												Object.class,
+												null);
+
+									cctx.defineVariable(msgVariableName, declaredVariable);
+
+									if (Objects.nonNull(actorDeclarationContext.objectFields())) {
+										defaultNaftahParserVisitor.visit(actorDeclarationContext.objectFields());
+									}
+
+								}, (message) -> {
+									var cctx = DefaultContext.getCurrentContext();
+
+									var declaredVariable = DeclaredVariable
+											.of(actorDeclarationContext,
+												msgVariableName,
+												false,
+												Object.class,
+												message);
+
+									cctx.setVariable(msgVariableName, declaredVariable);
+
+									defaultNaftahParserVisitor.visit(actorDeclarationContext.block());
+								}, currentContext::cleanThreadLocals);
+
+								var declaredVariable = DeclaredVariable
+										.of(actorDeclarationContext,
+											name,
+											true,
+											Actor.class,
+											actor);
+
+								currentContext.defineVariable(name, declaredVariable);
+
+								return declaredVariable;
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Object visitAssignment(org.daiitech.naftah.parser.NaftahParser.AssignmentContext ctx) {
 		return visitContext(
 							this,
 							"visitAssignment",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, assignmentContext) -> {
 								Object result;
@@ -844,9 +1023,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitSingleAssignmentExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, singleAssignmentExpressionContext) -> {
+								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
 								Object result;
 								if (Objects.nonNull(singleAssignmentExpressionContext.singleAssignment())) {
 									var singleAssignment = singleAssignmentExpressionContext.singleAssignment();
@@ -856,8 +1036,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									if (Objects.nonNull(singleAssignment.ID())) {
 										DeclaredVariable variable = currentContext
-												.getVariable(   singleAssignment.ID().getText(),
-																false).b;
+												.getVariable(singleAssignment.ID().getText(), false).b;
 										variable.setValue(newValue);
 										result = variable;
 									}
@@ -992,9 +1171,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitMultipleAssignmentsExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multipleAssignmentsExpressionContext) -> {
+								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is
+								//  failure).
 								if (Objects.nonNull(multipleAssignmentsExpressionContext.multipleAssignments())) {
 									var multipleAssignments = multipleAssignmentsExpressionContext
 											.multipleAssignments();
@@ -1042,8 +1223,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 										if (Objects.nonNull(singleAssignment.ID())) {
 											DeclaredVariable variable = currentContext
-													.getVariable(   singleAssignment.ID().getText(),
-																	false).b;
+													.getVariable(singleAssignment.ID().getText(), false).b;
 											variable.setValue(newValue);
 											assignments.add(variable);
 										}
@@ -1234,9 +1414,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitFunctionDeclaration",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, functionDeclarationContext) -> {
+								// TODO: check function existence first
 								String functionName = functionDeclarationContext.ID().getText();
 								DeclaredFunction declaredFunction = DeclaredFunction.of(functionDeclarationContext);
 								currentContext.defineFunction(functionName, declaredFunction);
@@ -1255,9 +1436,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitArgumentDeclarationList",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, parameterDeclarationListContext) -> {
+								// TODO: check parameters existence first
 								List<DeclaredParameter> args = new ArrayList<>();
 								for (org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext argumentDeclaration : parameterDeclarationListContext
 										.parameterDeclaration()) {
@@ -1277,9 +1459,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitParameterDeclaration",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, parameterDeclarationContext) -> {
+								// TODO: check parameters existence first
 								String argumentName = parameterDeclarationContext.ID().getText();
 								return DeclaredParameter
 										.of(parameterDeclarationContext,
@@ -1305,7 +1488,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitInitCall",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, initCallContext) -> {
 								boolean hasQualifiedName = hasChild(initCallContext
@@ -1483,6 +1666,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																			defaultNaftahParserVisitor,
 																			currentContext,
 																			functionName,
+																			false,
 																			args,
 																			jvmFunctionIndex,
 																			callSegmentContext.getStart().getLine(),
@@ -1504,7 +1688,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitFunctionCall",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, functionCallContext) -> {
 								boolean hasQualifiedCall = hasChild(functionCallContext.primaryCall().qualifiedCall());
@@ -1518,18 +1702,20 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 														.qualifiedCall()) :
 										functionCallContext.primaryCall().ID().getText();
 
-								Pair<String, Object> matchedVariableQualifiedCallAndValue = null;
+								Pair<Pair<String, Boolean>, Object> matchedVariableQualifiedCallAndForceInvocationWithValue = null;
 								if (hasQualifiedCall) {
-									matchedVariableQualifiedCallAndValue = currentContext.matchVariable(functionName);
-									if (Objects.nonNull(matchedVariableQualifiedCallAndValue)) {
-										functionName = matchedVariableQualifiedCallAndValue.a;
+									matchedVariableQualifiedCallAndForceInvocationWithValue = currentContext
+											.matchVariable(
+															functionName);
+									if (Objects.nonNull(matchedVariableQualifiedCallAndForceInvocationWithValue)) {
+										functionName = matchedVariableQualifiedCallAndForceInvocationWithValue.a.a;
 									}
 								}
 
 								String matchedImport;
 								List<Pair<String, Object>> args = new ArrayList<>();
 
-								if (Objects.isNull(matchedVariableQualifiedCallAndValue)) {
+								if (Objects.isNull(matchedVariableQualifiedCallAndForceInvocationWithValue)) {
 									matchedImport = currentContext.matchImport(functionName);
 									if (Objects.nonNull(matchedImport)) {
 										functionName = matchedImport;
@@ -1537,7 +1723,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								}
 								else {
 									// the variable value to perform the current function on it
-									args.add(new Pair<>(null, matchedVariableQualifiedCallAndValue.b));
+									args
+											.add(new Pair<>(null,
+															matchedVariableQualifiedCallAndForceInvocationWithValue.b));
 								}
 
 								if (hasChild(functionCallContext.primaryCall().argumentList())) {
@@ -1563,6 +1751,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																			defaultNaftahParserVisitor,
 																			currentContext,
 																			functionName,
+																			Optional
+																					.ofNullable(
+																								matchedVariableQualifiedCallAndForceInvocationWithValue)
+																					.map(pair -> pair.a.b)
+																					.orElse(false),
 																			args,
 																			jvmFunctionIndex,
 																			functionCallContext.getStart().getLine(),
@@ -1632,6 +1825,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																			defaultNaftahParserVisitor,
 																			currentContext,
 																			functionName,
+																			Optional
+																					.ofNullable(
+																								matchedVariableQualifiedCallAndForceInvocationWithValue)
+																					.map(pair -> pair.a.b)
+																					.orElse(false),
 																			args,
 																			jvmFunctionIndex,
 																			callSegmentContext.getStart().getLine(),
@@ -1653,7 +1851,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitSimpleCall",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -1673,7 +1871,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitQualifiedNameCall",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -1695,9 +1893,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitArgumentList",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, argumentListContext) -> {
+								// TODO: check args existence first
 								List<Pair<String, Object>> args = new ArrayList<>();
 								for (int i = 0; i < argumentListContext.expression().size(); i++) {
 									String name = hasChild(argumentListContext.ID(i)) ?
@@ -1720,7 +1919,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitIfStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, ifStatementContext) -> {
 								Object result = None.get();
@@ -1769,7 +1968,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitIndexBasedForLoopStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, indexBasedForLoopStatementContext) -> {
 								Object result = None.get();
@@ -1995,7 +2194,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
 										.isNone(result) ?
 												Optional
 														.ofNullable((LoopSignal.LoopSignalDetails) result)
@@ -2014,7 +2213,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitForEachLoopStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, forEachLoopStatementContext) -> {
 								Object result = None.get();
@@ -2029,6 +2228,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext.setLoopLabel(label);
 
 								// Loop target
+								// TODO: check duplications existence first
 								org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext foreachTarget = forEachLoopStatementContext
 										.foreachTarget();
 								Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass = foreachTarget
@@ -2100,6 +2300,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											targetValues = Tuple.of(index, value);
 										}
 
+										// TODO: check duplications existence first
 										setForeachVariables(currentContext, foreachTargetClass, target, targetValues);
 
 										defaultNaftahParserVisitor.visit(loopBlock);
@@ -2153,7 +2354,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
 										.isNone(result) ?
 												Optional
 														.ofNullable((LoopSignal.LoopSignalDetails) result)
@@ -2172,7 +2373,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitValueForeachTarget",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, valueForeachTargetContext) -> Tuple
 									.of(valueForeachTargetContext.ID().getText()),
@@ -2188,7 +2389,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitIndexAndValueForeachTarget",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, indexAndValueForeachTargetContext) -> {
 								String index = indexAndValueForeachTargetContext.ID(0).getText();
@@ -2206,7 +2407,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitKeyValueForeachTarget",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, keyValueForeachTargetContext) -> {
 								String key = keyValueForeachTargetContext.ID(0).getText();
@@ -2224,7 +2425,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitIndexAndKeyValueForeachTarget",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, indexAndKeyValueForeachTargetContext) -> {
 								String index = indexAndKeyValueForeachTargetContext.ID(0).getText();
@@ -2243,7 +2444,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitWhileStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2311,7 +2512,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
 										.isNone(result) ?
 												Optional
 														.ofNullable((LoopSignal.LoopSignalDetails) result)
@@ -2332,7 +2533,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitRepeatStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2401,7 +2602,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.isEmpty() || !propagateLoopSignal) && !None
+								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
 										.isNone(result) ?
 												Optional
 														.ofNullable((LoopSignal.LoopSignalDetails) result)
@@ -2422,7 +2623,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitCaseStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2478,7 +2679,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTryStatementWithTryCases",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2595,7 +2796,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTryStatementWithOptionCases",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2667,7 +2868,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitOkCase",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2689,7 +2890,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitErrorCase",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2711,7 +2912,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitSomeCase",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2733,7 +2934,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitNoneCase",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2755,7 +2956,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitExpressionStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -2774,10 +2975,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitBreakStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, breakStatementContext) -> {
-								if (LOOP_STACK.isEmpty() || !checkInsideLoop(breakStatementContext)) {
+								if (LOOP_STACK.get().isEmpty() || !checkInsideLoop(breakStatementContext)) {
 									throw new NaftahBugError(   String
 																		.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
 																				getFormattedTokenSymbols(
@@ -2836,10 +3037,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitContinueStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, continueStatementContext) -> {
-								if (LOOP_STACK.isEmpty() || !checkInsideLoop(continueStatementContext)) {
+								if (LOOP_STACK.get().isEmpty() || !checkInsideLoop(continueStatementContext)) {
 									throw new NaftahBugError(   String
 																		.format("لا يمكن استخدام '%s' خارج نطاق الحلقة.",
 																				getFormattedTokenSymbols(
@@ -2899,10 +3100,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitReturnStatement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, returnStatementContext) -> {
-								boolean insideLoop = !LOOP_STACK.isEmpty() || checkInsideLoop(returnStatementContext);
+								boolean insideLoop = !LOOP_STACK.get().isEmpty() || checkInsideLoop(
+																									returnStatementContext);
 								Object result;
 								if (Objects.nonNull(returnStatementContext.singleReturn())) {
 									result = defaultNaftahParserVisitor.visit(returnStatementContext.singleReturn());
@@ -2923,7 +3125,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitSingleReturn",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, returnStatementContext) -> {
 								Object result = None.get();
@@ -2944,7 +3146,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitMultipleReturns",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, returnStatementContext) -> {
 								if (hasChild(returnStatementContext.tupleElements())) {
@@ -2968,26 +3170,89 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Object visitScopeBlock(org.daiitech.naftah.parser.NaftahParser.ScopeBlockContext ctx) {
+		return visitContext(
+							this,
+							"visitScopeBlock",
+							getCurrentContext(),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, scopeBlockContext) -> {
+								startScope();
+
+								defaultNaftahParserVisitor.visit(scopeBlockContext.block());
+
+								List<Task<?>> tasks = CURRENT_TASK_SCOPE.get();
+								List<Object> results;
+
+								// Await all tasks spawned inside scope
+								if (hasChild(scopeBlockContext.ORDERED())) {
+									// Wait in the order tasks were spawned (default)
+									results = new ArrayList<>();
+									for (Task<?> t : tasks) {
+										results.add(t.await());
+									}
+								}
+								else {
+									// Wait in completion order
+									ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
+									try {
+										results = new CopyOnWriteArrayList<>();
+										// Wrap all tasks in CompletableFutures that just call await() when they finish
+										List<CompletableFuture<Void>> futures = tasks
+												.stream()
+												.map(task -> CompletableFuture
+														.supplyAsync(
+																		task::await,
+																		executor)
+														.thenAccept(results::add))
+												.toList();
+
+										// wait for all tasks to finish if needed
+										CompletableFuture<Void> allDone = CompletableFuture
+												.allOf(futures.toArray(new CompletableFuture[0]));
+										allDone.join();
+									}
+									finally {
+										executor.shutdown();
+									}
+								}
+
+								endScope();
+								return Tuple.of(results);
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Object visitBlock(org.daiitech.naftah.parser.NaftahParser.BlockContext ctx) {
 		return visitContext(
 							this,
 							"visitBlock",
-							getBlockContext(ctx, getContextByDepth(depth)),
+							getBlockContext(ctx, getCurrentContext()),
 							ctx,
 							(defaultNaftahParserVisitor, nextContext, blockContext) -> {
 								defaultNaftahParserVisitor.depth = nextContext.getDepth();
 								Object result = None.get();
-								for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : blockContext
-										.statement()) {
-									// Visit each statement in the block
-									result = defaultNaftahParserVisitor.visit(statement);
-									// break program after executing a return statement
-									if (shouldBreakStatementsLoop(nextContext, statement, result)) {
-										break;
+								try {
+									for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : blockContext
+											.statement()) {
+										// Visit each statement in the block
+										result = defaultNaftahParserVisitor.visit(statement);
+										// break program after executing a return statement
+										if (shouldBreakStatementsLoop(nextContext, statement, result)) {
+											break;
+										}
 									}
+
+									return result;
 								}
-								deregisterContextByDepth(defaultNaftahParserVisitor.depth--);
-								return result;
+								finally {
+									deregisterContext();
+									defaultNaftahParserVisitor.depth--;
+								}
 							}
 		);
 	}
@@ -3001,7 +3266,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitObjectExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3019,7 +3284,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitEmptyObject",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, emptyObjectContext) -> NaftahObject
 									.of(new LinkedHashMap<>())
@@ -3031,16 +3296,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 */
 	@Override
 	public Object visitObjectValue(org.daiitech.naftah.parser.NaftahParser.ObjectValueContext ctx) {
+		//noinspection unchecked
 		return visitContext(
 							this,
 							"visitObjectValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								objectValueContext) -> defaultNaftahParserVisitor
-										.visit(
-												objectValueContext.objectFields())
+								objectValueContext) -> NaftahObject
+										.of((Map<String, DeclaredVariable>) defaultNaftahParserVisitor
+												.visit(objectValueContext.objectFields())),
+							NaftahObject.class
 		);
 	}
 
@@ -3049,28 +3316,34 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object visitObjectFields(org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext ctx) {
-		return visitContext(
-							this,
-							"visitObjectFields",
-							getContextByDepth(depth),
-							ctx,
-							(defaultNaftahParserVisitor, currentContext, objectFieldsContext) -> {
-								var result = new LinkedHashMap<String, DeclaredVariable>();
+	public Map<String, DeclaredVariable> visitObjectFields(org.daiitech.naftah.parser.NaftahParser.ObjectFieldsContext ctx) {
+		//noinspection unchecked
+		return (Map<String, DeclaredVariable>) visitContext(
+															this,
+															"visitObjectFields",
+															getCurrentContext(),
+															ctx,
+															(   defaultNaftahParserVisitor,
+																currentContext,
+																objectFieldsContext) -> {
+																var result = new LinkedHashMap<String, DeclaredVariable>();
 
-								for (int i = 0; i < objectFieldsContext.assignment().size(); i++) {
-									//noinspection unchecked
-									var field = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
-											.visit(
-													objectFieldsContext.assignment(i));
-									var fieldName = field.a.getName();
-									result.put(fieldName, field.a);
-								}
+																for (   int i = 0;
+																		i < objectFieldsContext.assignment().size();
+																		i++) {
+																	//noinspection unchecked
+																	var field = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
+																			.visit(
+																					objectFieldsContext.assignment(i));
+																	var fieldName = field.a.getName();
+																	result.put(fieldName, field.a);
+																}
 
-								currentContext.setCreatingObject(false);
+																currentContext.setCreatingObject(false);
 
-								return NaftahObject.of(result);
-							}
+																return result;
+															},
+															Map.class
 		);
 	}
 
@@ -3083,7 +3356,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitObjectAccessExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3101,7 +3374,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitObjectAccess",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3128,7 +3401,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitQualifiedObjectAccess",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3154,7 +3427,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitCollectionExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3172,7 +3445,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitCollectionAccessExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3190,7 +3463,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitCollectionAccess",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3249,7 +3522,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitCollectionAccessIndex",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3275,7 +3548,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitListValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, listValueContext) -> {
 								var value = (List<?>) (Objects.nonNull(listValueContext.elements()) ?
@@ -3298,7 +3571,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTupleValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, tupleValueContext) -> {
 								if (currentContext.isParsingAssignment()) {
@@ -3339,7 +3612,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitEmptySet",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, emptySetContext) -> Objects
 									.nonNull(emptySetContext.ORDERED()) ?
@@ -3357,7 +3630,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitSetValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, setValueContext) -> {
 								var value = (List<?>) defaultNaftahParserVisitor
@@ -3379,7 +3652,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitEmptyMap",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, emptyMapContext) -> Objects
 									.nonNull(emptyMapContext.ORDERED()) ?
@@ -3397,7 +3670,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitMapValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, mapValueContext) -> defaultNaftahParserVisitor
 									.visit(mapValueContext.keyValuePairs()),
@@ -3414,7 +3687,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitSingleElement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, singleElementContext) -> {
 								// prepare validations
@@ -3470,7 +3743,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTupleSingleElement",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, tupleSingleElementContext) -> List
 									.of(defaultNaftahParserVisitor.visit(tupleSingleElementContext.expression())),
@@ -3486,7 +3759,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitMultipleElements",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multipleElementsContext) -> {
 								// prepare validations
@@ -3584,7 +3857,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTupleMultipleElements",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3604,7 +3877,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitKeyValuePairs",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, keyValuePairsContext) -> {
 								// prepare validations
@@ -3715,7 +3988,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitKeyValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, keyValueContext) -> {
 								var key = defaultNaftahParserVisitor.visit(keyValueContext.expression(0));
@@ -3743,7 +4016,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitValueExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, valueExpressionContext) -> {
 								// prepare validations
@@ -3790,7 +4063,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitParenthesisExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3808,7 +4081,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitInitCallExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3826,7 +4099,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitFunctionCallExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -3845,7 +4118,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitNumberValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, numberValueContext) -> {
 								Object value = numberValueContext.NUMBER().getText();
@@ -3863,7 +4136,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitRadixNumberValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, radixNumberValueContext) -> {
 								String originalValue = radixNumberValueContext.BASE_DIGITS().getText();
@@ -3891,7 +4164,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitCharacterValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, characterValueContext) -> characterValueContext
 									.CHARACTER()
@@ -3909,7 +4182,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitStringValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, stringValueContext) -> {
 								String value = stringValueContext.STRING().getText();
@@ -3942,7 +4215,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTrueValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, trueValueContext) -> Boolean.TRUE
 		);
@@ -3957,7 +4230,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitFalseValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, falseValueContext) -> Boolean.FALSE
 		);
@@ -3972,7 +4245,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitNullValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, nullValueContext) -> None.get()
 		);
@@ -3987,7 +4260,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitIdValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, idValueContext) -> {
 								// prepare validations
@@ -4013,7 +4286,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitVoidReturnType",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, voidReturnTypeContext) -> getJavaType(
 																												currentContext,
@@ -4031,7 +4304,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTypeReturnType",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -4050,7 +4323,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitVarType",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, varTypeContext) -> getJavaType(currentContext,
 																										varTypeContext),
@@ -4067,7 +4340,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitBuiltInType",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -4087,7 +4360,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitBuiltIn",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, builtInContext) -> getJavaType(builtInContext),
 							Class.class
@@ -4103,7 +4376,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitQualifiedNameType",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -4120,7 +4393,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitQualifiedName",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, qualifiedNameContext) -> {
 								Object result;
@@ -4164,7 +4437,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitLabel",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, labelContext) -> labelContext.ID().getText(),
 							String.class
@@ -4179,13 +4452,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
 								expressionContext) -> defaultNaftahParserVisitor
-										.visit(expressionContext
-												.ternaryExpression()));
+										.visit(expressionContext.ternaryExpression()));
 	}
 
 	/**
@@ -4196,7 +4468,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitTernaryExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, ternaryExpressionContext) -> {
 								if (Objects.nonNull(ternaryExpressionContext.QUESTION())) {
@@ -4223,7 +4495,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitLogicalExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, nullishExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
@@ -4250,7 +4522,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitLogicalExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, logicalExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
@@ -4280,7 +4552,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitBitwiseExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, bitwiseExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
@@ -4310,7 +4582,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitEqualityExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, equalityExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
@@ -4340,7 +4612,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitRelationalExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, relationalExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
@@ -4370,7 +4642,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitAdditiveExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, additiveExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
@@ -4400,7 +4672,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitMultiplicativeExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multiplicativeExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
@@ -4430,7 +4702,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitPowerExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, powerExpressionContext) -> {
 								if (Objects.nonNull(powerExpressionContext.POW())) {
@@ -4454,11 +4726,107 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Object visitSpawnUnaryExpression(org.daiitech.naftah.parser.NaftahParser.SpawnUnaryExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitSpawnUnaryExpression",
+							getCurrentContext(),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, spawnUnaryExpressionContext) -> {
+								var possibleFunctionCallContext = getFirstChildOfType(  spawnUnaryExpressionContext,
+																						org.daiitech.naftah.parser.NaftahParser.FunctionCallContext.class);
+								if (Objects.nonNull(possibleFunctionCallContext)) {
+									boolean hasQualifiedCall = hasChild(possibleFunctionCallContext
+											.primaryCall()
+											.qualifiedCall());
+									String functionName = hasQualifiedCall ?
+											(String) defaultNaftahParserVisitor
+													.visit(possibleFunctionCallContext
+															.primaryCall()
+															.qualifiedCall()) :
+											possibleFunctionCallContext.primaryCall().ID().getText();
+
+									if (currentContext.containsFunction(functionName)) {
+										Object function = currentContext.getFunction(functionName, false).b;
+										if (function instanceof DeclaredFunction declaredFunction && declaredFunction
+												.isAsync()) {
+											throw new NaftahBugError(
+																		"""
+																		الدالة غير المتزامنة (async) '%s' لا يمكن تشغيلها باستخدام أمر '%s'.
+																		"""
+																				.formatted(
+																							functionName,
+																							getFormattedTokenSymbols(
+																														defaultNaftahParserVisitor.parser
+																																.getVocabulary(),
+																														org.daiitech.naftah.parser.NaftahLexer.AWAIT,
+																														false)),
+																		possibleFunctionCallContext
+																				.getStart()
+																				.getLine(),
+																		possibleFunctionCallContext
+																				.getStart()
+																				.getCharPositionInLine()
+											);
+										}
+									}
+								}
+								return spawnTask(   currentContext,
+													() -> defaultNaftahParserVisitor
+															.visit(spawnUnaryExpressionContext.unaryExpression()),
+													currentContext::cleanThreadLocals);
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitAwaitUnaryExpression(org.daiitech.naftah.parser.NaftahParser.AwaitUnaryExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitAwaitUnaryExpression",
+							getCurrentContext(),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, awaitUnaryExpressionContext) -> {
+								currentContext.setAwaitingTask(true);
+								Object obj = visit(awaitUnaryExpressionContext.unaryExpression());
+								currentContext.setAwaitingTask(false);
+								if (obj instanceof Task<?> task) {
+									return task.await();
+								}
+								throw new NaftahBugError("""
+															لا يمكن استخدام '%s' على غير '%s'. يجب أن يكون القيمة المراد انتظارها من نوع شغل تم إنشاؤه باستخدام '%s' أو دالة غير متزامنة.
+															"""
+										.formatted(
+													getFormattedTokenSymbols(
+																				defaultNaftahParserVisitor.parser
+																						.getVocabulary(),
+																				org.daiitech.naftah.parser.NaftahLexer.AWAIT,
+																				false),
+													getFormattedTokenSymbols(
+																				defaultNaftahParserVisitor.parser
+																						.getVocabulary(),
+																				org.daiitech.naftah.parser.NaftahLexer.ASYNC,
+																				false),
+													getFormattedTokenSymbols(
+																				defaultNaftahParserVisitor.parser
+																						.getVocabulary(),
+																				org.daiitech.naftah.parser.NaftahLexer.SPAWN,
+																				false)));
+							}
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Object visitPrefixUnaryExpression(org.daiitech.naftah.parser.NaftahParser.PrefixUnaryExpressionContext ctx) {
 		return visitContext(
 							this,
 							"visitPrefixUnaryExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, prefixUnaryExpressionContext) -> {
 								Object value = defaultNaftahParserVisitor
@@ -4485,7 +4853,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitPostfixUnaryExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
@@ -4501,7 +4869,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitPostfixExpression",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, postfixExpressionContext) -> {
 								Object value = defaultNaftahParserVisitor
@@ -4532,7 +4900,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		return visitContext(
 							this,
 							"visitNanValue",
-							getContextByDepth(depth),
+							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, nanValueContext) -> NaN.get()
 		);

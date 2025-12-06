@@ -167,7 +167,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											5488940234982179551L),
 								null),
 					Arguments.of(true, """
-										ثابت ديناميك_رقم تعيين أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم(1)
+										ثابت ديناميك_رقم تعيين أورغ:داعيتاك:نفطه:مدرجة_مدرجة:لغة:ديناميك_رقم(1)
 
 
 										(

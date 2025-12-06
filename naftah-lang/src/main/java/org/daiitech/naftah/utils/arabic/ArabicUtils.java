@@ -33,6 +33,7 @@ import static org.daiitech.naftah.Naftah.ARABIC_INDIC_PROPERTY;
 import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.Naftah.MULTILINE_CACHE_PROPERTY;
 import static org.daiitech.naftah.Naftah.UNDERSCORE;
+import static org.daiitech.naftah.Naftah.WORD_CHUNK_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
@@ -268,14 +269,15 @@ public final class ArabicUtils {
 	 * @see Locale#forLanguageTag(String)
 	 * @see NumberFormat#getNumberInstance(Locale)
 	 */
-	public static volatile NumberFormat ARABIC_NUMBER_FORMAT;
+	public static volatile ThreadLocal<NumberFormat> ARABIC_NUMBER_FORMAT;
 	/**
 	 * Custom transliteration rules defined as a multi-line string.
 	 * Each rule maps Latin script sequences to their corresponding Arabic script sequences.
 	 * For example, "com > كوم" transliterates "com" to Arabic "كوم".
 	 */
 	public static String CUSTOM_RULES = """
-										naftah > نفطة;
+										daiitech > داعيتاك;
+										naftah > نفطه;
 										com > كوم;
 										org > أورغ;
 										co > كو;
@@ -359,7 +361,7 @@ public final class ArabicUtils {
 
 			symbols.setDecimalSeparator('٫'); // Arabic decimal separator
 			symbols.setGroupingSeparator('_'); // Arabic grouping separator  (in use if the pattern is "#,##0.###")
-			ARABIC_NUMBER_FORMAT = new DecimalFormat("###0.###", symbols);
+			ARABIC_NUMBER_FORMAT = ThreadLocal.withInitial(() -> new DecimalFormat("###0.###", symbols));
 		}
 	}
 
@@ -473,9 +475,9 @@ public final class ArabicUtils {
 	 * @param function a bi-function taking a line and the print flag, returning the processed line
 	 * @return the processed text if {@code print} is false; otherwise, null
 	 */
-	public static synchronized String applyBiFunction(  String input,
-														boolean print,
-														ThrowingBiFunction<String, Boolean, String> function) {
+	public static String applyBiFunction(   String input,
+											boolean print,
+											ThrowingBiFunction<String, Boolean, String> function) {
 		if (isMultiline(input)) {
 			Matcher matcher = getTextMatcher(input).reset();
 
@@ -516,7 +518,7 @@ public final class ArabicUtils {
 	 * @param function a function taking a line and returning the processed line
 	 * @return the processed text with all lines processed by the function
 	 */
-	public static synchronized String applyFunction(String input, ThrowingFunction<String, String> function) {
+	public static String applyFunction(String input, ThrowingFunction<String, String> function) {
 		if (isMultiline(input)) {
 			Matcher matcher = getTextMatcher(input).reset();
 
@@ -547,7 +549,7 @@ public final class ArabicUtils {
 	 * @param input the input Arabic text
 	 * @return the shaped and reordered text suitable for visual rendering in terminals
 	 */
-	public static synchronized String shape(String input) {
+	public static String shape(String input) {
 		return applyFunction(input, ArabicUtils::doShape);
 	}
 
@@ -558,7 +560,7 @@ public final class ArabicUtils {
 	 * @return the shaped and reordered text
 	 * @throws ArabicShapingException if an error occurs during shaping
 	 */
-	public static synchronized String doShape(String input) throws ArabicShapingException {
+	public static String doShape(String input) throws ArabicShapingException {
 		ArabicShaping shaper = new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.TEXT_DIRECTION_VISUAL_RTL);
 		String shaped = shaper.shape(input);
 		Bidi bidi = new Bidi(shaped, Bidi.DIRECTION_RIGHT_TO_LEFT);
@@ -575,7 +577,7 @@ public final class ArabicUtils {
 	 * @param print if true, print the padded text; else return it
 	 * @return the padded text if {@code print} is false; otherwise null
 	 */
-	public static synchronized String padText(String input, boolean print) {
+	public static String padText(String input, boolean print) {
 		return applyBiFunction(input, print, ArabicUtils::doPadText);
 	}
 
@@ -586,7 +588,7 @@ public final class ArabicUtils {
 	 * @param print if true, prints the padded lines; else returns them as a single string
 	 * @return the padded text if {@code print} is false; otherwise null
 	 */
-	public static synchronized String doPadText(String input, boolean print) {
+	public static String doPadText(String input, boolean print) {
 		int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
 		int padding = terminalWidth - input.length();
 		if (padding < 0) {
@@ -606,31 +608,59 @@ public final class ArabicUtils {
 	}
 
 	/**
-	 * Pads the input text, splitting it into multiple lines if needed to fit the terminal width.
+	 * Splits a list of words into lines that fit the terminal width, adding padding if needed.
+	 * If printing is enabled, lines are printed directly to the console; otherwise, they are collected in a list.
+	 *
+	 * @param lines         the list to store padded lines (ignored if printing)
+	 * @param word          the current word to add
+	 * @param currentLine   the StringBuilder holding the current line
+	 * @param terminalWidth the width of the terminal for padding
+	 * @param print         whether to print lines immediately or store in list
+	 * @return a new StringBuilder starting with the current word for the next line
+	 */
+	private static StringBuilder doPadText( List<String> lines,
+											String word,
+											StringBuilder currentLine,
+											int terminalWidth,
+											boolean print) {
+		// Line is full, store it and start a new one
+		String result = addPadding(currentLine, terminalWidth);
+
+		if (print) {
+			System.out.println(result);
+		}
+		else {
+			lines.add(result);
+		}
+
+		return new StringBuilder(word);
+	}
+
+	/**
+	 * Pads the input text to fit the specified terminal width, splitting it into multiple lines if necessary.
+	 * Lines are either printed directly or returned as a joined string depending on the {@code print} flag.
 	 *
 	 * @param input         the input text to pad
 	 * @param terminalWidth the width of the terminal
-	 * @param print         if true, prints padded lines; else returns them joined as a string
-	 * @return the padded text if {@code print} is false; otherwise null
+	 * @param print         if true, prints padded lines; otherwise returns them as a single string
+	 * @return the padded text as a string if {@code print} is false; otherwise null
 	 */
-	public static synchronized String doPadText(String input, int terminalWidth, boolean print) {
+	public static String doPadText(String input, int terminalWidth, boolean print) {
 		String[] words = input.split("\\s+");
 		StringBuilder currentLine = new StringBuilder();
 		List<String> lines = print ? null : new ArrayList<>();
 
 		for (String word : words) {
 			if (currentLine.length() + word.length() + (!currentLine.isEmpty() ? 1 : 0) > terminalWidth) {
-				// Line is full, store it and start a new one
-				String result = addPadding(currentLine, terminalWidth);
-
-				if (print) {
-					System.out.println(result);
+				if (Boolean.getBoolean(WORD_CHUNK_PROPERTY)) {
+					var wordChunks = chunk(word, terminalWidth);
+					for (String wordChunk : wordChunks) {
+						currentLine = doPadText(lines, wordChunk, currentLine, terminalWidth, print);
+					}
 				}
 				else {
-					lines.add(result);
+					currentLine = doPadText(lines, word, currentLine, terminalWidth, print);
 				}
-
-				currentLine = new StringBuilder(word);
 			}
 			else {
 				if (!currentLine.isEmpty()) {
@@ -665,7 +695,7 @@ public final class ArabicUtils {
 	 * @return a {@link String} with added padding spaces to align the text,
 	 *         or the original text if padding cannot be applied
 	 */
-	public static synchronized String addPadding(StringBuilder inputSb, int terminalWidth) {
+	public static String addPadding(StringBuilder inputSb, int terminalWidth) {
 		try {
 			int padding = terminalWidth - inputSb.length();
 			// add padding to align text
@@ -686,13 +716,41 @@ public final class ArabicUtils {
 	 * @param padding the number of spaces to add
 	 * @return the padded string
 	 */
-	public static synchronized String addPadding(String input, int padding) {
+	public static String addPadding(String input, int padding) {
 		// TODO: this is not needed in windows after rechecking.
 		// return " ".repeat(padding) + input;
 		// TODO: it works like this in windows (maybe Posix systems still need extra
 		// fixes, like
 		// above)
 		return containsArabic(input) ? input + " ".repeat(padding) : " ".repeat(padding) + input;
+	}
+
+	/**
+	 * Splits the given string into consecutive substrings of the specified size.
+	 *
+	 * <p>Each chunk is created using {@link String#substring(int, int)}. The last
+	 * chunk may be shorter than {@code size} if the input string's length is not
+	 * evenly divisible by the chunk size.</p>
+	 *
+	 * <p>Examples:</p>
+	 * <ul>
+	 * <li>{@code chunk("abcdef", 2)} → {@code ["ab", "cd", "ef"]}</li>
+	 * <li>{@code chunk("abcde", 2)} → {@code ["ab", "cd", "e"]}</li>
+	 * </ul>
+	 *
+	 * @param input the string to split; must not be {@code null}
+	 * @param size  the size of each chunk; must be greater than zero
+	 * @return a list containing the resulting substrings, in order
+	 * @throws IllegalArgumentException if {@code size} is less than 1
+	 */
+	public static List<String> chunk(String input, int size) {
+		List<String> chunks = new ArrayList<>();
+
+		for (int i = 0; i < input.length(); i += size) {
+			chunks.add(input.substring(i, Math.min(input.length(), i + size)));
+		}
+
+		return chunks;
 	}
 
 	/**
@@ -724,7 +782,7 @@ public final class ArabicUtils {
 		Transliterator transliterator = null;
 
 		if (Objects.nonNull(customRules) && !customRules.isBlank()) {
-			String customTransliteratorID = hashString(customRules, "SHA-1");
+			String customTransliteratorID = "Naftah" + hashString(customRules, "SHA-1");
 
 			try {
 				// Try to get an instance of the transliterator by ID
@@ -734,7 +792,9 @@ public final class ArabicUtils {
 			catch (IllegalArgumentException e) {
 				// Create a transliterator to convert based on ID with the custom rules
 				Transliterator customTransliterator = Transliterator
-						.createFromRules(customTransliteratorID, customRules, Transliterator.FORWARD);
+						.createFromRules(   customTransliteratorID,
+											customRules,
+											Transliterator.FORWARD);
 				Transliterator.registerInstance(customTransliterator);
 
 				// get an instance of the transliterator by ID

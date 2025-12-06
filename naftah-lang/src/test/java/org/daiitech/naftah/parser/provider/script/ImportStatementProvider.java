@@ -88,15 +88,15 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								إجلب جافا:أدة:اختياري::[وف تحت_إسم من_خلال, گت مثل خذ , أو_لس تحت_إسم أو_خذ , وف_فارغابل تحت_إسم من_فارغ]
 								[
 								من_خلال(10):::خذ() ،
-								من_فارغ(فارغ):::أو_خذ("لغة نفطة") ،
+								من_فارغ(فارغ):::أو_خذ("لغة نفطه") ،
 								]
-									""",
+								""",
 
 								List
 										.of(
 
 											NaftahObject.of(10),
-											NaftahObject.of("لغة نفطة")
+											NaftahObject.of("لغة نفطه")
 										),
 								null
 							),
@@ -106,7 +106,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								"""
 								إجلب جافا:أدة:اختياري::وف تحت_إسم من_خلال
 								من_خلال(10):::گت()
-									""",
+								""",
 
 								NaftahObject.of(10),
 								null
@@ -122,7 +122,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								@سلسلة("مرحبا"):::سلسلة_فرعية(1؛3) ،
 								@سلسلة("مرحبا"):::إلى_سلسلة() ،
 								]
-									""",
+								""",
 								List
 										.of(
 											NaftahObject.of(5),
@@ -142,7 +142,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								@قائمة([1؛100؛0])::خذ(0) ،
 								@قائمة([1؛100؛0])::الحجم() ،
 								]
-									""",
+								""",
 
 								List
 										.of(
@@ -158,7 +158,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								"""
 								إجلب جافا:لغة:كائن تحت_إسم كائن
 								@كائن() لا_يساوي فارغ
-									""",
+								""",
 								true,
 								null
 							),
@@ -170,7 +170,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 
 								ثابت معرف_مستخدم : معرف_مستخدم تعيين @معرف_مستخدم(6161415689025233999؛5488940234982179551)
 								معرف_مستخدم
-									""",
+								""",
 								NaftahObject.of(new UUID(6161415689025233999L, 5488940234982179551L)),
 								null
 							)

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.NaftahSystem;
@@ -627,8 +628,8 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "اقرأ_خاصية(\"os.name\")", System.getProperty("os.name"), null),
 					Arguments.of(true, "اكتب_خاصية(\"my.prop\", \"value\")", None.get(), null),
 					Arguments.of(true, "نسخة_جافا()", System.getProperty("java.version"), null),
-					Arguments.of(true, "إصدار_نفطة()", NaftahSystem.getVersion(), null),
-//					Arguments.of(true, "إصدار_قصير_نفطة()", NaftahSystem.getShortVersion(), null),
+					Arguments.of(true, "إصدار_نفطه()", NaftahSystem.getVersion(), null),
+//					Arguments.of(true, "إصدار_قصير_نفطه()", NaftahSystem.getShortVersion(), null),
 					Arguments.of(true, "اسم_النظام()", System.getProperty(OS_NAME_PROPERTY), null),
 					Arguments.of(true, "إسم_المستخدم()", System.getProperty("user.name"), null),
 					Arguments.of(true, "مجلد_المستخدم()", System.getProperty("user.home"), null),
@@ -1528,6 +1529,362 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								254,
 								null),
 					Arguments
+							.of(true,
+								"دوال:الحزم::حذف_عنصر_عند_فهرس([1 , 2 , 3], 1)",
+								2,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::حذف_عنصر_عند_فهرس({1 , 2}, 0)",
+								1,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::يحتوي_عنصر([1 , 2 , 3], 2)",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::يحتوي_عنصر({ 'أ': 1 , 'ب': 2 }, 2)",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::يحتوي_عنصر({1 , 2}, 0)",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::يحتوي_مفتاح({ 'أ': 1 , 'ب': 2 }, 2)",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"دوال:الحزم::يحتوي_مفتاح({ 'أ': 1 , 'ب': 2 }, 'أ')",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين { 'أ': 1 , 'ب': 2 }
+								دوال:الحزم::اضافة_عنصر(ت, جافا:أدة:مجرد_خريطة:بسيط_مدخل('ت' , 3))
+								ت
+								""",
+								Map
+										.of('أ',
+											1,
+											'ب',
+											2,
+											'ت',
+											3
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين { 'أ': 1 , 'ب': 2 }
+								دوال:الحزم::اضافة_عنصر(ت, جافا:أدة:خريطة::مدخل('ت' , 3))
+								ت
+								""",
+								Map
+										.of('أ',
+											1,
+											'ب',
+											2,
+											'ت',
+											3
+										),
+								null),
+//	TODO: uncomment after adding pair support
+//					Arguments
+//							.of(true,
+//								"""
+//								ثابت ت تعيين { 'أ': 1 , 'ب': 2 }
+//								دوال:الحزم::اضافة_عنصر(ت, ('ت':3))
+//								ت
+//								""",
+//								Map
+//										.of('أ',
+//											1,
+//											'ب',
+//											2,
+//											'ت',
+//											3
+//										),
+//								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين [1 , 2]
+								دوال:الحزم::اضافة_عنصر(ت, 3)
+								ت
+								""",
+								List.of(1, 2, 3),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين { 'أ': 1 , 'ب': 2 }
+								دوال:الحزم::حذف_عنصر(ت, 'ب')
+								ت
+								""",
+								Map.of('أ', 1),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين [1 , 2]
+								دوال:الحزم::حذف_عنصر(ت, 1)
+								ت
+								""",
+								List.of(2),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين [1 , 2 , 3]
+								دوال:الحزم::الاحتفاظ_بالعناصر(ت, [2, 3, 4])
+								ت
+								""",
+								List.of(2, 3),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين [1 , 2]
+								دوال:الحزم::مسح_المجموعة(ت)
+								ت
+								""",
+								List.of(),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين { 'أ': 1 , 'ب': 2 }
+								دوال:الحزم::مسح_المجموعة(ت)
+								ت
+								""",
+								Map.of(),
+								null),
+					Arguments
+							.of(true,
+								"دوال:الخيوط::الخيط_الحالي()",
+								NaftahObject.of(Thread.currentThread()),
+								null),
+					Arguments
+							.of(true,
+								"دوال:الخيوط::اسم_الخيط(دوال:الخيوط::الخيط_الحالي())",
+								Thread.currentThread().getName(),
+								null),
+					Arguments
+							.of(true,
+								"دوال:الخيوط::اسم_الخيط_الحالي()",
+								Thread.currentThread().getName(),
+								null),
+					Arguments
+							.of(true,
+								"""
+								دوال:الخيوط::تغيير_اسم_الخيط_الحالي("جديد")
+								دوال:الخيوط::اسم_الخيط_الحالي()
+								""",
+								"جديد",
+								null),
+					Arguments
+							.of(true,
+								"""
+								دوال:الخيوط::تغيير_اسم_الخيط(دوال:الخيوط::الخيط_الحالي(), "المنفذ-١")
+								دوال:الخيوط::اسم_الخيط_الحالي()
+								""",
+								"المنفذ-١",
+								null),
+					Arguments
+							.of(true,
+								"دوال:الخيوط::هل_مقاطع(دوال:الخيوط::الخيط_الحالي())",
+								Thread.currentThread().isInterrupted(),
+								null),
+					Arguments
+							.of(true,
+								"دوال:الخيوط::هل_الخيط_الحالي_مقاطع()",
+								Thread.currentThread().isInterrupted(),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت خيط تعيين دوال:الخيوط::الخيط_الحالي()
+								حاول(دوال:الخيوط::قاطع_الخيط(خيط)){
+								نجاح(أ) -> إطبع(أ)
+								فشل إفعل إطبع("فشل")
+								}
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(true,
+								"دوال:الخيوط::أولوية_الخيط(دوال:الخيوط::الخيط_الحالي())",
+								Thread.currentThread().getPriority(),
+								null),
+					Arguments
+							.of(true,
+								"دوال:الخيوط::أولوية_الخيط_الحالي()",
+								Thread.currentThread().getPriority(),
+								null),
+					Arguments
+							.of(true,
+								"""
+								دوال:الخيوط::تغيير_أولوية_الخيط_الحالي(7)
+								دوال:الخيوط::أولوية_الخيط_الحالي()
+								""",
+								7,
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت خيط تعيين دوال:الخيوط::الخيط_الحالي()
+								دوال:الخيوط::تغيير_أولوية_الخيط(خيط, 7)
+								دوال:الخيوط::أولوية_الخيط_الحالي()
+								""",
+								7,
+								null),
+					Arguments
+							.of(true,
+								"""
+								دوال:الخيوط::معرف_الخيط(دوال:الخيوط::الخيط_الحالي())
+								""",
+								Thread.currentThread().getId(),
+								null),
+					Arguments
+							.of(true,
+								"""
+								دوال:الخيوط::معرف_الخيط_الحالي()
+								""",
+								Thread.currentThread().getId(),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت شغل تعيين تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)
+								دوال:الخيوط::انتظر(شغل)
+								""",
+								2,
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت شغل تعيين تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)
+								دوال:الخيوط::انتظر(شغل)
+								دوال:الخيوط::مكتملة(شغل)
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت شغل تعيين تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)
+								دوال:الخيوط::انتظر(شغل)
+								دوال:الخيوط::ملغية(شغل)
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت شغل تعيين تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)
+								دوال:الخيوط::معرف_شغل(شغل) لا_يساوي فارغ
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت شغل تعيين تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)
+								دوال:الخيوط::اوقف_المهمة(شغل)
+								دوال:الخيوط::المهمة_حية(شغل)
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت شغل تعيين تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)
+								دوال:الخيوط::خيط_المهمة(شغل) لا_يساوي فارغ
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت قناة_ = دوال:الخيوط::إنشاء_قناة("أوامر")
+								دوال:الخيوط::ارسل(قناة_, 10)
+								دوال:الخيوط::استقبل(قناة_)
+								""",
+								DynamicNumber.of(10),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت قناة_ = دوال:الخيوط::إنشاء_قناة("أوامر")
+								دوال:الخيوط::اسم_القناة(قناة_)
+								""",
+								"أوامر",
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- ممثل بسيط يقوم فقط بطباعة الرسائل المستلمة
+								ممثل طابعة(رسالة_الطابعة){
+								إطبع(رسالة_الطابعة) --- طباعة الرسالة مباشرة
+								}
+								ثابت ث = دوال:الخيوط::ارسل_للممثل(طابعة, "مرحبا")
+								دوال:الخيوط::اوقف_الممثل(طابعة)
+								ث
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- ممثل بسيط يقوم فقط بطباعة الرسائل المستلمة
+								ممثل طابعة(رسالة_الطابعة){
+								إطبع(رسالة_الطابعة) --- طباعة الرسالة مباشرة
+								}
+								دوال:الخيوط::ممثل_حي(طابعة)
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- ممثل بسيط يقوم فقط بطباعة الرسائل المستلمة
+								ممثل طابعة(رسالة_الطابعة){
+								إطبع(رسالة_الطابعة) --- طباعة الرسالة مباشرة
+								}
+								دوال:الخيوط::ممثل_يعمل(طابعة)
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- ممثل بسيط يقوم فقط بطباعة الرسائل المستلمة
+								ممثل طابعة(رسالة_الطابعة){
+								إطبع(رسالة_الطابعة) --- طباعة الرسالة مباشرة
+								}
+								دوال:الخيوط::اسم_الممثل(طابعة)
+								""",
+								"طابعة",
+								null),
+					Arguments
+							.of(true,
+								"""
+								--- ممثل بسيط يقوم فقط بطباعة الرسائل المستلمة
+								ممثل طابعة(رسالة_الطابعة){
+								إطبع(رسالة_الطابعة) --- طباعة الرسالة مباشرة
+								}
+								دوال:الخيوط::خيط_الممثل(طابعة) لا_يساوي فارغ
+								""",
+								true,
+								null),
+					Arguments
 							.of(false,
 								"""
 								جافا:لغة:كائن::ابكديفجهجكلمنوبكرستيفوكسز()
@@ -1825,9 +2182,9 @@ public class FunctionCallProvider implements ArgumentsProvider {
 
 								"""
 								--- java.util.Optional::orElse
-								جافا:أدة:اختياري::وف_فارغابل(فارغ):::أو_لس("لغة نفطة")
+								جافا:أدة:اختياري::وف_فارغابل(فارغ):::أو_لس("لغة نفطه")
 								""",
-								NaftahObject.of("لغة نفطة"),
+								NaftahObject.of("لغة نفطه"),
 								null),
 					Arguments
 							.of(true,
@@ -1890,7 +2247,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								--- java.util.Optional::get
 								اختياري::گت(),
 								--- java.util.Optional::orElse
-								اختياري::أو_لس("لغة نفطة")
+								اختياري::أو_لس("لغة نفطه")
 								)
 								""",
 								Tuple

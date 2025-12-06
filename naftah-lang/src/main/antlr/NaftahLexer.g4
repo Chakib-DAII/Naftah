@@ -87,6 +87,13 @@ ELEMENTWISE_MUL : DOT MUL DOT;
 ELEMENTWISE_DIV : DOT DIV DOT;
 ELEMENTWISE_MOD : DOT MOD DOT;
 
+// Concurrency
+ASYNC:      'غير_متزامن';
+SPAWN:      'تشغيل';
+AWAIT:      'انتظار';
+SCOPE:      'نطاق';
+CHANNEL:    'قناة';
+ACTOR:      'ممثل';
 
 // Special characters
 LPAREN      : '(';

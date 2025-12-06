@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,13 +16,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Stack;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -33,7 +36,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
-import org.daiitech.naftah.builtin.lang.ClassScanningResult;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
@@ -41,8 +43,12 @@ import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.Result;
+import org.daiitech.naftah.builtin.utils.concurrent.Actor;
+import org.daiitech.naftah.builtin.utils.concurrent.SuppliedInheritableThreadLocal;
+import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
+import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
 
@@ -112,16 +118,18 @@ public class DefaultContext {
 	/**
 	 * Global map holding contexts indexed by their depth.
 	 */
-	protected static final Map<Integer, DefaultContext> CONTEXTS = new HashMap<>();
+	protected static final ConcurrentHashMap<Integer, CopyOnWriteArrayList<DefaultContext>> CONTEXTS = new ConcurrentHashMap<>();
 	/**
 	 * Stack representing the call stack containing pairs of function and argument maps,
 	 * along with the returned value.
 	 */
-	protected static final Stack<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>> CALL_STACK = new Stack<>();
+	protected static final ThreadLocal<Deque<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>>> CALL_STACK = ThreadLocal
+			.withInitial(ArrayDeque::new);
 	/**
 	 * Stack representing loop labels and their associated parser rule contexts.
 	 */
-	protected static final Deque<Pair<String, ? extends ParserRuleContext>> LOOP_STACK = new ArrayDeque<>();
+	protected static final InheritableThreadLocal<Deque<Pair<String, ? extends ParserRuleContext>>> LOOP_STACK = SuppliedInheritableThreadLocal
+			.withInitial(ArrayDeque::new, ArrayDeque::new);
 	/**
 	 * A supplier task to perform class scanning, loading, filtering, and extraction of JVM and builtin functions
 	 * asynchronously.
@@ -194,19 +202,27 @@ public class DefaultContext {
 			internalExecutor.shutdown();
 		}
 	};
+	/**
+	 * Holds the current thread's {@link DefaultContext} in a thread-local variable.
+	 */
+	protected static final ThreadLocal<DefaultContext> CURRENT_CONTEXT = new ThreadLocal<>();
+	/**
+	 * Thread-local list holding all tasks spawned in the current scope for this thread.
+	 */
+	protected static ThreadLocal<List<Task<?>>> CURRENT_TASK_SCOPE;
 	// LOADED CLASSES
-	protected static Map<String, ClassLoader> CLASS_NAMES;
-	protected static Set<String> CLASS_QUALIFIERS;
-	protected static Set<String> ARABIC_CLASS_QUALIFIERS;
+	protected static volatile Set<String> CLASS_NAMES;
+	protected static volatile Set<String> CLASS_QUALIFIERS;
+	protected static volatile Set<String> ARABIC_CLASS_QUALIFIERS;
 	// qualifiedName -> CLass<?>
-	protected static Map<String, Class<?>> CLASSES;
-	protected static Map<String, Class<?>> ACCESSIBLE_CLASSES;
-	protected static Map<String, Class<?>> INSTANTIABLE_CLASSES;
+	protected static volatile Map<String, Class<?>> CLASSES;
+	protected static volatile Map<String, Class<?>> ACCESSIBLE_CLASSES;
+	protected static volatile Map<String, Class<?>> INSTANTIABLE_CLASSES;
 	// qualifiedCall -> Method
-	protected static Map<String, List<JvmFunction>> JVM_FUNCTIONS;
-	protected static Map<String, List<JvmClassInitializer>> JVM_CLASS_INITIALIZERS;
-	protected static Map<String, String> IMPORTS = new HashMap<>();
+	protected static volatile Map<String, List<JvmFunction>> JVM_FUNCTIONS;
+	protected static volatile Map<String, List<JvmClassInitializer>> JVM_CLASS_INITIALIZERS;
 	protected static volatile Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
+	protected static volatile Map<String, String> IMPORTS = new ConcurrentHashMap<>();
 	protected static volatile boolean SHOULD_BOOT_STRAP;
 	protected static volatile boolean FORCE_BOOT_STRAP;
 	protected static volatile boolean ASYNC_BOOT_STRAP;
@@ -231,21 +247,28 @@ public class DefaultContext {
 	};
 
 	// instance
+	protected final Thread owner = Thread.currentThread();
+	protected final AtomicInteger pendingTasks = new AtomicInteger(0);
 	protected final DefaultContext parent;
 	protected final int depth;
-	protected final Map<String, DeclaredVariable> variables = new HashMap<>();
-	protected final Map<String, DeclaredFunction> functions = new HashMap<>();
-	protected String functionCallId; // current function in execution inside a context
-	protected boolean parsingFunctionCallId; // parsing current function in execution
-	protected boolean parsingAssignment; // parsing an assignment is in execution
-	protected boolean creatingObject; // object creation is in execution
-	protected Pair<DeclaredVariable, Boolean> declarationOfAssignment; // the declaration of variable being assigned
-	protected String loopLabel; // current loop label in execution inside a context
-	protected Map<String, Object> loopVariables; // only use in loop execution context
-	protected NaftahParseTreeProperty<Boolean> parseTreeExecution;
-	protected Map<String, String> blockImports;
-	protected Map<String, DeclaredParameter> parameters; // only use in function call context
-	protected Map<String, Object> arguments; // only use in function call context
+	protected final InheritableThreadLocal<Map<String, DeclaredVariable>> variables = SuppliedInheritableThreadLocal
+			.withInitial(HashMap::new, HashMap::new);
+	protected final InheritableThreadLocal<Map<String, DeclaredFunction>> functions = SuppliedInheritableThreadLocal
+			.withInitial(HashMap::new, HashMap::new);
+	protected volatile boolean pendingRemoval = false;
+	protected ThreadLocal<String> functionCallId; // current function in execution inside a context
+	protected ThreadLocal<Boolean> parsingFunctionCallId; // parsing current function in execution
+	protected ThreadLocal<Boolean> parsingAssignment; // parsing an assignment is in execution
+	protected ThreadLocal<Boolean> creatingObject; // object creation is in execution
+	protected ThreadLocal<Boolean> awaitingTask; // awaiting a spawned task
+	// the declaration of variable being assigned
+	protected ThreadLocal<Pair<DeclaredVariable, Boolean>> declarationOfAssignment;
+	protected ThreadLocal<String> loopLabel; // current loop label in execution inside a context
+	protected InheritableThreadLocal<Map<String, Object>> loopVariables; // only use in loop execution context
+	protected InheritableThreadLocal<NaftahParseTreeProperty<Boolean>> parseTreeExecution;
+	protected InheritableThreadLocal<Map<String, String>> blockImports;
+	protected InheritableThreadLocal<Map<String, DeclaredParameter>> parameters; // only use in function call context
+	protected InheritableThreadLocal<Map<String, Object>> arguments; // only use in function call context
 
 	/**
 	 * Constructs a default context with no parent, block imports, parameters, or arguments.
@@ -284,10 +307,18 @@ public class DefaultContext {
 		}
 		this.parent = parent;
 		this.depth = parent == null ? 0 : parent.getDepth() + 1;
-		this.blockImports = blockImports;
-		this.parameters = parameters;
-		this.arguments = arguments;
-		CONTEXTS.put(depth, this);
+
+		if (Objects.nonNull(blockImports)) {
+			this.blockImports = SuppliedInheritableThreadLocal.withInitial(() -> blockImports, HashMap::new);
+		}
+		if (Objects.nonNull(parameters)) {
+			this.parameters = SuppliedInheritableThreadLocal.withInitial(() -> parameters, HashMap::new);
+		}
+		if (Objects.nonNull(arguments)) {
+			this.arguments = SuppliedInheritableThreadLocal.withInitial(() -> arguments, HashMap::new);
+		}
+		CONTEXTS.computeIfAbsent(depth, d -> new CopyOnWriteArrayList<>()).add(this);
+		CURRENT_CONTEXT.set(this);
 	}
 
 	/**
@@ -486,30 +517,213 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Retrieves the context associated with the specified depth.
+	 * Returns the current thread’s active context.
+	 * <p>
+	 * This retrieves the value stored in the thread-local {@code CURRENT_CONTEXT}.
+	 * Each thread always sees its own context, independent of other threads.
+	 * </p>
 	 *
-	 * @param depth the depth of the context
-	 * @return the {@link DefaultContext} at the given depth, or {@code null} if none
+	 * @return the {@link DefaultContext} bound to the current thread,
+	 *         or {@code null} if none is set
 	 */
-	public static DefaultContext getContextByDepth(int depth) {
-		return CONTEXTS.get(depth);
+	public static DefaultContext getCurrentContext() {
+		return CURRENT_CONTEXT.get();
 	}
+
+
+	/**
+	 * Sets the active context for the current thread.
+	 * <p>
+	 * This assigns a {@link DefaultContext} to the calling thread’s thread-local
+	 * storage. Each thread maintains a separate context pointer.
+	 * </p>
+	 *
+	 * @param currentContext the context to bind to this thread
+	 */
+	public static void setCurrentContext(DefaultContext currentContext) {
+		CURRENT_CONTEXT.set(currentContext);
+	}
+
+	/**
+	 * Retrieves all contexts registered at a specific depth.
+	 * <p>
+	 * Multiple contexts may exist at the same depth when asynchronous tasks
+	 * or concurrent scopes are active. The returned list is thread-safe but is
+	 * not a defensive copy; modifications affect global state.
+	 * </p>
+	 *
+	 * @param depth the depth level whose contexts should be returned
+	 * @return a list of {@link DefaultContext} objects at that depth;
+	 *         an empty list if none exist
+	 */
+	public static List<DefaultContext> getContextsByDepth(int depth) {
+		return CONTEXTS.getOrDefault(depth, new CopyOnWriteArrayList<>());
+	}
+
 
 	/**
 	 * Deregisters and removes the context associated with the specified depth.
 	 * If the removed context and its parent both have parse tree execution properties,
 	 * copies the parse tree execution state from the removed context to its parent.
 	 *
-	 * @param depth the depth of the context to remove
-	 * @return the removed {@link DefaultContext}
 	 */
-	public static DefaultContext deregisterContext(int depth) {
-		DefaultContext context = CONTEXTS.remove(depth);
-		if (context.parent != null && context.parseTreeExecution != null && context.parent.parseTreeExecution != null) {
-			context.parent.parseTreeExecution.copyFrom(context.parseTreeExecution);
-		}
-		return context;
+	public static void deregisterContext() {
+		DefaultContext currentContext = CURRENT_CONTEXT.get();
+		deregisterContext(currentContext);
 	}
+
+	/**
+	 * Attempts to detach the given {@link DefaultContext} from its parent context,
+	 * performing state propagation when necessary.
+	 *
+	 * <p>If the context can be safely deregistered (i.e., no pending tasks and
+	 * no unresolved execution state), {@link #tryDeregisterContext(DefaultContext)}
+	 * is invoked. When deregistration succeeds, any active parse-tree execution
+	 * metadata from the child context is copied into the parent to preserve
+	 * execution continuity.</p>
+	 *
+	 * <p>If deregistration fails—typically due to pending asynchronous tasks or
+	 * execution markers that must remain valid—the method falls back to
+	 * {@link #copyDeclarationsToParent(DefaultContext)} to propagate variable and
+	 * function declarations from the child context into the parent. This prevents
+	 * redefinition conflicts or loss of symbol information while the child context
+	 * remains active.</p>
+	 *
+	 * <p>Calling this method has no effect if the given context is {@code null} or
+	 * has no parent.</p>
+	 *
+	 * @param context the context to deregister; may be {@code null}
+	 */
+	public static void deregisterContext(DefaultContext context) {
+		if (Objects.nonNull(context) && Objects.nonNull(context.parent)) {
+			if (tryDeregisterContext(context)) {
+				copyDeclarationsToParent(context);
+				if (Objects.nonNull(context.parseTreeExecution) && Objects
+						.nonNull(context.parent.parseTreeExecution)) {
+					context.parent.parseTreeExecution.get().copyFrom(context.parseTreeExecution.get());
+				}
+			}
+			else {
+				// copy declarations of context with pending tasks in case of deregistration failure to parent
+				// as prevention of creation of variable with the same name
+				copyDeclarationsToParent(context);
+			}
+		}
+	}
+
+	/**
+	 * Copies the variable and function declarations from the specified context
+	 * into its parent context.
+	 *
+	 * <p>This method is used as a fallback when a context cannot be safely
+	 * deregistered due to pending tasks or incomplete cleanup. By copying
+	 * declarations upward, the parent context gains visibility into all symbols
+	 * introduced by the child context, preventing name collisions or symbol
+	 * shadowing when the child remains active longer than expected.</p>
+	 *
+	 * <p>Only non-cleaned thread-local state is copied: if the context's
+	 * {@code threadLocalsCleaned} flag indicates that cleanup has already
+	 * occurred, no declarations are propagated. This ensures consistent and
+	 * deterministic state transfer.</p>
+	 *
+	 * <p>The method requires that the context and its parent both be non-null.</p>
+	 *
+	 * @param context the child context whose declarations should be copied
+	 * @throws NullPointerException if {@code context} or its parent is {@code null}
+	 */
+	public static void copyDeclarationsToParent(DefaultContext context) {
+		Objects.requireNonNull(Objects.requireNonNull(context).parent);
+		context.parent.variables.get().putAll(context.variables.get());
+		context.parent.functions.get().putAll(context.functions.get());
+	}
+
+	/**
+	 * Marks the given context as eligible for removal once it becomes safe
+	 * to do so.
+	 *
+	 * <p>This flag does <strong>not</strong> remove the context immediately.
+	 * A context may be marked for removal when:
+	 * <ul>
+	 * <li>its owning scope has ended, or</li>
+	 * <li>a thread attempts to deregister the context but it still has
+	 * pending asynchronous tasks, or</li>
+	 * <li>any of its descendant contexts still have active work.</li>
+	 * </ul>
+	 *
+	 * <p>Contexts marked for removal will be deleted automatically once:
+	 * <ul>
+	 * <li>the context itself has zero pending tasks, and</li>
+	 * <li>all of its descendant contexts have zero pending tasks.</li>
+	 * </ul>
+	 *
+	 * <p>This prevents premature cleanup while ensuring that no contexts leak
+	 * after they become fully inactive.</p>
+	 *
+	 * @param context the {@link DefaultContext} to mark for future removal;
+	 *                must not be {@code null}
+	 */
+	public static void markForRemoval(DefaultContext context) {
+		context.pendingRemoval = Thread.currentThread() == context.owner;
+	}
+
+	/**
+	 * Attempts to remove a context from the global context registry.
+	 *
+	 * <p>The removal is <strong>conditional</strong>. This method will only
+	 * deregister the given context when all of the following conditions
+	 * are satisfied:
+	 *
+	 * <ul>
+	 * <li>The context has no pending asynchronous tasks.</li>
+	 * <li>No descendant context has pending tasks.</li>
+	 * <li>The context has been properly registered in the
+	 * {@link DefaultContext#CONTEXTS} structure.</li>
+	 * </ul>
+	 *
+	 * <p>If removal is not yet possible, the context is marked for later
+	 * cleanup via {@link #markForRemoval(DefaultContext)}.</p>
+	 *
+	 * <p>If the context is the <em>current</em> context of the calling thread,
+	 * the thread-local pointer {@link DefaultContext#CURRENT_CONTEXT}
+	 * will be updated to the parent context. Otherwise, the caller's
+	 * thread-local context remains unchanged.</p>
+	 *
+	 * <p>The method is thread-safe and may be called concurrently from
+	 * multiple threads. Removal will occur exactly once.</p>
+	 *
+	 * @param context the context to attempt to deregister
+	 * @return {@code true} if the context was removed,
+	 *         {@code false} if removal was deferred
+	 */
+	public static boolean tryDeregisterContext(DefaultContext context) {
+		// If this context itself still has tasks → don't remove it.
+		if (context.pendingTasks.get() > 0) {
+			markForRemoval(context);
+			return false; // still used by running tasks
+		}
+
+		// Check children & descendants for pending tasks
+		for (DefaultContext child : context.getChildren()) {
+			if (child.pendingTasks.get() > 0) {
+				markForRemoval(context);
+				return false;
+			}
+		}
+
+		// Now it is safe: remove only ctx (not the whole depth)
+		CopyOnWriteArrayList<DefaultContext> list = CONTEXTS.get(context.depth);
+		if (list != null) {
+			list.remove(context);
+			if (list.isEmpty()) {
+				CONTEXTS.remove(context.depth, list);
+			}
+		}
+
+		CURRENT_CONTEXT.set(context.parent);
+
+		return true;
+	}
+
 
 	/**
 	 * Pushes a function call frame onto the call stack.
@@ -518,18 +732,7 @@ public class DefaultContext {
 	 * @param arguments the map of argument names to values
 	 */
 	public static void pushCall(DeclaredFunction function, Map<String, Object> arguments) {
-		CALL_STACK.push(new Pair<>(new Pair<>(function, arguments), null));
-	}
-
-	/**
-	 * Updates the top function call frame on the call stack with a returned value.
-	 *
-	 * @param function      the {@link DeclaredFunction} being updated
-	 * @param arguments     the map of argument names to values
-	 * @param returnedValue the returned value from the function call
-	 */
-	public static void updateCall(DeclaredFunction function, Map<String, Object> arguments, Object returnedValue) {
-		CALL_STACK.set(CALL_STACK.size() - 1, new Pair<>(new Pair<>(function, arguments), returnedValue));
+		CALL_STACK.get().push(new Pair<>(new Pair<>(function, arguments), null));
 	}
 
 	/**
@@ -539,10 +742,10 @@ public class DefaultContext {
 	 * @throws NaftahBugError if the call stack is empty
 	 */
 	public static Pair<Pair<DeclaredFunction, Map<String, Object>>, Object> popCall() {
-		if (CALL_STACK.empty()) {
+		if (CALL_STACK.get().isEmpty()) {
 			throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
 		}
-		return CALL_STACK.pop();
+		return CALL_STACK.get().pop();
 	}
 
 	/**
@@ -564,7 +767,32 @@ public class DefaultContext {
 	 * @param <T>     the type of the parser context
 	 */
 	public static <T extends ParserRuleContext> void pushLoop(String label, T loopCtx) {
-		LOOP_STACK.push(new Pair<>(label, loopCtx));
+		LOOP_STACK.get().push(new Pair<>(label, loopCtx));
+	}
+
+	/**
+	 * Initializes a new task scope for the current thread.
+	 *
+	 * <p>All tasks spawned after this call will be tracked in this scope and can
+	 * later be awaited or cleaned up. Must be called before spawning tasks if
+	 * no scope is active.</p>
+	 */
+	public static void startScope() {
+		if (Objects.isNull(CURRENT_TASK_SCOPE)) {
+			CURRENT_TASK_SCOPE = new ThreadLocal<>();
+		}
+		CURRENT_TASK_SCOPE.set(new ArrayList<>());
+	}
+
+	/**
+	 * Finalizes the current task scope for the thread.
+	 *
+	 * <p>Removes all tasks tracked in the current scope and clears the thread-local
+	 * reference. After this call, no tasks are associated with the scope until
+	 * {@link #startScope()} is called again.</p>
+	 */
+	public static void endScope() {
+		CURRENT_TASK_SCOPE.remove();
 	}
 
 	/**
@@ -573,7 +801,7 @@ public class DefaultContext {
 	 * @return a list of loop labels
 	 */
 	public static List<String> getLoopLabels() {
-		return LOOP_STACK.stream().map(stringPair -> stringPair.a).toList();
+		return LOOP_STACK.get().stream().map(stringPair -> stringPair.a).toList();
 	}
 
 	/**
@@ -583,7 +811,7 @@ public class DefaultContext {
 	 * @return {@code true} if the loop stack contains the label, {@code false} otherwise
 	 */
 	public static boolean loopContainsLabel(String label) {
-		return LOOP_STACK.stream().anyMatch(stringPair -> stringPair.a.equals(label));
+		return LOOP_STACK.get().stream().anyMatch(stringPair -> stringPair.a.equals(label));
 	}
 
 	/**
@@ -593,10 +821,10 @@ public class DefaultContext {
 	 * @throws NaftahBugError if the loop stack is empty
 	 */
 	public static Pair<String, ? extends ParserRuleContext> popLoop() {
-		if (LOOP_STACK.isEmpty()) {
+		if (LOOP_STACK.get().isEmpty()) {
 			throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس الحلقات الفارغ.");
 		}
-		return LOOP_STACK.pop();
+		return LOOP_STACK.get().pop();
 	}
 
 	/**
@@ -606,15 +834,15 @@ public class DefaultContext {
 	 * @param result the class scanning result containing loaded class information
 	 */
 	protected static void setContextFromClassScanningResult(ClassScanningResult result) {
-		CLASS_NAMES = result.getClassNames();
-		CLASS_QUALIFIERS = result.getClassQualifiers();
-		ARABIC_CLASS_QUALIFIERS = result.getArabicClassQualifiers();
-		CLASSES = result.getClasses();
-		ACCESSIBLE_CLASSES = result.getAccessibleClasses();
-		INSTANTIABLE_CLASSES = result.getInstantiableClasses();
-		JVM_CLASS_INITIALIZERS = result.getJvmClassInitializers();
-		JVM_FUNCTIONS = result.getJvmFunctions();
-		setBuiltinFunctions(result.getBuiltinFunctions());
+		CLASS_NAMES = Set.copyOf(result.getClassNames().keySet());
+		CLASS_QUALIFIERS = Set.copyOf(result.getClassQualifiers());
+		ARABIC_CLASS_QUALIFIERS = Set.copyOf(result.getArabicClassQualifiers());
+		CLASSES = Map.copyOf(result.getClasses());
+		ACCESSIBLE_CLASSES = Map.copyOf(result.getAccessibleClasses());
+		INSTANTIABLE_CLASSES = Map.copyOf(result.getInstantiableClasses());
+		JVM_CLASS_INITIALIZERS = Map.copyOf(result.getJvmClassInitializers());
+		JVM_FUNCTIONS = Map.copyOf(result.getJvmFunctions());
+		setBuiltinFunctions(Collections.unmodifiableMap(result.getBuiltinFunctions()));
 		BOOT_STRAPPED = true;
 	}
 
@@ -662,6 +890,8 @@ public class DefaultContext {
 					.stream()
 					.collect(toAliasGroupedByName()));
 		}
+		// Locking the Builtin function, cannot be changed anymore
+		setBuiltinFunctions(Collections.unmodifiableMap(getBuiltinFunctions()));
 	}
 
 	/**
@@ -709,7 +939,7 @@ public class DefaultContext {
 			Throwable thr = null;
 			try {
 				startLoader("""
-							تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة. قد يستغرق الأمر عدة دقائق حسب الإعدادات."""
+							تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطه. قد يستغرق الأمر عدة دقائق حسب الإعدادات."""
 				);
 				classScanningResult = LOADER_TASK.get();
 				stopLoader();
@@ -1004,13 +1234,186 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Checks if the variable with the given name exists in the current context or any parent context.
+	 * Clears all static {@link ThreadLocal} fields used by this class,
+	 * removing global per-thread interpreter state such as the execution
+	 * call stack, loop stack, and the currently active evaluation context.
 	 *
-	 * @param name the variable name
-	 * @return true if the variable exists, false otherwise
+	 * <p>This method should be called when global per-thread state is no
+	 * longer needed—for example, when shutting down an interpreter instance,
+	 * resetting internal state between isolated evaluations, or cleaning up
+	 * after thread reuse in pooled environments.</p>
+	 *
+	 * <p>Only thread-local data for the current thread is removed. This method
+	 * does not modify shared global structures or affect the state of other
+	 * threads. If the class maintains optional ThreadLocal fields, they are
+	 * removed only when non-null to ensure safe cleanup regardless of
+	 * initialization order.</p>
+	 */
+	public static void cleanClassThreadLocals() {
+		CALL_STACK.remove();
+		LOOP_STACK.remove();
+		CURRENT_CONTEXT.remove();
+		if (Objects.nonNull(CURRENT_TASK_SCOPE)) {
+			CURRENT_TASK_SCOPE.remove();
+		}
+	}
+
+	/**
+	 * Registers a newly created asynchronous task in both the current task scope
+	 * and the associated execution context.
+	 *
+	 * <p>This method must be called whenever a task is spawned that logically
+	 * belongs to this context. It performs two things:</p>
+	 * <ol>
+	 * <li>Increments the {@link #pendingTasks} counter to prevent premature
+	 * deregistration of the context while the task is running.</li>
+	 * <li>Adds the task to the current thread's task scope
+	 * ({@link #CURRENT_TASK_SCOPE}) so it can be tracked and awaited
+	 * when the scope ends.</li>
+	 * </ol>
+	 *
+	 * <p>If no scope is currently active for this thread, the task is only
+	 * registered in the context.</p>
+	 *
+	 * @param task the asynchronous task to register; must not be {@code null}
+	 */
+	public void registerTask(Task<?> task) {
+		// Increment pending tasks for this context
+		pendingTasks.incrementAndGet();
+
+		// Add to the current thread's active scope if it exists
+		List<Task<?>> currentTaskScope;
+		if (Objects.nonNull(CURRENT_TASK_SCOPE) && Objects.nonNull(currentTaskScope = CURRENT_TASK_SCOPE.get())) {
+			currentTaskScope.add(task);
+		}
+	}
+
+	/**
+	 * Marks a previously registered asynchronous task as completed.
+	 *
+	 * <p>This method performs two actions:</p>
+	 * <ol>
+	 * <li>Decrements the {@link #pendingTasks} counter, indicating that one
+	 * of the tasks associated with this context has finished execution.</li>
+	 * <li>If the context was previously marked for removal ({@link #pendingRemoval}),
+	 * this triggers a deregistration attempt via {@link #deregisterContext(DefaultContext)}.</li>
+	 * </ol>
+	 *
+	 * <p>The caller must ensure that {@code completeTask()} is invoked exactly once
+	 * for every successful {@link #registerTask(Task)}, typically after the task
+	 * finishes and its result has been consumed or awaited.</p>
+	 *
+	 * <p>Even when a task is tracked in a scope (via {@link #CURRENT_TASK_SCOPE}),
+	 * this method should still be called to update the context's pending task count
+	 * and enable proper lifecycle management.</p>
+	 *
+	 * @see #registerTask(Task)
+	 * @see #deregisterContext(DefaultContext)
+	 */
+	public void completeTask() {
+		pendingTasks.decrementAndGet();
+		if (pendingRemoval) {
+			deregisterContext(this);
+		}
+	}
+
+	/**
+	 * Clears all {@link ThreadLocal} values associated with this context,
+	 * removing per-thread state such as variables, function environments,
+	 * temporary execution markers, and parsing-related metadata.
+	 *
+	 * <p>This method should be invoked when a task running under this context
+	 * completes, or when the context is being cleaned up. It prevents memory
+	 * leaks and stale state retention across threads, especially in an
+	 * asynchronous or multi-threaded environment where contexts may migrate
+	 * between threads.</p>
+	 *
+	 * <p>All managed {@code ThreadLocal} fields are removed only if they are
+	 * non-null, ensuring safe cleanup even during partial initialization.</p>
+	 *
+	 * <p>Calling this method does not affect shared state or the global context
+	 * registry—it only clears thread-local execution state.</p>
+	 */
+	public void cleanThreadLocals() {
+		this.variables.remove();
+		this.functions.remove();
+		if (Objects.nonNull(this.functionCallId)) {
+			this.functionCallId.remove();
+		}
+		if (Objects.nonNull(this.parsingFunctionCallId)) {
+			this.parsingFunctionCallId.remove();
+		}
+		if (Objects.nonNull(this.parsingAssignment)) {
+			this.parsingAssignment.remove();
+		}
+		if (Objects.nonNull(this.creatingObject)) {
+			this.creatingObject.remove();
+		}
+		if (Objects.nonNull(this.awaitingTask)) {
+			this.awaitingTask.remove();
+		}
+		if (Objects.nonNull(this.declarationOfAssignment)) {
+			this.declarationOfAssignment.remove();
+		}
+		if (Objects.nonNull(this.loopLabel)) {
+			this.loopLabel.remove();
+		}
+		if (Objects.nonNull(this.loopVariables)) {
+			this.loopVariables.remove();
+		}
+		if (Objects.nonNull(this.parseTreeExecution)) {
+			this.parseTreeExecution.remove();
+		}
+		if (Objects.nonNull(this.blockImports)) {
+			this.blockImports.remove();
+		}
+		if (Objects.nonNull(this.parameters)) {
+			this.parameters.remove();
+		}
+		if (Objects.nonNull(this.arguments)) {
+			this.arguments.remove();
+		}
+	}
+
+	/**
+	 * Determines whether a variable with the given name exists in this context
+	 * or in any of its ancestor contexts.
+	 *
+	 * <p>This method performs a hierarchical lookup: it first checks the current
+	 * context's variable map, and if not found, recursively checks parent
+	 * contexts. This allows child contexts to inherit variables from their
+	 * enclosing execution scopes.</p>
+	 *
+	 * @param name the name of the variable to look up
+	 * @return {@code true} if the variable exists in this context or any parent
+	 *         context; {@code false} otherwise
 	 */
 	public boolean containsVariable(String name) {
-		return variables.containsKey(name) || (parent != null && parent.containsVariable(name));
+		return variables.get().containsKey(name) || (Objects.nonNull(parent) && parent.containsVariable(name));
+	}
+
+	/**
+	 * Checks whether a variable with the given name exists in the provided local
+	 * variable map or in any sibling contexts.
+	 *
+	 * <p>This method performs a “horizontal” lookup: it does not traverse upward
+	 * to parent contexts but instead inspects the current context's variable map
+	 * (the provided {@code variableMap}) and then the variable maps of sibling
+	 * contexts returned by {@link #getSiblings(boolean)}.</p>
+	 *
+	 * <p>This is useful in block-level or parallel-scope visibility rules where
+	 * sibling contexts may share declarations that should not be inherited from
+	 * parent scopes but must still be detected to prevent name conflicts.</p>
+	 *
+	 * @param variableMap  the variable map belonging to the current context
+	 * @param variableName the variable name to check
+	 * @return {@code true} if the variable exists locally or in any sibling
+	 *         context; {@code false} otherwise
+	 */
+	public boolean containsLocalVariable(Map<String, DeclaredVariable> variableMap, String variableName) {
+		List<DefaultContext> siblings;
+		return variableMap.containsKey(variableName) || (Objects.nonNull(siblings = getSiblings(false)) && !siblings
+				.isEmpty() && siblings.stream().anyMatch(sibling -> sibling.variables.get().containsKey(variableName)));
 	}
 
 	/**
@@ -1022,10 +1425,24 @@ public class DefaultContext {
 	 * @throws NaftahBugError if variable not found and safe is false
 	 */
 	public Pair<Integer, DeclaredVariable> getVariable(String name, boolean safe) {
-		if (variables.containsKey(name)) {
-			return new Pair<>(depth, variables.get(name));
+		var variableMap = variables.get();
+		List<DefaultContext> siblings;
+		if (variableMap.containsKey(name)) {
+			return new Pair<>(depth, variableMap.get(name));
 		}
-		else if (parent != null) {
+		else if (isAwaitingTask() && Objects.nonNull(siblings = getSiblings(false)) && !siblings.isEmpty()) {
+			for (DefaultContext sibling : siblings) {
+				variableMap = sibling.variables.get();
+				if (variableMap.containsKey(name)) {
+					var variable = variableMap.get(name);
+					if (variable.getValue() instanceof Task<?>) {
+						return new Pair<>(depth, variableMap.get(name));
+					}
+				}
+			}
+		}
+
+		if (parent != null) {
 			return parent.getVariable(name, safe);
 		}
 
@@ -1043,14 +1460,15 @@ public class DefaultContext {
 	 * @param value the new DeclaredVariable value
 	 */
 	public DeclaredVariable setVariable(String name, DeclaredVariable value) {
-		if (variables.containsKey(name)) {
-			return variables.put(name, value);
+		var variableMap = variables.get();
+		if (variableMap.containsKey(name)) {
+			return variableMap.put(name, value);
 		}
 		else if (parent != null && parent.containsVariable(name)) {
 			return parent.setVariable(name, value);
 		}
 		else {
-			return variables.put(name, value); // define new in current context
+			return variableMap.put(name, value); // define new in current context
 		}
 	}
 
@@ -1062,10 +1480,11 @@ public class DefaultContext {
 	 * @throws NaftahBugError if the variable already exists in the current context
 	 */
 	public void defineVariable(String name, DeclaredVariable value) {
-		if (variables.containsKey(name)) {
+		var variableMap = variables.get();
+		if (containsLocalVariable(variableMap, name)) {
 			throw new NaftahBugError("المتغير '%s' موجود في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
 		}
-		variables.put(name, value); // force local
+		variableMap.put(name, value); // force local
 	}
 
 	/**
@@ -1075,10 +1494,11 @@ public class DefaultContext {
 	 * @throws NaftahBugError if any variable already exists in the current context
 	 */
 	public void defineVariables(Map<String, DeclaredVariable> variables) {
-		if (variables.keySet().stream().anyMatch(this.variables::containsKey)) {
+		var variableMap = this.variables.get();
+		if (variables.keySet().stream().anyMatch(name -> containsLocalVariable(variableMap, name))) {
 			throw new NaftahBugError("المتغير موجود في السياق الحالي. لا يمكن إعادة إعلانه.");
 		}
-		this.variables.putAll(variables); // force local
+		variableMap.putAll(variables); // force local
 	}
 
 	/**
@@ -1094,14 +1514,15 @@ public class DefaultContext {
 	 * @throws NaftahBugError if the variable does not exist and lenient is {@code false}
 	 */
 	public void removeVariable(String name, boolean lenient) {
-		if (!variables.containsKey(name)) {
+		var variableMap = variables.get();
+		if (!variableMap.containsKey(name)) {
 			if (lenient) {
 				return;
 			}
 
 			throw new NaftahBugError("المتغير '%s' غير موجود في السياق الحالي. لا يمكن إزالته.".formatted(name));
 		}
-		variables.remove(name);
+		variableMap.remove(name);
 	}
 
 	/**
@@ -1112,11 +1533,13 @@ public class DefaultContext {
 	 * @return true if the function exists, false otherwise
 	 */
 	public boolean containsFunction(String name) {
-		return functions.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name
-				.matches(
-							QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
-									.containsKey(
-													name))) || parent != null && parent.containsFunction(name);
+		return functions
+				.get()
+				.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name
+						.matches(
+									QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
+											.containsKey(
+															name))) || parent != null && parent.containsFunction(name);
 	}
 
 	/**
@@ -1129,8 +1552,9 @@ public class DefaultContext {
 	 * @throws NaftahBugError if function not found and safe is false
 	 */
 	public Pair<Integer, Object> getFunction(String name, boolean safe) {
-		if (functions.containsKey(name)) {
-			return new Pair<>(depth, functions.get(name));
+		var functionMap = functions.get();
+		if (functionMap.containsKey(name)) {
+			return new Pair<>(depth, functionMap.get(name));
 		}
 		else if (parent != null) {
 			return parent.getFunction(name, safe);
@@ -1172,14 +1596,15 @@ public class DefaultContext {
 	 * @param value the new DeclaredFunction value
 	 */
 	public void setFunction(String name, DeclaredFunction value) {
-		if (functions.containsKey(name)) {
-			functions.put(name, value);
+		var functionMap = functions.get();
+		if (functionMap.containsKey(name)) {
+			functionMap.put(name, value);
 		}
 		else if (parent != null && parent.containsFunction(name)) {
 			parent.setFunction(name, value);
 		}
 		else {
-			functions.put(name, value); // define new in current context
+			functionMap.put(name, value); // define new in current context
 		}
 	}
 
@@ -1191,10 +1616,11 @@ public class DefaultContext {
 	 * @throws NaftahBugError if the function already exists in the current context
 	 */
 	public void defineFunction(String name, DeclaredFunction value) {
-		if (functions.containsKey(name)) {
+		var functionMap = functions.get();
+		if (functionMap.containsKey(name)) {
 			throw new NaftahBugError("الدالة '%s' موجودة في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
 		}
-		functions.put(name, value); // force local
+		functionMap.put(name, value); // force local
 	}
 
 	/**
@@ -1205,10 +1631,11 @@ public class DefaultContext {
 	 */
 	public String getFunctionParameterName(String name) {
 		if (parameters == null) {
-			parameters = new HashMap<>();
+			parameters = SuppliedInheritableThreadLocal.withInitial(HashMap::new, HashMap::new);
 		}
-		if (functionCallId != null) {
-			String functionName = functionCallId.split("-")[1];
+		String functionCallIdValue;
+		if (functionCallId != null && (functionCallIdValue = functionCallId.get()) != null) {
+			String functionName = functionCallIdValue.split("-")[1];
 			name = DefaultContext.generateParameterOrArgumentName(functionName, name);
 		}
 		return name;
@@ -1222,7 +1649,7 @@ public class DefaultContext {
 	 */
 	public boolean containsFunctionParameter(String name) {
 		String functionParameterName = getFunctionParameterName(name);
-		return parameters.containsKey(functionParameterName) || (parent != null && parent
+		return parameters.get().containsKey(functionParameterName) || (parent != null && parent
 				.containsFunctionParameter(name));
 	}
 
@@ -1236,8 +1663,9 @@ public class DefaultContext {
 	 */
 	public Pair<Integer, DeclaredParameter> getFunctionParameter(String name, boolean safe) {
 		String functionParameterName = getFunctionParameterName(name);
-		if (parameters.containsKey(functionParameterName)) {
-			return new Pair<>(depth, parameters.get(functionParameterName));
+		var parameterMap = parameters.get();
+		if (parameterMap.containsKey(functionParameterName)) {
+			return new Pair<>(depth, parameterMap.get(functionParameterName));
 		}
 		else if (parent != null) {
 			return parent.getFunctionParameter(name, safe);
@@ -1258,14 +1686,15 @@ public class DefaultContext {
 	 */
 	public void setFunctionParameter(String name, DeclaredParameter value) {
 		String functionParameterName = getFunctionParameterName(name);
-		if (parameters.containsKey(functionParameterName)) {
-			parameters.put(functionParameterName, value);
+		var parameterMap = parameters.get();
+		if (parameterMap.containsKey(functionParameterName)) {
+			parameterMap.put(functionParameterName, value);
 		}
 		else if (parent != null && parent.containsFunctionParameter(name)) {
 			parent.setFunctionParameter(name, value);
 		}
 		else {
-			parameters.put(name, value); // define new in current context
+			parameterMap.put(name, value); // define new in current context
 		}
 	}
 
@@ -1279,7 +1708,8 @@ public class DefaultContext {
 	 */
 	public void defineFunctionParameter(String name, DeclaredParameter value, boolean lenient) {
 		name = getFunctionParameterName(name);
-		if (parameters.containsKey(name)) {
+		var parameterMap = parameters.get();
+		if (parameterMap.containsKey(name)) {
 			if (lenient) {
 				return;
 			}
@@ -1288,7 +1718,7 @@ public class DefaultContext {
 										"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
 												.formatted(name));
 		}
-		parameters.put(name, value); // force local
+		parameterMap.put(name, value); // force local
 	}
 
 	/**
@@ -1304,14 +1734,15 @@ public class DefaultContext {
 				.stream()
 				.map(entry -> Map.entry(getFunctionParameterName(entry.getKey()), entry.getValue()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		if (parameters.keySet().stream().anyMatch(this.parameters::containsKey)) {
+		var parameterMap = this.parameters.get();
+		if (parameters.keySet().stream().anyMatch(parameterMap::containsKey)) {
 			if (lenient) {
 				return;
 			}
 
 			throw new NaftahBugError("المعامل موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
 		}
-		this.parameters.putAll(parameters); // force local
+		parameterMap.putAll(parameters); // force local
 	}
 
 	/**
@@ -1322,10 +1753,11 @@ public class DefaultContext {
 	 */
 	public String getFunctionArgumentName(String name) {
 		if (arguments == null) {
-			arguments = new HashMap<>();
+			arguments = SuppliedInheritableThreadLocal.withInitial(HashMap::new, HashMap::new);
 		}
-		if (functionCallId != null) {
-			name = DefaultContext.generateParameterOrArgumentName(functionCallId, name);
+		String functionCallIdValue;
+		if (functionCallId != null && (functionCallIdValue = functionCallId.get()) != null) {
+			name = DefaultContext.generateParameterOrArgumentName(functionCallIdValue, name);
 		}
 		return name;
 	}
@@ -1338,7 +1770,9 @@ public class DefaultContext {
 	 */
 	public boolean containsFunctionArgument(String name) {
 		String functionArgumentName = getFunctionArgumentName(name);
-		return arguments.containsKey(functionArgumentName) || (parent != null && parent.containsFunctionArgument(name));
+		return arguments.get().containsKey(functionArgumentName) || (parent != null && parent
+				.containsFunctionArgument(
+											name));
 	}
 
 	/**
@@ -1351,8 +1785,9 @@ public class DefaultContext {
 	 */
 	public Pair<Integer, Object> getFunctionArgument(String name, boolean safe) {
 		String functionArgumentName = getFunctionArgumentName(name);
-		if (arguments.containsKey(functionArgumentName)) {
-			return new Pair<>(depth, arguments.get(functionArgumentName));
+		var argumentsMap = arguments.get();
+		if (argumentsMap.containsKey(functionArgumentName)) {
+			return new Pair<>(depth, argumentsMap.get(functionArgumentName));
 		}
 		else if (parent != null) {
 			return parent.getFunctionArgument(name, safe);
@@ -1373,14 +1808,15 @@ public class DefaultContext {
 	 */
 	public void setFunctionArgument(String name, Object value) {
 		String functionArgumentName = getFunctionArgumentName(name);
-		if (arguments.containsKey(functionArgumentName)) {
-			arguments.put(functionArgumentName, value);
+		var argumentsMap = arguments.get();
+		if (argumentsMap.containsKey(functionArgumentName)) {
+			argumentsMap.put(functionArgumentName, value);
 		}
 		else if (parent != null && parent.containsFunctionArgument(name)) {
 			parent.setFunctionArgument(name, value);
 		}
 		else {
-			arguments.put(functionArgumentName, value); // define new in current context
+			argumentsMap.put(functionArgumentName, value); // define new in current context
 		}
 	}
 
@@ -1393,12 +1829,13 @@ public class DefaultContext {
 	 */
 	public void defineFunctionArgument(String name, Object value) {
 		name = getFunctionArgumentName(name);
-		if (arguments.containsKey(name)) {
+		var argumentsMap = arguments.get();
+		if (argumentsMap.containsKey(name)) {
 			throw new NaftahBugError(
 										"الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
 												.formatted(name));
 		}
-		arguments.put(name, value); // force local
+		argumentsMap.put(name, value); // force local
 	}
 
 	/**
@@ -1413,10 +1850,31 @@ public class DefaultContext {
 				.stream()
 				.map(entry -> Map.entry(getFunctionArgumentName(entry.getKey()), entry.getValue()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		if (arguments.keySet().stream().anyMatch(this.arguments::containsKey)) {
+		var argumentsMap = this.arguments.get();
+		if (arguments.keySet().stream().anyMatch(argumentsMap::containsKey)) {
 			throw new NaftahBugError("الوسيط موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
 		}
-		this.arguments.putAll(arguments); // force local
+		argumentsMap.putAll(arguments); // force local
+	}
+
+	/**
+	 * Ensures that the thread-local map used to store loop-scoped variables
+	 * is initialized.
+	 *
+	 * <p>This method lazily creates an instance of
+	 * {@link SuppliedInheritableThreadLocal} that provides a {@link HashMap}
+	 * for storing loop variables. The first supplier creates the initial
+	 * map for the current thread, while the second supplier provides a copy
+	 * for child threads, ensuring that loop-scoped variables are inherited
+	 * but remain isolated between threads.</p>
+	 *
+	 * <p>If the loop variable storage has already been initialized, this method
+	 * performs no action.</p>
+	 */
+	protected void prepareLoopVariable() {
+		if (loopVariables == null) {
+			loopVariables = SuppliedInheritableThreadLocal.withInitial(HashMap::new, HashMap::new);
+		}
 	}
 
 	/**
@@ -1426,11 +1884,10 @@ public class DefaultContext {
 	 * @return the canonical loop variable name
 	 */
 	public String getLoopVariableName(String name) {
-		if (loopVariables == null) {
-			loopVariables = new HashMap<>();
-		}
-		if (loopLabel != null) {
-			name = loopLabel + "-" + name;
+		prepareLoopVariable();
+		String loopLabelValue;
+		if (Objects.nonNull(loopLabel) && Objects.nonNull(loopLabelValue = loopLabel.get())) {
+			name = loopLabelValue + "-" + name;
 		}
 		return name;
 	}
@@ -1443,9 +1900,7 @@ public class DefaultContext {
 	 * @return a list of loop variable names prefixed by each loop label followed by a hyphen
 	 */
 	public List<String> getLoopVariableNames(String name) {
-		if (loopVariables == null) {
-			loopVariables = new HashMap<>();
-		}
+		prepareLoopVariable();
 		return getLoopLabels().stream().map(label -> label + "-" + name).toList();
 	}
 
@@ -1459,9 +1914,11 @@ public class DefaultContext {
 		var loopVariableNames = getLoopVariableNames(name);
 		return loopVariableNames
 				.stream()
-				.anyMatch(loopVariableName -> loopVariables.containsKey(loopVariableName)) || (parent != null && parent
-						.containsLoopVariable(
-												name));
+				.anyMatch(loopVariableName -> loopVariables
+						.get()
+						.containsKey(loopVariableName)) || (parent != null && parent
+								.containsLoopVariable(
+														name));
 	}
 
 	/**
@@ -1474,13 +1931,14 @@ public class DefaultContext {
 	 */
 	public Pair<Integer, Object> getLoopVariable(String name, boolean safe) {
 		var loopVariableNames = getLoopVariableNames(name);
+		var loopVariableMap = loopVariables.get();
 		var firstMatchedLoopVariableName = loopVariableNames
 				.stream()
-				.filter(loopVariableName -> loopVariables.containsKey(loopVariableName))
+				.filter(loopVariableMap::containsKey)
 				.findFirst()
 				.orElse(null);
 		if (Objects.nonNull(firstMatchedLoopVariableName)) {
-			return new Pair<>(depth, loopVariables.get(firstMatchedLoopVariableName));
+			return new Pair<>(depth, loopVariableMap.get(firstMatchedLoopVariableName));
 		}
 		else if (parent != null) {
 			return parent.getLoopVariable(name, safe);
@@ -1501,13 +1959,14 @@ public class DefaultContext {
 	 */
 	public Object setLoopVariable(String name, Object value) {
 		var loopVariableNames = getLoopVariableNames(name);
+		var loopVariableMap = loopVariables.get();
 		var firstMatchedLoopVariableName = loopVariableNames
 				.stream()
-				.filter(loopVariableName -> loopVariables.containsKey(loopVariableName))
+				.filter(loopVariableMap::containsKey)
 				.findFirst()
 				.orElse(null);
 		if (Objects.nonNull(firstMatchedLoopVariableName)) {
-			loopVariables.put(firstMatchedLoopVariableName, value);
+			loopVariableMap.put(firstMatchedLoopVariableName, value);
 			return value;
 		}
 		else if (parent != null && parent.containsLoopVariable(name)) {
@@ -1515,7 +1974,7 @@ public class DefaultContext {
 			return value;
 		}
 		else {
-			loopVariables.put(getLoopVariableName(name), value); // define new in current context
+			loopVariableMap.put(getLoopVariableName(name), value); // define new in current context
 			return value;
 		}
 	}
@@ -1529,7 +1988,8 @@ public class DefaultContext {
 	 */
 	public void defineLoopVariable(String name, Object value, boolean lenient) {
 		name = getLoopVariableName(name);
-		if (loopVariables.containsKey(name)) {
+		var loopVariableMap = loopVariables.get();
+		if (loopVariableMap.containsKey(name)) {
 			if (lenient) {
 				return;
 			}
@@ -1538,7 +1998,7 @@ public class DefaultContext {
 										"المعامل '%s' موجود في السياق الحالي للحلقة. لا يمكن إعادة إعلانه."
 												.formatted(name));
 		}
-		loopVariables.put(name, value); // force local
+		loopVariableMap.put(name, value); // force local
 	}
 
 	/**
@@ -1551,14 +2011,15 @@ public class DefaultContext {
 	 */
 	public void removeLoopVariable(String name, boolean lenient) {
 		name = getLoopVariableName(name);
-		if (!loopVariables.containsKey(name)) {
+		var loopVariableMap = loopVariables.get();
+		if (!loopVariableMap.containsKey(name)) {
 			if (lenient) {
 				return;
 			}
 
 			throw new NaftahBugError("المعامل '%s' غير موجود في السياق الحالي للحلقة. لا يمكن إزالته.".formatted(name));
 		}
-		loopVariables.remove(name); // force local
+		loopVariableMap.remove(name); // force local
 	}
 
 	/**
@@ -1568,7 +2029,7 @@ public class DefaultContext {
 	 */
 	public void markExecuted(ParseTree node) {
 		prepareParseTreeExecution();
-		parseTreeExecution.put(node, true);
+		parseTreeExecution.get().put(node, true);
 	}
 
 	/**
@@ -1578,7 +2039,7 @@ public class DefaultContext {
 	 * @return true if the node has been executed, false otherwise
 	 */
 	public boolean isExecuted(ParseTree node) {
-		return prepareParseTreeExecution() && Optional.ofNullable(parseTreeExecution.get(node)).orElse(false);
+		return prepareParseTreeExecution() && Optional.ofNullable(parseTreeExecution.get().get(node)).orElse(false);
 	}
 
 	/**
@@ -1591,12 +2052,13 @@ public class DefaultContext {
 	 * @return true if any child or sub-child of the specified type has been executed, false otherwise
 	 */
 	public <T extends Tree> boolean hasAnyExecutedChildOrSubChildOfType(ParseTree node, Class<T> type) {
-		return prepareParseTreeExecution() && getChildren(true)
+		return getChildren(true)
 				.stream()
 				.anyMatch(currentContext -> NaftahParserHelper
 						.hasAnyExecutedChildOrSubChildOfType(   node,
 																type,
-																currentContext.parseTreeExecution));
+																currentContext.getParseTreeExecution()
+						));
 	}
 
 	/**
@@ -1606,10 +2068,15 @@ public class DefaultContext {
 	 */
 	protected boolean prepareParseTreeExecution() {
 		if (parseTreeExecution == null) {
-			parseTreeExecution = new NaftahParseTreeProperty<>();
+			parseTreeExecution = SuppliedInheritableThreadLocal.withInitial(NaftahParseTreeProperty::new);
 			return false;
 		}
 		return true;
+	}
+
+	protected NaftahParseTreeProperty<Boolean> getParseTreeExecution() {
+		prepareParseTreeExecution();
+		return parseTreeExecution.get();
 	}
 
 	/**
@@ -1641,7 +2108,27 @@ public class DefaultContext {
 				.entrySet()
 				.stream()
 				.filter(entry -> includeParent ? entry.getKey() >= depth : entry.getKey() > depth)
-				.map(Map.Entry::getValue)
+				.flatMap(e -> e.getValue().stream())
+				.toList();
+	}
+
+	/**
+	 * Returns the sibling contexts of the current context.
+	 *
+	 * <p>Siblings are contexts that share the same depth as this context. If
+	 * {@code includeSelf} is {@code true}, the returned list also includes
+	 * this context; otherwise, this context is excluded.</p>
+	 *
+	 * @param includeSelf if {@code true}, the returned list will include this context itself
+	 * @return a list of {@link DefaultContext} objects at the same depth
+	 */
+	public List<DefaultContext> getSiblings(boolean includeSelf) {
+		return CONTEXTS
+				.entrySet()
+				.stream()
+				.filter(entry -> entry.getKey() == depth)
+				.flatMap(e -> e.getValue().stream())
+				.filter(ctx -> includeSelf || ctx != this)
 				.toList();
 	}
 
@@ -1651,7 +2138,10 @@ public class DefaultContext {
 	 * @return the function call ID as a string
 	 */
 	public String getFunctionCallId() {
-		return functionCallId;
+		if (Objects.isNull(functionCallId)) {
+			return null;
+		}
+		return functionCallId.get();
 	}
 
 	/**
@@ -1660,7 +2150,12 @@ public class DefaultContext {
 	 * @param functionCallId the function call ID to set
 	 */
 	public void setFunctionCallId(String functionCallId) {
-		this.functionCallId = functionCallId;
+		if (Objects.isNull(this.functionCallId)) {
+			this.functionCallId = ThreadLocal.withInitial(() -> functionCallId);
+		}
+		else {
+			this.functionCallId.set(functionCallId);
+		}
 	}
 
 	/**
@@ -1669,7 +2164,10 @@ public class DefaultContext {
 	 * @return true if parsing a function call ID, false otherwise
 	 */
 	public boolean isParsingFunctionCallId() {
-		return parsingFunctionCallId;
+		if (Objects.isNull(parsingFunctionCallId)) {
+			return false;
+		}
+		return parsingFunctionCallId.get();
 	}
 
 	/**
@@ -1678,7 +2176,12 @@ public class DefaultContext {
 	 * @param parsingFunctionCallId true to indicate parsing a function call ID, false otherwise
 	 */
 	public void setParsingFunctionCallId(boolean parsingFunctionCallId) {
-		this.parsingFunctionCallId = parsingFunctionCallId;
+		if (Objects.isNull(this.parsingFunctionCallId)) {
+			this.parsingFunctionCallId = ThreadLocal.withInitial(() -> parsingFunctionCallId);
+		}
+		else {
+			this.parsingFunctionCallId.set(parsingFunctionCallId);
+		}
 	}
 
 	/**
@@ -1687,7 +2190,10 @@ public class DefaultContext {
 	 * @return true if parsing an assignment, false otherwise
 	 */
 	public boolean isParsingAssignment() {
-		return parsingAssignment;
+		if (Objects.isNull(parsingAssignment)) {
+			return false;
+		}
+		return parsingAssignment.get();
 	}
 
 	/**
@@ -1697,8 +2203,13 @@ public class DefaultContext {
 	 * @param parsingAssignment true to indicate parsing an assignment, false otherwise
 	 */
 	public void setParsingAssignment(boolean parsingAssignment) {
-		this.parsingAssignment = parsingAssignment;
-		if (!this.parsingAssignment) {
+		if (Objects.isNull(this.parsingAssignment)) {
+			this.parsingAssignment = ThreadLocal.withInitial(() -> parsingAssignment);
+		}
+		else {
+			this.parsingAssignment.set(parsingAssignment);
+		}
+		if (!parsingAssignment) {
 			setDeclarationOfAssignment(null);
 		}
 	}
@@ -1709,7 +2220,10 @@ public class DefaultContext {
 	 * @return the declaration of assignment, or null if none
 	 */
 	public Pair<DeclaredVariable, Boolean> getDeclarationOfAssignment() {
-		return declarationOfAssignment;
+		if (Objects.isNull(declarationOfAssignment)) {
+			return null;
+		}
+		return declarationOfAssignment.get();
 	}
 
 	/**
@@ -1718,7 +2232,12 @@ public class DefaultContext {
 	 * @param declarationOfAssignment a pair containing the declared variable and a boolean flag
 	 */
 	public void setDeclarationOfAssignment(Pair<DeclaredVariable, Boolean> declarationOfAssignment) {
-		this.declarationOfAssignment = declarationOfAssignment;
+		if (Objects.isNull(this.declarationOfAssignment)) {
+			this.declarationOfAssignment = ThreadLocal.withInitial(() -> declarationOfAssignment);
+		}
+		else {
+			this.declarationOfAssignment.set(declarationOfAssignment);
+		}
 	}
 
 	/**
@@ -1727,7 +2246,10 @@ public class DefaultContext {
 	 * @return true if creating an object, false otherwise
 	 */
 	public boolean isCreatingObject() {
-		return creatingObject;
+		if (Objects.isNull(creatingObject)) {
+			return false;
+		}
+		return creatingObject.get();
 	}
 
 	/**
@@ -1736,7 +2258,48 @@ public class DefaultContext {
 	 * @param creatingObject true to indicate creating an object, false otherwise
 	 */
 	public void setCreatingObject(boolean creatingObject) {
-		this.creatingObject = creatingObject;
+		if (Objects.isNull(this.creatingObject)) {
+			this.creatingObject = ThreadLocal.withInitial(() -> creatingObject);
+		}
+		else {
+			this.creatingObject.set(creatingObject);
+		}
+	}
+
+	/**
+	 * Checks whether the current thread is awaiting the completion of a task
+	 * within this context.
+	 *
+	 * <p>This uses a {@link ThreadLocal} boolean to track if the current thread
+	 * is awaiting a task, allowing multiple threads to track their own state
+	 * independently.</p>
+	 *
+	 * @return {@code true} if the current thread is awaiting a task; {@code false} otherwise
+	 */
+	public boolean isAwaitingTask() {
+		if (Objects.isNull(awaitingTask)) {
+			return false;
+		}
+		return awaitingTask.get();
+	}
+
+	/**
+	 * Sets the awaiting state for the current thread in this context.
+	 *
+	 * <p>If the underlying {@link ThreadLocal} has not been initialized yet,
+	 * it will be created and initialized with the provided value. Otherwise,
+	 * it updates the current thread's value.</p>
+	 *
+	 * @param awaitingTask {@code true} if the current thread is awaiting a task,
+	 *                     {@code false} otherwise
+	 */
+	public void setAwaitingTask(boolean awaitingTask) {
+		if (Objects.isNull(this.awaitingTask)) {
+			this.awaitingTask = ThreadLocal.withInitial(() -> awaitingTask);
+		}
+		else {
+			this.awaitingTask.set(awaitingTask);
+		}
 	}
 
 	/**
@@ -1746,8 +2309,9 @@ public class DefaultContext {
 	 * @return the loop label string, or null if none is set
 	 */
 	public String getLoopLabel() {
-		if (Objects.nonNull(loopLabel)) {
-			return loopLabel;
+		String loopLabelValue;
+		if (Objects.nonNull(loopLabel) && Objects.nonNull(loopLabelValue = loopLabel.get())) {
+			return loopLabelValue;
 		}
 		else if (Objects.nonNull(parent)) {
 			return parent.getLoopLabel();
@@ -1761,7 +2325,12 @@ public class DefaultContext {
 	 * @param loopLabel the loop label string to set
 	 */
 	public void setLoopLabel(String loopLabel) {
-		this.loopLabel = loopLabel;
+		if (Objects.isNull(this.loopLabel)) {
+			this.loopLabel = ThreadLocal.withInitial(() -> loopLabel);
+		}
+		else {
+			this.loopLabel.set(loopLabel);
+		}
 	}
 
 	/**
@@ -1776,7 +2345,10 @@ public class DefaultContext {
 	 * @param importElement the fully qualified name or path of the element being imported
 	 */
 	private void defineBlockImport(String alias, String importElement) {
-		blockImports.put(alias, importElement);
+		if (blockImports == null) {
+			blockImports = SuppliedInheritableThreadLocal.withInitial(HashMap::new, HashMap::new);
+		}
+		blockImports.get().put(alias, importElement);
 	}
 
 
@@ -1817,8 +2389,11 @@ public class DefaultContext {
 	 * @return the fully qualified import path if found; otherwise {@code null}
 	 */
 	private String doMatchImport(String alias) {
-		if (Objects.nonNull(blockImports) && blockImports.containsKey(alias)) {
-			return blockImports.get(alias);
+		Map<String, String> blockImportMap;
+		if (Objects.nonNull(blockImports) && (Objects.nonNull(blockImportMap = blockImports.get())) && blockImportMap
+				.containsKey(
+								alias)) {
+			return blockImportMap.get(alias);
 		}
 		else if (parent != null) {
 			return parent.doMatchImport(alias);
@@ -1859,7 +2434,7 @@ public class DefaultContext {
 	 * @return a {@link Pair} containing the fully qualified call and the variable's
 	 *         underlying value; or {@code null} if resolution fails
 	 */
-	public Pair<String, Object> matchVariable(String qualifiedCall) {
+	public Pair<Pair<String, Boolean>, Object> matchVariable(String qualifiedCall) {
 		String[] parts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
 		String id = parts.length == 2 ? parts[0] : null;
 		if (Objects.nonNull(id) && !id.contains(QUALIFIED_NAME_SEPARATOR)) {
@@ -1869,7 +2444,13 @@ public class DefaultContext {
 				if (variableValue instanceof NaftahObject naftahObject) {
 					variableValue = naftahObject.get(true);
 				}
-				return new Pair<>(  getQualifiedCall(getQualifiedName(variableValue.getClass().getName()), parts[1]),
+				Class<?> variableClass = variableValue.getClass();
+				// handling actors implementations created at runtime
+				if (Actor.class.isAssignableFrom(variableClass)) {
+					variableClass = Actor.class;
+				}
+				return new Pair<>(  new Pair<>( getQualifiedCall(getQualifiedName(variableClass.getName()), parts[1]),
+												!variableClass.equals(variableValue.getClass())),
 									variableValue);
 			}
 		}
