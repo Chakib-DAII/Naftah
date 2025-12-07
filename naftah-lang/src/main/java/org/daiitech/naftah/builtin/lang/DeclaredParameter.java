@@ -14,7 +14,7 @@ import org.daiitech.naftah.parser.NaftahParserHelper;
  *
  * @author Chakib Daii
  */
-public final class DeclaredParameter {
+public final class DeclaredParameter extends Declaration {
 
 	/**
 	 * The original ANTLR context of the parameter declaration.
@@ -54,17 +54,20 @@ public final class DeclaredParameter {
 	/**
 	 * Constructs a declared parameter with its definition details.
 	 *
+	 * @param depth           the depth of context where declared
 	 * @param originalContext the original parse context of the parameter
 	 * @param name            the name of the parameter
 	 * @param constant        whether the parameter is constant
 	 * @param type            the type of the parameter
 	 * @param defaultValue    the default value of the parameter
 	 */
-	private DeclaredParameter(  NaftahParser.ParameterDeclarationContext originalContext,
+	private DeclaredParameter(  int depth,
+								NaftahParser.ParameterDeclarationContext originalContext,
 								String name,
 								boolean constant,
 								Class<?> type,
 								Object defaultValue) {
+		super(depth);
 		this.originalContext = originalContext;
 		this.name = name;
 		this.constant = constant;
@@ -75,6 +78,7 @@ public final class DeclaredParameter {
 	/**
 	 * Factory method to create a new {@code DeclaredParameter}.
 	 *
+	 * @param depth           the depth of context where declared
 	 * @param originalContext the original parse context
 	 * @param name            the parameter name
 	 * @param constant        whether it is a constant
@@ -82,12 +86,13 @@ public final class DeclaredParameter {
 	 * @param defaultValue    the default value
 	 * @return a new instance of {@code DeclaredParameter}
 	 */
-	public static DeclaredParameter of( NaftahParser.ParameterDeclarationContext originalContext,
+	public static DeclaredParameter of( int depth,
+										NaftahParser.ParameterDeclarationContext originalContext,
 										String name,
 										boolean constant,
 										Class<?> type,
 										Object defaultValue) {
-		return new DeclaredParameter(originalContext, name, constant, type, defaultValue);
+		return new DeclaredParameter(depth, originalContext, name, constant, type, defaultValue);
 	}
 
 	/**
