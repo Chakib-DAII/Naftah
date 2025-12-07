@@ -79,6 +79,10 @@ import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getCurrentContext;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.loopContainsLabel;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionArgumentError;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionError;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionParameterError;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugForeachTargetDuplicatesError;
 import static org.daiitech.naftah.parser.DefaultContext.popLoop;
 import static org.daiitech.naftah.parser.DefaultContext.pushLoop;
 import static org.daiitech.naftah.parser.DefaultContext.startScope;
@@ -105,6 +109,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.setObjectUsingQualif
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.spawnTask;
 import static org.daiitech.naftah.parser.NaftahParserHelper.typeMismatch;
+import static org.daiitech.naftah.parser.NaftahParserHelper.validateVariableExistence;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitContext;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visitFunctionCallInChain;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
@@ -187,7 +192,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext
 										.setVariable(   ARGS_VAR_NAME,
 														DeclaredVariable
-																.of(programContext,
+																.of(currentContext.depth,
+																	programContext,
 																	ARGS_VAR_NAME,
 																	true,
 																	Tuple.class,
@@ -195,13 +201,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext
 										.setVariable(   ARGS_SIZE,
 														DeclaredVariable
-																.of(programContext,
+																.of(currentContext.depth,
+																	programContext,
 																	ARGS_SIZE,
 																	true,
 																	int.class,
 																	args.size()));
 
-								defaultNaftahParserVisitor.depth = currentContext.getDepth();
+								defaultNaftahParserVisitor.depth = currentContext.depth;
 								Object result = None.get();
 								try {
 									for (org.daiitech.naftah.parser.NaftahParser.StatementContext statement : programContext
@@ -823,7 +830,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, singleDeclarationContext) -> {
-								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
+								validateVariableExistence(currentContext, singleDeclarationContext.ID().getText());
 								// variable -> new : flags if this is a new variable or not
 								boolean hasType = hasChild(singleDeclarationContext.type());
 								return handleDeclaration(   currentContext,
@@ -854,7 +861,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multipleDeclarationsContext) -> {
-								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
 								var variableNames = multipleDeclarationsContext.ID();
 								var possibleSpecifiedTypes = multipleDeclarationsContext.type();
 
@@ -872,10 +878,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								boolean hasType = !possibleSpecifiedTypes.isEmpty();
 								List<Object> declarations = new ArrayList<>();
 								for (int i = 0; i < variableNames.size(); i++) {
+									var variableName = variableNames.get(i).getText();
+									validateVariableExistence(currentContext, variableName);
 									declarations
 											.add(handleDeclaration( currentContext,
 																	multipleDeclarationsContext,
-																	variableNames.get(i).getText(),
+																	variableName,
 																	hasConstant,
 																	hasVariable,
 																	hasType,
@@ -915,7 +923,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								Channel<Object> channel = Channel.of(name);
 
 								var declaredVariable = DeclaredVariable
-										.of(channelDeclarationContext,
+										.of(currentContext.depth,
+											channelDeclarationContext,
 											name,
 											true,
 											Channel.class,
@@ -950,7 +959,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									var cctx = DefaultContext.getCurrentContext();
 
 									var declaredVariable = DeclaredVariable
-											.of(actorDeclarationContext,
+											.of(cctx.depth,
+												actorDeclarationContext,
 												msgVariableName,
 												false,
 												Object.class,
@@ -966,7 +976,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									var cctx = DefaultContext.getCurrentContext();
 
 									var declaredVariable = DeclaredVariable
-											.of(actorDeclarationContext,
+											.of(cctx.depth,
+												actorDeclarationContext,
 												msgVariableName,
 												false,
 												Object.class,
@@ -978,7 +989,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								}, currentContext::cleanThreadLocals);
 
 								var declaredVariable = DeclaredVariable
-										.of(actorDeclarationContext,
+										.of(currentContext.depth,
+											actorDeclarationContext,
 											name,
 											true,
 											Actor.class,
@@ -1026,7 +1038,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, singleAssignmentExpressionContext) -> {
-								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is failure).
 								Object result;
 								if (Objects.nonNull(singleAssignmentExpressionContext.singleAssignment())) {
 									var singleAssignment = singleAssignmentExpressionContext.singleAssignment();
@@ -1135,11 +1146,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									currentContext.setDeclarationOfAssignment(declaredVariable);
 									var newValue = defaultNaftahParserVisitor
 											.visit(singleAssignmentExpressionContext.expression());
-									// TODO: check if inside function to check if it matches any argument /
-									// parameter or previously
 									if (declaredVariable.b) {
 										declaredVariable = new Pair<>(  DeclaredVariable
-																				.of(singleAssignmentExpressionContext,
+																				.of(currentContext.depth,
+																					singleAssignmentExpressionContext,
 																					declaredVariable.a.getName(),
 																					declaredVariable.a.isConstant(),
 																					declaredVariable.a.getType(),
@@ -1174,8 +1184,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, multipleAssignmentsExpressionContext) -> {
-								// TODO: check var existence first (assignment-> not exists failure, declaration -> exists is
-								//  failure).
 								if (Objects.nonNull(multipleAssignmentsExpressionContext.multipleAssignments())) {
 									var multipleAssignments = multipleAssignmentsExpressionContext
 											.multipleAssignments();
@@ -1375,11 +1383,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												defaultNaftahParserVisitor
 														.visit(multipleAssignmentsExpressionContext.expression(i));
 
-										// TODO: check if inside function to check if it matches any argument /
-										// parameter or previously
 										if (declaredVariable.b) {
 											declaredVariable = new Pair<>(  DeclaredVariable
-																					.of(multipleAssignmentsExpressionContext,
+																					.of(currentContext.depth,
+																						multipleAssignmentsExpressionContext,
 																						declaredVariable.a.getName(),
 																						declaredVariable.a.isConstant(),
 																						declaredVariable.a.getType(),
@@ -1417,9 +1424,13 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, functionDeclarationContext) -> {
-								// TODO: check function existence first
 								String functionName = functionDeclarationContext.ID().getText();
-								DeclaredFunction declaredFunction = DeclaredFunction.of(functionDeclarationContext);
+								if (currentContext.containsFunction(functionName, currentContext.depth)) {
+									throw newNaftahBugExistentFunctionError(functionName);
+								}
+								DeclaredFunction declaredFunction = DeclaredFunction
+										.of(currentContext.depth,
+											functionDeclarationContext);
 								currentContext.defineFunction(functionName, declaredFunction);
 								return declaredFunction;
 							}
@@ -1435,17 +1446,31 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationListContext ctx) {
 		return visitContext(
 							this,
-							"visitArgumentDeclarationList",
+							"visitParameterDeclarationList",
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, parameterDeclarationListContext) -> {
-								// TODO: check parameters existence first
-								List<DeclaredParameter> args = new ArrayList<>();
-								for (org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext argumentDeclaration : parameterDeclarationListContext
-										.parameterDeclaration()) {
-									args.add((DeclaredParameter) defaultNaftahParserVisitor.visit(argumentDeclaration));
+								var parameterDeclarations = parameterDeclarationListContext.parameterDeclaration();
+
+								Set<String> uniqueParameterNames = new HashSet<>();
+								Optional<String> firstDuplicateParameterName = parameterDeclarations
+										.stream()
+										.map(parameterDeclaration -> parameterDeclaration
+												.ID()
+												.getText())
+										.filter(e -> !uniqueParameterNames.add(e))
+										.findFirst();
+								if (firstDuplicateParameterName.isPresent()) {
+									throw newNaftahBugExistentFunctionParameterError(firstDuplicateParameterName.get());
 								}
-								return args;
+
+								List<DeclaredParameter> params = new ArrayList<>();
+								for (org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationContext parameterDeclaration : parameterDeclarations) {
+									params
+											.add((DeclaredParameter) defaultNaftahParserVisitor
+													.visit(parameterDeclaration));
+								}
+								return params;
 							}
 		);
 	}
@@ -1462,11 +1487,11 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, parameterDeclarationContext) -> {
-								// TODO: check parameters existence first
-								String argumentName = parameterDeclarationContext.ID().getText();
+								String parameterName = parameterDeclarationContext.ID().getText();
 								return DeclaredParameter
-										.of(parameterDeclarationContext,
-											argumentName,
+										.of(currentContext.depth,
+											parameterDeclarationContext,
+											parameterName,
 											hasChild(parameterDeclarationContext.CONSTANT()),
 											hasChild(parameterDeclarationContext.type()) ?
 													(Class<?>) defaultNaftahParserVisitor
@@ -1896,12 +1921,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, argumentListContext) -> {
-								// TODO: check args existence first
 								List<Pair<String, Object>> args = new ArrayList<>();
+								Set<String> argumentNames = new HashSet<>();
 								for (int i = 0; i < argumentListContext.expression().size(); i++) {
-									String name = hasChild(argumentListContext.ID(i)) ?
-											argumentListContext.ID(i).getText() :
-											null;
+									String name = null;
+									if (hasChild(argumentListContext.ID(i))) {
+										name = argumentListContext.ID(i).getText();
+										if (!argumentNames.add(name)) {
+											throw newNaftahBugExistentFunctionArgumentError(name);
+										}
+									}
 									Object value = defaultNaftahParserVisitor.visit(argumentListContext.expression(i));
 									args.add(new Pair<>(name, value)); // Evaluate each expression in the argument list
 								}
@@ -2228,7 +2257,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext.setLoopLabel(label);
 
 								// Loop target
-								// TODO: check duplications existence first
 								org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext foreachTarget = forEachLoopStatementContext
 										.foreachTarget();
 								Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass = foreachTarget
@@ -2249,7 +2277,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								if (object instanceof Iterable<?> iterable) {
 									if (foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext || foreachTarget instanceof org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext) {
-										throw new NaftahBugError(   "key value not supported for collection.",
+										throw new NaftahBugError(   "زوج المفتاح والقيمة غير مدعوم للمجموعة.",
 																	forEachLoopStatementContext.getStart().getLine(),
 																	forEachLoopStatementContext
 																			.getStart()
@@ -2264,7 +2292,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									iterator = map.entrySet().iterator();
 								}
 								else {
-									throw new NaftahBugError(   "not an iterable",
+									throw new NaftahBugError(   "غير قابل للتكرار",
 																forEachLoopStatementContext.getStart().getLine(),
 																forEachLoopStatementContext
 																		.getStart()
@@ -2300,7 +2328,6 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											targetValues = Tuple.of(index, value);
 										}
 
-										// TODO: check duplications existence first
 										setForeachVariables(currentContext, foreachTargetClass, target, targetValues);
 
 										defaultNaftahParserVisitor.visit(loopBlock);
@@ -2394,6 +2421,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, indexAndValueForeachTargetContext) -> {
 								String index = indexAndValueForeachTargetContext.ID(0).getText();
 								String value = indexAndValueForeachTargetContext.ID(1).getText();
+
+								if (index.equals(value)) {
+									throw newNaftahBugForeachTargetDuplicatesError( index,
+																					indexAndValueForeachTargetContext);
+								}
+
 								return Tuple.of(index, value);
 							},
 							Tuple.class);
@@ -2412,6 +2445,13 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, keyValueForeachTargetContext) -> {
 								String key = keyValueForeachTargetContext.ID(0).getText();
 								String value = keyValueForeachTargetContext.ID(1).getText();
+
+								if (key.equals(value)) {
+									throw newNaftahBugForeachTargetDuplicatesError(
+																					key,
+																					keyValueForeachTargetContext);
+								}
+
 								return Tuple.of(key, value);
 							},
 							Tuple.class);
@@ -2428,9 +2468,21 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, indexAndKeyValueForeachTargetContext) -> {
+								Set<String> uniqueLoopVariableNames = new HashSet<>();
+
 								String index = indexAndKeyValueForeachTargetContext.ID(0).getText();
+								uniqueLoopVariableNames.add(index);
 								String key = indexAndKeyValueForeachTargetContext.ID(1).getText();
+								if (!uniqueLoopVariableNames.add(key)) {
+									throw newNaftahBugForeachTargetDuplicatesError( key,
+																					indexAndKeyValueForeachTargetContext);
+								}
 								String value = indexAndKeyValueForeachTargetContext.ID(2).getText();
+								if (!uniqueLoopVariableNames.add(value)) {
+									throw newNaftahBugForeachTargetDuplicatesError( value,
+																					indexAndKeyValueForeachTargetContext);
+								}
+
 								return Tuple.of(index, key, value);
 							},
 							Tuple.class);
@@ -2710,14 +2762,15 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																new NaftahBugError(th));
 
 												var declaredVariable = DeclaredVariable
-														.of(tryStatementWithTryCasesContext,
+														.of(currentContext.depth,
+															tryStatementWithTryCasesContext,
 															errorVariableName,
 															true,
 															Result.Error.class,
 															result);
 
 												boolean errorVarExists = currentContext
-														.containsVariable(errorVariableName);
+														.containsVariable(errorVariableName, currentContext.depth);
 												if (errorVarExists) {
 													previousErrorVariable = currentContext
 															.setVariable(   errorVariableName,
@@ -2743,13 +2796,16 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										result = Result.Ok.of(expressionResult);
 
 										var declaredVariable = DeclaredVariable
-												.of(tryStatementWithTryCasesContext,
+												.of(currentContext.depth,
+													tryStatementWithTryCasesContext,
 													okVariableName,
 													true,
 													Result.Ok.class,
 													result);
 
-										boolean okVarExists = currentContext.containsVariable(okVariableName);
+										boolean okVarExists = currentContext
+												.containsVariable(  okVariableName,
+																	currentContext.depth);
 										if (okVarExists) {
 											previousOkVariable = currentContext
 													.setVariable(okVariableName, declaredVariable);
@@ -2822,7 +2878,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										someVariableName = someCase.ID().getText();
 
 										var declaredVariable = DeclaredVariable
-												.of(tryStatementWithOptionCasesContext,
+												.of(currentContext.depth,
+													tryStatementWithOptionCasesContext,
 													someVariableName,
 													true,
 													result.getClass(),
@@ -2830,7 +2887,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 															optional.get() :
 															result);
 
-										boolean okVarExists = currentContext.containsVariable(someVariableName);
+										boolean okVarExists = currentContext
+												.containsVariable(  someVariableName,
+																	currentContext.depth);
 										if (okVarExists) {
 											previousSomeVariable = currentContext
 													.setVariable(someVariableName, declaredVariable);
@@ -4746,7 +4805,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 															.qualifiedCall()) :
 											possibleFunctionCallContext.primaryCall().ID().getText();
 
-									if (currentContext.containsFunction(functionName)) {
+									if (currentContext.containsFunction(functionName, -1)) {
 										Object function = currentContext.getFunction(functionName, false).b;
 										if (function instanceof DeclaredFunction declaredFunction && declaredFunction
 												.isAsync()) {
