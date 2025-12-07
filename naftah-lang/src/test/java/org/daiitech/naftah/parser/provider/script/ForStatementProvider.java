@@ -3,6 +3,7 @@ package org.daiitech.naftah.parser.provider.script;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.parser.DefaultContext;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -147,6 +148,36 @@ public class ForStatementProvider implements ArgumentsProvider {
 								null),
 					Arguments
 							.of(
+								false,
+								"""
+								كرر_حلقة أ؛أ:ت داخل  {
+													متغير الماركة تعيين "بيجو",
+													متغير الموديل تعيين 2021,
+													متغير اللون تعيين "أبيض"
+													} إفعل {
+									إطبع("${أ} - ${ت}")
+								}
+								أنهي
+								""",
+								null,
+								DefaultContext.newNaftahBugForeachTargetDuplicatesError("أ", 1, 9)),
+					Arguments
+							.of(
+								false,
+								"""
+								كرر_حلقة أ؛ب:أ داخل  {
+														متغير الماركة تعيين "بيجو",
+														متغير الموديل تعيين 2021,
+														متغير اللون تعيين "أبيض"
+														} إفعل {
+										إطبع("${أ} - ${ب}")
+									}
+									أنهي
+								""",
+								null,
+								DefaultContext.newNaftahBugForeachTargetDuplicatesError("أ", 1, 9)),
+					Arguments
+							.of(
 								true,
 								"""
 								كرر_حلقة أ من (1؛"نخيل"؛3،2؛'س'؛خاطئ؛حقيقي؛لاشيء؛(سلسلة_ثمانية_بت "سراب")؛ليس_عددي) إفعل {
@@ -189,7 +220,18 @@ public class ForStatementProvider implements ArgumentsProvider {
 								أنهي
 								""",
 								None.get(),
-								null)
+								null),
+					Arguments
+							.of(
+								false,
+								"""
+								كرر_حلقة أ:أ من_بين {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} إفعل {
+									إطبع("${أ} - ${أ}")
+								}
+								أنهي
+								""",
+								null,
+								DefaultContext.newNaftahBugForeachTargetDuplicatesError("أ", 1, 9))
 				);
 	}
 }

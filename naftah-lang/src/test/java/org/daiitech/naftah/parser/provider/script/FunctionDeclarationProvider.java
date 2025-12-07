@@ -7,6 +7,10 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionArgumentError;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionError;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionParameterError;
+
 public class FunctionDeclarationProvider implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
@@ -53,7 +57,53 @@ public class FunctionDeclarationProvider implements ArgumentsProvider {
 								String.format(factorialWithNestedPrintFunction, "دالة_المضروب(50)"),
 								new BigInteger(
 												"30414093201713378043612608166064768844377641568960512000000000000"),
-								null)
+								null),
+					Arguments
+							.of(false,
+								"""
+								دالة دالة_ترجع_تركيبة() : عدد_طويل {
+								ارجع ٣٢ ، ٤٥
+								}
+
+								دالة دالة_ترجع_تركيبة() : عدد_طويل {
+								ارجع ٣٢ ، ٤٥
+								}
+
+								متغير أ؛ب تعيين دالة_ترجع_تركيبة()
+								(أ , ب)
+								""",
+								null,
+								newNaftahBugExistentFunctionError("دالة_ترجع_تركيبة")),
+					Arguments
+							.of(false,
+								"""
+								دالة دالة_المضروب(عدد_مضروب تعيين 10 , عدد_مضروب تعيين 10) : عدد_طويل {
+								إذا عدد_مضروب أصغر_أو_يساوي ١ إذن {
+								ارجع 1
+								}
+								أنهي
+
+								ارجع عدد_مضروب ضارب دالة_المضروب(عدد_مضروب ناقص 1)
+								}
+								دالة_المضروب(20)
+								""",
+								null,
+								newNaftahBugExistentFunctionParameterError("عدد_مضروب")),
+					Arguments
+							.of(false,
+								"""
+								دالة دالة_المضروب(عدد_مضروب تعيين 10 , عدد_مضروب_1 تعيين 10) : عدد_طويل {
+								إذا عدد_مضروب أصغر_أو_يساوي ١ إذن {
+								ارجع 1
+								}
+								أنهي
+
+								ارجع عدد_مضروب ضارب دالة_المضروب(عدد_مضروب ناقص 1)
+								}
+								دالة_المضروب(عدد_مضروب تعيين 20 , عدد_مضروب تعيين 20)
+								""",
+								null,
+								newNaftahBugExistentFunctionArgumentError("عدد_مضروب"))
 				);
 	}
 }

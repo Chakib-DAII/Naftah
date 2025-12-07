@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -633,8 +634,30 @@ public class DefaultContext {
 	 */
 	public static void copyDeclarationsToParent(DefaultContext context) {
 		Objects.requireNonNull(Objects.requireNonNull(context).parent);
-		context.parent.variables.get().putAll(context.variables.get());
-		context.parent.functions.get().putAll(context.functions.get());
+		context.parent.variables
+				.get()
+				.putAll(context.variables
+						.get()
+						.entrySet()
+						.stream()
+						.filter(declaredVariableEntry -> declaredVariableEntry
+								.getValue()
+								.getDepth() <= (context.depth - 1))
+						.collect(Collectors
+								.toMap( Map.Entry::getKey,
+										Map.Entry::getValue)));
+		context.parent.functions
+				.get()
+				.putAll(context.functions
+						.get()
+						.entrySet()
+						.stream()
+						.filter(declaredFunctionEntry -> declaredFunctionEntry
+								.getValue()
+								.getDepth() <= (context.depth - 1))
+						.collect(Collectors
+								.toMap( Map.Entry::getKey,
+										Map.Entry::getValue)));
 	}
 
 	/**
@@ -670,7 +693,7 @@ public class DefaultContext {
 	 * Attempts to remove a context from the global context registry.
 	 *
 	 * <p>The removal is <strong>conditional</strong>. This method will only
-	 * deregister the given context when all of the following conditions
+	 * deregister the given context when all the following conditions
 	 * are satisfied:
 	 *
 	 * <ul>
@@ -1133,6 +1156,79 @@ public class DefaultContext {
 	}
 
 	/**
+	 * Creates a NaftahBugError for a duplicate (foreach) target with specified line and column.
+	 *
+	 * @param name   The name of the duplicated element.
+	 * @param line   The line number where the duplicate occurs.
+	 * @param column The column number where the duplicate occurs.
+	 * @return NaftahBugError with a detailed message about the duplicate.
+	 */
+	public static NaftahBugError newNaftahBugForeachTargetDuplicatesError(  String name,
+																			int line,
+																			int column) {
+		return new NaftahBugError(
+									"هدف حلقة (foreach) لا يمكن أن يحتوي على عناصر مكررة. إعلان مكرر ل'%s'."
+											.formatted(name),
+									line,
+									column);
+	}
+
+	/**
+	 * Creates a NaftahBugError when there is a duplicate in a (foreach) loop target.
+	 *
+	 * @param name                 The name of the duplicated element.
+	 * @param foreachTargetContext The context of the (foreach) target from the Naftah parser.
+	 * @return NaftahBugError containing line and column information for the duplicate element.
+	 */
+	public static NaftahBugError newNaftahBugForeachTargetDuplicatesError(  String name,
+																			org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext foreachTargetContext) {
+		return newNaftahBugForeachTargetDuplicatesError(
+														name,
+														foreachTargetContext.getStart().getLine(),
+														foreachTargetContext.getStart().getCharPositionInLine());
+	}
+
+	/**
+	 * Creates a NaftahBugError when a function argument already exists in the current context.
+	 *
+	 * @param name The name of the duplicated argument.
+	 * @return NaftahBugError indicating the argument already exists.
+	 */
+	public static NaftahBugError newNaftahBugExistentFunctionArgumentError(String name) {
+		return new NaftahBugError("الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
+	}
+
+	/**
+	 * Creates a NaftahBugError when a function parameter already exists in the current context.
+	 *
+	 * @param name The name of the duplicated parameter.
+	 * @return NaftahBugError indicating the parameter already exists.
+	 */
+	public static NaftahBugError newNaftahBugExistentFunctionParameterError(String name) {
+		return new NaftahBugError("المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.".formatted(name));
+	}
+
+	/**
+	 * Creates a NaftahBugError when a function already exists in the current context.
+	 *
+	 * @param name The name of the duplicated function.
+	 * @return NaftahBugError indicating the function already exists.
+	 */
+	public static NaftahBugError newNaftahBugExistentFunctionError(String name) {
+		return new NaftahBugError("الدالة '%s' موجودة في السياق الحالي. لا يمكن إعادة إعلانها.".formatted(name));
+	}
+
+	/**
+	 * Creates a NaftahBugError when a variable already exists in the current context.
+	 *
+	 * @param name The name of the duplicated variable.
+	 * @return NaftahBugError indicating the variable already exists.
+	 */
+	public static NaftahBugError newNaftahBugExistentVariableError(String name) {
+		return new NaftahBugError("المتغير '%s' موجود في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
+	}
+
+	/**
 	 * Adds all entries from the given map into the global built-in functions map.
 	 * <p>
 	 * This method is synchronized to ensure thread-safe updates.
@@ -1384,12 +1480,15 @@ public class DefaultContext {
 	 * contexts. This allows child contexts to inherit variables from their
 	 * enclosing execution scopes.</p>
 	 *
-	 * @param name the name of the variable to look up
+	 * @param depth the depth of look up
+	 * @param name  the name of the variable to look up
 	 * @return {@code true} if the variable exists in this context or any parent
 	 *         context; {@code false} otherwise
 	 */
-	public boolean containsVariable(String name) {
-		return variables.get().containsKey(name) || (Objects.nonNull(parent) && parent.containsVariable(name));
+	public boolean containsVariable(String name, int depth) {
+		return ((depth == -1 || this.depth >= depth) && variables
+				.get()
+				.containsKey(name)) || (Objects.nonNull(parent) && parent.containsVariable(name, depth));
 	}
 
 	/**
@@ -1464,7 +1563,7 @@ public class DefaultContext {
 		if (variableMap.containsKey(name)) {
 			return variableMap.put(name, value);
 		}
-		else if (parent != null && parent.containsVariable(name)) {
+		else if (parent != null && parent.containsVariable(name, value.getDepth())) {
 			return parent.setVariable(name, value);
 		}
 		else {
@@ -1481,8 +1580,8 @@ public class DefaultContext {
 	 */
 	public void defineVariable(String name, DeclaredVariable value) {
 		var variableMap = variables.get();
-		if (containsLocalVariable(variableMap, name)) {
-			throw new NaftahBugError("المتغير '%s' موجود في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
+		if (containsLocalVariable(variableMap, name) || containsVariable(name, value.getDepth())) {
+			throw newNaftahBugExistentVariableError(name);
 		}
 		variableMap.put(name, value); // force local
 	}
@@ -1495,8 +1594,19 @@ public class DefaultContext {
 	 */
 	public void defineVariables(Map<String, DeclaredVariable> variables) {
 		var variableMap = this.variables.get();
-		if (variables.keySet().stream().anyMatch(name -> containsLocalVariable(variableMap, name))) {
-			throw new NaftahBugError("المتغير موجود في السياق الحالي. لا يمكن إعادة إعلانه.");
+		AtomicReference<String> varName = new AtomicReference<>();
+		if (variables.entrySet().stream().anyMatch(declaredVariableEntry -> {
+			var name = declaredVariableEntry.getKey();
+			if (containsLocalVariable(variableMap, name) || containsVariable(   name,
+																				declaredVariableEntry
+																						.getValue()
+																						.getDepth())) {
+				varName.set(name);
+				return true;
+			}
+			return false;
+		})) {
+			throw newNaftahBugExistentVariableError(varName.get());
 		}
 		variableMap.putAll(variables); // force local
 	}
@@ -1529,17 +1639,30 @@ public class DefaultContext {
 	 * Checks if the function with the given name exists in the current context, built-in functions,
 	 * JVM functions (if bootstrapped), or any parent context.
 	 *
-	 * @param name the function name
+	 * @param depth the depth of look up
+	 * @param name  the function name
 	 * @return true if the function exists, false otherwise
 	 */
-	public boolean containsFunction(String name) {
-		return functions
-				.get()
-				.containsKey(name) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name) || (name
+	public boolean containsFunction(String name, int depth) {
+		return containsDeclaredFunction(name, depth) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS
+				.containsKey(name) || (name
 						.matches(
 									QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
 											.containsKey(
-															name))) || parent != null && parent.containsFunction(name);
+															name)));
+	}
+
+	/**
+	 * Checks if the declared function with the given name exists in the current context, or any parent context.
+	 *
+	 * @param depth the depth of look up
+	 * @param name  the function name
+	 * @return true if the function exists, false otherwise
+	 */
+	public boolean containsDeclaredFunction(String name, int depth) {
+		return ((depth == -1 || this.depth >= depth) && functions
+				.get()
+				.containsKey(name)) || parent != null && parent.containsFunction(name, depth);
 	}
 
 	/**
@@ -1600,7 +1723,7 @@ public class DefaultContext {
 		if (functionMap.containsKey(name)) {
 			functionMap.put(name, value);
 		}
-		else if (parent != null && parent.containsFunction(name)) {
+		else if (parent != null && parent.containsFunction(name, value.getDepth())) {
 			parent.setFunction(name, value);
 		}
 		else {
@@ -1616,11 +1739,10 @@ public class DefaultContext {
 	 * @throws NaftahBugError if the function already exists in the current context
 	 */
 	public void defineFunction(String name, DeclaredFunction value) {
-		var functionMap = functions.get();
-		if (functionMap.containsKey(name)) {
-			throw new NaftahBugError("الدالة '%s' موجودة في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
+		if (containsFunction(name, value.getDepth())) {
+			throw newNaftahBugExistentFunctionError(name);
 		}
-		functionMap.put(name, value); // force local
+		functions.get().put(name, value); // force local
 	}
 
 	/**
@@ -1644,13 +1766,16 @@ public class DefaultContext {
 	/**
 	 * Checks if a function parameter with the given name exists in the current or parent contexts.
 	 *
-	 * @param name the parameter name
+	 * @param depth the depth of look up
+	 * @param name  the parameter name
 	 * @return true if the function parameter exists, false otherwise
 	 */
-	public boolean containsFunctionParameter(String name) {
+	public boolean containsFunctionParameter(String name, int depth) {
 		String functionParameterName = getFunctionParameterName(name);
-		return parameters.get().containsKey(functionParameterName) || (parent != null && parent
-				.containsFunctionParameter(name));
+		return ((depth == -1 || this.depth >= depth) && parameters
+				.get()
+				.containsKey(functionParameterName)) || (parent != null && parent
+						.containsFunctionParameter(name, depth));
 	}
 
 	/**
@@ -1690,7 +1815,7 @@ public class DefaultContext {
 		if (parameterMap.containsKey(functionParameterName)) {
 			parameterMap.put(functionParameterName, value);
 		}
-		else if (parent != null && parent.containsFunctionParameter(name)) {
+		else if (parent != null && parent.containsFunctionParameter(name, value.getDepth())) {
 			parent.setFunctionParameter(name, value);
 		}
 		else {
@@ -1708,17 +1833,14 @@ public class DefaultContext {
 	 */
 	public void defineFunctionParameter(String name, DeclaredParameter value, boolean lenient) {
 		name = getFunctionParameterName(name);
-		var parameterMap = parameters.get();
-		if (parameterMap.containsKey(name)) {
+		if (containsFunctionParameter(name, value.getDepth())) {
 			if (lenient) {
 				return;
 			}
 
-			throw new NaftahBugError(
-										"المعامل '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
-												.formatted(name));
+			throw newNaftahBugExistentFunctionParameterError(name);
 		}
-		parameterMap.put(name, value); // force local
+		parameters.get().put(name, value); // force local
 	}
 
 	/**
@@ -1735,12 +1857,20 @@ public class DefaultContext {
 				.map(entry -> Map.entry(getFunctionParameterName(entry.getKey()), entry.getValue()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		var parameterMap = this.parameters.get();
-		if (parameters.keySet().stream().anyMatch(parameterMap::containsKey)) {
+		AtomicReference<String> parameterName = new AtomicReference<>();
+		if (parameters.entrySet().stream().anyMatch(declaredParameterEntry -> {
+			var name = declaredParameterEntry.getKey();
+			if (containsFunctionParameter(name, declaredParameterEntry.getValue().getDepth())) {
+				parameterName.set(name);
+				return true;
+			}
+			return false;
+		})) {
 			if (lenient) {
 				return;
 			}
 
-			throw new NaftahBugError("المعامل موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
+			throw newNaftahBugExistentFunctionParameterError(parameterName.get());
 		}
 		parameterMap.putAll(parameters); // force local
 	}
@@ -1765,14 +1895,16 @@ public class DefaultContext {
 	/**
 	 * Checks if a function argument with the given name exists in the current or parent contexts.
 	 *
-	 * @param name the argument name
+	 * @param depth the depth of look up
+	 * @param name  the argument name
 	 * @return true if the function argument exists, false otherwise
 	 */
-	public boolean containsFunctionArgument(String name) {
+	public boolean containsFunctionArgument(String name, int depth) {
 		String functionArgumentName = getFunctionArgumentName(name);
-		return arguments.get().containsKey(functionArgumentName) || (parent != null && parent
-				.containsFunctionArgument(
-											name));
+		return ((depth == -1 || this.depth >= depth) && arguments
+				.get()
+				.containsKey(functionArgumentName)) || (parent != null && parent
+						.containsFunctionArgument(name, depth));
 	}
 
 	/**
@@ -1803,17 +1935,18 @@ public class DefaultContext {
 	 * Sets the value of a function argument in the current or parent context.
 	 * Defines the argument locally if it does not exist.
 	 *
+	 * @param depth the depth of look up
 	 * @param name  the argument name
 	 * @param value the new DeclaredArgument value
 	 */
-	public void setFunctionArgument(String name, Object value) {
+	public void setFunctionArgument(String name, Object value, int depth) {
 		String functionArgumentName = getFunctionArgumentName(name);
 		var argumentsMap = arguments.get();
 		if (argumentsMap.containsKey(functionArgumentName)) {
 			argumentsMap.put(functionArgumentName, value);
 		}
-		else if (parent != null && parent.containsFunctionArgument(name)) {
-			parent.setFunctionArgument(name, value);
+		else if (parent != null && parent.containsFunctionArgument(name, depth)) {
+			parent.setFunctionArgument(name, value, depth);
 		}
 		else {
 			argumentsMap.put(functionArgumentName, value); // define new in current context
@@ -1823,36 +1956,42 @@ public class DefaultContext {
 	/**
 	 * Defines a new function argument in the current context.
 	 *
+	 * @param depth the depth of look up
 	 * @param name  the argument name
 	 * @param value the DeclaredArgument to define
 	 * @throws NaftahBugError if argument already exists and lenient is false
 	 */
-	public void defineFunctionArgument(String name, Object value) {
+	public void defineFunctionArgument(String name, Object value, int depth) {
 		name = getFunctionArgumentName(name);
-		var argumentsMap = arguments.get();
-		if (argumentsMap.containsKey(name)) {
-			throw new NaftahBugError(
-										"الوسيط '%s' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه."
-												.formatted(name));
+		if (containsFunctionArgument(name, depth)) {
+			throw newNaftahBugExistentFunctionArgumentError(name);
 		}
-		argumentsMap.put(name, value); // force local
+		arguments.get().put(name, value); // force local
 	}
 
 	/**
 	 * Defines multiple function arguments in the current context.
 	 *
+	 * @param depth     the depth of look up
 	 * @param arguments map of argument names to DeclaredArgument objects
 	 * @throws NaftahBugError if any argument already exists and lenient is false
 	 */
-	public void defineFunctionArguments(Map<String, Object> arguments) {
+	public void defineFunctionArguments(Map<String, Object> arguments, int depth) {
 		arguments = arguments
 				.entrySet()
 				.stream()
 				.map(entry -> Map.entry(getFunctionArgumentName(entry.getKey()), entry.getValue()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		var argumentsMap = this.arguments.get();
-		if (arguments.keySet().stream().anyMatch(argumentsMap::containsKey)) {
-			throw new NaftahBugError("الوسيط موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.");
+		AtomicReference<String> argumentName = new AtomicReference<>();
+		if (arguments.keySet().stream().anyMatch(name -> {
+			if (containsFunctionArgument(name, depth)) {
+				argumentName.set(name);
+				return true;
+			}
+			return false;
+		})) {
+			throw newNaftahBugExistentFunctionArgumentError(argumentName.get());
 		}
 		argumentsMap.putAll(arguments); // force local
 	}
@@ -1907,18 +2046,20 @@ public class DefaultContext {
 	/**
 	 * Checks if a loop variable with the given name exists in the current or parent contexts.
 	 *
-	 * @param name the loop variable name
+	 * @param depth the depth of look up
+	 * @param name  the loop variable name
 	 * @return true if the loop variable exists, false otherwise
 	 */
-	public boolean containsLoopVariable(String name) {
+	public boolean containsLoopVariable(String name, int depth) {
 		var loopVariableNames = getLoopVariableNames(name);
-		return loopVariableNames
+		return ((depth == -1 || this.depth >= depth) && loopVariableNames
 				.stream()
 				.anyMatch(loopVariableName -> loopVariables
 						.get()
-						.containsKey(loopVariableName)) || (parent != null && parent
+						.containsKey(loopVariableName))) || (parent != null && parent
 								.containsLoopVariable(
-														name));
+														name,
+														depth));
 	}
 
 	/**
@@ -1969,7 +2110,7 @@ public class DefaultContext {
 			loopVariableMap.put(firstMatchedLoopVariableName, value);
 			return value;
 		}
-		else if (parent != null && parent.containsLoopVariable(name)) {
+		else if (parent != null && parent.containsLoopVariable(name, -1)) {
 			parent.setLoopVariable(name, value);
 			return value;
 		}

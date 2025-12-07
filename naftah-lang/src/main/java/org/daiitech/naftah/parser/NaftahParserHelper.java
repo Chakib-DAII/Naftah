@@ -77,6 +77,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNonInvocableFun
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedFunctionError;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentVariableError;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
 import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
@@ -899,20 +900,22 @@ public final class NaftahParserHelper {
 	/**
 	 * Creates a declared variable instance from the parser context.
 	 *
+	 * @param depth        the depth of context where declared
 	 * @param ctx          The declaration context.
 	 * @param variableName The variable name.
 	 * @param isConstant   True if the variable is constant.
 	 * @param type         the variable type, default {@code Object.class}.
 	 * @return A pair containing the declared variable and a boolean flag.
 	 */
-	public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(
+	public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(   int depth,
 																			ParserRuleContext ctx,
 																			String variableName,
 																			boolean isConstant,
 																			Class<?> type) {
 
 		return new Pair<>(DeclaredVariable
-				.of(ctx,
+				.of(depth,
+					ctx,
 					variableName,
 					isConstant,
 					type,
@@ -981,7 +984,8 @@ public final class NaftahParserHelper {
 														.getCharPositionInLine());
 				}
 			}
-			declaredVariable = createDeclaredVariable(  ctx,
+			declaredVariable = createDeclaredVariable(  currentContext.depth,
+														ctx,
 														variableName,
 														hasConstant,
 														type);
@@ -997,12 +1001,33 @@ public final class NaftahParserHelper {
 			declaredVariable = Optional
 					.ofNullable(currentContext.getVariable(variableName, true))
 					.map(alreadyDeclaredVariable -> new Pair<>(alreadyDeclaredVariable.b, true))
-					.orElse(createDeclaredVariable( ctx,
+					.orElse(createDeclaredVariable( currentContext.depth,
+													ctx,
 													variableName,
 													false,
 													Object.class));
 		}
 		return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.a;
+	}
+
+	/**
+	 * Validates whether a variable with the given name already exists in the current context.
+	 * <p>
+	 * Checks both local variables in the current context and any broader variables in scope.
+	 * If a variable with the same name exists, a NaftahBugError is thrown.
+	 *
+	 * @param currentContext The current scope or context to check for variable existence.
+	 * @param name           The name of the variable to validate.
+	 * @throws NaftahBugError if a variable with the same name already exists in the context.
+	 */
+	public static void validateVariableExistence(   DefaultContext currentContext,
+													String name) {
+		if (!currentContext.isCreatingObject() && (currentContext
+				.containsLocalVariable( currentContext.variables.get(),
+										name) || currentContext
+												.containsVariable(name, currentContext.depth))) {
+			throw newNaftahBugExistentVariableError(name);
+		}
 	}
 
 	/**
@@ -1963,7 +1988,7 @@ public final class NaftahParserHelper {
 			}
 
 			if (!isEmpty(declaredFunction.getParameters())) {
-				currentContext.defineFunctionArguments(finalArgs);
+				currentContext.defineFunctionArguments(finalArgs, declaredFunction.getDepth());
 			}
 
 			pushCall(declaredFunction, finalArgs);
@@ -2409,7 +2434,7 @@ public final class NaftahParserHelper {
 		String functionCallId = generateCallId(depth, functionName);
 		currentContext.setFunctionCallId(functionCallId);
 
-		if (currentContext.containsFunction(functionName)) {
+		if (currentContext.containsFunction(functionName, -1)) {
 			Object function = currentContext.getFunction(functionName, false).b;
 			if (function instanceof DeclaredFunction declaredFunction) {
 				result = invokeDeclaredFunction(depth,
@@ -2590,7 +2615,7 @@ public final class NaftahParserHelper {
 		try {
 			for (String functionName : functionNames) {
 
-				if (!currentContext.containsFunction(functionName)) {
+				if (!currentContext.containsFunction(functionName, -1)) {
 					continue;
 				}
 
@@ -2732,7 +2757,7 @@ public final class NaftahParserHelper {
 				.getQualifiedCall(  ClassUtils.getQualifiedName(target.getClass().getName()),
 									ObjectAccessUtils.BUILD_SETTER.apply(fieldName));
 		try {
-			if (currentContext.containsFunction(functionName)) {
+			if (currentContext.containsFunction(functionName, -1)) {
 				Object function = currentContext.getFunction(functionName, false).b;
 				if (function instanceof JvmFunction jvmFunction) {
 					ObjectAccessUtils.set(target, fieldName, jvmFunction.getMethod(), value, safe, failFast);

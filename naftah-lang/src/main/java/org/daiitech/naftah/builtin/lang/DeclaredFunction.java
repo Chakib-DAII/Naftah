@@ -14,7 +14,7 @@ import org.daiitech.naftah.parser.NaftahParserHelper;
  *
  * @author Chakib Daii
  */
-public final class DeclaredFunction {
+public final class DeclaredFunction extends Declaration {
 
 	/**
 	 * The original ANTLR parse context for the function declaration.
@@ -59,9 +59,11 @@ public final class DeclaredFunction {
 	/**
 	 * Private constructor that initializes the function from its parse context.
 	 *
+	 * @param depth           the depth of context where declared
 	 * @param originalContext the original function declaration context
 	 */
-	private DeclaredFunction(NaftahParser.FunctionDeclarationContext originalContext) {
+	private DeclaredFunction(int depth, NaftahParser.FunctionDeclarationContext originalContext) {
+		super(depth);
 		this.originalContext = originalContext;
 		this.name = originalContext.ID().getText();
 		this.async = NaftahParserHelper.hasChild(originalContext.ASYNC());
@@ -73,11 +75,12 @@ public final class DeclaredFunction {
 	/**
 	 * Factory method to create a {@code DeclaredFunction} from the provided context.
 	 *
+	 * @param depth           the depth of context where declared
 	 * @param originalContext the function declaration context
 	 * @return a new instance of {@code DeclaredFunction}
 	 */
-	public static DeclaredFunction of(NaftahParser.FunctionDeclarationContext originalContext) {
-		return new DeclaredFunction(originalContext);
+	public static DeclaredFunction of(int depth, NaftahParser.FunctionDeclarationContext originalContext) {
+		return new DeclaredFunction(depth, originalContext);
 	}
 
 	/**

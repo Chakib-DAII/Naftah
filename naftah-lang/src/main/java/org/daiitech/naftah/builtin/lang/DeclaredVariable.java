@@ -19,7 +19,7 @@ import org.daiitech.naftah.parser.NaftahParserHelper;
  *
  * @author Chakib Daii
  */
-public final class DeclaredVariable {
+public final class DeclaredVariable extends Declaration {
 
 	/**
 	 * The name of the variable.
@@ -59,17 +59,20 @@ public final class DeclaredVariable {
 	/**
 	 * Constructs a new declared variable with the given properties.
 	 *
+	 * @param depth           the depth of context where declared
 	 * @param originalContext the original parser context of the declaration
 	 * @param name            the name of the variable
 	 * @param constant        whether the variable is a constant
 	 * @param type            the type of the variable
 	 * @param defaultValue    the default value of the variable
 	 */
-	private DeclaredVariable(   ParserRuleContext originalContext,
+	private DeclaredVariable(   int depth,
+								ParserRuleContext originalContext,
 								String name,
 								boolean constant,
 								Class<?> type,
 								Object defaultValue) {
+		super(depth);
 		this.originalContext = originalContext;
 		this.name = name;
 		this.constant = constant;
@@ -80,6 +83,7 @@ public final class DeclaredVariable {
 	/**
 	 * Factory method to create a {@code DeclaredVariable} instance.
 	 *
+	 * @param depth           the depth of context where declared
 	 * @param originalContext the original parser context
 	 * @param name            the variable name
 	 * @param constant        whether the variable is constant
@@ -87,12 +91,13 @@ public final class DeclaredVariable {
 	 * @param defaultValue    the default value
 	 * @return a new {@code DeclaredVariable} instance
 	 */
-	public static DeclaredVariable of(  ParserRuleContext originalContext,
+	public static DeclaredVariable of(  int depth,
+										ParserRuleContext originalContext,
 										String name,
 										boolean constant,
 										Class<?> type,
 										Object defaultValue) {
-		return new DeclaredVariable(originalContext, name, constant, type, defaultValue);
+		return new DeclaredVariable(depth, originalContext, name, constant, type, defaultValue);
 	}
 
 	/**
