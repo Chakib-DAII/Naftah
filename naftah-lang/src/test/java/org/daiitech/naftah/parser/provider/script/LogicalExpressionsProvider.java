@@ -89,11 +89,7 @@ public class LogicalExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, "2 بت_او_حصري 2", 0, null),
 					Arguments.of(true, "2 بت_وإلا_حصري 2", 0, null),
 					Arguments.of(true, "2 بت_والا_حصري 2", 0, null),
-					Arguments.of(true, "2 بت_ولا_حصري 2", 0, null), // TODO:
-					// add
-					// more
-					// composite
-					// expressions
+					Arguments.of(true, "2 بت_ولا_حصري 2", 0, null),
 					Arguments.of(true, "~((2 بت_ولا_حصري 2) بت_او (2 بت_ولا 2))", -3, null));
 	}
 }

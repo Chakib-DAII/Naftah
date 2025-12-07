@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentVariableError;
+
 public class DeclarationProvider implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
@@ -76,6 +78,10 @@ public class DeclarationProvider implements ArgumentsProvider {
 										ثابت ك : عدد_عائم_طويل
 										ك
 										""", null, null),
+					Arguments.of(false, """
+										ثابت ت
+										ثابت ت: عدد_عائم_طويل
+										""", null, newNaftahBugExistentVariableError("ت")),
 					Arguments
 							.of(true,
 								"""
@@ -114,6 +120,16 @@ public class DeclarationProvider implements ArgumentsProvider {
 								""",
 								Arrays.asList(null, null, null, null, null, null, null, null, null, null),
 								null),
+					Arguments
+							.of(false,
+								"""
+								ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ت،ق: منطقي؛تسلسل_رموز؛عدد_طويل؛عدد_عائم_طويل
+								[
+								ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق
+								]
+								""",
+								null,
+								newNaftahBugExistentVariableError("ت")),
 					Arguments
 							.of(false,
 								"""

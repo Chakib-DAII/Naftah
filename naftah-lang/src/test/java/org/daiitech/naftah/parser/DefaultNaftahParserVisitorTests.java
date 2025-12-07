@@ -3,7 +3,6 @@ package org.daiitech.naftah.parser;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -47,12 +46,9 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.TestUtils.assertBugEquals;
 import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.TestUtils.runScript;
-import static org.daiitech.naftah.parser.DefaultContext.CALL_STACK;
 import static org.daiitech.naftah.parser.DefaultContext.CONTEXTS;
-import static org.daiitech.naftah.parser.DefaultContext.CURRENT_CONTEXT;
-import static org.daiitech.naftah.parser.DefaultContext.CURRENT_TASK_SCOPE;
-import static org.daiitech.naftah.parser.DefaultContext.LOOP_STACK;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
+import static org.daiitech.naftah.parser.DefaultContext.cleanClassThreadLocals;
 import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
 import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
@@ -100,12 +96,7 @@ public class DefaultNaftahParserVisitorTests {
 	@BeforeEach
 	void setup() {
 		CONTEXTS.clear();
-		CALL_STACK.remove();
-		LOOP_STACK.remove();
-		CURRENT_CONTEXT.remove();
-		if (Objects.nonNull(CURRENT_TASK_SCOPE)) {
-			CURRENT_TASK_SCOPE.remove();
-		}
+		cleanClassThreadLocals();
 	}
 
 	@ParameterizedTest
