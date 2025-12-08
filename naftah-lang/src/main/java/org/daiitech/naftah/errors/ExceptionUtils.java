@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmExecutable;
+import org.daiitech.naftah.utils.tuple.Pair;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
@@ -269,10 +269,11 @@ public final class ExceptionUtils {
 		return new NaftahBugError(  "قيمة رقمية غير صالحة: '%s' في النظام العددي %d"
 											.formatted(
 														object instanceof Pair<?, ?> pair ?
-																(!pair.b.equals(pair.a) ?
+																(!pair.getRight().equals(pair.getLeft()) ?
 																		"%s ← %s"
-																				.formatted(pair.b, pair.a) :
-																		pair.a) :
+																				.formatted( pair.getRight(),
+																							pair.getLeft()) :
+																		pair.getLeft()) :
 																object,
 														radix),
 									exception);

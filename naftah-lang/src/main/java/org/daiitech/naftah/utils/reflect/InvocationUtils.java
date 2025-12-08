@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmExecutable;
@@ -23,6 +22,8 @@ import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.utils.tuple.Pair;
 
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createCollection;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createMap;
@@ -138,7 +139,7 @@ public final class InvocationUtils {
 					throw new IllegalArgumentException("Argument count mismatch");
 				}
 
-				naftahArgs.add(new Pair<>(null, varargArray));
+				naftahArgs.add(ImmutablePair.of(null, varargArray));
 			}
 			else {
 				throw new IllegalArgumentException("Argument count mismatch");
@@ -149,7 +150,7 @@ public final class InvocationUtils {
 		Type[] genericTypes = methodOrConstructor.getGenericParameterTypes();
 
 		for (int i = 0; i < naftahArgs.size(); i++) {
-			executableArgs[i] = convertArgument(naftahArgs.get(i).b, paramTypes[i], genericTypes[i], useNone);
+			executableArgs[i] = convertArgument(naftahArgs.get(i).getRight(), paramTypes[i], genericTypes[i], useNone);
 		}
 
 		var result = invokeJvmExecutable(instance, methodOrConstructor, executableArgs, naftahArgs, returnType);
@@ -532,7 +533,7 @@ public final class InvocationUtils {
 
 		for (int i = 0; i < limit; i++) {
 			Pair<String, Object> currentPair = naftahArgs.get(i);
-			Object original = currentPair.b;
+			Object original = currentPair.getRight();
 			Object converted = executableArgs[i];
 
 
@@ -547,7 +548,7 @@ public final class InvocationUtils {
 			}
 
 			var merged = convertArgumentBack(original, converted);
-			naftahArgs.set(i, new Pair<>(currentPair.a, merged));
+			naftahArgs.set(i, ImmutablePair.of(currentPair.getLeft(), merged));
 		}
 	}
 
@@ -737,7 +738,7 @@ public final class InvocationUtils {
 						continue;
 					}
 
-					args.add(new Pair<>(null, varargArray));
+					args.add(ImmutablePair.of(null, varargArray));
 				}
 				else {
 					continue;
@@ -748,9 +749,9 @@ public final class InvocationUtils {
 																paramTypes,
 																args,
 																jvmExecutable instanceof BuiltinFunction);
-			if (scoreAndArgs.a >= 0 && scoreAndArgs.a < bestScore) {
-				best = new Pair<>(jvmExecutable, scoreAndArgs.b);
-				bestScore = scoreAndArgs.a;
+			if (scoreAndArgs.getLeft() >= 0 && scoreAndArgs.getLeft() < bestScore) {
+				best = ImmutablePair.of(jvmExecutable, scoreAndArgs.getRight());
+				bestScore = scoreAndArgs.getLeft();
 			}
 		}
 		if (Objects.isNull(best)) {
@@ -792,13 +793,13 @@ public final class InvocationUtils {
 		Object[] executableArgs = new Object[args.size()];
 
 		for (int i = 0; i < params.length; i++) {
-			Object arg = args.get(i).b;
+			Object arg = args.get(i).getRight();
 			Class<?> param = params[i];
 
 			try {
 				Object converted = convertArgument(arg, param, getGenericType(executable, i), useNone);
 				if (converted == null && param.isPrimitive()) {
-					return new Pair<>(-1, null);
+					return ImmutablePair.of(-1, null);
 				}
 
 				// scoring: lower is better
@@ -849,10 +850,10 @@ public final class InvocationUtils {
 				executableArgs[i] = converted;
 			}
 			catch (Throwable ignored) {
-				return new Pair<>(-1, null); // conversion failed
+				return ImmutablePair.of(-1, null); // conversion failed
 			}
 		}
-		return new Pair<>(score, executableArgs);
+		return ImmutablePair.of(score, executableArgs);
 	}
 
 	/**

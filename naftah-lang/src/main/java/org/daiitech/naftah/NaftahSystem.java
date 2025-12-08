@@ -72,7 +72,7 @@ public final class NaftahSystem {
 	 *
 	 * @return the short version string
 	 * @throws NaftahBugError if the version format is invalid or unexpected
-	 * @since 3.0.1
+	 *
 	 */
 	public static String getShortVersion() {
 		String full = getVersion();

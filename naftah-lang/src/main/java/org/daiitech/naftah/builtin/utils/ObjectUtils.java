@@ -149,13 +149,12 @@ public final class ObjectUtils {
 	 * compare("abc", "def") = "abc".compareTo("def")
 	 * </pre>
 	 *
-	 * @param <T>   the type of objects being compared; must implement {@link Comparable}
 	 * @param left  the first object to compare, may be {@code null}
 	 * @param right the second object to compare, may be {@code null}
 	 * @return a negative integer, zero, or a positive integer if {@code left} is less than, equal to,
 	 *         or greater than {@code right}, respectively
 	 */
-	public static <T extends Comparable<T>> int compare(T left, T right) {
+	public static int compare(Object left, Object right) {
 		if (left == right) {
 			return 0;
 		}
@@ -165,7 +164,8 @@ public final class ObjectUtils {
 		if (right == null) {
 			return 1;
 		}
-		return left.compareTo(right);
+		//noinspection unchecked
+		return ((Comparable<Object>) left).compareTo(right);
 	}
 
 	/**
