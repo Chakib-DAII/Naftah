@@ -8,8 +8,9 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.utils.repl.BaseHighlighter;
+import org.daiitech.naftah.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.utils.tuple.Pair;
 import org.jline.reader.EOFError;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
@@ -94,7 +95,7 @@ public class SyntaxHighlighter extends BaseHighlighter {
 			// Add unmatched text before this token
 			if (tokenStartIndex > lastIndex && lastIndex >= 0 && tokenStartIndex <= buffer.length()) {
 				String gapText = buffer.substring(lastIndex, tokenStartIndex);
-				styledSegments.add(new Pair<>(gapText, AttributedStyle.DEFAULT));
+				styledSegments.add(ImmutablePair.of(gapText, AttributedStyle.DEFAULT));
 			}
 
 			AttributedStyle style = getStyleForTokenType(type);
@@ -109,14 +110,14 @@ public class SyntaxHighlighter extends BaseHighlighter {
 				}
 			}
 
-			styledSegments.add(new Pair<>(shaped, style));
+			styledSegments.add(ImmutablePair.of(shaped, style));
 			lastIndex = tokenStopIndex + 1;
 		}
 
 		// Add any unmatched trailing text after the last token
 		if (lastIndex < buffer.length()) {
 			String trailingText = buffer.substring(lastIndex);
-			styledSegments.add(new Pair<>(trailingText, AttributedStyle.DEFAULT));
+			styledSegments.add(ImmutablePair.of(trailingText, AttributedStyle.DEFAULT));
 		}
 
 		if (shouldReshape()) {
@@ -126,7 +127,7 @@ public class SyntaxHighlighter extends BaseHighlighter {
 
 		// Build lines with wrapping and right-alignment
 		for (Pair<CharSequence, AttributedStyle> part : styledSegments) {
-			AttributedString fragment = new AttributedString(part.a.toString(), part.b);
+			AttributedString fragment = new AttributedString(part.getLeft().toString(), part.getRight());
 			int fragWidth = fragment.columnLength();
 
 			if (currentLineWidth + fragWidth > terminalWidth) {

@@ -21,7 +21,6 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import org.antlr.v4.runtime.Vocabulary;
-import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
@@ -42,6 +41,10 @@ import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.utils.tuple.MutablePair;
+import org.daiitech.naftah.utils.tuple.Pair;
+import org.daiitech.naftah.utils.tuple.Triple;
 
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
@@ -297,9 +300,13 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									imports
 											.forEach(currentImport -> defineImport( currentContext,
 																					groupedImportStatementContext,
-																					Objects.nonNull(currentImport.a) ?
-																							currentImport.a :
-																							currentImport.b,
+																					Objects
+																							.nonNull(currentImport
+																									.getLeft()) ?
+																											currentImport
+																													.getLeft() :
+																											currentImport
+																													.getRight(),
 																					String
 																							.join(
 																									groupedImportStatementContext
@@ -308,7 +315,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																													QUALIFIED_NAME_SEPARATOR :
 																													QUALIFIED_CALL_SEPARATOR,
 																									qualifiedName,
-																									currentImport.b)));
+																									currentImport
+																											.getRight())));
 								}
 								else {
 									if (Objects.nonNull(groupedImportStatementContext.importAlias())) {
@@ -458,7 +466,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return new Pair<>(alias, importElement);
+								return ImmutablePair.of(alias, importElement);
 							},
 							Pair.class
 		);
@@ -1047,7 +1055,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									if (Objects.nonNull(singleAssignment.ID())) {
 										DeclaredVariable variable = currentContext
-												.getVariable(singleAssignment.ID().getText(), false).b;
+												.getVariable(singleAssignment.ID().getText(), false)
+												.getRight();
 										variable.setValue(newValue);
 										result = variable;
 									}
@@ -1141,28 +1150,33 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									boolean creatingObjectField = hasAnyParentOfType(   singleDeclaration,
 																						org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
 									//noinspection unchecked
-									Pair<DeclaredVariable, Boolean> declaredVariable = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
+									MutablePair<DeclaredVariable, Boolean> declaredVariable = (MutablePair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
 											.visit(singleDeclaration);
 									currentContext.setDeclarationOfAssignment(declaredVariable);
 									var newValue = defaultNaftahParserVisitor
 											.visit(singleAssignmentExpressionContext.expression());
-									if (declaredVariable.b) {
-										declaredVariable = new Pair<>(  DeclaredVariable
-																				.of(currentContext.depth,
-																					singleAssignmentExpressionContext,
-																					declaredVariable.a.getName(),
-																					declaredVariable.a.isConstant(),
-																					declaredVariable.a.getType(),
-																					newValue),
-																		declaredVariable.b);
+
+									if (declaredVariable.getRight()) {
+										declaredVariable
+												.setLeft(DeclaredVariable
+														.of(currentContext.depth,
+															singleAssignmentExpressionContext,
+															declaredVariable.getLeft().getName(),
+															declaredVariable.getLeft().isConstant(),
+															declaredVariable.getLeft().getType(),
+															newValue));
 									}
 									else {
-										declaredVariable.a.setOriginalContext(singleAssignmentExpressionContext);
-										declaredVariable.a.setValue(newValue);
+										declaredVariable
+												.getLeft()
+												.setOriginalContext(singleAssignmentExpressionContext);
+										declaredVariable.getLeft().setValue(newValue);
 									}
 									// declared and update if possible
 									if (!creatingObjectField) {
-										currentContext.setVariable(declaredVariable.a.getName(), declaredVariable.a);
+										currentContext
+												.setVariable(   declaredVariable.getLeft().getName(),
+																declaredVariable.getLeft());
 									}
 									currentContext.setParsingAssignment(false);
 									result = declaredVariable;
@@ -1231,7 +1245,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 										if (Objects.nonNull(singleAssignment.ID())) {
 											DeclaredVariable variable = currentContext
-													.getVariable(singleAssignment.ID().getText(), false).b;
+													.getVariable(singleAssignment.ID().getText(), false)
+													.getRight();
 											variable.setValue(newValue);
 											assignments.add(variable);
 										}
@@ -1373,7 +1388,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									for (int i = 0; i < declaredVariables.size(); i++) {
 										//noinspection unchecked
-										Pair<DeclaredVariable, Boolean> declaredVariable = (Pair<DeclaredVariable, Boolean>) declaredVariables
+										MutablePair<DeclaredVariable, Boolean> declaredVariable = (MutablePair<DeclaredVariable, Boolean>) declaredVariables
 												.get(
 														i);
 										currentContext.setDeclarationOfAssignment(declaredVariable);
@@ -1383,24 +1398,27 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												defaultNaftahParserVisitor
 														.visit(multipleAssignmentsExpressionContext.expression(i));
 
-										if (declaredVariable.b) {
-											declaredVariable = new Pair<>(  DeclaredVariable
-																					.of(currentContext.depth,
-																						multipleAssignmentsExpressionContext,
-																						declaredVariable.a.getName(),
-																						declaredVariable.a.isConstant(),
-																						declaredVariable.a.getType(),
-																						newValue),
-																			declaredVariable.b);
+										if (declaredVariable.getRight()) {
+											declaredVariable
+													.setLeft(DeclaredVariable
+															.of(currentContext.depth,
+																multipleAssignmentsExpressionContext,
+																declaredVariable.getLeft().getName(),
+																declaredVariable.getLeft().isConstant(),
+																declaredVariable.getLeft().getType(),
+																newValue));
 										}
 										else {
-											declaredVariable.a.setOriginalContext(multipleAssignmentsExpressionContext);
-											declaredVariable.a.setValue(newValue);
+											declaredVariable
+													.getLeft()
+													.setOriginalContext(multipleAssignmentsExpressionContext);
+											declaredVariable.getLeft().setValue(newValue);
 										}
 										// declared and update if possible
 										if (!creatingObjectField) {
 											currentContext
-													.setVariable(declaredVariable.a.getName(), declaredVariable.a);
+													.setVariable(   declaredVariable.getLeft().getName(),
+																	declaredVariable.getLeft());
 										}
 									}
 
@@ -1673,7 +1691,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										// result of previous call in chain to perform the current function on it
 										// (it behaves like a pipe for builtin, declared and static java methods (first argument))
 										// and as the instance (this) for java instance methods
-										args.add(0, new Pair<>(null, result));
+										args.add(0, ImmutablePair.of(null, result));
 
 										Number jvmFunctionIndex = Objects
 												.nonNull(callSegmentContext
@@ -1727,13 +1745,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 														.qualifiedCall()) :
 										functionCallContext.primaryCall().ID().getText();
 
-								Pair<Pair<String, Boolean>, Object> matchedVariableQualifiedCallAndForceInvocationWithValue = null;
+								Triple<String, Boolean, Object> matchedVariableQualifiedCallAndForceInvocationWithValue = null;
 								if (hasQualifiedCall) {
 									matchedVariableQualifiedCallAndForceInvocationWithValue = currentContext
 											.matchVariable(
 															functionName);
 									if (Objects.nonNull(matchedVariableQualifiedCallAndForceInvocationWithValue)) {
-										functionName = matchedVariableQualifiedCallAndForceInvocationWithValue.a.a;
+										functionName = matchedVariableQualifiedCallAndForceInvocationWithValue
+												.getLeft();
 									}
 								}
 
@@ -1749,8 +1768,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								else {
 									// the variable value to perform the current function on it
 									args
-											.add(new Pair<>(null,
-															matchedVariableQualifiedCallAndForceInvocationWithValue.b));
+											.add(ImmutablePair
+													.of(null,
+														matchedVariableQualifiedCallAndForceInvocationWithValue
+																.getRight()));
 								}
 
 								if (hasChild(functionCallContext.primaryCall().argumentList())) {
@@ -1779,7 +1800,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																			Optional
 																					.ofNullable(
 																								matchedVariableQualifiedCallAndForceInvocationWithValue)
-																					.map(pair -> pair.a.b)
+																					.map(Triple::getMiddle)
 																					.orElse(false),
 																			args,
 																			jvmFunctionIndex,
@@ -1832,7 +1853,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										// result of previous call in chain to perform the current function on it
 										// (it behaves like a pipe for builtin, declared and static java methods (first argument))
 										// and as the instance (this) for java instance methods
-										args.add(0, new Pair<>(null, result));
+										args.add(0, ImmutablePair.of(null, result));
 
 										jvmFunctionIndex = Objects
 												.nonNull(callSegmentContext
@@ -1853,7 +1874,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																			Optional
 																					.ofNullable(
 																								matchedVariableQualifiedCallAndForceInvocationWithValue)
-																					.map(pair -> pair.a.b)
+																					.map(Triple::getMiddle)
 																					.orElse(false),
 																			args,
 																			jvmFunctionIndex,
@@ -1932,7 +1953,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										}
 									}
 									Object value = defaultNaftahParserVisitor.visit(argumentListContext.expression(i));
-									args.add(new Pair<>(name, value)); // Evaluate each expression in the argument list
+									args.add(ImmutablePair.of(name, value)); // Evaluate each expression in the argument list
 								}
 								return args;
 							}
@@ -3394,8 +3415,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																	var field = (Pair<DeclaredVariable, Boolean>) defaultNaftahParserVisitor
 																			.visit(
 																					objectFieldsContext.assignment(i));
-																	var fieldName = field.a.getName();
-																	result.put(fieldName, field.a);
+																	var fieldName = field.getLeft().getName();
+																	result.put(fieldName, field.getLeft());
 																}
 
 																currentContext.setCreatingObject(false);
@@ -3635,8 +3656,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, tupleValueContext) -> {
 								if (currentContext.isParsingAssignment()) {
 									var currentDeclaration = currentContext.getDeclarationOfAssignment();
-									Class<?> currentDeclarationType = currentDeclaration.a.getType();
-									String currentDeclarationName = currentDeclaration.a.getName();
+									Class<?> currentDeclarationType = currentDeclaration.getLeft().getType();
+									String currentDeclarationName = currentDeclaration.getLeft().getName();
 									if (Objects.nonNull(currentDeclarationType) && !Object.class
 											.equals(currentDeclarationType)) {
 										throw new NaftahBugError(
@@ -3758,8 +3779,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								String currentDeclarationName = null;
 								if (parsingAssignment) {
 									var currentDeclaration = currentContext.getDeclarationOfAssignment();
-									currentDeclarationType = currentDeclaration.a.getType();
-									currentDeclarationName = currentDeclaration.a.getName();
+									currentDeclarationType = currentDeclaration.getLeft().getType();
+									currentDeclarationName = currentDeclaration.getLeft().getName();
 								}
 								// process elements
 								var elementValue = defaultNaftahParserVisitor.visit(singleElementContext.expression());
@@ -3832,8 +3853,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								String currentDeclarationName = null;
 								if (parsingAssignment) {
 									var currentDeclaration = currentContext.getDeclarationOfAssignment();
-									currentDeclarationType = currentDeclaration.a.getType();
-									currentDeclarationName = currentDeclaration.a.getName();
+									currentDeclarationType = currentDeclaration.getLeft().getType();
+									currentDeclarationName = currentDeclaration.getLeft().getName();
 								}
 								// process elements
 								List<Object> elements = new ArrayList<>();
@@ -3947,8 +3968,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								String currentDeclarationName = null;
 								if (parsingAssignment) {
 									var currentDeclaration = currentContext.getDeclarationOfAssignment();
-									currentDeclarationType = currentDeclaration.a.getType();
-									currentDeclarationName = currentDeclaration.a.getName();
+									currentDeclarationType = currentDeclaration.getLeft().getType();
+									currentDeclarationName = currentDeclaration.getLeft().getName();
 								}
 								// process entries
 								org.daiitech.naftah.parser.NaftahParser.MapValueContext mapValueContext = (org.daiitech.naftah.parser.NaftahParser.MapValueContext) keyValuePairsContext
@@ -4093,9 +4114,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								if (!creatingCollection && !callingInitOrFunction && parsingAssignment) {
 									var currentDeclaration = currentContext.getDeclarationOfAssignment();
-									Class<?> currentDeclarationType = currentDeclaration.a.getType();
+									Class<?> currentDeclarationType = currentDeclaration.getLeft().getType();
 									Class<?> resultType = Objects.nonNull(result) ? result.getClass() : Object.class;
-									String currentDeclarationName = currentDeclaration.a.getName();
+									String currentDeclarationName = currentDeclaration.getLeft().getName();
 									if (typeMismatch(result, resultType, currentDeclarationType)) {
 										throw new NaftahBugError(   "القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
 																			.formatted( currentDeclarationName,
@@ -4806,7 +4827,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 											possibleFunctionCallContext.primaryCall().ID().getText();
 
 									if (currentContext.containsFunction(functionName, -1)) {
-										Object function = currentContext.getFunction(functionName, false).b;
+										Object function = currentContext.getFunction(functionName, false).getRight();
 										if (function instanceof DeclaredFunction declaredFunction && declaredFunction
 												.isAsync()) {
 											throw new NaftahBugError(

@@ -32,7 +32,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
-import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -54,6 +53,9 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.ObjectAccessUtils;
+import org.daiitech.naftah.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.utils.tuple.MutablePair;
+import org.daiitech.naftah.utils.tuple.Pair;
 
 import com.ibm.icu.text.Normalizer2;
 
@@ -422,7 +424,7 @@ public final class NaftahParserHelper {
 		// arguments that have names
 		Map<Integer, Pair<String, Object>> namedArguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
 			var current = arguments.get(i);
-			return current.a != null ? Map.entry(i, current) : null;
+			return current.getLeft() != null ? Map.entry(i, current) : null;
 		}).filter(Objects::nonNull).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 		Map<String, Object> finalArguments = new HashMap<>();
@@ -436,7 +438,7 @@ public final class NaftahParserHelper {
 			finalArguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
 				var argument = arguments.get(i);
 				var param = i >= requiredParams.size() ? parameters.get(i) : requiredParams.get(i);
-				return Map.entry(param.getName(), argument.b);
+				return Map.entry(param.getName(), argument.getRight());
 			}).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		}
 		else {
@@ -446,7 +448,7 @@ public final class NaftahParserHelper {
 					.range(0, arguments.size())
 					.mapToObj(i -> {
 						var current = arguments.get(i);
-						return current.a == null ? Map.entry(i, current) : null;
+						return current.getLeft() == null ? Map.entry(i, current) : null;
 					})
 					.filter(Objects::nonNull)
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -457,7 +459,7 @@ public final class NaftahParserHelper {
 				if (namedArguments.containsKey(entry.getKey())) {
 					throw new NaftahBugError("تم تحديد الوسيط '%s' موقعياً وبالاسم في آنٍ واحد.".formatted(paramName));
 				}
-				finalArguments.put(paramName, entry.getValue().b);
+				finalArguments.put(paramName, entry.getValue().getRight());
 				usedNames.add(paramName);
 			}
 
@@ -472,12 +474,14 @@ public final class NaftahParserHelper {
 						throw new NaftahBugError("تم تمرير الوسيط '%s' أكثر من مرة.".formatted(paramName));
 					}
 
-					finalArguments.put(paramName, entry.getValue().b);
+					finalArguments.put(paramName, entry.getValue().getRight());
 					usedNames.add(paramName);
 
 				}
 				else {
-					throw new NaftahBugError("الوسيط '%s' لا يتوافق مع أي من المعاملات المحددة." + entry.getValue().a);
+					throw new NaftahBugError("الوسيط '%s' لا يتوافق مع أي من المعاملات المحددة." + entry
+							.getValue()
+							.getLeft());
 				}
 			}
 
@@ -594,7 +598,7 @@ public final class NaftahParserHelper {
 		// Create a lexer and token stream
 		var lexerCommonTokenStreamPair = getCommonTokenStream(input, errorListeners);
 
-		CommonTokenStream tokens = lexerCommonTokenStreamPair.b;
+		CommonTokenStream tokens = lexerCommonTokenStreamPair.getRight();
 
 		if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 			tokens.fill();
@@ -602,7 +606,7 @@ public final class NaftahParserHelper {
 			for (Token token : tokens.getTokens()) {
 				System.out
 						.printf("Token: %-20s Text: %s%n",
-								lexerCommonTokenStreamPair.a.getVocabulary().getSymbolicName(token.getType()),
+								lexerCommonTokenStreamPair.getLeft().getVocabulary().getSymbolicName(token.getType()),
 								token.getText());
 			}
 		}
@@ -663,7 +667,7 @@ public final class NaftahParserHelper {
 	 * @return The CommonTokenStream.
 	 */
 	public static CommonTokenStream getCommonTokenStream(CharStream charStream) {
-		return getCommonTokenStream(charStream, List.of()).b;
+		return getCommonTokenStream(charStream, List.of()).getRight();
 	}
 
 	/**
@@ -674,7 +678,7 @@ public final class NaftahParserHelper {
 	 * @return The CommonTokenStream.
 	 */
 	public static CommonTokenStream getCommonTokenStream(CharStream charStream, ANTLRErrorListener errorListener) {
-		return getCommonTokenStream(charStream, List.of(errorListener)).b;
+		return getCommonTokenStream(charStream, List.of(errorListener)).getRight();
 	}
 
 	/**
@@ -691,7 +695,7 @@ public final class NaftahParserHelper {
 		org.daiitech.naftah.parser.NaftahLexer lexer = new org.daiitech.naftah.parser.NaftahLexer(charStream);
 		lexer.removeErrorListeners();
 		errorListeners.forEach(lexer::addErrorListener);
-		return new Pair<>(lexer, new CommonTokenStream(lexer));
+		return ImmutablePair.of(lexer, new CommonTokenStream(lexer));
 	}
 
 	/**
@@ -912,14 +916,14 @@ public final class NaftahParserHelper {
 																			String variableName,
 																			boolean isConstant,
 																			Class<?> type) {
-
-		return new Pair<>(DeclaredVariable
-				.of(depth,
-					ctx,
-					variableName,
-					isConstant,
-					type,
-					null), true);
+		return MutablePair
+				.of(DeclaredVariable
+						.of(depth,
+							ctx,
+							variableName,
+							isConstant,
+							type,
+							null), true);
 	}
 
 	/**
@@ -994,20 +998,23 @@ public final class NaftahParserHelper {
 			// previously
 			// declared and update if possible
 			if (!creatingObjectField) {
-				currentContext.defineVariable(variableName, declaredVariable.a);
+				currentContext.defineVariable(variableName, declaredVariable.getLeft());
 			}
 		}
 		else {
 			declaredVariable = Optional
 					.ofNullable(currentContext.getVariable(variableName, true))
-					.map(alreadyDeclaredVariable -> new Pair<>(alreadyDeclaredVariable.b, true))
+					.<Pair<DeclaredVariable, Boolean>>map(alreadyDeclaredVariable -> MutablePair
+							.of(
+								alreadyDeclaredVariable.getRight(),
+								true))
 					.orElse(createDeclaredVariable( currentContext.depth,
 													ctx,
 													variableName,
 													false,
 													Object.class));
 		}
-		return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.a;
+		return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.getLeft();
 	}
 
 	/**
@@ -1548,7 +1555,7 @@ public final class NaftahParserHelper {
 		boolean found = false;
 		boolean safeChaining = false;
 
-		DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).b;
+		DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).getRight();
 
 		if (accessArray.length > 1 && objectVariable.getValue() instanceof NaftahObject naftahObject) {
 			int i = 1;
@@ -1773,14 +1780,14 @@ public final class NaftahParserHelper {
 										int column) throws NoSuchMethodException {
 		var bestMatch = findBestExecutable(jvmFunctions, new ArrayList<>(naftahArgs), true);
 
-		var selectedFunction = bestMatch.a;
+		var selectedFunction = bestMatch.getLeft();
 		Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
-				.isStatic() ? null : naftahArgs.remove(0).b;
+				.isStatic() ? null : naftahArgs.remove(0).getRight();
 
 		return invokeFunction(  functionName,
 								forceInvocation,
 								selectedFunction,
-								bestMatch.b,
+								bestMatch.getRight(),
 								naftahArgs,
 								possibleInstance,
 								line,
@@ -2367,7 +2374,12 @@ public final class NaftahParserHelper {
 													int line,
 													int column) throws NoSuchMethodException {
 		var bestMatch = findBestExecutable(jvmClassInitializers, naftahArgs);
-		return invokeJvmClassInitializer(classInitializerName, bestMatch.a, bestMatch.b, naftahArgs, line, column);
+		return invokeJvmClassInitializer(   classInitializerName,
+											bestMatch.getLeft(),
+											bestMatch.getRight(),
+											naftahArgs,
+											line,
+											column);
 	}
 
 	/**
@@ -2435,7 +2447,7 @@ public final class NaftahParserHelper {
 		currentContext.setFunctionCallId(functionCallId);
 
 		if (currentContext.containsFunction(functionName, -1)) {
-			Object function = currentContext.getFunction(functionName, false).b;
+			Object function = currentContext.getFunction(functionName, false).getRight();
 			if (function instanceof DeclaredFunction declaredFunction) {
 				result = invokeDeclaredFunction(depth,
 												functionName,
@@ -2452,7 +2464,7 @@ public final class NaftahParserHelper {
 												column);
 			}
 			else if (function instanceof JvmFunction jvmFunction) {
-				Object possibleInstance = jvmFunction.isStatic() ? null : args.remove(0).b;
+				Object possibleInstance = jvmFunction.isStatic() ? null : args.remove(0).getRight();
 
 				result = invokeJvmFunction( functionName,
 											forceInvocation,
@@ -2470,7 +2482,7 @@ public final class NaftahParserHelper {
 						var selectedFunction = getFunction(jvmExecutables, functionIndex);
 
 						Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
-								.isStatic() ? null : args.remove(0).b;
+								.isStatic() ? null : args.remove(0).getRight();
 
 						result = invokeFunction(functionName,
 												forceInvocation,
@@ -2620,7 +2632,7 @@ public final class NaftahParserHelper {
 				}
 
 				try {
-					Object function = currentContext.getFunction(functionName, false).b;
+					Object function = currentContext.getFunction(functionName, false).getRight();
 					if (function instanceof JvmFunction jvmFunction) {
 						return ObjectAccessUtils.get(target, fieldName, jvmFunction.getMethod(), safe, failFast);
 					}
@@ -2633,7 +2645,7 @@ public final class NaftahParserHelper {
 							return ObjectAccessUtils
 									.get(   target,
 											fieldName,
-											(Method) bestMatch.a.getExecutable(),
+											(Method) bestMatch.getLeft().getExecutable(),
 											safe,
 											failFast);
 						}
@@ -2758,7 +2770,7 @@ public final class NaftahParserHelper {
 									ObjectAccessUtils.BUILD_SETTER.apply(fieldName));
 		try {
 			if (currentContext.containsFunction(functionName, -1)) {
-				Object function = currentContext.getFunction(functionName, false).b;
+				Object function = currentContext.getFunction(functionName, false).getRight();
 				if (function instanceof JvmFunction jvmFunction) {
 					ObjectAccessUtils.set(target, fieldName, jvmFunction.getMethod(), value, safe, failFast);
 				}
@@ -2766,13 +2778,15 @@ public final class NaftahParserHelper {
 					//noinspection unchecked
 					var jvmExecutables = (Collection<JvmExecutable>) functions;
 					try {
-						var bestMatch = findBestExecutable(jvmExecutables, List.of(new Pair<>(null, value)), true);
+						var bestMatch = findBestExecutable( jvmExecutables,
+															List.of(ImmutablePair.of(null, value)),
+															true);
 
 						ObjectAccessUtils
 								.set(   target,
 										fieldName,
-										(Method) bestMatch.a.getExecutable(),
-										bestMatch.b[0],
+										(Method) bestMatch.getLeft().getExecutable(),
+										bestMatch.getRight()[0],
 										safe,
 										failFast);
 					}

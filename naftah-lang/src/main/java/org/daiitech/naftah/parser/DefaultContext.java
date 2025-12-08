@@ -32,7 +32,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.Builtin;
@@ -52,6 +51,10 @@ import org.daiitech.naftah.utils.Base64SerializationUtils;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
+import org.daiitech.naftah.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.utils.tuple.ImmutableTriple;
+import org.daiitech.naftah.utils.tuple.Pair;
+import org.daiitech.naftah.utils.tuple.Triple;
 
 import static org.daiitech.naftah.Naftah.BUILTIN_CLASSES_PROPERTY;
 import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
@@ -124,7 +127,7 @@ public class DefaultContext {
 	 * Stack representing the call stack containing pairs of function and argument maps,
 	 * along with the returned value.
 	 */
-	protected static final ThreadLocal<Deque<Pair<Pair<DeclaredFunction, Map<String, Object>>, Object>>> CALL_STACK = ThreadLocal
+	protected static final ThreadLocal<Deque<Triple<DeclaredFunction, Map<String, Object>, Object>>> CALL_STACK = ThreadLocal
 			.withInitial(ArrayDeque::new);
 	/**
 	 * Stack representing loop labels and their associated parser rule contexts.
@@ -146,7 +149,7 @@ public class DefaultContext {
 				var classQualifiersMap = getClassQualifiers(classNames.keySet(), false);
 				var classQualifiers = new HashSet<>(classQualifiersMap.keySet());
 				var arabicClassQualifiers = getArabicClassQualifiers(classQualifiersMap.values());
-				return new Pair<>(classQualifiers, arabicClassQualifiers);
+				return ImmutablePair.of(classQualifiers, arabicClassQualifiers);
 			};
 			var qualifiersFuture = internalExecutor.submit(qualifiersLoaderTask);
 
@@ -154,8 +157,8 @@ public class DefaultContext {
 			var classFuture = internalExecutor.submit(classLoaderTask);
 
 			var qualifiersFutureResult = qualifiersFuture.get();
-			result.setClassQualifiers(qualifiersFutureResult.a);
-			result.setArabicClassQualifiers(qualifiersFutureResult.b);
+			result.setClassQualifiers(qualifiersFutureResult.getLeft());
+			result.setArabicClassQualifiers(qualifiersFutureResult.getRight());
 
 			result.setClasses(classFuture.get());
 
@@ -373,22 +376,22 @@ public class DefaultContext {
 		return Optional
 				.ofNullable(context.getLoopVariable(varName, true))
 				.flatMap(functionArgument -> Optional
-						.of(VariableLookupResult.of(varName, functionArgument.b)))
+						.of(VariableLookupResult.of(varName, functionArgument.getRight())))
 				.orElseGet(() -> Optional
 						.ofNullable(context.getFunctionArgument(varName, true))
 						.flatMap(functionArgument -> Optional
-								.of(VariableLookupResult.of(varName, functionArgument.b)))
+								.of(VariableLookupResult.of(varName, functionArgument.getRight())))
 						.orElseGet(() -> Optional
 								.ofNullable(context.getFunctionParameter(varName, true))
 								.flatMap(functionParameter -> Optional
 										.of(VariableLookupResult
 												.of(
 													varName,
-													functionParameter.b.getValue())))
+													functionParameter.getRight().getValue())))
 								.orElseGet(() -> Optional
 										.ofNullable(context.getVariable(varName, true))
 										.flatMap(declaredVariable -> {
-											var value = declaredVariable.b.getValue();
+											var value = declaredVariable.getRight().getValue();
 
 											if (value instanceof Result<?, ?> result) {
 												if (result.isOk()) {
@@ -755,7 +758,7 @@ public class DefaultContext {
 	 * @param arguments the map of argument names to values
 	 */
 	public static void pushCall(DeclaredFunction function, Map<String, Object> arguments) {
-		CALL_STACK.get().push(new Pair<>(new Pair<>(function, arguments), null));
+		CALL_STACK.get().push(ImmutableTriple.of(function, arguments, null));
 	}
 
 	/**
@@ -764,7 +767,7 @@ public class DefaultContext {
 	 * @return the popped function call frame as a pair containing function, arguments, and return value
 	 * @throws NaftahBugError if the call stack is empty
 	 */
-	public static Pair<Pair<DeclaredFunction, Map<String, Object>>, Object> popCall() {
+	public static Triple<DeclaredFunction, Map<String, Object>, Object> popCall() {
 		if (CALL_STACK.get().isEmpty()) {
 			throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
 		}
@@ -790,7 +793,7 @@ public class DefaultContext {
 	 * @param <T>     the type of the parser context
 	 */
 	public static <T extends ParserRuleContext> void pushLoop(String label, T loopCtx) {
-		LOOP_STACK.get().push(new Pair<>(label, loopCtx));
+		LOOP_STACK.get().push(ImmutablePair.of(label, loopCtx));
 	}
 
 	/**
@@ -824,7 +827,7 @@ public class DefaultContext {
 	 * @return a list of loop labels
 	 */
 	public static List<String> getLoopLabels() {
-		return LOOP_STACK.get().stream().map(stringPair -> stringPair.a).toList();
+		return LOOP_STACK.get().stream().map(Pair::getLeft).toList();
 	}
 
 	/**
@@ -834,7 +837,7 @@ public class DefaultContext {
 	 * @return {@code true} if the loop stack contains the label, {@code false} otherwise
 	 */
 	public static boolean loopContainsLabel(String label) {
-		return LOOP_STACK.get().stream().anyMatch(stringPair -> stringPair.a.equals(label));
+		return LOOP_STACK.get().stream().anyMatch(stringPair -> stringPair.getLeft().equals(label));
 	}
 
 	/**
@@ -1527,7 +1530,7 @@ public class DefaultContext {
 		var variableMap = variables.get();
 		List<DefaultContext> siblings;
 		if (variableMap.containsKey(name)) {
-			return new Pair<>(depth, variableMap.get(name));
+			return ImmutablePair.of(depth, variableMap.get(name));
 		}
 		else if (isAwaitingTask() && Objects.nonNull(siblings = getSiblings(false)) && !siblings.isEmpty()) {
 			for (DefaultContext sibling : siblings) {
@@ -1535,7 +1538,7 @@ public class DefaultContext {
 				if (variableMap.containsKey(name)) {
 					var variable = variableMap.get(name);
 					if (variable.getValue() instanceof Task<?>) {
-						return new Pair<>(depth, variableMap.get(name));
+						return ImmutablePair.of(depth, variableMap.get(name));
 					}
 				}
 			}
@@ -1677,7 +1680,7 @@ public class DefaultContext {
 	public Pair<Integer, Object> getFunction(String name, boolean safe) {
 		var functionMap = functions.get();
 		if (functionMap.containsKey(name)) {
-			return new Pair<>(depth, functionMap.get(name));
+			return ImmutablePair.of(depth, functionMap.get(name));
 		}
 		else if (parent != null) {
 			return parent.getFunction(name, safe);
@@ -1685,12 +1688,12 @@ public class DefaultContext {
 		else { // root parent
 			if (BUILTIN_FUNCTIONS.containsKey(name)) {
 				var functions = BUILTIN_FUNCTIONS.get(name);
-				return new Pair<>(depth, functions.size() == 1 ? functions.get(0) : functions);
+				return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
 			}
 			else if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
 				if (BOOT_STRAPPED && JVM_FUNCTIONS.containsKey(name)) {
 					var functions = JVM_FUNCTIONS.get(name);
-					return new Pair<>(depth, functions.size() == 1 ? functions.get(0) : functions);
+					return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
 				}
 				else if (name.matches(QUALIFIED_CALL_REGEX)) {
 					while (!BOOT_STRAPPED && Objects.isNull(JVM_FUNCTIONS)) {
@@ -1700,7 +1703,7 @@ public class DefaultContext {
 						}
 					}
 					var functions = JVM_FUNCTIONS.get(name);
-					return new Pair<>(depth, functions.size() == 1 ? functions.get(0) : functions);
+					return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
 				}
 			}
 		}
@@ -1790,7 +1793,7 @@ public class DefaultContext {
 		String functionParameterName = getFunctionParameterName(name);
 		var parameterMap = parameters.get();
 		if (parameterMap.containsKey(functionParameterName)) {
-			return new Pair<>(depth, parameterMap.get(functionParameterName));
+			return ImmutablePair.of(depth, parameterMap.get(functionParameterName));
 		}
 		else if (parent != null) {
 			return parent.getFunctionParameter(name, safe);
@@ -1919,7 +1922,7 @@ public class DefaultContext {
 		String functionArgumentName = getFunctionArgumentName(name);
 		var argumentsMap = arguments.get();
 		if (argumentsMap.containsKey(functionArgumentName)) {
-			return new Pair<>(depth, argumentsMap.get(functionArgumentName));
+			return ImmutablePair.of(depth, argumentsMap.get(functionArgumentName));
 		}
 		else if (parent != null) {
 			return parent.getFunctionArgument(name, safe);
@@ -2079,7 +2082,7 @@ public class DefaultContext {
 				.findFirst()
 				.orElse(null);
 		if (Objects.nonNull(firstMatchedLoopVariableName)) {
-			return new Pair<>(depth, loopVariableMap.get(firstMatchedLoopVariableName));
+			return ImmutablePair.of(depth, loopVariableMap.get(firstMatchedLoopVariableName));
 		}
 		else if (parent != null) {
 			return parent.getLoopVariable(name, safe);
@@ -2575,7 +2578,7 @@ public class DefaultContext {
 	 * @return a {@link Pair} containing the fully qualified call and the variable's
 	 *         underlying value; or {@code null} if resolution fails
 	 */
-	public Pair<Pair<String, Boolean>, Object> matchVariable(String qualifiedCall) {
+	public Triple<String, Boolean, Object> matchVariable(String qualifiedCall) {
 		String[] parts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
 		String id = parts.length == 2 ? parts[0] : null;
 		if (Objects.nonNull(id) && !id.contains(QUALIFIED_NAME_SEPARATOR)) {
@@ -2590,9 +2593,10 @@ public class DefaultContext {
 				if (Actor.class.isAssignableFrom(variableClass)) {
 					variableClass = Actor.class;
 				}
-				return new Pair<>(  new Pair<>( getQualifiedCall(getQualifiedName(variableClass.getName()), parts[1]),
-												!variableClass.equals(variableValue.getClass())),
-									variableValue);
+				return ImmutableTriple
+						.of(getQualifiedCall(getQualifiedName(variableClass.getName()), parts[1]),
+							!variableClass.equals(variableValue.getClass()),
+							variableValue);
 			}
 		}
 		return null;
