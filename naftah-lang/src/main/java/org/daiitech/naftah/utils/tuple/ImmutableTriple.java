@@ -14,7 +14,6 @@ import java.util.Objects;
  * @param <L> the left element type
  * @param <M> the middle element type
  * @param <R> the right element type
- *
  * @author Chakib Daii
  */
 public class ImmutableTriple<L, M, R> extends Triple<L, M, R> {
@@ -25,6 +24,31 @@ public class ImmutableTriple<L, M, R> extends Triple<L, M, R> {
 	// This is not defined with generics to avoid warnings in call sites.
 	@SuppressWarnings("rawtypes")
 	private static final ImmutableTriple NULL = new ImmutableTriple<>(null, null, null);
+	/**
+	 * Left object.
+	 */
+	public final L left;
+	/**
+	 * Middle object.
+	 */
+	public final M middle;
+	/**
+	 * Right object.
+	 */
+	public final R right;
+
+	/**
+	 * Create a new triple instance.
+	 *
+	 * @param left   the left value, may be null
+	 * @param middle the middle value, may be null
+	 * @param right  the right value, may be null
+	 */
+	public ImmutableTriple(final L left, final M middle, final R right) {
+		this.left = left;
+		this.middle = middle;
+		this.right = right;
+	}
 
 	/**
 	 * Returns an immutable triple of nulls.
@@ -80,27 +104,6 @@ public class ImmutableTriple<L, M, R> extends Triple<L, M, R> {
 		return of(  Objects.requireNonNull(left, "left"),
 					Objects.requireNonNull(middle, "middle"),
 					Objects.requireNonNull(right, "right"));
-	}
-
-	/** Left object */
-	public final L left;
-	/** Middle object */
-	public final M middle;
-
-	/** Right object */
-	public final R right;
-
-	/**
-	 * Create a new triple instance.
-	 *
-	 * @param left   the left value, may be null
-	 * @param middle the middle value, may be null
-	 * @param right  the right value, may be null
-	 */
-	public ImmutableTriple(final L left, final M middle, final R right) {
-		this.left = left;
-		this.middle = middle;
-		this.right = right;
 	}
 
 	/**

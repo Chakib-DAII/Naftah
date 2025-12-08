@@ -74,10 +74,10 @@ public class MutablePair<L, R> extends Pair<L, R> {
 		return of(Objects.requireNonNull(left, "left"), Objects.requireNonNull(right, "right"));
 	}
 
-	/** Left object */
+	/** Left object. */
 	public L left;
 
-	/** Right object */
+	/** Right object. */
 	public R right;
 
 	/**

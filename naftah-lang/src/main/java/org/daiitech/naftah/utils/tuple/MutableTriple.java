@@ -10,10 +10,41 @@ import java.util.Objects;
  * @param <L> the left element type
  * @param <M> the middle element type
  * @param <R> the right element type
- *
  * @author Chakib Daii
  */
 public class MutableTriple<L, M, R> extends Triple<L, M, R> {
+
+	/**
+	 * Left object.
+	 */
+	public L left;
+	/**
+	 * Middle object.
+	 */
+	public M middle;
+	/**
+	 * Right object.
+	 */
+	public R right;
+
+	/**
+	 * Create a new triple instance of three nulls.
+	 */
+	public MutableTriple() {
+	}
+
+	/**
+	 * Create a new triple instance.
+	 *
+	 * @param left   the left value, may be null
+	 * @param middle the middle value, may be null
+	 * @param right  the right value, may be null
+	 */
+	public MutableTriple(final L left, final M middle, final R right) {
+		this.left = left;
+		this.middle = middle;
+		this.right = right;
+	}
 
 	/**
 	 * Obtains a mutable triple of three objects inferring the generic types.
@@ -55,55 +86,12 @@ public class MutableTriple<L, M, R> extends Triple<L, M, R> {
 					Objects.requireNonNull(right, "right"));
 	}
 
-	/** Left object */
-	public L left;
-	/** Middle object */
-	public M middle;
-
-	/** Right object */
-	public R right;
-
-	/**
-	 * Create a new triple instance of three nulls.
-	 */
-	public MutableTriple() {
-	}
-
-	/**
-	 * Create a new triple instance.
-	 *
-	 * @param left   the left value, may be null
-	 * @param middle the middle value, may be null
-	 * @param right  the right value, may be null
-	 */
-	public MutableTriple(final L left, final M middle, final R right) {
-		this.left = left;
-		this.middle = middle;
-		this.right = right;
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public L getLeft() {
 		return left;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public M getMiddle() {
-		return middle;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public R getRight() {
-		return right;
 	}
 
 	/**
@@ -116,12 +104,28 @@ public class MutableTriple<L, M, R> extends Triple<L, M, R> {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public M getMiddle() {
+		return middle;
+	}
+
+	/**
 	 * Sets the middle element of the triple.
 	 *
 	 * @param middle the new value of the middle element, may be null
 	 */
 	public void setMiddle(final M middle) {
 		this.middle = middle;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public R getRight() {
+		return right;
 	}
 
 	/**

@@ -121,10 +121,10 @@ public class ImmutablePair<L, R> extends Pair<L, R> {
 		return of(null, right);
 	}
 
-	/** Left object */
+	/** Left object. */
 	public final L left;
 
-	/** Right object */
+	/** Right object. */
 	public final R right;
 
 	/**
