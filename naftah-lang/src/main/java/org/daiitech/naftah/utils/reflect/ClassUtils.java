@@ -21,6 +21,8 @@ import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.utils.tuple.Pair;
 
 import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
@@ -194,21 +196,30 @@ public final class ClassUtils {
 
 
 	/**
-	 * Extracts class parts from the input class names and returns a map where
-	 * keys are either individual parts (flattened = true) or full qualified names
-	 * (flattened = false), and values are the array of parts.
+	 * Extracts parts of class names and returns a mapping based on the specified mode.
+	 * <p>
+	 * If {@code flattened} is {@code true}, the returned map contains each individual
+	 * class part as a key, mapped to a pair of the original class name and its array of parts.
+	 * Duplicate keys are resolved by keeping the first occurrence.
+	 * <p>
+	 * If {@code flattened} is {@code false}, the returned map uses the fully qualified
+	 * class name as the key, mapped to a pair of the original class name and its array of parts.
 	 *
-	 * @param classNames set of fully qualified class names
-	 * @param flattened  if true, returns flattened map of each part; if false,
-	 *                   returns map keyed by full qualified name
-	 * @return map of class parts or qualified names to their parts
+	 * @param classNames a set of fully qualified class names to process
+	 * @param flattened  if {@code true}, returns a map of individual parts;
+	 *                   if {@code false}, returns a map keyed by fully qualified names
+	 * @return a map where keys are either class parts or fully qualified class names,
+	 *         and values are {@link Pair} objects containing the original class name
+	 *         and its parts array
 	 */
-	public static Map<String, String[]> getClassQualifiers(Set<String> classNames, boolean flattened) {
-		var baseStream = classNames.stream().map(s -> s.split(CLASS_SEPARATORS_REGEX));
+	public static Map<String, Pair<String, String[]>> getClassQualifiers(Set<String> classNames, boolean flattened) {
+		var baseStream = classNames.stream().map(s -> ImmutablePair.of(s, s.split(CLASS_SEPARATORS_REGEX)));
 
 		if (flattened) {
 			return baseStream
-					.flatMap(strings -> Arrays.stream(strings).map(element -> Map.entry(element, strings)))
+					.flatMap(strings -> Arrays
+							.stream(strings.getRight())
+							.map(element -> Map.entry(element, strings)))
 					.collect(
 								Collectors
 										.toMap( Map.Entry::getKey,
@@ -218,7 +229,7 @@ public final class ClassUtils {
 		}
 
 		return baseStream
-				.map(strings -> Map.entry(String.join(QUALIFIED_NAME_SEPARATOR, strings), strings))
+				.map(strings -> Map.entry(String.join(QUALIFIED_NAME_SEPARATOR, strings.getRight()), strings))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
@@ -238,21 +249,31 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Returns a map from Arabic transliterated qualified class names to the
-	 * original qualified names.
+	 * Generates a mapping from Arabic-transliterated fully qualified class names
+	 * to the original fully qualified class names.
+	 * <p>
+	 * Each entry in the returned map uses the Arabic transliteration of the class
+	 * parts (joined by {@link #QUALIFIED_NAME_SEPARATOR}) as the key, and the
+	 * original fully qualified name as the value. If multiple original names
+	 * transliterate to the same Arabic string, the first occurrence is kept.
 	 *
-	 * @param classQualifiers collection of class parts arrays
-	 * @return map of Arabic qualified names to original qualified names
+	 * @param classQualifiers a collection of {@link Pair} objects, where the left
+	 *                        element is the original class name and the right element
+	 *                        is an array of class name parts
+	 * @return a map of Arabic-transliterated qualified names to original qualified names
 	 */
-	public static Map<String, String> getArabicClassQualifiersMapping(Collection<String[]> classQualifiers) {
+	public static Map<String, String> getArabicClassQualifiersMapping(Collection<Pair<String, String[]>> classQualifiers) {
 		return classQualifiers
 				.stream()
 				.map(strings -> Map
 						.entry(
 								String
 										.join(  QUALIFIED_NAME_SEPARATOR,
-												ArabicUtils.transliterateToArabicScriptDefault(strings.clone())),
-								String.join(QUALIFIED_NAME_SEPARATOR, strings.clone())))
+												ArabicUtils
+														.transliterateToArabicScriptDefault(strings
+																.getRight()
+																.clone())),
+								strings.getLeft()))
 				.collect(Collectors
 						.toMap( Map.Entry::getKey,
 								Map.Entry::getValue,
@@ -351,17 +372,42 @@ public final class ClassUtils {
 	}
 
 	/**
-	 * Retrieves all methods from a single class wrapped as JvmFunction instances.
+	 * Retrieves all methods of the given class, wrapped as {@link JvmFunction} instances.
+	 * <p>
+	 * This variant retrieves <strong>all public methods</strong> of the class,
+	 * including inherited methods, without any filtering.
 	 *
-	 * @param qualifiedName qualified name of the class
-	 * @param clazz         the Class object
-	 * @return list of JvmFunction wrapping all class methods
+	 * @param qualifiedName the fully qualified name of the class
+	 * @param clazz         the {@link Class} object to inspect
+	 * @return a list of {@link JvmFunction} instances representing all class methods
 	 */
 	public static List<JvmFunction> getClassMethods(String qualifiedName, Class<?> clazz) {
-		return Arrays.stream(clazz.getMethods()).map(method -> {
-			String qualifiedCall = getQualifiedCall(qualifiedName, method);
-			return JvmFunction.of(qualifiedCall, clazz, method);
-		}).toList();
+		return getClassMethods(qualifiedName, clazz, method -> true);
+	}
+
+	/**
+	 * Retrieves methods of the given class that satisfy a specified predicate,
+	 * wrapped as {@link JvmFunction} instances.
+	 * <p>
+	 * The provided {@code methodPredicate} is applied to each public method of
+	 * the class to determine whether it should be included in the result.
+	 *
+	 * @param qualifiedName   the fully qualified name of the class
+	 * @param clazz           the {@link Class} object to inspect
+	 * @param methodPredicate a {@link Predicate} used to filter methods
+	 * @return a list of {@link JvmFunction} instances representing the filtered methods
+	 */
+	public static List<JvmFunction> getClassMethods(String qualifiedName,
+													Class<?> clazz,
+													Predicate<Method> methodPredicate) {
+		return Arrays
+				.stream(clazz.getMethods())
+				.filter(methodPredicate)
+				.map(method -> {
+					String qualifiedCall = getQualifiedCall(qualifiedName, method);
+					return JvmFunction.of(qualifiedCall, clazz, method);
+				})
+				.toList();
 	}
 
 	/**
