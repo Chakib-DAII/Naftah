@@ -125,6 +125,10 @@ public final class NaftahParserHelper {
 	 */
 	public static final String NULL = "<فارغ>";
 	/**
+	 * Regex pattern for matching qualified names.
+	 */
+	public static final String QUALIFIED_NAME_REGEX = "^([^:]+)(:[^:]+)*$";
+	/**
 	 * Regex pattern for matching qualified calls.
 	 */
 	public static final String QUALIFIED_CALL_REGEX = "^([^:]+)(:[^:]+)*::[^:]+$";
@@ -1247,26 +1251,6 @@ public final class NaftahParserHelper {
 																	new HashMap<>()) :
 													registerContext(currentContext,
 																	new HashMap<>());
-		}
-	}
-
-	/**
-	 * Deregisters (removes) the current context based on the execution mode.
-	 *
-	 * <p>If the system is running in REPL mode (indicated by the system property
-	 * {@value org.daiitech.naftah.Naftah#INSIDE_REPL_PROPERTY}), the deregistration is delegated to
-	 * {@link REPLContext#deregisterContext()}. Otherwise, it calls the standard
-	 * context cleanup via {@link DefaultContext#deregisterContext()}.</p>
-	 *
-	 * <p>This method abstracts context cleanup so that callers do not need
-	 * to distinguish between REPL and non-REPL modes.</p>
-	 */
-	public static void deregisterContext() {
-		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
-			REPLContext.deregisterContext();
-		}
-		else {
-			DefaultContext.deregisterContext();
 		}
 	}
 
