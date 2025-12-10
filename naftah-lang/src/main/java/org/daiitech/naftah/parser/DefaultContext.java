@@ -48,6 +48,7 @@ import org.daiitech.naftah.builtin.utils.concurrent.SuppliedInheritableThreadLoc
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
+import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
@@ -70,6 +71,7 @@ import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByNam
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
+import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_NAME_REGEX;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasAnyParentOfType;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
 import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
@@ -77,7 +79,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.filterClasses;
-import static org.daiitech.naftah.utils.reflect.ClassUtils.getArabicClassQualifiers;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.getArabicClassQualifiersMapping;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinMethods;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassConstructors;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassMethods;
@@ -134,9 +136,24 @@ public class DefaultContext {
 	 */
 	protected static final InheritableThreadLocal<Deque<Pair<String, ? extends ParserRuleContext>>> LOOP_STACK = SuppliedInheritableThreadLocal
 			.withInitial(ArrayDeque::new, ArrayDeque::new);
+
 	/**
-	 * A supplier task to perform class scanning, loading, filtering, and extraction of JVM and builtin functions
-	 * asynchronously.
+	 * A supplier task that performs a full asynchronous scan, loading, filtering,
+	 * and extraction of JVM and builtin functions from the classpath.
+	 * <p>
+	 * The task executes the following steps:
+	 * <ol>
+	 * <li>Scans all available classes.</li>
+	 * <li>Generates class qualifiers and their Arabic transliterations.</li>
+	 * <li>Loads the Class objects for all discovered classes.</li>
+	 * <li>Filters classes into accessible and instantiable sets.</li>
+	 * <li>Retrieves JVM class initializers (constructors) for instantiable classes.</li>
+	 * <li>Retrieves all JVM and builtin functions for accessible and instantiable classes.</li>
+	 * </ol>
+	 * <p>
+	 * All operations are executed asynchronously using a fixed thread pool (2 threads),
+	 * and results are collected into a {@link ClassScanningResult} instance.
+	 * In case of interruption or execution errors, a {@link NaftahBugError} is thrown.
 	 */
 	protected static final Supplier<ClassScanningResult> LOADER_TASK = () -> {
 		ExecutorService internalExecutor = Executors.newFixedThreadPool(2);
@@ -145,10 +162,10 @@ public class DefaultContext {
 		result.setClassNames(classNames);
 
 		try {
-			Callable<Pair<Set<String>, Set<String>>> qualifiersLoaderTask = () -> {
+			Callable<Pair<Set<String>, Map<String, String>>> qualifiersLoaderTask = () -> {
 				var classQualifiersMap = getClassQualifiers(classNames.keySet(), false);
 				var classQualifiers = new HashSet<>(classQualifiersMap.keySet());
-				var arabicClassQualifiers = getArabicClassQualifiers(classQualifiersMap.values());
+				var arabicClassQualifiers = getArabicClassQualifiersMapping(classQualifiersMap.values());
 				return ImmutablePair.of(classQualifiers, arabicClassQualifiers);
 			};
 			var qualifiersFuture = internalExecutor.submit(qualifiersLoaderTask);
@@ -206,6 +223,45 @@ public class DefaultContext {
 			internalExecutor.shutdown();
 		}
 	};
+
+	/**
+	 * A minimal supplier task that performs an asynchronous scan of classes and
+	 * computes class qualifiers and their Arabic transliterations.
+	 * <p>
+	 * Unlike {@link #LOADER_TASK}, this task does not load Class objects, filter
+	 * them, or retrieve constructors and functions. It is suitable for lightweight
+	 * operations where only class name metadata is needed.
+	 * <p>
+	 * All operations are executed asynchronously using a single-thread executor.
+	 */
+	protected static final Supplier<ClassScanningResult> MINIMAL_LOADER_TASK = () -> {
+		ExecutorService internalExecutor = Executors.newFixedThreadPool(1);
+		ClassScanningResult result = new ClassScanningResult();
+		var classNames = scanClasses();
+		result.setClassNames(classNames);
+
+		try {
+			Callable<Pair<Set<String>, Map<String, String>>> qualifiersLoaderTask = () -> {
+				var classQualifiersMap = getClassQualifiers(classNames.keySet(), false);
+				var classQualifiers = new HashSet<>(classQualifiersMap.keySet());
+				var arabicClassQualifiers = getArabicClassQualifiersMapping(classQualifiersMap.values());
+				return ImmutablePair.of(classQualifiers, arabicClassQualifiers);
+			};
+			var qualifiersFuture = internalExecutor.submit(qualifiersLoaderTask);
+
+			var qualifiersFutureResult = qualifiersFuture.get();
+			result.setClassQualifiers(qualifiersFutureResult.getLeft());
+			result.setArabicClassQualifiers(qualifiersFutureResult.getRight());
+
+			return result;
+		}
+		catch (InterruptedException | ExecutionException e) {
+			throw new NaftahBugError(e);
+		}
+		finally {
+			internalExecutor.shutdown();
+		}
+	};
 	/**
 	 * Holds the current thread's {@link DefaultContext} in a thread-local variable.
 	 */
@@ -217,14 +273,16 @@ public class DefaultContext {
 	// LOADED CLASSES
 	protected static volatile Set<String> CLASS_NAMES;
 	protected static volatile Set<String> CLASS_QUALIFIERS;
-	protected static volatile Set<String> ARABIC_CLASS_QUALIFIERS;
+	protected static volatile Map<String, String> ARABIC_CLASS_QUALIFIERS;
 	// qualifiedName -> CLass<?>
 	protected static volatile Map<String, Class<?>> CLASSES;
 	protected static volatile Map<String, Class<?>> ACCESSIBLE_CLASSES;
 	protected static volatile Map<String, Class<?>> INSTANTIABLE_CLASSES;
 	// qualifiedCall -> Method
 	protected static volatile Map<String, List<JvmFunction>> JVM_FUNCTIONS;
+	protected static volatile ThreadLocal<List<JvmFunction>> CURRENT_LOOKUP_JVM_FUNCTIONS;
 	protected static volatile Map<String, List<JvmClassInitializer>> JVM_CLASS_INITIALIZERS;
+	protected static volatile ThreadLocal<List<JvmClassInitializer>> CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS;
 	protected static volatile Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
 	protected static volatile Map<String, String> IMPORTS = new ConcurrentHashMap<>();
 	protected static volatile boolean SHOULD_BOOT_STRAP;
@@ -234,7 +292,12 @@ public class DefaultContext {
 	protected static volatile boolean BOOT_STRAPPED;
 
 	/**
-	 * Consumer to handle the result or error from class scanning and loading.
+	 * A consumer to handle the result or error from the full class scanning and loading task.
+	 * <p>
+	 * If an error occurs (non-null {@code throwable}), it triggers a default bootstrap
+	 * and marks {@code BOOT_STRAP_FAILED} as {@code true}.
+	 * Otherwise, it sets the scanning context from the {@link ClassScanningResult}
+	 * and optionally caches the result if {@code CACHE_SCANNING_RESULTS_PROPERTY} is enabled.
 	 */
 	protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> LOADER_CONSUMER = (   result,
 																											throwable) -> {
@@ -247,6 +310,25 @@ public class DefaultContext {
 			if (Boolean.getBoolean(CACHE_SCANNING_RESULTS_PROPERTY)) {
 				serializeClassScanningResult(result);
 			}
+		}
+	};
+
+	/**
+	 * A consumer to handle the result or error from the minimal class scanning task.
+	 * <p>
+	 * If an error occurs (non-null {@code throwable}), it simply marks
+	 * {@code BOOT_STRAP_FAILED} as {@code true}.
+	 * Otherwise, it sets the scanning context from the {@link ClassScanningResult}.
+	 * <p>
+	 * Unlike {@link #LOADER_CONSUMER}, this consumer does not perform caching or default bootstrapping.
+	 */
+	protected static final BiConsumer<? super ClassScanningResult, ? super Throwable> MINIMAL_LOADER_CONSUMER = (   result,
+																													throwable) -> {
+		if (Objects.nonNull(throwable)) {
+			BOOT_STRAP_FAILED = true;
+		}
+		else {
+			setContextFromClassScanningResult(result);
 		}
 	};
 
@@ -616,51 +698,57 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Copies the variable and function declarations from the specified context
-	 * into its parent context.
+	 * Copies variable and function declarations from a child context to its parent context.
+	 * <p>
+	 * This method is typically used as a fallback when a child context cannot be safely
+	 * deregistered due to pending tasks or incomplete cleanup. By propagating declarations
+	 * upward, the parent context gains visibility into all symbols introduced by the child,
+	 * preventing name collisions or symbol shadowing if the child remains active longer
+	 * than expected.
+	 * <p>
+	 * Only thread-local state that has not been cleaned is copied. If the context's
+	 * {@code threadLocalsCleaned} flag indicates that cleanup has already occurred,
+	 * no declarations are propagated, ensuring consistent and deterministic state transfer.
+	 * <p>
+	 * In a REPL environment (indicated by {@code INSIDE_REPL_PROPERTY}), all declarations
+	 * at depth 1 are copied directly. Otherwise, only declarations with a depth less than
+	 * or equal to {@code context.depth - 1} are copied.
 	 *
-	 * <p>This method is used as a fallback when a context cannot be safely
-	 * deregistered due to pending tasks or incomplete cleanup. By copying
-	 * declarations upward, the parent context gains visibility into all symbols
-	 * introduced by the child context, preventing name collisions or symbol
-	 * shadowing when the child remains active longer than expected.</p>
-	 *
-	 * <p>Only non-cleaned thread-local state is copied: if the context's
-	 * {@code threadLocalsCleaned} flag indicates that cleanup has already
-	 * occurred, no declarations are propagated. This ensures consistent and
-	 * deterministic state transfer.</p>
-	 *
-	 * <p>The method requires that the context and its parent both be non-null.</p>
-	 *
-	 * @param context the child context whose declarations should be copied
+	 * @param context the child {@link DefaultContext} whose declarations should be copied
 	 * @throws NullPointerException if {@code context} or its parent is {@code null}
 	 */
 	public static void copyDeclarationsToParent(DefaultContext context) {
 		Objects.requireNonNull(Objects.requireNonNull(context).parent);
-		context.parent.variables
-				.get()
-				.putAll(context.variables
-						.get()
-						.entrySet()
-						.stream()
-						.filter(declaredVariableEntry -> declaredVariableEntry
-								.getValue()
-								.getDepth() <= (context.depth - 1))
-						.collect(Collectors
-								.toMap( Map.Entry::getKey,
-										Map.Entry::getValue)));
-		context.parent.functions
-				.get()
-				.putAll(context.functions
-						.get()
-						.entrySet()
-						.stream()
-						.filter(declaredFunctionEntry -> declaredFunctionEntry
-								.getValue()
-								.getDepth() <= (context.depth - 1))
-						.collect(Collectors
-								.toMap( Map.Entry::getKey,
-										Map.Entry::getValue)));
+		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY) && context.depth == 1) {
+			context.parent.variables.get().putAll(context.variables.get());
+			context.parent.functions.get().putAll(context.functions.get());
+		}
+		else {
+			context.parent.variables
+					.get()
+					.putAll(context.variables
+							.get()
+							.entrySet()
+							.stream()
+							.filter(declaredVariableEntry -> declaredVariableEntry
+									.getValue()
+									.getDepth() <= (context.depth - 1))
+							.collect(Collectors
+									.toMap( Map.Entry::getKey,
+											Map.Entry::getValue)));
+			context.parent.functions
+					.get()
+					.putAll(context.functions
+							.get()
+							.entrySet()
+							.stream()
+							.filter(declaredFunctionEntry -> declaredFunctionEntry
+									.getValue()
+									.getDepth() <= (context.depth - 1))
+							.collect(Collectors
+									.toMap( Map.Entry::getKey,
+											Map.Entry::getValue)));
+		}
 	}
 
 	/**
@@ -811,6 +899,74 @@ public class DefaultContext {
 	}
 
 	/**
+	 * Retrieves and clears the thread-local list of JVM functions for the current lookup context.
+	 * <p>
+	 * This method returns the current thread's {@link JvmFunction} list stored in
+	 * {@code CURRENT_LOOKUP_JVM_FUNCTIONS} and removes it from the thread-local storage,
+	 * preventing accidental reuse across lookups.
+	 *
+	 * @return the list of {@link JvmFunction} for the current lookup, or {@code null} if none is set
+	 */
+	public static List<JvmFunction> getCurrentLookupJvmFunctions() {
+		if (Objects.isNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
+			return null;
+		}
+		var result = CURRENT_LOOKUP_JVM_FUNCTIONS.get();
+		CURRENT_LOOKUP_JVM_FUNCTIONS.remove();
+		return result;
+	}
+
+	/**
+	 * Sets the thread-local list of JVM functions for the current lookup context.
+	 * <p>
+	 * If the thread-local variable {@code CURRENT_LOOKUP_JVM_FUNCTIONS} is not initialized,
+	 * it is created. This allows subsequent calls to {@link #getCurrentLookupJvmFunctions()}
+	 * to retrieve the list in the same thread.
+	 *
+	 * @param lookupJvmFunctions the list of {@link JvmFunction} to store for the current thread
+	 */
+	public static void setCurrentLookupJvmFunctions(List<JvmFunction> lookupJvmFunctions) {
+		if (Objects.isNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
+			CURRENT_LOOKUP_JVM_FUNCTIONS = new ThreadLocal<>();
+		}
+		CURRENT_LOOKUP_JVM_FUNCTIONS.set(lookupJvmFunctions);
+	}
+
+	/**
+	 * Retrieves and clears the thread-local list of JVM class initializers for the current lookup context.
+	 * <p>
+	 * This method returns the current thread's {@link JvmClassInitializer} list stored in
+	 * {@code CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS} and removes it from the thread-local storage
+	 * to prevent accidental reuse across lookups.
+	 *
+	 * @return the list of {@link JvmClassInitializer} for the current lookup, or {@code null} if none is set
+	 */
+	public static List<JvmClassInitializer> getCurrentLookupJvmClassInitializers() {
+		if (Objects.isNull(CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS)) {
+			return null;
+		}
+		var result = CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS.get();
+		CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS.remove();
+		return result;
+	}
+
+	/**
+	 * Sets the thread-local list of JVM class initializers for the current lookup context.
+	 * <p>
+	 * If the thread-local variable {@code CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS} is not initialized,
+	 * it is created. This allows subsequent calls to {@link #getCurrentLookupJvmClassInitializers()}
+	 * to retrieve the list in the same thread.
+	 *
+	 * @param lookupJvmClassInitializers the list of {@link JvmClassInitializer} to store for the current thread
+	 */
+	public static void setCurrentLookupJvmClassInitializers(List<JvmClassInitializer> lookupJvmClassInitializers) {
+		if (Objects.isNull(CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS)) {
+			CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS = new ThreadLocal<>();
+		}
+		CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS.set(lookupJvmClassInitializers);
+	}
+
+	/**
 	 * Finalizes the current task scope for the thread.
 	 *
 	 * <p>Removes all tasks tracked in the current scope and clears the thread-local
@@ -862,13 +1018,25 @@ public class DefaultContext {
 	protected static void setContextFromClassScanningResult(ClassScanningResult result) {
 		CLASS_NAMES = Set.copyOf(result.getClassNames().keySet());
 		CLASS_QUALIFIERS = Set.copyOf(result.getClassQualifiers());
-		ARABIC_CLASS_QUALIFIERS = Set.copyOf(result.getArabicClassQualifiers());
-		CLASSES = Map.copyOf(result.getClasses());
-		ACCESSIBLE_CLASSES = Map.copyOf(result.getAccessibleClasses());
-		INSTANTIABLE_CLASSES = Map.copyOf(result.getInstantiableClasses());
-		JVM_CLASS_INITIALIZERS = Map.copyOf(result.getJvmClassInitializers());
-		JVM_FUNCTIONS = Map.copyOf(result.getJvmFunctions());
-		setBuiltinFunctions(Collections.unmodifiableMap(result.getBuiltinFunctions()));
+		ARABIC_CLASS_QUALIFIERS = Map.copyOf(result.getArabicClassQualifiers());
+		if (Objects.nonNull(result.getClasses())) {
+			CLASSES = Map.copyOf(result.getClasses());
+		}
+		if (Objects.nonNull(result.getAccessibleClasses())) {
+			ACCESSIBLE_CLASSES = Map.copyOf(result.getAccessibleClasses());
+		}
+		if (Objects.nonNull(result.getInstantiableClasses())) {
+			INSTANTIABLE_CLASSES = Map.copyOf(result.getInstantiableClasses());
+		}
+		if (Objects.nonNull(result.getJvmClassInitializers())) {
+			JVM_CLASS_INITIALIZERS = Map.copyOf(result.getJvmClassInitializers());
+		}
+		if (Objects.nonNull(result.getJvmFunctions())) {
+			JVM_FUNCTIONS = Map.copyOf(result.getJvmFunctions());
+		}
+		if (Objects.nonNull(result.getBuiltinFunctions())) {
+			setBuiltinFunctions(Collections.unmodifiableMap(result.getBuiltinFunctions()));
+		}
 		BOOT_STRAPPED = true;
 	}
 
@@ -956,9 +1124,11 @@ public class DefaultContext {
 	 *
 	 * @param async {@code true} to run asynchronously, {@code false} to run synchronously
 	 */
-	protected static void callLoader(boolean async) {
+	protected static void callLoader(   boolean async,
+										Supplier<ClassScanningResult> loaderTask,
+										BiConsumer<? super ClassScanningResult, ? super Throwable> loaderConsumer) {
 		if (async) {
-			CompletableFuture.supplyAsync(LOADER_TASK).whenComplete(LOADER_CONSUMER);
+			CompletableFuture.supplyAsync(loaderTask).whenComplete(loaderConsumer);
 		}
 		else {
 			ClassScanningResult classScanningResult = null;
@@ -967,14 +1137,14 @@ public class DefaultContext {
 				startLoader("""
 							تحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطه. قد يستغرق الأمر عدة دقائق حسب الإعدادات."""
 				);
-				classScanningResult = LOADER_TASK.get();
+				classScanningResult = loaderTask.get();
 				stopLoader();
 			}
 			catch (Throwable throwable) {
 				thr = throwable;
 			}
 			finally {
-				LOADER_CONSUMER.accept(classScanningResult, thr);
+				loaderConsumer.accept(classScanningResult, thr);
 			}
 		}
 	}
@@ -1007,7 +1177,7 @@ public class DefaultContext {
 			setContextFromClassScanningResult(result);
 		}
 		catch (Exception e) {
-			callLoader(ASYNC_BOOT_STRAP);
+			callLoader(ASYNC_BOOT_STRAP, LOADER_TASK, LOADER_CONSUMER);
 		}
 	}
 
@@ -1060,7 +1230,7 @@ public class DefaultContext {
 			FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
 
 			if (FORCE_BOOT_STRAP || !Files.exists(CACHE_PATH)) {
-				callLoader(ASYNC_BOOT_STRAP);
+				callLoader(ASYNC_BOOT_STRAP, LOADER_TASK, LOADER_CONSUMER);
 			}
 			else {
 				deserializeClassScanningResult();
@@ -1068,6 +1238,7 @@ public class DefaultContext {
 		}
 		else {
 			defaultBootstrap();
+			callLoader(false, MINIMAL_LOADER_TASK, MINIMAL_LOADER_CONSUMER);
 		}
 		if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 			long end = System.nanoTime();
@@ -1355,6 +1526,149 @@ public class DefaultContext {
 		if (Objects.nonNull(CURRENT_TASK_SCOPE)) {
 			CURRENT_TASK_SCOPE.remove();
 		}
+		if (Objects.nonNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
+			CURRENT_LOOKUP_JVM_FUNCTIONS.remove();
+		}
+		if (Objects.nonNull(CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS)) {
+			CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS.remove();
+		}
+	}
+
+	/**
+	 * Looks up JVM class initializers by the Arabic-transliterated qualified class name.
+	 * <p>
+	 * If the class is found, it loads the corresponding {@link Class} object, retrieves
+	 * its constructors as {@link JvmClassInitializer} instances, stores them in the
+	 * thread-local {@link #CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS}, and returns {@code true}.
+	 * Otherwise, it returns {@code false}.
+	 *
+	 * @param arabicQualifiedName the Arabic-transliterated fully qualified class name
+	 * @return {@code true} if the class and its initializers were successfully found; {@code false} otherwise
+	 */
+	public static boolean lookupJvmClassInitializer(String arabicQualifiedName) {
+		String className;
+		if (Objects.nonNull(className = ARABIC_CLASS_QUALIFIERS.get(arabicQualifiedName))) {
+			try {
+				Class<?> clazz = Class.forName(className);
+				var jvmClassInitializers = ClassUtils
+						.getClassConstructors(  arabicQualifiedName,
+												clazz);
+				setCurrentLookupJvmClassInitializers(jvmClassInitializers);
+				return true;
+			}
+			catch (ClassNotFoundException e) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Looks up JVM functions by the Arabic-transliterated qualified call.
+	 * <p>
+	 * The qualified call should contain the class and method name separated by
+	 * {@link ClassUtils#QUALIFIED_CALL_SEPARATOR}. If the class is found and contains the
+	 * corresponding method, the matching {@link JvmFunction} instances are stored
+	 * in the thread-local {@link #CURRENT_LOOKUP_JVM_FUNCTIONS} and {@code true} is returned.
+	 *
+	 * @param arabicQualifiedCall the Arabic-transliterated fully qualified call (class + method)
+	 * @return {@code true} if the function(s) were successfully found; {@code false} otherwise
+	 */
+	public static boolean lookupJvmFunctions(String arabicQualifiedCall) {
+		String[] arabicQualifiedCallParts;
+		String className;
+		if ((arabicQualifiedCallParts = arabicQualifiedCall.split(QUALIFIED_CALL_SEPARATOR)).length == 2 && Objects
+				.nonNull(className = ARABIC_CLASS_QUALIFIERS.get(arabicQualifiedCallParts[0]))) {
+			try {
+				Class<?> clazz = Class.forName(className);
+				var jvmFunctions = ClassUtils
+						.getClassMethods(   arabicQualifiedCallParts[0],
+											clazz,
+											method -> arabicQualifiedCallParts[1]
+													.equals(ArabicUtils
+															.transliterateToArabicScriptDefault(
+																								method.getName())[0]));
+				setCurrentLookupJvmFunctions(jvmFunctions);
+				return true;
+			}
+			catch (ClassNotFoundException e) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks whether a JVM class initializer exists for the specified qualified name.
+	 * <p>
+	 * If {@link #SHOULD_BOOT_STRAP} is enabled, this checks both the bootstrap-loaded
+	 * initializers and performs a lookup if necessary. Otherwise, it checks the current
+	 * thread-local lookup context.
+	 *
+	 * @param qualifiedName the Arabic-transliterated qualified class name
+	 * @return {@code true} if a class initializer exists; {@code false} otherwise
+	 */
+	public boolean containsJvmClassInitializer(String qualifiedName) {
+		return qualifiedName
+				.matches(
+							QUALIFIED_NAME_REGEX) && (SHOULD_BOOT_STRAP ?
+									(!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_CLASS_INITIALIZERS != null && JVM_CLASS_INITIALIZERS
+											.containsKey(
+															qualifiedName)) :
+									(!BOOT_STRAP_FAILED && BOOT_STRAPPED && lookupJvmClassInitializer(
+																										qualifiedName)));
+	}
+
+	/**
+	 * Retrieves the JVM class initializer(s) for the specified Arabic-transliterated
+	 * qualified name.
+	 * <p>
+	 * Depending on the bootstrap and lookup state, this method retrieves initializers
+	 * from the global {@link #JVM_CLASS_INITIALIZERS} map or from the current
+	 * thread-local lookup context. If only one initializer exists, it is returned
+	 * directly; otherwise, the list of initializers is returned.
+	 *
+	 * @param arabicQualifiedName the Arabic-transliterated qualified class name
+	 * @param safe                if {@code false}, throws {@link NaftahBugError} if no initializer is found; if
+	 *                            * {@code true}, returns {@code null} instead
+	 * @return a {@link Pair} containing the current depth and the initializer(s), or {@code null} if not found and
+	 *         * {@code safe} is {@code true}
+	 * @throws NaftahBugError if the initializer does not exist and {@code safe} is {@code false}
+	 */
+	public Pair<Integer, Object> getJvmClassInitializer(String arabicQualifiedName, boolean safe) {
+		if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
+			if (BOOT_STRAPPED && JVM_CLASS_INITIALIZERS.containsKey(arabicQualifiedName)) {
+				var jvmClassInitializers = JVM_CLASS_INITIALIZERS.get(arabicQualifiedName);
+				return ImmutablePair
+						.of(depth,
+							jvmClassInitializers.size() == 1 ? jvmClassInitializers.get(0) : jvmClassInitializers);
+			}
+			else if (arabicQualifiedName.matches(QUALIFIED_NAME_REGEX)) {
+				while (!BOOT_STRAPPED && Objects.isNull(JVM_CLASS_INITIALIZERS)) {
+					// block the execution until bootstrapped
+					if (BOOT_STRAP_FAILED) {
+						return null;
+					}
+				}
+				var jvmClassInitializers = JVM_CLASS_INITIALIZERS.get(arabicQualifiedName);
+				return ImmutablePair
+						.of(depth,
+							jvmClassInitializers.size() == 1 ? jvmClassInitializers.get(0) : jvmClassInitializers);
+			}
+		}
+		else if (!BOOT_STRAP_FAILED && BOOT_STRAPPED && Objects.nonNull(CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS)) {
+			var jvmClassInitializers = getCurrentLookupJvmClassInitializers();
+			if (Objects.nonNull(jvmClassInitializers)) {
+				return ImmutablePair
+						.of(depth,
+							jvmClassInitializers.size() == 1 ? jvmClassInitializers.get(0) : jvmClassInitializers);
+			}
+		}
+
+		if (!safe) {
+			throw new NaftahBugError("المُستدعى '%s' غير موجودة في السياق الحالي.".formatted(arabicQualifiedName));
+		}
+		return null;
 	}
 
 	/**
@@ -1650,9 +1964,11 @@ public class DefaultContext {
 		return containsDeclaredFunction(name, depth) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS
 				.containsKey(name) || (name
 						.matches(
-									QUALIFIED_CALL_REGEX) && SHOULD_BOOT_STRAP && (!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
-											.containsKey(
-															name)));
+									QUALIFIED_CALL_REGEX) && (SHOULD_BOOT_STRAP ?
+											(!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
+													.containsKey(
+																	name)) :
+											(!BOOT_STRAP_FAILED && BOOT_STRAPPED && lookupJvmFunctions(name))));
 	}
 
 	/**
@@ -1703,6 +2019,12 @@ public class DefaultContext {
 						}
 					}
 					var functions = JVM_FUNCTIONS.get(name);
+					return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
+				}
+			}
+			else if (!BOOT_STRAP_FAILED && BOOT_STRAPPED && Objects.nonNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
+				var functions = getCurrentLookupJvmFunctions();
+				if (Objects.nonNull(functions)) {
 					return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
 				}
 			}

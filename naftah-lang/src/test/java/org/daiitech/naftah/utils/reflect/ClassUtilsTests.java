@@ -13,6 +13,8 @@ import org.daiitech.naftah.builtin.functions.ConcurrencyBuiltinFunctions;
 import org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions;
 import org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.utils.tuple.Pair;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,11 +53,11 @@ public class ClassUtilsTests {
 	@Test
 	void getClassQualifiersTest() {
 		Set<String> names = Set.of("a.b.C", "x.y.Z");
-		Map<String, String[]> flat = ClassUtils.getClassQualifiers(names, true);
+		Map<String, Pair<String, String[]>> flat = ClassUtils.getClassQualifiers(names, true);
 		assertTrue(flat.containsKey("C"));
 		assertTrue(flat.containsKey("Z"));
 
-		Map<String, String[]> nonFlat = ClassUtils.getClassQualifiers(names, false);
+		Map<String, Pair<String, String[]>> nonFlat = ClassUtils.getClassQualifiers(names, false);
 		assertTrue(nonFlat.containsKey("a:b:C"));
 		assertTrue(nonFlat.containsKey("x:y:Z"));
 	}
@@ -76,15 +78,15 @@ public class ClassUtilsTests {
 
 	@Test
 	void arabicClassQualifiersMappingTest() {
-		List<String[]> qualifiers = new ArrayList<>() {
+		List<Pair<String, String[]>> qualifiers = new ArrayList<>() {
 			{
-				add(new String[]{"com", "test"});
+				add(ImmutablePair.of("com.test", new String[]{"com", "test"}));
 			}
 		};
 		Map<String, String> map = ClassUtils.getArabicClassQualifiersMapping(qualifiers);
 		Map.Entry<String, String> resultEntry = map.entrySet().iterator().next();
 		assertEquals("كوم:اختبار", resultEntry.getKey());
-		assertEquals("com:test", resultEntry.getValue());
+		assertEquals("com.test", resultEntry.getValue());
 	}
 
 	@Test

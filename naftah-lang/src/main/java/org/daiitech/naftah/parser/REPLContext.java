@@ -112,22 +112,4 @@ public class REPLContext extends DefaultContext {
 													Map<String, Object> arguments) {
 		return new DefaultContext(parent, blockImports, parameters, arguments);
 	}
-
-	/**
-	 * Deregisters the current context from the context management system.
-	 * <p>
-	 * This method retrieves the {@link DefaultContext} associated with the current
-	 * thread (via {@code CURRENT_CONTEXT}) and removes it if possible.
-	 * If the context has a parent, its variables, functions, and parse tree execution
-	 * state are merged into the parent before removal.
-	 * </p>
-	 * <p>
-	 * The actual removal is attempted only if there are no pending tasks in this context
-	 * or its descendants. Otherwise, the context may be marked for later removal.
-	 * </p>
-	 */
-	public static void deregisterContext() {
-		DefaultContext currentContext = CURRENT_CONTEXT.get();
-		deregisterContext(currentContext);
-	}
 }

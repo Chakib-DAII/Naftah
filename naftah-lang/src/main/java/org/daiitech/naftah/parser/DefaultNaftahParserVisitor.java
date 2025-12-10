@@ -77,6 +77,7 @@ import static org.daiitech.naftah.parser.DefaultContext.LOOP_STACK;
 import static org.daiitech.naftah.parser.DefaultContext.cleanClassThreadLocals;
 import static org.daiitech.naftah.parser.DefaultContext.currentLoopLabel;
 import static org.daiitech.naftah.parser.DefaultContext.defineImport;
+import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.endScope;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
 import static org.daiitech.naftah.parser.DefaultContext.getCurrentContext;
@@ -95,7 +96,6 @@ import static org.daiitech.naftah.parser.LoopSignal.RETURN;
 import static org.daiitech.naftah.parser.NaftahParserHelper.accessObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkInsideLoop;
 import static org.daiitech.naftah.parser.NaftahParserHelper.checkLoopSignal;
-import static org.daiitech.naftah.parser.NaftahParserHelper.deregisterContext;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getBlockContext;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFirstChildOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
@@ -1563,14 +1563,12 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								String functionCallId = generateCallId(depth, functionName);
 								currentContext.setFunctionCallId(functionCallId);
 
-								Map<String, List<JvmClassInitializer>> jvmClassInitializersMap = DefaultContext
-										.getJvmClassInitializers();
-								if (Objects.nonNull(jvmClassInitializersMap) && jvmClassInitializersMap
-										.containsKey(functionName)) {
-									List<JvmClassInitializer> jvmClassInitializersList = jvmClassInitializersMap
-											.get(functionName);
-									if (jvmClassInitializersList.size() == 1) {
-										JvmClassInitializer jvmClassInitializer = jvmClassInitializersList.get(0);
+
+								if (currentContext.containsJvmClassInitializer(functionName)) {
+									Object jvmClassInitializerOrList = currentContext
+											.getJvmClassInitializer(functionName, false)
+											.getRight();
+									if (jvmClassInitializerOrList instanceof JvmClassInitializer jvmClassInitializer) {
 										result = invokeJvmClassInitializer( functionName,
 																			jvmClassInitializer,
 																			args,
@@ -1580,6 +1578,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																					.getCharPositionInLine());
 									}
 									else {
+										//noinspection unchecked
+										List<JvmClassInitializer> jvmClassInitializersList = (List<JvmClassInitializer>) jvmClassInitializerOrList;
 										try {
 											if (Objects.nonNull(initCallContext.targetExecutableIndex())) {
 												Number jvmClassInitializerIndex = NumberUtils
