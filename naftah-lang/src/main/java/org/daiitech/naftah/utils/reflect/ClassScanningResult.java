@@ -45,9 +45,9 @@ public class ClassScanningResult implements Serializable {
 	private Set<String> classQualifiers;
 
 	/**
-	 * Set of fully qualified class names in Arabic notation.
+	 * Set of fully qualified class names in Arabic notation mapped to original java qualified class name.
 	 */
-	private Set<String> arabicClassQualifiers;
+	private Map<String, String> arabicClassQualifiers;
 
 	/**
 	 * Maps fully qualified class names to their corresponding Class objects.
@@ -96,11 +96,11 @@ public class ClassScanningResult implements Serializable {
 		this.classQualifiers = classQualifiers;
 	}
 
-	public Set<String> getArabicClassQualifiers() {
+	public Map<String, String> getArabicClassQualifiers() {
 		return arabicClassQualifiers;
 	}
 
-	public void setArabicClassQualifiers(Set<String> arabicClassQualifiers) {
+	public void setArabicClassQualifiers(Map<String, String> arabicClassQualifiers) {
 		this.arabicClassQualifiers = arabicClassQualifiers;
 	}
 
