@@ -831,17 +831,17 @@ public final class ArabicUtils {
 												String word) {
 		// Apply transliteration
 		if (CUSTOM_RULES_KEYS.contains(word.toLowerCase(ARABIC))) {
-			word = transliterator.transliterate(word.toLowerCase(Locale.US));
+			word = transliterator.transliterate(word.toLowerCase(ARABIC));
 		}
 		else {
 			var parts = splitIdentifier(word);
 			if (parts.size() == 1) {
-				word = transliterator.transliterate(word.toLowerCase(Locale.US));
+				word = transliterator.transliterate(word.toLowerCase(ARABIC));
 			}
 			else {
 				for (int i = 0; i < parts.size(); i++) {
 					var currentPart = parts.get(i);
-					currentPart = transliterator.transliterate(currentPart.toLowerCase(Locale.US));
+					currentPart = transliterator.transliterate(currentPart.toLowerCase(ARABIC));
 					parts.set(i, currentPart);
 				}
 				word = String.join(UNDERSCORE, parts);
