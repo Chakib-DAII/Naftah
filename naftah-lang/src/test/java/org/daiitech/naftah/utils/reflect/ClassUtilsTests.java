@@ -13,8 +13,8 @@ import org.daiitech.naftah.builtin.functions.ConcurrencyBuiltinFunctions;
 import org.daiitech.naftah.builtin.functions.RuntimeBuiltinFunctions;
 import org.daiitech.naftah.builtin.functions.SystemBuiltinFunctions;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
-import org.daiitech.naftah.utils.tuple.ImmutablePair;
-import org.daiitech.naftah.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -195,7 +195,7 @@ public class ClassUtilsTests {
 								- عام (public)؟: نعم
 								- مجرد (abstract)؟: لا
 								- واجهة (interface)؟: لا
-							- الصنف الأب (super classes): java.lang.Object - جافا:لغة:كائن
+							- الصنف الأب (super classes): java.lang.Object - جافا:لغة:كائن_
 								- تعداد (enum)؟: لا
 								- توصيف (annotation)؟: لا
 								- سجل (record)؟: لا

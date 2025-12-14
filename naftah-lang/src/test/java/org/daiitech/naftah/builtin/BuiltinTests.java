@@ -9,7 +9,10 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
-import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.Triple;
+import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.daiitech.naftah.utils.arabic.ArabicOutputTransformer;
@@ -63,7 +66,12 @@ class BuiltinTests {
 					Arguments.of(new Object[]{1, 2}, CollectionUtils.toString(new Object[]{1, 2})),
 					Arguments.of(List.of(1, 2), CollectionUtils.toString(List.of(1, 2))),
 					Arguments.of(Set.of(1, 2), CollectionUtils.toString(Set.of(1, 2))),
-					Arguments.of(Tuple.of(1, 2), CollectionUtils.toString(Tuple.of(1, 2))),
+					Arguments.of(Tuple.of(1, 2, 3, 4), CollectionUtils.toString(Tuple.of(1, 2, 3, 4))),
+					Arguments.of(Pair.of(1, 2), Pair.of(1, 2).toString()),
+					Arguments.of(Triple.of(1, 2, 3), Triple.of(1, 2, 3).toString()),
+					Arguments.of(NTuple.of(1, 2, 3, 4), CollectionUtils.toString(Tuple.of(1, 2, 3, 4))),
+					Arguments.of(NTuple.of(1, 2), Pair.of(1, 2).toString()),
+					Arguments.of(NTuple.of(1, 2, 3), Triple.of(1, 2, 3).toString()),
 					Arguments.of(Map.of(1, 2), CollectionUtils.toString(Map.of(1, 2))),
 					Arguments.of(LoopSignal.LoopSignalDetails.of(LoopSignal.CONTINUE, null), NULL),
 					Arguments.of(LoopSignal.LoopSignalDetails.of(LoopSignal.RETURN, null), NULL),

@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -77,7 +78,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								List
 										.of(
 											List.of(1, 0),
-											List.of(-1, -2)
+											Pair.of(-1, -2)
 										),
 								null
 							),
@@ -136,11 +137,11 @@ public class ImportStatementProvider implements ArgumentsProvider {
 							.of(
 								true,
 								"""
-								إجلب جافا:أدة:[صفائف_القائمة تحت_إسم قائمة , صفائف_القائمة::إضافة مثل إضافة ، صفائف_القائمة::گت تحت_إسم خذ ، صفائف_القائمة::الحجم تحت_إسم الحجم]
+								إجلب جافا:أدة:[صفائف_القائمة تحت_إسم قائمة_ , صفائف_القائمة::إضافة مثل إضافة ، صفائف_القائمة::گت تحت_إسم خذ ، صفائف_القائمة::الحجم تحت_إسم الحجم]
 								[
-								@قائمة([1؛100؛0])::إضافة(100) ،
-								@قائمة([1؛100؛0])::خذ(0) ،
-								@قائمة([1؛100؛0])::الحجم() ،
+								@قائمة_([1؛100؛0])::إضافة(100) ،
+								@قائمة_([1؛100؛0])::خذ(0) ،
+								@قائمة_([1؛100؛0])::الحجم() ،
 								]
 								""",
 
@@ -156,8 +157,8 @@ public class ImportStatementProvider implements ArgumentsProvider {
 							.of(
 								true,
 								"""
-								إجلب جافا:لغة:كائن تحت_إسم كائن
-								@كائن() لا_يساوي فارغ
+								إجلب جافا:لغة:كائن_ تحت_إسم كائن_
+								@كائن_() لا_يساوي فارغ
 								""",
 								true,
 								null
