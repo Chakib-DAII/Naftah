@@ -3998,17 +3998,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override public JavaType visitTypeExpression(org.daiitech.naftah.parser.NaftahParser.TypeExpressionContext ctx) {
+	@Override
+	public JavaType visitTypeExpression(org.daiitech.naftah.parser.NaftahParser.TypeExpressionContext ctx) {
 		return visitContext(
-				this,
-				"visitTypeExpression",
-				getCurrentContext(),
-				ctx,
-				(   defaultNaftahParserVisitor,
-					currentContext,
-					typeExpressionContext) -> defaultNaftahParserVisitor
-						.visit(typeExpressionContext.type()),
-				JavaType.class
+							this,
+							"visitTypeExpression",
+							getCurrentContext(),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								typeExpressionContext) -> defaultNaftahParserVisitor
+										.visit(typeExpressionContext.type()),
+							JavaType.class
 		);
 	}
 
