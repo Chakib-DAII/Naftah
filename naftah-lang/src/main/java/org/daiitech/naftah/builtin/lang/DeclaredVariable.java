@@ -6,6 +6,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahParserHelper;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
+
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.validateType;
 
 /**
  * Represents a variable declared in the Naftah scripting language.
@@ -34,7 +37,7 @@ public final class DeclaredVariable extends Declaration {
 	/**
 	 * The Java class representing the type of the variable.
 	 */
-	private final Class<?> type;
+	private final JavaType type;
 
 	/**
 	 * The default value assigned to the variable at declaration.
@@ -70,7 +73,7 @@ public final class DeclaredVariable extends Declaration {
 								ParserRuleContext originalContext,
 								String name,
 								boolean constant,
-								Class<?> type,
+								JavaType type,
 								Object defaultValue) {
 		super(depth);
 		this.originalContext = originalContext;
@@ -95,8 +98,13 @@ public final class DeclaredVariable extends Declaration {
 										ParserRuleContext originalContext,
 										String name,
 										boolean constant,
-										Class<?> type,
+										JavaType type,
 										Object defaultValue) {
+		validateType(   name,
+						defaultValue,
+						type,
+						Objects.isNull(originalContext) ? -1 : originalContext.getStart().getLine(),
+						Objects.isNull(originalContext) ? -1 : originalContext.getStart().getCharPositionInLine());
 		return new DeclaredVariable(depth, originalContext, name, constant, type, defaultValue);
 	}
 
@@ -141,7 +149,7 @@ public final class DeclaredVariable extends Declaration {
 	 *
 	 * @return the variable type
 	 */
-	public Class<?> getType() {
+	public JavaType getType() {
 		return type;
 	}
 
@@ -172,6 +180,11 @@ public final class DeclaredVariable extends Declaration {
 	 * @throws NaftahBugError if attempting to modify a constant variable
 	 */
 	public void setValue(Object currentValue) {
+		validateType(   name,
+						currentValue,
+						type,
+						Objects.isNull(originalContext) ? -1 : originalContext.getStart().getLine(),
+						Objects.isNull(originalContext) ? -1 : originalContext.getStart().getCharPositionInLine());
 		if (constant) {
 			throw ExceptionUtils.newNaftahSettingConstantError(name);
 		}
