@@ -20,10 +20,12 @@ import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
-import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.Triple;
+import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.utils.tuple.ImmutablePair;
-import org.daiitech.naftah.utils.tuple.Pair;
 
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createCollection;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createMap;
@@ -341,29 +343,47 @@ public final class InvocationUtils {
 	/**
 	 * Converts a single argument to the target type expected by a method parameter.
 	 *
-	 * <p>This method attempts to convert the provided {@code value} to the specified
-	 * {@code targetType}, taking into account the provided {@code genericType} for
-	 * collections and maps. It supports the following conversions:</p>
+	 * <p>
+	 * This method attempts to adapt the supplied {@code value} to the specified
+	 * {@code targetType}. When available, {@code genericType} information is used
+	 * to guide element-wise conversion of collections, arrays, tuples, and maps.
+	 * </p>
 	 *
+	 * <h3>Supported conversions</h3>
 	 * <ul>
-	 * <li>Primitive types (int, long, double, float, boolean, char, byte, short)</li>
-	 * <li>{@link DynamicNumber} to numeric types</li>
-	 * <li>Arrays (recursively converts elements)</li>
-	 * <li>Collections (recursively converts elements, respects generic type if available)</li>
-	 * <li>Maps (recursively converts keys and values, respects generic type if available)</li>
-	 * <li>{@link NaftahObject} extraction, if the target type is not {@code NaftahObject}</li>
+	 * <li>Primitive types and their boxed equivalents</li>
+	 * <li>{@link DynamicNumber} to standard numeric types</li>
+	 * <li>{@link NaN} to {@link Double#NaN}</li>
+	 * <li>Arrays (recursive element conversion)</li>
+	 * <li>{@link Collection Collections} (recursive element conversion)</li>
+	 * <li>{@link Map Maps} (recursive key and value conversion)</li>
+	 * <li>{@link NTuple}, {@link Pair}, and {@link Triple} (recursive element conversion)</li>
+	 * <li>{@link NaftahObject} unwrapping when the target type is not {@code NaftahObject}</li>
 	 * </ul>
 	 *
-	 * <p>If the value is {@code null} or represents {@link None}, the returned value
-	 * depends on the {@code useNone} flag: it returns {@link None#get()} if {@code useNone}
-	 * is {@code true}, otherwise {@code null}.</p>
+	 * <p>
+	 * If {@code value} is {@code null} or represents {@link None}, the return value
+	 * depends on {@code useNone}: when {@code true}, {@link None#get()} is returned;
+	 * otherwise {@code null} is returned.
+	 * </p>
 	 *
-	 * @param value       the original argument value to convert
-	 * @param targetType  the target type to which the value should be converted
-	 * @param genericType the generic type information (for collections or maps), may be {@code null}
-	 * @param useNone     if {@code true}, {@code null} or {@link None} values are converted to {@link None#get()}
-	 * @return the converted argument value, compatible with the target type
-	 * @throws ClassCastException if the value cannot be cast to the target type and no other conversion is possible
+	 * <p>
+	 * If {@code value} is already assignable to {@code targetType}, it is returned
+	 * unchanged.
+	 * </p>
+	 *
+	 * @param value       the original argument value to convert; may be {@code null}
+	 * @param targetType  the target class to which the value should be converted
+	 * @param genericType generic type information used for element conversion of collections
+	 *                    and maps; may be {@code null}
+	 * @param useNone     if {@code true}, {@code null} or {@link None} values are converted to
+	 *                    {@link None#get()}
+	 * @return a value compatible with {@code targetType}, or {@code null} if
+	 *         {@code value} is {@code null} and {@code useNone} is {@code false}
+	 * @throws ClassCastException if the value cannot be converted or cast to {@code targetType}
+	 * @apiNote This method performs unchecked casts and reflective conversions. Callers are
+	 *          responsible for ensuring that {@code targetType} and {@code genericType}
+	 *          accurately describe the expected runtime types.
 	 * @see #convertArgumentsBack(Object[], List)
 	 * @see #convertArgumentBack(Object, Object)
 	 */
@@ -419,6 +439,35 @@ public final class InvocationUtils {
 			}
 		}
 
+		// Handle Triple
+		if (Pair.class.isAssignableFrom(targetType) && value instanceof Pair<?, ?> pair) {
+			var left = pair.getLeft();
+			var leftType = left.getClass();
+			var right = pair.getRight();
+			var rightType = right.getClass();
+			return Pair
+					.of(
+						convertArgument(left, leftType, leftType, useNone),
+						convertArgument(right, rightType, rightType, useNone)
+					);
+		}
+
+		// Handle Triple
+		if (Triple.class.isAssignableFrom(targetType) && value instanceof Triple<?, ?, ?> triple) {
+			var left = triple.getLeft();
+			var leftType = left.getClass();
+			var middle = triple.getMiddle();
+			var middleType = middle.getClass();
+			var right = triple.getRight();
+			var rightType = right.getClass();
+			return Triple
+					.of(
+						convertArgument(left, leftType, leftType, useNone),
+						convertArgument(middle, middleType, middleType, useNone),
+						convertArgument(right, rightType, rightType, useNone)
+					);
+		}
+
 		// Handle arrays
 		if (targetType.isArray() && value.getClass().isArray()) {
 			int length = Array.getLength(value);
@@ -435,10 +484,10 @@ public final class InvocationUtils {
 			return newArray;
 		}
 
-		// Handle collections
+		// Handle collections and Tuples
 		if ((Collection.class.isAssignableFrom(targetType) || targetType
-				.isArray()) && value instanceof Collection<?> src) {
-
+				.isArray()) && (value instanceof Collection<?> || value instanceof NTuple)) {
+			Iterable<?> src = value instanceof NTuple nTuple ? List.of(nTuple.toArray()) : (Collection<?>) value;
 			Class<?> itemType = Object.class;
 			Collection<Object> result;
 			if (targetType.isArray()) {
@@ -553,22 +602,47 @@ public final class InvocationUtils {
 	}
 
 	/**
-	 * Merges a converted argument value back into its original form.
+	 * Merges a converted argument value back into its original representation.
 	 *
-	 * <p>This method attempts to reconcile a new value ({@code converted}) with the
-	 * original argument ({@code original}). It handles various types including:
-	 * primitives, {@link DynamicNumber}, arrays, collections, maps, and custom objects
-	 * like {@link NaftahObject}. For mutable types, the original object is updated
-	 * in-place. For immutable types or when in-place modification is not possible, a
-	 * new object is returned.</p>
+	 * <p>
+	 * This method reconciles a value produced by a reflective invocation
+	 * ({@code converted}) with the original argument value ({@code original}).
+	 * Where possible, mutable objects are updated <em>in place</em>; otherwise,
+	 * the original value or a replacement object is returned.
+	 * </p>
 	 *
-	 * <p>Use this method to propagate changes made during reflective method or
-	 * constructor execution back to the original arguments.</p>
+	 * <h3>Supported merge behaviors</h3>
+	 * <ul>
+	 * <li>{@code null} or {@link None} — returns {@link None#get()}</li>
+	 * <li>{@link NaN} — preserved unchanged</li>
+	 * <li>{@link NaftahObject} — rewrapped with the converted value</li>
+	 * <li>{@link DynamicNumber} — updated in place</li>
+	 * <li>Primitive wrappers and {@link Number} types — merged via {@link DynamicNumber}</li>
+	 * <li>Arrays — elements copied into the original array</li>
+	 * <li>{@link Collection Collections} — elements updated in place</li>
+	 * <li>{@link Map Maps} — contents replaced</li>
+	 * <li>{@link NTuple}, {@link Pair}, {@link Triple}, {@link Tuple} — elements merged reflectively</li>
+	 * </ul>
 	 *
-	 * @param original  the original argument value passed to the executable.
-	 * @param converted the value resulting from the reflective call.
-	 * @return the merged argument value, either the updated original or a new instance,
-	 *         suitable for replacing the original reference.
+	 * <p>
+	 * If {@code converted} is already assignable to the runtime type of
+	 * {@code original}, it is returned directly.
+	 * </p>
+	 *
+	 * <p>
+	 * This method is primarily intended to propagate argument mutations made
+	 * during reflective method or constructor execution back to the original
+	 * argument objects.
+	 * </p>
+	 *
+	 * @param original  the original argument value supplied to the executable
+	 * @param converted the value produced by the reflective invocation
+	 * @return the merged value, either the updated original instance or a suitable
+	 *         replacement object
+	 * @throws NaftahBugError if reflective field updates fail
+	 * @apiNote This method relies on reflective field access and unchecked casts. Callers
+	 *          must ensure that {@code original} and {@code converted} are structurally
+	 *          compatible.
 	 * @see #convertArgumentsBack(Object[], List)
 	 */
 	public static Object convertArgumentBack(Object original, Object converted) {
@@ -607,6 +681,63 @@ public final class InvocationUtils {
 			return DynamicNumber.of(converted);
 		}
 
+		// Handle Triple
+		if (Pair.class.isAssignableFrom(targetType) && converted instanceof Pair<?, ?> pair) {
+			try {
+				ObjectAccessUtils
+						.set(   original,
+								"left",
+								null,
+								pair.getLeft(),
+								false,
+								true);
+
+				ObjectAccessUtils
+						.set(   original,
+								"right",
+								null,
+								pair.getRight(),
+								false,
+								true);
+			}
+			catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
+				throw new NaftahBugError(e);
+			}
+		}
+
+		// Handle Triple
+		if (Triple.class.isAssignableFrom(targetType) && converted instanceof Triple<?, ?, ?> triple) {
+			try {
+				ObjectAccessUtils
+						.set(   original,
+								"left",
+								null,
+								triple.getLeft(),
+								false,
+								true);
+
+				ObjectAccessUtils
+						.set(   original,
+								"middle",
+								null,
+								triple.getMiddle(),
+								false,
+								true);
+
+
+				ObjectAccessUtils
+						.set(   original,
+								"right",
+								null,
+								triple.getRight(),
+								false,
+								true);
+			}
+			catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
+				throw new NaftahBugError(e);
+			}
+		}
+
 		// Handle arrays
 		if (targetType.isArray() && converted.getClass().isArray()) {
 			int length = Array.getLength(original);
@@ -617,30 +748,91 @@ public final class InvocationUtils {
 			return original;
 		}
 
-		// Handle collections
+		// Handle collections and tuple
 		Class<?> convertedType = converted.getClass();
 		if ((Collection.class.isAssignableFrom(convertedType) || convertedType
-				.isArray()) && original instanceof @SuppressWarnings("rawtypes")
-		Collection src) {
-			if (src instanceof Tuple tuple) {
+				.isArray()) && (original instanceof Collection || original instanceof NTuple)) {
+			if (original instanceof Pair<?, ?> pair) {
+				try {
+					ObjectAccessUtils
+							.set(   pair,
+									"left",
+									null,
+									getConvertedElementAt(converted, convertedType, 0),
+									false,
+									true);
+
+					ObjectAccessUtils
+							.set(   pair,
+									"right",
+									null,
+									getConvertedElementAt(converted, convertedType, 1),
+									false,
+									true);
+				}
+				catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
+					throw new NaftahBugError(e);
+				}
+			}
+			else if (original instanceof Triple<?, ?, ?> triple) {
+				try {
+					ObjectAccessUtils
+							.set(   triple,
+									"left",
+									null,
+									getConvertedElementAt(converted, convertedType, 0),
+									false,
+									true);
+
+					ObjectAccessUtils
+							.set(   triple,
+									"middle",
+									null,
+									getConvertedElementAt(converted, convertedType, 1),
+									false,
+									true);
+
+					ObjectAccessUtils
+							.set(   triple,
+									"right",
+									null,
+									getConvertedElementAt(converted, convertedType, 2),
+									false,
+									true);
+				}
+				catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
+					throw new NaftahBugError(e);
+				}
+			}
+			else if (original instanceof Tuple tuple) {
 				var tupleArray = tuple.toArray();
 				for (int i = 0; i < tuple.size(); i++) {
-					Object convertedElement = Array.get(converted, i);
+					var convertedElement = getConvertedElementAt(converted, convertedType, i);
 					Array.set(tupleArray, i, convertedElement);
 				}
-				tuple.update(List.of(tupleArray));
+				try {
+					ObjectAccessUtils
+							.set(   tuple,
+									"values",
+									null,
+									List.of(tupleArray),
+									false,
+									true);
+				}
+				catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
+					throw new NaftahBugError(e);
+				}
 			}
 			else {
-				for (int i = 0; i < src.size(); i++) {
-					var convertedElement = convertedType.isArray() ?
-							Array.get(converted, i) :
-							getElementAt((Collection<?>) converted, i);
-					//noinspection unchecked
-					setElementAt(src, i, convertedElement);
+				//noinspection unchecked,DataFlowIssue
+				for (int i = 0; i < ((Collection<Object>) original).size(); i++) {
+					var convertedElement = getConvertedElementAt(converted, convertedType, i);
+					//noinspection unchecked,DataFlowIssue
+					setElementAt((Collection<Object>) original, i, convertedElement);
 				}
 			}
 
-			return src;
+			return original;
 		}
 
 
@@ -654,6 +846,27 @@ public final class InvocationUtils {
 		}
 
 		return original;
+	}
+
+	/**
+	 * Retrieves the element at the specified index from a converted composite value.
+	 * <p>
+	 * Supports both array and {@link Collection} representations. If
+	 * {@code convertedType} represents an array, the element is obtained via
+	 * {@link java.lang.reflect.Array#get(Object, int)}; otherwise the value is
+	 * retrieved from the collection using index-based access.
+	 * </p>
+	 *
+	 * @param converted     the converted composite value (array or {@link Collection})
+	 * @param convertedType the runtime type of {@code converted}, used to distinguish arrays
+	 *                      from collections
+	 * @param i             the zero-based index of the element to retrieve
+	 * @return the element at the specified index
+	 * @throws IndexOutOfBoundsException if the index is out of range
+	 * @throws ClassCastException        if {@code converted} is not compatible with {@code convertedType}
+	 */
+	private static Object getConvertedElementAt(Object converted, Class<?> convertedType, int i) {
+		return convertedType.isArray() ? Array.get(converted, i) : getElementAt((Collection<?>) converted, i);
 	}
 
 	/**
