@@ -10,7 +10,9 @@ import java.util.stream.IntStream;
 import org.antlr.v4.runtime.Parser;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmExecutable;
-import org.daiitech.naftah.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.CollectionUtils;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
@@ -207,10 +209,12 @@ public final class ExceptionUtils {
 											.formatted( number,
 														Objects.isNull(PARSER_VOCABULARY) ?
 																getQualifiedName(number.getClass().getName()) :
-																getNaftahType(PARSER_VOCABULARY, number.getClass()),
+																getNaftahType(  PARSER_VOCABULARY,
+																				JavaType.of(number.getClass())),
 														Objects.isNull(PARSER_VOCABULARY) ?
 																getQualifiedName(targetClass.getName()) :
-																getNaftahType(PARSER_VOCABULARY, targetClass),
+																getNaftahType(  PARSER_VOCABULARY,
+																				JavaType.of(targetClass)),
 														overflow ? "بسبب: تجاوز السعة" : ""));
 	}
 
@@ -293,10 +297,10 @@ public final class ExceptionUtils {
 				.stream(dn)
 				.map(dynamicNumber -> Objects.isNull(PARSER_VOCABULARY) ?
 						getQualifiedName(dynamicNumber.get().getClass().getName()) :
-						getNaftahType(PARSER_VOCABULARY, dynamicNumber.get().getClass()))
+						getNaftahType(PARSER_VOCABULARY, JavaType.of(dynamicNumber.get().getClass())))
 				.toArray(String[]::new);
 		return new NaftahBugError((singleInput ? "نوع الرقم غير مدعوم: '%s'" : "أنواع الأرقام غير مدعومة: '%s'، '%s'")
-				.formatted((Object[]) args));
+				.formatted(CollectionUtils.toObjectArray(args)));
 	}
 
 
@@ -717,5 +721,26 @@ public final class ExceptionUtils {
 											JVM ignored reflective write to constant field '%s'.
 											"""
 													.formatted(fieldName));
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} representing a type-mismatch error with
+	 * source location information.
+	 *
+	 * <p>This overload is used when the type mismatch can be associated with a
+	 * specific position in the source code (line and column).</p>
+	 *
+	 * <p>The generated error message is localized (Arabic) and indicates that
+	 * the provided value does not match the expected type.</p>
+	 *
+	 * @param name   the name of the value, variable, or parameter that caused the mismatch
+	 * @param type   the expected type description (usually produced by the Naftah type system)
+	 * @param line   the source line number where the error occurred, or {@code -1} if unknown
+	 * @param column the character position in the line where the error occurred, or {@code -1} if unknown
+	 * @return a {@link NaftahBugError} describing the type mismatch
+	 */
+	public static NaftahBugError newNaftahTypeMismatchError(String name, String type, int line, int column) {
+		return new NaftahBugError("القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
+				.formatted(name, type), line, column);
 	}
 }
