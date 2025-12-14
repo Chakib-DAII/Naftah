@@ -238,6 +238,7 @@ jacoco {
 }
 
 test {
+	systemProperty "naftah.jarDir", "$projectDir/build/libs"
 	testLogging {
 		events "passed", "skipped", "failed"
 	}
