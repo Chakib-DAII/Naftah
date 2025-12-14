@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
-import org.daiitech.naftah.utils.tuple.ImmutablePair;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
