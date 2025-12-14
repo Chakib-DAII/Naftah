@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -34,20 +35,39 @@ public final class FunctionUtils {
 	}
 
 	/**
-	 * Returns {@code true} if all elements in the input match the given predicate.
+	 * Returns {@code true} if all elements contained in the given input
+	 * satisfy the supplied predicate.
 	 * <p>
-	 * Supports input of type {@link Collection}, {@link Map}, arrays, or a single object.
+	 * The input may represent a composite or a scalar value:
+	 * <ul>
+	 * <li>{@link NTuple} — evaluated element by element</li>
+	 * <li>{@link Collection} — evaluated over its elements</li>
+	 * <li>{@link Map} — evaluated over its entries</li>
+	 * <li>Array — evaluated over its elements</li>
+	 * <li>Any other object — evaluated as a single value</li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * This method is intended for use in recursive or dynamically-typed
+	 * processing where the concrete structure of the input is not known
+	 * at compile time.
 	 * </p>
 	 *
-	 * @param <T>       the type of elements to be tested by the predicate
+	 * @param <T>       the type of values tested by the predicate
 	 * @param input     the input object to evaluate; must not be {@code null}
-	 * @param predicate the predicate to test each element
-	 * @return {@code true} if all elements match the predicate; {@code false} otherwise
+	 * @param predicate the predicate applied to each evaluated value
+	 * @return {@code true} if every evaluated value satisfies the predicate;
+	 *         {@code false} otherwise
 	 * @throws NaftahBugError if {@code input} is {@code null}
 	 */
 	public static <T> boolean allMatch(Object input, Predicate<T> predicate) {
 		if (input == null) {
 			throw newNaftahBugNullInputError(true, (Object) null);
+		}
+
+		// NTuple
+		if (input instanceof NTuple nTuple) {
+			return CollectionUtils.allMatch(nTuple.toArray(), predicate);
 		}
 
 		// Collection
@@ -62,7 +82,7 @@ public final class FunctionUtils {
 
 		// Array
 		if (input.getClass().isArray()) {
-			return CollectionUtils.allMatch((Object[]) input, predicate);
+			return CollectionUtils.allMatch(CollectionUtils.toObjectArray(input), predicate);
 		}
 
 		//noinspection unchecked
@@ -102,20 +122,37 @@ public final class FunctionUtils {
 	}
 
 	/**
-	 * Reduces the input to a single value using the specified combiner.
+	 * Reduces the given input to a single value using the specified combiner.
 	 * <p>
-	 * Supports input of type {@link Collection}, {@link Map}, arrays, or a single object.
-	 * For collections and arrays, all elements are combined using the {@link BinaryOperator}.
-	 * For maps, only the values are combined.
+	 * The input may represent either a composite structure or a scalar value:
+	 * <ul>
+	 * <li>{@link NTuple} — reduced by combining its elements</li>
+	 * <li>{@link Collection} — reduced by combining its elements</li>
+	 * <li>Array — reduced by combining its elements</li>
+	 * <li>{@link Map} — reduced by combining its values</li>
+	 * <li>Any other object — returned as-is</li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * If the input is {@code null}, this method returns {@code null} without
+	 * invoking the combiner.
 	 * </p>
 	 *
 	 * @param input    the input object to reduce; may be {@code null}
-	 * @param combiner the binary operator to combine elements
-	 * @return the reduced value, or {@code null} if the input is {@code null}
+	 * @param combiner the binary operator used to combine values
+	 * @return the reduced value, or {@code null} if {@code input} is {@code null}
+	 * @apiNote This method performs unchecked casts internally and relies on the caller
+	 *          to ensure that all combined values are compatible with the provided
+	 *          {@link BinaryOperator}.
 	 */
 	public static Object reduce(Object input, BinaryOperator<Object> combiner) {
 		if (input == null) {
 			return null;
+		}
+
+		// NTuple
+		if (input instanceof NTuple nTuple) {
+			return CollectionUtils.reduce(nTuple.toArray(), combiner);
 		}
 
 		// Collection
@@ -126,7 +163,7 @@ public final class FunctionUtils {
 
 		// Array
 		if (input.getClass().isArray()) {
-			return CollectionUtils.reduce((Object[]) input, combiner);
+			return CollectionUtils.reduce(CollectionUtils.toObjectArray(input), combiner);
 		}
 
 		// Map
