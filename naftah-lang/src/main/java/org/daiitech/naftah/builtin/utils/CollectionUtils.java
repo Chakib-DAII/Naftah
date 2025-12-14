@@ -25,6 +25,8 @@ import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
+import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
@@ -610,15 +612,32 @@ public final class CollectionUtils {
 	 * Determines whether the specified object represents a collection-like structure:
 	 * a {@link Collection}, {@link Map}, or an array.
 	 * <p>
-	 * This method is used for dynamic type inspection in recursive utilities
-	 * that operate over general data structures.
+	 * This method is intended for dynamic type inspection in recursive utilities
+	 * that traverse or process heterogeneous object graphs.
 	 * </p>
 	 *
-	 * @param obj the object to inspect
-	 * @return {@code true} if the object is a Collection, Map, or Array; {@code false} otherwise
+	 * @param obj the object to inspect (may be {@code null})
+	 * @return {@code true} if the object is a {@link Collection}, {@link Map},
+	 *         or an array; {@code false} otherwise
 	 */
 	public static boolean isCollectionMapOrArray(Object obj) {
 		return obj != null && (obj instanceof Collection<?> || obj instanceof Map<?, ?> || obj.getClass().isArray());
+	}
+
+	/**
+	 * Determines whether the specified object represents a tuple-like or
+	 * collection-like structure.
+	 * <p>
+	 * This method extends {@link #isCollectionMapOrArray(Object)} by also
+	 * recognizing {@link NTuple} instances.
+	 * </p>
+	 *
+	 * @param obj the object to inspect (may be {@code null})
+	 * @return {@code true} if the object is an {@link NTuple}, {@link Collection},
+	 *         {@link Map}, or an array; {@code false} otherwise
+	 */
+	public static boolean isCollectionMapOrArrayOrTuple(Object obj) {
+		return obj instanceof NTuple || CollectionUtils.isCollectionMapOrArray(obj);
 	}
 
 	/**
