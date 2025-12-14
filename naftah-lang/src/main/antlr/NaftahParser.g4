@@ -267,6 +267,7 @@ primary: initCall #initCallExpression
        | objectAccess #objectAccessExpression
        | collectionAccess #collectionAccessExpression
        | value #valueExpression
+       | type #typeExpression
        | LPAREN expression RPAREN #parenthesisExpression
        ;
 
@@ -318,7 +319,7 @@ returnType: VOID #voidReturnType
           ;
 
 // Type: Can be any, builtinType or qualifiedName
-	type: complexBuiltIn #complexType
+type: complexBuiltIn #complexType
     | builtIn #builtInType
     | VAR #varType
     | (ID | qualifiedName) #qualifiedNameType
