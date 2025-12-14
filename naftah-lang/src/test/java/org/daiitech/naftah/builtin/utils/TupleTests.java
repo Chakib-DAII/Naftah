@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
+import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
