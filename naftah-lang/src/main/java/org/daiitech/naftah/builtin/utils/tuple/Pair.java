@@ -1,8 +1,11 @@
-package org.daiitech.naftah.utils.tuple;
+package org.daiitech.naftah.builtin.utils.tuple;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.compare;
 
@@ -20,10 +23,14 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.compare;
  *
  * @param <L> the left element type
  * @param <R> the right element type
- *
  * @author Chakib Daii
  */
-public abstract class Pair<L, R> implements Map.Entry<L, R>, Comparable<Pair<L, R>>, Serializable {
+public abstract sealed class Pair<L, R> implements NTuple, Map.Entry<L, R>, Comparable<Pair<L, R>>, Serializable permits
+		ImmutablePair,
+		MutablePair {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructs a new instance.
@@ -111,7 +118,8 @@ public abstract class Pair<L, R> implements Map.Entry<L, R>, Comparable<Pair<L, 
 			return true;
 		}
 		if (obj instanceof Map.Entry<?, ?> other) {
-			return Objects.equals(getKey(), other.getKey()) && Objects.equals(getValue(), other.getValue());
+			return ObjectUtils.equals(getKey(), other.getKey(), true) && ObjectUtils
+					.equals(getValue(), other.getValue(), true);
 		}
 		return false;
 	}
@@ -179,7 +187,8 @@ public abstract class Pair<L, R> implements Map.Entry<L, R>, Comparable<Pair<L, 
 	 */
 	@Override
 	public String toString() {
-		return "(" + getLeft() + ',' + getRight() + ')';
+		return "زوج: (" + ObjectUtils.getNaftahValueToString(getLeft()) + ", " + ObjectUtils
+				.getNaftahValueToString(getRight()) + ")";
 	}
 
 	/**
@@ -197,4 +206,39 @@ public abstract class Pair<L, R> implements Map.Entry<L, R>, Comparable<Pair<L, 
 		return String.format(format, getLeft(), getRight());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int arity() {
+		return 2;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object get(int index) {
+		return switch (index) {
+			case 0 -> getLeft();
+			case 1 -> getRight();
+			default -> throw new IndexOutOfBoundsException();
+		};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object[] toArray() {
+		return new Object[]{getLeft(), getRight()};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean contains(Object o) {
+		return Objects.equals(getLeft(), o) || Objects.equals(getRight(), o);
+	}
 }

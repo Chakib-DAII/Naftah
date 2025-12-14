@@ -1,7 +1,10 @@
-package org.daiitech.naftah.utils.tuple;
+package org.daiitech.naftah.builtin.utils.tuple;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.compare;
 
@@ -20,7 +23,12 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.compare;
  * @param <R> the right element type
  * @author Chakib Daii
  */
-public abstract class Triple<L, M, R> implements Comparable<Triple<L, M, R>>, Serializable {
+public abstract sealed class Triple<L, M, R> implements NTuple, Comparable<Triple<L, M, R>>, Serializable permits
+		ImmutableTriple,
+		MutableTriple {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructs a new instance.
@@ -103,8 +111,9 @@ public abstract class Triple<L, M, R> implements Comparable<Triple<L, M, R>>, Se
 			return true;
 		}
 		if (obj instanceof Triple<?, ?, ?> other) {
-			return Objects.equals(getLeft(), other.getLeft()) && Objects
-					.equals(getMiddle(), other.getMiddle()) && Objects.equals(getRight(), other.getRight());
+			return ObjectUtils.equals(getLeft(), other.getLeft(), true) && ObjectUtils
+					.equals(getMiddle(), other.getMiddle(), true) && ObjectUtils
+							.equals(getRight(), other.getRight(), true);
 		}
 		return false;
 	}
@@ -147,7 +156,8 @@ public abstract class Triple<L, M, R> implements Comparable<Triple<L, M, R>>, Se
 	 */
 	@Override
 	public String toString() {
-		return "(" + getLeft() + "," + getMiddle() + "," + getRight() + ")";
+		return "ثلاثي: (" + ObjectUtils.getNaftahValueToString(getLeft()) + ", " + ObjectUtils
+				.getNaftahValueToString(getMiddle()) + ", " + ObjectUtils.getNaftahValueToString(getRight()) + ")";
 	}
 
 	/**
@@ -165,4 +175,41 @@ public abstract class Triple<L, M, R> implements Comparable<Triple<L, M, R>>, Se
 		return String.format(format, getLeft(), getMiddle(), getRight());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int arity() {
+		return 3;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object get(int index) {
+		return switch (index) {
+			case 0 -> getLeft();
+			case 1 -> getMiddle();
+			case 2 -> getRight();
+			default -> throw new IndexOutOfBoundsException();
+		};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object[] toArray() {
+		return new Object[]{getLeft(), getMiddle(), getRight()};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean contains(Object o) {
+		return Objects.equals(getLeft(), o) || Objects
+				.equals(getMiddle(), o) || Objects.equals(getRight(), o);
+	}
 }
