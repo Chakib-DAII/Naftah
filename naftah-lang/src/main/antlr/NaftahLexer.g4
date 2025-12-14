@@ -71,8 +71,8 @@ POW        : STAR_SIGN STAR_SIGN | 'رفع';
 DIV        : '/' | 'قسمة';
 MOD        : '%' | 'باقي';
 ASSIGN     : '=' | 'تعيين';
-LT         : '>' | 'أصغر_من';
-GT         : '<' | 'أكبر_من';
+LT         : LT_SIGN | 'أصغر_من';
+GT         : GT_SIGN | 'أكبر_من';
 LE         : '=>' | 'أصغر_أو_يساوي';
 GE         : '>=' | 'أكبر_أو_يساوي';
 EQ         : '==' | 'يساوي';
@@ -113,20 +113,38 @@ HASH_SIGN   : '#';
 AT_SIGN     : '@';
 DOLLAR_SIGN : '$';
 STAR_SIGN   : '*';
+LT_SIGN     : '>';
+GT_SIGN     : '<';
 
 
 // Types
-VAR              : 'أي_نوع' | 'أي_نمط';
+VAR			: 'أي_نوع' | 'أي_نمط';
 
-BOOLEAN : 'بوليان' | 'منطقي';
-STRING_TYPE : 'تسلسل_أحرف' | 'تسلسل_حروف' | 'تسلسل_رموز';
-CHAR    : 'حرف' | 'رمز';
-BYTE    : 'عدد_قصير_جدا' | 'قصير_جدا';
-SHORT   : 'عدد_قصير' | 'قصير';
-INT     : 'عدد_صحيح' | 'عدد';
-LONG    : 'عدد_طويل' | 'طويل';
-FLOAT   : 'عدد_عائم' | 'عائم';
-DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
+// simple types
+BOOLEAN 		: 'بوليان' | 'منطقي';
+STRING_TYPE 	: 'تسلسل_أحرف' | 'تسلسل_حروف' | 'تسلسل_رموز';
+CHAR    		: 'حرف' | 'رمز';
+BYTE    		: 'عدد_قصير_جدا' | 'قصير_جدا';
+SHORT   		: 'عدد_قصير' | 'قصير';
+INT     		: 'عدد_صحيح' | 'عدد';
+LONG    		: 'عدد_طويل' | 'طويل';
+BIG_INT    		: 'عدد_طويل_جدا' | 'طويل_جدا';
+FLOAT   		: 'عدد_عائم' | 'عائم';
+DOUBLE  		: 'عدد_عائم_طويل' | 'عائم_طويل';
+BIG_DECIMAL  	: 'عدد_عائم_طويل_جدا' | 'عائم_طويل_جدا';
+VAR_NUMBER  	: 'أي_عدد';
+
+// complex types
+STRUCT			: 'كائن' | 'هيكل';
+IMPLEMENTATION	: 'سلوك';
+PAIR			: 'زوج' | 'مفتاح_و_قيمة' | 'زوج_مفتاح_و_قيمة';
+TRIPLE			: 'ثلاثي' | 'ثلاثي_القيم';
+LIST			: 'قائمة';
+TUPLE			: 'تركيبة';
+SET				: 'مجموعة';
+MAP				: 'مصفوفة_ترابطية';
+LT_TYPE_SIGN    : COLON LT_SIGN;
+GT_TYPE_SIGN    : GT_SIGN COLON;
 
 // Literals
 BASE_DIGITS	: (Digit | Character)+ QuotationMark QuotationMark;  // Digits for base up to 36 (including a-z for bases > 10)
