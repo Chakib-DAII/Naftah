@@ -1,5 +1,6 @@
-package org.daiitech.naftah.utils.tuple;
+package org.daiitech.naftah.builtin.utils.tuple;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Objects;
 
@@ -14,10 +15,12 @@ import java.util.Objects;
  *
  * @param <L> the left element type
  * @param <R> the right element type
- *
  * @author Chakib Daii
  */
-public class ImmutablePair<L, R> extends Pair<L, R> {
+public final class ImmutablePair<L, R> extends Pair<L, R> {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * An immutable pair of nulls.
@@ -25,6 +28,25 @@ public class ImmutablePair<L, R> extends Pair<L, R> {
 	// This is not defined with generics to avoid warnings in call sites.
 	@SuppressWarnings("rawtypes")
 	private static final ImmutablePair NULL = new ImmutablePair<>(null, null);
+	/**
+	 * Left object.
+	 */
+	public final L left;
+	/**
+	 * Right object.
+	 */
+	public final R right;
+
+	/**
+	 * Create a new pair instance.
+	 *
+	 * @param left  the left value, may be null
+	 * @param right the right value, may be null
+	 */
+	public ImmutablePair(final L left, final R right) {
+		this.left = left;
+		this.right = right;
+	}
 
 	/**
 	 * Creates an immutable pair of two objects inferring the generic types.
@@ -119,23 +141,6 @@ public class ImmutablePair<L, R> extends Pair<L, R> {
 	 */
 	public static <L, R> Pair<L, R> right(final R right) {
 		return of(null, right);
-	}
-
-	/** Left object. */
-	public final L left;
-
-	/** Right object. */
-	public final R right;
-
-	/**
-	 * Create a new pair instance.
-	 *
-	 * @param left  the left value, may be null
-	 * @param right the right value, may be null
-	 */
-	public ImmutablePair(final L left, final R right) {
-		this.left = left;
-		this.right = right;
 	}
 
 	/**
