@@ -345,6 +345,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ValueExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TypeExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ParenthesisExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -1651,6 +1654,21 @@ public final class NaftahExecutionLogger {
 											"""
 										.formatted(Objects.nonNull(context.value()) ?
 												context.value().getText() :
+												null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.TypeExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											TypeExpressionContext::type -> {
+												%s
+											}
+											"""
+										.formatted(Objects.nonNull(context.type()) ?
+												context.type().getText() :
 												null));
 
 	}
