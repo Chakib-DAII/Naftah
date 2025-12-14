@@ -374,7 +374,7 @@ public class DynamicNumber extends Number implements Comparable<DynamicNumber>, 
 	 */
 	public DynamicNumber set(Number value) {
 		if (value == null) {
-			throw newNaftahBugNullInputError(true, value);
+			throw newNaftahBugNullInputError(true, (Object) null);
 		}
 		this.value = value instanceof DynamicNumber dynamicNumber ? dynamicNumber.value : value;
 		return this;

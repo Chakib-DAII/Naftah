@@ -841,7 +841,7 @@ public class NumberUtilsTests {
 							Arguments.of(true, "0.0", results[8], null),
 							Arguments.of(true, new BigDecimal("1.1"), results[9], null),
 							Arguments.of(true, "1000000000000000", results[10], null),
-							Arguments.of(false, null, results[11], newNaftahBugNullInputError(true, null)),
+							Arguments.of(false, null, results[11], newNaftahBugNullInputError(true, (Object) null)),
 							Arguments.of(true, 2, results[12], null),
 							Arguments
 									.of(false,
@@ -866,8 +866,18 @@ public class NumberUtilsTests {
 							Arguments.of(true, "0.0", "5.2", results[8], null),
 							Arguments.of(true, new BigDecimal("1.1"), new BigDecimal("2.2"), results[9], null),
 							Arguments.of(true, "1000000000000000", "3", results[10], null),
-							Arguments.of(false, null, 1, results[1], newNaftahBugNullInputError(true, null)),
-							Arguments.of(false, 2, null, results[12], newNaftahBugNullInputError(true, null)),
+							Arguments
+									.of(false,
+										null,
+										1,
+										results[1],
+										newNaftahBugNullInputError(true, (Object) null)),
+							Arguments
+									.of(false,
+										2,
+										null,
+										results[12],
+										newNaftahBugNullInputError(true, (Object) null)),
 							Arguments
 									.of(false,
 										"abc",
@@ -916,7 +926,7 @@ public class NumberUtilsTests {
 					Arguments.of(true, "U", 31, 30, null),
 					Arguments.of(true, "V", 32, 31, null),
 					Arguments.of(false, "2.2", 11, null, newNaftahBugInvalidNumberValueError("2.2", 11)),
-					Arguments.of(false, null, 10, null, newNaftahBugNullInputError(true, null))
+					Arguments.of(false, null, 10, null, newNaftahBugNullInputError(true, (Object) null))
 				);
 	}
 
