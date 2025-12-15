@@ -197,38 +197,70 @@ public final class JavaType {
 	}
 
 	/**
-	 * Determines if a given object {@code obj} is assignable to a specified {@link JavaType} {@code targetType}.
-	 * <p>
-	 * This method performs a combination of runtime type inspection and generic type inference. It handles
-	 * several special cases, including {@link DynamicNumber}, {@link NaftahObject}, {@link NTuple}, collections,
-	 * and maps, attempting to infer element or key/value types where possible.
-	 * </p>
+	 * Determines whether a runtime object is assignable to a target {@link JavaType}.
 	 *
-	 * <p><b>Behavior summary:</b></p>
+	 * <p>This method combines runtime type inspection with strict generic
+	 * validation. Unlike simple type inference, container types are validated
+	 * <b>exhaustively</b> (element-by-element or entry-by-entry) to ensure runtime
+	 * type safety.</p>
+	 *
+	 * <p><b>Key behaviors:</b></p>
 	 * <ul>
-	 * <li>If {@code targetType} represents a {@link Number} (excluding {@link DynamicNumber}) and the object
-	 * is a {@link DynamicNumber}, delegation is performed to {@link DynamicNumber#isAssignableFrom(Class)}
-	 * * .</li>
-	 * <li>If {@code obj} is a {@link NaftahObject} and {@code targetType} is not {@link NaftahObject}, the
-	 * * underlying
-	 * Java value is extracted and its type is inspected.</li>
-	 * <li>If {@code targetType} is an {@link NTuple} (Pair or Triple), the method attempts to extract
-	 * the component types from the tuple and constructs a dynamic parameterized {@link JavaType}.</li>
-	 * <li>If {@code targetType} is a collection type, the element type is inferred from a non-null element
-	 * if available; otherwise, {@code Object.class} is used.</li>
-	 * <li>If {@code targetType} is a map type, the key and value types are inferred from non-null entries
-	 * if possible, with fallback to {@code Object.class} for missing elements.</li>
-	 * <li>For all other types, a standard {@link JavaType} is created from the object's runtime class.</li>
+	 * <li><b>Dynamic numbers:</b>
+	 * If the target type represents a {@link Number} (excluding
+	 * {@link DynamicNumber}) and the object is a {@link DynamicNumber},
+	 * numeric compatibility is delegated to
+	 * {@link DynamicNumber#isAssignableFrom(Class)}.</li>
+	 *
+	 * <li><b>NaftahObject unwrapping:</b>
+	 * If the object is a {@link NaftahObject} and the target type is not,
+	 * the underlying Java value is extracted and validated instead.
+	 * When the underlying value represents a map-like structure, both
+	 * the map shape and its contained values are validated recursively.</li>
+	 *
+	 * <li><b>NTuple validation:</b>
+	 * For {@link Pair} and {@link Triple} targets, component types are
+	 * inferred at runtime and validated against each tuple element.</li>
+	 *
+	 * <li><b>Collection validation:</b>
+	 * If the target type is a collection, <b>every non-null element</b>
+	 * is validated against the collection’s generic parameter.
+	 * Validation fails immediately upon encountering an incompatible
+	 * element.</li>
+	 *
+	 * <li><b>Map validation:</b>
+	 * If the target type is a map, <b>every entry</b> is validated by
+	 * checking both key and value types against the target map’s generic
+	 * parameters. For Naftah-backed maps, declared value types are
+	 * validated recursively.</li>
+	 *
+	 * <li><b>Fallback:</b>
+	 * For non-container types, validation is performed against the
+	 * object’s runtime class only.</li>
 	 * </ul>
 	 *
-	 * <p><b>Leniency:</b> Certain container types (NTuple, Collection, Map) use strict (non-lenient) assignability
-	 * checking, while primitive and general object types are checked leniently by default.</p>
+	 * <p><b>Leniency:</b></p>
+	 * <ul>
+	 * <li>Simple object and primitive-compatible types are checked leniently
+	 * (raw-type compatibility only).</li>
+	 * <li>Tuples, collections, and maps enforce strict generic validation.</li>
+	 * </ul>
 	 *
-	 * @param obj        the object whose runtime type is to be checked; must not be null
-	 * @param targetType the {@link JavaType} representing the target type to check assignability against
-	 * @return {@code true} if the object is assignable to the target type, considering both raw types
-	 *         and inferred generic parameters; {@code false} otherwise
-	 * @throws NullPointerException if {@code obj} or {@code targetType} is null
+	 * <p><b>Notes:</b></p>
+	 * <ul>
+	 * <li>{@code null} elements within containers are considered assignable
+	 * and are ignored during validation.</li>
+	 * <li>This method guarantees correctness for the <em>current contents</em>
+	 * of container objects but does not prevent future mutations from
+	 * violating type constraints.</li>
+	 * </ul>
+	 *
+	 * @param obj        the runtime object to validate; must not be {@code null}
+	 * @param targetType the target {@link JavaType}; must not be {@code null}
+	 * @return {@code true} if the object is assignable to the target type,
+	 *         including all applicable generic constraints;
+	 *         {@code false} otherwise
+	 * @throws NullPointerException if {@code obj} or {@code targetType} is {@code null}
 	 * @see JavaType
 	 * @see DynamicNumber
 	 * @see NaftahObject
@@ -245,10 +277,12 @@ public final class JavaType {
 			boolean lenient = true;
 			Class<?> objClass;
 			boolean naftahObjectAsMap = false;
+			NTuple nestedObjects = null;
 			if (!targetType
 					.hasRawClass(NaftahObject.class) && obj instanceof NaftahObject naftahObject) {
 				naftahObjectAsMap = !naftahObject.fromJava();
-				objClass = naftahObject.get(true).getClass();
+				obj = naftahObject.get(true);
+				objClass = obj.getClass();
 			}
 			else {
 				objClass = obj.getClass();
@@ -273,6 +307,7 @@ public final class JavaType {
 																				.<Class<?>>map(Object::getClass)
 																				.orElse(Object.class))
 									));
+					nestedObjects = pair;
 				}
 				else if (targetType.isTriple() && obj instanceof Triple<?, ?, ?> triple) {
 					actualType = JavaType
@@ -295,7 +330,7 @@ public final class JavaType {
 																				.<Class<?>>map(Object::getClass)
 																				.orElse(Object.class))
 									));
-
+					nestedObjects = triple;
 				}
 				else {
 					actualType = JavaType.of(objClass);
@@ -303,7 +338,7 @@ public final class JavaType {
 			}
 			else if (targetType.isCollection() && obj instanceof Collection<?> collection) {
 				for (Object element : collection) {
-					if (element == null) {
+					if (Objects.isNull(element)) {
 						continue; // nulls are generally safe
 					}
 					actualType = JavaType
@@ -312,7 +347,8 @@ public final class JavaType {
 																objClass,
 																JavaType.of(element.getClass())
 									));
-					if (!targetType.isAssignableFrom(actualType, false)) {
+					nestedObjects = NTuple.of(element);
+					if (!targetType.isAssignableFrom(nestedObjects, actualType, false)) {
 						return false;
 					}
 				}
@@ -320,9 +356,23 @@ public final class JavaType {
 			}
 			else if (targetType.isMap()) {
 				if (naftahObjectAsMap) {
-					lenient = false;
 					actualType = JavaType.of(new TypeReference<Map<String, DeclaredVariable>>() {
 					});
+					if (!targetType.isAssignableFrom(actualType, false)) {
+						return false;
+					}
+					//noinspection unchecked
+					for (DeclaredVariable declaredVariable : ((Map<String, DeclaredVariable>) obj).values()) {
+						Object value;
+						if (Objects.isNull(declaredVariable) || Objects.isNull(value = declaredVariable.getValue())) {
+							continue; // nulls are generally safe
+						}
+
+						if (!isAssignableFrom(value, declaredVariable.getType())) {
+							return false;
+						}
+					}
+					return true;
 				}
 				else if (obj instanceof Map<?, ?> map) {
 					for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -341,7 +391,8 @@ public final class JavaType {
 																					.<Class<?>>map(Object::getClass)
 																					.orElse(Object.class))
 										));
-						if (!targetType.isAssignableFrom(actualType, false)) {
+						nestedObjects = NTuple.of(entry.getKey(), entry.getValue());
+						if (!targetType.isAssignableFrom(nestedObjects, actualType, false)) {
 							return false;
 						}
 					}
@@ -355,7 +406,7 @@ public final class JavaType {
 				actualType = JavaType.of(objClass);
 			}
 
-			return targetType.isAssignableFrom(actualType, lenient);
+			return targetType.isAssignableFrom(nestedObjects, actualType, lenient);
 		}
 	}
 
@@ -555,43 +606,55 @@ public final class JavaType {
 	 * Determines whether this {@link JavaType} can accept (is assignable from)
 	 * another {@link JavaType}.
 	 *
-	 * <p>This method generalizes {@link Class#isAssignableFrom(Class)} to work
-	 * with fully parameterized types, including generic type parameters and
-	 * arrays.</p>
+	 * <p>This method generalizes {@link Class#isAssignableFrom(Class)} to operate
+	 * on fully parameterized types, including generic type parameters and
+	 * dynamically inferred types.</p>
 	 *
-	 * <p>The assignability rules are:</p>
+	 * <p><b>Assignability rules:</b></p>
 	 * <ul>
-	 * <li>{@code Object} is the top type and accepts any other type.</li>
-	 * <li>The raw class of this type must be assignable from the raw class
-	 * of the {@code other} type.</li>
-	 * <li>If this type has no generic parameters, raw type compatibility
-	 * is sufficient.</li>
-	 * <li>If generic parameters are present, their count must match and
-	 * each parameter must be assignable recursively.</li>
+	 * <li>{@code Object} is treated as the top type and is assignable from any type.</li>
+	 * <li>The raw class of this type must be assignable from the raw class of
+	 * the {@code other} type.</li>
+	 * <li>If this type declares no generic parameters, raw-type compatibility
+	 * alone is sufficient.</li>
+	 * <li>If generic parameters are present, their count must match exactly.</li>
+	 * <li>Each generic parameter must itself be assignable, recursively.</li>
 	 * </ul>
 	 *
-	 * <p>This method enables runtime type checks similar to a dynamic language,
-	 * allowing covariant matching of generic parameters where appropriate.</p>
+	 * <p>When {@code lenient} is {@code true}, only raw-type compatibility is checked.
+	 * When {@code lenient} is {@code false}, generic parameters are strictly validated.</p>
 	 *
-	 * <p>Examples:</p>
-	 * <pre>{@code
-	 * JavaType listOfObjects = JavaType.of(new TypeReference<List<Object>>() {});
-	 * JavaType listOfStrings = JavaType.of(new TypeReference<List<String>>() {});
+	 * <p>This method supports special handling for numeric types, including
+	 * {@link DynamicNumber}, allowing runtime numeric compatibility checks.</p>
 	 *
-	 * listOfObjects.isAssignableFrom(listOfStrings); // true
-	 * listOfStrings.isAssignableFrom(listOfObjects); // false
-	 *
-	 * JavaType numberType = JavaType.of(Number.class);
-	 * JavaType integerType = JavaType.of(Integer.class);
-	 *
-	 * numberType.isAssignableFrom(integerType); // true
-	 * }</pre>
-	 *
-	 * @param other the {@link JavaType} to test for assignability; must not be null
-	 * @return {@code true} if this type can accept the {@code other} type,
+	 * @param other   the {@link JavaType} to test against; must not be {@code null}
+	 * @param lenient whether generic parameters should be ignored
+	 * @return {@code true} if this type can accept the {@code other} type;
 	 *         {@code false} otherwise
 	 */
 	public boolean isAssignableFrom(JavaType other, boolean lenient) {
+		return isAssignableFrom(null, other, lenient);
+	}
+
+	/**
+	 * Internal assignability check that optionally uses runtime values
+	 * (encapsulated in an {@link NTuple}) to validate generic parameters.
+	 *
+	 * <p>This overload is used when validating container types (such as
+	 * tuples, collections, or maps) where runtime values are available and
+	 * generic parameters must be checked against actual elements.</p>
+	 *
+	 * <p>If {@code nestedObjects} is provided and its arity matches the number
+	 * of generic parameters, each generic parameter is validated against the
+	 * corresponding runtime value.</p>
+	 *
+	 * @param nestedObjects runtime values corresponding to generic parameters,
+	 *                      or {@code null} if no runtime validation is available
+	 * @param other         the runtime-derived {@link JavaType}
+	 * @param lenient       whether to ignore generic parameters
+	 * @return {@code true} if assignable under the specified rules
+	 */
+	public boolean isAssignableFrom(NTuple nestedObjects, JavaType other, boolean lenient) {
 		// Object accepts everything
 		if (this.rawClass == Object.class) {
 			return true;
@@ -635,8 +698,15 @@ public final class JavaType {
 						return false;
 					}
 				}
-				else if (!thisTypeParameter.isAssignableFrom(otherTypeParameter, false)) {
-					return false;
+				else {
+					if (Objects.nonNull(nestedObjects) && nestedObjects.arity() == this.typeParameters.size()) {
+						if (!isAssignableFrom(nestedObjects.get(i), thisTypeParameter)) {
+							return false;
+						}
+					}
+					else if (!thisTypeParameter.isAssignableFrom(otherTypeParameter, false)) {
+						return false;
+					}
 				}
 
 			}
