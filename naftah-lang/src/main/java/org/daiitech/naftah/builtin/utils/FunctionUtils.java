@@ -2,14 +2,19 @@ package org.daiitech.naftah.builtin.utils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.function.ThrowingFunction;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedTypeError;
 
 /**
  * Utility class providing functional-style operations on various input types,
@@ -173,5 +178,77 @@ public final class FunctionUtils {
 		}
 
 		return input;
+	}
+
+	/**
+	 * Executes a function on the underlying Java value of a {@link NaftahObject}
+	 * after validating its runtime type.
+	 *
+	 * <p>The provided {@link NaftahObject} is unwrapped using
+	 * {@link NaftahObject#get(boolean)} with {@code true}. The unwrapped value must
+	 * be non-{@code null} and assignable to {@code rawClass}. If these conditions
+	 * are met, the value is cast to {@code T} and passed to the supplied
+	 * {@code executionFunction}.</p>
+	 *
+	 * <p>If the {@code NaftahObject} is {@code null}, unwraps to {@code null}, or
+	 * does not match the expected runtime type, a
+	 * {@link NaftahBugError} is thrown via
+	 * {@link org.daiitech.naftah.errors.ExceptionUtils#newNaftahUnsupportedTypeError(Object)}.</p>
+	 *
+	 * @param naftahObject      the {@link NaftahObject} to unwrap and validate
+	 * @param rawClass          the expected raw runtime class of the unwrapped value
+	 * @param executionFunction a function to execute on the validated value
+	 * @param <T>               the expected runtime type of the unwrapped value
+	 * @param <R>               the return type of the function
+	 * @return the result of {@code executionFunction.apply(T)}
+	 * @throws NaftahBugError if the object is {@code null}, cannot be unwrapped, or is not
+	 *                        assignable to {@code rawClass}
+	 */
+	public static <T, R> R execute( NaftahObject naftahObject,
+									Class<?> rawClass,
+									ThrowingFunction<T, R> executionFunction) {
+		T object = null;
+		//noinspection unchecked
+		if (Objects.nonNull(naftahObject) && Objects.nonNull(object = (T) naftahObject.get(true)) && rawClass
+				.isAssignableFrom(object.getClass())) {
+			return executionFunction.apply(object);
+		}
+		else {
+			throw newNaftahUnsupportedTypeError(object);
+		}
+	}
+
+	/**
+	 * Executes a consumer on the underlying Java value of a {@link NaftahObject}
+	 * after validating its runtime type.
+	 *
+	 * <p>The provided {@link NaftahObject} is unwrapped using
+	 * {@link NaftahObject#get(boolean)} with {@code true}. The unwrapped value must
+	 * be non-{@code null} and assignable to {@code rawClass}. If these conditions
+	 * are met, the value is cast to {@code T} and passed to the supplied
+	 * {@code executionConsumer}.</p>
+	 *
+	 * <p>If the {@code NaftahObject} is {@code null}, unwraps to {@code null}, or
+	 * does not match the expected runtime type, a
+	 * {@link NaftahBugError} is thrown via
+	 * {@link org.daiitech.naftah.errors.ExceptionUtils#newNaftahUnsupportedTypeError(Object)}.</p>
+	 *
+	 * @param naftahObject      the {@link NaftahObject} to unwrap and validate
+	 * @param rawClass          the expected raw runtime class of the unwrapped value
+	 * @param executionConsumer a consumer to execute on the validated value
+	 * @param <T>               the expected runtime type of the unwrapped value
+	 * @throws NaftahBugError if the object is {@code null}, cannot be unwrapped, or is not
+	 *                        assignable to {@code rawClass}
+	 */
+	public static <T> void execute(NaftahObject naftahObject, Class<?> rawClass, Consumer<T> executionConsumer) {
+		T object = null;
+		//noinspection unchecked
+		if (Objects.nonNull(naftahObject) && Objects.nonNull(object = (T) naftahObject.get(true)) && rawClass
+				.isAssignableFrom(object.getClass())) {
+			executionConsumer.accept(object);
+		}
+		else {
+			throw newNaftahUnsupportedTypeError(object);
+		}
 	}
 }
