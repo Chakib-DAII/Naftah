@@ -123,6 +123,36 @@ public class DynamicNumber extends Number implements Comparable<DynamicNumber>, 
 		return false;
 	}
 
+	/**
+	 * Determines whether a value of the given runtime class can be assigned to
+	 * a target type using relaxed numeric and primitive compatibility rules.
+	 *
+	 * <p>This method extends {@link Class#isAssignableFrom(Class)} semantics by:</p>
+	 * <ul>
+	 * <li>Normalizing primitive types to their boxed equivalents</li>
+	 * <li>Allowing numeric widening conversions between {@link Number} types
+	 * based on a predefined numeric rank hierarchy</li>
+	 * </ul>
+	 *
+	 * <p>Two types are considered compatible if:</p>
+	 * <ul>
+	 * <li>They are equal after primitive normalization, or</li>
+	 * <li>Both are subclasses of {@link Number} and the value type’s numeric rank
+	 * is less than or equal to the target type’s numeric rank</li>
+	 * </ul>
+	 *
+	 * <p>If either {@code valueClass} or {@code targetType} is {@code null},
+	 * this method returns {@code false}.</p>
+	 *
+	 * @param valueClass
+	 *                   the runtime class of the value being assigned
+	 * @param targetType
+	 *                   the desired target type
+	 *
+	 * @return
+	 *         {@code true} if a value of {@code valueClass} can be assigned to
+	 *         {@code targetType} under these rules; {@code false} otherwise
+	 */
 	public static boolean isAssignableFrom(Class<?> valueClass, Class<?> targetType) {
 		if (valueClass == null || targetType == null) {
 			return false;
