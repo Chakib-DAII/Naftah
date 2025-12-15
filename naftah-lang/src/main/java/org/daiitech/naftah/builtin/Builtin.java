@@ -1122,7 +1122,7 @@ public final class Builtin {
 	)
 	public static String getType(Object obj) {
 		return getNaftahType(   PARSER_VOCABULARY,
-								JavaType.of(obj.getClass()));
+								JavaType.getJavaType(obj));
 	}
 
 	/**
