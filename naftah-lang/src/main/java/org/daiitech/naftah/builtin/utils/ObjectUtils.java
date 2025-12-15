@@ -536,7 +536,7 @@ public final class ObjectUtils {
 							));
 		}
 		if (hasChild(complexBuiltInContext.TUPLE())) {
-			return JavaType.of(Tuple.class);
+			return JavaType.of(NTuple.class);
 		}
 		if (hasChild(complexBuiltInContext.SET())) {
 			return JavaType
