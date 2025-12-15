@@ -79,54 +79,67 @@ public final class InvocationUtils {
 	}
 
 	/**
-	 * Dynamically invokes a Java {@link Method} or {@link Constructor} using reflection.
+	 * Dynamically invokes a JVM {@link Method} or {@link Constructor} using reflection.
 	 *
 	 * <p>This unified utility abstracts the complexity of calling either a {@link Method} or
-	 * {@link Constructor} by automatically handling:</p>
+	 * {@link Constructor} at runtime by automatically handling:</p>
 	 * <ul>
-	 * <li>Parameter conversion, including primitives, arrays, collections, and generic types</li>
-	 * <li>Null safety and {@link None} handling</li>
-	 * <li>Primitive boxing/unboxing</li>
+	 * <li>Argument conversion to match JVM parameter types, including primitives, arrays,
+	 * collections, and generic types</li>
+	 * <li>Primitive boxing and unboxing</li>
+	 * <li>Naftah-specific type handling and conversions (when enabled)</li>
+	 * <li>Varargs executables, including automatic construction of the trailing vararg array
+	 * when possible</li>
 	 * </ul>
 	 *
-	 * <p>It is designed for runtime environments that need to dynamically invoke JVM executables
-	 * without compile-time type information.</p>
+	 * <p>This method is designed for runtime environments that need to dynamically invoke JVM
+	 * executables without compile-time type information.</p>
 	 *
 	 * <h3>Supported executable types</h3>
 	 * <ul>
-	 * <li><b>Instance and static methods:</b> invoked via {@link Method#invoke(Object, Object...)}</li>
+	 * <li><b>Instance methods:</b> invoked via {@link Method#invoke(Object, Object...)}</li>
+	 * <li><b>Static methods:</b> invoked with a {@code null} instance</li>
 	 * <li><b>Constructors:</b> invoked via {@link Constructor#newInstance(Object...)}</li>
 	 * </ul>
 	 *
-	 * <h3>Return handling</h3>
-	 * <p>If {@code useNone} is {@code true}, {@code null} or {@code void} results are replaced with
-	 * {@link None#get()} to ensure a non-null return value.</p>
+	 * <h3>Argument handling</h3>
+	 * <ul>
+	 * <li>The number of provided arguments must match the executable’s parameter count</li>
+	 * <li>If the executable is {@code varargs}, a missing final array argument may be
+	 * synthesized automatically</li>
+	 * <li>Arguments are converted <i>before</i> invocation and may be converted back
+	 * into {@code naftahArgs} after invocation</li>
+	 * </ul>
 	 *
-	 * @param instance            the target object for instance method calls, or {@code null} for static methods or
-	 *                            constructors
-	 * @param methodOrConstructor the {@link Executable} to invoke (either {@link Method} or {@link Constructor})
-	 * @param naftahArgs          a list of {@link Pair}&lt;String, Object&gt; representing argument names and values
+	 * <h3>Return handling</h3>
+	 * <p>The raw result of the underlying reflective call is returned. Any Naftah-specific
+	 * wrapping or post-processing is handled by the delegated invocation logic.</p>
+	 *
+	 * @param instance            the target object for instance method calls, or {@code null} for static methods
+	 *                            or constructors
+	 * @param methodOrConstructor the {@link Executable} to invoke (either a {@link Method} or a {@link Constructor})
+	 * @param naftahArgs          a list of {@link Pair}&lt;String, Object&gt; representing argument names and values;
+	 *                            this list may be mutated during invocation (e.g. for varargs handling or
+	 *                            argument back-conversion)
 	 * @param returnType          the expected return type; use {@link Void#TYPE} or {@link Void} for {@code void}
-	 *                            methods
-	 * @param useNone             if {@code true}, replaces {@code null} or {@code void} results with
-	 *                            {@link None#get()}
-	 * @param <T>                 the type of executable
-	 * @return the invocation result, or {@link None#get()} if {@code null} or {@code void} and {@code useNone} is true
+	 *                            executables
+	 * @param useNaftahTypes      whether Naftah-specific type semantics and conversions should be applied
+	 * @param <T>                 the type of executable being invoked
+	 * @return the result of the invocation
 	 * @throws InvocationTargetException if the underlying executable throws an exception
 	 * @throws InstantiationException    if a constructor fails to create a new instance
 	 * @throws IllegalAccessException    if the executable cannot be accessed due to Java access control
-	 * @throws IllegalArgumentException  if the argument count or types do not match the executable
-	 * @see java.lang.reflect.Method#invoke(Object, Object...)
-	 * @see java.lang.reflect.Constructor#newInstance(Object...)
-	 * @see java.lang.reflect.Executable
-	 * @see None#get()
+	 * @throws IllegalArgumentException  if argument count or types do not match the executable signature
+	 * @see Method#invoke(Object, Object...)
+	 * @see Constructor#newInstance(Object...)
+	 * @see Executable
 	 */
 	public static <T extends Executable> Object invokeJvmExecutable(
 																	Object instance,
 																	T methodOrConstructor,
 																	List<Pair<String, Object>> naftahArgs,
 																	Class<?> returnType,
-																	boolean useNone)
+																	boolean useNaftahTypes)
 			throws InvocationTargetException,
 			InstantiationException,
 			IllegalAccessException {
@@ -152,7 +165,10 @@ public final class InvocationUtils {
 		Type[] genericTypes = methodOrConstructor.getGenericParameterTypes();
 
 		for (int i = 0; i < naftahArgs.size(); i++) {
-			executableArgs[i] = convertArgument(naftahArgs.get(i).getRight(), paramTypes[i], genericTypes[i], useNone);
+			executableArgs[i] = convertArgument(naftahArgs.get(i).getRight(),
+												paramTypes[i],
+												genericTypes[i],
+												useNaftahTypes);
 		}
 
 		var result = invokeJvmExecutable(instance, methodOrConstructor, executableArgs, naftahArgs, returnType);
@@ -261,39 +277,41 @@ public final class InvocationUtils {
 		return result;
 	}
 
-
 	/**
 	 * Convenience method to invoke a {@link Constructor} reflectively using a list of arguments.
 	 *
-	 * <p>This method is a wrapper around {@link #invokeJvmExecutable(Object, Executable, List, Class, boolean)}
-	 * that automatically passes {@code null} as the instance, since constructors do not require one.</p>
+	 * <p>This method is a thin wrapper around
+	 * {@link #invokeJvmExecutable(Object, Executable, List, Class, boolean)} that automatically
+	 * supplies a {@code null} instance, as constructors do not require one.</p>
 	 *
-	 * <p>Arguments are converted automatically to match the constructor's parameter types,
-	 * including primitives, arrays, and generic types. {@code useNone} can replace {@code null} results with
-	 * {@link None#get()}.</p>
+	 * <p>Constructor arguments are converted automatically to match the constructor’s parameter
+	 * types, including primitives, arrays, collections, and generic types. Naftah-specific
+	 * type semantics and conversions are applied when enabled.</p>
+	 *
+	 * <p>The provided argument list may be mutated during invocation (for example, to support
+	 * varargs handling or argument back-conversion).</p>
 	 *
 	 * @param methodOrConstructor the {@link Constructor} to invoke
 	 * @param args                the constructor arguments as a list of {@link Pair}&lt;String, Object&gt;
 	 * @param returnType          the expected type of the constructed object
-	 * @param useNone             if {@code true}, replaces {@code null} results with {@link None#get()}
-	 * @param <T>                 the type of constructor
-	 * @return the newly created instance, or {@link None#get()} if the result is {@code null} or {@code void}
+	 * @param useNaftahTypes      whether Naftah-specific type semantics and conversions should be applied
+	 * @param <T>                 the type of executable (constructor) being invoked
+	 * @return the newly created instance
 	 * @throws InvocationTargetException if the constructor throws an exception
 	 * @throws InstantiationException    if the constructor fails to instantiate a new object
 	 * @throws IllegalAccessException    if reflective access is not allowed
-	 * @throws IllegalArgumentException  if the argument count or types do not match the constructor
+	 * @throws IllegalArgumentException  if the argument count or types do not match the constructor signature
 	 * @see #invokeJvmExecutable(Object, Executable, List, Class, boolean)
-	 * @see java.lang.reflect.Constructor#newInstance(Object...)
-	 * @see None#get()
+	 * @see Constructor#newInstance(Object...)
 	 */
 	public static <T extends Executable> Object invokeJvmConstructor(   T methodOrConstructor,
 																		List<Pair<String, Object>> args,
 																		Class<?> returnType,
-																		boolean useNone)
+																		boolean useNaftahTypes)
 			throws InvocationTargetException,
 			InstantiationException,
 			IllegalAccessException {
-		return invokeJvmExecutable(null, methodOrConstructor, args, returnType, useNone);
+		return invokeJvmExecutable(null, methodOrConstructor, args, returnType, useNaftahTypes);
 	}
 
 	/**
@@ -341,58 +359,61 @@ public final class InvocationUtils {
 	}
 
 	/**
-	 * Converts a single argument to the target type expected by a method parameter.
+	 * Converts a single argument to the target type expected by a reflective method
+	 * or constructor parameter.
 	 *
-	 * <p>
-	 * This method attempts to adapt the supplied {@code value} to the specified
+	 * <p>This method attempts to adapt the supplied {@code value} to the specified
 	 * {@code targetType}. When available, {@code genericType} information is used
-	 * to guide element-wise conversion of collections, arrays, tuples, and maps.
-	 * </p>
+	 * to guide recursive, element-wise conversion of arrays, collections, tuples,
+	 * and maps.</p>
 	 *
 	 * <h3>Supported conversions</h3>
 	 * <ul>
 	 * <li>Primitive types and their boxed equivalents</li>
-	 * <li>{@link DynamicNumber} to standard numeric types</li>
+	 * <li>{@link DynamicNumber} to standard JVM numeric types</li>
 	 * <li>{@link NaN} to {@link Double#NaN}</li>
 	 * <li>Arrays (recursive element conversion)</li>
 	 * <li>{@link Collection Collections} (recursive element conversion)</li>
 	 * <li>{@link Map Maps} (recursive key and value conversion)</li>
 	 * <li>{@link NTuple}, {@link Pair}, and {@link Triple} (recursive element conversion)</li>
-	 * <li>{@link NaftahObject} unwrapping when the target type is not {@code NaftahObject}</li>
+	 * <li>{@link NaftahObject} unwrapping when Naftah types are disabled</li>
 	 * </ul>
 	 *
-	 * <p>
-	 * If {@code value} is {@code null} or represents {@link None}, the return value
-	 * depends on {@code useNone}: when {@code true}, {@link None#get()} is returned;
-	 * otherwise {@code null} is returned.
-	 * </p>
+	 * <h3>Naftah-specific semantics</h3>
+	 * <ul>
+	 * <li>If {@code value} is {@code null} or represents {@link None}, the result depends on
+	 * {@code useNaftahTypes}:
+	 * <ul>
+	 * <li>when {@code true}, {@link None#get()} is returned</li>
+	 * <li>when {@code false}, {@code null} is returned</li>
+	 * </ul>
+	 * </li>
+	 * <li>When {@code useNaftahTypes} is {@code false}, {@link NaftahObject} values are
+	 * automatically unwrapped unless the target type is {@link NaftahObject}</li>
+	 * </ul>
 	 *
-	 * <p>
-	 * If {@code value} is already assignable to {@code targetType}, it is returned
-	 * unchanged.
-	 * </p>
+	 * <p>If {@code value} is already assignable to {@code targetType}, it is returned unchanged.</p>
 	 *
-	 * @param value       the original argument value to convert; may be {@code null}
-	 * @param targetType  the target class to which the value should be converted
-	 * @param genericType generic type information used for element conversion of collections
-	 *                    and maps; may be {@code null}
-	 * @param useNone     if {@code true}, {@code null} or {@link None} values are converted to
-	 *                    {@link None#get()}
+	 * @param value          the original argument value to convert; may be {@code null} or {@link None}
+	 * @param targetType     the target class expected by the executable parameter
+	 * @param genericType    generic type information used to guide recursive conversion of collections,
+	 *                       arrays, and maps; may be {@code null}
+	 * @param useNaftahTypes whether Naftah-specific type semantics and wrappers should be preserved
 	 * @return a value compatible with {@code targetType}, or {@code null} if
-	 *         {@code value} is {@code null} and {@code useNone} is {@code false}
+	 *         {@code value} is {@code null} and Naftah types are disabled
 	 * @throws ClassCastException if the value cannot be converted or cast to {@code targetType}
-	 * @apiNote This method performs unchecked casts and reflective conversions. Callers are
-	 *          responsible for ensuring that {@code targetType} and {@code genericType}
-	 *          accurately describe the expected runtime types.
+	 * @apiNote This method performs unchecked casts and reflective conversions.
+	 *          Callers are responsible for ensuring that {@code targetType} and
+	 *          {@code genericType} accurately describe the expected runtime types.
 	 * @see #convertArgumentsBack(Object[], List)
 	 * @see #convertArgumentBack(Object, Object)
 	 */
-	public static Object convertArgument(Object value, Class<?> targetType, Type genericType, boolean useNone) {
+	public static Object convertArgument(Object value, Class<?> targetType, Type genericType, boolean useNaftahTypes) {
 		if (value == null || None.isNone(value)) {
-			return useNone ? None.get() : null;
+			return useNaftahTypes ? None.get() : null;
 		}
 
-		if (!targetType.equals(NaftahObject.class) && value instanceof NaftahObject naftahObject) {
+		if (!useNaftahTypes && !targetType.equals(NaftahObject.class) && value instanceof NaftahObject naftahObject) {
 			value = naftahObject.get(true);
 		}
 
@@ -401,7 +422,7 @@ public final class InvocationUtils {
 			return value;
 		}
 
-		if (value instanceof DynamicNumber dynamicNumber) {
+		if (!useNaftahTypes && value instanceof DynamicNumber dynamicNumber) {
 			value = dynamicNumber.get();
 		}
 
@@ -447,8 +468,8 @@ public final class InvocationUtils {
 			var rightType = right.getClass();
 			return Pair
 					.of(
-						convertArgument(left, leftType, leftType, useNone),
-						convertArgument(right, rightType, rightType, useNone)
+						convertArgument(left, leftType, leftType, useNaftahTypes),
+						convertArgument(right, rightType, rightType, useNaftahTypes)
 					);
 		}
 
@@ -462,9 +483,9 @@ public final class InvocationUtils {
 			var rightType = right.getClass();
 			return Triple
 					.of(
-						convertArgument(left, leftType, leftType, useNone),
-						convertArgument(middle, middleType, middleType, useNone),
-						convertArgument(right, rightType, rightType, useNone)
+						convertArgument(left, leftType, leftType, useNaftahTypes),
+						convertArgument(middle, middleType, middleType, useNaftahTypes),
+						convertArgument(right, rightType, rightType, useNaftahTypes)
 					);
 		}
 
@@ -479,7 +500,7 @@ public final class InvocationUtils {
 								convertArgument(Array.get(value, i),
 												targetType.getComponentType(),
 												targetType.getComponentType(),
-												useNone));
+												useNaftahTypes));
 			}
 			return newArray;
 		}
@@ -505,7 +526,7 @@ public final class InvocationUtils {
 			}
 
 			for (Object item : src) {
-				result.add(convertArgument(item, itemType, itemType, useNone));
+				result.add(convertArgument(item, itemType, itemType, useNaftahTypes));
 			}
 
 			if (targetType.isArray()) {
@@ -542,8 +563,8 @@ public final class InvocationUtils {
 			}
 
 			for (Map.Entry<?, ?> entry : srcMap.entrySet()) {
-				Object newKey = convertArgument(entry.getKey(), keyType, keyType, useNone);
-				Object newValue = convertArgument(entry.getValue(), valueType, valueType, useNone);
+				Object newKey = convertArgument(entry.getKey(), keyType, keyType, useNaftahTypes);
+				Object newValue = convertArgument(entry.getValue(), valueType, valueType, useNaftahTypes);
 				result.put(newKey, newValue);
 			}
 			return result;
@@ -974,34 +995,53 @@ public final class InvocationUtils {
 	}
 
 	/**
-	 * Calculates how closely a set of provided arguments matches the parameters of a given {@link Executable}.
+	 * Computes a compatibility score describing how well a set of provided arguments
+	 * matches the parameter types of a given {@link Executable}.
 	 *
-	 * <p>This method attempts to convert each argument into the target parameter type using
-	 * {@code convertArgument()}, computing a total compatibility score as follows:</p>
+	 * <p>Each argument is tentatively converted to the corresponding parameter type
+	 * using {@link #convertArgument(Object, Class, Type, boolean)}. If any argument
+	 * fails conversion, the executable is considered incompatible and a score of
+	 * {@code -1} is returned.</p>
+	 *
+	 * <h3>Scoring semantics</h3>
+	 * <p>Lower scores indicate a better match. The total score is the sum of
+	 * per-parameter penalties based on how closely the converted argument matches
+	 * the target parameter type:</p>
+	 *
 	 * <ul>
-	 * <li>Exact type match: score += 0</li>
-	 * <li>Numeric type coercion (e.g. {@code Integer → Double}): score += 1</li>
-	 * <li>Generic or compatible conversion: score += 3</li>
-	 * <li>{@code null} argument: score += 10</li>
+	 * <li>{@code null} argument: +10</li>
+	 * <li>Exact runtime type match: +0</li>
+	 * <li>Assignable match (after conversion): +1</li>
+	 * <li>Boxed numeric to boxed numeric: +2</li>
+	 * <li>Boxed numeric to matching primitive: +3</li>
+	 * <li>Numeric or character primitive mismatch: +4</li>
+	 * <li>Other non-null compatible conversions: +5</li>
+	 * <li>Converted value is {@code null}: +6</li>
 	 * </ul>
 	 *
-	 * <p>If any argument fails conversion, the method returns a score of {@code -1} to indicate incompatibility.</p>
+	 * <p>If a converted argument is {@code null} but the corresponding parameter is
+	 * primitive, the match fails immediately.</p>
 	 *
-	 * @param executable the target method or constructor being evaluated.
-	 * @param params     the parameter types of the executable.
-	 * @param args       the provided arguments as a list of {@code Pair<String, Object>}.
-	 * @param useNone    whether {@link None#get()} should be treated as a {@code null}-equivalent placeholder.
-	 * @param <T>        the type of the {@link Executable}.
+	 * <h3>Naftah-specific behavior</h3>
+	 * <p>The {@code useNaftahTypes} flag controls whether {@link None} and
+	 * {@link NaftahObject} values are preserved or unwrapped during argument
+	 * conversion.</p>
+	 *
+	 * @param executable     the method or constructor being evaluated
+	 * @param params         the raw parameter types of the executable
+	 * @param args           the provided arguments as a list of {@link Pair}&lt;String, Object&gt;
+	 * @param useNaftahTypes whether Naftah-specific type semantics should be applied during conversion
+	 * @param <T>            the type of {@link Executable}
 	 * @return a {@link Pair} containing:
 	 *         <ul>
-	 *         <li>The computed match score (lower is better, {@code -1} indicates failure).</li>
-	 *         <li>The array of converted argument values ready for invocation.</li>
+	 *         <li>the computed compatibility score (lower is better, {@code -1} indicates incompatibility)</li>
+	 *         <li>an array of converted argument values suitable for invocation</li>
 	 *         </ul>
 	 */
 	private static <T extends Executable> Pair<Integer, Object[]> matchScore(   T executable,
 																				Class<?>[] params,
 																				List<Pair<String, Object>> args,
-																				boolean useNone) {
+																				boolean useNaftahTypes) {
 		int score = 0;
 		Object[] executableArgs = new Object[args.size()];
 
@@ -1010,7 +1050,7 @@ public final class InvocationUtils {
 			Class<?> param = params[i];
 
 			try {
-				Object converted = convertArgument(arg, param, getGenericType(executable, i), useNone);
+				Object converted = convertArgument(arg, param, getGenericType(executable, i), useNaftahTypes);
 				if (converted == null && param.isPrimitive()) {
 					return ImmutablePair.of(-1, null);
 				}
