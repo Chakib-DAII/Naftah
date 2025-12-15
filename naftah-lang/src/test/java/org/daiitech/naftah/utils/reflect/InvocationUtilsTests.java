@@ -260,7 +260,7 @@ class InvocationUtilsTests {
 		}
 
 		@SuppressWarnings("ConstantValue") @Test
-		void testNullReturnsNullIfUseNoneFalse() {
+		void testNullReturnsNullIfUseNaftahTypesFalse() {
 			Object result = InvocationUtils.convertArgument(null, Object.class, Object.class, false);
 			assertNull(result);
 		}
