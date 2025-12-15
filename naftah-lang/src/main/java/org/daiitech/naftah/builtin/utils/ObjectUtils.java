@@ -1338,6 +1338,10 @@ public final class ObjectUtils {
 			return 0;
 		}
 
+		if (obj instanceof NaftahObject naftahObject) {
+			obj = naftahObject.get(true);
+		}
+
 		Class<?> clazz = obj.getClass();
 
 		// Array
