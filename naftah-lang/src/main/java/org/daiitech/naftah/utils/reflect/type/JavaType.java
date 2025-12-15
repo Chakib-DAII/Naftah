@@ -292,48 +292,15 @@ public final class JavaType {
 			if (targetType.isNTuple() && obj instanceof NTuple) {
 				lenient = false;
 				if (targetType.isPair() && obj instanceof Pair<?, ?> pair) {
-					actualType = JavaType
-							.of(TypeReference
-									.dynamicParameterizedType(
-																objClass,
-																JavaType
-																		.of(Optional
-																				.ofNullable(pair.getLeft())
-																				.<Class<?>>map(Object::getClass)
-																				.orElse(Object.class)),
-																JavaType
-																		.of(Optional
-																				.ofNullable(pair.getRight())
-																				.<Class<?>>map(Object::getClass)
-																				.orElse(Object.class))
-									));
+					actualType = of(pair);
 					nestedObjects = pair;
 				}
 				else if (targetType.isTriple() && obj instanceof Triple<?, ?, ?> triple) {
-					actualType = JavaType
-							.of(TypeReference
-									.dynamicParameterizedType(
-																objClass,
-																JavaType
-																		.of(Optional
-																				.ofNullable(triple.getLeft())
-																				.<Class<?>>map(Object::getClass)
-																				.orElse(Object.class)),
-																JavaType
-																		.of(Optional
-																				.ofNullable(triple.getMiddle())
-																				.<Class<?>>map(Object::getClass)
-																				.orElse(Object.class)),
-																JavaType
-																		.of(Optional
-																				.ofNullable(triple.getRight())
-																				.<Class<?>>map(Object::getClass)
-																				.orElse(Object.class))
-									));
+					actualType = of(triple);
 					nestedObjects = triple;
 				}
 				else {
-					actualType = JavaType.of(objClass);
+					actualType = of(objClass);
 				}
 			}
 			else if (targetType.isCollection() && obj instanceof Collection<?> collection) {
@@ -341,12 +308,11 @@ public final class JavaType {
 					if (Objects.isNull(element)) {
 						continue; // nulls are generally safe
 					}
-					actualType = JavaType
-							.of(TypeReference
-									.dynamicParameterizedType(
-																objClass,
-																JavaType.of(element.getClass())
-									));
+					actualType = of(TypeReference
+							.dynamicParameterizedType(
+														objClass,
+														of(element.getClass())
+							));
 					nestedObjects = NTuple.of(element);
 					if (!targetType.isAssignableFrom(nestedObjects, actualType, false)) {
 						return false;
@@ -356,7 +322,7 @@ public final class JavaType {
 			}
 			else if (targetType.isMap()) {
 				if (naftahObjectAsMap) {
-					actualType = JavaType.of(new TypeReference<Map<String, DeclaredVariable>>() {
+					actualType = of(new TypeReference<Map<String, DeclaredVariable>>() {
 					});
 					if (!targetType.isAssignableFrom(actualType, false)) {
 						return false;
@@ -376,21 +342,18 @@ public final class JavaType {
 				}
 				else if (obj instanceof Map<?, ?> map) {
 					for (Map.Entry<?, ?> entry : map.entrySet()) {
-						actualType = JavaType
-								.of(TypeReference
-										.dynamicParameterizedType(
-																	objClass,
-																	JavaType
-																			.of(Optional
-																					.ofNullable(entry.getKey())
-																					.<Class<?>>map(Object::getClass)
-																					.orElse(Object.class)),
-																	JavaType
-																			.of(Optional
-																					.ofNullable(entry.getValue())
-																					.<Class<?>>map(Object::getClass)
-																					.orElse(Object.class))
-										));
+						actualType = of(TypeReference
+								.dynamicParameterizedType(
+															objClass,
+															of(Optional
+																	.ofNullable(entry.getKey())
+																	.<Class<?>>map(Object::getClass)
+																	.orElse(Object.class)),
+															of(Optional
+																	.ofNullable(entry.getValue())
+																	.<Class<?>>map(Object::getClass)
+																	.orElse(Object.class))
+								));
 						nestedObjects = NTuple.of(entry.getKey(), entry.getValue());
 						if (!targetType.isAssignableFrom(nestedObjects, actualType, false)) {
 							return false;
@@ -399,15 +362,198 @@ public final class JavaType {
 					return true;
 				}
 				else {
-					actualType = JavaType.of(objClass);
+					actualType = of(objClass);
 				}
 			}
 			else {
-				actualType = JavaType.of(objClass);
+				actualType = of(objClass);
 			}
 
 			return targetType.isAssignableFrom(nestedObjects, actualType, lenient);
 		}
+	}
+
+	/**
+	 * Creates a {@link JavaType} representing a parameterized {@link Triple}.
+	 *
+	 * <p>The resulting type preserves the runtime class of the triple and infers
+	 * generic type arguments from the runtime types of its elements:</p>
+	 * <ul>
+	 * <li>The left, middle, and right element types are inferred from their
+	 * non-null runtime classes</li>
+	 * <li>If an element is {@code null}, {@link Object} is used as its type</li>
+	 * </ul>
+	 *
+	 * @param triple the triple whose runtime type should be analyzed
+	 * @return a {@link JavaType} describing the parameterized triple type
+	 */
+	public static JavaType of(Triple<?, ?, ?> triple) {
+		return of(TypeReference
+				.dynamicParameterizedType(
+											triple.getClass(),
+											of(Optional
+													.ofNullable(triple.getLeft())
+													.<Class<?>>map(Object::getClass)
+													.orElse(Object.class)),
+											of(Optional
+													.ofNullable(triple.getMiddle())
+													.<Class<?>>map(Object::getClass)
+													.orElse(Object.class)),
+											of(Optional
+													.ofNullable(triple.getRight())
+													.<Class<?>>map(Object::getClass)
+													.orElse(Object.class))
+				));
+	}
+
+	/**
+	 * Creates a {@link JavaType} representing a parameterized {@link Pair}.
+	 *
+	 * <p>The resulting type preserves the runtime class of the pair and infers
+	 * generic type arguments from the runtime types of its elements. If either
+	 * element is {@code null}, {@link Object} is used as a fallback type.</p>
+	 *
+	 * @param pair the pair whose runtime type should be analyzed
+	 * @return a {@link JavaType} describing the parameterized pair type
+	 */
+	public static JavaType of(Pair<?, ?> pair) {
+		return of(TypeReference
+				.dynamicParameterizedType(
+											pair.getClass(),
+											of(Optional
+													.ofNullable(pair.getLeft())
+													.<Class<?>>map(Object::getClass)
+													.orElse(Object.class)),
+											of(Optional
+													.ofNullable(pair.getRight())
+													.<Class<?>>map(Object::getClass)
+													.orElse(Object.class))
+				));
+	}
+
+	/**
+	 * Creates a {@link JavaType} representing a parameterized {@link Collection}.
+	 *
+	 * <p>The collection’s raw runtime class is preserved. The element type is
+	 * inferred from any non-null element in the collection. If the collection is
+	 * empty or contains only {@code null} values, {@link Object} is used as the
+	 * element type.</p>
+	 *
+	 * @param collection the collection whose runtime type should be analyzed
+	 * @return a {@link JavaType} describing the parameterized collection type
+	 */
+	public static JavaType of(Collection<?> collection) {
+		return of(TypeReference
+				.dynamicParameterizedType(
+											collection.getClass(),
+											collection.isEmpty() ?
+													ofObject() :
+													of(collection
+															.stream()
+															.filter(Objects::nonNull)
+															.findAny()
+															.<Class<?>>map(Object::getClass)
+															.orElse(Object.class))
+				));
+	}
+
+	/**
+	 * Creates a {@link JavaType} representing a parameterized {@link Map}.
+	 *
+	 * <p>The map’s raw runtime class is preserved. Key and value types are inferred
+	 * independently from any non-null keys and values present in the map. If the
+	 * map is empty or contains only {@code null} keys or values, {@link Object} is
+	 * used as a fallback type.</p>
+	 *
+	 * @param map the map whose runtime type should be analyzed
+	 * @return a {@link JavaType} describing the parameterized map type
+	 */
+	public static JavaType of(Map<?, ?> map) {
+		return of(TypeReference
+				.dynamicParameterizedType(
+											map.getClass(),
+											map.isEmpty() ?
+													ofObject() :
+													of(map
+															.keySet()
+															.stream()
+															.filter(Objects::nonNull)
+															.findAny()
+															.<Class<?>>map(Object::getClass)
+															.orElse(Object.class)),
+											map.isEmpty() ?
+													ofObject() :
+													of(map
+															.values()
+															.stream()
+															.filter(Objects::nonNull)
+															.findAny()
+															.getClass())));
+	}
+
+	/**
+	 * Infers the most appropriate {@link JavaType} for a runtime object.
+	 *
+	 * <p>This method analyzes the runtime structure of {@code obj} and produces a
+	 * {@link JavaType} that reflects both its concrete class and, where applicable,
+	 * inferred generic type parameters.</p>
+	 *
+	 * <h3>Type inference rules</h3>
+	 * <ul>
+	 * <li>{@link NaftahObject} instances are unwrapped before analysis</li>
+	 * <li>{@link Pair} and {@link Triple} values produce parameterized tuple types</li>
+	 * <li>{@link Collection Collections} produce parameterized collection types</li>
+	 * <li>{@link Map Maps} produce parameterized map types</li>
+	 * <li>Non-Java-origin {@link NaftahObject} values may be treated as
+	 * {@code Map&lt;String, DeclaredVariable&gt;}</li>
+	 * <li>All other values fall back to their concrete runtime class</li>
+	 * </ul>
+	 *
+	 * <p>When generic element types cannot be determined (for example, due to
+	 * {@code null} values or empty containers), {@link Object} is used as a fallback.</p>
+	 *
+	 * @param obj the object whose type should be inferred
+	 * @return a {@link JavaType} describing the inferred runtime type
+	 * @throws NullPointerException if {@code obj} is {@code null}
+	 */
+	public static JavaType getJavaType(Object obj) {
+		Class<?> objClass;
+		boolean naftahObjectAsMap = false;
+		if (obj instanceof NaftahObject naftahObject) {
+			naftahObjectAsMap = !naftahObject.fromJava();
+			obj = naftahObject.get(true);
+			objClass = obj.getClass();
+		}
+		else {
+			objClass = obj.getClass();
+		}
+
+		JavaType actualType;
+		if (obj instanceof NTuple) {
+			if (obj instanceof Pair<?, ?> pair) {
+				actualType = of(pair);
+			}
+			else if (obj instanceof Triple<?, ?, ?> triple) {
+				actualType = of(triple);
+			}
+			else {
+				actualType = of(objClass);
+			}
+		}
+		else if (obj instanceof Collection<?> collection) {
+			actualType = of(collection);
+		}
+		else if (naftahObjectAsMap) {
+			actualType = of(new TypeReference<Map<String, DeclaredVariable>>() {
+			});
+		}
+		else if (obj instanceof Map<?, ?> map) {
+			actualType = of(map);
+		}
+		else {
+			actualType = of(objClass);
+		}
+		return actualType;
 	}
 
 	/**
