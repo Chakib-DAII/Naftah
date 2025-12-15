@@ -57,7 +57,6 @@ import org.daiitech.naftah.utils.function.TriFunction;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.ObjectAccessUtils;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
-import org.daiitech.naftah.utils.reflect.type.TypeReference;
 
 import com.ibm.icu.text.Normalizer2;
 
@@ -65,7 +64,6 @@ import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.errors.ExceptionUtils.INVALID_INSTANCE_METHOD_CALL_MSG;
 import static org.daiitech.naftah.errors.ExceptionUtils.NOTE;
@@ -87,7 +85,6 @@ import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
 import static org.daiitech.naftah.parser.DefaultContext.registerContext;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
-import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
 import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
@@ -967,33 +964,11 @@ public final class NaftahParserHelper {
 		boolean creatingObjectField = hasAnyParentOfType(   ctx,
 															org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
 		if (hasConstant || hasVariable || hasType || creatingObjectField) {
-			if (creatingObject && hasType) {
-				if (Objects.nonNull(type) && !type
-						.isAssignableFrom(JavaType.of(new TypeReference<Map<String, DeclaredVariable>>() {
-						}), false) && !type.hasRawClass(Object.class)) {
-					throw new NaftahBugError(
-												("""
-													لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع الأنواع (%s).""")
-														.formatted( variableName,
-																	getNaftahType(  PARSER_VOCABULARY,
-																					type),
-																	getNaftahType(  PARSER_VOCABULARY,
-																					JavaType.ofObject())),
-												ctx.getStart().getLine(),
-												ctx
-														.getStart()
-														.getCharPositionInLine());
-				}
-			}
 			declaredVariable = createDeclaredVariable(  currentContext.depth,
 														ctx,
 														variableName,
 														hasConstant,
 														type);
-			// TODO: check if inside function to check if it matches any argument /
-			// parameter or
-			// previously
-			// declared and update if possible
 			if (!creatingObjectField) {
 				currentContext.defineVariable(variableName, declaredVariable.getLeft());
 			}
