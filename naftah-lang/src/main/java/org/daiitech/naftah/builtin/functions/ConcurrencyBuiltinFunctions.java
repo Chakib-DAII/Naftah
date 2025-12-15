@@ -8,6 +8,7 @@ import org.daiitech.naftah.builtin.utils.concurrent.Channel;
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.builtin.utils.FunctionUtils.execute;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrBuiltinOrCollectionOrMapOfSimpleType;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
@@ -110,7 +111,7 @@ public final class ConcurrencyBuiltinFunctions {
 	/**
 	 * Returns the name of the specified thread.
 	 *
-	 * @param thread the thread whose name to return
+	 * @param threadObject the thread whose name to return
 	 * @return the name of the thread
 	 */
 	@NaftahFn(
@@ -120,8 +121,8 @@ public final class ConcurrencyBuiltinFunctions {
 				parameterTypes = Thread.class,
 				returnType = String.class
 	)
-	public static String getThreadName(Thread thread) {
-		return thread.getName();
+	public static String getThreadName(NaftahObject threadObject) {
+		return execute(threadObject, Thread.class, Thread::getName);
 	}
 
 	/**
@@ -158,8 +159,8 @@ public final class ConcurrencyBuiltinFunctions {
 	/**
 	 * Sets the name of the specified thread.
 	 *
-	 * @param thread  the thread to rename
-	 * @param newName the new name for the thread
+	 * @param threadObject the thread to rename
+	 * @param newName      the new name for the thread
 	 */
 	@NaftahFn(
 				name = "تغيير_اسم_الخيط",
@@ -170,8 +171,8 @@ public final class ConcurrencyBuiltinFunctions {
 				parameterTypes = {Thread.class, String.class},
 				returnType = void.class
 	)
-	public static void setThreadName(Thread thread, String newName) {
-		thread.setName(newName);
+	public static void setThreadName(NaftahObject threadObject, String newName) {
+		execute(threadObject, Thread.class, (Thread thread) -> thread.setName(newName));
 	}
 
 	/**
@@ -184,12 +185,12 @@ public final class ConcurrencyBuiltinFunctions {
 				name = "نَم",
 				description = "يوقِف تنفيذ الخيط الحالي لعدد معين من الملّي ثواني.",
 				usage = "دوال:الخيوط::نَم(1000)",
-				parameterTypes = long.class,
+				parameterTypes = Number.class,
 				returnType = void.class
 	)
-	public static void sleep(long millis) {
+	public static void sleep(Number millis) {
 		try {
-			Thread.sleep(millis);
+			Thread.sleep(millis.longValue());
 		}
 		catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -213,7 +214,7 @@ public final class ConcurrencyBuiltinFunctions {
 	/**
 	 * Checks whether the specified thread has been interrupted.
 	 *
-	 * @param thread the thread to check
+	 * @param threadObject the thread to check
 	 * @return {@code true} if the thread is interrupted, {@code false} otherwise
 	 */
 	@NaftahFn(
@@ -223,8 +224,8 @@ public final class ConcurrencyBuiltinFunctions {
 				parameterTypes = Thread.class,
 				returnType = boolean.class
 	)
-	public static boolean isInterrupted(Thread thread) {
-		return thread.isInterrupted();
+	public static boolean isInterrupted(NaftahObject threadObject) {
+		return execute(threadObject, Thread.class, Thread::isInterrupted);
 	}
 
 	/**
@@ -245,7 +246,7 @@ public final class ConcurrencyBuiltinFunctions {
 	/**
 	 * Interrupts the specified thread.
 	 *
-	 * @param thread the thread to interrupt
+	 * @param threadObject the thread to interrupt
 	 */
 	@NaftahFn(
 				name = "قاطع_الخيط",
@@ -254,8 +255,8 @@ public final class ConcurrencyBuiltinFunctions {
 				parameterTypes = Thread.class,
 				returnType = void.class
 	)
-	public static void interruptThread(Thread thread) {
-		thread.interrupt();
+	public static void interruptThread(NaftahObject threadObject) {
+		execute(threadObject, Thread.class, Thread::interrupt);
 	}
 
 	/**
@@ -274,7 +275,7 @@ public final class ConcurrencyBuiltinFunctions {
 	/**
 	 * Returns the priority of the specified thread.
 	 *
-	 * @param thread the thread to query
+	 * @param threadObject the thread to query
 	 * @return the priority of the thread
 	 */
 	@NaftahFn(
@@ -284,8 +285,8 @@ public final class ConcurrencyBuiltinFunctions {
 				parameterTypes = {Thread.class},
 				returnType = int.class
 	)
-	public static int getThreadPriority(Thread thread) {
-		return thread.getPriority();
+	public static int getThreadPriority(NaftahObject threadObject) {
+		return execute(threadObject, Thread.class, Thread::getPriority);
 	}
 
 	/**
@@ -312,34 +313,34 @@ public final class ConcurrencyBuiltinFunctions {
 				name = "تغيير_أولوية_الخيط_الحالي",
 				description = "يغيّر أولوية الخيط الحالي.",
 				usage = "دوال:الخيوط::تغيير_أولوية_الخيط_الحالي(7)",
-				parameterTypes = int.class,
+				parameterTypes = Number.class,
 				returnType = void.class
 	)
-	public static void setCurrentThreadPriority(int priority) {
-		Thread.currentThread().setPriority(priority);
+	public static void setCurrentThreadPriority(Number priority) {
+		Thread.currentThread().setPriority(priority.intValue());
 	}
 
 	/**
 	 * Sets the priority of the specified thread.
 	 *
-	 * @param thread   the thread to modify
-	 * @param priority the new priority (1–10)
+	 * @param threadObject the thread to modify
+	 * @param priority     the new priority (1–10)
 	 */
 	@NaftahFn(
 				name = "تغيير_أولوية_الخيط",
 				description = "يحدد أولوية جديدة للخيط (من 1 إلى 10).",
 				usage = "دوال:الخيوط::تغيير_أولوية_الخيط(خيط, 7)",
-				parameterTypes = {Thread.class, int.class},
+				parameterTypes = {Thread.class, Number.class},
 				returnType = void.class
 	)
-	public static void setThreadPriority(Thread thread, int priority) {
-		thread.setPriority(priority);
+	public static void setThreadPriority(NaftahObject threadObject, Number priority) {
+		execute(threadObject, Thread.class, (Thread thread) -> thread.setPriority(priority.intValue()));
 	}
 
 	/**
 	 * Returns the unique ID of the specified thread.
 	 *
-	 * @param thread the thread to query
+	 * @param threadObject the thread to query
 	 * @return the thread's unique ID
 	 */
 	@NaftahFn(
@@ -349,8 +350,8 @@ public final class ConcurrencyBuiltinFunctions {
 				parameterTypes = {Thread.class},
 				returnType = long.class
 	)
-	public static long getThreadId(Thread thread) {
-		return thread.getId();
+	public static long getThreadId(NaftahObject threadObject) {
+		return execute(threadObject, Thread.class, Thread::getId);
 	}
 
 	/**

@@ -3,10 +3,10 @@ package org.daiitech.naftah.builtin.functions;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
@@ -16,6 +16,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedTypeError;
 
 /**
  * Provides built-in functions used within the Naftah language for performing various
@@ -966,6 +967,12 @@ public final class CollectionBuiltinFunctions {
 				returnType = boolean.class
 	)
 	public static boolean addElement(Object x, Object element) {
+		if (x instanceof NaftahObject naftahObject) {
+			x = naftahObject.get(true);
+		}
+		if (element instanceof NaftahObject naftahObject) {
+			element = naftahObject.get(true);
+		}
 		checkParam(x);
 		if (x instanceof Collection<?> collection) {
 			//noinspection unchecked
@@ -976,7 +983,7 @@ public final class CollectionBuiltinFunctions {
 			((Map<? super Object, ? super Object>) map).put(entry.getKey(), entry.getValue());
 			return true;
 		}
-		throw new NaftahBugError("نوع غير مدعوم للإضافة: " + (Objects.isNull(x) ? null : x.getClass().getName()));
+		throw newNaftahUnsupportedTypeError(x, element);
 	}
 
 	/**
@@ -998,6 +1005,12 @@ public final class CollectionBuiltinFunctions {
 				returnType = boolean.class
 	)
 	public static boolean removeElement(Object x, Object element) {
+		if (x instanceof NaftahObject naftahObject) {
+			x = naftahObject.get(true);
+		}
+		if (element instanceof NaftahObject naftahObject) {
+			element = naftahObject.get(true);
+		}
 		checkParam(x);
 		if (x instanceof Collection<?> collection) {
 			return collection.remove(element);
@@ -1007,7 +1020,7 @@ public final class CollectionBuiltinFunctions {
 			((Map<? super Object, ? super Object>) map).remove(element);
 			return true;
 		}
-		throw new NaftahBugError("نوع غير مدعوم للإزالة: " + (Objects.isNull(x) ? null : x.getClass().getName()));
+		throw newNaftahUnsupportedTypeError(x, element);
 	}
 
 	/**
@@ -1062,7 +1075,7 @@ public final class CollectionBuiltinFunctions {
 			}
 		}
 		else {
-			throw new NaftahBugError("نوع غير مدعوم للمسح: " + (Objects.isNull(x) ? null : x.getClass().getName()));
+			throw newNaftahUnsupportedTypeError(x);
 		}
 	}
 
