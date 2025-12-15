@@ -743,4 +743,48 @@ public final class ExceptionUtils {
 		return new NaftahBugError("القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
 				.formatted(name, type), line, column);
 	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that a value has an unsupported
+	 * runtime type.
+	 *
+	 * <p>The generated error message is localized (Arabic) and includes the fully
+	 * qualified class name of the offending object when available. If the provided
+	 * object is {@code null}, the message explicitly reports {@code null} as the
+	 * unsupported type.</p>
+	 *
+	 * <p>This error does not include source location information and is typically
+	 * used for internal or runtime type validation failures.</p>
+	 *
+	 * @param object the object whose runtime type is unsupported; may be {@code null}
+	 * @return a {@link NaftahBugError} describing the unsupported type
+	 */
+	public static NaftahBugError newNaftahUnsupportedTypeError(Object object) {
+		return new NaftahBugError("نوع غير مدعوم: " + (Objects.isNull(object) ? null : object.getClass().getName()));
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that a combination of values has
+	 * unsupported runtime types.
+	 *
+	 * <p>The generated error message is localized (Arabic) and includes the fully
+	 * qualified class names of both offending objects when available. If either
+	 * object is {@code null}, {@code null} is reported explicitly for that position
+	 * in the message.</p>
+	 *
+	 * <p>This overload is typically used when validating operations involving two
+	 * operands or values whose types are incompatible or unsupported in combination.</p>
+	 *
+	 * <p>This error does not include source location information and is intended for
+	 * internal or runtime type validation failures.</p>
+	 *
+	 * @param object  the first object with an unsupported runtime type; may be {@code null}
+	 * @param object1 the second object with an unsupported runtime type; may be {@code null}
+	 * @return a {@link NaftahBugError} describing the unsupported types
+	 */
+	public static NaftahBugError newNaftahUnsupportedTypeError(Object object, Object object1) {
+		return new NaftahBugError("نوع غير مدعوم: %s, %s"
+				.formatted( Objects.isNull(object) ? null : object.getClass().getName(),
+							Objects.isNull(object1) ? null : object1.getClass().getName()));
+	}
 }
