@@ -2031,7 +2031,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								دوال:الخيوط::اوقف_المهمة(شغل)
 								دوال:الخيوط::المهمة_حية(شغل)
 								""",
-								false,
+								true,
 								null),
 					Arguments
 							.of(true,
