@@ -8,8 +8,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.utils.tuple.ImmutablePair;
 
 import static java.math.MathContext.DECIMAL128;
 

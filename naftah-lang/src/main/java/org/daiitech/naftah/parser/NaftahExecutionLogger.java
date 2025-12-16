@@ -345,6 +345,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ValueExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.TypeExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ParenthesisExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -423,6 +426,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.VarTypeContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ComplexTypeContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.BuiltInTypeContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -433,6 +439,9 @@ public final class NaftahExecutionLogger {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.QualifiedNameCallContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ComplexBuiltInContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.BuiltInContext context) {
@@ -1649,6 +1658,21 @@ public final class NaftahExecutionLogger {
 
 	}
 
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.TypeExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											TypeExpressionContext::type -> {
+												%s
+											}
+											"""
+										.formatted(Objects.nonNull(context.type()) ?
+												context.type().getText() :
+												null));
+
+	}
+
 
 	public static String logExecution(  boolean doLog,
 										org.daiitech.naftah.parser.NaftahParser.ParenthesisExpressionContext ctx) {
@@ -1832,6 +1856,68 @@ public final class NaftahExecutionLogger {
 										.formatted(
 
 													Objects.nonNull(context.VAR()) ? context.VAR().getText() : null
+										));
+
+	}
+
+	public static String logExecution(boolean doLog, org.daiitech.naftah.parser.NaftahParser.ComplexTypeContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ComplexTypeContext::complexBuiltIn -> {
+													%s
+											}
+											"""
+										.formatted(Objects.nonNull(context.complexBuiltIn()) ?
+												context.complexBuiltIn().getText() :
+												null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ComplexBuiltInContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ComplexBuiltInContext::STRUCT -> %s
+											ComplexBuiltInContext::IMPLEMENTATION -> %s
+											ComplexBuiltInContext::PAIR -> %s
+											ComplexBuiltInContext::TRIPLE -> %s
+											ComplexBuiltInContext::LIST -> %s
+											ComplexBuiltInContext::TUPLE -> %s
+											ComplexBuiltInContext::SET -> %s
+											ComplexBuiltInContext::MAP -> %s
+											ComplexBuiltInContext::LT_SIGN -> %s
+											ComplexBuiltInContext::type -> {
+												%s
+											}
+											ComplexBuiltInContext::GT_SIGN -> %s
+											"""
+										.formatted( Objects.nonNull(context.STRUCT()) ?
+															context.STRUCT().getText() :
+															null,
+													Objects.nonNull(context.IMPLEMENTATION()) ?
+															context.IMPLEMENTATION().getText() :
+															null,
+													Objects.nonNull(context.PAIR()) ? context.PAIR().getText() : null,
+													Objects.nonNull(context.TRIPLE()) ?
+															context.TRIPLE().getText() :
+															null,
+													Objects.nonNull(context.LIST()) ? context.LIST().getText() : null,
+													Objects.nonNull(context.TUPLE()) ? context.TUPLE().getText() : null,
+													Objects.nonNull(context.SET()) ?
+															context.SET().getText() :
+															null,
+													Objects.nonNull(context.MAP()) ?
+															context.MAP().getText() :
+															null,
+													Objects.nonNull(context.LT_TYPE_SIGN()) ?
+															context.LT_TYPE_SIGN().getText() :
+															null,
+													join(context.type()),
+													Objects.nonNull(context.GT_TYPE_SIGN()) ?
+															context.GT_TYPE_SIGN().getText() :
+															null
 										));
 
 	}

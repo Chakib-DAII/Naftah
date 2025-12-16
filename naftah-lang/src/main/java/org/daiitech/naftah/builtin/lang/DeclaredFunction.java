@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.NaftahParserHelper;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 /**
  * Definition of a function declared in the Naftah script.
@@ -54,7 +55,7 @@ public final class DeclaredFunction extends Declaration {
 	/**
 	 * The resolved return type of the function.
 	 */
-	private Object returnType;
+	private JavaType returnType;
 
 	/**
 	 * Private constructor that initializes the function from its parse context.
@@ -172,7 +173,7 @@ public final class DeclaredFunction extends Declaration {
 	 *
 	 * @param returnType the return type to set
 	 */
-	public void setReturnType(Object returnType) {
+	public void setReturnType(JavaType returnType) {
 		this.returnType = returnType;
 	}
 

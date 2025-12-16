@@ -8,6 +8,7 @@ import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.booleanToInt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
@@ -1242,10 +1243,10 @@ public enum BinaryOperation implements Operation {
 				.formatted( getFormattedTokenSymbols(binaryOperation.toString(), false),
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(left.getClass().getName()) :
-									getNaftahType(PARSER_VOCABULARY, left.getClass()),
+									getNaftahType(PARSER_VOCABULARY, JavaType.of(left.getClass())),
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(right.getClass().getName()) :
-									getNaftahType(PARSER_VOCABULARY, right.getClass())));
+									getNaftahType(PARSER_VOCABULARY, JavaType.of(right.getClass()))));
 	}
 
 	/**

@@ -3,7 +3,7 @@ package org.daiitech.naftah.parser.provider.script;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;

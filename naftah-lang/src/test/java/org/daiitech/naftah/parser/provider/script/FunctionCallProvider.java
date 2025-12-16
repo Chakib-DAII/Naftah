@@ -11,7 +11,8 @@ import org.daiitech.naftah.NaftahSystem;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
-import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -624,6 +625,237 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر(6 ، 3)", 2, null),
 					Arguments.of(true, "عكس_الإشارة(6)", -6, null),
 					Arguments.of(true, "نفي_منطقي(6)", -6, null),
+					Arguments.of(true, "حجم(6)", 1, null),
+					Arguments.of(true, "نوع(6)", "'أي_عدد'", null),
+					Arguments.of(true, "مثيل_من(6 , أي_عدد)", true, null),
+					Arguments.of(true, "مثيل_من(6 , أي_نوع)", true, null),
+					Arguments.of(true, "نوع(صحيح)", "'بوليان' أو 'منطقي'", null),
+					Arguments.of(true, "نوع(خطأ)", "'بوليان' أو 'منطقي'", null),
+					Arguments.of(true, "مثيل_من(صحيح , منطقي)", true, null),
+					Arguments.of(true, "مثيل_من(صائب , منطقي)", true, null),
+					Arguments.of(true, "مثيل_من(حقيقي , منطقي)", true, null),
+					Arguments.of(true, "مثيل_من(حقيقي , أي_نوع)", true, null),
+					Arguments.of(true, "مثيل_من(خطأ , بوليان)", true, null),
+					Arguments.of(true, "مثيل_من(خاطئ , بوليان)", true, null),
+					Arguments.of(true, "مثيل_من(زائف , بوليان)", true, null),
+					Arguments.of(true, "مثيل_من(زائف , أي_نوع)", true, null),
+					Arguments.of(true, "نوع('6')", "'حرف' أو 'رمز'", null),
+					Arguments.of(true, "مثيل_من('6' , رمز)", true, null),
+					Arguments.of(true, "مثيل_من('6' , حرف)", true, null),
+					Arguments.of(true, "مثيل_من('6' , أي_نوع)", true, null),
+					Arguments.of(true, "نوع(\"666\")", "'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز'", null),
+					Arguments.of(true, "مثيل_من(\"666\" , تسلسل_أحرف)", true, null),
+					Arguments.of(true, "مثيل_من(\"666\" , تسلسل_حروف)", true, null),
+					Arguments.of(true, "مثيل_من(\"666\" , تسلسل_رموز)", true, null),
+					Arguments.of(true, "مثيل_من(\"666\" , أي_نوع)", true, null),
+					Arguments.of(true, "نوع(@{})", "'كائن' أو 'هيكل'", null),
+					Arguments.of(true, "مثيل_من(@{} , هيكل)", true, null),
+					Arguments.of(true, "مثيل_من(@{} , كائن)", true, null),
+					Arguments.of(true, """
+										متغير شخص: كائن تعيين {
+										متغير الاسم: تسلسل_رموز تعيين "أنيس",
+										متغير العمر: قصير_جدا تعيين 32,
+										متغير متزوج: منطقي تعيين خطأ
+										}
+										نوع(شخص)""", "'كائن' أو 'هيكل'", null),
+					Arguments.of(true, """
+										متغير شخص: كائن تعيين {
+										متغير الاسم: تسلسل_رموز تعيين "أنيس",
+										متغير العمر: قصير_جدا تعيين 32,
+										متغير متزوج: منطقي تعيين خطأ
+										}
+										مثيل_من(شخص , هيكل)""", true, null),
+					Arguments.of(true, """
+										متغير شخص: كائن تعيين {
+										متغير الاسم: تسلسل_رموز تعيين "أنيس",
+										متغير العمر: قصير_جدا تعيين 32,
+										متغير متزوج: منطقي تعيين خطأ
+										}
+										مثيل_من(شخص , كائن)""", true, null),
+					Arguments
+							.of(true,
+								"""
+								متغير تركيبة_ تعيين (٣٢، ٤٥)
+								نوع(تركيبة_)""",
+								"'زوج' أو 'مفتاح_و_قيمة' أو 'زوج_مفتاح_و_قيمة'<: 'أي_عدد', 'أي_عدد' :>",
+								null),
+					Arguments
+							.of(true,
+								"""
+								متغير تركيبة_:زوج<:أي_عدد,أي_عدد:> تعيين (٣٢، ٤٥)
+								نوع(تركيبة_)""",
+								"'زوج' أو 'مفتاح_و_قيمة' أو 'زوج_مفتاح_و_قيمة'<: 'أي_عدد', 'أي_عدد' :>",
+								null),
+					Arguments
+							.of(true,
+								"""
+								متغير تركيبة_:زوج_مفتاح_و_قيمة<:عدد_طويل,عدد_طويل:> تعيين (٣٢، ٤٥)
+								نوع(تركيبة_)""",
+								"'زوج' أو 'مفتاح_و_قيمة' أو 'زوج_مفتاح_و_قيمة'<: 'أي_عدد', 'أي_عدد' :>",
+								null),
+					Arguments.of(true, """
+										متغير تركيبة_ تعيين (٣٢، ٤٥)
+										مثيل_من(تركيبة_ , زوج<:أي_عدد,أي_عدد:>)""", true, null),
+					Arguments.of(true, """
+										متغير تركيبة_ تعيين (٣٢، ٤٥)
+										مثيل_من(تركيبة_ , تركيبة)""", true, null),
+					Arguments.of(true, """
+										متغير تركيبة_:زوج<:أي_عدد,أي_عدد:> تعيين (٣٢، ٤٥)
+										مثيل_من(تركيبة_ , زوج_مفتاح_و_قيمة<:عدد_طويل,عدد_طويل:>)""", true, null),
+					Arguments.of(true, """
+										متغير تركيبة_:زوج_مفتاح_و_قيمة<:عدد_طويل,عدد_طويل:> تعيين (٣٢، ٤٥)
+										مثيل_من(تركيبة_ , مفتاح_و_قيمة<:أي_عدد,أي_عدد:>)""", true, null),
+					Arguments
+							.of(true,
+								"""
+								متغير تركيبة_ تعيين (٣٢، ٤٥، ٤٥)
+								نوع(تركيبة_)""",
+								"'ثلاثي' أو 'ثلاثي_القيم'<: 'أي_عدد', 'أي_عدد', 'أي_عدد' :>",
+								null),
+					Arguments
+							.of(true,
+								"""
+								متغير تركيبة_:ثلاثي_القيم<:أي_عدد,أي_عدد,أي_عدد:> تعيين (٣٢، ٤٥، ٤٥)
+								نوع(تركيبة_)""",
+								"'ثلاثي' أو 'ثلاثي_القيم'<: 'أي_عدد', 'أي_عدد', 'أي_عدد' :>",
+								null),
+					Arguments
+							.of(true,
+								"""
+								متغير تركيبة_:ثلاثي_القيم<:عدد_طويل,عدد_طويل,عدد_طويل:> تعيين (٣٢، ٤٥، ٤٥)
+								نوع(تركيبة_)""",
+								"'ثلاثي' أو 'ثلاثي_القيم'<: 'أي_عدد', 'أي_عدد', 'أي_عدد' :>",
+								null),
+					Arguments.of(true, """
+										متغير تركيبة_ تعيين (٣٢، ٤٥، ٤٥)
+										مثيل_من(تركيبة_ , ثلاثي_القيم<:أي_عدد,أي_عدد,أي_عدد:>)""", true, null),
+					Arguments.of(true, """
+										متغير تركيبة_ تعيين (٣٢، ٤٥، ٤٥)
+										مثيل_من(تركيبة_ , تركيبة)""", true, null),
+					Arguments
+							.of(true,
+								"""
+								متغير تركيبة_:ثلاثي_القيم<:أي_عدد,أي_عدد,أي_عدد:> تعيين (٣٢، ٤٥، ٤٥)
+								مثيل_من(تركيبة_ , ثلاثي_القيم<:عدد_طويل,عدد_طويل,عدد_طويل:>)""",
+								true,
+								null),
+					Arguments.of(true, """
+										متغير تركيبة_:ثلاثي_القيم<:عدد_طويل,عدد_طويل,عدد_طويل:> تعيين (٣٢، ٤٥، ٤٥)
+										مثيل_من(تركيبة_ , ثلاثي<:أي_عدد,عدد_طويل,أي_عدد:>)""", true, null),
+					Arguments.of(true, """
+																	ثابت درجات تعيين []
+										نوع(درجات)""", "'قائمة'<: 'أي_نوع' أو 'أي_نمط' :>", null),
+					Arguments.of(true, """
+																	ثابت درجات: قائمة<:أي_عدد:> تعيين [٨٥، ٩٠، ٧٨، ٩٢]
+										نوع(درجات)""", "'قائمة'<: 'أي_عدد' :>", null),
+					Arguments
+							.of(true,
+								"""
+															ثابت درجات: قائمة<:عدد_طويل_جدا:> تعيين [٨٥، ٩٠، ٧٨، ٩٢]
+								نوع(درجات)""",
+								"'قائمة'<: 'أي_عدد' :>",
+								null),
+					Arguments.of(true, """
+																	ثابت درجات تعيين []
+										مثيل_من(درجات , قائمة<:أي_نمط:>)""", true, null),
+					Arguments.of(true, """
+																	ثابت درجات: قائمة<:أي_عدد:> تعيين [٨٥، ٩٠، ٧٨، ٩٢]
+										مثيل_من(درجات , قائمة<:أي_عدد:>)""", true, null),
+					Arguments
+							.of(true,
+								"""
+															ثابت درجات: قائمة<:عدد_طويل_جدا:> تعيين [٨٥، ٩٠، ٧٨، ٩٢]
+								مثيل_من(درجات , قائمة<:طويل:>)""",
+								true,
+								null),
+
+
+					Arguments.of(true, """
+																	ثابت درجات تعيين #{}
+										نوع(درجات)""", "'مجموعة'<: 'أي_نوع' أو 'أي_نمط' :>", null),
+					Arguments
+							.of(true,
+								"""
+															ثابت درجات: مجموعة<:أي_عدد:> تعيين {٨٥، ٩٠، ٧٨، ٩٢}
+								نوع(درجات)""",
+								"'مجموعة'<: 'أي_عدد' :>",
+								null),
+					Arguments
+							.of(true,
+								"""
+															ثابت درجات: مجموعة<:عدد_طويل_جدا:> تعيين {٨٥، ٩٠، ٧٨، ٩٢}
+								نوع(درجات)""",
+								"'مجموعة'<: 'أي_عدد' :>",
+								null),
+					Arguments.of(true, """
+																	ثابت درجات تعيين #{}
+										مثيل_من(درجات , مجموعة<:أي_نمط:>)""", true, null),
+					Arguments.of(true, """
+																	ثابت درجات: مجموعة<:أي_عدد:> تعيين {٨٥، ٩٠، ٧٨، ٩٢}
+										مثيل_من(درجات , مجموعة<:أي_عدد:>)""", true, null),
+					Arguments
+							.of(true,
+								"""
+															ثابت درجات: مجموعة<:عدد_طويل_جدا:> تعيين {٨٥، ٩٠، ٧٨، ٩٢}
+								مثيل_من(درجات , مجموعة<:طويل:>)""",
+								true,
+								null),
+
+
+					Arguments
+							.of(true,
+								"""
+															ثابت درجات تعيين ${}
+								نوع(درجات)""",
+								"'مصفوفة_ترابطية'<: 'أي_نوع' أو 'أي_نمط', 'أي_نوع' أو 'أي_نمط' :>",
+								null),
+					Arguments
+							.of(true,
+								"""
+																ثابت درجات: مصفوفة_ترابطية<:تسلسل_أحرف,أي_نوع:> تعيين {
+									"الاسم": "سارة",
+									"العناوين": ["المنزل", "العمل"],
+									"الأرقام": (١٠٠١، ٢٠٠٢)
+								}
+										نوع(درجات)""",
+								"'مصفوفة_ترابطية'<: 'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز', 'أي_نوع' أو " + "'أي_نمط' :>",
+								null),
+					Arguments
+							.of(true,
+								"""
+																ثابت درجات: مصفوفة_ترابطية<:تسلسل_رموز,أي_نوع:> تعيين {
+									"الاسم": "سارة",
+									"العناوين": ["المنزل", "العمل"],
+									"الأرقام": (١٠٠١، ٢٠٠٢)
+								}
+										نوع(درجات)""",
+								"'مصفوفة_ترابطية'<: 'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز', 'أي_نوع' أو " + "'أي_نمط' :>",
+								null),
+					Arguments.of(true, """
+																	ثابت درجات تعيين ${}
+										مثيل_من(درجات , مصفوفة_ترابطية<:أي_نمط,أي_نمط:>)""", true, null),
+					Arguments
+							.of(true,
+								"""
+																ثابت درجات: مصفوفة_ترابطية<:تسلسل_حروف,أي_نوع:> تعيين {
+									"الاسم": "سارة",
+									"العناوين": ["المنزل", "العمل"],
+									"الأرقام": (١٠٠١، ٢٠٠٢)
+								}
+										مثيل_من(درجات , مصفوفة_ترابطية<:تسلسل_رموز,أي_نوع:>)""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+																ثابت درجات: مصفوفة_ترابطية<:تسلسل_حروف,أي_نوع:> تعيين {
+									"الاسم": "سارة",
+									"العناوين": ["المنزل", "العمل"],
+									"الأرقام": (١٠٠١، ٢٠٠٢)
+								}
+										مثيل_من(درجات , مصفوفة_ترابطية<:تسلسل_حروف,أي_نوع:>)""",
+								true,
+								null),
 					Arguments.of(true, "اقرأ_متغير_بيئة(\"JAVA_HOME\")", System.getenv("JAVA_HOME"), null),
 					Arguments.of(true, "اقرأ_خاصية(\"os.name\")", System.getProperty("os.name"), null),
 					Arguments.of(true, "اكتب_خاصية(\"my.prop\", \"value\")", None.get(), null),
@@ -652,7 +884,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "إجمع({1 , 2}, {3 , 5})", 11, null),
 					Arguments.of(true, "دوال:الحزم::إجمع({1 , 2}, {3 , 5})", List.of(4, 7), null),
 					Arguments.of(true, "إجمع((1 , 2), (1 , 2))", 6, null),
-					Arguments.of(true, "دوال:الحزم::إجمع((1 , 2), (1 , 2))", List.of(2, 4), null),
+					Arguments.of(true, "دوال:الحزم::إجمع((1 , 2), (1 , 2))", Pair.of(2, 4), null),
 					Arguments.of(true, "إجمع([1 ,2 , 3], 10)", 36, null),
 					Arguments.of(true, "دوال:الحزم::إجمع([1 ,2 , 3], 10)", List.of(11, 12, 13), null),
 					Arguments.of(true, "إجمع(10 , [1 ,2 , 3])", 36, null),
@@ -678,7 +910,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "جمع_عنصر_ب_عنصر({1 , 2}, {3 , 5})", 9, null),
 					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر({1 , 2}, {3 , 5})", List.of(2, 7), null),
 					Arguments.of(true, "جمع_عنصر_ب_عنصر((1 , 2), (1 , 2))", 0, null),
-					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر((1 , 2), (1 , 2))", List.of(0, 0), null),
+					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر((1 , 2), (1 , 2))", Pair.of(0, 0), null),
 					Arguments.of(true, "جمع_عنصر_ب_عنصر([1 ,2 , 3], 10)", 28, null),
 					Arguments.of(true, "دوال:الحزم::جمع_عنصر_ب_عنصر([1 ,2 , 3], 10)", List.of(11, 8, 9), null),
 					Arguments.of(true, "جمع_عنصر_ب_عنصر(10 , [1 ,2 , 3])", 28, null),
@@ -699,7 +931,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "و_منطقي({1 , 2}, {3 , 5})", 8, null),
 					Arguments.of(true, "دوال:الحزم::و_منطقي({1 , 2}, {3 , 5})", List.of(3, 5), null),
 					Arguments.of(true, "و_منطقي((1 , 2), (1 , 2))", 3, null),
-					Arguments.of(true, "دوال:الحزم::و_منطقي((1 , 2), (1 , 2))", List.of(1, 2), null),
+					Arguments.of(true, "دوال:الحزم::و_منطقي((1 , 2), (1 , 2))", Pair.of(1, 2), null),
 					Arguments.of(true, "و_منطقي([1 ,2 , 3], 10)", 30, null),
 					Arguments.of(true, "دوال:الحزم::و_منطقي([1 ,2 , 3], 10)", List.of(10, 10, 10), null),
 					Arguments.of(true, "و_منطقي(10 , [1 ,2 , 3])", 6, null),
@@ -720,7 +952,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "أو_منطقي({1 , 2}, {3 , 5})", 3, null),
 					Arguments.of(true, "دوال:الحزم::أو_منطقي({1 , 2}, {3 , 5})", List.of(1, 2), null),
 					Arguments.of(true, "أو_منطقي((1 , 2), (1 , 2))", 3, null),
-					Arguments.of(true, "دوال:الحزم::أو_منطقي((1 , 2), (1 , 2))", List.of(1, 2), null),
+					Arguments.of(true, "دوال:الحزم::أو_منطقي((1 , 2), (1 , 2))", Pair.of(1, 2), null),
 					Arguments.of(true, "أو_منطقي([1 ,2 , 3], 10)", 6, null),
 					Arguments.of(true, "دوال:الحزم::أو_منطقي([1 ,2 , 3], 10)", List.of(1, 2, 3), null),
 					Arguments.of(true, "أو_منطقي(10 , [1 ,2 , 3])", 30, null),
@@ -741,7 +973,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "إطرح({1 , 2}, {3 , 5})", -5, null),
 					Arguments.of(true, "دوال:الحزم::إطرح({1 , 2}, {3 , 5})", List.of(-2, -3), null),
 					Arguments.of(true, "إطرح((1 , 2), (1 , 2))", 0, null),
-					Arguments.of(true, "دوال:الحزم::إطرح((1 , 2), (1 , 2))", List.of(0, 0), null),
+					Arguments.of(true, "دوال:الحزم::إطرح((1 , 2), (1 , 2))", Pair.of(0, 0), null),
 					Arguments.of(true, "إطرح([1 ,2 , 3], 10)", -24, null),
 					Arguments.of(true, "دوال:الحزم::إطرح([1 ,2 , 3], 10)", List.of(-9, -8, -7), null),
 					Arguments.of(true, "إطرح(10 , [1 ,2 , 3])", 24, null),
@@ -762,7 +994,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "طرح_عنصر_ب_عنصر({1 , 2}, {3 , 5})", -11, null),
 					Arguments.of(true, "دوال:الحزم::طرح_عنصر_ب_عنصر({1 , 2}, {3 , 5})", List.of(-3, -8), null),
 					Arguments.of(true, "طرح_عنصر_ب_عنصر((1 , 2), (1 , 2))", -2, null),
-					Arguments.of(true, "دوال:الحزم::طرح_عنصر_ب_عنصر((1 , 2), (1 , 2))", List.of(-1, -1), null),
+					Arguments.of(true, "دوال:الحزم::طرح_عنصر_ب_عنصر((1 , 2), (1 , 2))", Pair.of(-1, -1), null),
 					Arguments.of(true, "طرح_عنصر_ب_عنصر([1 ,2 , 3], 10)", -31, null),
 					Arguments.of(true, "دوال:الحزم::طرح_عنصر_ب_عنصر([1 ,2 , 3], 10)", List.of(-12, -9, -10), null),
 					Arguments.of(true, "طرح_عنصر_ب_عنصر(10 , [1 ,2 , 3])", -31, null),
@@ -787,7 +1019,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "إضرب({1 , 2}, {3 , 5})", 13, null),
 					Arguments.of(true, "دوال:الحزم::إضرب({1 , 2}, {3 , 5})", List.of(3, 10), null),
 					Arguments.of(true, "إضرب((1 , 2), (1 , 2))", 5, null),
-					Arguments.of(true, "دوال:الحزم::إضرب((1 , 2), (1 , 2))", List.of(1, 4), null),
+					Arguments.of(true, "دوال:الحزم::إضرب((1 , 2), (1 , 2))", Pair.of(1, 4), null),
 					Arguments.of(true, "إضرب([1 ,2 , 3], 10)", 60, null),
 					Arguments.of(true, "دوال:الحزم::إضرب([1 ,2 , 3], 10)", List.of(10, 20, 30), null),
 					Arguments.of(true, "إضرب(10 , [1 ,2 , 3])", 60, null),
@@ -808,7 +1040,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "ضرب_عنصر_ب_عنصر({1 , 2}, {3 , 5})", 1, null),
 					Arguments.of(true, "دوال:الحزم::ضرب_عنصر_ب_عنصر({1 , 2}, {3 , 5})", List.of(1, 0), null),
 					Arguments.of(true, "ضرب_عنصر_ب_عنصر((1 , 2), (1 , 2))", 3, null),
-					Arguments.of(true, "دوال:الحزم::ضرب_عنصر_ب_عنصر((1 , 2), (1 , 2))", List.of(1, 2), null),
+					Arguments.of(true, "دوال:الحزم::ضرب_عنصر_ب_عنصر((1 , 2), (1 , 2))", Pair.of(1, 2), null),
 					Arguments.of(true, "ضرب_عنصر_ب_عنصر([1 ,2 , 3], 10)", 4, null),
 					Arguments
 							.of(true,
@@ -833,7 +1065,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "أس({1 , 2}, {3 , 5})", 33., null),
 					Arguments.of(true, "دوال:الحزم::أس({1 , 2}, {3 , 5})", List.of(1., 32.), null),
 					Arguments.of(true, "أس((1 , 2), (1 , 2))", 5., null),
-					Arguments.of(true, "دوال:الحزم::أس((1 , 2), (1 , 2))", List.of(1., 4.), null),
+					Arguments.of(true, "دوال:الحزم::أس((1 , 2), (1 , 2))", Pair.of(1., 4.), null),
 					Arguments.of(true, "أس([1 ,2 , 3], 10)", 60074., null),
 					Arguments.of(true, "دوال:الحزم::أس([1 ,2 , 3], 10)", List.of(1., 1024., 59049.), null),
 					Arguments.of(true, "أس(10 , [1 ,2 , 3])", 1110., null),
@@ -854,7 +1086,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "إقسم({1 , 2}, {3 , 5})", 0, null),
 					Arguments.of(true, "دوال:الحزم::إقسم({1 , 2}, {3 , 5})", List.of(0, 0), null),
 					Arguments.of(true, "إقسم((1 , 2), (1 , 2))", 2, null),
-					Arguments.of(true, "دوال:الحزم::إقسم((1 , 2), (1 , 2))", List.of(1, 1), null),
+					Arguments.of(true, "دوال:الحزم::إقسم((1 , 2), (1 , 2))", Pair.of(1, 1), null),
 					Arguments.of(true, "إقسم([1 ,2 , 3], 10)", 0, null),
 					Arguments.of(true, "دوال:الحزم::إقسم([1 ,2 , 3], 10)", List.of(0, 0, 0), null),
 					Arguments.of(true, "إقسم(10 , [1 ,2 , 3])", 18, null),
@@ -875,7 +1107,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "قسمة_عنصر_ب_عنصر({1 , 2}, {3 , 5})", 0, null),
 					Arguments.of(true, "دوال:الحزم::قسمة_عنصر_ب_عنصر({1 , 2}, {3 , 5})", List.of(0, 0), null),
 					Arguments.of(true, "قسمة_عنصر_ب_عنصر((1 , 2), (1 , 2))", 0, null),
-					Arguments.of(true, "دوال:الحزم::قسمة_عنصر_ب_عنصر((1 , 2), (1 , 2))", List.of(0, 0), null),
+					Arguments.of(true, "دوال:الحزم::قسمة_عنصر_ب_عنصر((1 , 2), (1 , 2))", Pair.of(0, 0), null),
 					Arguments
 							.of(false,
 								"قسمة_عنصر_ب_عنصر([1 ,2 , 3], 10)",
@@ -914,7 +1146,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "باقي_القسمة({1 , 2}, {3 , 5})", 3, null),
 					Arguments.of(true, "دوال:الحزم::باقي_القسمة({1 , 2}, {3 , 5})", List.of(1, 2), null),
 					Arguments.of(true, "باقي_القسمة((1 , 2), (1 , 2))", 0, null),
-					Arguments.of(true, "دوال:الحزم::باقي_القسمة((1 , 2), (1 , 2))", List.of(0, 0), null),
+					Arguments.of(true, "دوال:الحزم::باقي_القسمة((1 , 2), (1 , 2))", Pair.of(0, 0), null),
 					Arguments.of(true, "باقي_القسمة([1 ,2 , 3], 10)", 6, null),
 					Arguments.of(true, "دوال:الحزم::باقي_القسمة([1 ,2 , 3], 10)", List.of(1, 2, 3), null),
 					Arguments.of(true, "باقي_القسمة(10 , [1 ,2 , 3])", 1, null),
@@ -946,7 +1178,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::باقي_القسمة_عنصر_ب_عنصر((1 , 2), (1 , 2))",
-								List.of(0, 0),
+								Pair.of(0, 0),
 								null),
 					Arguments.of(true, "باقي_القسمة_عنصر_ب_عنصر([1 ,2 , 3], 10)", 2, null),
 					Arguments
@@ -976,7 +1208,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "هل_يساوي({1 , 2}, {3 , 5})", false, null),
 					Arguments.of(true, "دوال:الحزم::هل_يساوي({1 , 2}, {3 , 5})", List.of(false, false), null),
 					Arguments.of(true, "هل_يساوي((1 , 2), (1 , 2))", true, null),
-					Arguments.of(true, "دوال:الحزم::هل_يساوي((1 , 2), (1 , 2))", List.of(true, true), null),
+					Arguments.of(true, "دوال:الحزم::هل_يساوي((1 , 2), (1 , 2))", Pair.of(true, true), null),
 					Arguments.of(true, "هل_يساوي([1 ,2 , 3], 10)", false, null),
 					Arguments.of(true, "دوال:الحزم::هل_يساوي([1 ,2 , 3], 10)", List.of(false, false, false), null),
 					Arguments.of(true, "هل_يساوي(10 , [1 ,2 , 3])", false, null),
@@ -1001,7 +1233,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "هل_لا_يساوي({1 , 2}, {3 , 5})", true, null),
 					Arguments.of(true, "دوال:الحزم::هل_لا_يساوي({1 , 2}, {3 , 5})", List.of(true, true), null),
 					Arguments.of(true, "هل_لا_يساوي((1 , 2), (1 , 2))", false, null),
-					Arguments.of(true, "دوال:الحزم::هل_لا_يساوي((1 , 2), (1 , 2))", List.of(false, false), null),
+					Arguments.of(true, "دوال:الحزم::هل_لا_يساوي((1 , 2), (1 , 2))", Pair.of(false, false), null),
 					Arguments.of(true, "هل_لا_يساوي([1 ,2 , 3], 10)", true, null),
 					Arguments.of(true, "دوال:الحزم::هل_لا_يساوي([1 ,2 , 3], 10)", List.of(true, true, true), null),
 					Arguments.of(true, "هل_لا_يساوي(10 , [1 ,2 , 3])", true, null),
@@ -1026,7 +1258,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "هل_أصغر_من({1 , 2}, {3 , 5})", true, null),
 					Arguments.of(true, "دوال:الحزم::هل_أصغر_من({1 , 2}, {3 , 5})", List.of(true, true), null),
 					Arguments.of(true, "هل_أصغر_من((1 , 2), (1 , 2))", false, null),
-					Arguments.of(true, "دوال:الحزم::هل_أصغر_من((1 , 2), (1 , 2))", List.of(false, false), null),
+					Arguments.of(true, "دوال:الحزم::هل_أصغر_من((1 , 2), (1 , 2))", Pair.of(false, false), null),
 					Arguments.of(true, "هل_أصغر_من([1 ,2 , 3], 10)", true, null),
 					Arguments.of(true, "دوال:الحزم::هل_أصغر_من([1 ,2 , 3], 10)", List.of(true, true, true), null),
 					Arguments.of(true, "هل_أصغر_من(10 , [1 ,2 , 3])", false, null),
@@ -1062,7 +1294,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::هل_أصغر_أو_يساوي((1 , 2), (1 , 2))",
-								List.of(true, true),
+								Pair.of(true, true),
 								null),
 					Arguments.of(true, "هل_أصغر_أو_يساوي([1 ,2 , 3], 10)", true, null),
 					Arguments
@@ -1092,7 +1324,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments.of(true, "هل_أكبر_من({1 , 2}, {3 , 5})", false, null),
 					Arguments.of(true, "دوال:الحزم::هل_أكبر_من({1 , 2}, {3 , 5})", List.of(false, false), null),
 					Arguments.of(true, "هل_أكبر_من((1 , 2), (1 , 2))", false, null),
-					Arguments.of(true, "دوال:الحزم::هل_أكبر_من((1 , 2), (1 , 2))", List.of(false, false), null),
+					Arguments.of(true, "دوال:الحزم::هل_أكبر_من((1 , 2), (1 , 2))", Pair.of(false, false), null),
 					Arguments.of(true, "هل_أكبر_من([1 ,2 , 3], 10)", false, null),
 					Arguments
 							.of(true,
@@ -1132,7 +1364,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::هل_أكبر_أو_يساوي((1 , 2), (1 , 2))",
-								List.of(true, true),
+								Pair.of(true, true),
 								null),
 					Arguments.of(true, "هل_أكبر_أو_يساوي([1 ,2 , 3], 10)", false, null),
 					Arguments
@@ -1173,7 +1405,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::أو_بتي((1 , 2), (1 , 2))",
-								List.of(1, 2),
+								Pair.of(1, 2),
 								null),
 					Arguments.of(true, "أو_بتي([1 ,2 , 3], 10)", 32, null),
 					Arguments
@@ -1214,7 +1446,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::حصري_أو_بتي((1 , 2), (1 , 2))",
-								List.of(0, 0),
+								Pair.of(0, 0),
 								null),
 					Arguments.of(true, "حصري_أو_بتي([1 ,2 , 3], 10)", 28, null),
 					Arguments
@@ -1255,7 +1487,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::و_بتي((1 , 2), (1 , 2))",
-								List.of(1, 2),
+								Pair.of(1, 2),
 								null),
 					Arguments.of(true, "و_بتي([1 ,2 , 3], 10)", 4, null),
 					Arguments
@@ -1296,7 +1528,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::ليس_بتي((1 , 2))",
-								List.of(-2, -3),
+								Pair.of(-2, -3),
 								null),
 					Arguments
 							.of(false,
@@ -1330,7 +1562,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::زيادة_قبلية((1 , 2))",
-								List.of(2, 3),
+								Pair.of(2, 3),
 								null),
 					Arguments.of(true, "زيادة_بعدية({أ:1 , ب:2})", 3, null),
 					Arguments
@@ -1359,7 +1591,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::زيادة_بعدية((1 , 2))",
-								List.of(1, 2),
+								Pair.of(1, 2),
 								null),
 					Arguments.of(true, "نقصان_قبلي({أ:1 , ب:2})", 1, null),
 					Arguments
@@ -1388,7 +1620,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::نقصان_قبلي((1 , 2))",
-								List.of(0, 1),
+								Pair.of(0, 1),
 								null),
 					Arguments.of(true, "نقصان_بعدي({أ:1 , ب:2})", 3, null),
 					Arguments
@@ -1417,7 +1649,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::نقصان_بعدي((1 , 2))",
-								List.of(1, 2),
+								Pair.of(1, 2),
 								null),
 
 					Arguments.of(true, "عكس_الإشارة({أ:1 , ب:2})", -3, null),
@@ -1447,7 +1679,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::عكس_الإشارة((1 , 2))",
-								List.of(-1, -2),
+								Pair.of(-1, -2),
 								null),
 					Arguments.of(true, "نفي_منطقي({أ:1 , ب:2})", -3, null),
 					Arguments
@@ -1476,23 +1708,23 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"دوال:الحزم::نفي_منطقي((1 , 2))",
-								List.of(-1, -2),
+								Pair.of(-1, -2),
 								null),
 					Arguments
 							.of(true,
 								"""
-								متغير قائمة تعيين [1 , 2 , 3]
-								دوال:الحزم::تعيين_عنصر(قائمة, 1 , 99)
-								قائمة
+								متغير قائمة_ تعيين [1 , 2 , 3]
+								دوال:الحزم::تعيين_عنصر(قائمة_, 1 , 99)
+								قائمة_
 								""",
 								List.of(1, 99, 3),
 								null),
 					Arguments
 							.of(true,
 								"""
-								متغير مجموعة تعيين {1 , 2}
-								دوال:الحزم::تعيين_عنصر(مجموعة, 1 , 99)
-								مجموعة
+								متغير مجموعة_ تعيين {1 , 2}
+								دوال:الحزم::تعيين_عنصر(مجموعة_, 1 , 99)
+								مجموعة_
 								""",
 								List.of(1, 99),
 								null)
@@ -1595,23 +1827,22 @@ public class FunctionCallProvider implements ArgumentsProvider {
 											3
 										),
 								null),
-//	TODO: uncomment after adding pair support
-//					Arguments
-//							.of(true,
-//								"""
-//								ثابت ت تعيين { 'أ': 1 , 'ب': 2 }
-//								دوال:الحزم::اضافة_عنصر(ت, ('ت':3))
-//								ت
-//								""",
-//								Map
-//										.of('أ',
-//											1,
-//											'ب',
-//											2,
-//											'ت',
-//											3
-//										),
-//								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين { 'أ': 1 , 'ب': 2 }
+								دوال:الحزم::اضافة_عنصر(ت, ('ت', 3))
+								ت
+								""",
+								Map
+										.of('أ',
+											1,
+											'ب',
+											2,
+											'ت',
+											3
+										),
+								null),
 					Arguments
 							.of(true,
 								"""
@@ -1887,10 +2118,10 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(false,
 								"""
-								جافا:لغة:كائن::ابكديفجهجكلمنوبكرستيفوكسز()
+								جافا:لغة:كائن_::ابكديفجهجكلمنوبكرستيفوكسز()
 								""",
 								null,
-								newNaftahInvocableNotFoundError("جافا:لغة:كائن::ابكديفجهجكلمنوبكرستيفوكسز",
+								newNaftahInvocableNotFoundError("جافا:لغة:كائن_::ابكديفجهجكلمنوبكرستيفوكسز",
 																1,
 																0)),
 					Arguments
@@ -2209,7 +2440,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								سلسلة::إلى_سلسلة()
 								)
 								""",
-								Tuple
+								Triple
 										.of(
 											NaftahObject.of(5),
 											NaftahObject.of("رح"),
@@ -2219,18 +2450,18 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								ثابت قائمة تعيين جافا:أدة:صفائف_القائمة([1؛100؛0])
+								ثابت قائمة_ تعيين جافا:أدة:صفائف_القائمة([1؛100؛0])
 
 								(
 								--- java.lang.List::add
-								قائمة::إضافة(100),
+								قائمة_::إضافة(100),
 								--- java.lang.List::get
-								قائمة::گت(0),
+								قائمة_::گت(0),
 								--- java.lang.List::size
-								قائمة::الحجم()
+								قائمة_::الحجم()
 								)
 								""",
-								Tuple
+								Triple
 										.of(
 											NaftahObject.of(Boolean.TRUE),
 											NaftahObject.of(1),
@@ -2250,7 +2481,7 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								اختياري::أو_لس("لغة نفطه")
 								)
 								""",
-								Tuple
+								Pair
 										.of(
 											NaftahObject.of(10),
 											NaftahObject.of(10)

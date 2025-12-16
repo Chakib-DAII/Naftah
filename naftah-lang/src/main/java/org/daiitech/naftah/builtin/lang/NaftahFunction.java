@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
@@ -111,7 +112,7 @@ public record NaftahFunction(
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(returnType.getName()) :
 									getNaftahType(  PARSER_VOCABULARY,
-													returnType),
+													JavaType.of(returnType)),
 							parameterTypes.isEmpty() ?
 									"لا شيء" :
 									parameterTypes
@@ -119,7 +120,7 @@ public record NaftahFunction(
 											.map(aClass -> Objects.isNull(PARSER_VOCABULARY) ?
 													getQualifiedName(aClass.getName()) :
 													getNaftahType(  PARSER_VOCABULARY,
-																	aClass))
+																	JavaType.of(aClass)))
 											.collect(Collectors.joining(", ")),
 							exceptionTypes.isEmpty() ?
 									"لا شيء" :
@@ -128,7 +129,7 @@ public record NaftahFunction(
 											.map(aClass -> Objects.isNull(PARSER_VOCABULARY) ?
 													getQualifiedName(aClass.getName()) :
 													getNaftahType(  PARSER_VOCABULARY,
-																	aClass))
+																	JavaType.of(aClass)))
 											.collect(Collectors.joining(", "))
 				);
 	}

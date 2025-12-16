@@ -19,10 +19,10 @@ import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
-import org.daiitech.naftah.utils.tuple.ImmutablePair;
-import org.daiitech.naftah.utils.tuple.Pair;
 
 import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
@@ -972,5 +972,59 @@ public final class ClassUtils {
 						));
 
 		return detailedString.toString();
+	}
+
+	/**
+	 * Normalizes a primitive {@link Class} to its corresponding wrapper type.
+	 *
+	 * <p>If the provided class represents a primitive type (e.g., {@code int.class}),
+	 * this method returns the corresponding wrapper class (e.g., {@link Integer}).
+	 * If the class is not primitive, it is returned unchanged.</p>
+	 *
+	 * <p>This is useful for reflective or generic type comparisons where
+	 * primitive and wrapper types should be considered equivalent.</p>
+	 *
+	 * <p>Examples:</p>
+	 * <pre>{@code
+	 * normalizePrimitive(int.class);      // returns Integer.class
+	 * normalizePrimitive(boolean.class);  // returns Boolean.class
+	 * normalizePrimitive(String.class);   // returns String.class (unchanged)
+	 * }</pre>
+	 *
+	 * @param clazz the class to normalize; must not be null
+	 * @return the wrapper class for a primitive type, or the original class if not primitive
+	 */
+	public static Class<?> normalizePrimitive(Class<?> clazz) {
+		if (!clazz.isPrimitive()) {
+			return clazz;
+		}
+		if (clazz == boolean.class) {
+			return Boolean.class;
+		}
+		if (clazz == byte.class) {
+			return Byte.class;
+		}
+		if (clazz == char.class) {
+			return Character.class;
+		}
+		if (clazz == short.class) {
+			return Short.class;
+		}
+		if (clazz == int.class) {
+			return Integer.class;
+		}
+		if (clazz == long.class) {
+			return Long.class;
+		}
+		if (clazz == float.class) {
+			return Float.class;
+		}
+		if (clazz == double.class) {
+			return Double.class;
+		}
+		if (clazz == void.class) {
+			return Void.class;
+		}
+		return clazz; // fallback, should not happen
 	}
 }

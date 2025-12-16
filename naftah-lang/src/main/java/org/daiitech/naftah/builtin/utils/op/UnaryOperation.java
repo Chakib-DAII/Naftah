@@ -8,6 +8,7 @@ import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.booleanToInt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
@@ -333,7 +334,7 @@ public enum UnaryOperation implements Operation {
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(o.getClass().getName()) :
 									getNaftahType(  PARSER_VOCABULARY,
-													o.getClass())));
+													JavaType.of(o.getClass()))));
 	}
 
 	/**

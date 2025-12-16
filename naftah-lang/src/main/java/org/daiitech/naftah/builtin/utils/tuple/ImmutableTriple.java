@@ -1,5 +1,6 @@
-package org.daiitech.naftah.utils.tuple;
+package org.daiitech.naftah.builtin.utils.tuple;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -16,7 +17,10 @@ import java.util.Objects;
  * @param <R> the right element type
  * @author Chakib Daii
  */
-public class ImmutableTriple<L, M, R> extends Triple<L, M, R> {
+public final class ImmutableTriple<L, M, R> extends Triple<L, M, R> {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * An immutable triple of nulls.

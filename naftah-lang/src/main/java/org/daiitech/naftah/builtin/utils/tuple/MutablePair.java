@@ -1,5 +1,6 @@
-package org.daiitech.naftah.utils.tuple;
+package org.daiitech.naftah.builtin.utils.tuple;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Objects;
 
@@ -13,7 +14,10 @@ import java.util.Objects;
  *
  * @author Chakib Daii
  */
-public class MutablePair<L, R> extends Pair<L, R> {
+public final class MutablePair<L, R> extends Pair<L, R> {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Creates a mutable pair of two objects inferring the generic types.

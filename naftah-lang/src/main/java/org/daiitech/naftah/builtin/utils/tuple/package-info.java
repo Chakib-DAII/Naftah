@@ -3,4 +3,4 @@
  *
  * @author Chakib Daii
  */
-package org.daiitech.naftah.utils.tuple;
+package org.daiitech.naftah.builtin.utils.tuple;

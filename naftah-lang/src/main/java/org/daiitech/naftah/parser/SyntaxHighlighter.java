@@ -8,9 +8,9 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.utils.repl.BaseHighlighter;
-import org.daiitech.naftah.utils.tuple.ImmutablePair;
-import org.daiitech.naftah.utils.tuple.Pair;
 import org.jline.reader.EOFError;
 import org.jline.reader.Highlighter;
 import org.jline.reader.LineReader;
@@ -184,9 +184,15 @@ public class SyntaxHighlighter extends BaseHighlighter {
 			case org.daiitech.naftah.parser.NaftahLexer.VAR, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN,
 					org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, org.daiitech.naftah.parser.NaftahLexer.CHAR,
 					org.daiitech.naftah.parser.NaftahLexer.BYTE, org.daiitech.naftah.parser.NaftahLexer.SHORT,
-					org.daiitech.naftah.parser.NaftahLexer.INT, org.daiitech.naftah.parser.NaftahLexer.LONG,
-					org.daiitech.naftah.parser.NaftahLexer.FLOAT, org.daiitech.naftah.parser.NaftahLexer.DOUBLE ->
-				AttributedStyle.BOLD.foreground(AttributedStyle.MAGENTA);
+					org.daiitech.naftah.parser.NaftahLexer.INT, org.daiitech.naftah.parser.NaftahLexer.BIG_INT,
+					org.daiitech.naftah.parser.NaftahLexer.LONG, org.daiitech.naftah.parser.NaftahLexer.FLOAT,
+					org.daiitech.naftah.parser.NaftahLexer.DOUBLE, org.daiitech.naftah.parser.NaftahLexer.BIG_DECIMAL,
+					org.daiitech.naftah.parser.NaftahLexer.VAR_NUMBER, org.daiitech.naftah.parser.NaftahLexer.STRUCT,
+					org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
+					org.daiitech.naftah.parser.NaftahLexer.PAIR, org.daiitech.naftah.parser.NaftahLexer.LIST,
+					org.daiitech.naftah.parser.NaftahLexer.TUPLE, org.daiitech.naftah.parser.NaftahLexer.SET,
+					org.daiitech.naftah.parser.NaftahLexer.MAP -> AttributedStyle.BOLD
+							.foreground(AttributedStyle.MAGENTA);
 			case org.daiitech.naftah.parser.NaftahLexer.CHARACTER, org.daiitech.naftah.parser.NaftahLexer.STRING,
 					org.daiitech.naftah.parser.NaftahLexer.NUMBER, org.daiitech.naftah.parser.NaftahLexer.BASE_DIGITS,
 					org.daiitech.naftah.parser.NaftahLexer.TRUE, org.daiitech.naftah.parser.NaftahLexer.FALSE ->
@@ -230,7 +236,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.HASH_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.AT_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.DOLLAR_SIGN,
-					org.daiitech.naftah.parser.NaftahLexer.STAR_SIGN ->
+					org.daiitech.naftah.parser.NaftahLexer.STAR_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.LT_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.GT_SIGN ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.CYAN);
 			case org.daiitech.naftah.parser.NaftahLexer.ID -> AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW);
 			default -> AttributedStyle.BOLD.foreground(AttributedStyle.WHITE);

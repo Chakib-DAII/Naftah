@@ -6,14 +6,17 @@ import java.util.Map;
 
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedTypeError;
 
 /**
  * Provides built-in functions used within the Naftah language for performing various
@@ -879,7 +882,7 @@ public final class CollectionBuiltinFunctions {
 	}
 
 	/**
-	 * Checks if a collection, map, or array contains a specific element.
+	 * Checks if a tuple, collection, map, or array contains a specific element.
 	 *
 	 * @param x       collection, map, or array to check
 	 * @param element element to look for
@@ -899,7 +902,10 @@ public final class CollectionBuiltinFunctions {
 	)
 	public static <T> boolean containsElement(T x, Object element) {
 		checkParam(x);
-		if (x instanceof Collection<?> collection) {
+		if (x instanceof NTuple nTuple) {
+			return nTuple.contains(element);
+		}
+		else if (x instanceof Collection<?> collection) {
 			return collection.contains(element);
 		}
 		else if (x instanceof Map<?, ?> map) {
@@ -961,6 +967,12 @@ public final class CollectionBuiltinFunctions {
 				returnType = boolean.class
 	)
 	public static boolean addElement(Object x, Object element) {
+		if (x instanceof NaftahObject naftahObject) {
+			x = naftahObject.get(true);
+		}
+		if (element instanceof NaftahObject naftahObject) {
+			element = naftahObject.get(true);
+		}
 		checkParam(x);
 		if (x instanceof Collection<?> collection) {
 			//noinspection unchecked
@@ -971,7 +983,7 @@ public final class CollectionBuiltinFunctions {
 			((Map<? super Object, ? super Object>) map).put(entry.getKey(), entry.getValue());
 			return true;
 		}
-		throw new NaftahBugError("نوع غير مدعوم للإضافة: " + x.getClass().getName());
+		throw newNaftahUnsupportedTypeError(x, element);
 	}
 
 	/**
@@ -993,6 +1005,12 @@ public final class CollectionBuiltinFunctions {
 				returnType = boolean.class
 	)
 	public static boolean removeElement(Object x, Object element) {
+		if (x instanceof NaftahObject naftahObject) {
+			x = naftahObject.get(true);
+		}
+		if (element instanceof NaftahObject naftahObject) {
+			element = naftahObject.get(true);
+		}
 		checkParam(x);
 		if (x instanceof Collection<?> collection) {
 			return collection.remove(element);
@@ -1002,7 +1020,7 @@ public final class CollectionBuiltinFunctions {
 			((Map<? super Object, ? super Object>) map).remove(element);
 			return true;
 		}
-		throw new NaftahBugError("نوع غير مدعوم للإزالة: " + x.getClass().getName());
+		throw newNaftahUnsupportedTypeError(x, element);
 	}
 
 	/**
@@ -1056,10 +1074,13 @@ public final class CollectionBuiltinFunctions {
 				Array.set(x, i, null);
 			}
 		}
+		else {
+			throw newNaftahUnsupportedTypeError(x);
+		}
 	}
 
 	/**
-	 * Checks if at least one of the two parameters is a collection, map, or array.
+	 * Checks if at least one of the two parameters is a tuple, collection, map, or array.
 	 * Throws a NaftahBugError with an Arabic message if the check fails.
 	 *
 	 * @param left  first value to check
@@ -1068,13 +1089,14 @@ public final class CollectionBuiltinFunctions {
 	 * @throws NaftahBugError if neither left nor right is a collection, map, or array
 	 */
 	private static <T> void checkParams(T left, T right) {
-		if (!(CollectionUtils.isCollectionMapOrArray(left) || CollectionUtils.isCollectionMapOrArray(right))) {
+		if (!(CollectionUtils.isCollectionMapOrArrayOrTuple(left) || CollectionUtils
+				.isCollectionMapOrArrayOrTuple(right))) {
 			throw newNaftahNotCollectionOrMapArgumentError(false);
 		}
 	}
 
 	/**
-	 * Checks if the parameter is a collection, map, or array.
+	 * Checks if the parameter is a tuple, collection, map, or array.
 	 * Throws a NaftahBugError with an Arabic message if the check fails.
 	 *
 	 * @param x   value to check
@@ -1082,7 +1104,7 @@ public final class CollectionBuiltinFunctions {
 	 * @throws NaftahBugError if x is not a collection, map, or array
 	 */
 	private static <T> void checkParam(T x) {
-		if (!CollectionUtils.isCollectionMapOrArray(x)) {
+		if (!CollectionUtils.isCollectionMapOrArrayOrTuple(x)) {
 			throw newNaftahNotCollectionOrMapArgumentError(true);
 		}
 	}

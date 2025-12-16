@@ -46,16 +46,17 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
-import org.daiitech.naftah.builtin.utils.Tuple;
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.MutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.ObjectAccessUtils;
-import org.daiitech.naftah.utils.tuple.ImmutablePair;
-import org.daiitech.naftah.utils.tuple.MutablePair;
-import org.daiitech.naftah.utils.tuple.Pair;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import com.ibm.icu.text.Normalizer2;
 
@@ -63,7 +64,6 @@ import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
-import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.errors.ExceptionUtils.INVALID_INSTANCE_METHOD_CALL_MSG;
 import static org.daiitech.naftah.errors.ExceptionUtils.NOTE;
@@ -85,7 +85,6 @@ import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
 import static org.daiitech.naftah.parser.DefaultContext.registerContext;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
-import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
 import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
@@ -161,7 +160,19 @@ public final class NaftahParserHelper {
 			LEXER_LITERALS = readFileLines(getJarDirectory() + "/lexer-literals");
 		}
 		catch (Throwable ignored) {
-
+			String jarDir = System.getProperty("naftah.jarDir");
+			if (Objects.nonNull(jarDir)) {
+				try {
+					if (Objects.isNull(TOKENS_SYMBOLS)) {
+						TOKENS_SYMBOLS = getProperties(jarDir + "/tokens-symbols.properties");
+					}
+					if (Objects.isNull(LEXER_LITERALS)) {
+						LEXER_LITERALS = readFileLines(jarDir + "/lexer-literals");
+					}
+				}
+				catch (Throwable ignoredThrowable) {
+				}
+			}
 		}
 	}
 
@@ -401,7 +412,7 @@ public final class NaftahParserHelper {
 																	function.getParametersContext()));
 		}
 		if (function.getReturnType() == null && hasChild(function.getReturnTypeContext())) {
-			function.setReturnType(visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
+			function.setReturnType((JavaType) visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
 		}
 	}
 
@@ -836,23 +847,33 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Returns a formatted string of token symbols based on the token name.
+	 * Returns a formatted string representing the symbols associated with a token name.
 	 * <p>
-	 * This method looks up the token name in a {@code TOKENS_SYMBOLS} map (assumed to be a
-	 * {@link java.util.Properties} object). If a match is found, the associated value is used
-	 * as the base symbol string. Commas in the value are replaced with " أو" (Arabic "or").
-	 * <p>
-	 * If {@code ln} is {@code true}, the formatted string will include a line break and bullet point.
+	 * This method looks up {@code tokenName} in the {@code TOKENS_SYMBOLS} map
+	 * (expected to be a {@link java.util.Properties} instance). If a corresponding
+	 * entry is found, its value is used as the symbol representation; otherwise,
+	 * {@code tokenName} itself is used as a fallback.
+	 * </p>
 	 *
-	 * @param tokenName The name of the token.
-	 * @param ln        If {@code true}, output is formatted with a line break and bullet.
-	 * @return A formatted string representing the token symbols, or {@code null} if not found.
+	 * <p>
+	 * Comma-separated symbols in the resolved value are joined using
+	 * {@code " أو"} (Arabic for “or”).
+	 * </p>
+	 *
+	 * <p>
+	 * If {@code ln} is {@code true}, the result is formatted as a bullet point
+	 * prefixed with a line break.
+	 * </p>
+	 *
+	 * @param tokenName the name of the token to look up
+	 * @param ln        whether to format the result as a bullet point on its own line
+	 * @return a formatted symbol string; never {@code null}
 	 */
 	public static String getFormattedTokenSymbols(String tokenName, boolean ln) {
 		String tokenSymbols = Objects.isNull(TOKENS_SYMBOLS) ? tokenName : TOKENS_SYMBOLS.getProperty(tokenName);
-		return tokenSymbols == null ? null : (ln ? """
-													- %s
-													""" : "%s").formatted(tokenSymbols.replaceAll(",", " أو"));
+		return tokenSymbols == null ? tokenName : (ln ? """
+														- %s
+														""" : "%s").formatted(tokenSymbols.replaceAll(",", " أو"));
 	}
 
 	/**
@@ -873,53 +894,20 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Checks if there is a type mismatch between the given value and the declared type.
-	 *
-	 * @param value           The value to check.
-	 * @param valueType       The class of the value.
-	 * @param declarationType The declared type class.
-	 * @return True if types mismatch, false otherwise.
-	 */
-	public static boolean typeMismatch(Object value, Class<?> valueType, Class<?> declarationType) {
-		return Objects.nonNull(value) && typeMismatch(valueType, declarationType);
-	}
-
-	/**
-	 * Checks if there is a type mismatch between two classes.
-	 *
-	 * @param valueType       The class of the value.
-	 * @param declarationType The declared type class.
-	 * @return True if types mismatch, false otherwise.
-	 */
-	public static boolean typeMismatch(Class<?> valueType, Class<?> declarationType) {
-		return Objects.nonNull(declarationType) && !Object.class.equals(declarationType) && !Collection.class
-				.isAssignableFrom(declarationType) && !Map.class.isAssignableFrom(declarationType) && (((Number.class
-						.isAssignableFrom(valueType) && !Number.class
-								.isAssignableFrom(declarationType)) || (!Number.class
-										.isAssignableFrom(valueType) && Number.class
-												.isAssignableFrom(declarationType))) || (!Number.class
-														.isAssignableFrom(declarationType) && !Number.class
-																.isAssignableFrom(valueType) && !valueType
-																		.isAssignableFrom(declarationType)) || Collection.class
-																				.isAssignableFrom(valueType) || Map.class
-																						.isAssignableFrom(valueType));
-	}
-
-	/**
 	 * Creates a declared variable instance from the parser context.
 	 *
 	 * @param depth        the depth of context where declared
 	 * @param ctx          The declaration context.
 	 * @param variableName The variable name.
 	 * @param isConstant   True if the variable is constant.
-	 * @param type         the variable type, default {@code Object.class}.
+	 * @param type         the variable type, default {@code JavaType::ofObject}.
 	 * @return A pair containing the declared variable and a boolean flag.
 	 */
 	public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(   int depth,
 																			ParserRuleContext ctx,
 																			String variableName,
 																			boolean isConstant,
-																			Class<?> type) {
+																			JavaType type) {
 		return MutablePair
 				.of(DeclaredVariable
 						.of(depth,
@@ -959,7 +947,7 @@ public final class NaftahParserHelper {
 	 * @param hasConstant    true if the declaration includes a constant modifier
 	 * @param hasVariable    true if the declaration includes a variable modifier
 	 * @param hasType        true if the declaration specifies a type
-	 * @param type           the Java {@link Class} representing the type of the variable, if any
+	 * @param type           the {@link JavaType} representing the type of the variable, if any
 	 * @return a {@link DeclaredVariable} object, or a {@link Pair} of the variable and a boolean if parsing an
 	 *         * assignment
 	 * @throws NaftahBugError if an invalid type is specified for an object creation context
@@ -970,37 +958,17 @@ public final class NaftahParserHelper {
 											boolean hasConstant,
 											boolean hasVariable,
 											boolean hasType,
-											Class<?> type) {
+											JavaType type) {
 		Pair<DeclaredVariable, Boolean> declaredVariable;
 		boolean creatingObject = currentContext.isCreatingObject();
 		boolean creatingObjectField = hasAnyParentOfType(   ctx,
 															org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
 		if (hasConstant || hasVariable || hasType || creatingObjectField) {
-			if (creatingObject && hasType) {
-				if (Objects.nonNull(type) && !Object.class.equals(type)) {
-					throw new NaftahBugError(
-												("""
-													لا يمكن أن يكون الكائن '%s' من النوع %s. يجب أن يكون الكائن عامًا لجميع الأنواع (%s).""")
-														.formatted( variableName,
-																	getNaftahType(  PARSER_VOCABULARY,
-																					type),
-																	getNaftahType(  PARSER_VOCABULARY,
-																					Object.class)),
-												ctx.getStart().getLine(),
-												ctx
-														.getStart()
-														.getCharPositionInLine());
-				}
-			}
 			declaredVariable = createDeclaredVariable(  currentContext.depth,
 														ctx,
 														variableName,
 														hasConstant,
 														type);
-			// TODO: check if inside function to check if it matches any argument /
-			// parameter or
-			// previously
-			// declared and update if possible
 			if (!creatingObjectField) {
 				currentContext.defineVariable(variableName, declaredVariable.getLeft());
 			}
@@ -1016,7 +984,7 @@ public final class NaftahParserHelper {
 													ctx,
 													variableName,
 													false,
-													Object.class));
+													JavaType.ofObject()));
 		}
 		return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.getLeft();
 	}
@@ -1284,13 +1252,13 @@ public final class NaftahParserHelper {
 	 *
 	 * @param currentContext     the execution context in which loop variables will be set
 	 * @param foreachTargetClass the class type of the parsed `foreach` target, determines how variables are mapped
-	 * @param variableNames      a {@link Tuple} of loop variable names extracted from the `foreach` declaration
-	 * @param targetValues       a {@link Tuple} of values to assign to the loop variables
+	 * @param variableNames      a {@link NTuple} of loop variable names extracted from the `foreach` declaration
+	 * @param targetValues       a {@link NTuple} of values to assign to the loop variables
 	 */
 	public static void setForeachVariables( DefaultContext currentContext,
 											Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass,
-											Tuple variableNames,
-											Tuple targetValues) {
+											NTuple variableNames,
+											NTuple targetValues) {
 		if (org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext.class
 				.isAssignableFrom(foreachTargetClass)) {
 			String valueVar = (String) variableNames.get(0);

@@ -1,9 +1,8 @@
-package org.daiitech.naftah.builtin.utils;
+package org.daiitech.naftah.builtin.utils.tuple;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -14,6 +13,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
@@ -29,7 +29,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
  *
  * @author Chakib Daii
  */
-public final class Tuple implements List<Object>, Serializable {
+public final class Tuple implements NTuple, List<Object>, Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
@@ -37,15 +37,20 @@ public final class Tuple implements List<Object>, Serializable {
 	/**
 	 * The underlying unmodifiable list of tuple elements.
 	 */
-	private List<Object> values;
+	private final List<Object> values;
 
 	/**
-	 * Private constructor to wrap the given list as an unmodifiable list.
+	 * Private constructor to create a tuple from the given elements.
 	 *
-	 * @param values the list of elements to be wrapped in this tuple
+	 * <p>The elements are stored in an immutable list using {@link List#of(Object...)}.
+	 * Once created, the tuple cannot be modified: no elements can be added, removed,
+	 * or replaced. This ensures that the tuple is fully immutable.</p>
+	 *
+	 * @param values the elements to be included in the tuple
+	 * @throws NullPointerException if {@code values} is null or contains null elements
 	 */
-	private Tuple(List<Object> values) {
-		this.values = Collections.unmodifiableList(values);
+	private Tuple(Object... values) {
+		this.values = List.of(values);
 	}
 
 	/**
@@ -57,9 +62,9 @@ public final class Tuple implements List<Object>, Serializable {
 	 */
 	public static Tuple of(Object... elements) {
 		if (elements == null) {
-			throw newNaftahBugNullError();
+			throw NTuple.newNaftahBugNullError();
 		}
-		return new Tuple(List.of(elements));
+		return new Tuple(elements);
 	}
 
 	/**
@@ -71,49 +76,17 @@ public final class Tuple implements List<Object>, Serializable {
 	 */
 	public static Tuple of(List<?> elements) {
 		if (elements == null) {
-			throw newNaftahBugNullError();
+			throw NTuple.newNaftahBugNullError();
 		}
-		//noinspection unchecked
-		return new Tuple((List<Object>) elements);
+		return new Tuple(elements.toArray());
 	}
 
 	/**
-	 * Creates a new {@link NaftahBugError} indicating that null values are not allowed.
-	 * <p>
-	 * This is a convenience method that uses default values of -1 for both the line and column.
-	 * The error message is provided in Arabic: "القيم لا يجب أن تكون null"
-	 *
-	 * @return a new {@code NaftahBugError} instance with an Arabic error message
+	 * {@inheritDoc}
 	 */
-	public static NaftahBugError newNaftahBugNullError() {
-		return newNaftahBugNullError(-1, -1);
-	}
-
-	/**
-	 * Creates a new {@link NaftahBugError} indicating that null values are not allowed,
-	 * and includes the specified line and column information.
-	 * <p>
-	 * The error message is in Arabic: "القيم لا يجب أن تكون null"
-	 *
-	 * @param line   the line number where the error occurred, or -1 if unknown
-	 * @param column the column number where the error occurred, or -1 if unknown
-	 * @return a new {@code NaftahBugError} instance with an Arabic error message and location data
-	 */
-	public static NaftahBugError newNaftahBugNullError(int line, int column) {
-		return new NaftahBugError("القيم لا يجب أن تكون null", line, column);
-	}
-
-	/**
-	 * Updates the tuple’s contents by replacing its internal unmodifiable list
-	 * with a new one built from the given elements.
-	 *
-	 * <p>This method should only be used internally — external users should
-	 * treat tuples as immutable.</p>
-	 *
-	 * @param elements the new list of elements to assign to this tuple
-	 */
-	public void update(List<?> elements) {
-		this.values = Collections.unmodifiableList(elements);
+	@Override
+	public int arity() {
+		return size();
 	}
 
 	/**
@@ -193,7 +166,7 @@ public final class Tuple implements List<Object>, Serializable {
 	public String toString() {
 		return values
 				.stream()
-				.map(Object::toString)
+				.map(ObjectUtils::getNaftahValueToString)
 				.collect(Collectors.joining(", ", "(", ")"));
 	}
 
@@ -257,7 +230,7 @@ public final class Tuple implements List<Object>, Serializable {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		return o == this || values.equals(o);
+		return o == this || ObjectUtils.equals(values, o, true);
 	}
 
 	/**
@@ -337,7 +310,7 @@ public final class Tuple implements List<Object>, Serializable {
 	 */
 	@Override
 	public Tuple subList(int fromIndex, int toIndex) {
-		return new Tuple(values.subList(fromIndex, toIndex));
+		return new Tuple(values.subList(fromIndex, toIndex).toArray());
 	}
 
 	// Unsupported modification operations

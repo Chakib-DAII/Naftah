@@ -267,6 +267,7 @@ primary: initCall #initCallExpression
        | objectAccess #objectAccessExpression
        | collectionAccess #collectionAccessExpression
        | value #valueExpression
+       | type #typeExpression
        | LPAREN expression RPAREN #parenthesisExpression
        ;
 
@@ -318,9 +319,20 @@ returnType: VOID #voidReturnType
           ;
 
 // Type: Can be any, builtinType or qualifiedName
-type: VAR #varType
+type: complexBuiltIn #complexType
     | builtIn #builtInType
+    | VAR #varType
     | (ID | qualifiedName) #qualifiedNameType
+    ;
+
+complexBuiltIn: STRUCT
+	| IMPLEMENTATION
+	| PAIR GT_TYPE_SIGN type (COMMA | SEMI) type LT_TYPE_SIGN
+	| TRIPLE GT_TYPE_SIGN type (COMMA | SEMI) type (COMMA | SEMI) type LT_TYPE_SIGN
+	| LIST GT_TYPE_SIGN type LT_TYPE_SIGN
+	| TUPLE
+	| SET GT_TYPE_SIGN type LT_TYPE_SIGN
+	| MAP GT_TYPE_SIGN type (COMMA | SEMI) type LT_TYPE_SIGN
     ;
 
 builtIn: BOOLEAN
@@ -329,8 +341,11 @@ builtIn: BOOLEAN
     |   SHORT
     |   INT
     |   LONG
+    |   BIG_INT
     |   FLOAT
     |   DOUBLE
+    |   BIG_DECIMAL
+    |   VAR_NUMBER
     |   STRING_TYPE
     ;
 

@@ -30,14 +30,14 @@ public class FunctionInitProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								جافا:لغة:كائن() لا_يساوي فارغ
+								جافا:لغة:كائن_() لا_يساوي فارغ
 								""",
 								true,
 								null),
 					Arguments
 							.of(true,
 								"""
-								@جافا:لغة:كائن() لا_يساوي فارغ
+								@جافا:لغة:كائن_() لا_يساوي فارغ
 								""",
 								true,
 								null),
