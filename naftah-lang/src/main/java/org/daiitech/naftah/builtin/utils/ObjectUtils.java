@@ -1333,8 +1333,8 @@ public final class ObjectUtils {
 	 * @param obj the object whose size is to be determined; may be {@code null}
 	 * @return the size or length of the given object, or {@code 0} if {@code null}
 	 */
-	public static int size(Object obj) {
-		if (obj == null) {
+	public static Number size(Object obj) {
+		if (obj == null || NaN.isNaN(obj) || None.isNone(obj)) {
 			return 0;
 		}
 
@@ -1350,18 +1350,18 @@ public final class ObjectUtils {
 		}
 
 		// Collection (List, Set, etc.)
-		if (obj instanceof Collection<?>) {
-			return ((Collection<?>) obj).size();
+		if (obj instanceof Collection<?> collection) {
+			return collection.size();
 		}
 
 		// Map
-		if (obj instanceof Map<?, ?>) {
-			return ((Map<?, ?>) obj).size();
+		if (obj instanceof Map<?, ?> map) {
+			return map.size();
 		}
 
 		// String
-		if (obj instanceof String) {
-			return ((String) obj).length();
+		if (obj instanceof String string) {
+			return string.length();
 		}
 
 		// Boxed primitives: Integer, Double, Boolean, etc.
