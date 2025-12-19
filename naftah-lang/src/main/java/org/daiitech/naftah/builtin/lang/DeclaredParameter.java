@@ -165,7 +165,7 @@ public final class DeclaredParameter extends Declaration {
 	 * @param currentValue the new value to assign
 	 * @throws NaftahBugError if attempting to modify a constant parameter
 	 */
-	public void setValue(Object currentValue) {
+	public synchronized void setValue(Object currentValue) {
 		validateType(   name,
 						currentValue,
 						type,

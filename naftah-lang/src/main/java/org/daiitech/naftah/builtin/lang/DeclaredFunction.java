@@ -137,7 +137,7 @@ public final class DeclaredFunction extends Declaration {
 	 *
 	 * @param parameters the parameters to set
 	 */
-	public void setParameters(List<DeclaredParameter> parameters) {
+	public synchronized void setParameters(List<DeclaredParameter> parameters) {
 		this.parameters = parameters;
 	}
 
@@ -173,7 +173,7 @@ public final class DeclaredFunction extends Declaration {
 	 *
 	 * @param returnType the return type to set
 	 */
-	public void setReturnType(JavaType returnType) {
+	public synchronized void setReturnType(JavaType returnType) {
 		this.returnType = returnType;
 	}
 
