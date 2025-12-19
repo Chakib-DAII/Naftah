@@ -15,8 +15,8 @@ import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
+import static org.daiitech.naftah.errors.ExceptionUtils.newIllegalArgumentException;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
-import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedTypeError;
 
 /**
  * Provides built-in functions used within the Naftah language for performing various
@@ -983,7 +983,7 @@ public final class CollectionBuiltinFunctions {
 			((Map<? super Object, ? super Object>) map).put(entry.getKey(), entry.getValue());
 			return true;
 		}
-		throw newNaftahUnsupportedTypeError(x, element);
+		throw newIllegalArgumentException(x, element);
 	}
 
 	/**
@@ -1020,7 +1020,7 @@ public final class CollectionBuiltinFunctions {
 			((Map<? super Object, ? super Object>) map).remove(element);
 			return true;
 		}
-		throw newNaftahUnsupportedTypeError(x, element);
+		throw newIllegalArgumentException(x, element);
 	}
 
 	/**
@@ -1075,7 +1075,7 @@ public final class CollectionBuiltinFunctions {
 			}
 		}
 		else {
-			throw newNaftahUnsupportedTypeError(x);
+			throw newIllegalArgumentException(x);
 		}
 	}
 
