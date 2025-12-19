@@ -291,6 +291,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.RelationalExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ShiftExpressionContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.AdditiveExpressionContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -2113,7 +2116,7 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											RelationalExpressionContext::additiveExpression -> {
+											RelationalExpressionContext::shiftExpression -> {
 											%s
 											}
 											RelationalExpressionContext::LT -> %s
@@ -2121,11 +2124,29 @@ public final class NaftahExecutionLogger {
 											RelationalExpressionContext::GT -> %s
 											RelationalExpressionContext::GE -> %s
 											"""
-										.formatted( join(context.additiveExpression()),
+										.formatted( join(context.shiftExpression()),
 													join(context.LT()),
 													join(context.LE()),
 													join(context.GT()),
 													join(context.GE())));
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ShiftExpressionContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ShiftExpressionContext::additiveExpression -> {
+											%s
+											}
+											ShiftExpressionContext::BITWISE_SHL -> %s
+											ShiftExpressionContext::BITWISE_SHR -> %s
+											ShiftExpressionContext::BITWISE_USHR -> %s
+											"""
+										.formatted( join(context.additiveExpression()),
+													join(context.BITWISE_SHL()),
+													join(context.BITWISE_SHR()),
+													join(context.BITWISE_USHR())));
 	}
 
 	public static String logExecution(  boolean doLog,
