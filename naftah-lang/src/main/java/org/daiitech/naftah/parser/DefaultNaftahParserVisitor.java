@@ -59,6 +59,7 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.getJavaType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isTruthy;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.ADD;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.GREATER_THAN_EQUALS;
+import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.INSTANCE_OF;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.LESS_THAN;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.LESS_THAN_EQUALS;
 import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.SUBTRACT;
@@ -68,6 +69,8 @@ import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.POST;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_DECREMENT;
 import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.PRE_INCREMENT;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.SIZE_OF;
+import static org.daiitech.naftah.builtin.utils.op.UnaryOperation.TYPE_OF;
 import static org.daiitech.naftah.builtin.utils.tuple.NTuple.newNaftahBugNullError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidLoopLabelError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahExpressionsDeclarationsSizeMismatchErrorError;
@@ -4608,16 +4611,52 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, relationalExpressionContext) -> {
 								Object left = defaultNaftahParserVisitor
-										.visit(relationalExpressionContext.additiveExpression(0));
+										.visit(relationalExpressionContext.shiftExpression(0));
 
-								for (int i = 1; i < relationalExpressionContext.additiveExpression().size(); i++) {
+								for (int i = 1; i < relationalExpressionContext.shiftExpression().size(); i++) {
 									Object right = defaultNaftahParserVisitor
 											.visit(relationalExpressionContext
+													.shiftExpression(i));
+
+									String op = NaftahParserHelper
+											.getDisplayName(relationalExpressionContext.getChild(2 * i - 1),
+															defaultNaftahParserVisitor.parser.getVocabulary());
+									BinaryOperation binaryOperation = BinaryOperation.of(op);
+									if (INSTANCE_OF.equals(binaryOperation)) {
+										left = binaryOperation.apply(left, right);
+									}
+									else {
+										left = applyOperation(left, right, binaryOperation);
+									}
+
+								}
+
+								return left;
+							});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitShiftExpression(org.daiitech.naftah.parser.NaftahParser.ShiftExpressionContext ctx) {
+		return visitContext(
+							this,
+							"visitShiftExpression",
+							getCurrentContext(),
+							ctx,
+							(defaultNaftahParserVisitor, currentContext, shiftExpressionContext) -> {
+								Object left = defaultNaftahParserVisitor
+										.visit(shiftExpressionContext.additiveExpression(0));
+
+								for (int i = 1; i < shiftExpressionContext.additiveExpression().size(); i++) {
+									Object right = defaultNaftahParserVisitor
+											.visit(shiftExpressionContext
 													.additiveExpression(
 																		i));
 
 									String op = NaftahParserHelper
-											.getDisplayName(relationalExpressionContext.getChild(2 * i - 1),
+											.getDisplayName(shiftExpressionContext.getChild(2 * i - 1),
 															defaultNaftahParserVisitor.parser.getVocabulary());
 									left = applyOperation(left, right, BinaryOperation.of(op));
 								}
@@ -4831,7 +4870,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								if (INCREMENT.equals(op) || DECREMENT.equals(op)) {
 									op = PRE + op;
 								}
-								result = applyOperation(value, UnaryOperation.of(op));
+
+								UnaryOperation unaryOperation = UnaryOperation.of(op);
+								if (TYPE_OF.equals(unaryOperation) || SIZE_OF.equals(unaryOperation)) {
+									result = unaryOperation.apply(value);
+								}
+								else {
+									result = applyOperation(value, unaryOperation);
+								}
 
 								return result;
 							});

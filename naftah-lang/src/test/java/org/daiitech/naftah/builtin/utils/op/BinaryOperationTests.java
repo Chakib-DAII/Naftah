@@ -10,6 +10,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_SHL;
+import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_SHR;
+import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.BITWISE_USHR;
+import static org.daiitech.naftah.builtin.utils.op.BinaryOperation.INSTANCE_OF;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,7 +37,12 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("numbersOperationProvider")
 		void numberOperandsTest(BinaryOperation op, Number left, Number right) {
-			assertNotNull(op.apply(left, right));
+			if (INSTANCE_OF.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else {
+				assertNotNull(op.apply(left, right));
+			}
 		}
 	}
 
@@ -57,7 +66,10 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("booleanAndNumberOperationProvider")
 		void booleanAndNumberOperandsTest(BinaryOperation op, boolean left, Number right) {
-			if ((BinaryOperation.DIVIDE.equals(op) || BinaryOperation.MODULO.equals(op)) && right.equals(0)) {
+			if (INSTANCE_OF.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if ((BinaryOperation.DIVIDE.equals(op) || BinaryOperation.MODULO.equals(op)) && right.equals(0)) {
 				assertThrows(ArithmeticException.class, () -> op.apply(left, right));
 			}
 			else {
@@ -68,7 +80,10 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("numberAndBooleanOperationProvider")
 		void numberAndBooleanOperandsTest(BinaryOperation op, Number left, boolean right) {
-			if ((BinaryOperation.DIVIDE.equals(op) || BinaryOperation.MODULO.equals(op)) && !right) {
+			if (INSTANCE_OF.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if ((BinaryOperation.DIVIDE.equals(op) || BinaryOperation.MODULO.equals(op)) && !right) {
 				assertThrows(ArithmeticException.class, () -> op.apply(left, right));
 			}
 			else {
@@ -97,15 +112,31 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("charAndNumberOperationProvider")
 		void charAndNumberOperandsTest(BinaryOperation op, char left, Number right) {
-			Object result = op.apply(left, right);
-			assertTrue(result instanceof Character || result instanceof Number || result instanceof Boolean);
+			if (INSTANCE_OF.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else {
+				Object result = op.apply(left, right);
+				assertTrue(result instanceof Character || result instanceof Number || result instanceof Boolean);
+			}
 		}
 
 		@ParameterizedTest
 		@MethodSource("numberAndCharOperationProvider")
 		void numberAndCharOperandsTest(BinaryOperation op, Number left, char right) {
-			if (BinaryOperation.ELEMENTWISE_DIVIDE.equals(op)) {
+			if (INSTANCE_OF.equals(op)) {
 				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if (BinaryOperation.ELEMENTWISE_DIVIDE.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if (BITWISE_USHR.equals(op) || BITWISE_SHR.equals(op)) {
+				if (right > 31) {
+					assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+				}
+				else {
+					assertNotNull(op.apply(left, right));
+				}
 			}
 			else {
 				Object result = op.apply(left, right);
@@ -129,8 +160,19 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("charsOperationProvider")
 		void charOperandsTest(BinaryOperation op, char left, char right) {
-			if (BinaryOperation.ELEMENTWISE_DIVIDE.equals(op)) {
+			if (INSTANCE_OF.equals(op)) {
 				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if (BinaryOperation.ELEMENTWISE_DIVIDE.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if (BITWISE_USHR.equals(op) || BITWISE_SHR.equals(op)) {
+				if (right > 31) {
+					assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+				}
+				else {
+					assertNotNull(op.apply(left, right));
+				}
 			}
 			else {
 				Object result = op.apply(left, right);
@@ -154,7 +196,10 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("booleansOperationProvider")
 		void booleanOperandsTest(BinaryOperation op, boolean left, boolean right) {
-			if ((BinaryOperation.DIVIDE.equals(op) || BinaryOperation.MODULO.equals(op)) && !right) {
+			if (INSTANCE_OF.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if ((BinaryOperation.DIVIDE.equals(op) || BinaryOperation.MODULO.equals(op)) && !right) {
 				assertThrows(ArithmeticException.class, () -> op.apply(left, right));
 			}
 			else {
@@ -179,11 +224,16 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("stringsOperationProvider")
 		void stringOperandsTest(BinaryOperation op, String left, String right) {
-			Object result = op.apply(left, right);
-			assertNotNull(result);
-			assertTrue(result instanceof Number || result instanceof String || result instanceof Boolean || result
-					.getClass()
-					.isArray() || NaN.isNaN(result));
+			if (INSTANCE_OF.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else {
+				Object result = op.apply(left, right);
+				assertNotNull(result);
+				assertTrue(result instanceof Number || result instanceof String || result instanceof Boolean || result
+						.getClass()
+						.isArray() || NaN.isNaN(result));
+			}
 		}
 	}
 
@@ -211,8 +261,16 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("objectAndNumberOperationProvider")
 		void objectAndNumberOperandsTest(BinaryOperation op, Object left, Number right) {
-			if (invalid.equals(left)) {
+			if (INSTANCE_OF.equals(op)) {
 				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if (invalid.equals(left)) {
+				if (BITWISE_USHR.equals(op) || BITWISE_SHR.equals(op) || BITWISE_SHL.equals(op)) {
+					assertNotNull(op.apply(left, right));
+				}
+				else {
+					assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+				}
 			}
 			else {
 				assertNotNull(op.apply(left, right));
@@ -222,8 +280,16 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("numberAndObjectOperationProvider")
 		void numberAndObjectOperandsTest(BinaryOperation op, Number left, Object right) {
-			if (invalid.equals(right)) {
+			if (INSTANCE_OF.equals(op)) {
 				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if (invalid.equals(right)) {
+				if (BITWISE_USHR.equals(op) || BITWISE_SHR.equals(op) || BITWISE_SHL.equals(op)) {
+					assertNotNull(op.apply(left, right));
+				}
+				else {
+					assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+				}
 			}
 			else if (BinaryOperation.ELEMENTWISE_DIVIDE.equals(op) && (right instanceof String string && string
 					.codePoints()
@@ -266,19 +332,32 @@ public class BinaryOperationTests {
 		@ParameterizedTest
 		@MethodSource("falsyNaNOperationProvider")
 		void binaryNaNTest(BinaryOperation op, Object left, Object right) {
-			Object result = op.apply(left, right);
-			assertNotNull(result);
-			assertTrue(NaN
-					.isNaN(result) || result instanceof Number || result instanceof Character || result instanceof String || result instanceof Boolean || result
-							.getClass()
-							.isArray());
+			if (INSTANCE_OF.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else {
+				Object result = op.apply(left, right);
+				assertNotNull(result);
+				assertTrue(NaN
+						.isNaN(result) || result instanceof Number || result instanceof Character || result instanceof String || result instanceof Boolean || result
+								.getClass()
+								.isArray());
+			}
 		}
 
 
 		@ParameterizedTest
 		@MethodSource("falsyNoneOperationProvider")
 		void binaryNoneTest(BinaryOperation op, Object left, Object right) {
-			if (None.isNone(right) && (op.equals(BinaryOperation.DIVIDE) || (op.equals(BinaryOperation.MODULO)))) {
+			if (INSTANCE_OF.equals(op)) {
+				assertThrows(NaftahBugError.class, () -> op.apply(left, right));
+			}
+			else if (BITWISE_USHR.equals(op) || BITWISE_SHR.equals(op) || BITWISE_SHL.equals(op)) {
+				Object result = op.apply(left, right);
+				assertNotNull(result);
+				assertTrue(NaN.isNaN(result));
+			}
+			else if (None.isNone(right) && (op.equals(BinaryOperation.DIVIDE) || (op.equals(BinaryOperation.MODULO)))) {
 				if (left instanceof String) {
 					try {
 						op.apply(left, right);

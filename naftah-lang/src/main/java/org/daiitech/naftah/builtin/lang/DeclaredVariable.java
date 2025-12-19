@@ -179,7 +179,7 @@ public final class DeclaredVariable extends Declaration {
 	 * @param currentValue the value to set
 	 * @throws NaftahBugError if attempting to modify a constant variable
 	 */
-	public void setValue(Object currentValue) {
+	public synchronized void setValue(Object currentValue) {
 		validateType(   name,
 						currentValue,
 						type,

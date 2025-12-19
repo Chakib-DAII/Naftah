@@ -12,9 +12,9 @@ import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.ThrowingFunction;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newIllegalArgumentException;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
-import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedTypeError;
 
 /**
  * Utility class providing functional-style operations on various input types,
@@ -193,7 +193,7 @@ public final class FunctionUtils {
 	 * <p>If the {@code NaftahObject} is {@code null}, unwraps to {@code null}, or
 	 * does not match the expected runtime type, a
 	 * {@link NaftahBugError} is thrown via
-	 * {@link org.daiitech.naftah.errors.ExceptionUtils#newNaftahUnsupportedTypeError(Object)}.</p>
+	 * {@link org.daiitech.naftah.errors.ExceptionUtils#newIllegalArgumentException(Object)}.</p>
 	 *
 	 * @param naftahObject      the {@link NaftahObject} to unwrap and validate
 	 * @param rawClass          the expected raw runtime class of the unwrapped value
@@ -214,7 +214,7 @@ public final class FunctionUtils {
 			return executionFunction.apply(object);
 		}
 		else {
-			throw newNaftahUnsupportedTypeError(object);
+			throw newIllegalArgumentException(object);
 		}
 	}
 
@@ -231,7 +231,7 @@ public final class FunctionUtils {
 	 * <p>If the {@code NaftahObject} is {@code null}, unwraps to {@code null}, or
 	 * does not match the expected runtime type, a
 	 * {@link NaftahBugError} is thrown via
-	 * {@link org.daiitech.naftah.errors.ExceptionUtils#newNaftahUnsupportedTypeError(Object)}.</p>
+	 * {@link org.daiitech.naftah.errors.ExceptionUtils#newIllegalArgumentException(Object)}.</p>
 	 *
 	 * @param naftahObject      the {@link NaftahObject} to unwrap and validate
 	 * @param rawClass          the expected raw runtime class of the unwrapped value
@@ -248,7 +248,7 @@ public final class FunctionUtils {
 			executionConsumer.accept(object);
 		}
 		else {
-			throw newNaftahUnsupportedTypeError(object);
+			throw newIllegalArgumentException(object);
 		}
 	}
 }

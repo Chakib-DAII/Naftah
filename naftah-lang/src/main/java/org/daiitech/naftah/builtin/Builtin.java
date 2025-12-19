@@ -1077,9 +1077,9 @@ public final class Builtin {
 	 * @return the size as a {@link Number}; 0 for null objects
 	 */
 	@NaftahFn(
-				name = "حجم",
+				name = "ما_حجم",
 				description = """
-								دالة (حجم) لحساب حجم الكائن.
+								دالة (ما_حجم) لحساب حجم الكائن.
 								- للمصفوفات: طول المصفوفة
 								- للقوائم والمجموعات: عدد العناصر
 								- للخرائط: عدد المدخلات
@@ -1087,7 +1087,7 @@ public final class Builtin {
 								- للأنواع العددية والمنطقية: 1
 								- للكائنات الأخرى: عدد الحقول غير الثابتة
 								""",
-				usage = "حجم(الكائن_)",
+				usage = "ما_حجم(الكائن_)",
 				parameterTypes = {Object.class},
 				returnType = Number.class
 	)
@@ -1112,11 +1112,11 @@ public final class Builtin {
 	 * @return a string describing the object's type; "null" if the object is null
 	 */
 	@NaftahFn(
-				name = "نوع",
+				name = "ما_نوع",
 				description = """
-								دالة (نوع) لإرجاع نوع الكائن وفق لغة نفطه.
+								دالة (ما_نوع) لإرجاع نوع الكائن وفق لغة نفطه.
 											- تستخدم JavaType للحصول على النوع الخام والمُعرف بالمعلمات إذا كانت موجودة.""",
-				usage = "نوع(الكائن_)",
+				usage = "ما_نوع(الكائن_)",
 				parameterTypes = {Object.class},
 				returnType = String.class
 	)
@@ -1144,13 +1144,13 @@ public final class Builtin {
 	 * @return {@code true} if obj is an instance of javaType (including generic parameters), {@code false} otherwise
 	 */
 	@NaftahFn(
-				name = "مثيل_من",
+				name = "هل_مثيل_من",
 				description = """
-								دالة (مثيل_من) للتحقق مما إذا كان الكائن من النوع المحدد.
+								دالة (هل_مثيل_من) للتحقق مما إذا كان الكائن من النوع المحدد.
 								- تدعم المقارنة باستخدام JavaType بما في ذلك النوع الخام والمعلمات.
 								- تعمل بشكل مشابه لـ instanceof ولكن بدعم للمعلمات العامة إذا كانت موجودة.
 								""",
-				usage = "مثيل_من(الكائن_، النوع)",
+				usage = "هل_مثيل_من(الكائن_، النوع)",
 				parameterTypes = {Object.class, JavaType.class},
 				returnType = Boolean.class
 	)
