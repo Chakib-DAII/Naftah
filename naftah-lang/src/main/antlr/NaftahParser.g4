@@ -13,15 +13,6 @@ parser grammar NaftahParser;
 
 options {
     tokenVocab = NaftahLexer;
-//    contextSuperClass = NaftahParserRuleContext;
-//    superClass = AbstractParser;
-}
-
-@header {
-}
-
-@members {
-
 }
 
 // Top-level rule: A Naftah program consists of statements
@@ -244,7 +235,9 @@ bitwiseExpression: equalityExpression ((BITWISE_AND | BITWISE_OR | BITWISE_XOR) 
 
 equalityExpression: relationalExpression ((EQ | NEQ) relationalExpression)*;
 
-relationalExpression: additiveExpression ((LT | LE | GT | GE) additiveExpression)*;
+relationalExpression: shiftExpression ((LT | LE | GT | GE | INSTANCE_OF) shiftExpression)*;
+
+shiftExpression: additiveExpression ((BITWISE_SHL | BITWISE_SHR | BITWISE_USHR) additiveExpression)*;
 
 additiveExpression: multiplicativeExpression ((PLUS | MINUS | ELEMENTWISE_PLUS | ELEMENTWISE_MINUS) multiplicativeExpression)*;
 
@@ -254,7 +247,7 @@ powerExpression: unaryExpression (POW powerExpression)?;
 
 unaryExpression: SPAWN (COLON type)? unaryExpression #spawnUnaryExpression
                | AWAIT unaryExpression #awaitUnaryExpression
-			   | (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression #prefixUnaryExpression
+			   | (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT | TYPE_OF | SIZE_OF) unaryExpression #prefixUnaryExpression
     		   | postfixExpression #postfixUnaryExpression
      		   ;
 
