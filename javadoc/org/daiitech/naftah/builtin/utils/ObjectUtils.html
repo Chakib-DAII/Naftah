@@ -149,38 +149,67 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Converts a boolean value to its Naftah string representation ("صحيح" or "خطأ").</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getJavaType(org.daiitech.naftah.parser.DefaultContext,org.antlr.v4.runtime.ParserRuleContext)" class="member-name-link">getJavaType</a><wbr>(<a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#compare(java.lang.Object,java.lang.Object)" class="member-name-link">compare</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;left,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;right)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Compares two <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link"><code>Comparable</code></a> objects in a null-safe manner.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#equals(T,T,boolean)" class="member-name-link">equals</a><wbr>(T&nbsp;left,
+ T&nbsp;right,
+ boolean&nbsp;safe)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Safely compares two objects for equality using custom dynamic operations.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getJavaType(org.daiitech.naftah.parser.DefaultContext,org.daiitech.naftah.parser.NaftahParser.QualifiedNameTypeContext)" class="member-name-link">getJavaType</a><wbr>(<a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
+ <a href="../../parser/NaftahParser.QualifiedNameTypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameTypeContext</a>&nbsp;qualifiedNameTypeContext)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resolves a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> from a qualified-name type context.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getJavaType(org.daiitech.naftah.parser.NaftahParser.BuiltInContext)" class="member-name-link">getJavaType</a><wbr>(<a href="../../parser/NaftahParser.BuiltInContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.BuiltInContext</a>&nbsp;builtInContext)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resolves a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> from a built-in Naftah type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getJavaType(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.parser.DefaultContext,org.antlr.v4.runtime.ParserRuleContext)" class="member-name-link">getJavaType</a><wbr>(<a href="../../parser/NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
+ <a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  org.antlr.v4.runtime.ParserRuleContext&nbsp;naftahTypeContext)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolves the Java type from a Naftah type context.</div>
+<div class="block">Resolves a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> from a Naftah parser type context.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getJavaType(org.daiitech.naftah.parser.DefaultContext,org.daiitech.naftah.parser.NaftahParser.QualifiedNameTypeContext)" class="member-name-link">getJavaType</a><wbr>(<a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
- <a href="../../parser/NaftahParser.QualifiedNameTypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameTypeContext</a>&nbsp;qualifiedNameTypeContext)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getJavaType(org.daiitech.naftah.parser.NaftahParser.BuiltInContext)" class="member-name-link">getJavaType</a><wbr>(<a href="../../parser/NaftahParser.BuiltInContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.BuiltInContext</a>&nbsp;builtInContext)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolves the Java type from a built-in type context in Naftah.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getNaftahType(org.antlr.v4.runtime.Parser,java.lang.Class)" class="member-name-link">getNaftahType</a><wbr>(org.antlr.v4.runtime.Parser&nbsp;parser,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;javaType)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getJavaType(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.parser.NaftahParser.ComplexBuiltInContext)" class="member-name-link">getJavaType</a><wbr>(<a href="../../parser/NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
+ <a href="../../parser/NaftahParser.ComplexBuiltInContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ComplexBuiltInContext</a>&nbsp;complexBuiltInContext)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolves a Java type to its corresponding Naftah language type using a parser's vocabulary.</div>
+<div class="block">Resolves a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> from a complex built-in type context.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getNaftahType(org.antlr.v4.runtime.Vocabulary,java.lang.Class)" class="member-name-link">getNaftahType</a><wbr>(org.antlr.v4.runtime.Vocabulary&nbsp;vocabulary,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;javaType)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getNaftahType(org.antlr.v4.runtime.Parser,org.daiitech.naftah.utils.reflect.type.JavaType)" class="member-name-link">getNaftahType</a><wbr>(org.antlr.v4.runtime.Parser&nbsp;parser,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;javaType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Maps a given Java type to its equivalent Naftah language type keyword,
- using the provided ANTLR <code>Vocabulary</code>.</div>
+<div class="block">Maps a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> to its corresponding Naftah language type using the
+ <code>Vocabulary</code> associated with the given ANTLR <code>Parser</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getNaftahValueToString(java.lang.Object)" class="member-name-link">getNaftahValueToString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getNaftahType(org.antlr.v4.runtime.Vocabulary,org.daiitech.naftah.utils.reflect.type.JavaType)" class="member-name-link">getNaftahType</a><wbr>(org.antlr.v4.runtime.Vocabulary&nbsp;vocabulary,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;javaType)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Maps a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> to its equivalent Naftah language type representation
+ using the supplied ANTLR <code>Vocabulary</code>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getNaftahValueToString(java.lang.Object)" class="member-name-link">getNaftahValueToString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Converts a Naftah value into its string representation, using language-specific formatting.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#instanceOf(java.lang.Object,org.daiitech.naftah.utils.reflect.type.JavaType)" class="member-name-link">instanceOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;targetType)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks whether the given object is an instance of the specified <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#intToBoolean(int)" class="member-name-link">intToBoolean</a><wbr>(int&nbsp;i)</code></div>
@@ -200,7 +229,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(java.lang.Object)" class="member-name-link">isSimpleOrBuiltinOrCollectionOrMapOfSimpleType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Checks whether the object or its components are simple, built-in, or collections/maps of such types.</div>
+<div class="block">Checks whether the object or its components are simple, built-in, or collections/maps/tuple of such types.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isSimpleType(java.lang.Object)" class="member-name-link">isSimpleType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj)</code></div>
@@ -210,7 +239,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isTruthy(java.lang.Object)" class="member-name-link">isTruthy</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Checks whether the given object is considered "truthy".</div>
+<div class="block">Determines whether the given object is considered "truthy".</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#not(java.lang.Object)" class="member-name-link">not</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value)</code></div>
@@ -227,10 +256,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Replaces all "null" occurrences in the given string with the localized <code>NULL</code> constant.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#size(java.lang.Object)" class="member-name-link">size</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the size or length of the given object, depending on its type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#validateType(java.lang.String,java.lang.Object,org.daiitech.naftah.utils.reflect.type.JavaType,int,int)" class="member-name-link">validateType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;type,
+ int&nbsp;line,
+ int&nbsp;column)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Validates that a runtime value conforms to the expected <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>.</div>
 </div>
 </div>
 </div>
@@ -269,16 +307,82 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isTruthy(java.lang.Object)">
 <h3>isTruthy</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isTruthy</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj)</span></div>
-<div class="block">Checks whether the given object is considered "truthy".
- <p>
- This method returns <code>false</code> for <code>null</code>, <code>false</code> booleans,
- numeric zero, NaN, blank strings, empty arrays, collections, and maps.
- For all other objects, it returns <code>true</code>.</div>
+<div class="block">Determines whether the given object is considered "truthy".
+
+ <p>The following objects are considered <b>falsy</b> (return <code>false</code>):
+ <ul>
+ <li><code>null</code></li>
+ <li><code>Boolean.FALSE</code></li>
+ <li>Numeric zero or <code>NaN</code> values</li>
+ <li>Blank strings (empty or only whitespace)</li>
+ <li>Empty arrays</li>
+ <li>Empty collections or maps</li>
+ </ul>
+ For all other objects, this method returns <code>true</code>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>obj</code> - the object to evaluate</dd>
+<dd><code>obj</code> - the object to evaluate for truthiness</dd>
 <dt>Returns:</dt>
 <dd><code>true</code> if the object is considered truthy; <code>false</code> otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="compare(java.lang.Object,java.lang.Object)">
+<h3>compare</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">compare</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;left,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;right)</span></div>
+<div class="block">Compares two <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link"><code>Comparable</code></a> objects in a null-safe manner.
+
+ <p>Rules for comparison:</p>
+ <ul>
+ <li>If both <code>left</code> and <code>right</code> are the same object (including both <code>null</code>), returns 0.</li>
+ <li>A <code>null</code> value is considered less than any non-null value (nulls-first).</li>
+ <li>If both values are non-null, their natural ordering (via <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html#compareTo(T)" title="class or interface in java.lang" class="external-link"><code>Comparable.compareTo(T)</code></a>) is used.</li>
+ </ul>
+
+ <p>Examples:</p>
+ <pre>
+ compare(null, null) = 0
+ compare(null, "abc") = -1
+ compare("abc", null) = 1
+ compare("abc", "def") = "abc".compareTo("def")
+ </pre></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>left</code> - the first object to compare, may be <code>null</code></dd>
+<dd><code>right</code> - the second object to compare, may be <code>null</code></dd>
+<dt>Returns:</dt>
+<dd>a negative integer, zero, or a positive integer if <code>left</code> is less than, equal to,
+         or greater than <code>right</code>, respectively</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="equals(T,T,boolean)">
+<h3 id="equals(java.lang.Object,java.lang.Object,boolean)">equals</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">equals</span><wbr><span class="parameters">(T&nbsp;left,
+ T&nbsp;right,
+ boolean&nbsp;safe)</span></div>
+<div class="block">Safely compares two objects for equality using custom dynamic operations.
+
+ <p>This method attempts to evaluate <code>left</code> and <code>right</code> using
+ the internal <a href="op/BinaryOperation.html#EQUALS"><code>BinaryOperation.EQUALS</code></a> operation and checks that all
+ results are <code>true</code>. If an internal <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> occurs,
+ it falls back to <code>left.equals(right)</code>, unless the error matches a
+ known empty-arguments condition and <code>safe</code> is <code>true</code>, in which
+ case it returns <code>true</code>.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the type of the objects being compared</dd>
+<dt>Parameters:</dt>
+<dd><code>left</code> - the first object to compare</dd>
+<dd><code>right</code> - the second object to compare</dd>
+<dd><code>safe</code> - whether to treat certain internal evaluation errors as equality</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if the objects are considered equal; <code>false</code> otherwise</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if a comparison fails and <code>safe</code> is <code>false</code> for certain internal errors</dd>
 </dl>
 </section>
 </li>
@@ -327,77 +431,196 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getJavaType(org.daiitech.naftah.parser.DefaultContext,org.antlr.v4.runtime.ParserRuleContext)">
+<section class="detail" id="getJavaType(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.parser.DefaultContext,org.antlr.v4.runtime.ParserRuleContext)">
 <h3>getJavaType</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getJavaType</span><wbr><span class="parameters">(<a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></span>&nbsp;<span class="element-name">getJavaType</span><wbr><span class="parameters">(<a href="../../parser/NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
+ <a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  org.antlr.v4.runtime.ParserRuleContext&nbsp;naftahTypeContext)</span></div>
-<div class="block">Resolves the Java type from a Naftah type context.</div>
+<div class="block">Resolves a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> from a Naftah parser type context.
+
+ <p>
+ This method inspects the supplied <code>ParserRuleContext</code> and maps Naftah
+ language type constructs to their corresponding Java types. It supports
+ return types, built-in types, complex built-ins, variable types, and
+ qualified names, delegating to specialized resolvers where appropriate.
+ </p>
+
+ <p>
+ Qualified names are resolved against the current <a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>,
+ including import matching. If a type cannot be resolved, the result
+ defaults to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a>.
+ </p>
+
+ <h3>Resolution behavior</h3>
+ <ul>
+ <li><code>void</code> return types → <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link"><code>Void</code></a></li>
+ <li><code>var</code> or unresolved types → <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a></li>
+ <li>Built-in types → mapped Java primitives or boxed types</li>
+ <li>Complex built-ins → resolved recursively</li>
+ <li>Qualified names → resolved via imports and context lookup</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>naftahTypeContext</code> - the parser context for the type</dd>
+<dd><code>naftahParserBaseVisitor</code> - the active parser visitor, used to resolve complex built-in types</dd>
+<dd><code>currentContext</code> - the current semantic context, used for import and type resolution</dd>
+<dd><code>naftahTypeContext</code> - the parser rule context representing a Naftah type</dd>
 <dt>Returns:</dt>
-<dd>the corresponding Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a>, or <code>Object.class</code> if unknown</dd>
+<dd>the resolved <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>; <a href="../../utils/reflect/type/JavaType.html#ofObject()"><code>JavaType.ofObject()</code></a> if the type
+         cannot be resolved</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getJavaType(org.daiitech.naftah.parser.DefaultContext,org.daiitech.naftah.parser.NaftahParser.QualifiedNameTypeContext)">
 <h3>getJavaType</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getJavaType</span><wbr><span class="parameters">(<a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></span>&nbsp;<span class="element-name">getJavaType</span><wbr><span class="parameters">(<a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser">DefaultContext</a>&nbsp;currentContext,
  <a href="../../parser/NaftahParser.QualifiedNameTypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.QualifiedNameTypeContext</a>&nbsp;qualifiedNameTypeContext)</span></div>
+<div class="block">Resolves a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> from a qualified-name type context.
+
+ <p>
+ The type name is extracted either from a fully-qualified name or a simple
+ identifier and is then resolved against the current <a href="../../parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>,
+ including import matching.
+ </p>
+
+ <p>
+ If a matching import is found, the imported type is used. Otherwise, the
+ resolved name is looked up directly. If resolution fails, the result
+ defaults to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a>.
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>currentContext</code> - the current semantic context used for import resolution</dd>
+<dd><code>qualifiedNameTypeContext</code> - the parser context representing a qualified-name type</dd>
+<dt>Returns:</dt>
+<dd>the resolved <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>, or <a href="../../utils/reflect/type/JavaType.html#ofObject()"><code>JavaType.ofObject()</code></a> if unresolved</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getJavaType(org.daiitech.naftah.parser.NaftahParser.BuiltInContext)">
 <h3>getJavaType</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getJavaType</span><wbr><span class="parameters">(<a href="../../parser/NaftahParser.BuiltInContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.BuiltInContext</a>&nbsp;builtInContext)</span></div>
-<div class="block">Resolves the Java type from a built-in type context in Naftah.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></span>&nbsp;<span class="element-name">getJavaType</span><wbr><span class="parameters">(<a href="../../parser/NaftahParser.BuiltInContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.BuiltInContext</a>&nbsp;builtInContext)</span></div>
+<div class="block">Resolves a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> from a built-in Naftah type.
+
+ <p>
+ Built-in types are mapped to their corresponding boxed Java types:
+ <code>boolean</code>, <code>char</code>, <code>byte</code>, <code>short</code>, <code>int</code>,
+ <code>long</code>, <code>float</code>, <code>double</code>, and <code>string</code>.
+ </p>
+
+ <p>
+ If the built-in type is not recognized, this method returns
+ <a href="../../utils/reflect/type/JavaType.html#ofObject()"><code>JavaType.ofObject()</code></a>.
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>builtInContext</code> - the built-in type context</dd>
+<dd><code>builtInContext</code> - the parser context representing a built-in type</dd>
 <dt>Returns:</dt>
-<dd>the corresponding Java type</dd>
+<dd>the corresponding <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a></dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getNaftahType(org.antlr.v4.runtime.Vocabulary,java.lang.Class)">
+<section class="detail" id="getJavaType(org.daiitech.naftah.parser.NaftahParserBaseVisitor,org.daiitech.naftah.parser.NaftahParser.ComplexBuiltInContext)">
+<h3>getJavaType</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></span>&nbsp;<span class="element-name">getJavaType</span><wbr><span class="parameters">(<a href="../../parser/NaftahParserBaseVisitor.html" title="class in org.daiitech.naftah.parser">NaftahParserBaseVisitor</a>&lt;?&gt;&nbsp;naftahParserBaseVisitor,
+ <a href="../../parser/NaftahParser.ComplexBuiltInContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ComplexBuiltInContext</a>&nbsp;complexBuiltInContext)</span></div>
+<div class="block">Resolves a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> from a complex built-in type context.
+
+ <p>
+ Complex built-in types represent parameterized or structured constructs and
+ are resolved recursively using the provided parser visitor.
+ </p>
+
+ <h3>Supported complex built-ins</h3>
+ <ul>
+ <li><code>struct</code> → <code>Map&amp;lt;String, DeclaredVariable&amp;gt;</code></li>
+ <li><code>implementation</code> → <code>Map&amp;lt;String, DeclaredFunction&amp;gt;</code></li>
+ <li><code>pair&amp;lt;T, U&amp;gt;</code> → <code>Pair&amp;lt;T, U&amp;gt;</code></li>
+ <li><code>triple&amp;lt;T, U, V&amp;gt;</code> → <code>Triple&amp;lt;T, U, V&amp;gt;</code></li>
+ <li><code>list&amp;lt;T&amp;gt;</code> → <code>List&amp;lt;T&amp;gt;</code></li>
+ <li><code>set&amp;lt;T&amp;gt;</code> → <code>Set&amp;lt;T&amp;gt;</code></li>
+ <li><code>map&amp;lt;K, V&amp;gt;</code> → <code>Map&amp;lt;K, V&amp;gt;</code></li>
+ <li><code>tuple</code> → <a href="tuple/Tuple.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Tuple</code></a></li>
+ </ul>
+
+ <p>
+ Generic type arguments are resolved by visiting nested <code>type</code>
+ contexts via the supplied visitor.
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>naftahParserBaseVisitor</code> - the active parser visitor used to resolve nested type parameters</dd>
+<dd><code>complexBuiltInContext</code> - the parser context representing a complex built-in type</dd>
+<dt>Returns:</dt>
+<dd>the resolved <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>, or <a href="../../utils/reflect/type/JavaType.html#ofObject()"><code>JavaType.ofObject()</code></a> if unresolved</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getNaftahType(org.antlr.v4.runtime.Vocabulary,org.daiitech.naftah.utils.reflect.type.JavaType)">
 <h3>getNaftahType</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getNaftahType</span><wbr><span class="parameters">(org.antlr.v4.runtime.Vocabulary&nbsp;vocabulary,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;javaType)</span></div>
-<div class="block">Maps a given Java type to its equivalent Naftah language type keyword,
- using the provided ANTLR <code>Vocabulary</code>.
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;javaType)</span></div>
+<div class="block">Maps a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> to its equivalent Naftah language type representation
+ using the supplied ANTLR <code>Vocabulary</code>.
+
  <p>
- This method checks the Java class and returns a string representation of
- the corresponding type in the Naftah language, such as <code>int</code>, <code>boolean</code>,
- <code>string</code>, etc., based on token types defined in <code>NaftahLexer</code>.
+ Primitive wrapper types and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a> are mapped to their corresponding
+ Naftah built-in type keywords (e.g. <code>int</code>, <code>boolean</code>, <code>string</code>).
+ </p>
+
  <p>
- If the Java type is <code>null</code> or not explicitly recognized, the default
- type <code>var</code> is returned.</div>
+ Parameterized and structured Java types are mapped as follows:
+ <ul>
+ <li><code>Map&amp;lt;String, DeclaredVariable&amp;gt;</code> → <code>struct</code></li>
+ <li><code>Map&amp;lt;String, DeclaredFunction&amp;gt;</code> → <code>implementation</code></li>
+ <li><code>Map&amp;lt;K, V&amp;gt;</code> → <code>map&amp;lt;K, V&amp;gt;</code></li>
+ <li><code>Pair&amp;lt;A, B&amp;gt;</code> → <code>pair&amp;lt;A, B&amp;gt;</code></li>
+ <li><code>Triple&amp;lt;A, B, C&amp;gt;</code> → <code>triple&amp;lt;A, B, C&amp;gt;</code></li>
+ <li><code>List&amp;lt;T&amp;gt;</code> → <code>list&amp;lt;T&amp;gt;</code></li>
+ <li><code>Set&amp;lt;T&amp;gt;</code> → <code>set&amp;lt;T&amp;gt;</code></li>
+ <li><a href="tuple/Tuple.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Tuple</code></a> → <code>tuple</code></li>
+ </ul>
+ </p>
+
+ <p>
+ Generic type parameters are resolved recursively to produce fully-formed
+ Naftah type expressions.
+ </p>
+
+ <p>
+ If <code>javaType</code> is <code>null</code> or cannot be mapped explicitly, the
+ fallback type <code>var</code> is returned.
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>vocabulary</code> - the ANTLR <code>Vocabulary</code> used to resolve token names</dd>
-<dd><code>javaType</code> - the Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> to map (e.g. <code>Integer.class</code>, <code>String.class</code>)</dd>
+<dd><code>vocabulary</code> - the ANTLR <code>Vocabulary</code> used to resolve token symbols</dd>
+<dd><code>javaType</code> - the Java type to map</dd>
 <dt>Returns:</dt>
-<dd>the formatted Naftah type token as a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a></dd>
+<dd>the formatted Naftah type representation</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getNaftahType(org.antlr.v4.runtime.Parser,java.lang.Class)">
+<section class="detail" id="getNaftahType(org.antlr.v4.runtime.Parser,org.daiitech.naftah.utils.reflect.type.JavaType)">
 <h3>getNaftahType</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getNaftahType</span><wbr><span class="parameters">(org.antlr.v4.runtime.Parser&nbsp;parser,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;javaType)</span></div>
-<div class="block">Resolves a Java type to its corresponding Naftah language type using a parser's vocabulary.
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;javaType)</span></div>
+<div class="block">Maps a <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> to its corresponding Naftah language type using the
+ <code>Vocabulary</code> associated with the given ANTLR <code>Parser</code>.
+
  <p>
- This is a convenience method that internally retrieves the <code>Vocabulary</code> from
- the given <code>Parser</code> and delegates to <a href="#getNaftahType(org.antlr.v4.runtime.Vocabulary,java.lang.Class)"><code>getNaftahType(Vocabulary, Class)</code></a>.</div>
+ This is a convenience overload that delegates to
+ <a href="#getNaftahType(org.antlr.v4.runtime.Vocabulary,org.daiitech.naftah.utils.reflect.type.JavaType)"><code>getNaftahType(Vocabulary, JavaType)</code></a>.
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>parser</code> - the ANTLR <code>Parser</code> instance</dd>
-<dd><code>javaType</code> - the Java type to convert</dd>
+<dd><code>parser</code> - the ANTLR <code>Parser</code> providing the vocabulary</dd>
+<dd><code>javaType</code> - the Java type to map</dd>
 <dt>Returns:</dt>
-<dd>the Naftah language type token as a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a></dd>
+<dd>the formatted Naftah type representation</dd>
 </dl>
 </section>
 </li>
@@ -411,6 +634,84 @@ loadScripts(document, 'script');</script>
 <dd><code>obj</code> - the object to check</dd>
 <dt>Returns:</dt>
 <dd><code>true</code> if the object is a built-in type</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="instanceOf(java.lang.Object,org.daiitech.naftah.utils.reflect.type.JavaType)">
+<h3>instanceOf</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">instanceOf</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;targetType)</span></div>
+<div class="block">Checks whether the given object is an instance of the specified <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>.
+
+ <p>This method behaves similarly to the Java <code>instanceof</code> operator,
+ but works with <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> to support runtime inspection of generic
+ type parameters.</p>
+
+ <p>Unlike strict type equality checks, this method uses assignability
+ semantics. This means that an object whose type is more specific may
+ still be considered an instance of a more general target type.</p>
+
+ <p>Examples:</p>
+ <pre><code>
+ JavaType objectType = JavaType.of(Object.class);
+ JavaType numberType = JavaType.of(Number.class);
+ JavaType listOfObjects = JavaType.of(new TypeReference&lt;List&lt;Object&gt;&gt;() {});
+
+ instanceOf("hello", objectType); // true
+ instanceOf(42, numberType); // true
+ instanceOf(List.of("a"), listOfObjects); // true
+ </code></pre>
+
+ <p>If either the object or the target type is <code>null</code>, this method
+ returns <code>false</code>.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>obj</code> - the object to check; may be null</dd>
+<dd><code>targetType</code> - the <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> to check against; may be null</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if the object is an instance of the specified type
+         according to assignability rules; <code>false</code> otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="validateType(java.lang.String,java.lang.Object,org.daiitech.naftah.utils.reflect.type.JavaType,int,int)">
+<h3>validateType</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">validateType</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;type,
+ int&nbsp;line,
+ int&nbsp;column)</span></div>
+<div class="block">Validates that a runtime value conforms to the expected <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>.
+
+ <p>If the provided value is non-null and does not match the expected type,
+ this method throws a Naftah type-mismatch error. Type matching is performed
+ using <a href="#instanceOf(java.lang.Object,org.daiitech.naftah.utils.reflect.type.JavaType)"><code>instanceOf(Object, JavaType)</code></a>, which supports
+ raw types, generic parameters, and wildcard assignability.</p>
+
+ <p>This method is typically used to validate function arguments, variable
+ assignments, and return values at runtime.</p>
+
+ <p>Null values are considered valid for any type and will not trigger
+ a validation error.</p>
+
+ <p>Example usage:</p>
+ <pre><code>
+ JavaType expectedType = JavaType.of(new TypeReference&lt;List&lt;String&gt;&gt;() {});
+ validateType("items", List.of("a", "b"), expectedType); // valid
+
+ validateType("items", List.of(1, 2), expectedType); // throws type mismatch error
+ </code></pre></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - the name of the variable, parameter, or value being validated;
+              used for error reporting</dd>
+<dd><code>value</code> - the runtime value to validate; may be <code>null</code></dd>
+<dd><code>type</code> - the expected <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a> of the value</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the value is non-null and does not conform
+                        to the expected type</dd>
 </dl>
 </section>
 </li>
@@ -431,7 +732,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(java.lang.Object)">
 <h3>isSimpleOrBuiltinOrCollectionOrMapOfSimpleType</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isSimpleOrBuiltinOrCollectionOrMapOfSimpleType</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj)</span></div>
-<div class="block">Checks whether the object or its components are simple, built-in, or collections/maps of such types.</div>
+<div class="block">Checks whether the object or its components are simple, built-in, or collections/maps/tuple of such types.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>obj</code> - the object to evaluate</dd>
@@ -577,7 +878,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="size(java.lang.Object)">
 <h3>size</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">size</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a></span>&nbsp;<span class="element-name">size</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;obj)</span></div>
 <div class="block">Returns the size or length of the given object, depending on its type.
 
  <p>This method provides a unified way to determine the "size" of various types

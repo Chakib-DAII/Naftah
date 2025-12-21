@@ -15,7 +15,11 @@
 <script type="text/javascript" src="../../../../../script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="package-declaration-page">
-<script type="text/javascript">var pathtoroot = "../../../../../";
+<script type="text/javascript">var evenRowColor = "even-row-color";
+var oddRowColor = "odd-row-color";
+var tableTab = "table-tab";
+var activeTableTab = "active-table-tab";
+var pathtoroot = "../../../../../";
 loadScripts(document, 'script');</script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -79,16 +83,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">This is the base package of Naftah programming language utilities.</div>
 </div>
-<div class="col-first odd-row-color"><a href="../arabic/package-summary.html">org.daiitech.naftah.utils.arabic</a></div>
+<div class="col-first odd-row-color"><a href="type/package-summary.html">org.daiitech.naftah.utils.reflect.type</a></div>
 <div class="col-last odd-row-color">
+<div class="block">This is the base package of Naftah programming language type reflection utilities.</div>
+</div>
+<div class="col-first even-row-color"><a href="../arabic/package-summary.html">org.daiitech.naftah.utils.arabic</a></div>
+<div class="col-last even-row-color">
 <div class="block">This is the base package of Naftah programming language arabic utilities.</div>
 </div>
-<div class="col-first even-row-color"><a href="../function/package-summary.html">org.daiitech.naftah.utils.function</a></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><a href="../function/package-summary.html">org.daiitech.naftah.utils.function</a></div>
+<div class="col-last odd-row-color">
 <div class="block">This is the base package of Naftah programming functional utilities.</div>
 </div>
-<div class="col-first odd-row-color"><a href="../repl/package-summary.html">org.daiitech.naftah.utils.repl</a></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><a href="../repl/package-summary.html">org.daiitech.naftah.utils.repl</a></div>
+<div class="col-last even-row-color">
 <div class="block">This is the base package of Naftah programming language REPL (Read-Eval-Print Loop) utilities.</div>
 </div>
 </div>
@@ -96,7 +104,8 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="caption"><span>Classes</span></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab4" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab4', 2)" class="table-tab">Record Classes</button></div>
+<div id="class-summary.tabpanel" role="tabpanel" aria-labelledby="class-summary-tab0">
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
@@ -105,15 +114,23 @@ loadScripts(document, 'script');</script>
 <div class="block">Utility class for working with Java annotations on methods, classes, and
  parameters.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ClassUtils.html" title="class in org.daiitech.naftah.utils.reflect">ClassUtils</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ClassScanningResult.html" title="class in org.daiitech.naftah.utils.reflect">ClassScanningResult</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Holds the results of a classpath or module scanning operation.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ClassUtils.html" title="class in org.daiitech.naftah.utils.reflect">ClassUtils</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for working with Java classes, methods, and their qualified names.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="InvocationUtils.html" title="class in org.daiitech.naftah.utils.reflect">InvocationUtils</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="InvocationUtils.html" title="class in org.daiitech.naftah.utils.reflect">InvocationUtils</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for reflective invocation of Java methods and constructors,
  with support for type conversion and integration with the dynamically typed
  programming language <code>Naftah</code>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ObjectAccessUtils.html" title="class in org.daiitech.naftah.utils.reflect">ObjectAccessUtils</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">Utility class for reflective access to object fields and properties.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="RuntimeClassScanner.html" title="class in org.daiitech.naftah.utils.reflect">RuntimeClassScanner</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
@@ -122,6 +139,11 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="RuntimeClassScanner1.html" title="class in org.daiitech.naftah.utils.reflect">RuntimeClassScanner1</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">Deprecated, for removal: This API element is subject to removal in a future version.
 <div class="deprecation-comment">This class is deprecated and marked for removal.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="ScannedClass.html" title="class in org.daiitech.naftah.utils.reflect">ScannedClass</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">Deprecated.
+<div class="deprecation-comment">This class is deprecated and may be removed in future versions.</div>
+</div>
 </div>
 </div>
 </div>

@@ -144,6 +144,14 @@ implements <a href="Operation.html" title="interface in org.daiitech.naftah.buil
 <div class="col-last odd-row-color">
 <div class="block">PRE_INCREMENT: Simulates the prefix increment operation (++x).</div>
 </div>
+<div class="col-first even-row-color"><code><a href="#SIZE_OF" class="member-name-link">SIZE_OF</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Represents the <code>sizeof</code> operation.</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#TYPE_OF" class="member-name-link">TYPE_OF</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Represents the <code>typeof</code> operation.</div>
+</div>
 </div>
 </section>
 </li>
@@ -379,6 +387,35 @@ the order they are declared.</div>
  <p>
  Applies a "falsy" check to numeric or string values and returns the opposite boolean.
  Uses the custom <code>not(...)</code> logic based on "truthy"/"falsy" evaluation.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="TYPE_OF">
+<h3>TYPE_OF</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="UnaryOperation.html" title="enum class in org.daiitech.naftah.builtin.utils.op">UnaryOperation</a></span>&nbsp;<span class="element-name">TYPE_OF</span></div>
+<div class="block">Represents the <code>typeof</code> operation.
+ <p>
+ Returns the runtime language type of the given operand as a Naftah type
+ descriptor.
+ <ul>
+ <li>Resolves the operand's <a href="../../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>.</li>
+ <li>Maps the Java type to the corresponding Naftah type using the parser vocabulary.</li>
+ </ul></div>
+</section>
+</li>
+<li>
+<section class="detail" id="SIZE_OF">
+<h3>SIZE_OF</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="UnaryOperation.html" title="enum class in org.daiitech.naftah.builtin.utils.op">UnaryOperation</a></span>&nbsp;<span class="element-name">SIZE_OF</span></div>
+<div class="block">Represents the <code>sizeof</code> operation.
+ <p>
+ Computes the logical size of the given operand.
+ <ul>
+ <li>For collections, returns the number of elements.</li>
+ <li>For arrays, returns their length.</li>
+ <li>For strings, returns the character count.</li>
+ <li>For unsupported types, behavior is delegated to <a href="../ObjectUtils.html#size(java.lang.Object)"><code>ObjectUtils.size(Object)</code></a>.</li>
+ </ul></div>
 </section>
 </li>
 </ul>

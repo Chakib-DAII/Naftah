@@ -11,15 +11,15 @@
 	<!-- DataTables CSS & JS -->
 	<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	
+
 	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
 
 	  <!-- used by jekyll-seo-tag plugin -->
 </head>
 <body>
 <header class="site-header">
-	<img alt="NaftahLang" src="/assets/images/logo.png"
-		 style="height: 40px; vertical-align: middle; margin-right: 10px;">
+	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
+	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
 	<h1>
 		<a href="/">
 			Naftah Language Documentation - مستندات لغة نفطه
@@ -48,6 +48,8 @@
 		<li><a href="/language/functions">الدوال</a></li>
 		
 		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
+		
+		<li><a href="/language/concurrency">التزامن</a></li>
 		
 		<li><a href="/running-naftah">تشغيل نفطه</a></li>
 		
@@ -79,102 +81,57 @@ in the lexer.</p>
 
 <hr />
 
-<h2 id="-الاستيراد-imports">📦 الاستيراد (Imports)</h2>
+<h2 id="-الاستيراد-imports">📥 الاستيراد (Imports)</h2>
 
 <table>
   <thead>
     <tr>
       <th>الكلمة</th>
-      <th>مرادفات</th>
+      <th>المرادفات</th>
       <th>الوظيفة</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">استيراد</code></td>
-      <td><code class="language-plaintext highlighter-rouge">استيراد</code>, <code class="language-plaintext highlighter-rouge">جلب</code>, <code class="language-plaintext highlighter-rouge">إجلب</code></td>
-      <td>استيراد مكتبة أو وحدة</td>
+      <td><code class="language-plaintext highlighter-rouge">جلب</code>, <code class="language-plaintext highlighter-rouge">إجلب</code></td>
+      <td>إدراج وحدة أو ملف خارجي لاستخدام محتوياته داخل البرنامج</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">تحت_إسم</code></td>
-      <td><code class="language-plaintext highlighter-rouge">تحت_إسم</code>, <code class="language-plaintext highlighter-rouge">مثل</code></td>
-      <td>إعطاء اسم مستعار للوحدة المستوردة</td>
+      <td><code class="language-plaintext highlighter-rouge">مثل</code></td>
+      <td>إعطاء اسم بديل للوحدة أو العنصر المستورد لتسهيل استخدامه</td>
     </tr>
   </tbody>
 </table>
 
 <hr />
 
-<h2 id="-التحكم-بالتدفق-flow-control">🧭 التحكم بالتدفق (Flow Control)</h2>
+<h2 id="-القيم-والثوابت-constants--literals">📦 القيم والثوابت (Constants &amp; Literals)</h2>
 
 <table>
   <thead>
     <tr>
       <th>الكلمة</th>
-      <th>مرادفات</th>
+      <th>المرادفات</th>
       <th>الوظيفة</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">إذا</code></td>
-      <td><code class="language-plaintext highlighter-rouge">إذا</code>, <code class="language-plaintext highlighter-rouge">اذا</code>, <code class="language-plaintext highlighter-rouge">إذا_كان</code>, <code class="language-plaintext highlighter-rouge">اذا_كان</code></td>
-      <td>شرط أولي (Conditional (if) block)</td>
+      <td><code class="language-plaintext highlighter-rouge">صحيح</code></td>
+      <td><code class="language-plaintext highlighter-rouge">صحيح</code>, <code class="language-plaintext highlighter-rouge">صائب</code>, <code class="language-plaintext highlighter-rouge">حقيقي</code></td>
+      <td>قيمة منطقية تعبّر عن حالة الصواب (Boolean true)</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">غير_ذلك_إذا</code></td>
-      <td><code class="language-plaintext highlighter-rouge">غير_ذلك_إذا</code>, <code class="language-plaintext highlighter-rouge">غير_ذلك_إذا_كان</code>, <code class="language-plaintext highlighter-rouge">غير_ذلك_اذا_كان</code>, <code class="language-plaintext highlighter-rouge">غير_ذلك_اذا</code></td>
-      <td>شرط إضافي  (Else-if conditional)</td>
+      <td><code class="language-plaintext highlighter-rouge">خطأ</code></td>
+      <td><code class="language-plaintext highlighter-rouge">خطأ</code>, <code class="language-plaintext highlighter-rouge">خاطئ</code>, <code class="language-plaintext highlighter-rouge">زائف</code></td>
+      <td>قيمة منطقية تعبّر عن حالة الخطأ (Boolean false)</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">غير_ذلك</code></td>
-      <td>-</td>
-      <td>فرع بديل في جملة شرطية (Else block)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">إذن</code></td>
-      <td><code class="language-plaintext highlighter-rouge">إذن</code>, <code class="language-plaintext highlighter-rouge">اذن</code></td>
-      <td>تفيد تنفيذ الفرع الصحيح (Then block (executes if condition is true))</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">كرر</code></td>
-      <td>-</td>
-      <td>تكرار حتى تحقق شرط     (Repeat loop (repeat-until))</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">كرر_حلقة</code></td>
-      <td>-</td>
-      <td>حلقة تكرار بعدد محدد  (For loop)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">إفعل</code></td>
-      <td><code class="language-plaintext highlighter-rouge">إفعل</code>, <code class="language-plaintext highlighter-rouge">افعل</code></td>
-      <td>بدء تنفيذ حلقة (do (Start of do-while loop))</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">بينما</code></td>
-      <td>-</td>
-      <td>تنفيذ شرط طالما تحقق  ( While loop)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">حتى</code></td>
-      <td>-</td>
-      <td>نهاية حلقة <code class="language-plaintext highlighter-rouge">كرر</code>    (Until condition (used in repeat))</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">إلى</code></td>
-      <td>-</td>
-      <td>يستخدم في الحلقات  (Loop range upper bound)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">تنازليا</code></td>
-      <td>-</td>
-      <td>عد تنازلي في الحلقات (downto, Count down loop)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">خطوة</code></td>
-      <td>-</td>
-      <td>تحديد خطوة في الحلقات    (Step value in loop)</td>
+      <td><code class="language-plaintext highlighter-rouge">ليس_رقم</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ليس_رقم</code>, <code class="language-plaintext highlighter-rouge">قيمة_غير_رقمية</code>, <code class="language-plaintext highlighter-rouge">رقم_غير_صالح</code>, <code class="language-plaintext highlighter-rouge">غير_عددي</code>, <code class="language-plaintext highlighter-rouge">ليس_عددي</code></td>
+      <td>قيمة خاصة تشير إلى نتيجة حسابية غير صالحة أو غير عددية (NaN)</td>
     </tr>
   </tbody>
 </table>
@@ -187,7 +144,7 @@ in the lexer.</p>
   <thead>
     <tr>
       <th>الكلمة</th>
-      <th>مرادفات</th>
+      <th>المرادفات</th>
       <th>الوظيفة</th>
     </tr>
   </thead>
@@ -195,27 +152,83 @@ in the lexer.</p>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">ثابت</code></td>
       <td>-</td>
-      <td>تعريف قيمة غير قابلة للتغيير (Immutable value declaration)</td>
+      <td>تعريف قيمة ثابتة لا يمكن تغييرها بعد إنشائها</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">متغير</code></td>
       <td>-</td>
-      <td>تعريف متغير يمكن تغييره (Mutable variable declaration)</td>
+      <td>تعريف قيمة يمكن تعديلها أثناء تنفيذ البرنامج</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">دالة</code></td>
       <td>-</td>
-      <td>تعريف دالة (Function declaration)</td>
+      <td>تعريف وحدة تنفيذية تحتوي على تعليمات قابلة لإعادة الاستخدام</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">عدم</code></td>
       <td><code class="language-plaintext highlighter-rouge">عدم</code>, <code class="language-plaintext highlighter-rouge">فراغ</code>, <code class="language-plaintext highlighter-rouge">بطلان</code>, <code class="language-plaintext highlighter-rouge">خلاء</code></td>
-      <td>نوع عدم void (Void return type)</td>
+      <td>تحديد أن الدالة لا تُرجع أي قيمة</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">فارغ</code></td>
       <td><code class="language-plaintext highlighter-rouge">فارغ</code>, <code class="language-plaintext highlighter-rouge">باطل</code>, <code class="language-plaintext highlighter-rouge">لاشيء</code></td>
-      <td>قيمة فارغة (Null value)</td>
+      <td>تمثيل غياب القيمة أو عدم وجود كائن</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">أي_نوع</code></td>
+      <td><code class="language-plaintext highlighter-rouge">أي_نوع</code>, <code class="language-plaintext highlighter-rouge">أي_نمط</code></td>
+      <td>نوع عام يقبل أي قيمة دون تقييد بنوع محدد</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="️-التحكم-الشرطي-والمنطقي-conditional--logical">⚖️ التحكم الشرطي والمنطقي (Conditional &amp; Logical)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>الكلمة</th>
+      <th>المرادفات</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">إذا</code></td>
+      <td><code class="language-plaintext highlighter-rouge">إذا</code>, <code class="language-plaintext highlighter-rouge">إذا_كان</code>, <code class="language-plaintext highlighter-rouge">اذا</code>, <code class="language-plaintext highlighter-rouge">اذا_كان</code></td>
+      <td>تنفيذ كتلة برمجية عند تحقق شرط معين</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">غير_ذلك_إذا</code></td>
+      <td><code class="language-plaintext highlighter-rouge">غير_ذلك_إذا_كان</code>, <code class="language-plaintext highlighter-rouge">غير_ذلك_اذا_كان</code>, <code class="language-plaintext highlighter-rouge">غير_ذلك_اذا</code></td>
+      <td>اختبار شرط إضافي عند فشل الشرط السابق</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">غير_ذلك</code></td>
+      <td>-</td>
+      <td>تنفيذ كتلة بديلة عند عدم تحقق أي شرط</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">إذن</code></td>
+      <td><code class="language-plaintext highlighter-rouge">إذن</code>, <code class="language-plaintext highlighter-rouge">اذن</code></td>
+      <td>تحديد بداية التنفيذ بعد تحقق الشرط</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">و</code></td>
+      <td><code class="language-plaintext highlighter-rouge">و</code>, <code class="language-plaintext highlighter-rouge">ايضا</code>, <code class="language-plaintext highlighter-rouge">أيضا</code></td>
+      <td>عامل منطقي يُرجع true إذا تحققت جميع الشروط</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">أو</code></td>
+      <td><code class="language-plaintext highlighter-rouge">أو</code>, <code class="language-plaintext highlighter-rouge">او</code>, <code class="language-plaintext highlighter-rouge">وإلا</code>, <code class="language-plaintext highlighter-rouge">والا</code>, <code class="language-plaintext highlighter-rouge">ولا</code></td>
+      <td>عامل منطقي يُرجع true إذا تحقق أحد الشروط</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">ليس</code></td>
+      <td>-</td>
+      <td>نفي القيمة المنطقية وتحويل true إلى false والعكس</td>
     </tr>
   </tbody>
 </table>
@@ -228,164 +241,400 @@ in the lexer.</p>
   <thead>
     <tr>
       <th>الكلمة</th>
-      <th>مرادفات</th>
+      <th>المرادفات</th>
       <th>الوظيفة</th>
     </tr>
   </thead>
   <tbody>
     <tr>
+      <td><code class="language-plaintext highlighter-rouge">كرر</code></td>
+      <td>-</td>
+      <td>تنفيذ مجموعة تعليمات بشكل متكرر</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">كرر_حلقة</code></td>
+      <td>-</td>
+      <td>حلقة تكرار بعدد محدد أو نطاق معين</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">إفعل</code></td>
+      <td><code class="language-plaintext highlighter-rouge">إفعل</code>, <code class="language-plaintext highlighter-rouge">افعل</code></td>
+      <td>بدء حلقة تُنفّذ مرة واحدة على الأقل</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">بينما</code></td>
+      <td>-</td>
+      <td>تكرار التنفيذ طالما تحقق شرط معين</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">حتى</code></td>
+      <td>-</td>
+      <td>تحديد شرط التوقف عن التكرار</td>
+    </tr>
+    <tr>
       <td><code class="language-plaintext highlighter-rouge">كسر</code></td>
-      <td><code class="language-plaintext highlighter-rouge">كسر</code>, <code class="language-plaintext highlighter-rouge">اكسر</code>, <code class="language-plaintext highlighter-rouge">إكسر</code></td>
-      <td>إيقاف الحلقة (Exit the loop)</td>
+      <td><code class="language-plaintext highlighter-rouge">اكسر</code>, <code class="language-plaintext highlighter-rouge">إكسر</code></td>
+      <td>إيقاف الحلقة فورًا والخروج منها</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">تابع</code></td>
       <td>-</td>
-      <td>تخطي الدورة الحالية للحلقة واستكمال التالي (Skip to next iteration)</td>
-    </tr>
-  </tbody>
-</table>
-
-<hr />
-
-<h2 id="️-المنطق-الشرطي-logical">⚖️ المنطق الشرطي (Logical)</h2>
-
-<table>
-  <thead>
-    <tr>
-      <th>الكلمة</th>
-      <th>مرادفات</th>
-      <th>الوظيفة</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">و</code></td>
-      <td><code class="language-plaintext highlighter-rouge">و</code>, <code class="language-plaintext highlighter-rouge">ايضا</code>, <code class="language-plaintext highlighter-rouge">أيضا</code></td>
-      <td>العامل المنطقي و (Logical AND)</td>
+      <td>تخطي التكرار الحالي والانتقال للتالي</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">أو</code></td>
-      <td><code class="language-plaintext highlighter-rouge">أو</code>, <code class="language-plaintext highlighter-rouge">او</code>, <code class="language-plaintext highlighter-rouge">وإلا</code>, <code class="language-plaintext highlighter-rouge">والا</code>, <code class="language-plaintext highlighter-rouge">ولا</code></td>
-      <td>العامل المنطقي أو (Logical OR)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">ليس</code></td>
+      <td><code class="language-plaintext highlighter-rouge">إلى</code></td>
       <td>-</td>
-      <td>العامل المنطقي ليس (Logical NOT)</td>
+      <td>تحديد الحد الأعلى لقيم التكرار</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">تنازليا</code></td>
+      <td>-</td>
+      <td>تنفيذ التكرار باتجاه تنازلي</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">خطوة</code></td>
+      <td>-</td>
+      <td>تحديد مقدار الزيادة أو النقصان في كل دورة</td>
     </tr>
   </tbody>
 </table>
 
 <hr />
 
-<h2 id="-القيم-والثوابت-constants">📦 القيم والثوابت (Constants)</h2>
+<h2 id="-التعبيرات-والبناء-expressions--flow">🧪 التعبيرات والبناء (Expressions &amp; Flow)</h2>
 
 <table>
   <thead>
     <tr>
       <th>الكلمة</th>
-      <th>مرادفات</th>
-      <th>الوظيفة</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">صحيح</code></td>
-      <td><code class="language-plaintext highlighter-rouge">صحيح</code>, <code class="language-plaintext highlighter-rouge">صائب</code>, <code class="language-plaintext highlighter-rouge">حقيقي</code></td>
-      <td>قيمة منطقية صحيحة (Boolean true)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">خطأ</code></td>
-      <td><code class="language-plaintext highlighter-rouge">خطأ</code>, <code class="language-plaintext highlighter-rouge">خاطئ</code>, <code class="language-plaintext highlighter-rouge">زائف</code></td>
-      <td>قيمة منطقية خاطئة (Boolean false)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">ليس_رقم</code></td>
-      <td><code class="language-plaintext highlighter-rouge">ليس_رقم</code>, <code class="language-plaintext highlighter-rouge">قيمة_غير_رقمية</code>, <code class="language-plaintext highlighter-rouge">رقم_غير_صالح</code>, <code class="language-plaintext highlighter-rouge">غير_عددي</code>, <code class="language-plaintext highlighter-rouge">ليس_عددي</code></td>
-      <td>قيمة ليس رقم (NaN (Not-a-Number)</td>
-    </tr>
-  </tbody>
-</table>
-
-<hr />
-
-<h2 id="-التعبيرات-expressions">🧪 التعبيرات (Expressions)</h2>
-
-<table>
-  <thead>
-    <tr>
-      <th>الكلمة</th>
-      <th>مرادفات</th>
+      <th>المرادفات</th>
       <th>الوظيفة</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">من</code></td>
-      <td><code class="language-plaintext highlighter-rouge">من</code>, <code class="language-plaintext highlighter-rouge">ضمن</code>, <code class="language-plaintext highlighter-rouge">من_بين</code>, <code class="language-plaintext highlighter-rouge">داخل</code></td>
-      <td>تستخدم في الحلقات (for..in loops )</td>
+      <td><code class="language-plaintext highlighter-rouge">ضمن</code>, <code class="language-plaintext highlighter-rouge">من_بين</code>, <code class="language-plaintext highlighter-rouge">داخل</code></td>
+      <td>المرور على عناصر مجموعة أو نطاق</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">اختر</code></td>
       <td>-</td>
-      <td>بداية جملة الاختيار (Switch/case statement)</td>
+      <td>تنفيذ أحد الفروع بناءً على قيمة محددة</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">من بين</code></td>
-      <td><code class="language-plaintext highlighter-rouge">من بين</code>, <code class="language-plaintext highlighter-rouge">حسب</code>, <code class="language-plaintext highlighter-rouge">لـ</code>, <code class="language-plaintext highlighter-rouge">وفقا لـ</code></td>
-      <td>فرع داخل  جملة الاختيار (Case branch)</td>
+      <td><code class="language-plaintext highlighter-rouge">حسب</code>, <code class="language-plaintext highlighter-rouge">لـ</code>, <code class="language-plaintext highlighter-rouge">وفقا_لـ</code></td>
+      <td>تحديد فرع مطابق داخل جملة الاختيار</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">ارجع</code></td>
-      <td><code class="language-plaintext highlighter-rouge">ارجع</code>, <code class="language-plaintext highlighter-rouge">أرجع</code>, <code class="language-plaintext highlighter-rouge">اعد</code>, <code class="language-plaintext highlighter-rouge">أعد</code></td>
-      <td>إرجاع قيمة من دالة أو نطاق (Return value from function or scope)</td>
+      <td><code class="language-plaintext highlighter-rouge">أرجع</code>, <code class="language-plaintext highlighter-rouge">اعد</code>, <code class="language-plaintext highlighter-rouge">أعد</code></td>
+      <td>إنهاء الدالة وإرجاع قيمة إلى المستدعي</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">أنهي</code></td>
-      <td><code class="language-plaintext highlighter-rouge">أنهي</code>, <code class="language-plaintext highlighter-rouge">انهي</code>, <code class="language-plaintext highlighter-rouge">نهاية</code></td>
-      <td>نهاية بناء برمجي (مثل دالة أو حلقة) (End of a block)</td>
+      <td><code class="language-plaintext highlighter-rouge">انهي</code>, <code class="language-plaintext highlighter-rouge">نهاية</code></td>
+      <td>إنهاء كتلة برمجية أو نطاق تنفيذي</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">مثيل_من</code></td>
+      <td>-</td>
+      <td>التحقق مما إذا كانت القيمة تنتمي إلى نوع معين</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">نوع</code></td>
+      <td>-</td>
+      <td>إرجاع نوع القيمة أثناء وقت التنفيذ</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">حجم</code></td>
+      <td>-</td>
+      <td>حساب حجم أو عدد عناصر قيمة أو بنية بيانات</td>
     </tr>
   </tbody>
 </table>
 
 <hr />
 
-<h2 id="-أخرى">🧩 أخرى</h2>
+<h2 id="-العمليات-operators">➕➖ العمليات (Operators)</h2>
+
+<h3 id="حسابية">حسابية</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>الرمز</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">+</code></td>
+      <td>جمع القيم أو دمجها</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-</code></td>
+      <td>طرح قيمة من أخرى</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">*</code></td>
+      <td>ضرب القيم</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">/</code></td>
+      <td>قسمة القيم</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">%</code></td>
+      <td>حساب باقي القسمة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">**</code></td>
+      <td>رفع قيمة لقوة أخرى</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="إسناد-ومقارنة">إسناد ومقارنة</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>الرمز</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">=</code></td>
+      <td>إسناد قيمة لمتغير</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">==</code></td>
+      <td>مقارنة قيمتين للتحقق من التساوي</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">=!</code></td>
+      <td>التحقق من عدم التساوي</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">&lt;</code></td>
+      <td>مقارنة لمعرفة الأصغر</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">&gt;</code></td>
+      <td>مقارنة لمعرفة الأكبر</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">=&gt;</code></td>
+      <td>أصغر من أو يساوي</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">&gt;=</code></td>
+      <td>أكبر من أو يساوي</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="منطقية-بتية-bitwise">منطقية بتية (Bitwise)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>الرمز</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">~</code></td>
+      <td>نفي البتات</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">&amp;</code></td>
+      <td>عملية AND بتية</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">\|</code></td>
+      <td>عملية OR بتية</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">^</code></td>
+      <td>عملية XOR بتية</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="إزاحة-shift">إزاحة (Shift)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>الرمز</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">&lt;&lt;</code></td>
+      <td>إزاحة البتات إلى اليسار</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">&gt;&gt;</code></td>
+      <td>إزاحة البتات إلى اليمين مع الحفاظ على الإشارة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">&gt;&gt;&gt;</code></td>
+      <td>إزاحة البتات إلى اليمين دون إشارة</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="عنصر-بعنصر-element-wise">عنصر-بعنصر (Element-wise)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>الرمز</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.+.</code></td>
+      <td>تطبيق الجمع على العناصر المقابلة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.-.</code></td>
+      <td>تطبيق الطرح على العناصر المقابلة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">.*.</code></td>
+      <td>تطبيق الضرب على العناصر المقابلة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">./.</code></td>
+      <td>تطبيق القسمة على العناصر المقابلة</td>
+    </tr>
+    <tr>
+      <td>`.%.’</td>
+      <td>تطبيق باقي القسمة على العناصر المقابلة</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-التزامن-concurrency">⚡ التزامن (Concurrency)</h2>
 
 <table>
   <thead>
     <tr>
       <th>الكلمة</th>
-      <th>مرادفات</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">غير_متزامن</code></td>
+      <td>تعريف دالة تُنفّذ بشكل غير متزامن</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">تشغيل</code></td>
+      <td>تشغيل مهمة غير متزامنة فورًا</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">انتظار</code></td>
+      <td>إيقاف التنفيذ مؤقتًا حتى انتهاء المهمة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">نطاق</code></td>
+      <td>إنشاء سياق تنفيذي محلي</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">قناة</code></td>
+      <td>إرسال واستقبال البيانات بين المهام</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">ممثل</code></td>
+      <td>كيان مستقل يعالج الرسائل ويحتفظ بحالة</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-المعالجة-والاستثناءات-error-handling">🧩 المعالجة والاستثناءات (Error Handling)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>الكلمة</th>
       <th>الوظيفة</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">حاول</code></td>
-      <td>-</td>
-      <td>بداية كتلة المحاولة (Begin try block)</td>
+      <td>بدء كتلة مراقبة الأخطاء</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">نجاح</code></td>
-      <td>-</td>
-      <td>كتلة النجاح (Try success)</td>
+      <td>تنفيذ التعليمات عند نجاح العملية</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">فشل</code></td>
-      <td>-</td>
-      <td>كتلة الخطأ (Try failure)</td>
+      <td>تنفيذ التعليمات عند حدوث خطأ</td>
     </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-الاختيارية-optional">🧠 الاختيارية (Optional)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>الكلمة</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">بعض</code></td>
-      <td>-</td>
-      <td>تحديد وجود قيمة (Optional value present)</td>
+      <td>تمثيل وجود قيمة صالحة</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">معدوم</code></td>
+      <td>تمثيل غياب القيمة</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-السلوك-والتنفيذ-implementations">🧩 السلوك والتنفيذ (Implementations)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>الكلمة</th>
+      <th>المرادفات</th>
+      <th>الوظيفة</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">سلوك</code></td>
       <td>-</td>
-      <td>لا توجد قيمة (Optional value not present)</td>
+      <td>تعريف كتلة سلوك (Implementation) مرتبطة بكائن مُعرّف مسبقًا</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">هذا</code></td>
+      <td><code class="language-plaintext highlighter-rouge">هذا</code>, <code class="language-plaintext highlighter-rouge">ذات</code></td>
+      <td>مرجع إلى الكائن الحالي داخل كتلة السلوك (مشابه لـ <code class="language-plaintext highlighter-rouge">self</code> في Rust و <code class="language-plaintext highlighter-rouge">this</code> في Java)</td>
     </tr>
   </tbody>
 </table>
@@ -415,6 +664,7 @@ in the lexer.</p>
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
 * [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
 * [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
+* [⚡ التعامل مع التزامن في نفطه – Concurrency](./10_concurrency.md)
 
 ---
 </div>

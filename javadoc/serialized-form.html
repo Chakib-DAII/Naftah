@@ -137,70 +137,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.ClassScanningResult">
-<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/ClassScanningResult.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.ClassScanningResult</a></h3>
-<div class="type-signature">class ClassScanningResult extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
-<dl class="name-value">
-<dt>serialVersionUID:</dt>
-<dd>1L</dd>
-</dl>
-<ul class="block-list">
-<li>
-<section class="detail">
-<h4>Serialized Fields</h4>
-<ul class="block-list">
-<li class="block-list">
-<h5>accessibleClasses</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt; accessibleClasses</pre>
-<div class="block">Subset of classes that are accessible for reflection or usage.</div>
-</li>
-<li class="block-list">
-<h5>arabicClassQualifiers</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt; arabicClassQualifiers</pre>
-<div class="block">Set of fully qualified class names in Arabic notation.</div>
-</li>
-<li class="block-list">
-<h5>builtinFunctions</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt; builtinFunctions</pre>
-<div class="block">Maps qualified method or function names to lists of builtin functions.</div>
-</li>
-<li class="block-list">
-<h5>classes</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt; classes</pre>
-<div class="block">Maps fully qualified class names to their corresponding Class objects.</div>
-</li>
-<li class="block-list">
-<h5>classNames</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&gt; classNames</pre>
-<div class="block">Maps class names to their respective ClassLoader instances.</div>
-</li>
-<li class="block-list">
-<h5>classQualifiers</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt; classQualifiers</pre>
-<div class="block">Set of fully qualified class names discovered.</div>
-</li>
-<li class="block-list">
-<h5>instantiableClasses</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt; instantiableClasses</pre>
-<div class="block">Subset of classes that can be instantiated (e.g., not abstract).</div>
-</li>
-<li class="block-list">
-<h5>jvmClassInitializers</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&gt; jvmClassInitializers</pre>
-<div class="block">Maps qualified Java class names to lists of <a href="org/daiitech/naftah/builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> constructors.</div>
-</li>
-<li class="block-list">
-<h5>jvmFunctions</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;&gt; jvmFunctions</pre>
-<div class="block">Maps qualified method or function names to lists of JVM functions (methods).</div>
-</li>
-</ul>
-</section>
-</li>
-</ul>
-</section>
-</li>
-<li>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.lang.DynamicNumber">
 <h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.DynamicNumber</a></h3>
 <div class="type-signature">class DynamicNumber extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
@@ -512,9 +448,162 @@ loadScripts(document, 'script');</script>
 </ul>
 </section>
 </li>
+</ul>
+</section>
+</li>
 <li>
-<section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.Tuple">
-<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/Tuple.html" title="class in org.daiitech.naftah.builtin.utils">org.daiitech.naftah.builtin.utils.Tuple</a></h3>
+<section class="serialized-package-container">
+<h2 title="Package">Package&nbsp;<a href="org/daiitech/naftah/builtin/utils/tuple/package-summary.html">org.daiitech.naftah.builtin.utils.tuple</a></h2>
+<ul class="block-list">
+<li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.tuple.ImmutablePair">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/tuple/ImmutablePair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">org.daiitech.naftah.builtin.utils.tuple.ImmutablePair</a></h3>
+<div class="type-signature">class ImmutablePair extends <a href="org/daiitech/naftah/builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="org/daiitech/naftah/builtin/utils/tuple/ImmutablePair.html" title="type parameter in ImmutablePair">L</a>,<wbr><a href="org/daiitech/naftah/builtin/utils/tuple/ImmutablePair.html" title="type parameter in ImmutablePair">R</a>&gt; implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+<ul class="block-list">
+<li>
+<section class="detail">
+<h4>Serialized Fields</h4>
+<ul class="block-list">
+<li class="block-list">
+<h5>left</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/ImmutablePair.html" title="type parameter in ImmutablePair">L</a> left</pre>
+<div class="block">Left object.</div>
+</li>
+<li class="block-list">
+<h5>right</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/ImmutablePair.html" title="type parameter in ImmutablePair">R</a> right</pre>
+<div class="block">Right object.</div>
+</li>
+</ul>
+</section>
+</li>
+</ul>
+</section>
+</li>
+<li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.tuple.ImmutableTriple">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/tuple/ImmutableTriple.html" title="class in org.daiitech.naftah.builtin.utils.tuple">org.daiitech.naftah.builtin.utils.tuple.ImmutableTriple</a></h3>
+<div class="type-signature">class ImmutableTriple extends <a href="org/daiitech/naftah/builtin/utils/tuple/Triple.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Triple</a>&lt;<a href="org/daiitech/naftah/builtin/utils/tuple/ImmutableTriple.html" title="type parameter in ImmutableTriple">L</a>,<wbr><a href="org/daiitech/naftah/builtin/utils/tuple/ImmutableTriple.html" title="type parameter in ImmutableTriple">M</a>,<wbr><a href="org/daiitech/naftah/builtin/utils/tuple/ImmutableTriple.html" title="type parameter in ImmutableTriple">R</a>&gt; implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+<ul class="block-list">
+<li>
+<section class="detail">
+<h4>Serialized Fields</h4>
+<ul class="block-list">
+<li class="block-list">
+<h5>left</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/ImmutableTriple.html" title="type parameter in ImmutableTriple">L</a> left</pre>
+<div class="block">Left object.</div>
+</li>
+<li class="block-list">
+<h5>middle</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/ImmutableTriple.html" title="type parameter in ImmutableTriple">M</a> middle</pre>
+<div class="block">Middle object.</div>
+</li>
+<li class="block-list">
+<h5>right</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/ImmutableTriple.html" title="type parameter in ImmutableTriple">R</a> right</pre>
+<div class="block">Right object.</div>
+</li>
+</ul>
+</section>
+</li>
+</ul>
+</section>
+</li>
+<li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.tuple.MutablePair">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/tuple/MutablePair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">org.daiitech.naftah.builtin.utils.tuple.MutablePair</a></h3>
+<div class="type-signature">class MutablePair extends <a href="org/daiitech/naftah/builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="org/daiitech/naftah/builtin/utils/tuple/MutablePair.html" title="type parameter in MutablePair">L</a>,<wbr><a href="org/daiitech/naftah/builtin/utils/tuple/MutablePair.html" title="type parameter in MutablePair">R</a>&gt; implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+<ul class="block-list">
+<li>
+<section class="detail">
+<h4>Serialized Fields</h4>
+<ul class="block-list">
+<li class="block-list">
+<h5>left</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/MutablePair.html" title="type parameter in MutablePair">L</a> left</pre>
+<div class="block">Left object.</div>
+</li>
+<li class="block-list">
+<h5>right</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/MutablePair.html" title="type parameter in MutablePair">R</a> right</pre>
+<div class="block">Right object.</div>
+</li>
+</ul>
+</section>
+</li>
+</ul>
+</section>
+</li>
+<li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.tuple.MutableTriple">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/tuple/MutableTriple.html" title="class in org.daiitech.naftah.builtin.utils.tuple">org.daiitech.naftah.builtin.utils.tuple.MutableTriple</a></h3>
+<div class="type-signature">class MutableTriple extends <a href="org/daiitech/naftah/builtin/utils/tuple/Triple.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Triple</a>&lt;<a href="org/daiitech/naftah/builtin/utils/tuple/MutableTriple.html" title="type parameter in MutableTriple">L</a>,<wbr><a href="org/daiitech/naftah/builtin/utils/tuple/MutableTriple.html" title="type parameter in MutableTriple">M</a>,<wbr><a href="org/daiitech/naftah/builtin/utils/tuple/MutableTriple.html" title="type parameter in MutableTriple">R</a>&gt; implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+<ul class="block-list">
+<li>
+<section class="detail">
+<h4>Serialized Fields</h4>
+<ul class="block-list">
+<li class="block-list">
+<h5>left</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/MutableTriple.html" title="type parameter in MutableTriple">L</a> left</pre>
+<div class="block">Left object.</div>
+</li>
+<li class="block-list">
+<h5>middle</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/MutableTriple.html" title="type parameter in MutableTriple">M</a> middle</pre>
+<div class="block">Middle object.</div>
+</li>
+<li class="block-list">
+<h5>right</h5>
+<pre><a href="org/daiitech/naftah/builtin/utils/tuple/MutableTriple.html" title="type parameter in MutableTriple">R</a> right</pre>
+<div class="block">Right object.</div>
+</li>
+</ul>
+</section>
+</li>
+</ul>
+</section>
+</li>
+<li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.tuple.Pair">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">org.daiitech.naftah.builtin.utils.tuple.Pair</a></h3>
+<div class="type-signature">class Pair extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.tuple.Triple">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/tuple/Triple.html" title="class in org.daiitech.naftah.builtin.utils.tuple">org.daiitech.naftah.builtin.utils.tuple.Triple</a></h3>
+<div class="type-signature">class Triple extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.tuple.Tuple">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/tuple/Tuple.html" title="class in org.daiitech.naftah.builtin.utils.tuple">org.daiitech.naftah.builtin.utils.tuple.Tuple</a></h3>
 <div class="type-signature">class Tuple extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
 <dl class="name-value">
 <dt>serialVersionUID:</dt>
@@ -575,6 +664,77 @@ loadScripts(document, 'script');</script>
 <h5>message</h5>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a> message</pre>
 <div class="block">The descriptive message text for the bug error.</div>
+</li>
+</ul>
+</section>
+</li>
+</ul>
+</section>
+</li>
+</ul>
+</section>
+</li>
+<li>
+<section class="serialized-package-container">
+<h2 title="Package">Package&nbsp;<a href="org/daiitech/naftah/utils/reflect/package-summary.html">org.daiitech.naftah.utils.reflect</a></h2>
+<ul class="block-list">
+<li>
+<section class="serialized-class-details" id="org.daiitech.naftah.utils.reflect.ClassScanningResult">
+<h3>Class&nbsp;<a href="org/daiitech/naftah/utils/reflect/ClassScanningResult.html" title="class in org.daiitech.naftah.utils.reflect">org.daiitech.naftah.utils.reflect.ClassScanningResult</a></h3>
+<div class="type-signature">class ClassScanningResult extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a> implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<dl class="name-value">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+<ul class="block-list">
+<li>
+<section class="detail">
+<h4>Serialized Fields</h4>
+<ul class="block-list">
+<li class="block-list">
+<h5>accessibleClasses</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt; accessibleClasses</pre>
+<div class="block">Subset of classes that are accessible for reflection or usage.</div>
+</li>
+<li class="block-list">
+<h5>arabicClassQualifiers</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt; arabicClassQualifiers</pre>
+<div class="block">Set of fully qualified class names in Arabic notation mapped to original java qualified class name.</div>
+</li>
+<li class="block-list">
+<h5>builtinFunctions</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt; builtinFunctions</pre>
+<div class="block">Maps qualified method or function names to lists of builtin functions.</div>
+</li>
+<li class="block-list">
+<h5>classes</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt; classes</pre>
+<div class="block">Maps fully qualified class names to their corresponding Class objects.</div>
+</li>
+<li class="block-list">
+<h5>classNames</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&gt; classNames</pre>
+<div class="block">Maps class names to their respective ClassLoader instances.</div>
+</li>
+<li class="block-list">
+<h5>classQualifiers</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt; classQualifiers</pre>
+<div class="block">Set of fully qualified class names discovered.</div>
+</li>
+<li class="block-list">
+<h5>instantiableClasses</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt; instantiableClasses</pre>
+<div class="block">Subset of classes that can be instantiated (e.g., not abstract).</div>
+</li>
+<li class="block-list">
+<h5>jvmClassInitializers</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang">JvmClassInitializer</a>&gt;&gt; jvmClassInitializers</pre>
+<div class="block">Maps qualified Java class names to lists of <a href="org/daiitech/naftah/builtin/lang/JvmClassInitializer.html" title="class in org.daiitech.naftah.builtin.lang"><code>JvmClassInitializer</code></a> constructors.</div>
+</li>
+<li class="block-list">
+<h5>jvmFunctions</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;&gt; jvmFunctions</pre>
+<div class="block">Maps qualified method or function names to lists of JVM functions (methods).</div>
 </li>
 </ul>
 </section>

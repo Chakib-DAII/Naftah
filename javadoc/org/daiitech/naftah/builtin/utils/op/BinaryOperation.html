@@ -140,45 +140,61 @@ implements <a href="Operation.html" title="interface in org.daiitech.naftah.buil
 <div class="col-last odd-row-color">
 <div class="block">Represents the bitwise OR operation (|).</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#BITWISE_XOR" class="member-name-link">BITWISE_XOR</a></code></div>
+<div class="col-first even-row-color"><code><a href="#BITWISE_SHL" class="member-name-link">BITWISE_SHL</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Represents the left bitwise shift operation.</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#BITWISE_SHR" class="member-name-link">BITWISE_SHR</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Represents the signed right bitwise shift operation.</div>
+</div>
+<div class="col-first even-row-color"><code><a href="#BITWISE_USHR" class="member-name-link">BITWISE_USHR</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Represents the unsigned right bitwise shift operation.</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#BITWISE_XOR" class="member-name-link">BITWISE_XOR</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Represents the bitwise XOR (exclusive OR) operation (^).</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#DIVIDE" class="member-name-link">DIVIDE</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#DIVIDE" class="member-name-link">DIVIDE</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Represents the division operation (/).</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#ELEMENTWISE_ADD" class="member-name-link">ELEMENTWISE_ADD</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#ELEMENTWISE_ADD" class="member-name-link">ELEMENTWISE_ADD</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Represents element-wise addition.</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#ELEMENTWISE_DIVIDE" class="member-name-link">ELEMENTWISE_DIVIDE</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#ELEMENTWISE_DIVIDE" class="member-name-link">ELEMENTWISE_DIVIDE</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Represents element-wise division.</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#ELEMENTWISE_MODULO" class="member-name-link">ELEMENTWISE_MODULO</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#ELEMENTWISE_MODULO" class="member-name-link">ELEMENTWISE_MODULO</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Represents element-wise modulo operation.</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#ELEMENTWISE_MULTIPLY" class="member-name-link">ELEMENTWISE_MULTIPLY</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#ELEMENTWISE_MULTIPLY" class="member-name-link">ELEMENTWISE_MULTIPLY</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Represents element-wise multiplication.</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#ELEMENTWISE_SUBTRACT" class="member-name-link">ELEMENTWISE_SUBTRACT</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#ELEMENTWISE_SUBTRACT" class="member-name-link">ELEMENTWISE_SUBTRACT</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Represents element-wise subtraction.</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#EQUALS" class="member-name-link">EQUALS</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#EQUALS" class="member-name-link">EQUALS</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Represents the equality comparison operation (==).</div>
 </div>
-<div class="col-first even-row-color"><code><a href="#GREATER_THAN" class="member-name-link">GREATER_THAN</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code><a href="#GREATER_THAN" class="member-name-link">GREATER_THAN</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Represents the greater-than comparison operation (>).</div>
 </div>
-<div class="col-first odd-row-color"><code><a href="#GREATER_THAN_EQUALS" class="member-name-link">GREATER_THAN_EQUALS</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code><a href="#GREATER_THAN_EQUALS" class="member-name-link">GREATER_THAN_EQUALS</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Represents the greater-than-or-equal-to comparison operation (>=).</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="#INSTANCE_OF" class="member-name-link">INSTANCE_OF</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Represents the <code>instanceof</code> type-check operation.</div>
 </div>
 <div class="col-first even-row-color"><code><a href="#LESS_THAN" class="member-name-link">LESS_THAN</a></code></div>
 <div class="col-last even-row-color">
@@ -589,6 +605,54 @@ the order they are declared.</div>
 </section>
 </li>
 <li>
+<section class="detail" id="BITWISE_USHR">
+<h3>BITWISE_USHR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BinaryOperation.html" title="enum class in org.daiitech.naftah.builtin.utils.op">BinaryOperation</a></span>&nbsp;<span class="element-name">BITWISE_USHR</span></div>
+<div class="block">Represents the unsigned right bitwise shift operation.
+ <p>
+ Shifts the bits of the left-hand operand to the right by the number of
+ positions specified by the right-hand operand, filling with zeros.
+ <ul>
+ <li>If operands are numeric, performs a standard unsigned shift.</li>
+ <li>If one operand is non-numeric, its <code>size</code> is used as the shift value.</li>
+ <li>String operands are shifted based on their length.</li>
+ </ul>
+ Falsy operands result in <a href="../../lang/NaN.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaN</code></a>.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="BITWISE_SHR">
+<h3>BITWISE_SHR</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BinaryOperation.html" title="enum class in org.daiitech.naftah.builtin.utils.op">BinaryOperation</a></span>&nbsp;<span class="element-name">BITWISE_SHR</span></div>
+<div class="block">Represents the signed right bitwise shift operation.
+ <p>
+ Shifts the bits of the left-hand operand to the right while preserving
+ the sign bit.
+ <ul>
+ <li>If operands are numeric, performs a signed arithmetic shift.</li>
+ <li>If one operand is non-numeric, its <code>size</code> is used as the shift value.</li>
+ <li>String operands are shifted based on their length.</li>
+ </ul>
+ Falsy operands result in <a href="../../lang/NaN.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaN</code></a>.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="BITWISE_SHL">
+<h3>BITWISE_SHL</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BinaryOperation.html" title="enum class in org.daiitech.naftah.builtin.utils.op">BinaryOperation</a></span>&nbsp;<span class="element-name">BITWISE_SHL</span></div>
+<div class="block">Represents the left bitwise shift operation.
+ <p>
+ Shifts the bits of the left-hand operand to the left by the number of
+ positions specified by the right-hand operand.
+ <ul>
+ <li>If operands are numeric, performs a standard left shift.</li>
+ <li>If one operand is non-numeric, its <code>size</code> is used as the shift value.</li>
+ <li>String operands are shifted based on their length.</li>
+ </ul>
+ Falsy operands result in <a href="../../lang/NaN.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaN</code></a>.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="ELEMENTWISE_ADD">
 <h3>ELEMENTWISE_ADD</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BinaryOperation.html" title="enum class in org.daiitech.naftah.builtin.utils.op">BinaryOperation</a></span>&nbsp;<span class="element-name">ELEMENTWISE_ADD</span></div>
@@ -631,6 +695,21 @@ the order they are declared.</div>
 <div class="block">Represents element-wise modulo operation.
  Performs modulo on corresponding elements in collections or arrays.
  Supports element-wise operations on compatible data structures.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="INSTANCE_OF">
+<h3>INSTANCE_OF</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="BinaryOperation.html" title="enum class in org.daiitech.naftah.builtin.utils.op">BinaryOperation</a></span>&nbsp;<span class="element-name">INSTANCE_OF</span></div>
+<div class="block">Represents the <code>instanceof</code> type-check operation.
+ <p>
+ Evaluates whether the left-hand operand is an instance of the type
+ represented by the right-hand operand.
+ <ul>
+ <li>The right-hand operand must be a <a href="../../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type"><code>JavaType</code></a>.</li>
+ <li>Returns <code>true</code> if the left operand is compatible with the given type.</li>
+ <li>All other operand combinations are considered invalid.</li>
+ </ul></div>
 </section>
 </li>
 </ul>

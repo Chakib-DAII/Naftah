@@ -72,17 +72,27 @@ loadScripts(document, 'script');</script>
 <h1 title="Class DeclaredFunction" class="title">Class DeclaredFunction</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
+<div class="inheritance"><a href="Declaration.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.Declaration</a>
 <div class="inheritance">org.daiitech.naftah.builtin.lang.DeclaredFunction</div>
+</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">DeclaredFunction</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Definition of a function declared in the Naftah script.
+<span class="extends-implements">extends <a href="Declaration.html" title="class in org.daiitech.naftah.builtin.lang">Declaration</a></span></div>
+<div class="block">Represents a function declaration in the Naftah scripting language.
  <p>
- This class wraps the original parse context of a function declaration
- and provides access to its components such as name, parameters, body,
- and return type.</div>
+ This class encapsulates the ANTLR parse-tree context of a function
+ declaration and exposes its semantic components, including the function
+ name, parameters, body, return type, and asynchronous modifier.
+ </p>
+
+ <p>
+ A <code>DeclaredFunction</code> is a concrete, immutable declaration with respect
+ to its identity and scope; however, some derived properties (such as resolved
+ parameter and return types) may be computed lazily during later compilation
+ phases.
+ </p></div>
 <dl class="notes">
 <dt>Author:</dt>
 <dd>Chakib Daii</dd>
@@ -99,10 +109,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>private final <a href="../../parser/NaftahParser.BlockContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.BlockContext</a></code></div>
-<div class="col-second even-row-color"><code><a href="#body" class="member-name-link">body</a></code></div>
+<div class="col-first even-row-color"><code>private final boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#async" class="member-name-link">async</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Indicates whether the function is declared as asynchronous.</div>
+</div>
+<div class="col-first odd-row-color"><code>private final <a href="../../parser/NaftahParser.BlockContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.BlockContext</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#body" class="member-name-link">body</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">The parse context for the function body block.</div>
+</div>
+<div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#implementationName" class="member-name-link">implementationName</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">The name of the implementation.</div>
 </div>
 <div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#name" class="member-name-link">name</a></code></div>
@@ -124,7 +144,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">The parse context for the parameter declaration list.</div>
 </div>
-<div class="col-first odd-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-first odd-row-color"><code>private <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#returnType" class="member-name-link">returnType</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">The resolved return type of the function.</div>
@@ -135,6 +155,9 @@ loadScripts(document, 'script');</script>
 <div class="block">The parse context for the return type.</div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="fields-inherited-from-class-org.daiitech.naftah.builtin.lang.Declaration">Fields inherited from class&nbsp;org.daiitech.naftah.builtin.lang.<a href="Declaration.html" title="class in org.daiitech.naftah.builtin.lang">Declaration</a></h3>
+<code><a href="Declaration.html#depth">depth</a></code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -147,9 +170,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>private </code></div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext)" class="member-name-link">DeclaredFunction</a><wbr>(<a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a>&nbsp;originalContext)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(int,org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext,java.lang.String)" class="member-name-link">DeclaredFunction</a><wbr>(int&nbsp;depth,
+ <a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a>&nbsp;originalContext,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;implementationName)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Private constructor that initializes the function from its parse context.</div>
+<div class="block">Creates a <code>DeclaredFunction</code> from its parsed function declaration.</div>
 </div>
 </div>
 </section>
@@ -171,39 +196,51 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the context for the function body block.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getImplementationName()" class="member-name-link">getImplementationName</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the internal implementation name of this function.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the name of the function.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getOriginalContext()" class="member-name-link">getOriginalContext</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getOriginalContext()" class="member-name-link">getOriginalContext</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the original function declaration context.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getParameters()" class="member-name-link">getParameters</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getParameters()" class="member-name-link">getParameters</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the list of declared parameters.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../parser/NaftahParser.ParameterDeclarationListContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationListContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getParametersContext()" class="member-name-link">getParametersContext</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../parser/NaftahParser.ParameterDeclarationListContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ParameterDeclarationListContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getParametersContext()" class="member-name-link">getParametersContext</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the context for the parameter declaration list.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getReturnType()" class="member-name-link">getReturnType</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getReturnType()" class="member-name-link">getReturnType</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the resolved return type of the function.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../parser/NaftahParser.ReturnTypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ReturnTypeContext</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getReturnTypeContext()" class="member-name-link">getReturnTypeContext</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../parser/NaftahParser.ReturnTypeContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.ReturnTypeContext</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getReturnTypeContext()" class="member-name-link">getReturnTypeContext</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the context for the return type.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isAsync()" class="member-name-link">isAsync</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns whether this function is asynchronous.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredFunction</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext)" class="member-name-link">of</a><wbr>(<a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a>&nbsp;originalContext)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(int,org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext,java.lang.String)" class="member-name-link">of</a><wbr>(int&nbsp;depth,
+ <a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a>&nbsp;originalContext,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;implementationName)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Factory method to create a <code>DeclaredFunction</code> from the provided context.</div>
+<div class="block">Creates a <code>DeclaredFunction</code> from a parsed function declaration.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setParameters(java.util.List)" class="member-name-link">setParameters</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="DeclaredParameter.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredParameter</a>&gt;&nbsp;parameters)</code></div>
@@ -211,7 +248,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets the list of declared parameters.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReturnType(java.lang.Object)" class="member-name-link">setReturnType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;returnType)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReturnType(org.daiitech.naftah.utils.reflect.type.JavaType)" class="member-name-link">setReturnType</a><wbr>(<a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;returnType)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the resolved return type of the function.</div>
 </div>
@@ -223,6 +260,9 @@ loadScripts(document, 'script');</script>
 </div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-org.daiitech.naftah.builtin.lang.Declaration">Methods inherited from class&nbsp;org.daiitech.naftah.builtin.lang.<a href="Declaration.html" title="class in org.daiitech.naftah.builtin.lang">Declaration</a></h3>
+<code><a href="Declaration.html#getDepth()">getDepth</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -249,6 +289,20 @@ loadScripts(document, 'script');</script>
 <h3>name</h3>
 <div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">name</span></div>
 <div class="block">The name of the function.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="implementationName">
+<h3>implementationName</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">implementationName</span></div>
+<div class="block">The name of the implementation.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="async">
+<h3>async</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">async</span></div>
+<div class="block">Indicates whether the function is declared as asynchronous.</div>
 </section>
 </li>
 <li>
@@ -282,7 +336,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="returnType">
 <h3>returnType</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">returnType</span></div>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></span>&nbsp;<span class="element-name">returnType</span></div>
 <div class="block">The resolved return type of the function.</div>
 </section>
 </li>
@@ -295,13 +349,29 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext)">
+<section class="detail" id="&lt;init&gt;(int,org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext,java.lang.String)">
 <h3>DeclaredFunction</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="element-name">DeclaredFunction</span><wbr><span class="parameters">(<a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a>&nbsp;originalContext)</span></div>
-<div class="block">Private constructor that initializes the function from its parse context.</div>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="element-name">DeclaredFunction</span><wbr><span class="parameters">(int&nbsp;depth,
+ <a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a>&nbsp;originalContext,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;implementationName)</span></div>
+<div class="block">Creates a <code>DeclaredFunction</code> from its parsed function declaration.
+ <p>
+ This constructor initializes the semantic representation of a function
+ using information extracted from the ANTLR parse tree. It captures the
+ function's name, async modifier, parameters, return type, and body, while
+ retaining the original parse context for later analysis or code generation.
+ </p>
+
+ <p>
+ This constructor is private and is intended to be used by factory methods
+ within this class.
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>originalContext</code> - the original function declaration context</dd>
+<dd><code>depth</code> - The lexical scope depth at which the function is declared.</dd>
+<dd><code>originalContext</code> - The ANTLR parse-tree context representing the function declaration.</dd>
+<dd><code>implementationName</code> - The internal or generated name used to identify this function during
+                           compilation or code generation.</dd>
 </dl>
 </section>
 </li>
@@ -314,15 +384,26 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="of(org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext)">
+<section class="detail" id="of(int,org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext,java.lang.String)">
 <h3>of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredFunction</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(<a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a>&nbsp;originalContext)</span></div>
-<div class="block">Factory method to create a <code>DeclaredFunction</code> from the provided context.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="DeclaredFunction.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredFunction</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(int&nbsp;depth,
+ <a href="../../parser/NaftahParser.FunctionDeclarationContext.html" title="class in org.daiitech.naftah.parser">NaftahParser.FunctionDeclarationContext</a>&nbsp;originalContext,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;implementationName)</span></div>
+<div class="block">Creates a <code>DeclaredFunction</code> from a parsed function declaration.
+ <p>
+ This factory method constructs a semantic representation of a function
+ using the provided ANTLR parse-tree context. It delegates initialization
+ to the private constructor and associates the function with its lexical
+ scope depth and internal implementation name.
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>originalContext</code> - the function declaration context</dd>
+<dd><code>depth</code> - The lexical scope depth at which the function is declared.</dd>
+<dd><code>originalContext</code> - The ANTLR parse-tree context representing the function declaration.</dd>
+<dd><code>implementationName</code> - The internal or generated name used to identify this function during
+                           compilation or code generation.</dd>
 <dt>Returns:</dt>
-<dd>a new instance of <code>DeclaredFunction</code></dd>
+<dd>A newly created <code>DeclaredFunction</code> instance.</dd>
 </dl>
 </section>
 </li>
@@ -345,6 +426,36 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the function name</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getImplementationName()">
+<h3>getImplementationName</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getImplementationName</span>()</div>
+<div class="block">Returns the internal implementation name of this function.
+ <p>
+ This name is used internally (for example, during name mangling,
+ linking, or code generation) and may differ from the function’s
+ declared source-level name.
+ </p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The internal implementation name associated with this function.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isAsync()">
+<h3>isAsync</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isAsync</span>()</div>
+<div class="block">Returns whether this function is asynchronous.
+ <p>
+ An asynchronous function executes in its own task and must be awaited
+ if its result is required before proceeding.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><code>true</code> if the function is asynchronous; <code>false</code> otherwise</dd>
 </dl>
 </section>
 </li>
@@ -406,7 +517,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getReturnType()">
 <h3>getReturnType</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">getReturnType</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></span>&nbsp;<span class="element-name">getReturnType</span>()</div>
 <div class="block">Returns the resolved return type of the function.</div>
 <dl class="notes">
 <dt>Returns:</dt>
@@ -415,9 +526,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="setReturnType(java.lang.Object)">
+<section class="detail" id="setReturnType(org.daiitech.naftah.utils.reflect.type.JavaType)">
 <h3>setReturnType</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setReturnType</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;returnType)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setReturnType</span><wbr><span class="parameters">(<a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;returnType)</span></div>
 <div class="block">Sets the resolved return type of the function.</div>
 <dl class="notes">
 <dt>Parameters:</dt>

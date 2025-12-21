@@ -11,15 +11,15 @@
 	<!-- DataTables CSS & JS -->
 	<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	
+
 	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
 
 	  <!-- used by jekyll-seo-tag plugin -->
 </head>
 <body>
 <header class="site-header">
-	<img alt="NaftahLang" src="/assets/images/logo.png"
-		 style="height: 40px; vertical-align: middle; margin-right: 10px;">
+	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
+	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
 	<h1>
 		<a href="/">
 			Naftah Language Documentation - مستندات لغة نفطه
@@ -48,6 +48,8 @@
 		<li><a href="/language/functions">الدوال</a></li>
 		
 		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
+		
+		<li><a href="/language/concurrency">التزامن</a></li>
 		
 		<li><a href="/running-naftah">تشغيل نفطه</a></li>
 		
@@ -253,7 +255,7 @@ non-numeric strings or invalid values.</p>
 
 <hr />
 
-<h3 id="-ملاحظات-على-الاستيراد-في-نفطة">🔹 ملاحظات على الاستيراد في نفطة</h3>
+<h3 id="-ملاحظات-على-الاستيراد-في-نفطه">🔹 ملاحظات على الاستيراد في نفطه</h3>
 
 <ol>
   <li><strong>إجلب / استيراد</strong>: يستخدم لجلب الدوال أو الحزم أو الكائنات.</li>
@@ -261,6 +263,116 @@ non-numeric strings or invalid values.</p>
   <li><strong>نداء مؤهل (Qualified Call)</strong>: <code class="language-plaintext highlighter-rouge">حزم::دالة</code> يتيح استدعاء دالة محددة ضمن حزمة دون استيراد كل شيء.</li>
   <li>يمكن <strong>استدعاء عدة دوال مع إعادة تسمية واحدة فقط</strong> لتجنب التعارضات أو لتبسيط الكود.</li>
 </ol>
+
+<hr />
+
+<h2 id="-عمليات-الإزاحة-البتّية-bitwise-shift-operations">🔀 عمليات الإزاحة البتّية (Bitwise Shift Operations)</h2>
+
+<p>تُستخدم عمليات الإزاحة لتحريك البتّات يمينًا أو يسارًا داخل القيمة العددية.
+يدعم Naftah أعدادًا <strong>غير محدودة الحجم</strong> طالما كانت <strong>أعدادًا صحيحة</strong>.</p>
+
+<hr />
+
+<h3 id="️-الإزاحة-إلى-اليسار-shift-left">⬅️ الإزاحة إلى اليسار (Shift Left)</h3>
+
+<h4 id="-الصيغة-الرمزية">🔹 الصيغة الرمزية</h4>
+
+<pre><code class="language-naftah">64 &lt;&lt; 2
+1073741824 &lt;&lt; 2
+1 &lt;&lt; 100
+</code></pre>
+
+<h4 id="-الصيغة-اللفظية">🔹 الصيغة اللفظية</h4>
+
+<pre><code class="language-naftah">64 إزاحة_يسار 2
+1073741824 إزاحة_يسار 2
+1 إزاحة_يسار 100
+</code></pre>
+
+<h4 id="-الشرح">🧠 الشرح</h4>
+
+<ul>
+  <li>كل إزاحة لليسار تعادل <strong>الضرب في 2ⁿ</strong></li>
+  <li>تدعم أعدادًا ضخمة جدًا بدون فقدان دقة</li>
+</ul>
+
+<p><strong>أمثلة ناتج:</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>64 &lt;&lt; 2  → 256
+1 &lt;&lt; 100 → 1267650600228229401496703205376
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="️-الإزاحة-إلى-اليمين-shift-right--signed">➡️ الإزاحة إلى اليمين (Shift Right – Signed)</h3>
+
+<h4 id="-الصيغة-الرمزية-1">🔹 الصيغة الرمزية</h4>
+
+<pre><code class="language-naftah">128 &gt;&gt; 2
+32768 &gt;&gt; 2
+9223372036854775808 &gt;&gt; 2
+</code></pre>
+
+<h4 id="-الصيغة-اللفظية-1">🔹 الصيغة اللفظية</h4>
+
+<pre><code class="language-naftah">128 إزاحة_يمين 2
+32768 إزاحة_يمين 2
+9223372036854775808 إزاحة_يمين 2
+</code></pre>
+
+<h4 id="-الشرح-1">🧠 الشرح</h4>
+
+<ul>
+  <li>تعادل <strong>القسمة الصحيحة على 2ⁿ</strong></li>
+  <li>تحافظ على الإشارة (في حال دعم الأعداد السالبة)</li>
+</ul>
+
+<p><strong>مثال:</strong></p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>128 &gt;&gt; 2 → 32
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="️️-الإزاحة-إلى-اليمين-غير-الموقعة-unsigned-shift-right">➡️➡️ الإزاحة إلى اليمين غير الموقعة (Unsigned Shift Right)</h3>
+
+<h4 id="-الصيغة-الرمزية-2">🔹 الصيغة الرمزية</h4>
+
+<pre><code class="language-naftah">128 &gt;&gt;&gt; 2
+2147483648 &gt;&gt;&gt; 2
+9223372036854775808 &gt;&gt;&gt; 2
+</code></pre>
+
+<h4 id="-الصيغة-اللفظية-2">🔹 الصيغة اللفظية</h4>
+
+<pre><code class="language-naftah">128 إزاحة_يمين_غير_موقعة 2
+2147483648 إزاحة_يمين_غير_موقعة 2
+9223372036854775808 إزاحة_يمين_غير_موقعة 2
+</code></pre>
+
+<h4 id="-الشرح-2">🧠 الشرح</h4>
+
+<ul>
+  <li>إزاحة يمين <strong>بدون اعتبار الإشارة</strong></li>
+  <li>مفيدة في العمليات منخفضة المستوى (Low-level / Bit masking)</li>
+</ul>
+
+<hr />
+
+<h3 id="️-القيود-والأخطاء">⚠️ القيود والأخطاء</h3>
+
+<h4 id="-الأعداد-العشرية-غير-مدعومة">❌ الأعداد العشرية غير مدعومة</h4>
+
+<p>أي محاولة لاستخدام الإزاحة مع عدد عشري تؤدي إلى خطأ لغوي (Bug Error):</p>
+
+<pre><code class="language-naftah">340282346638528859811704183484516925440,000000 &lt;&lt; 2
+</code></pre>
+
+<p>❗ <strong>السبب:</strong></p>
+
+<blockquote>
+  <p>عمليات الإزاحة تعمل فقط على الأعداد الصحيحة (Integer / BigInteger)</p>
+</blockquote>
 
 <hr />
 
@@ -288,8 +400,9 @@ non-numeric strings or invalid values.</p>
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [📦 تعريف الكائنات - Objects](./06_objects.md)
 * [🌀 التحكم في تدفق البرنامج - Control Flow](./07_control_flow.md)
-* [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
-* [⚙️ التوافق مع Java (Java Interop) في لغة نفطة - Java Interop](./09_java_interop.md)
+* [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
+* [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
+* [⚡ التعامل مع التزامن في نفطه – Concurrency](./10_concurrency.md)
 
 ---
 </div>

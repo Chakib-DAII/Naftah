@@ -153,90 +153,99 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#convertArgument(java.lang.Object,java.lang.Class,java.lang.reflect.Type,boolean)" class="member-name-link">convertArgument</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;targetType,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a>&nbsp;genericType,
- boolean&nbsp;useNone)</code></div>
+ boolean&nbsp;useNaftahTypes)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts a single argument to the target type expected by a method parameter.</div>
+<div class="block">Converts a single argument to the target type expected by a reflective method
+ or constructor parameter.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#convertArgumentBack(java.lang.Object,java.lang.Object)" class="member-name-link">convertArgumentBack</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;original,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;converted)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Merges a converted argument value back into its original form.</div>
+<div class="block">Merges a converted argument value back into its original representation.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#convertArgumentsBack(java.lang.Object%5B%5D,java.util.List)" class="member-name-link">convertArgumentsBack</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Updates the original argument list with values from the executed arguments array.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;<br>org.antlr.v4.runtime.misc.Pair&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;<br><a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#findBestExecutable(java.util.Collection,java.util.List)" class="member-name-link">findBestExecutable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;candidates,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Attempts to find the most suitable <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> (method or constructor)
  from a collection of candidates, based on the provided argument list.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;<br>org.antlr.v4.runtime.misc.Pair&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;<br><a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#findBestExecutable(java.util.Collection,java.util.List,boolean)" class="member-name-link">findBestExecutable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;candidates,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
  boolean&nbsp;removeInstanceArg)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Determines the best-matching <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> (method or constructor)
  from a given collection of candidates based on argument compatibility.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getGenericType(T,int)" class="member-name-link">getGenericType</a><wbr>(T&nbsp;executable,
- int&nbsp;index)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getConvertedElementAt(java.lang.Object,java.lang.Class,int)" class="member-name-link">getConvertedElementAt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;converted,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;convertedType,
+ int&nbsp;i)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves the element at the specified index from a converted composite value.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getGenericType(T,int)" class="member-name-link">getGenericType</a><wbr>(T&nbsp;executable,
+ int&nbsp;index)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Retrieves the generic parameter type for the specified parameter index of a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getVarargArrayIfPossible(java.util.List,java.lang.Class%5B%5D)" class="member-name-link">getVarargArrayIfPossible</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getVarargArrayIfPossible(java.util.List,java.lang.Class%5B%5D)" class="member-name-link">getVarargArrayIfPossible</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;[]&nbsp;paramTypes)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a varargs array from a list of arguments if the method parameters indicate a varargs parameter.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmConstructor(T,java.lang.Object%5B%5D,java.util.List,java.lang.Class)" class="member-name-link">invokeJvmConstructor</a><wbr>(T&nbsp;methodOrConstructor,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmConstructor(T,java.lang.Object%5B%5D,java.util.List,java.lang.Class)" class="member-name-link">invokeJvmConstructor</a><wbr>(T&nbsp;methodOrConstructor,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;returnType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Invokes a Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> reflectively using the specified argument array.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmConstructor(T,java.util.List,java.lang.Class,boolean)" class="member-name-link">invokeJvmConstructor</a><wbr>(T&nbsp;methodOrConstructor,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmConstructor(T,java.util.List,java.lang.Class,boolean)" class="member-name-link">invokeJvmConstructor</a><wbr>(T&nbsp;methodOrConstructor,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;returnType,
- boolean&nbsp;useNone)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+ boolean&nbsp;useNaftahTypes)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Convenience method to invoke a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> reflectively using a list of arguments.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmExecutable(java.lang.Object,T,java.lang.Object%5B%5D,java.util.List,java.lang.Class)" class="member-name-link">invokeJvmExecutable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;instance,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmExecutable(java.lang.Object,T,java.lang.Object%5B%5D,java.util.List,java.lang.Class)" class="member-name-link">invokeJvmExecutable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;instance,
  T&nbsp;methodOrConstructor,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;returnType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Invokes a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> reflectively with specified argument values.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmExecutable(java.lang.Object,T,java.util.List,java.lang.Class,boolean)" class="member-name-link">invokeJvmExecutable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;instance,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#invokeJvmExecutable(java.lang.Object,T,java.util.List,java.lang.Class,boolean)" class="member-name-link">invokeJvmExecutable</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;instance,
  T&nbsp;methodOrConstructor,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;returnType,
- boolean&nbsp;useNone)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Dynamically invokes a Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> using reflection.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br>org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#matchScore(T,java.lang.Class%5B%5D,java.util.List,boolean)" class="member-name-link">matchScore</a><wbr>(T&nbsp;executable,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;[]&nbsp;params,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
- boolean&nbsp;useNone)</code></div>
+ boolean&nbsp;useNaftahTypes)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Calculates how closely a set of provided arguments matches the parameters of a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a>.</div>
+<div class="block">Dynamically invokes a JVM <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> using reflection.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static &lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;<br><a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#matchScore(T,java.lang.Class%5B%5D,java.util.List,boolean)" class="member-name-link">matchScore</a><wbr>(T&nbsp;executable,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;[]&nbsp;params,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+ boolean&nbsp;useNaftahTypes)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Computes a compatibility score describing how well a set of provided arguments
+ matches the parameter types of a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a>.</div>
 </div>
 </div>
 </div>
@@ -276,60 +285,73 @@ loadScripts(document, 'script');</script>
 <h3 id="invokeJvmExecutable(java.lang.Object,java.lang.reflect.Executable,java.util.List,java.lang.Class,boolean)">invokeJvmExecutable</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmExecutable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;instance,
  T&nbsp;methodOrConstructor,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;returnType,
- boolean&nbsp;useNone)</span>
+ boolean&nbsp;useNaftahTypes)</span>
                                                          throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/InvocationTargetException.html" title="class or interface in java.lang.reflect" class="external-link">InvocationTargetException</a>,
 <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/InstantiationException.html" title="class or interface in java.lang" class="external-link">InstantiationException</a>,
 <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalAccessException.html" title="class or interface in java.lang" class="external-link">IllegalAccessException</a></span></div>
-<div class="block">Dynamically invokes a Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> using reflection.
+<div class="block">Dynamically invokes a JVM <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> using reflection.
 
  <p>This unified utility abstracts the complexity of calling either a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> or
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> by automatically handling:</p>
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> at runtime by automatically handling:</p>
  <ul>
- <li>Parameter conversion, including primitives, arrays, collections, and generic types</li>
- <li>Null safety and <a href="../../builtin/lang/None.html" title="class in org.daiitech.naftah.builtin.lang"><code>None</code></a> handling</li>
- <li>Primitive boxing/unboxing</li>
+ <li>Argument conversion to match JVM parameter types, including primitives, arrays,
+ collections, and generic types</li>
+ <li>Primitive boxing and unboxing</li>
+ <li>Naftah-specific type handling and conversions (when enabled)</li>
+ <li>Varargs executables, including automatic construction of the trailing vararg array
+ when possible</li>
  </ul>
 
- <p>It is designed for runtime environments that need to dynamically invoke JVM executables
- without compile-time type information.</p>
+ <p>This method is designed for runtime environments that need to dynamically invoke JVM
+ executables without compile-time type information.</p>
 
  <h3>Supported executable types</h3>
  <ul>
- <li><b>Instance and static methods:</b> invoked via <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html#invoke(java.lang.Object,java.lang.Object...)" title="class or interface in java.lang.reflect" class="external-link"><code>Method.invoke(Object, Object...)</code></a></li>
+ <li><b>Instance methods:</b> invoked via <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html#invoke(java.lang.Object,java.lang.Object...)" title="class or interface in java.lang.reflect" class="external-link"><code>Method.invoke(Object, Object...)</code></a></li>
+ <li><b>Static methods:</b> invoked with a <code>null</code> instance</li>
  <li><b>Constructors:</b> invoked via <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html#newInstance(java.lang.Object...)" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor.newInstance(Object...)</code></a></li>
  </ul>
 
+ <h3>Argument handling</h3>
+ <ul>
+ <li>The number of provided arguments must match the executable’s parameter count</li>
+ <li>If the executable is <code>varargs</code>, a missing final array argument may be
+ synthesized automatically</li>
+ <li>Arguments are converted <i>before</i> invocation and may be converted back
+ into <code>naftahArgs</code> after invocation</li>
+ </ul>
+
  <h3>Return handling</h3>
- <p>If <code>useNone</code> is <code>true</code>, <code>null</code> or <code>void</code> results are replaced with
- <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a> to ensure a non-null return value.</p></div>
+ <p>The raw result of the underlying reflective call is returned. Any Naftah-specific
+ wrapping or post-processing is handled by the delegated invocation logic.</p></div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>T</code> - the type of executable</dd>
+<dd><code>T</code> - the type of executable being invoked</dd>
 <dt>Parameters:</dt>
-<dd><code>instance</code> - the target object for instance method calls, or <code>null</code> for static methods or
-                            constructors</dd>
-<dd><code>methodOrConstructor</code> - the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a> to invoke (either <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a>)</dd>
-<dd><code>naftahArgs</code> - a list of <code>Pair</code>&lt;String, Object&gt; representing argument names and values</dd>
+<dd><code>instance</code> - the target object for instance method calls, or <code>null</code> for static methods
+                            or constructors</dd>
+<dd><code>methodOrConstructor</code> - the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a> to invoke (either a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> or a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a>)</dd>
+<dd><code>naftahArgs</code> - a list of <a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Pair</code></a>&lt;String, Object&gt; representing argument names and values;
+                            this list may be mutated during invocation (e.g. for varargs handling or
+                            argument back-conversion)</dd>
 <dd><code>returnType</code> - the expected return type; use <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Void.html#TYPE" title="class or interface in java.lang" class="external-link"><code>Void.TYPE</code></a> or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Void.html" title="class or interface in java.lang" class="external-link"><code>Void</code></a> for <code>void</code>
-                            methods</dd>
-<dd><code>useNone</code> - if <code>true</code>, replaces <code>null</code> or <code>void</code> results with
-                            <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a></dd>
+                            executables</dd>
+<dd><code>useNaftahTypes</code> - whether Naftah-specific type semantics and conversions should be applied</dd>
 <dt>Returns:</dt>
-<dd>the invocation result, or <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a> if <code>null</code> or <code>void</code> and <code>useNone</code> is true</dd>
+<dd>the result of the invocation</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/InvocationTargetException.html" title="class or interface in java.lang.reflect" class="external-link">InvocationTargetException</a></code> - if the underlying executable throws an exception</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/InstantiationException.html" title="class or interface in java.lang" class="external-link">InstantiationException</a></code> - if a constructor fails to create a new instance</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalAccessException.html" title="class or interface in java.lang" class="external-link">IllegalAccessException</a></code> - if the executable cannot be accessed due to Java access control</dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the argument count or types do not match the executable</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if argument count or types do not match the executable signature</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list-long">
 <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html#invoke(java.lang.Object,java.lang.Object...)" title="class or interface in java.lang.reflect" class="external-link"><code>Method.invoke(Object, Object...)</code></a></li>
 <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html#newInstance(java.lang.Object...)" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor.newInstance(Object...)</code></a></li>
 <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a></li>
-<li><a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -338,7 +360,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getVarargArrayIfPossible(java.util.List,java.lang.Class[])">
 <h3>getVarargArrayIfPossible</h3>
-<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">getVarargArrayIfPossible</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">getVarargArrayIfPossible</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;[]&nbsp;paramTypes)</span></div>
 <div class="block">Creates a varargs array from a list of arguments if the method parameters indicate a varargs parameter.
  <p>
@@ -384,7 +406,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmExecutable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;instance,
  T&nbsp;methodOrConstructor,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;returnType)</span>
                                                          throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/InvocationTargetException.html" title="class or interface in java.lang.reflect" class="external-link">InvocationTargetException</a>,
 <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/InstantiationException.html" title="class or interface in java.lang" class="external-link">InstantiationException</a>,
@@ -429,41 +451,44 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="invokeJvmConstructor(T,java.util.List,java.lang.Class,boolean)">
 <h3 id="invokeJvmConstructor(java.lang.reflect.Executable,java.util.List,java.lang.Class,boolean)">invokeJvmConstructor</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmConstructor</span><wbr><span class="parameters">(T&nbsp;methodOrConstructor,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;returnType,
- boolean&nbsp;useNone)</span>
+ boolean&nbsp;useNaftahTypes)</span>
                                                           throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/InvocationTargetException.html" title="class or interface in java.lang.reflect" class="external-link">InvocationTargetException</a>,
 <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/InstantiationException.html" title="class or interface in java.lang" class="external-link">InstantiationException</a>,
 <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalAccessException.html" title="class or interface in java.lang" class="external-link">IllegalAccessException</a></span></div>
 <div class="block">Convenience method to invoke a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> reflectively using a list of arguments.
 
- <p>This method is a wrapper around <a href="#invokeJvmExecutable(java.lang.Object,T,java.util.List,java.lang.Class,boolean)"><code>invokeJvmExecutable(Object, Executable, List, Class, boolean)</code></a>
- that automatically passes <code>null</code> as the instance, since constructors do not require one.</p>
+ <p>This method is a thin wrapper around
+ <a href="#invokeJvmExecutable(java.lang.Object,T,java.util.List,java.lang.Class,boolean)"><code>invokeJvmExecutable(Object, Executable, List, Class, boolean)</code></a> that automatically
+ supplies a <code>null</code> instance, as constructors do not require one.</p>
 
- <p>Arguments are converted automatically to match the constructor's parameter types,
- including primitives, arrays, and generic types. <code>useNone</code> can replace <code>null</code> results with
- <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a>.</p></div>
+ <p>Constructor arguments are converted automatically to match the constructor’s parameter
+ types, including primitives, arrays, collections, and generic types. Naftah-specific
+ type semantics and conversions are applied when enabled.</p>
+
+ <p>The provided argument list may be mutated during invocation (for example, to support
+ varargs handling or argument back-conversion).</p></div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>T</code> - the type of constructor</dd>
+<dd><code>T</code> - the type of executable (constructor) being invoked</dd>
 <dt>Parameters:</dt>
 <dd><code>methodOrConstructor</code> - the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor</code></a> to invoke</dd>
-<dd><code>args</code> - the constructor arguments as a list of <code>Pair</code>&lt;String, Object&gt;</dd>
+<dd><code>args</code> - the constructor arguments as a list of <a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Pair</code></a>&lt;String, Object&gt;</dd>
 <dd><code>returnType</code> - the expected type of the constructed object</dd>
-<dd><code>useNone</code> - if <code>true</code>, replaces <code>null</code> results with <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a></dd>
+<dd><code>useNaftahTypes</code> - whether Naftah-specific type semantics and conversions should be applied</dd>
 <dt>Returns:</dt>
-<dd>the newly created instance, or <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a> if the result is <code>null</code> or <code>void</code></dd>
+<dd>the newly created instance</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/InvocationTargetException.html" title="class or interface in java.lang.reflect" class="external-link">InvocationTargetException</a></code> - if the constructor throws an exception</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/InstantiationException.html" title="class or interface in java.lang" class="external-link">InstantiationException</a></code> - if the constructor fails to instantiate a new object</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalAccessException.html" title="class or interface in java.lang" class="external-link">IllegalAccessException</a></code> - if reflective access is not allowed</dd>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the argument count or types do not match the constructor</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the argument count or types do not match the constructor signature</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list-long">
 <li><a href="#invokeJvmExecutable(java.lang.Object,T,java.util.List,java.lang.Class,boolean)"><code>invokeJvmExecutable(Object, Executable, List, Class, boolean)</code></a></li>
 <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Constructor.html#newInstance(java.lang.Object...)" title="class or interface in java.lang.reflect" class="external-link"><code>Constructor.newInstance(Object...)</code></a></li>
-<li><a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a></li>
 </ul>
 </dd>
 </dl>
@@ -474,7 +499,7 @@ loadScripts(document, 'script');</script>
 <h3 id="invokeJvmConstructor(java.lang.reflect.Executable,java.lang.Object[],java.util.List,java.lang.Class)">invokeJvmConstructor</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">invokeJvmConstructor</span><wbr><span class="parameters">(T&nbsp;methodOrConstructor,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;returnType)</span>
                                                           throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/InvocationTargetException.html" title="class or interface in java.lang.reflect" class="external-link">InvocationTargetException</a>,
 <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/InstantiationException.html" title="class or interface in java.lang" class="external-link">InstantiationException</a>,
@@ -529,35 +554,53 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">convertArgument</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;value,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;targetType,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a>&nbsp;genericType,
- boolean&nbsp;useNone)</span></div>
-<div class="block">Converts a single argument to the target type expected by a method parameter.
+ boolean&nbsp;useNaftahTypes)</span></div>
+<div class="block">Converts a single argument to the target type expected by a reflective method
+ or constructor parameter.
 
- <p>This method attempts to convert the provided <code>value</code> to the specified
- <code>targetType</code>, taking into account the provided <code>genericType</code> for
- collections and maps. It supports the following conversions:</p>
+ <p>This method attempts to adapt the supplied <code>value</code> to the specified
+ <code>targetType</code>. When available, <code>genericType</code> information is used
+ to guide recursive, element-wise conversion of arrays, collections, tuples,
+ and maps.</p>
 
+ <h3>Supported conversions</h3>
  <ul>
- <li>Primitive types (int, long, double, float, boolean, char, byte, short)</li>
- <li><a href="../../builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a> to numeric types</li>
- <li>Arrays (recursively converts elements)</li>
- <li>Collections (recursively converts elements, respects generic type if available)</li>
- <li>Maps (recursively converts keys and values, respects generic type if available)</li>
- <li><a href="../../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> extraction, if the target type is not <code>NaftahObject</code></li>
+ <li>Primitive types and their boxed equivalents</li>
+ <li><a href="../../builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a> to standard JVM numeric types</li>
+ <li><a href="../../builtin/lang/NaN.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaN</code></a> to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Double.html#NaN" title="class or interface in java.lang" class="external-link"><code>Double.NaN</code></a></li>
+ <li>Arrays (recursive element conversion)</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collections</code></a> (recursive element conversion)</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Maps</code></a> (recursive key and value conversion)</li>
+ <li><a href="../../builtin/utils/tuple/NTuple.html" title="interface in org.daiitech.naftah.builtin.utils.tuple"><code>NTuple</code></a>, <a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Pair</code></a>, and <a href="../../builtin/utils/tuple/Triple.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Triple</code></a> (recursive element conversion)</li>
+ <li><a href="../../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> unwrapping when Naftah types are disabled</li>
  </ul>
 
- <p>If the value is <code>null</code> or represents <a href="../../builtin/lang/None.html" title="class in org.daiitech.naftah.builtin.lang"><code>None</code></a>, the returned value
- depends on the <code>useNone</code> flag: it returns <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a> if <code>useNone</code>
- is <code>true</code>, otherwise <code>null</code>.</p></div>
+ <h3>Naftah-specific semantics</h3>
+ <ul>
+ <li>If <code>value</code> is <code>null</code> or represents <a href="../../builtin/lang/None.html" title="class in org.daiitech.naftah.builtin.lang"><code>None</code></a>, the result depends on
+ <code>useNaftahTypes</code>:
+ <ul>
+ <li>when <code>true</code>, <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a> is returned</li>
+ <li>when <code>false</code>, <code>null</code> is returned</li>
+ </ul>
+ </li>
+ <li>When <code>useNaftahTypes</code> is <code>false</code>, <a href="../../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> values are
+ automatically unwrapped unless the target type is <a href="../../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a></li>
+ </ul>
+
+ <p>If <code>value</code> is already assignable to <code>targetType</code>, it is returned unchanged.</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>value</code> - the original argument value to convert</dd>
-<dd><code>targetType</code> - the target type to which the value should be converted</dd>
-<dd><code>genericType</code> - the generic type information (for collections or maps), may be <code>null</code></dd>
-<dd><code>useNone</code> - if <code>true</code>, <code>null</code> or <a href="../../builtin/lang/None.html" title="class in org.daiitech.naftah.builtin.lang"><code>None</code></a> values are converted to <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a></dd>
+<dd><code>value</code> - the original argument value to convert; may be <code>null</code> or <a href="../../builtin/lang/None.html" title="class in org.daiitech.naftah.builtin.lang"><code>None</code></a></dd>
+<dd><code>targetType</code> - the target class expected by the executable parameter</dd>
+<dd><code>genericType</code> - generic type information used to guide recursive conversion of collections,
+                       arrays, and maps; may be <code>null</code></dd>
+<dd><code>useNaftahTypes</code> - whether Naftah-specific type semantics and wrappers should be preserved</dd>
 <dt>Returns:</dt>
-<dd>the converted argument value, compatible with the target type</dd>
+<dd>a value compatible with <code>targetType</code>, or <code>null</code> if
+         <code>value</code> is <code>null</code> and Naftah types are disabled</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassCastException.html" title="class or interface in java.lang" class="external-link">ClassCastException</a></code> - if the value cannot be cast to the target type and no other conversion is possible</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassCastException.html" title="class or interface in java.lang" class="external-link">ClassCastException</a></code> - if the value cannot be converted or cast to <code>targetType</code></dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list-long">
@@ -572,7 +615,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="convertArgumentsBack(java.lang.Object[],java.util.List)">
 <h3>convertArgumentsBack</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">convertArgumentsBack</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&nbsp;executableArgs,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;naftahArgs)</span></div>
 <div class="block">Updates the original argument list with values from the executed arguments array.
 
  <p>This method iterates through the provided <code>executableArgs</code> array and
@@ -603,24 +646,47 @@ loadScripts(document, 'script');</script>
 <h3>convertArgumentBack</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">convertArgumentBack</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;original,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;converted)</span></div>
-<div class="block">Merges a converted argument value back into its original form.
+<div class="block">Merges a converted argument value back into its original representation.
 
- <p>This method attempts to reconcile a new value (<code>converted</code>) with the
- original argument (<code>original</code>). It handles various types including:
- primitives, <a href="../../builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a>, arrays, collections, maps, and custom objects
- like <a href="../../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a>. For mutable types, the original object is updated
- in-place. For immutable types or when in-place modification is not possible, a
- new object is returned.</p>
+ <p>
+ This method reconciles a value produced by a reflective invocation
+ (<code>converted</code>) with the original argument value (<code>original</code>).
+ Where possible, mutable objects are updated <em>in place</em>; otherwise,
+ the original value or a replacement object is returned.
+ </p>
 
- <p>Use this method to propagate changes made during reflective method or
- constructor execution back to the original arguments.</p></div>
+ <h3>Supported merge behaviors</h3>
+ <ul>
+ <li><code>null</code> or <a href="../../builtin/lang/None.html" title="class in org.daiitech.naftah.builtin.lang"><code>None</code></a> — returns <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a></li>
+ <li><a href="../../builtin/lang/NaN.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaN</code></a> — preserved unchanged</li>
+ <li><a href="../../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> — rewrapped with the converted value</li>
+ <li><a href="../../builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a> — updated in place</li>
+ <li>Primitive wrappers and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link"><code>Number</code></a> types — merged via <a href="../../builtin/lang/DynamicNumber.html" title="class in org.daiitech.naftah.builtin.lang"><code>DynamicNumber</code></a></li>
+ <li>Arrays — elements copied into the original array</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collections</code></a> — elements updated in place</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Maps</code></a> — contents replaced</li>
+ <li><a href="../../builtin/utils/tuple/NTuple.html" title="interface in org.daiitech.naftah.builtin.utils.tuple"><code>NTuple</code></a>, <a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Pair</code></a>, <a href="../../builtin/utils/tuple/Triple.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Triple</code></a>, <a href="../../builtin/utils/tuple/Tuple.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Tuple</code></a> — elements merged reflectively</li>
+ </ul>
+
+ <p>
+ If <code>converted</code> is already assignable to the runtime type of
+ <code>original</code>, it is returned directly.
+ </p>
+
+ <p>
+ This method is primarily intended to propagate argument mutations made
+ during reflective method or constructor execution back to the original
+ argument objects.
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>original</code> - the original argument value passed to the executable.</dd>
-<dd><code>converted</code> - the value resulting from the reflective call.</dd>
+<dd><code>original</code> - the original argument value supplied to the executable</dd>
+<dd><code>converted</code> - the value produced by the reflective invocation</dd>
 <dt>Returns:</dt>
-<dd>the merged argument value, either the updated original or a new instance,
-         suitable for replacing the original reference.</dd>
+<dd>the merged value, either the updated original instance or a suitable
+         replacement object</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if reflective field updates fail</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list-long">
@@ -631,12 +697,39 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getConvertedElementAt(java.lang.Object,java.lang.Class,int)">
+<h3>getConvertedElementAt</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">getConvertedElementAt</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;converted,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;convertedType,
+ int&nbsp;i)</span></div>
+<div class="block">Retrieves the element at the specified index from a converted composite value.
+ <p>
+ Supports both array and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a> representations. If
+ <code>convertedType</code> represents an array, the element is obtained via
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Array.html#get(java.lang.Object,int)" title="class or interface in java.lang.reflect" class="external-link"><code>Array.get(Object, int)</code></a>; otherwise the value is
+ retrieved from the collection using index-based access.
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>converted</code> - the converted composite value (array or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a>)</dd>
+<dd><code>convertedType</code> - the runtime type of <code>converted</code>, used to distinguish arrays
+                      from collections</dd>
+<dd><code>i</code> - the zero-based index of the element to retrieve</dd>
+<dt>Returns:</dt>
+<dd>the element at the specified index</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IndexOutOfBoundsException.html" title="class or interface in java.lang" class="external-link">IndexOutOfBoundsException</a></code> - if the index is out of range</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassCastException.html" title="class or interface in java.lang" class="external-link">ClassCastException</a></code> - if <code>converted</code> is not compatible with <code>convertedType</code></dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="findBestExecutable(java.util.Collection,java.util.List)">
 <h3>findBestExecutable</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;</span>
-<span class="return-type">org.antlr.v4.runtime.misc.Pair&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</span>&nbsp;<span class="element-name">findBestExecutable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;candidates,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args)</span>
-                                                       throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></span></div>
+<span class="return-type"><a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</span>&nbsp;<span class="element-name">findBestExecutable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;candidates,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args)</span>
+                             throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></span></div>
 <div class="block">Attempts to find the most suitable <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> (method or constructor)
  from a collection of candidates, based on the provided argument list.
 
@@ -651,7 +744,7 @@ loadScripts(document, 'script');</script>
 <dd><code>args</code> - the argument list to match, represented as <code>Pair&lt;String, Object&gt;</code>
                    where each pair contains the argument name and its value.</dd>
 <dt>Returns:</dt>
-<dd>a <code>Pair</code> containing the best-matching <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> and its
+<dd>a <a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Pair</code></a> containing the best-matching <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> and its
          prepared argument array; or <code>null</code> if no suitable match is found.</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></code></dd>
@@ -668,10 +761,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="findBestExecutable(java.util.Collection,java.util.List,boolean)">
 <h3>findBestExecutable</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang">JvmExecutable</a>&gt;</span>
-<span class="return-type">org.antlr.v4.runtime.misc.Pair&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</span>&nbsp;<span class="element-name">findBestExecutable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;candidates,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+<span class="return-type"><a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;T,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</span>&nbsp;<span class="element-name">findBestExecutable</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;T&gt;&nbsp;candidates,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
  boolean&nbsp;removeInstanceArg)</span>
-                                                       throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></span></div>
+                             throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NoSuchMethodException.html" title="class or interface in java.lang" class="external-link">NoSuchMethodException</a></span></div>
 <div class="block">Determines the best-matching <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a> (method or constructor)
  from a given collection of candidates based on argument compatibility.
 
@@ -692,7 +785,7 @@ loadScripts(document, 'script');</script>
 <dd><code>removeInstanceArg</code> - whether to remove the first argument when matching
                           non-static functions (useful when the instance is already supplied).</dd>
 <dt>Returns:</dt>
-<dd>a <code>Pair</code> containing:
+<dd>a <a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Pair</code></a> containing:
          <ul>
          <li>the best-matching <a href="../../builtin/lang/JvmExecutable.html" title="interface in org.daiitech.naftah.builtin.lang"><code>JvmExecutable</code></a>, and</li>
          <li>the prepared and type-converted argument array for invocation.</li>
@@ -716,35 +809,54 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="matchScore(T,java.lang.Class[],java.util.List,boolean)">
 <h3 id="matchScore(java.lang.reflect.Executable,java.lang.Class[],java.util.List,boolean)">matchScore</h3>
 <div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link">Executable</a>&gt;</span>
-<span class="return-type">org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</span>&nbsp;<span class="element-name">matchScore</span><wbr><span class="parameters">(T&nbsp;executable,
+<span class="return-type"><a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>[]&gt;</span>&nbsp;<span class="element-name">matchScore</span><wbr><span class="parameters">(T&nbsp;executable,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;[]&nbsp;params,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;org.antlr.v4.runtime.misc.Pair&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
- boolean&nbsp;useNone)</span></div>
-<div class="block">Calculates how closely a set of provided arguments matches the parameters of a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a>.
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple">Pair</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&gt;&nbsp;args,
+ boolean&nbsp;useNaftahTypes)</span></div>
+<div class="block">Computes a compatibility score describing how well a set of provided arguments
+ matches the parameter types of a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a>.
 
- <p>This method attempts to convert each argument into the target parameter type using
- <code>convertArgument()</code>, computing a total compatibility score as follows:</p>
+ <p>Each argument is tentatively converted to the corresponding parameter type
+ using <a href="#convertArgument(java.lang.Object,java.lang.Class,java.lang.reflect.Type,boolean)"><code>convertArgument(Object, Class, Type, boolean)</code></a>. If any argument
+ fails conversion, the executable is considered incompatible and a score of
+ <code>-1</code> is returned.</p>
+
+ <h3>Scoring semantics</h3>
+ <p>Lower scores indicate a better match. The total score is the sum of
+ per-parameter penalties based on how closely the converted argument matches
+ the target parameter type:</p>
+
  <ul>
- <li>Exact type match: score += 0</li>
- <li>Numeric type coercion (e.g. <code>Integer → Double</code>): score += 1</li>
- <li>Generic or compatible conversion: score += 3</li>
- <li><code>null</code> argument: score += 10</li>
+ <li><code>null</code> argument: +10</li>
+ <li>Exact runtime type match: +0</li>
+ <li>Assignable match (after conversion): +1</li>
+ <li>Boxed numeric to boxed numeric: +2</li>
+ <li>Boxed numeric to matching primitive: +3</li>
+ <li>Numeric or character primitive mismatch: +4</li>
+ <li>Other non-null compatible conversions: +5</li>
+ <li>Converted value is <code>null</code>: +6</li>
  </ul>
 
- <p>If any argument fails conversion, the method returns a score of <code>-1</code> to indicate incompatibility.</p></div>
+ <p>If a converted argument is <code>null</code> but the corresponding parameter is
+ primitive, the match fails immediately.</p>
+
+ <h3>Naftah-specific behavior</h3>
+ <p>The <code>useNaftahTypes</code> flag controls whether <a href="../../builtin/lang/None.html" title="class in org.daiitech.naftah.builtin.lang"><code>None</code></a> and
+ <a href="../../builtin/lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> values are preserved or unwrapped during argument
+ conversion.</p></div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>T</code> - the type of the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a>.</dd>
+<dd><code>T</code> - the type of <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Executable.html" title="class or interface in java.lang.reflect" class="external-link"><code>Executable</code></a></dd>
 <dt>Parameters:</dt>
-<dd><code>executable</code> - the target method or constructor being evaluated.</dd>
-<dd><code>params</code> - the parameter types of the executable.</dd>
-<dd><code>args</code> - the provided arguments as a list of <code>Pair&lt;String, Object&gt;</code>.</dd>
-<dd><code>useNone</code> - whether <a href="../../builtin/lang/None.html#get()"><code>None.get()</code></a> should be treated as a <code>null</code>-equivalent placeholder.</dd>
+<dd><code>executable</code> - the method or constructor being evaluated</dd>
+<dd><code>params</code> - the raw parameter types of the executable</dd>
+<dd><code>args</code> - the provided arguments as a list of <a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Pair</code></a>&lt;String, Object&gt;</dd>
+<dd><code>useNaftahTypes</code> - whether Naftah-specific type semantics should be applied during conversion</dd>
 <dt>Returns:</dt>
-<dd>a <code>Pair</code> containing:
+<dd>a <a href="../../builtin/utils/tuple/Pair.html" title="class in org.daiitech.naftah.builtin.utils.tuple"><code>Pair</code></a> containing:
          <ul>
-         <li>The computed match score (lower is better, <code>-1</code> indicates failure).</li>
-         <li>The array of converted argument values ready for invocation.</li>
+         <li>the computed compatibility score (lower is better, <code>-1</code> indicates incompatibility)</li>
+         <li>an array of converted argument values suitable for invocation</li>
          </ul></dd>
 </dl>
 </section>

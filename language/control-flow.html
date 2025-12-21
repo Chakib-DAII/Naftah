@@ -11,15 +11,15 @@
 	<!-- DataTables CSS & JS -->
 	<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	
+
 	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
 
 	  <!-- used by jekyll-seo-tag plugin -->
 </head>
 <body>
 <header class="site-header">
-	<img alt="NaftahLang" src="/assets/images/logo.png"
-		 style="height: 40px; vertical-align: middle; margin-right: 10px;">
+	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
+	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
 	<h1>
 		<a href="/">
 			Naftah Language Documentation - مستندات لغة نفطه
@@ -49,6 +49,8 @@
 		
 		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
 		
+		<li><a href="/language/concurrency">التزامن</a></li>
+		
 		<li><a href="/running-naftah">تشغيل نفطه</a></li>
 		
 		<li><a href="/java-doc">التوثيق (جاڤا)</a></li>
@@ -71,7 +73,7 @@
 
 <h1 id="-التحكم-في-تدفق-البرنامج-في-لغة-نفطه-control-flow">🌀 التحكم في تدفق البرنامج في لغة نفطه (Control Flow)</h1>
 
-<p>هذا الملف يشرح كيفية استخدام أوامر التحكم في تدفق البرنامج في لغة نفطة، التي تشمل:
+<p>هذا الملف يشرح كيفية استخدام أوامر التحكم في تدفق البرنامج في لغة نفطه، التي تشمل:
 <code class="language-plaintext highlighter-rouge">if</code> مع <code class="language-plaintext highlighter-rouge">elseif</code> و <code class="language-plaintext highlighter-rouge">else</code>، حلقات التكرار المختلفة (<code class="language-plaintext highlighter-rouge">for</code>, <code class="language-plaintext highlighter-rouge">foreach</code>, <code class="language-plaintext highlighter-rouge">while</code>, <code class="language-plaintext highlighter-rouge">repeat-until</code>)،
 تعليمات الحالة <code class="language-plaintext highlighter-rouge">case</code>، وأسلوب التعامل مع الأخطاء والخيارات عبر <code class="language-plaintext highlighter-rouge">try</code> مع أنماط <code class="language-plaintext highlighter-rouge">ok/error</code> أو <code class="language-plaintext highlighter-rouge">some/none</code>.<br />
 يحتوي الملف على تعريفات تفصيلية مع أمثلة توضيحية لكل بنية.</p>
@@ -175,7 +177,7 @@ It provides detailed definitions and illustrative examples.</p>
 <h2 id="-حلقات-التكرار-loops">🔄 حلقات التكرار (Loops)</h2>
 
 <p>—*
-هذا الملف يشرح كيفية استخدام الحلقات (loops) في لغة نفطة، ويغطي:</p>
+هذا الملف يشرح كيفية استخدام الحلقات (loops) في لغة نفطه، ويغطي:</p>
 
 <ul>
   <li>الحلقات العددية المتزايدة والمتناقصة</li>
@@ -390,11 +392,11 @@ It provides detailed definitions and illustrative examples.</p>
 
 <hr />
 
-<p>بهذا الشكل يمكنك التحكم الكامل في الحلقات في لغة نفطة، من الحلقات البسيطة العددية إلى الحلقات المعقدة والمتداخلة مع
+<p>بهذا الشكل يمكنك التحكم الكامل في الحلقات في لغة نفطه، من الحلقات البسيطة العددية إلى الحلقات المعقدة والمتداخلة مع
 إدارة دقيقة لتدفق التنفيذ.</p>
 
 <hr />
-<p>أكيد! هنا شرح مفصل لحلقة <strong>while</strong> في لغة نفطة بأسلوب مشابه لحلقة <strong>for</strong> اللي شرحتها لك سابقًا، مع أمثلة واقعية
+<p>أكيد! هنا شرح مفصل لحلقة <strong>while</strong> في لغة نفطه بأسلوب مشابه لحلقة <strong>for</strong> اللي شرحتها لك سابقًا، مع أمثلة واقعية
 وتفصيلية.</p>
 
 <hr />
@@ -412,7 +414,7 @@ It provides detailed definitions and illustrative examples.</p>
 
 <hr />
 
-<h3 id="بناء-الجملة-في-نفطة">بناء الجملة في نفطة</h3>
+<h3 id="بناء-الجملة-في-نفطه">بناء الجملة في نفطه</h3>
 
 <pre><code class="language-naftah">بينما (الشرط) افعل {
     --- تعليمات التكرار طالما الشرط صحيح
@@ -516,7 +518,7 @@ It provides detailed definitions and illustrative examples.</p>
 
 <hr />
 
-<p>أكيد! هنا شرح مفصل وموسع لحلقة <strong>repeat-until (كرر … حتى)</strong> مع أمثلة واضحة وتفصيلية بلغة نفطة، بأسلوب منظم وشامل يشبه
+<p>أكيد! هنا شرح مفصل وموسع لحلقة <strong>repeat-until (كرر … حتى)</strong> مع أمثلة واضحة وتفصيلية بلغة نفطه، بأسلوب منظم وشامل يشبه
 الأمثلة اللي أرسلتها:</p>
 
 <hr />
@@ -534,7 +536,7 @@ It provides detailed definitions and illustrative examples.</p>
 
 <hr />
 
-<h3 id="البناء-العام-في-نفطة">البناء العام في نفطة</h3>
+<h3 id="البناء-العام-في-نفطه">البناء العام في نفطه</h3>
 
 <pre><code class="language-naftah">كرر {
     --- تعليمات التكرار
@@ -668,7 +670,7 @@ It provides detailed definitions and illustrative examples.</p>
 
 <hr />
 
-<p>أكيد! هنا إعادة صياغة لشرح <strong>جملة الحالة (Case Statement)</strong> في لغة نفطة بأسلوب مشابه لمثال الـ <strong>switch</strong> المفصل الذي
+<p>أكيد! هنا إعادة صياغة لشرح <strong>جملة الحالة (Case Statement)</strong> في لغة نفطه بأسلوب مشابه لمثال الـ <strong>switch</strong> المفصل الذي
 أرسلتَه:</p>
 
 <hr />
@@ -743,14 +745,14 @@ It provides detailed definitions and illustrative examples.</p>
 
 <hr />
 
-<p>أكيد! إليك شرحًا مفصلًا ومنسقًا لآلية التعامل مع الأخطاء والخيارات باستخدام جملة <strong>حاول (try)</strong> في لغة نفطة، مع أمثلة
+<p>أكيد! إليك شرحًا مفصلًا ومنسقًا لآلية التعامل مع الأخطاء والخيارات باستخدام جملة <strong>حاول (try)</strong> في لغة نفطه، مع أمثلة
 تطبيقية توضح التعامل مع حالات <code class="language-plaintext highlighter-rouge">نجاح</code>/<code class="language-plaintext highlighter-rouge">فشل</code> و<code class="language-plaintext highlighter-rouge">بعض</code>/<code class="language-plaintext highlighter-rouge">معدوم</code> بطريقة مشابهة لمحتواك:</p>
 
 <hr />
 
 <h2 id="️-معالجة-الأخطاء-والخيارات-try-statement">🛠️ معالجة الأخطاء والخيارات (Try Statement)</h2>
 
-<p>في لغة نفطة، تعبير <strong>حاول</strong> يُستخدم لتنفيذ تعبير قد يفشل أو يكون له قيمة محتملة، مع التعامل المدمج لحالات النجاح والفشل
+<p>في لغة نفطه، تعبير <strong>حاول</strong> يُستخدم لتنفيذ تعبير قد يفشل أو يكون له قيمة محتملة، مع التعامل المدمج لحالات النجاح والفشل
 أو وجود/عدم وجود قيمة.</p>
 
 <hr />
@@ -965,8 +967,9 @@ It provides detailed definitions and illustrative examples.</p>
 * [🧮 التعبيرات - Expressions](./04_expressions.md)
 * [🔢 الأعداد بأنظمة العد - Radix Numbers](./05_radix_numbers.md)
 * [📦 تعريف الكائنات - Objects](./06_objects.md)
-* [⚙️ الدوال في لغة نفطة - Functions](./08_functions.md)
-* [⚙️ التوافق مع Java (Java Interop) في لغة نفطة - Java Interop](./09_java_interop.md)
+* [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
+* [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
+* [⚡ التعامل مع التزامن في نفطه – Concurrency](./10_concurrency.md)
 
 ---
 </div>

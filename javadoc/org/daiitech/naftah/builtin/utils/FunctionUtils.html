@@ -127,13 +127,31 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#allMatch(java.lang.Object,java.util.function.Predicate)" class="member-name-link">allMatch</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;T&gt;&nbsp;predicate)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns <code>true</code> if all elements in the input match the given predicate.</div>
+<div class="block">Returns <code>true</code> if all elements contained in the given input
+ satisfy the supplied predicate.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#anyMatch(java.lang.Object,java.util.function.Predicate)" class="member-name-link">anyMatch</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;T&gt;&nbsp;predicate)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns <code>true</code> if at least one element in the input matches the given predicate.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#execute(org.daiitech.naftah.builtin.lang.NaftahObject,java.lang.Class,java.util.function.Consumer)" class="member-name-link">execute</a><wbr>(<a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a>&nbsp;naftahObject,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;rawClass,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;executionConsumer)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Executes a consumer on the underlying Java value of a <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a>
+ after validating its runtime type.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T,<wbr>
+R&gt;&nbsp;R</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#execute(org.daiitech.naftah.builtin.lang.NaftahObject,java.lang.Class,org.daiitech.naftah.utils.function.ThrowingFunction)" class="member-name-link">execute</a><wbr>(<a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a>&nbsp;naftahObject,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;rawClass,
+ <a href="../../utils/function/ThrowingFunction.html" title="interface in org.daiitech.naftah.utils.function">ThrowingFunction</a>&lt;T,<wbr>R&gt;&nbsp;executionFunction)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Executes a function on the underlying Java value of a <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a>
+ after validating its runtime type.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#noneMatch(java.lang.Object,java.util.function.Predicate)" class="member-name-link">noneMatch</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;input,
@@ -145,7 +163,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reduce(java.lang.Object,java.util.function.BinaryOperator)" class="member-name-link">reduce</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BinaryOperator.html" title="class or interface in java.util.function" class="external-link">BinaryOperator</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;combiner)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Reduces the input to a single value using the specified combiner.</div>
+<div class="block">Reduces the given input to a single value using the specified combiner.</div>
 </div>
 </div>
 </div>
@@ -185,18 +203,32 @@ loadScripts(document, 'script');</script>
 <h3>allMatch</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">allMatch</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;T&gt;&nbsp;predicate)</span></div>
-<div class="block">Returns <code>true</code> if all elements in the input match the given predicate.
+<div class="block">Returns <code>true</code> if all elements contained in the given input
+ satisfy the supplied predicate.
  <p>
- Supports input of type <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a>, arrays, or a single object.
+ The input may represent a composite or a scalar value:
+ <ul>
+ <li><a href="tuple/NTuple.html" title="interface in org.daiitech.naftah.builtin.utils.tuple"><code>NTuple</code></a> — evaluated element by element</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a> — evaluated over its elements</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a> — evaluated over its entries</li>
+ <li>Array — evaluated over its elements</li>
+ <li>Any other object — evaluated as a single value</li>
+ </ul>
+ </p>
+ <p>
+ This method is intended for use in recursive or dynamically-typed
+ processing where the concrete structure of the input is not known
+ at compile time.
  </p></div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>T</code> - the type of elements to be tested by the predicate</dd>
+<dd><code>T</code> - the type of values tested by the predicate</dd>
 <dt>Parameters:</dt>
 <dd><code>input</code> - the input object to evaluate; must not be <code>null</code></dd>
-<dd><code>predicate</code> - the predicate to test each element</dd>
+<dd><code>predicate</code> - the predicate applied to each evaluated value</dd>
 <dt>Returns:</dt>
-<dd><code>true</code> if all elements match the predicate; <code>false</code> otherwise</dd>
+<dd><code>true</code> if every evaluated value satisfies the predicate;
+         <code>false</code> otherwise</dd>
 <dt>Throws:</dt>
 <dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if <code>input</code> is <code>null</code></dd>
 </dl>
@@ -248,18 +280,95 @@ loadScripts(document, 'script');</script>
 <h3>reduce</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">reduce</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;input,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BinaryOperator.html" title="class or interface in java.util.function" class="external-link">BinaryOperator</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&gt;&nbsp;combiner)</span></div>
-<div class="block">Reduces the input to a single value using the specified combiner.
+<div class="block">Reduces the given input to a single value using the specified combiner.
  <p>
- Supports input of type <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a>, arrays, or a single object.
- For collections and arrays, all elements are combined using the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/BinaryOperator.html" title="class or interface in java.util.function" class="external-link"><code>BinaryOperator</code></a>.
- For maps, only the values are combined.
+ The input may represent either a composite structure or a scalar value:
+ <ul>
+ <li><a href="tuple/NTuple.html" title="interface in org.daiitech.naftah.builtin.utils.tuple"><code>NTuple</code></a> — reduced by combining its elements</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link"><code>Collection</code></a> — reduced by combining its elements</li>
+ <li>Array — reduced by combining its elements</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link"><code>Map</code></a> — reduced by combining its values</li>
+ <li>Any other object — returned as-is</li>
+ </ul>
+ </p>
+ <p>
+ If the input is <code>null</code>, this method returns <code>null</code> without
+ invoking the combiner.
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>input</code> - the input object to reduce; may be <code>null</code></dd>
-<dd><code>combiner</code> - the binary operator to combine elements</dd>
+<dd><code>combiner</code> - the binary operator used to combine values</dd>
 <dt>Returns:</dt>
-<dd>the reduced value, or <code>null</code> if the input is <code>null</code></dd>
+<dd>the reduced value, or <code>null</code> if <code>input</code> is <code>null</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="execute(org.daiitech.naftah.builtin.lang.NaftahObject,java.lang.Class,org.daiitech.naftah.utils.function.ThrowingFunction)">
+<h3>execute</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T,<wbr>
+R&gt;</span>&nbsp;<span class="return-type">R</span>&nbsp;<span class="element-name">execute</span><wbr><span class="parameters">(<a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a>&nbsp;naftahObject,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;rawClass,
+ <a href="../../utils/function/ThrowingFunction.html" title="interface in org.daiitech.naftah.utils.function">ThrowingFunction</a>&lt;T,<wbr>R&gt;&nbsp;executionFunction)</span></div>
+<div class="block">Executes a function on the underlying Java value of a <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a>
+ after validating its runtime type.
+
+ <p>The provided <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> is unwrapped using
+ <a href="../lang/NaftahObject.html#get(boolean)"><code>NaftahObject.get(boolean)</code></a> with <code>true</code>. The unwrapped value must
+ be non-<code>null</code> and assignable to <code>rawClass</code>. If these conditions
+ are met, the value is cast to <code>T</code> and passed to the supplied
+ <code>executionFunction</code>.</p>
+
+ <p>If the <code>NaftahObject</code> is <code>null</code>, unwraps to <code>null</code>, or
+ does not match the expected runtime type, a
+ <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> is thrown via
+ <a href="../../errors/ExceptionUtils.html#newIllegalArgumentException(java.lang.Object)"><code>ExceptionUtils.newIllegalArgumentException(Object)</code></a>.</p></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the expected runtime type of the unwrapped value</dd>
+<dd><code>R</code> - the return type of the function</dd>
+<dt>Parameters:</dt>
+<dd><code>naftahObject</code> - the <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> to unwrap and validate</dd>
+<dd><code>rawClass</code> - the expected raw runtime class of the unwrapped value</dd>
+<dd><code>executionFunction</code> - a function to execute on the validated value</dd>
+<dt>Returns:</dt>
+<dd>the result of <code>executionFunction.apply(T)</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the object is <code>null</code>, cannot be unwrapped, or is not
+                        assignable to <code>rawClass</code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="execute(org.daiitech.naftah.builtin.lang.NaftahObject,java.lang.Class,java.util.function.Consumer)">
+<h3>execute</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">execute</span><wbr><span class="parameters">(<a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a>&nbsp;naftahObject,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;rawClass,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;T&gt;&nbsp;executionConsumer)</span></div>
+<div class="block">Executes a consumer on the underlying Java value of a <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a>
+ after validating its runtime type.
+
+ <p>The provided <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> is unwrapped using
+ <a href="../lang/NaftahObject.html#get(boolean)"><code>NaftahObject.get(boolean)</code></a> with <code>true</code>. The unwrapped value must
+ be non-<code>null</code> and assignable to <code>rawClass</code>. If these conditions
+ are met, the value is cast to <code>T</code> and passed to the supplied
+ <code>executionConsumer</code>.</p>
+
+ <p>If the <code>NaftahObject</code> is <code>null</code>, unwraps to <code>null</code>, or
+ does not match the expected runtime type, a
+ <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> is thrown via
+ <a href="../../errors/ExceptionUtils.html#newIllegalArgumentException(java.lang.Object)"><code>ExceptionUtils.newIllegalArgumentException(Object)</code></a>.</p></div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - the expected runtime type of the unwrapped value</dd>
+<dt>Parameters:</dt>
+<dd><code>naftahObject</code> - the <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahObject</code></a> to unwrap and validate</dd>
+<dd><code>rawClass</code> - the expected raw runtime class of the unwrapped value</dd>
+<dd><code>executionConsumer</code> - a consumer to execute on the validated value</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the object is <code>null</code>, cannot be unwrapped, or is not
+                        assignable to <code>rawClass</code></dd>
 </dl>
 </section>
 </li>

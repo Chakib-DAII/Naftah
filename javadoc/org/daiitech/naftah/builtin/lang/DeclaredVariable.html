@@ -72,12 +72,14 @@ loadScripts(document, 'script');</script>
 <h1 title="Class DeclaredVariable" class="title">Class DeclaredVariable</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
+<div class="inheritance"><a href="Declaration.html" title="class in org.daiitech.naftah.builtin.lang">org.daiitech.naftah.builtin.lang.Declaration</a>
 <div class="inheritance">org.daiitech.naftah.builtin.lang.DeclaredVariable</div>
+</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">DeclaredVariable</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<span class="extends-implements">extends <a href="Declaration.html" title="class in org.daiitech.naftah.builtin.lang">Declaration</a></span></div>
 <div class="block">Represents a variable declared in the Naftah scripting language.
  <p>
  A declared variable has a name, type, constant modifier, default value,
@@ -127,7 +129,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">The original parse context where this variable was declared.</div>
 </div>
-<div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
+<div class="col-first odd-row-color"><code>private final <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#type" class="member-name-link">type</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">The Java class representing the type of the variable.</div>
@@ -138,6 +140,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Whether the current value has been explicitly set.</div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="fields-inherited-from-class-org.daiitech.naftah.builtin.lang.Declaration">Fields inherited from class&nbsp;org.daiitech.naftah.builtin.lang.<a href="Declaration.html" title="class in org.daiitech.naftah.builtin.lang">Declaration</a></h3>
+<code><a href="Declaration.html#depth">depth</a></code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -150,10 +155,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>private </code></div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.antlr.v4.runtime.ParserRuleContext,java.lang.String,boolean,java.lang.Class,java.lang.Object)" class="member-name-link">DeclaredVariable</a><wbr>(org.antlr.v4.runtime.ParserRuleContext&nbsp;originalContext,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(int,org.antlr.v4.runtime.ParserRuleContext,java.lang.String,boolean,org.daiitech.naftah.utils.reflect.type.JavaType,java.lang.Object)" class="member-name-link">DeclaredVariable</a><wbr>(int&nbsp;depth,
+ org.antlr.v4.runtime.ParserRuleContext&nbsp;originalContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  boolean&nbsp;constant,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;type,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;defaultValue)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Constructs a new declared variable with the given properties.</div>
@@ -192,7 +198,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the original parser context of this variable declaration.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getType()" class="member-name-link">getType</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the type of the variable.</div>
@@ -213,10 +219,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Indicates whether the variable is a constant.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="DeclaredVariable.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredVariable</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(org.antlr.v4.runtime.ParserRuleContext,java.lang.String,boolean,java.lang.Class,java.lang.Object)" class="member-name-link">of</a><wbr>(org.antlr.v4.runtime.ParserRuleContext&nbsp;originalContext,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#of(int,org.antlr.v4.runtime.ParserRuleContext,java.lang.String,boolean,org.daiitech.naftah.utils.reflect.type.JavaType,java.lang.Object)" class="member-name-link">of</a><wbr>(int&nbsp;depth,
+ org.antlr.v4.runtime.ParserRuleContext&nbsp;originalContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  boolean&nbsp;constant,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;type,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;defaultValue)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Factory method to create a <code>DeclaredVariable</code> instance.</div>
@@ -239,6 +246,9 @@ loadScripts(document, 'script');</script>
 </div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-org.daiitech.naftah.builtin.lang.Declaration">Methods inherited from class&nbsp;org.daiitech.naftah.builtin.lang.<a href="Declaration.html" title="class in org.daiitech.naftah.builtin.lang">Declaration</a></h3>
+<code><a href="Declaration.html#getDepth()">getDepth</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
 <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
@@ -270,7 +280,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="type">
 <h3>type</h3>
-<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">type</span></div>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></span>&nbsp;<span class="element-name">type</span></div>
 <div class="block">The Java class representing the type of the variable.</div>
 </section>
 </li>
@@ -311,16 +321,18 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(org.antlr.v4.runtime.ParserRuleContext,java.lang.String,boolean,java.lang.Class,java.lang.Object)">
+<section class="detail" id="&lt;init&gt;(int,org.antlr.v4.runtime.ParserRuleContext,java.lang.String,boolean,org.daiitech.naftah.utils.reflect.type.JavaType,java.lang.Object)">
 <h3>DeclaredVariable</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="element-name">DeclaredVariable</span><wbr><span class="parameters">(org.antlr.v4.runtime.ParserRuleContext&nbsp;originalContext,
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="element-name">DeclaredVariable</span><wbr><span class="parameters">(int&nbsp;depth,
+ org.antlr.v4.runtime.ParserRuleContext&nbsp;originalContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  boolean&nbsp;constant,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;type,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;defaultValue)</span></div>
 <div class="block">Constructs a new declared variable with the given properties.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
+<dd><code>depth</code> - the depth of context where declared</dd>
 <dd><code>originalContext</code> - the original parser context of the declaration</dd>
 <dd><code>name</code> - the name of the variable</dd>
 <dd><code>constant</code> - whether the variable is a constant</dd>
@@ -338,16 +350,18 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="of(org.antlr.v4.runtime.ParserRuleContext,java.lang.String,boolean,java.lang.Class,java.lang.Object)">
+<section class="detail" id="of(int,org.antlr.v4.runtime.ParserRuleContext,java.lang.String,boolean,org.daiitech.naftah.utils.reflect.type.JavaType,java.lang.Object)">
 <h3>of</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="DeclaredVariable.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredVariable</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(org.antlr.v4.runtime.ParserRuleContext&nbsp;originalContext,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="DeclaredVariable.html" title="class in org.daiitech.naftah.builtin.lang">DeclaredVariable</a></span>&nbsp;<span class="element-name">of</span><wbr><span class="parameters">(int&nbsp;depth,
+ org.antlr.v4.runtime.ParserRuleContext&nbsp;originalContext,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  boolean&nbsp;constant,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;type,
+ <a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a>&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;defaultValue)</span></div>
 <div class="block">Factory method to create a <code>DeclaredVariable</code> instance.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
+<dd><code>depth</code> - the depth of context where declared</dd>
 <dd><code>originalContext</code> - the original parser context</dd>
 <dd><code>name</code> - the variable name</dd>
 <dd><code>constant</code> - whether the variable is constant</dd>
@@ -405,7 +419,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getType()">
 <h3>getType</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getType</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../utils/reflect/type/JavaType.html" title="class in org.daiitech.naftah.utils.reflect.type">JavaType</a></span>&nbsp;<span class="element-name">getType</span>()</div>
 <div class="block">Returns the type of the variable.</div>
 <dl class="notes">
 <dt>Returns:</dt>
