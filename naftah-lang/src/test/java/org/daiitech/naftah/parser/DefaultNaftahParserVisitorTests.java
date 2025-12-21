@@ -19,6 +19,7 @@ import org.daiitech.naftah.parser.provider.script.FunctionCallProvider;
 import org.daiitech.naftah.parser.provider.script.FunctionDeclarationProvider;
 import org.daiitech.naftah.parser.provider.script.FunctionInitProvider;
 import org.daiitech.naftah.parser.provider.script.IfStatementProvider;
+import org.daiitech.naftah.parser.provider.script.ImplementationProvider;
 import org.daiitech.naftah.parser.provider.script.ImportStatementProvider;
 import org.daiitech.naftah.parser.provider.script.LogicalExpressionsProvider;
 import org.daiitech.naftah.parser.provider.script.QualifiedNameProvider;
@@ -184,6 +185,15 @@ public class DefaultNaftahParserVisitorTests {
 							String script,
 							Object expectedValue,
 							NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(ImplementationProvider.class)
+	void ImplementationTests(   boolean validScript,
+								String script,
+								Object expectedValue,
+								NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 

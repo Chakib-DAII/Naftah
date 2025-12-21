@@ -179,7 +179,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.IMPORT, org.daiitech.naftah.parser.NaftahLexer.AS,
 					org.daiitech.naftah.parser.NaftahLexer.ASYNC, org.daiitech.naftah.parser.NaftahLexer.SPAWN,
 					org.daiitech.naftah.parser.NaftahLexer.AWAIT, org.daiitech.naftah.parser.NaftahLexer.SCOPE,
-					org.daiitech.naftah.parser.NaftahLexer.CHANNEL, org.daiitech.naftah.parser.NaftahLexer.ACTOR ->
+					org.daiitech.naftah.parser.NaftahLexer.CHANNEL, org.daiitech.naftah.parser.NaftahLexer.ACTOR,
+					org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
+					org.daiitech.naftah.parser.NaftahLexer.SELF ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.BLUE);
 			case org.daiitech.naftah.parser.NaftahLexer.VAR, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN,
 					org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, org.daiitech.naftah.parser.NaftahLexer.CHAR,
@@ -188,7 +190,6 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.LONG, org.daiitech.naftah.parser.NaftahLexer.FLOAT,
 					org.daiitech.naftah.parser.NaftahLexer.DOUBLE, org.daiitech.naftah.parser.NaftahLexer.BIG_DECIMAL,
 					org.daiitech.naftah.parser.NaftahLexer.VAR_NUMBER, org.daiitech.naftah.parser.NaftahLexer.STRUCT,
-					org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
 					org.daiitech.naftah.parser.NaftahLexer.PAIR, org.daiitech.naftah.parser.NaftahLexer.LIST,
 					org.daiitech.naftah.parser.NaftahLexer.TUPLE, org.daiitech.naftah.parser.NaftahLexer.SET,
 					org.daiitech.naftah.parser.NaftahLexer.MAP -> AttributedStyle.BOLD

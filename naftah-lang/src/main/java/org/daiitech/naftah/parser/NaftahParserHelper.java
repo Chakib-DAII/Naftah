@@ -51,6 +51,7 @@ import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
 import org.daiitech.naftah.builtin.utils.tuple.MutablePair;
 import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
@@ -78,13 +79,16 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocationError
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNonInvocableFunctionError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedFunctionError;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
+import static org.daiitech.naftah.parser.DefaultContext.getCurrentContext;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentVariableError;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
+import static org.daiitech.naftah.parser.DefaultContext.peekCall;
 import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
 import static org.daiitech.naftah.parser.DefaultContext.registerContext;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
 import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
@@ -414,6 +418,9 @@ public final class NaftahParserHelper {
 		if (function.getReturnType() == null && hasChild(function.getReturnTypeContext())) {
 			function.setReturnType((JavaType) visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
 		}
+		else {
+			function.setReturnType(JavaType.ofObject());
+		}
 	}
 
 	/**
@@ -527,16 +534,17 @@ public final class NaftahParserHelper {
 	public static String getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedNameContext ctx) {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
-		for (int i = 0; i < ctx.ID().size(); i++) {
-			String id = ctx.ID(i).getText();
-			result.get().append(id);
+		String id = matchImplementationName(ctx.selfOrId(), getCurrentContext());
+		result.get().append(id);
 
-			if (i != ctx.ID().size() - 1) {
-				String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
-						ctx.QUESTION(i).getText() + ctx.COLON(i).getText() :
-						ctx.COLON(i).getText();
-				result.get().append(qualifier);
-			}
+		for (int i = 0; i < ctx.ID().size(); i++) {
+			String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
+					ctx.QUESTION(i).getText() + ctx.COLON(i).getText() :
+					ctx.COLON(i).getText();
+			result.get().append(qualifier);
+
+			id = ctx.ID(i).getText();
+			result.get().append(id);
 		}
 		return result.get().toString();
 	}
@@ -550,7 +558,7 @@ public final class NaftahParserHelper {
 	public static String getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext ctx) {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
-		String id = ctx.ID().getText();
+		String id = matchImplementationName(ctx.selfOrId(), getCurrentContext());
 		result.get().append(id);
 
 		for (int i = 0; i < ctx.propertyAccess().size(); i++) {
@@ -750,7 +758,6 @@ public final class NaftahParserHelper {
 		}
 		return charStream;
 	}
-
 
 	/**
 	 * Searches for a Naftah script file based on a given name, trying multiple extensions.
@@ -960,7 +967,6 @@ public final class NaftahParserHelper {
 											boolean hasType,
 											JavaType type) {
 		Pair<DeclaredVariable, Boolean> declaredVariable;
-		boolean creatingObject = currentContext.isCreatingObject();
 		boolean creatingObjectField = hasAnyParentOfType(   ctx,
 															org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
 		if (hasConstant || hasVariable || hasType || creatingObjectField) {
@@ -1746,7 +1752,6 @@ public final class NaftahParserHelper {
 								column);
 	}
 
-
 	/**
 	 * Invokes a specific {@link JvmExecutable}, either a {@link BuiltinFunction} or {@link JvmFunction}.
 	 *
@@ -1896,27 +1901,38 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Performs the actual execution of a declared function within the given context.
+	 * Executes a declared function within the specified context.
+	 * <p>
+	 * This method manages the full lifecycle of a function call, including:
+	 * </p>
+	 * <ul>
+	 * <li>Setting the implementation name in the current context.</li>
+	 * <li>Preparing the function’s parameter metadata and evaluating argument values.</li>
+	 * <li>Binding parameters and arguments into the current context for correct
+	 * resolution during body evaluation.</li>
+	 * <li>Maintaining the call stack by pushing the function call before evaluation
+	 * and popping it afterward.</li>
+	 * <li>Invoking the function body via the provided {@link DefaultNaftahParserVisitor}.</li>
+	 * <li>Returning {@link None#get()} if the function’s return type is {@link Void},
+	 * otherwise returning the evaluated result.</li>
+	 * </ul>
+	 * <p>
+	 * Callers should ensure {@link #prepareDeclaredFunction} has been invoked if any
+	 * prerequisite preparation is required for the function.
+	 * </p>
+	 * <p>
+	 * The call stack is updated even if an exception occurs during function execution,
+	 * guaranteeing that context state remains consistent. After the function is
+	 * popped, the implementation name in the context is restored to the parent call
+	 * or cleared if no parent exists.
+	 * </p>
 	 *
-	 * <p>This method handles parameter preparation, argument binding, and call-stack
-	 * management, then evaluates the function body via the provided visitor. It is
-	 * intended to be called either directly (for synchronous functions) or inside a
-	 * spawned task (for asynchronous functions).</p>
-	 *
-	 * <p>The method must be invoked after {@link #prepareDeclaredFunction} has set up
-	 * prerequisites for execution. It binds both the function’s parameter metadata
-	 * and the evaluated argument map into the current context, ensuring that the
-	 * body resolves variable and parameter references correctly.</p>
-	 *
-	 * <p>The function call is pushed onto the context call stack before evaluation
-	 * and popped afterward, guaranteeing proper stack tracking even in failure
-	 * scenarios.</p>
-	 *
-	 * @param declaredFunction           the function being executed
-	 * @param defaultNaftahParserVisitor the visitor evaluating the function body
-	 * @param args                       the raw argument name/value pairs passed to the function
-	 * @param currentContext             the execution context associated with the call
-	 * @return the evaluated result of the function body
+	 * @param declaredFunction           the {@link DeclaredFunction} being executed
+	 * @param defaultNaftahParserVisitor the visitor used to evaluate the function body
+	 * @param args                       the raw argument name/value pairs supplied to the function
+	 * @param currentContext             the {@link DefaultContext} associated with the call
+	 * @return the evaluated result of the function body, or {@link None#get()} if
+	 *         the function has a {@link Void} return type
 	 */
 	public static Object doInvokeDeclaredFunction(  DeclaredFunction declaredFunction,
 													DefaultNaftahParserVisitor defaultNaftahParserVisitor,
@@ -1925,6 +1941,7 @@ public final class NaftahParserHelper {
 	) {
 		boolean functionInStack = false;
 		try {
+			currentContext.setImplementationName(declaredFunction.getImplementationName());
 			prepareDeclaredFunction(defaultNaftahParserVisitor, declaredFunction);
 			Map<String, Object> finalArgs = isEmpty(declaredFunction.getParameters()) ?
 					Map.of() :
@@ -1952,11 +1969,19 @@ public final class NaftahParserHelper {
 
 			pushCall(declaredFunction, finalArgs);
 			functionInStack = true;
-			return defaultNaftahParserVisitor.visit(declaredFunction.getBody());
+			var result = defaultNaftahParserVisitor.visit(declaredFunction.getBody());
+			return declaredFunction.getReturnType().isOfType(Void.class) ? None.get() : result;
 		}
 		finally {
 			if (functionInStack) {
 				popCall();
+				Triple<DeclaredFunction, Map<String, Object>, Object> parentCall;
+				if (Objects.nonNull(parentCall = peekCall())) {
+					currentContext.setImplementationName(parentCall.getLeft().getImplementationName());
+				}
+				else {
+					currentContext.setImplementationName(null);
+				}
 			}
 		}
 	}
@@ -2060,7 +2085,6 @@ public final class NaftahParserHelper {
 												column);
 		}
 	}
-
 
 	/**
 	 * Invokes a JVM function (static or instance) with automatic argument conversion.
@@ -2824,5 +2848,61 @@ public final class NaftahParserHelper {
 		task.spawn();
 
 		return task;
+	}
+
+	/**
+	 * Resolves the name of an implementation from a {@link org.daiitech.naftah.parser.NaftahParser.SelfOrIdContext}.
+	 *
+	 * <p>This method determines whether the context explicitly specifies an identifier
+	 * or implicitly refers to the current implementation in the execution context.</p>
+	 *
+	 * <ul>
+	 * <li>If {@code selfOrIdContext.ID()} is present, the method returns its text as the implementation name.</li>
+	 * <li>If no explicit ID is provided, the method retrieves the implementation name
+	 * from the provided {@link DefaultContext}.</li>
+	 * <li>If the implementation name cannot be determined (i.e., it is null in the current context),
+	 * the method throws a {@link NaftahBugError} with an Arabic message indicating that
+	 * {@code self} cannot be used outside an implementation definition.</li>
+	 * </ul>
+	 *
+	 * @param selfOrIdContext the parse context representing either {@code self} or an identifier
+	 * @param currentContext  the current {@link DefaultContext} providing execution state
+	 * @return the resolved implementation name, either explicitly from the context or from the current execution
+	 *         * context
+	 * @throws NaftahBugError if {@code self} is used outside a valid implementation context
+	 */
+	public static String matchImplementationName(   org.daiitech.naftah.parser.NaftahParser.SelfOrIdContext selfOrIdContext,
+													DefaultContext currentContext) {
+		String result;
+		if (hasChild(selfOrIdContext.ID())) {
+			result = selfOrIdContext.ID().getText();
+		}
+		else {
+			var implementationName = currentContext.getImplementationName();
+			if (Objects.isNull(implementationName)) {
+				throw new NaftahBugError(
+											"""
+											لا يمكن استخدام %s خارج سياق تعريف %s.
+											"""
+													.formatted(
+																getFormattedTokenSymbols(   PARSER_VOCABULARY,
+																							org.daiitech.naftah.parser.NaftahLexer.SELF,
+																							false),
+
+																getFormattedTokenSymbols(   PARSER_VOCABULARY,
+																							org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
+																							false)),
+											selfOrIdContext
+													.getStart()
+													.getLine(),
+											selfOrIdContext
+													.getStart()
+													.getCharPositionInLine()
+				);
+			}
+			result = implementationName;
+		}
+
+		return result;
 	}
 }

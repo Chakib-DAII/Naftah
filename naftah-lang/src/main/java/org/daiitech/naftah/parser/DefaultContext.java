@@ -37,6 +37,7 @@ import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
+import org.daiitech.naftah.builtin.lang.DeclaredImplementation;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
@@ -341,8 +342,12 @@ public class DefaultContext {
 			.withInitial(HashMap::new, HashMap::new);
 	protected final InheritableThreadLocal<Map<String, DeclaredFunction>> functions = SuppliedInheritableThreadLocal
 			.withInitial(HashMap::new, HashMap::new);
+	protected final InheritableThreadLocal<Map<String, DeclaredImplementation>> implementations = SuppliedInheritableThreadLocal
+			.withInitial(HashMap::new, HashMap::new);
 	protected volatile boolean pendingRemoval = false;
 	protected ThreadLocal<String> functionCallId; // current function in execution inside a context
+	// current implementation of function in execution inside a context
+	protected InheritableThreadLocal<String> implementationName;
 	protected ThreadLocal<Boolean> parsingFunctionCallId; // parsing current function in execution
 	protected ThreadLocal<Boolean> parsingAssignment; // parsing an assignment is in execution
 	protected ThreadLocal<Boolean> creatingObject; // object creation is in execution
@@ -374,15 +379,34 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Constructs a context with a parent context, block imports, parameters, and arguments.
+	 * Constructs a new {@code DefaultContext} with an optional parent context and
+	 * optional initial state.
 	 * <p>
-	 * Throws a {@link NaftahBugError} if instantiated outside allowed conditions
-	 * (e.g., outside REPL and without a parent context when contexts already exist).
+	 * This constructor initializes a context with references to its parent,
+	 * lexical depth, and any provided block imports, parameters, or arguments.
+	 * Supplied maps are used as the initial thread-local state for the context.
+	 * </p>
 	 *
-	 * @param parent       the parent context, or null if none
-	 * @param blockImports block imports map
-	 * @param parameters   function parameters map
-	 * @param arguments    function arguments map
+	 * <p>
+	 * Context creation is restricted: if the environment is not a REPL
+	 * (as indicated by {@code INSIDE_REPL_PROPERTY}), a root context may only be
+	 * created when no other contexts already exist. Violating this invariant
+	 * results in a {@link NaftahBugError}.
+	 * </p>
+	 *
+	 * <p>
+	 * When a parent context is provided, selected thread-local metadata
+	 * (such as the current function call identifier and implementation name)
+	 * is inherited from the parent if present.
+	 * </p>
+	 *
+	 * @param parent       The parent context, or {@code null} if this is a root context.
+	 * @param blockImports Initial block-level imports for this context, or {@code null} if none.
+	 * @param parameters   Initial function parameters for this context, or {@code null} if none.
+	 * @param arguments    Initial function arguments for this context, or {@code null} if none.
+	 * @throws NaftahBugError If this constructor is invoked in an invalid context-creation
+	 *                        scenario (for example, creating a root context outside the REPL
+	 *                        when contexts already exist).
 	 */
 	protected DefaultContext(   DefaultContext parent,
 								Map<String, String> blockImports,
@@ -402,6 +426,20 @@ public class DefaultContext {
 		}
 		if (Objects.nonNull(arguments)) {
 			this.arguments = SuppliedInheritableThreadLocal.withInitial(() -> arguments, HashMap::new);
+		}
+		if (Objects.nonNull(parent)) {
+			if (Objects.nonNull(parent.functionCallId)) {
+				String functionCallId;
+				if (Objects.nonNull(functionCallId = parent.functionCallId.get())) {
+					setFunctionCallId(functionCallId);
+				}
+			}
+			if (Objects.nonNull(parent.implementationName)) {
+				String implementationName;
+				if (Objects.nonNull(implementationName = parent.implementationName.get())) {
+					setImplementationName(implementationName);
+				}
+			}
 		}
 		CONTEXTS.computeIfAbsent(depth, d -> new CopyOnWriteArrayList<>()).add(this);
 		CURRENT_CONTEXT.set(this);
@@ -698,30 +736,37 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Copies variable and function declarations from a child context to its parent context.
+	 * Copies variable, function, and implementation declarations from a child
+	 * context into its parent context.
 	 * <p>
-	 * This method is typically used as a fallback when a child context cannot be safely
-	 * deregistered due to pending tasks or incomplete cleanup. By propagating declarations
-	 * upward, the parent context gains visibility into all symbols introduced by the child,
-	 * preventing name collisions or symbol shadowing if the child remains active longer
-	 * than expected.
-	 * <p>
-	 * Only thread-local state that has not been cleaned is copied. If the context's
-	 * {@code threadLocalsCleaned} flag indicates that cleanup has already occurred,
-	 * no declarations are propagated, ensuring consistent and deterministic state transfer.
-	 * <p>
-	 * In a REPL environment (indicated by {@code INSIDE_REPL_PROPERTY}), all declarations
-	 * at depth 1 are copied directly. Otherwise, only declarations with a depth less than
-	 * or equal to {@code context.depth - 1} are copied.
+	 * This method is used as a fallback when a child context cannot be safely
+	 * deregistered (for example, due to pending tasks or deferred cleanup).
+	 * By propagating declarations upward, the parent context gains visibility
+	 * into symbols introduced by the child, avoiding loss of symbol information
+	 * if the child remains active longer than expected.
+	 * </p>
 	 *
-	 * @param context the child {@link DefaultContext} whose declarations should be copied
-	 * @throws NullPointerException if {@code context} or its parent is {@code null}
+	 * <p>
+	 * In a REPL environment (indicated by {@code INSIDE_REPL_PROPERTY}), all
+	 * declarations declared at depth {@code 1} are copied directly to the parent.
+	 * </p>
+	 *
+	 * <p>
+	 * Outside of a REPL environment, only declarations whose declared depth is
+	 * less than or equal to {@code context.depth - 1} are copied. This prevents
+	 * propagation of symbols that are local to deeper lexical scopes.
+	 * </p>
+	 *
+	 * @param context The child {@link DefaultContext} whose declarations should be copied
+	 *                into its parent context.
+	 * @throws NullPointerException If {@code context} or its parent context is {@code null}.
 	 */
 	public static void copyDeclarationsToParent(DefaultContext context) {
 		Objects.requireNonNull(Objects.requireNonNull(context).parent);
 		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY) && context.depth == 1) {
 			context.parent.variables.get().putAll(context.variables.get());
 			context.parent.functions.get().putAll(context.functions.get());
+			context.parent.implementations.get().putAll(context.implementations.get());
 		}
 		else {
 			context.parent.variables
@@ -743,6 +788,18 @@ public class DefaultContext {
 							.entrySet()
 							.stream()
 							.filter(declaredFunctionEntry -> declaredFunctionEntry
+									.getValue()
+									.getDepth() <= (context.depth - 1))
+							.collect(Collectors
+									.toMap( Map.Entry::getKey,
+											Map.Entry::getValue)));
+			context.parent.implementations
+					.get()
+					.putAll(context.implementations
+							.get()
+							.entrySet()
+							.stream()
+							.filter(declaredImplementationEntry -> declaredImplementationEntry
 									.getValue()
 									.getDepth() <= (context.depth - 1))
 							.collect(Collectors
@@ -860,6 +917,15 @@ public class DefaultContext {
 			throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
 		}
 		return CALL_STACK.get().pop();
+	}
+
+	/**
+	 * Returns (without removing) the most recent function call frame from the call stack.
+	 *
+	 * @return the top function call frame, or {@code null} if the stack is empty
+	 */
+	public static Triple<DeclaredFunction, Map<String, Object>, Object> peekCall() {
+		return CALL_STACK.get().peek();
 	}
 
 	/**
@@ -1306,7 +1372,7 @@ public class DefaultContext {
 	 * @return a new {@link NaftahBugError} with the formatted message
 	 */
 	public static NaftahBugError newNaftahBugVariableNotFoundError(String name) {
-		return newNaftahInvocableNotFoundError(name, -1, -1);
+		return newNaftahBugVariableNotFoundError(name, -1, -1);
 	}
 
 	/**
@@ -1390,6 +1456,17 @@ public class DefaultContext {
 	 */
 	public static NaftahBugError newNaftahBugExistentFunctionError(String name) {
 		return new NaftahBugError("الدالة '%s' موجودة في السياق الحالي. لا يمكن إعادة إعلانها.".formatted(name));
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an implementation with the given name
+	 * already exists in the current context.
+	 *
+	 * @param name the name of the duplicated implementation
+	 * @return a {@code NaftahBugError} describing the duplication
+	 */
+	public static NaftahBugError newNaftahBugExistentImplementationError(String name) {
+		return new NaftahBugError("السلوك '%s' موجود في السياق الحالي. لا يمكن إعادة إعلانه.".formatted(name));
 	}
 
 	/**
@@ -1731,25 +1808,34 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Clears all {@link ThreadLocal} values associated with this context,
-	 * removing per-thread state such as variables, function environments,
+	 * Clears all {@link ThreadLocal} values associated with this context.
+	 * <p>
+	 * This removes per-thread state such as variables, functions, implementations,
 	 * temporary execution markers, and parsing-related metadata.
+	 * </p>
 	 *
-	 * <p>This method should be invoked when a task running under this context
-	 * completes, or when the context is being cleaned up. It prevents memory
-	 * leaks and stale state retention across threads, especially in an
-	 * asynchronous or multi-threaded environment where contexts may migrate
-	 * between threads.</p>
+	 * <p>
+	 * This method should be called when a task executing under this context completes
+	 * or when the context is being cleaned up. Proper invocation prevents memory
+	 * leaks and ensures no stale state is retained across threads, which is
+	 * especially important in asynchronous or multi-threaded environments where
+	 * contexts may be reused or migrated.
+	 * </p>
 	 *
-	 * <p>All managed {@code ThreadLocal} fields are removed only if they are
-	 * non-null, ensuring safe cleanup even during partial initialization.</p>
+	 * <p>
+	 * Only non-null {@code ThreadLocal} fields are removed, ensuring safe cleanup
+	 * even if the context was only partially initialized.
+	 * </p>
 	 *
-	 * <p>Calling this method does not affect shared state or the global context
-	 * registry—it only clears thread-local execution state.</p>
+	 * <p>
+	 * Calling this method affects only per-thread execution state. Shared state,
+	 * global registries, or parent/child context relationships remain unchanged.
+	 * </p>
 	 */
 	public void cleanThreadLocals() {
 		this.variables.remove();
 		this.functions.remove();
+		this.implementations.remove();
 		if (Objects.nonNull(this.functionCallId)) {
 			this.functionCallId.remove();
 		}
@@ -1961,27 +2047,99 @@ public class DefaultContext {
 	 * @return true if the function exists, false otherwise
 	 */
 	public boolean containsFunction(String name, int depth) {
-		return containsDeclaredFunction(name, depth) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS
-				.containsKey(name) || (name
-						.matches(
-									QUALIFIED_CALL_REGEX) && (SHOULD_BOOT_STRAP ?
-											(!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
-													.containsKey(
-																	name)) :
-											(!BOOT_STRAP_FAILED && BOOT_STRAPPED && lookupJvmFunctions(name))));
+		return containsDeclaredFunction(name, depth) || containsDeclaredImplementation( name,
+																						depth) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS
+																								.containsKey(name) || (name
+																										.matches(
+																													QUALIFIED_CALL_REGEX) && (SHOULD_BOOT_STRAP ?
+																															(!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
+																																	.containsKey(
+																																					name)) :
+																															(!BOOT_STRAP_FAILED && BOOT_STRAPPED && lookupJvmFunctions(name))));
 	}
 
 	/**
-	 * Checks if the declared function with the given name exists in the current context, or any parent context.
+	 * Checks whether a function with the specified name exists in this context
+	 * or any parent context up to the given depth.
 	 *
-	 * @param depth the depth of look up
-	 * @param name  the function name
-	 * @return true if the function exists, false otherwise
+	 * @param name  the name of the function to check
+	 * @param depth the maximum depth to search; use -1 to ignore depth limits
+	 * @return {@code true} if the function exists, {@code false} otherwise
 	 */
 	public boolean containsDeclaredFunction(String name, int depth) {
 		return ((depth == -1 || this.depth >= depth) && functions
 				.get()
-				.containsKey(name)) || parent != null && parent.containsFunction(name, depth);
+				.containsKey(name)) || parent != null && parent.containsDeclaredFunction(name, depth);
+	}
+
+	/**
+	 * Checks whether a declared implementation with the specified qualified call
+	 * exists in this context or any parent context up to the given depth.
+	 *
+	 * @param qualifiedCall the qualified implementation call (format: "implId.functionName")
+	 * @param depth         the maximum depth to search; use -1 to ignore depth limits
+	 * @return {@code true} if the implementation exists, {@code false} otherwise
+	 */
+	public boolean containsDeclaredImplementation(String qualifiedCall, int depth) {
+		return containsDeclaredImplementation(qualifiedCall, false, depth);
+	}
+
+	/**
+	 * Checks whether a declared implementation with the specified qualified call
+	 * exists in this context or any parent context up to the given depth.
+	 *
+	 * @param qualifiedCall      the qualified implementation call (format: "implId.functionName")
+	 * @param implementationOnly if {@code true}, only checks for the implementation existence,
+	 *                           ignoring specific function names
+	 * @param depth              the maximum depth to search; use -1 to ignore depth limits
+	 * @return {@code true} if the implementation exists according to the search rules,
+	 *         {@code false} otherwise
+	 */
+	public boolean containsDeclaredImplementation(String qualifiedCall, boolean implementationOnly, int depth) {
+		Map<String, DeclaredImplementation> implementationMap;
+		String[] parts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
+		String implementationId = parts.length == 2 ? parts[0] : null;
+		return ((depth == -1 || this.depth >= depth) && Objects.nonNull(implementationId) && !implementationId
+				.contains(
+							QUALIFIED_NAME_SEPARATOR) && (implementationMap = implementations.get())
+									.containsKey(implementationId) && (implementationOnly || implementationMap
+											.get(implementationId)
+											.getImplementationFunctions()
+											.containsKey(parts[1]))) || parent != null && parent
+													.containsDeclaredImplementation(qualifiedCall,
+																					implementationOnly,
+																					depth);
+	}
+
+	/**
+	 * Retrieves the {@link DeclaredFunction} corresponding to a qualified implementation
+	 * call from this context or any parent context.
+	 *
+	 * @param qualifiedCall the qualified implementation call (format: "implId.functionName")
+	 * @param safe          if {@code true}, returns {@code null} when the function is not found;
+	 *                      if {@code false}, throws an exception
+	 * @return the corresponding {@link DeclaredFunction}, or {@code null} if not found and {@code safe} is {@code
+	 * * true}
+	 * @throws NaftahBugError if the function is not found and {@code safe} is {@code false}
+	 */
+	public DeclaredFunction getDeclaredImplementationFunction(String qualifiedCall, boolean safe) {
+		Map<String, DeclaredImplementation> implementationMap;
+		Map<String, DeclaredFunction> functionsMap;
+		String[] parts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
+		String implementationId = parts.length == 2 ? parts[0] : null;
+		if (Objects.nonNull(implementationId) && !implementationId
+				.contains(QUALIFIED_NAME_SEPARATOR) && (implementationMap = implementations.get())
+						.containsKey(implementationId) && (functionsMap = implementationMap
+								.get(implementationId)
+								.getImplementationFunctions())
+								.containsKey(parts[1])) {
+			return functionsMap.get(parts[1]);
+		}
+
+		if (!safe) {
+			throw newNaftahInvocableNotFoundError(qualifiedCall);
+		}
+		return null;
 	}
 
 	/**
@@ -1997,6 +2155,9 @@ public class DefaultContext {
 		var functionMap = functions.get();
 		if (functionMap.containsKey(name)) {
 			return ImmutablePair.of(depth, functionMap.get(name));
+		}
+		else if (containsDeclaredImplementation(name, depth)) {
+			return ImmutablePair.of(depth, getDeclaredImplementationFunction(name, safe));
 		}
 		else if (parent != null) {
 			return parent.getFunction(name, safe);
@@ -2031,7 +2192,7 @@ public class DefaultContext {
 		}
 
 		if (!safe) {
-			throw new NaftahBugError("الدالة '%s' غير موجودة في السياق الحالي.".formatted(name));
+			throw newNaftahInvocableNotFoundError(name);
 		}
 		return null;
 	}
@@ -2058,16 +2219,68 @@ public class DefaultContext {
 
 	/**
 	 * Defines a new function in the current context.
+	 * <p>
+	 * The function is added to this context's local function registry. If a function
+	 * with the same name already exists in the current context at the same depth,
+	 * a {@link NaftahBugError} is thrown.
+	 * </p>
 	 *
-	 * @param name  the function name
-	 * @param value the DeclaredFunction to define
-	 * @throws NaftahBugError if the function already exists in the current context
+	 * @param name  the name of the function to define
+	 * @param value the {@link DeclaredFunction} to associate with the name
+	 * @throws NaftahBugError if a function with the same name already exists
+	 *                        in the current context
 	 */
 	public void defineFunction(String name, DeclaredFunction value) {
 		if (containsFunction(name, value.getDepth())) {
 			throw newNaftahBugExistentFunctionError(name);
 		}
 		functions.get().put(name, value); // force local
+	}
+
+	/**
+	 * Sets or updates an implementation in the current context or in a parent context.
+	 * <p>
+	 * If the implementation already exists in the current context, it is updated.
+	 * Otherwise, if a function with the same name exists in a parent context, the
+	 * implementation is updated there. If neither exists, the implementation is
+	 * defined locally in this context.
+	 * </p>
+	 *
+	 * @param name  the name of the implementation
+	 * @param value the {@link DeclaredImplementation} to set
+	 */
+	public void setImplementation(String name, DeclaredImplementation value) {
+		var implementationMap = implementations.get();
+		if (implementationMap.containsKey(name)) {
+			implementationMap.put(name, value);
+		}
+		else if (parent != null && parent.containsFunction(name, value.getDepth())) {
+			parent.setImplementation(name, value);
+		}
+		else {
+			implementationMap.put(name, value); // define new in current context
+		}
+	}
+
+	/**
+	 * Defines a new implementation in the current context.
+	 * <p>
+	 * If an implementation with the same name already exists in this context (or
+	 * matching the search criteria in the depth hierarchy), a
+	 * {@link NaftahBugError} is thrown. Otherwise, the implementation is added
+	 * to the current context's registry.
+	 * </p>
+	 *
+	 * @param name  the name of the implementation to define
+	 * @param value the {@link DeclaredImplementation} to associate with the name
+	 * @throws NaftahBugError if the implementation already exists according to
+	 *                        the context's depth rules
+	 */
+	public void defineImplementation(String name, DeclaredImplementation value) {
+		if (containsDeclaredImplementation(name, true, value.getDepth())) {
+			throw newNaftahBugExistentImplementationError(name);
+		}
+		implementations.get().put(name, value); // force local
 	}
 
 	/**
@@ -2611,7 +2824,12 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Sets the identifier for the current function call being parsed.
+	 * Sets the identifier for the current function call being in execution.
+	 * <p>
+	 * This value is stored in a {@link ThreadLocal} to allow each thread to
+	 * independently track the current function call ID. If the thread-local
+	 * is uninitialized, it is created; otherwise, the value is updated.
+	 * </p>
 	 *
 	 * @param functionCallId the function call ID to set
 	 */
@@ -2625,9 +2843,48 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Checks if the parser is currently parsing a function call ID.
+	 * Returns the current implementation name for this context.
+	 * <p>
+	 * The implementation name is stored in a thread-local variable. If the
+	 * thread-local is uninitialized, this method returns {@code null}.
+	 * </p>
 	 *
-	 * @return true if parsing a function call ID, false otherwise
+	 * @return the current implementation name, or {@code null} if none is set
+	 */
+	public String getImplementationName() {
+		if (Objects.isNull(implementationName)) {
+			return null;
+		}
+		return implementationName.get();
+	}
+
+	/**
+	 * Sets the implementation name for this context.
+	 * <p>
+	 * The value is stored in a thread-local variable to allow independent
+	 * tracking per thread. If the thread-local is uninitialized, it is created;
+	 * otherwise, the value is updated.
+	 * </p>
+	 *
+	 * @param implementationName the implementation name to set
+	 */
+	public void setImplementationName(String implementationName) {
+		if (Objects.isNull(this.implementationName)) {
+			this.implementationName = SuppliedInheritableThreadLocal.withInitial(() -> implementationName, true);
+		}
+		else {
+			this.implementationName.set(implementationName);
+		}
+	}
+
+	/**
+	 * Checks whether the parser is currently processing a function call ID.
+	 * <p>
+	 * This flag is tracked using a thread-local variable. If the thread-local
+	 * is uninitialized, this method returns {@code false}.
+	 * </p>
+	 *
+	 * @return {@code true} if a function call ID is being parsed, {@code false} otherwise
 	 */
 	public boolean isParsingFunctionCallId() {
 		if (Objects.isNull(parsingFunctionCallId)) {
@@ -2873,32 +3130,40 @@ public class DefaultContext {
 	 * Attempts to resolve a variable reference into a fully qualified call and
 	 * retrieve its underlying value.
 	 *
-	 * <p>This method processes expressions of the form:
-	 * {@code variableId:propertyName}. If the identifier corresponds to a known
-	 * variable within this context (or any parent context), the method produces:</p>
+	 * <p>This method processes expressions of the form {@code variableId:propertyName}.
+	 * If the identifier corresponds to a known variable within this context or any
+	 * parent context, the method returns a {@link Triple} containing:</p>
 	 *
 	 * <ul>
-	 * <li>A fully qualified call of the form:
-	 * <pre>qualifiedVariableClassName:propertyName</pre>
-	 * </li>
-	 * <li>The actual value of the variable, with automatic unwrapping of
-	 * {@link NaftahObject} instances.</li>
+	 * <li><b>Triple.left</b> — the fully qualified call string, in the form
+	 * {@code qualifiedVariableClassName:propertyName}</li>
+	 * <li><b>Triple.middle</b> — a boolean indicating whether the variable's
+	 * runtime class differs from its declared type</li>
+	 * <li><b>Triple.right</b> — the resolved variable value, with automatic
+	 * unwrapping of {@link NaftahObject} instances</li>
 	 * </ul>
 	 *
-	 * <p>The result is returned as a {@link Pair}, where:</p>
-	 *
+	 * <p>Special handling:</p>
 	 * <ul>
-	 * <li><b>pair.a</b> — the fully qualified call string</li>
-	 * <li><b>pair.b</b> — the resolved variable value</li>
+	 * <li>If the variable is a {@link NaftahObject}, it is unwrapped to obtain
+	 * the underlying value, and a flag is set to indicate whether it originates
+	 * from Java.</li>
+	 * <li>If the variable is an instance of {@link Actor} or a subclass, the
+	 * fully qualified type is reported as {@code Actor.class}.</li>
 	 * </ul>
 	 *
-	 * <p>If the identifier does not correspond to a known variable, or if the
-	 * input does not match the {@code id:property} pattern, this method returns
-	 * {@code null}.</p>
+	 * <p>If the input string does not match the {@code id:property} format, or
+	 * if the variable cannot be found in this context or any parent, the method
+	 * returns {@code null}.</p>
 	 *
 	 * @param qualifiedCall a variable reference in the form {@code id:property}
-	 * @return a {@link Pair} containing the fully qualified call and the variable's
-	 *         underlying value; or {@code null} if resolution fails
+	 * @return a {@link Triple} containing:
+	 *         <ul>
+	 *         <li>the fully qualified call string</li>
+	 *         <li>a boolean indicating if the runtime class differs from the declared type</li>
+	 *         <li>the resolved variable value</li>
+	 *         </ul>
+	 *         Returns {@code null} if resolution fails.
 	 */
 	public Triple<String, Boolean, Object> matchVariable(String qualifiedCall) {
 		String[] parts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
@@ -2907,18 +3172,23 @@ public class DefaultContext {
 			var variable = getVariable(id, this);
 			if (variable.isFound()) {
 				Object variableValue = variable.get();
+				boolean fromJava = true;
 				if (variableValue instanceof NaftahObject naftahObject) {
+					fromJava = naftahObject.fromJava();
 					variableValue = naftahObject.get(true);
 				}
-				Class<?> variableClass = variableValue.getClass();
-				// handling actors implementations created at runtime
-				if (Actor.class.isAssignableFrom(variableClass)) {
-					variableClass = Actor.class;
+
+				if (fromJava) {
+					Class<?> variableClass = variableValue.getClass();
+					// handling actors implementations created at runtime
+					if (Actor.class.isAssignableFrom(variableClass)) {
+						variableClass = Actor.class;
+					}
+					return ImmutableTriple
+							.of(getQualifiedCall(getQualifiedName(variableClass.getName()), parts[1]),
+								!variableClass.equals(variableValue.getClass()),
+								variableValue);
 				}
-				return ImmutableTriple
-						.of(getQualifiedCall(getQualifiedName(variableClass.getName()), parts[1]),
-							!variableClass.equals(variableValue.getClass()),
-							variableValue);
 			}
 		}
 		return null;

@@ -18,6 +18,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Vocabulary;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
+import org.daiitech.naftah.builtin.lang.DeclaredImplementation;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
@@ -500,10 +501,6 @@ public final class ObjectUtils {
 			return JavaType.of(new TypeReference<Map<String, DeclaredVariable>>() {
 			});
 		}
-		if (hasChild(complexBuiltInContext.IMPLEMENTATION())) {
-			return JavaType.of(new TypeReference<Map<String, DeclaredFunction>>() {
-			});
-		}
 		if (hasChild(complexBuiltInContext.PAIR())) {
 			return JavaType
 					.of(TypeReference
@@ -639,21 +636,29 @@ public final class ObjectUtils {
 			if (javaType.isOfType(String.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, false);
 			}
+			if (javaType.isOfType(DeclaredImplementation.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
+												false);
+			}
+			if (javaType.isOfType(Channel.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.CHANNEL,
+												false);
+			}
+			if (javaType.isOfType(Actor.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.ACTOR,
+												false);
+			}
 			if (javaType.isMap()) {
 				List<JavaType> params = javaType.getTypeParameters();
 				var keyType = params.get(0);
 				var valueType = params.get(1);
-				if (keyType.isOfType(String.class)) {
-					if (valueType.isOfType(DeclaredVariable.class)) {
-						return getFormattedTokenSymbols(vocabulary,
-														org.daiitech.naftah.parser.NaftahLexer.STRUCT,
-														false);
-					}
-					if (valueType.isOfType(DeclaredFunction.class)) {
-						return getFormattedTokenSymbols(vocabulary,
-														org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
-														false);
-					}
+				if (keyType.isOfType(String.class) && valueType.isOfType(DeclaredVariable.class)) {
+					return getFormattedTokenSymbols(vocabulary,
+													org.daiitech.naftah.parser.NaftahLexer.STRUCT,
+													false);
 				}
 				return getFormattedTokenSymbols(vocabulary,
 												org.daiitech.naftah.parser.NaftahLexer.MAP,
@@ -1053,6 +1058,16 @@ public final class ObjectUtils {
 			}
 
 			return operation.apply(left, number);
+		}
+
+		// String vs any
+		if (left instanceof String string) {
+			return operation.apply(string, getNaftahValueToString(right));
+		}
+
+		// Character vs any
+		if (left instanceof Character character) {
+			return operation.apply(character, getNaftahValueToString(right));
 		}
 
 		// Collection vs Collection or Array (element-wise)
