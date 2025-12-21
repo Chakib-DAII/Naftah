@@ -29,6 +29,7 @@ statement: scopeBlock #scopeBlockStatement
          | caseStatement #caseStatementStatement
          | tryStatement #tryStatementStatement
          | functionDeclaration #functionDeclarationStatement
+         | implementationDeclaration #implementationDeclarationStatement
          | declaration #declarationStatement
          | channelDeclaration #channelDeclarationStatement
          | actorDeclaration #actorDeclarationStatement
@@ -106,7 +107,7 @@ initCall: ((AT_SIGN ID) | (AT_SIGN? qualifiedName)) targetExecutableIndex? LPARE
 callSegment: COLON COLON COLON? primaryCall;
 
 // Function call: Can have arguments and return values
-primaryCall: (ID | qualifiedCall) targetExecutableIndex? LPAREN argumentList? RPAREN;
+primaryCall: (selfOrId | qualifiedCall) targetExecutableIndex? LPAREN argumentList? RPAREN;
 
 /**
  * Represents the index of the target executable (method or constructor)
@@ -273,6 +274,11 @@ objectFields: assignment ((COMMA | SEMI) assignment)*;
 objectAccess: qualifiedName
 		    | qualifiedObjectAccess;
 
+// Implementation
+implementationDeclaration: IMPLEMENTATION ID LBRACE implementationFunctions RBRACE;
+
+implementationFunctions: functionDeclaration (END? functionDeclaration)*;
+
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
           | LPAREN tupleElements? RPAREN #tupleValue
@@ -319,7 +325,6 @@ type: complexBuiltIn #complexType
     ;
 
 complexBuiltIn: STRUCT
-	| IMPLEMENTATION
 	| PAIR GT_TYPE_SIGN type (COMMA | SEMI) type LT_TYPE_SIGN
 	| TRIPLE GT_TYPE_SIGN type (COMMA | SEMI) type (COMMA | SEMI) type LT_TYPE_SIGN
 	| LIST GT_TYPE_SIGN type LT_TYPE_SIGN
@@ -343,16 +348,16 @@ builtIn: BOOLEAN
     ;
 
 // QualifiedName: ID separated by COLONs
-qualifiedName: ID (QUESTION? COLON ID)+;
+qualifiedName: selfOrId (QUESTION? COLON ID)+;
 
-qualifiedCall: ID COLON COLON ID #simpleCall
+qualifiedCall: selfOrId COLON COLON ID #simpleCall
 			| qualifiedName COLON COLON ID #qualifiedNameCall;
 
-qualifiedObjectAccess: ID (QUESTION? propertyAccess)+;
+qualifiedObjectAccess: selfOrId (QUESTION? propertyAccess)+;
 
-//qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK) | collectionAccess))+;
+//qualifiedObjectAccess: selfOrId (QUESTION? ((COLON ID) | (LBRACK ID RBRACK) | collectionAccess))+;
 
-collectionAccess: ID (QUESTION? LBRACK collectionAccessIndex RBRACK)+;
+collectionAccess: selfOrId (QUESTION? LBRACK collectionAccessIndex RBRACK)+;
 
 propertyAccess
     : COLON ID
@@ -367,3 +372,5 @@ collectionAccessIndex
 
 // A label is an identifier followed by a colon for loops
 label: ID COLON;
+
+selfOrId: SELF | ID;
