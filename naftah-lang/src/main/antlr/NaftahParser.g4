@@ -13,22 +13,14 @@ parser grammar NaftahParser;
 
 options {
     tokenVocab = NaftahLexer;
-//    contextSuperClass = NaftahParserRuleContext;
-//    superClass = AbstractParser;
-}
-
-@header {
-}
-
-@members {
-
 }
 
 // Top-level rule: A Naftah program consists of statements
 program: (statement END?)+;
 
 // Statement: Can be an assignment, function call, or control flow
-statement: block #blockStatement
+statement: scopeBlock #scopeBlockStatement
+		 | block #blockStatement
          | importStatement #importStatementStatement
          | ifStatement #ifStatementStatement
          | forStatement #forStatementStatement
@@ -37,7 +29,10 @@ statement: block #blockStatement
          | caseStatement #caseStatementStatement
          | tryStatement #tryStatementStatement
          | functionDeclaration #functionDeclarationStatement
+         | implementationDeclaration #implementationDeclarationStatement
          | declaration #declarationStatement
+         | channelDeclaration #channelDeclarationStatement
+         | actorDeclaration #actorDeclarationStatement
          | assignment #assignmentStatement
          | returnStatement #returnStatementStatement
          | breakStatement #breakStatementStatement
@@ -66,13 +61,25 @@ callableImportElement: (ID | qualifiedName | qualifiedCall) importAlias?;
 importAlias: AS ID;
 
 // Declaration: variable or constant declaration
-declaration: (VARIABLE | CONSTANT) ID (COLON type)?;
+declaration: singleDeclaration | multipleDeclarations;
+
+singleDeclaration: (VARIABLE | CONSTANT) ID (COLON type)?;
+
+multipleDeclarations: (VARIABLE | CONSTANT) ID ((COMMA | SEMI) ID)+ (COLON type ((COMMA | SEMI) type)*)?;
 
 // Assignment: variable or constant assignment, object field or collection element
-assignment: (declaration | ID | qualifiedName | qualifiedObjectAccess | collectionAccess) ASSIGN expression;
+assignment: singleAssignmentExpression | multipleAssignmentsExpression;
+
+singleAssignmentExpression: (singleDeclaration | singleAssignment) ASSIGN expression;
+
+multipleAssignmentsExpression: (multipleDeclarations | multipleAssignments) ASSIGN expression ((COMMA | SEMI) expression)*;
+
+singleAssignment: ID | qualifiedName | qualifiedObjectAccess | collectionAccess;
+
+multipleAssignments: singleAssignment ((COMMA | SEMI) singleAssignment)+;
 
 // Function declaration: Can have parameters and return values
-functionDeclaration: FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
+functionDeclaration: ASYNC? FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
 
 // Function declaration parameter list: parameterDeclarations separated by commas or semicolons
 parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclaration)*;
@@ -100,7 +107,7 @@ initCall: ((AT_SIGN ID) | (AT_SIGN? qualifiedName)) targetExecutableIndex? LPARE
 callSegment: COLON COLON COLON? primaryCall;
 
 // Function call: Can have arguments and return values
-primaryCall: (ID | qualifiedCall) targetExecutableIndex? LPAREN argumentList? RPAREN;
+primaryCall: (selfOrId | qualifiedCall) targetExecutableIndex? LPAREN argumentList? RPAREN;
 
 /**
  * Represents the index of the target executable (method or constructor)
@@ -188,6 +195,18 @@ someCase: SOME LPAREN ID RPAREN (DO | ARROW) (block | expression);
 
 noneCase: NONE (DO | ARROW) (block | expression);
 
+// Concurrency Scope Block
+scopeBlock: SCOPE ORDERED? block;
+
+// Concurrency Channel / Actor
+channelDeclaration: CHANNEL ID (COLON type)?;
+
+actorDeclaration: ACTOR ID
+	(LPAREN (
+			 (ID (COLON type)? ((COMMA | SEMI) LPAREN objectFields RPAREN)?)
+     		 | (LPAREN objectFields RPAREN)
+     ) RPAREN)? block;
+
 // Break statement: used in loops to break the loop with optional label
 breakStatement: BREAK ID?;
 
@@ -195,12 +214,16 @@ breakStatement: BREAK ID?;
 continueStatement: CONTINUE ID?;
 
 // Return statement: 'return' followed by an optional expression
-returnStatement: RETURN expression?;
+returnStatement: singleReturn | multipleReturns;
+
+singleReturn: RETURN expression?;
+
+multipleReturns: RETURN ((LPAREN tupleElements? RPAREN) | collectionMultipleElements);
 
 // Block: A block of statements enclosed in curly braces
 block: LBRACE (statement END?)* RBRACE;
 
-// Expressions: Can be value, binary operations
+// Expressions: Can be value, binary operations... with optional Concurrency Spawn / Await
 expression: ternaryExpression;
 
 ternaryExpression: nullishExpression (QUESTION expression COLON ternaryExpression)?;
@@ -213,7 +236,9 @@ bitwiseExpression: equalityExpression ((BITWISE_AND | BITWISE_OR | BITWISE_XOR) 
 
 equalityExpression: relationalExpression ((EQ | NEQ) relationalExpression)*;
 
-relationalExpression: additiveExpression ((LT | LE | GT | GE) additiveExpression)*;
+relationalExpression: shiftExpression ((LT | LE | GT | GE | INSTANCE_OF) shiftExpression)*;
+
+shiftExpression: additiveExpression ((BITWISE_SHL | BITWISE_SHR | BITWISE_USHR) additiveExpression)*;
 
 additiveExpression: multiplicativeExpression ((PLUS | MINUS | ELEMENTWISE_PLUS | ELEMENTWISE_MINUS) multiplicativeExpression)*;
 
@@ -221,7 +246,9 @@ multiplicativeExpression: powerExpression ((MUL | DIV | MOD | ELEMENTWISE_MUL | 
 
 powerExpression: unaryExpression (POW powerExpression)?;
 
-unaryExpression: (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT) unaryExpression #prefixUnaryExpression
+unaryExpression: SPAWN (COLON type)? unaryExpression #spawnUnaryExpression
+               | AWAIT unaryExpression #awaitUnaryExpression
+			   | (PLUS | MINUS | NOT | BITWISE_NOT | INCREMENT | DECREMENT | TYPE_OF | SIZE_OF) unaryExpression #prefixUnaryExpression
     		   | postfixExpression #postfixUnaryExpression
      		   ;
 
@@ -234,6 +261,7 @@ primary: initCall #initCallExpression
        | objectAccess #objectAccessExpression
        | collectionAccess #collectionAccessExpression
        | value #valueExpression
+       | type #typeExpression
        | LPAREN expression RPAREN #parenthesisExpression
        ;
 
@@ -245,6 +273,11 @@ objectFields: assignment ((COMMA | SEMI) assignment)*;
 
 objectAccess: qualifiedName
 		    | qualifiedObjectAccess;
+
+// Implementation
+implementationDeclaration: IMPLEMENTATION ID LBRACE implementationFunctions RBRACE;
+
+implementationFunctions: functionDeclaration (END? functionDeclaration)*;
 
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue
@@ -285,9 +318,19 @@ returnType: VOID #voidReturnType
           ;
 
 // Type: Can be any, builtinType or qualifiedName
-type: VAR #varType
+type: complexBuiltIn #complexType
     | builtIn #builtInType
+    | VAR #varType
     | (ID | qualifiedName) #qualifiedNameType
+    ;
+
+complexBuiltIn: STRUCT
+	| PAIR GT_TYPE_SIGN type (COMMA | SEMI) type LT_TYPE_SIGN
+	| TRIPLE GT_TYPE_SIGN type (COMMA | SEMI) type (COMMA | SEMI) type LT_TYPE_SIGN
+	| LIST GT_TYPE_SIGN type LT_TYPE_SIGN
+	| TUPLE
+	| SET GT_TYPE_SIGN type LT_TYPE_SIGN
+	| MAP GT_TYPE_SIGN type (COMMA | SEMI) type LT_TYPE_SIGN
     ;
 
 builtIn: BOOLEAN
@@ -296,22 +339,25 @@ builtIn: BOOLEAN
     |   SHORT
     |   INT
     |   LONG
+    |   BIG_INT
     |   FLOAT
     |   DOUBLE
+    |   BIG_DECIMAL
+    |   VAR_NUMBER
     |   STRING_TYPE
     ;
 
 // QualifiedName: ID separated by COLONs
-qualifiedName: ID (QUESTION? COLON ID)+;
+qualifiedName: selfOrId (QUESTION? COLON ID)+;
 
-qualifiedCall: ID COLON COLON ID #simpleCall
+qualifiedCall: selfOrId COLON COLON ID #simpleCall
 			| qualifiedName COLON COLON ID #qualifiedNameCall;
 
-qualifiedObjectAccess: ID (QUESTION? propertyAccess)+;
+qualifiedObjectAccess: selfOrId (QUESTION? propertyAccess)+;
 
-//qualifiedObjectAccess: ID (QUESTION? ((COLON ID) | (LBRACK ID RBRACK) | collectionAccess))+;
+//qualifiedObjectAccess: selfOrId (QUESTION? ((COLON ID) | (LBRACK ID RBRACK) | collectionAccess))+;
 
-collectionAccess: ID (QUESTION? LBRACK collectionAccessIndex RBRACK)+;
+collectionAccess: selfOrId (QUESTION? LBRACK collectionAccessIndex RBRACK)+;
 
 propertyAccess
     : COLON ID
@@ -326,3 +372,5 @@ collectionAccessIndex
 
 // A label is an identifier followed by a colon for loops
 label: ID COLON;
+
+selfOrId: SELF | ID;

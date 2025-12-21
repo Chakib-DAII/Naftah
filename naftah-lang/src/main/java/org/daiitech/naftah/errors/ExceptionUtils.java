@@ -8,9 +8,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmExecutable;
+import org.daiitech.naftah.builtin.utils.CollectionUtils;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
@@ -207,10 +209,12 @@ public final class ExceptionUtils {
 											.formatted( number,
 														Objects.isNull(PARSER_VOCABULARY) ?
 																getQualifiedName(number.getClass().getName()) :
-																getNaftahType(PARSER_VOCABULARY, number.getClass()),
+																getNaftahType(  PARSER_VOCABULARY,
+																				JavaType.of(number.getClass())),
 														Objects.isNull(PARSER_VOCABULARY) ?
 																getQualifiedName(targetClass.getName()) :
-																getNaftahType(PARSER_VOCABULARY, targetClass),
+																getNaftahType(  PARSER_VOCABULARY,
+																				JavaType.of(targetClass)),
 														overflow ? "بسبب: تجاوز السعة" : ""));
 	}
 
@@ -269,10 +273,11 @@ public final class ExceptionUtils {
 		return new NaftahBugError(  "قيمة رقمية غير صالحة: '%s' في النظام العددي %d"
 											.formatted(
 														object instanceof Pair<?, ?> pair ?
-																(!pair.b.equals(pair.a) ?
+																(!pair.getRight().equals(pair.getLeft()) ?
 																		"%s ← %s"
-																				.formatted(pair.b, pair.a) :
-																		pair.a) :
+																				.formatted( pair.getRight(),
+																							pair.getLeft()) :
+																		pair.getLeft()) :
 																object,
 														radix),
 									exception);
@@ -292,10 +297,10 @@ public final class ExceptionUtils {
 				.stream(dn)
 				.map(dynamicNumber -> Objects.isNull(PARSER_VOCABULARY) ?
 						getQualifiedName(dynamicNumber.get().getClass().getName()) :
-						getNaftahType(PARSER_VOCABULARY, dynamicNumber.get().getClass()))
+						getNaftahType(PARSER_VOCABULARY, JavaType.of(dynamicNumber.get().getClass())))
 				.toArray(String[]::new);
 		return new NaftahBugError((singleInput ? "نوع الرقم غير مدعوم: '%s'" : "أنواع الأرقام غير مدعومة: '%s'، '%s'")
-				.formatted((Object[]) args));
+				.formatted(CollectionUtils.toObjectArray(args)));
 	}
 
 
@@ -499,6 +504,18 @@ public final class ExceptionUtils {
 	}
 
 	/**
+	 * Creates a new {@link NaftahBugError} for a missing invocable
+	 * without specifying source line or column.
+	 *
+	 * @param functionName the name of the missing invocable (method or constructor)
+	 * @return never returns normally; this method always creates a {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate a missing invocable
+	 */
+	public static NaftahBugError newNaftahInvocableNotFoundError(String functionName) {
+		return newNaftahInvocableNotFoundError(functionName, -1, -1);
+	}
+
+	/**
 	 * Creates and throws a {@link NaftahBugError} when a collection of invocable
 	 * functions or class initializers is found, but the caller did not specify
 	 * an index to select which one to invoke.
@@ -571,5 +588,221 @@ public final class ExceptionUtils {
 									exception,
 									line,
 									column);
+	}
+
+	/**
+	 * Creates and throws a {@link NaftahBugError} when an assignment expression
+	 * is invalid because it is not provided as a tuple of elements.
+	 *
+	 * <p>This error is triggered in situations where the user provides either:</p>
+	 * <ul>
+	 * <li>a single value for assignment instead of a tuple, or</li>
+	 * <li>multiple comma-separated values that are not wrapped in a tuple structure.</li>
+	 * </ul>
+	 *
+	 * <p>The generated message (in Arabic) informs the user that an assignment
+	 * expression must always be represented as a tuple, regardless of whether the
+	 * assignment involves a single value or multiple values.</p>
+	 *
+	 * @param line   the source line number where the error occurred
+	 * @param column the source column number where the error occurred
+	 * @return this method never returns normally; it always throws {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate an invalid assignment expression
+	 */
+	public static NaftahBugError newNaftahSingleExpressionAssignmentError(  int line,
+																			int column) {
+		return new NaftahBugError(  """
+									يجب أن تكون عبارة الإسناد تركيبة (Tuple) من العناصر في حالة الإسناد بقيمة واحدة أو بقيم متعددة مفصولة بفواصل في حالة الإسناد بقيم متعددة.
+									""",
+									line,
+									column);
+	}
+
+	/**
+	 * Creates and throws a {@link NaftahBugError} when the number of assignment
+	 * expressions does not match the number of declared variables.
+	 *
+	 * <p>This typically occurs when performing multiple assignments or tuple-based
+	 * destructuring, and the left-hand side declarations and right-hand side
+	 * expressions do not align in count.</p>
+	 *
+	 * <p>The generated message (in Arabic) clarifies that both sides must have an
+	 * equal number of elements.</p>
+	 *
+	 * @param line   the source line number where the error occurred
+	 * @param column the source column number where the error occurred
+	 * @return this method never returns normally; it always throws {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate a mismatch between declarations and expressions
+	 */
+	public static NaftahBugError newNaftahExpressionsDeclarationsSizeMismatchErrorError(int line,
+																						int column) {
+		return new NaftahBugError(  """
+									يجب أن يتطابق عدد العبارات مع عدد التصريحات.
+									""",
+									line,
+									column);
+	}
+
+	/**
+	 * Creates and throws a {@link NaftahBugError} when the parser encounters
+	 * multiple variable declarations where the number of explicitly specified
+	 * types exceeds the number of declared variable names.
+	 *
+	 * <p>This situation is invalid because each declared variable may have at most
+	 * one corresponding type, and extra types cannot be mapped to any variable.</p>
+	 *
+	 * <p>The generated message (in Arabic) explains that the number of specified
+	 * types cannot be greater than the number of variable names.</p>
+	 *
+	 * @param line   the source line number where the error occurred
+	 * @param column the source column number where the error occurred
+	 * @return this method never returns normally; it always throws {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate a types-to-variables mismatch
+	 */
+	public static NaftahBugError newNaftahSpecifiedTypesExceedVariableNamesError(   int line,
+																					int column) {
+		return new NaftahBugError(  """
+									عدد الأنواع المحددة لا يجوز أن يتجاوز عدد أسماء المتغيرات.
+									""",
+									line,
+									column);
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an attempt was made to
+	 * reassign a constant (final or otherwise immutable) variable.
+	 *
+	 * <p>This overload simply delegates to
+	 * {@link #newNaftahSettingConstantError(String, Throwable)} with a null cause.</p>
+	 *
+	 * <p>The generated error message (written in Arabic) includes the name of the
+	 * constant that was attempted to be reassigned.</p>
+	 *
+	 * @param name the name of the constant variable being reassigned
+	 * @return a new {@link NaftahBugError} describing the constant reassignment error
+	 * @throws NaftahBugError this method always creates an error instance;
+	 *                        intended to be thrown by the caller
+	 */
+	public static NaftahBugError newNaftahSettingConstantError(String name) {
+		return newNaftahSettingConstantError(name, null);
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} indicating that an attempt was made to
+	 * reassign a constant (final or otherwise immutable) variable, optionally
+	 * wrapping the underlying cause.
+	 *
+	 * <p>If a non-null {@code Throwable} is provided, an {@link IllegalArgumentException}
+	 * will be created and chained with an {@link IllegalAccessException} whose message
+	 * mirrors the original cause. This preserves the original error context while
+	 * signaling that a constant value cannot be modified.</p>
+	 *
+	 * <p>The generated error message (in Arabic) includes the name of the constant
+	 * that was attempted to be reassigned:</p>
+	 *
+	 * <pre>
+	 * "حدث خطأ أثناء إعادة تعيين القيمة الثابتة: '%s'. لا يمكن إعادة تعيين ثابت."
+	 * </pre>
+	 *
+	 * @param name the name of the constant variable being reassigned
+	 * @param th   an optional underlying cause; may be {@code null}
+	 * @return a new {@link NaftahBugError} describing the constant reassignment error
+	 * @throws NaftahBugError this method creates an error instance; intended to be thrown by the caller
+	 */
+	public static NaftahBugError newNaftahSettingConstantError(String name, Throwable th) {
+		return new NaftahBugError(
+									"حدث خطأ أثناء إعادة تعيين القيمة الثابتة: '%s'. لا يمكن إعادة تعيين ثابت."
+											.formatted(name),
+									Objects.nonNull(th) ? th : null);
+	}
+
+	/**
+	 * Creates an {@link IllegalAccessException} indicating that a reflective
+	 * write to a constant (final/static) field was ignored by the JVM.
+	 *
+	 * <p>This can happen when attempting to modify a field that the JVM
+	 * treats as immutable, such as a final field, where the write is silently
+	 * ignored without throwing an exception.</p>
+	 *
+	 * @param fieldName the name of the field that was attempted to be modified
+	 * @return an {@link IllegalAccessException} describing the failed reflective write
+	 */
+	public static IllegalAccessException newIllegalFieldAccessException(String fieldName) {
+		return new IllegalAccessException(
+											"""
+											JVM ignored reflective write to constant field '%s'.
+											"""
+													.formatted(fieldName));
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} representing a type-mismatch error with
+	 * source location information.
+	 *
+	 * <p>This overload is used when the type mismatch can be associated with a
+	 * specific position in the source code (line and column).</p>
+	 *
+	 * <p>The generated error message is localized (Arabic) and indicates that
+	 * the provided value does not match the expected type.</p>
+	 *
+	 * @param name   the name of the value, variable, or parameter that caused the mismatch
+	 * @param type   the expected type description (usually produced by the Naftah type system)
+	 * @param line   the source line number where the error occurred, or {@code -1} if unknown
+	 * @param column the character position in the line where the error occurred, or {@code -1} if unknown
+	 * @return a {@link NaftahBugError} describing the type mismatch
+	 */
+	public static NaftahBugError newNaftahTypeMismatchError(String name, String type, int line, int column) {
+		return new NaftahBugError("القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
+				.formatted(name, type), line, column);
+	}
+
+	/**
+	 * Creates an {@link IllegalArgumentException} indicating that a value has an
+	 * unsupported runtime type.
+	 *
+	 * <p>The generated error message is localized (Arabic) and includes the fully
+	 * qualified class name of the offending object when available. If the provided
+	 * object is {@code null}, the message explicitly reports {@code null} as the
+	 * unsupported type.</p>
+	 *
+	 * <p>This exception does not include source location information and is intended
+	 * for internal runtime type validation failures.</p>
+	 *
+	 * @param object the object whose runtime type is unsupported; may be {@code null}
+	 * @return an {@link IllegalArgumentException} describing the unsupported type
+	 */
+	public static IllegalArgumentException newIllegalArgumentException(Object object) {
+		return new IllegalArgumentException("نوع غير مدعوم: " + (Objects.isNull(object) ?
+				null :
+				object.getClass().getName()));
+	}
+
+	/**
+	 * Creates an {@link IllegalArgumentException} indicating that a combination of
+	 * values has unsupported or incompatible runtime types.
+	 *
+	 * <p>The generated error message is localized (Arabic) and includes the fully
+	 * qualified class names of both offending objects when available. If either
+	 * object is {@code null}, {@code null} is reported explicitly for that position
+	 * in the message.</p>
+	 *
+	 * <p>This overload is typically used when validating operations involving two
+	 * operands whose runtime types are unsupported or incompatible in combination.</p>
+	 *
+	 * <p>This exception does not include source location information and is intended
+	 * for internal runtime type validation failures.</p>
+	 *
+	 * @param object  the first object with an unsupported runtime type; may be {@code null}
+	 * @param object1 the second object with an unsupported runtime type; may be {@code null}
+	 * @return an {@link IllegalArgumentException} describing the unsupported types
+	 */
+	public static IllegalArgumentException newIllegalArgumentException(Object object, Object object1) {
+		return new IllegalArgumentException("نوع غير مدعوم: %s, %s"
+				.formatted( Objects.isNull(object) ?
+									null :
+									object.getClass().getName(),
+							Objects.isNull(object1) ?
+									null :
+									object1.getClass().getName()));
 	}
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
+import org.daiitech.naftah.errors.NaftahBugError;
 
 /**
  * Extension of ANTLR's ParseTreeProperty to expose
@@ -13,7 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
  * @param <V> the type of values stored in the property
  * @author Chakib Daii
  */
-public class NaftahParseTreeProperty<V> extends ParseTreeProperty<V> {
+public class NaftahParseTreeProperty<V> extends ParseTreeProperty<V> implements Cloneable {
 
 	/**
 	 * Returns the internal map holding parse tree nodes and their associated values.
@@ -32,5 +33,27 @@ public class NaftahParseTreeProperty<V> extends ParseTreeProperty<V> {
 	 */
 	public void copyFrom(NaftahParseTreeProperty<V> other) {
 		annotations.putAll(other.getAll());
+	}
+
+	/**
+	 * Creates a shallow clone of this {@code NaftahParseTreeProperty}.
+	 * <p>
+	 * The clone contains all the annotations of this instance but shares
+	 * references for the stored values (no deep copy of the values themselves).
+	 *
+	 * @return a cloned {@code NaftahParseTreeProperty} containing the same annotations
+	 * @throws NaftahBugError if cloning fails unexpectedly
+	 */
+	@Override
+	public NaftahParseTreeProperty<V> clone() {
+		try {
+			//noinspection unchecked
+			NaftahParseTreeProperty<V> clone = (NaftahParseTreeProperty<V>) super.clone();
+			clone.copyFrom(this);
+			return clone;
+		}
+		catch (CloneNotSupportedException e) {
+			throw new NaftahBugError("فشل الاستنساخ بشكل غير متوقع.", e);
+		}
 	}
 }

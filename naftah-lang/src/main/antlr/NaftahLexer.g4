@@ -11,18 +11,6 @@
 
 lexer grammar NaftahLexer;
 
-options {
-//    superClass = AbstractLexer;
-}
-
-@header {
-
-}
-
-@members {
-
-}
-
 // Keywords
 AND        : 'و' | 'ايضا' | 'أيضا';
 OR         : 'أو' | 'او' | 'وإلا' | 'والا' | 'ولا';
@@ -50,7 +38,7 @@ THEN       : 'إذن' | 'اذن';
 UNTIL      : 'حتى';
 WHILE      : 'بينما';
 CASE       : 'اختر';
-OF         : 'من بين' | 'حسب' | 'لـ' | 'وفقا لـ';
+OF         : 'من بين' | 'حسب' | 'لـ' | 'وفقا_لـ';
 TRUE       : 'صحيح' | 'صائب' | 'حقيقي';
 FALSE      : 'خطأ' | 'خاطئ' | 'زائف';
 TRY        : 'حاول';
@@ -61,32 +49,49 @@ NONE	   : 'معدوم';
 IMPORT     : 'استيراد' |  'جلب' | 'إجلب';
 AS         : 'تحت_إسم' | 'مثل';
 
-// Operators
-PLUS       : '+' | 'زائد';
-INCREMENT  : '++' | 'زد';
-MINUS      : '-' | 'ناقص';
-DECREMENT  : '--' | 'نقص';
-MUL        : STAR_SIGN | 'ضارب';
-POW        : STAR_SIGN STAR_SIGN | 'رفع';
-DIV        : '/' | 'قسمة';
-MOD        : '%' | 'باقي';
-ASSIGN     : '=' | 'تعيين';
-LT         : '>' | 'أصغر_من';
-GT         : '<' | 'أكبر_من';
-LE         : '=>' | 'أصغر_أو_يساوي';
-GE         : '>=' | 'أكبر_أو_يساوي';
-EQ         : '==' | 'يساوي';
-NEQ        : '=!' | 'لا_يساوي';
-BITWISE_NOT : '~' | 'بت_ليس';
-BITWISE_AND : '&' | 'بت_و' | 'بت_ايضا' | 'بت_أيضا';
-BITWISE_OR  : '|' | 'بت_أو' | 'بت_او' | 'بت_وإلا' | 'بت_والا' | 'بت_ولا';
-BITWISE_XOR : '^' | 'بت_أو_حصري' | 'بت_او_حصري' | 'بت_وإلا_حصري' | 'بت_والا_حصري' | 'بت_ولا_حصري';
-ELEMENTWISE_PLUS : DOT PLUS DOT;
-ELEMENTWISE_MINUS : DOT MINUS DOT;
-ELEMENTWISE_MUL : DOT MUL DOT;
-ELEMENTWISE_DIV : DOT DIV DOT;
-ELEMENTWISE_MOD : DOT MOD DOT;
+// Implementations
+IMPLEMENTATION	: 'سلوك';
+SELF       		: 'ذات' | 'هذا';
 
+// Operators
+PLUS       			: '+' | 'زائد';
+INCREMENT  			: '++' | 'زد';
+MINUS      			: '-' | 'ناقص';
+DECREMENT  			: '--' | 'نقص';
+MUL        			: STAR_SIGN | 'ضارب';
+POW        			: STAR_SIGN STAR_SIGN | 'رفع';
+DIV        			: '/' | 'قسمة';
+MOD        			: '%' | 'باقي';
+ASSIGN     			: '=' | 'تعيين';
+LT         			: LT_SIGN | 'أصغر_من';
+GT         			: GT_SIGN | 'أكبر_من';
+LE         			: '=>' | 'أصغر_أو_يساوي';
+GE         			: '>=' | 'أكبر_أو_يساوي';
+EQ         			: '==' | 'يساوي';
+NEQ        			: '=!' | 'لا_يساوي';
+BITWISE_NOT 		: '~' | 'بت_ليس';
+BITWISE_AND 		: '&' | 'بت_و' | 'بت_ايضا' | 'بت_أيضا';
+BITWISE_OR  		: '|' | 'بت_أو' | 'بت_او' | 'بت_وإلا' | 'بت_والا' | 'بت_ولا';
+BITWISE_XOR 		: '^' | 'بت_أو_حصري' | 'بت_او_حصري' | 'بت_وإلا_حصري' | 'بت_والا_حصري' | 'بت_ولا_حصري';
+BITWISE_USHR 		: '>>>' | 'إزاحة_يمين_غير_موقعة';
+BITWISE_SHR  		: '>>' | 'إزاحة_يمين';
+BITWISE_SHL  		: '<<' | 'إزاحة_يسار';
+ELEMENTWISE_PLUS	: DOT PLUS DOT;
+ELEMENTWISE_MINUS 	: DOT MINUS DOT;
+ELEMENTWISE_MUL 	: DOT MUL DOT;
+ELEMENTWISE_DIV 	: DOT DIV DOT;
+ELEMENTWISE_MOD 	: DOT MOD DOT;
+INSTANCE_OF			: 'مثيل_من';
+TYPE_OF				: 'نوع';
+SIZE_OF				: 'حجم';
+
+// Concurrency
+ASYNC	:      'غير_متزامن';
+SPAWN	:      'تشغيل';
+AWAIT	:      'انتظار';
+SCOPE	:      'نطاق';
+CHANNEL	:    'قناة';
+ACTOR	:      'ممثل';
 
 // Special characters
 LPAREN      : '(';
@@ -106,20 +111,37 @@ HASH_SIGN   : '#';
 AT_SIGN     : '@';
 DOLLAR_SIGN : '$';
 STAR_SIGN   : '*';
+LT_SIGN     : '>';
+GT_SIGN     : '<';
 
 
 // Types
-VAR              : 'أي_نوع' | 'أي_نمط';
+VAR				: 'أي_نوع' | 'أي_نمط';
 
-BOOLEAN : 'بوليان' | 'منطقي';
-STRING_TYPE : 'تسلسل_أحرف' | 'تسلسل_حروف' | 'تسلسل_رموز';
-CHAR    : 'حرف' | 'رمز';
-BYTE    : 'عدد_قصير_جدا' | 'قصير_جدا';
-SHORT   : 'عدد_قصير' | 'قصير';
-INT     : 'عدد_صحيح' | 'عدد';
-LONG    : 'عدد_طويل' | 'طويل';
-FLOAT   : 'عدد_عائم' | 'عائم';
-DOUBLE  : 'عدد_عائم_طويل' | 'عائم_طويل';
+// simple types
+BOOLEAN 		: 'بوليان' | 'منطقي';
+STRING_TYPE 	: 'تسلسل_أحرف' | 'تسلسل_حروف' | 'تسلسل_رموز';
+CHAR    		: 'حرف' | 'رمز';
+BYTE    		: 'عدد_قصير_جدا' | 'قصير_جدا';
+SHORT   		: 'عدد_قصير' | 'قصير';
+INT     		: 'عدد_صحيح' | 'عدد';
+LONG    		: 'عدد_طويل' | 'طويل';
+BIG_INT    		: 'عدد_طويل_جدا' | 'طويل_جدا';
+FLOAT   		: 'عدد_عائم' | 'عائم';
+DOUBLE  		: 'عدد_عائم_طويل' | 'عائم_طويل';
+BIG_DECIMAL  	: 'عدد_عائم_طويل_جدا' | 'عائم_طويل_جدا';
+VAR_NUMBER  	: 'أي_عدد';
+
+// complex types
+STRUCT			: 'كائن' | 'هيكل';
+PAIR			: 'زوج' | 'مفتاح_و_قيمة' | 'زوج_مفتاح_و_قيمة';
+TRIPLE			: 'ثلاثي' | 'ثلاثي_القيم';
+LIST			: 'قائمة';
+TUPLE			: 'تركيبة';
+SET				: 'مجموعة';
+MAP				: 'مصفوفة_ترابطية';
+LT_TYPE_SIGN    : COLON LT_SIGN;
+GT_TYPE_SIGN    : GT_SIGN COLON;
 
 // Literals
 BASE_DIGITS	: (Digit | Character)+ QuotationMark QuotationMark;  // Digits for base up to 36 (including a-z for bases > 10)
@@ -133,21 +155,20 @@ STRING      : DoubleQuotationMark String DoubleQuotationMark
 			| DoubleQuotationMarkLeft String DoubleQuotationMarkRight;
 ID          : [ء-يڠ-ۿﹼپ_٠-٩0-9\u064B-\u065F]* [ء-يڠ-ۿﹼپ_\u064B-\u065F] [ء-يڠ-ۿﹼپ_٠-٩0-9\u064B-\u065F]*;
 
-QuotationMark : '\'' | '’';
-DoubleQuotationMark : '"';
-DoubleQuotationMarkLeft : '«';
-DoubleQuotationMarkRight : '»';
+QuotationMark 				: '\'' | '’';
+DoubleQuotationMark 		: '"';
+DoubleQuotationMarkLeft 	: '«';
+DoubleQuotationMarkRight	: '»';
 
-fragment Digit: [٠-٩0-9];
-fragment Character: (~["«»\r\n]);
-fragment String: Character* ESC* EMOJI* PUNCTUATION* .*?;
-fragment ESC: '\\' ["\\n];
+fragment Digit		: [٠-٩0-9];
+fragment Character	: (~["«»\r\n]);
+fragment String		: Character* ESC* EMOJI* PUNCTUATION* .*?;
+fragment ESC		: '\\' ["\\n];
+fragment EMOJI 		: '\uD83C' [\uDF00-\uDF5F] | '\uD83D' [\uDE00-\uDE4F] | '\u2600'..'\u26FF' | '\u2700'..'\u27BF';
 
-fragment EMOJI : '\uD83C' [\uDF00-\uDF5F] | '\uD83D' [\uDE00-\uDE4F] | '\u2600'..'\u26FF' | '\u2700'..'\u27BF';
-
-PUNCTUATION : [،.؟:!-];
+PUNCTUATION 	: [،.؟:!-];
 
 // Whitespace and comments
-WS         : [ \t\r\n]+ -> skip;
-LINE_COMMENT : '---' ~[\r\n]* -> skip;
-BLOCK_COMMENT : '---*' .*? '*---' -> skip;
+WS         		: [ \t\r\n]+ -> skip;
+LINE_COMMENT 	: '---' ~[\r\n]* -> skip;
+BLOCK_COMMENT	: '---*' .*? '*---' -> skip;

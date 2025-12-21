@@ -154,6 +154,8 @@ JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector \
 --add-opens=java.base/sun.reflect.misc=ALL-UNNAMED \
 --add-opens=java.base/java.lang.ref=ALL-UNNAMED \
 --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED \
+--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED \
+--add-opens=java.base/jdk.internal.module=ALL-UNNAMED \
 --add-opens=java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED \
 --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED \
 --add-opens=java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED \

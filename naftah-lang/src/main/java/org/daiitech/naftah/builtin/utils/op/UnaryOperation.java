@@ -6,8 +6,10 @@ import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.booleanToInt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
@@ -281,6 +283,84 @@ public enum UnaryOperation implements Operation {
 		protected Object handleFalsy(Object object) {
 			return true;
 		}
+	},
+
+	/**
+	 * Represents the {@code typeof} operation.
+	 * <p>
+	 * Returns the runtime language type of the given operand as a Naftah type
+	 * descriptor.
+	 * <ul>
+	 * <li>Resolves the operand's {@link JavaType}.</li>
+	 * <li>Maps the Java type to the corresponding Naftah type using the parser vocabulary.</li>
+	 * </ul>
+	 *
+	 * @throws RuntimeException if invoked with unsupported operand-specific overloads
+	 */
+	TYPE_OF("TYPE_OF") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Object apply(Object Object) {
+			return getNaftahType(   PARSER_VOCABULARY,
+									JavaType.getJavaType(Object));
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Number number) {
+			throw UnaryOperation.newNaftahBugError(this, number);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(String string) {
+			throw UnaryOperation.newNaftahBugError(this, string);
+		}
+	},
+
+	/**
+	 * Represents the {@code sizeof} operation.
+	 * <p>
+	 * Computes the logical size of the given operand.
+	 * <ul>
+	 * <li>For collections, returns the number of elements.</li>
+	 * <li>For arrays, returns their length.</li>
+	 * <li>For strings, returns the character count.</li>
+	 * <li>For unsupported types, behavior is delegated to {@link ObjectUtils#size(Object)}.</li>
+	 * </ul>
+	 *
+	 * @throws RuntimeException if invoked with unsupported operand-specific overloads
+	 */
+	SIZE_OF("SIZE_OF") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Object apply(Object object) {
+			return ObjectUtils.size(object);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Number number) {
+			throw UnaryOperation.newNaftahBugError(this, number);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(String string) {
+			throw UnaryOperation.newNaftahBugError(this, string);
+		}
 	};
 
 	/**
@@ -333,7 +413,7 @@ public enum UnaryOperation implements Operation {
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(o.getClass().getName()) :
 									getNaftahType(  PARSER_VOCABULARY,
-													o.getClass())));
+													JavaType.of(o.getClass()))));
 	}
 
 	/**

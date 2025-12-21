@@ -83,9 +83,9 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 
 						boolean useQualifiedAliases = fn
 								.getProviderInfo()
-								.useQualifiedName() | fn
+								.useQualifiedAliases() | fn
 										.getFunctionInfo()
-										.useQualifiedName();
+										.useQualifiedAliases();
 
 						String providerName = fn
 								.getProviderInfo()

@@ -18,6 +18,8 @@
   url: /language/functions
 - title: التكامل مع جافا
   url: /language/java-interop
+- title: التزامن
+  url: /language/concurrency
 - title: تشغيل نفطه
   url: /running-naftah
 - title: التوثيق (جاڤا)

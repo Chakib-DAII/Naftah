@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmExecutable;
@@ -18,6 +17,8 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ class InvocationUtilsTests {
 					.invokeJvmExecutable(
 											obj,
 											method,
-											List.of(new Pair<>(null, false)),
+											List.of(ImmutablePair.of(null, false)),
 											Object.class,
 											false
 					);
@@ -64,8 +65,8 @@ class InvocationUtilsTests {
 											null,
 											method,
 											List
-													.of(new Pair<>(null, "_"),
-														new Pair<>(null, new String[]{"Naftah", "Lang"})),
+													.of(ImmutablePair.of(null, "_"),
+														ImmutablePair.of(null, new String[]{"Naftah", "Lang"})),
 											String.class,
 											false
 					);
@@ -88,10 +89,10 @@ class InvocationUtilsTests {
 					.invokeJvmConstructor(
 											constructor,
 											List
-													.of(new Pair<>(null, true),
-														new Pair<>(null, javaObject),
-														new Pair<>(null, Object.class),
-														new Pair<>(null, null)),
+													.of(ImmutablePair.of(null, true),
+														ImmutablePair.of(null, javaObject),
+														ImmutablePair.of(null, Object.class),
+														ImmutablePair.of(null, null)),
 											NaftahObject.class,
 											false
 					);
@@ -99,21 +100,23 @@ class InvocationUtilsTests {
 			assertTrue(instance instanceof NaftahObject);
 			assertTrue(((NaftahObject) instance).fromJava());
 			assertEquals(javaObject, ((NaftahObject) instance).javaObject());
-			assertEquals(javaObject, ((NaftahObject) instance).get(false));
+			assertEquals(javaObject, ((NaftahObject) instance).get());
 			assertEquals(ObjectUtils.getNaftahValueToString(javaObject), instance.toString());
 
 
 			Object naftahScriptObject = new LinkedHashMap<>(Map
 					.of("أ",
 						DeclaredVariable
-								.of(null,
+								.of(-1,
+									null,
 									"أ",
 									false,
 									null,
 									DynamicNumber.of(1)),
 						"ب",
 						DeclaredVariable
-								.of(null,
+								.of(-1,
+									null,
 									"ب",
 									false,
 									null,
@@ -123,10 +126,10 @@ class InvocationUtilsTests {
 					.invokeJvmConstructor(
 											constructor,
 											List
-													.of(new Pair<>(null, false),
-														new Pair<>(null, null),
-														new Pair<>(null, Map.class),
-														new Pair<>(null, naftahScriptObject)),
+													.of(ImmutablePair.of(null, false),
+														ImmutablePair.of(null, null),
+														ImmutablePair.of(null, Map.class),
+														ImmutablePair.of(null, naftahScriptObject)),
 											NaftahObject.class,
 											false
 					);
@@ -134,7 +137,7 @@ class InvocationUtilsTests {
 			assertTrue(instance instanceof NaftahObject);
 			assertFalse(((NaftahObject) instance).fromJava());
 			assertEquals(naftahScriptObject, ((NaftahObject) instance).objectFields());
-			assertEquals(naftahScriptObject, ((NaftahObject) instance).get(false));
+			assertEquals(naftahScriptObject, ((NaftahObject) instance).get());
 			assertEquals(CollectionUtils.toString(naftahScriptObject), instance.toString());
 		}
 
@@ -154,7 +157,7 @@ class InvocationUtilsTests {
 									.invokeJvmExecutable(
 															obj,
 															method,
-															List.of(new Pair<>("a", 1)), // more args
+															List.of(ImmutablePair.of("a", 1)), // more args
 															int.class,
 															false
 									)
@@ -192,11 +195,11 @@ class InvocationUtilsTests {
 
 			List<Pair<String, Object>> args = List
 					.of(
-						new Pair<>("a", true)
+						ImmutablePair.of("a", true)
 					);
 			Pair<JvmExecutable, Object[]> best = InvocationUtils.findBestExecutable(Collections.singleton(df), args);
 			assertNotNull(best);
-			assertEquals(JvmFunction.class, best.a.getClass());
+			assertEquals(JvmFunction.class, best.getLeft().getClass());
 		}
 
 	}
@@ -257,7 +260,7 @@ class InvocationUtilsTests {
 		}
 
 		@SuppressWarnings("ConstantValue") @Test
-		void testNullReturnsNullIfUseNoneFalse() {
+		void testNullReturnsNullIfUseNaftahTypesFalse() {
 			Object result = InvocationUtils.convertArgument(null, Object.class, Object.class, false);
 			assertNull(result);
 		}

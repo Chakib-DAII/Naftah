@@ -43,7 +43,7 @@ public class QualifiedNameProvider implements ArgumentsProvider {
 										}
 										}
 										المدينة؟:ء:عدد_البيوت
-										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء")),
+										""", null, newNaftahBugVariableNotFoundError("المدينة؟:ء", 9, 0)),
 					Arguments.of(true, """
 										متغير المدينة تعيين {
 										متغير الاسم تعيين "قبلي",
@@ -66,17 +66,23 @@ public class QualifiedNameProvider implements ArgumentsProvider {
 										}
 										المدي؟:البلدة؟:عدد_البيوت
 										""", null, newNaftahBugVariableNotFoundError("المدي")),
-					Arguments.of(false, """
-										متغير المدينة تعيين {
-										متغير الاسم تعيين "قبلي",
-										متغير عدد_السكان تعيين 50000,
-										متغير البلدة تعيين {
-											متغير الاسم تعيين "سوق الأحد",
-											متغير عدد_البيوت تعيين 400
-										}
-										}
-										المدينة؟:البلدة؟:عددت
-										""", null, newNaftahBugVariableNotFoundError("المدينة؟:البلدة؟:عددت"))
+					Arguments
+							.of(false,
+								"""
+								متغير المدينة تعيين {
+								متغير الاسم تعيين "قبلي",
+								متغير عدد_السكان تعيين 50000,
+								متغير البلدة تعيين {
+									متغير الاسم تعيين "سوق الأحد",
+									متغير عدد_البيوت تعيين 400
+								}
+								}
+								المدينة؟:البلدة؟:عددت
+								""",
+								null,
+								newNaftahBugVariableNotFoundError(  "المدينة؟:البلدة؟:عددت",
+																	9,
+																	0))
 				);
 	}
 }

@@ -2,9 +2,11 @@ package org.daiitech.naftah.parser;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +18,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +32,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.Vocabulary;
-import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -44,10 +46,18 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
-import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.concurrent.Task;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.MutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.Triple;
+import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.function.TriFunction;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.reflect.ObjectAccessUtils;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import com.ibm.icu.text.Normalizer2;
 
@@ -58,6 +68,7 @@ import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.errors.ExceptionUtils.INVALID_INSTANCE_METHOD_CALL_MSG;
 import static org.daiitech.naftah.errors.ExceptionUtils.NOTE;
+import static org.daiitech.naftah.errors.ExceptionUtils.newIllegalFieldAccessException;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahIllegalArgumentError;
@@ -67,14 +78,17 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFou
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocationError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNonInvocableFunctionError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahUnsupportedFunctionError;
-import static org.daiitech.naftah.parser.DefaultContext.deregisterContext;
 import static org.daiitech.naftah.parser.DefaultContext.generateCallId;
+import static org.daiitech.naftah.parser.DefaultContext.getCurrentContext;
 import static org.daiitech.naftah.parser.DefaultContext.getVariable;
+import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentVariableError;
 import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugVariableNotFoundError;
+import static org.daiitech.naftah.parser.DefaultContext.peekCall;
 import static org.daiitech.naftah.parser.DefaultContext.popCall;
 import static org.daiitech.naftah.parser.DefaultContext.pushCall;
 import static org.daiitech.naftah.parser.DefaultContext.registerContext;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.LOGGER;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahErrorListener.ERROR_HANDLER_INSTANCE;
 import static org.daiitech.naftah.parser.NaftahExecutionLogger.logExecution;
 import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
@@ -83,6 +97,7 @@ import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
+import static org.daiitech.naftah.utils.reflect.InvocationUtils.convertArgument;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.findBestExecutable;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.invokeJvmConstructor;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.invokeJvmExecutable;
@@ -112,6 +127,10 @@ public final class NaftahParserHelper {
 	 * String representation for a null value in Naftah.
 	 */
 	public static final String NULL = "<فارغ>";
+	/**
+	 * Regex pattern for matching qualified names.
+	 */
+	public static final String QUALIFIED_NAME_REGEX = "^([^:]+)(:[^:]+)*$";
 	/**
 	 * Regex pattern for matching qualified calls.
 	 */
@@ -145,7 +164,19 @@ public final class NaftahParserHelper {
 			LEXER_LITERALS = readFileLines(getJarDirectory() + "/lexer-literals");
 		}
 		catch (Throwable ignored) {
-
+			String jarDir = System.getProperty("naftah.jarDir");
+			if (Objects.nonNull(jarDir)) {
+				try {
+					if (Objects.isNull(TOKENS_SYMBOLS)) {
+						TOKENS_SYMBOLS = getProperties(jarDir + "/tokens-symbols.properties");
+					}
+					if (Objects.isNull(LEXER_LITERALS)) {
+						LEXER_LITERALS = readFileLines(jarDir + "/lexer-literals");
+					}
+				}
+				catch (Throwable ignoredThrowable) {
+				}
+			}
 		}
 	}
 
@@ -286,6 +317,45 @@ public final class NaftahParserHelper {
 	}
 
 	/**
+	 * Recursively searches the given parse tree node and its descendants for the
+	 * first occurrence of a child whose type matches the specified class.
+	 * <p>
+	 * The search is performed in a pre-order, depth-first manner:
+	 * <ul>
+	 * <li>First, the current {@code node} itself is checked.</li>
+	 * <li>If it matches the requested {@code type}, it is returned immediately.</li>
+	 * <li>Otherwise, each child is visited in the order they appear in the tree.</li>
+	 * </ul>
+	 * <p>
+	 * This method does <b>not</b> restrict the search to direct children; it will
+	 * return the first matching descendant at any depth.
+	 *
+	 * @param node the root of the subtree to search; may be {@code null}
+	 * @param type the class object representing the desired parse tree type
+	 * @param <T>  the expected parse tree subtype
+	 * @return the first node (including {@code node} itself) that is an instance
+	 *         of {@code type}, or {@code null} if no matching node is found
+	 */
+	public static <T extends ParseTree> T getFirstChildOfType(ParseTree node, Class<T> type) {
+		if (node == null) {
+			return null;
+		}
+
+		if (type.isInstance(node)) {
+			return type.cast(node);
+		}
+
+		for (int i = 0; i < node.getChildCount(); i++) {
+			T child = getFirstChildOfType(node.getChild(i), type);
+			if (child != null) {
+				return child;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Collects all nodes in the subtree rooted at the given parse tree node, including itself.
 	 * Uses an internal cache to optimize repeated calls on the same node.
 	 *
@@ -346,7 +416,10 @@ public final class NaftahParserHelper {
 																	function.getParametersContext()));
 		}
 		if (function.getReturnType() == null && hasChild(function.getReturnTypeContext())) {
-			function.setReturnType(visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
+			function.setReturnType((JavaType) visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
+		}
+		else {
+			function.setReturnType(JavaType.ofObject());
 		}
 	}
 
@@ -373,7 +446,7 @@ public final class NaftahParserHelper {
 		// arguments that have names
 		Map<Integer, Pair<String, Object>> namedArguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
 			var current = arguments.get(i);
-			return current.a != null ? Map.entry(i, current) : null;
+			return current.getLeft() != null ? Map.entry(i, current) : null;
 		}).filter(Objects::nonNull).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 		Map<String, Object> finalArguments = new HashMap<>();
@@ -387,7 +460,7 @@ public final class NaftahParserHelper {
 			finalArguments = IntStream.range(0, arguments.size()).mapToObj(i -> {
 				var argument = arguments.get(i);
 				var param = i >= requiredParams.size() ? parameters.get(i) : requiredParams.get(i);
-				return Map.entry(param.getName(), argument.b);
+				return Map.entry(param.getName(), argument.getRight());
 			}).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		}
 		else {
@@ -397,7 +470,7 @@ public final class NaftahParserHelper {
 					.range(0, arguments.size())
 					.mapToObj(i -> {
 						var current = arguments.get(i);
-						return current.a == null ? Map.entry(i, current) : null;
+						return current.getLeft() == null ? Map.entry(i, current) : null;
 					})
 					.filter(Objects::nonNull)
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -408,7 +481,7 @@ public final class NaftahParserHelper {
 				if (namedArguments.containsKey(entry.getKey())) {
 					throw new NaftahBugError("تم تحديد الوسيط '%s' موقعياً وبالاسم في آنٍ واحد.".formatted(paramName));
 				}
-				finalArguments.put(paramName, entry.getValue().b);
+				finalArguments.put(paramName, entry.getValue().getRight());
 				usedNames.add(paramName);
 			}
 
@@ -423,12 +496,14 @@ public final class NaftahParserHelper {
 						throw new NaftahBugError("تم تمرير الوسيط '%s' أكثر من مرة.".formatted(paramName));
 					}
 
-					finalArguments.put(paramName, entry.getValue().b);
+					finalArguments.put(paramName, entry.getValue().getRight());
 					usedNames.add(paramName);
 
 				}
 				else {
-					throw new NaftahBugError("الوسيط '%s' لا يتوافق مع أي من المعاملات المحددة." + entry.getValue().a);
+					throw new NaftahBugError("الوسيط '%s' لا يتوافق مع أي من المعاملات المحددة." + entry
+							.getValue()
+							.getLeft());
 				}
 			}
 
@@ -459,16 +534,17 @@ public final class NaftahParserHelper {
 	public static String getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedNameContext ctx) {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
-		for (int i = 0; i < ctx.ID().size(); i++) {
-			String id = ctx.ID(i).getText();
-			result.get().append(id);
+		String id = matchImplementationName(ctx.selfOrId(), getCurrentContext());
+		result.get().append(id);
 
-			if (i != ctx.ID().size() - 1) {
-				String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
-						ctx.QUESTION(i).getText() + ctx.COLON(i).getText() :
-						ctx.COLON(i).getText();
-				result.get().append(qualifier);
-			}
+		for (int i = 0; i < ctx.ID().size(); i++) {
+			String qualifier = Objects.nonNull(ctx.QUESTION(i)) ?
+					ctx.QUESTION(i).getText() + ctx.COLON(i).getText() :
+					ctx.COLON(i).getText();
+			result.get().append(qualifier);
+
+			id = ctx.ID(i).getText();
+			result.get().append(id);
 		}
 		return result.get().toString();
 	}
@@ -482,7 +558,7 @@ public final class NaftahParserHelper {
 	public static String getQualifiedName(org.daiitech.naftah.parser.NaftahParser.QualifiedObjectAccessContext ctx) {
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
-		String id = ctx.ID().getText();
+		String id = matchImplementationName(ctx.selfOrId(), getCurrentContext());
 		result.get().append(id);
 
 		for (int i = 0; i < ctx.propertyAccess().size(); i++) {
@@ -545,7 +621,7 @@ public final class NaftahParserHelper {
 		// Create a lexer and token stream
 		var lexerCommonTokenStreamPair = getCommonTokenStream(input, errorListeners);
 
-		CommonTokenStream tokens = lexerCommonTokenStreamPair.b;
+		CommonTokenStream tokens = lexerCommonTokenStreamPair.getRight();
 
 		if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 			tokens.fill();
@@ -553,7 +629,7 @@ public final class NaftahParserHelper {
 			for (Token token : tokens.getTokens()) {
 				System.out
 						.printf("Token: %-20s Text: %s%n",
-								lexerCommonTokenStreamPair.a.getVocabulary().getSymbolicName(token.getType()),
+								lexerCommonTokenStreamPair.getLeft().getVocabulary().getSymbolicName(token.getType()),
 								token.getText());
 			}
 		}
@@ -614,7 +690,7 @@ public final class NaftahParserHelper {
 	 * @return The CommonTokenStream.
 	 */
 	public static CommonTokenStream getCommonTokenStream(CharStream charStream) {
-		return getCommonTokenStream(charStream, List.of()).b;
+		return getCommonTokenStream(charStream, List.of()).getRight();
 	}
 
 	/**
@@ -625,7 +701,7 @@ public final class NaftahParserHelper {
 	 * @return The CommonTokenStream.
 	 */
 	public static CommonTokenStream getCommonTokenStream(CharStream charStream, ANTLRErrorListener errorListener) {
-		return getCommonTokenStream(charStream, List.of(errorListener)).b;
+		return getCommonTokenStream(charStream, List.of(errorListener)).getRight();
 	}
 
 	/**
@@ -642,7 +718,7 @@ public final class NaftahParserHelper {
 		org.daiitech.naftah.parser.NaftahLexer lexer = new org.daiitech.naftah.parser.NaftahLexer(charStream);
 		lexer.removeErrorListeners();
 		errorListeners.forEach(lexer::addErrorListener);
-		return new Pair<>(lexer, new CommonTokenStream(lexer));
+		return ImmutablePair.of(lexer, new CommonTokenStream(lexer));
 	}
 
 	/**
@@ -682,7 +758,6 @@ public final class NaftahParserHelper {
 		}
 		return charStream;
 	}
-
 
 	/**
 	 * Searches for a Naftah script file based on a given name, trying multiple extensions.
@@ -779,23 +854,33 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Returns a formatted string of token symbols based on the token name.
+	 * Returns a formatted string representing the symbols associated with a token name.
 	 * <p>
-	 * This method looks up the token name in a {@code TOKENS_SYMBOLS} map (assumed to be a
-	 * {@link java.util.Properties} object). If a match is found, the associated value is used
-	 * as the base symbol string. Commas in the value are replaced with " أو" (Arabic "or").
-	 * <p>
-	 * If {@code ln} is {@code true}, the formatted string will include a line break and bullet point.
+	 * This method looks up {@code tokenName} in the {@code TOKENS_SYMBOLS} map
+	 * (expected to be a {@link java.util.Properties} instance). If a corresponding
+	 * entry is found, its value is used as the symbol representation; otherwise,
+	 * {@code tokenName} itself is used as a fallback.
+	 * </p>
 	 *
-	 * @param tokenName The name of the token.
-	 * @param ln        If {@code true}, output is formatted with a line break and bullet.
-	 * @return A formatted string representing the token symbols, or {@code null} if not found.
+	 * <p>
+	 * Comma-separated symbols in the resolved value are joined using
+	 * {@code " أو"} (Arabic for “or”).
+	 * </p>
+	 *
+	 * <p>
+	 * If {@code ln} is {@code true}, the result is formatted as a bullet point
+	 * prefixed with a line break.
+	 * </p>
+	 *
+	 * @param tokenName the name of the token to look up
+	 * @param ln        whether to format the result as a bullet point on its own line
+	 * @return a formatted symbol string; never {@code null}
 	 */
 	public static String getFormattedTokenSymbols(String tokenName, boolean ln) {
 		String tokenSymbols = Objects.isNull(TOKENS_SYMBOLS) ? tokenName : TOKENS_SYMBOLS.getProperty(tokenName);
-		return tokenSymbols == null ? null : (ln ? """
-													- %s
-													""" : "%s").formatted(tokenSymbols.replaceAll(",", " أو"));
+		return tokenSymbols == null ? tokenName : (ln ? """
+														- %s
+														""" : "%s").formatted(tokenSymbols.replaceAll(",", " أو"));
 	}
 
 	/**
@@ -816,61 +901,118 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Checks if there is a type mismatch between the given value and the declared type.
-	 *
-	 * @param value           The value to check.
-	 * @param valueType       The class of the value.
-	 * @param declarationType The declared type class.
-	 * @return True if types mismatch, false otherwise.
-	 */
-	public static boolean typeMismatch(Object value, Class<?> valueType, Class<?> declarationType) {
-		return Objects.nonNull(value) && typeMismatch(valueType, declarationType);
-	}
-
-	/**
-	 * Checks if there is a type mismatch between two classes.
-	 *
-	 * @param valueType       The class of the value.
-	 * @param declarationType The declared type class.
-	 * @return True if types mismatch, false otherwise.
-	 */
-	public static boolean typeMismatch(Class<?> valueType, Class<?> declarationType) {
-		return Objects.nonNull(declarationType) && !Object.class.equals(declarationType) && !Collection.class
-				.isAssignableFrom(declarationType) && !Map.class.isAssignableFrom(declarationType) && (((Number.class
-						.isAssignableFrom(valueType) && !Number.class
-								.isAssignableFrom(declarationType)) || (!Number.class
-										.isAssignableFrom(valueType) && Number.class
-												.isAssignableFrom(declarationType))) || (!Number.class
-														.isAssignableFrom(declarationType) && !Number.class
-																.isAssignableFrom(valueType) && !valueType
-																		.isAssignableFrom(declarationType)) || Collection.class
-																				.isAssignableFrom(valueType) || Map.class
-																						.isAssignableFrom(valueType));
-	}
-
-	/**
 	 * Creates a declared variable instance from the parser context.
 	 *
-	 * @param naftahParserBaseVisitor The base visitor for the parser.
-	 * @param ctx                     The declaration context.
-	 * @param variableName            The variable name.
-	 * @param isConstant              True if the variable is constant.
-	 * @param hasType                 True if the variable has an explicit type.
+	 * @param depth        the depth of context where declared
+	 * @param ctx          The declaration context.
+	 * @param variableName The variable name.
+	 * @param isConstant   True if the variable is constant.
+	 * @param type         the variable type, default {@code JavaType::ofObject}.
 	 * @return A pair containing the declared variable and a boolean flag.
 	 */
-	public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(
-																			org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
-																			org.daiitech.naftah.parser.NaftahParser.DeclarationContext ctx,
+	public static Pair<DeclaredVariable, Boolean> createDeclaredVariable(   int depth,
+																			ParserRuleContext ctx,
 																			String variableName,
 																			boolean isConstant,
-																			boolean hasType) {
+																			JavaType type) {
+		return MutablePair
+				.of(DeclaredVariable
+						.of(depth,
+							ctx,
+							variableName,
+							isConstant,
+							type,
+							null), true);
+	}
 
-		return new Pair<>(DeclaredVariable
-				.of(ctx,
-					variableName,
-					isConstant,
-					hasType ? (Class<?>) visit(naftahParserBaseVisitor, ctx.type()) : null,
-					null), true);
+	/**
+	 * Handles the declaration of a variable or constant in the current execution context.
+	 *
+	 * <p>This method manages both standard variable/constant declarations and
+	 * special cases like object field declarations. It also performs type validation
+	 * when creating objects with a specific type.</p>
+	 *
+	 * <p>Behavior:</p>
+	 * <ul>
+	 * <li>If the declaration includes a constant, variable, type, or is part of
+	 * an object field, a new {@link DeclaredVariable} is created.</li>
+	 * <li>If the context is inside an object creation and a type is specified,
+	 * it ensures that the object type is compatible with all types (i.e., Object.class).</li>
+	 * <li>If the variable is not part of an object field, it is registered in the
+	 * {@link DefaultContext}.</li>
+	 * <li>If none of the declaration flags are set, it checks for a previously
+	 * declared variable with the same name and reuses it if found. Otherwise,
+	 * it creates a generic variable of type {@link Object}.</li>
+	 * </ul>
+	 *
+	 * <p>The method returns either the {@link DeclaredVariable} or a pair containing
+	 * it and a boolean flag if the context is parsing an assignment.</p>
+	 *
+	 * @param currentContext the execution context where the variable is declared
+	 * @param ctx            the parser context corresponding to the variable declaration
+	 * @param variableName   the name of the variable to declare or retrieve
+	 * @param hasConstant    true if the declaration includes a constant modifier
+	 * @param hasVariable    true if the declaration includes a variable modifier
+	 * @param hasType        true if the declaration specifies a type
+	 * @param type           the {@link JavaType} representing the type of the variable, if any
+	 * @return a {@link DeclaredVariable} object, or a {@link Pair} of the variable and a boolean if parsing an
+	 *         * assignment
+	 * @throws NaftahBugError if an invalid type is specified for an object creation context
+	 */
+	public static Object handleDeclaration( DefaultContext currentContext,
+											ParserRuleContext ctx,
+											String variableName,
+											boolean hasConstant,
+											boolean hasVariable,
+											boolean hasType,
+											JavaType type) {
+		Pair<DeclaredVariable, Boolean> declaredVariable;
+		boolean creatingObjectField = hasAnyParentOfType(   ctx,
+															org.daiitech.naftah.parser.NaftahParser.ObjectContext.class);
+		if (hasConstant || hasVariable || hasType || creatingObjectField) {
+			declaredVariable = createDeclaredVariable(  currentContext.depth,
+														ctx,
+														variableName,
+														hasConstant,
+														type);
+			if (!creatingObjectField) {
+				currentContext.defineVariable(variableName, declaredVariable.getLeft());
+			}
+		}
+		else {
+			declaredVariable = Optional
+					.ofNullable(currentContext.getVariable(variableName, true))
+					.<Pair<DeclaredVariable, Boolean>>map(alreadyDeclaredVariable -> MutablePair
+							.of(
+								alreadyDeclaredVariable.getRight(),
+								true))
+					.orElse(createDeclaredVariable( currentContext.depth,
+													ctx,
+													variableName,
+													false,
+													JavaType.ofObject()));
+		}
+		return currentContext.isParsingAssignment() ? declaredVariable : declaredVariable.getLeft();
+	}
+
+	/**
+	 * Validates whether a variable with the given name already exists in the current context.
+	 * <p>
+	 * Checks both local variables in the current context and any broader variables in scope.
+	 * If a variable with the same name exists, a NaftahBugError is thrown.
+	 *
+	 * @param currentContext The current scope or context to check for variable existence.
+	 * @param name           The name of the variable to validate.
+	 * @throws NaftahBugError if a variable with the same name already exists in the context.
+	 */
+	public static void validateVariableExistence(   DefaultContext currentContext,
+													String name) {
+		if (!currentContext.isCreatingObject() && (currentContext
+				.containsLocalVariable( currentContext.variables.get(),
+										name) || currentContext
+												.containsVariable(name, currentContext.depth))) {
+			throw newNaftahBugExistentVariableError(name);
+		}
 	}
 
 	/**
@@ -1087,25 +1229,42 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Deregisters (removes) a context by its depth level.
-	 * <p>
-	 * Handles REPL mode or standard context cleanup depending on the system property.
+	 * Sets loop variables in the {@link DefaultContext} for a Naftah `foreach` iteration.
 	 *
-	 * @param depth the depth level of the context to be deregistered
+	 * <p>This method inspects the type of the {@code foreachTargetClass} to determine
+	 * how to assign values from the {@code targetValues} tuple to the corresponding
+	 * loop variables in the {@code currentContext}.</p>
+	 *
+	 * <p>Supported target contexts and their behavior:</p>
+	 * <ul>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext}:
+	 * Only a value variable is set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.KeyValueForeachTargetContext}:
+	 * Both key and value variables are set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.IndexAndValueForeachTargetContext}:
+	 * Index and value variables are set.</li>
+	 * <li>{@link org.daiitech.naftah.parser.NaftahParser.IndexAndKeyValueForeachTargetContext}:
+	 * Index, key, and value variables are all set.</li>
+	 * </ul>
+	 *
+	 * <p>The mapping from {@code variableNames} to {@code targetValues} is as follows:</p>
+	 * <ul>
+	 * <li>For value-only iteration: {@code variableNames[0]} → {@code targetValues[1]}</li>
+	 * <li>For key-value iteration: {@code variableNames[0]} → key, {@code variableNames[1]} → value</li>
+	 * <li>For index-value iteration: {@code variableNames[0]} → index, {@code variableNames[1]} → value</li>
+	 * <li>For index-key-value iteration: {@code variableNames[0]} → index, {@code variableNames[1]} → key,
+	 * * {@code variableNames[2]} → value</li>
+	 * </ul>
+	 *
+	 * @param currentContext     the execution context in which loop variables will be set
+	 * @param foreachTargetClass the class type of the parsed `foreach` target, determines how variables are mapped
+	 * @param variableNames      a {@link NTuple} of loop variable names extracted from the `foreach` declaration
+	 * @param targetValues       a {@link NTuple} of values to assign to the loop variables
 	 */
-	public static void deregisterContextByDepth(int depth) {
-		if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
-			REPLContext.deregisterContext(depth);
-		}
-		else {
-			deregisterContext(depth);
-		}
-	}
-
 	public static void setForeachVariables( DefaultContext currentContext,
 											Class<? extends org.daiitech.naftah.parser.NaftahParser.ForeachTargetContext> foreachTargetClass,
-											Tuple variableNames,
-											Tuple targetValues) {
+											NTuple variableNames,
+											NTuple targetValues) {
 		if (org.daiitech.naftah.parser.NaftahParser.ValueForeachTargetContext.class
 				.isAssignableFrom(foreachTargetClass)) {
 			String valueVar = (String) variableNames.get(0);
@@ -1171,10 +1330,15 @@ public final class NaftahParserHelper {
 	 *
 	 * @param qualifiedName  the colon-separated variable access path, with optional {@code "؟"} suffixes
 	 * @param currentContext the current execution context used to resolve variables
+	 * @param line           source line number (used for error reporting)
+	 * @param column         source column number (used for error reporting)
 	 * @return the resolved {@code DeclaredVariable} if found, or {@code None.get()} if not found with safe chaining
 	 * @throws NaftahBugError if a variable in the access chain is not found and safe chaining is not enabled
 	 */
-	public static Object accessObjectUsingQualifiedName(String qualifiedName, DefaultContext currentContext) {
+	public static Object accessObjectUsingQualifiedName(String qualifiedName,
+														DefaultContext currentContext,
+														int line,
+														int column) {
 		Object result = None.get();
 		var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
 		boolean[] optional = new boolean[accessArray.length - 1];
@@ -1189,9 +1353,53 @@ public final class NaftahParserHelper {
 		if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
 				.get() instanceof NaftahObject naftahObject) {
 			int i = 1;
-			if (!naftahObject.fromJava()) {
+
+			if (naftahObject.fromJava()) {
+				var javaObject = naftahObject.get(true);
+				for (; i < accessArray.length; i++) {
+					if (i < accessArray.length - 1) {
+
+						if (accessArray[i].endsWith("؟")) {
+							optional[i] = true;
+							accessArray[i] = accessArray[i]
+									.substring(0, accessArray[i].length() - 1);
+						}
+
+						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
+						if (Objects.isNull(objectField)) {
+							safeChaining = IntStream
+									.range(0, optional.length)
+									.mapToObj(index -> optional[index])
+									.allMatch(Boolean.TRUE::equals);
+							found = false;
+							break;
+						}
+						else {
+							found = true;
+							javaObject = objectField;
+						}
+					}
+					else if (Objects.nonNull(javaObject)) {
+						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
+						if (Objects.nonNull(objectField)) {
+							found = true;
+							result = objectField;
+						}
+						else {
+							found = false;
+						}
+					}
+					else {
+						safeChaining = IntStream
+								.range(0, optional.length)
+								.mapToObj(index -> optional[index])
+								.allMatch(Boolean.TRUE::equals);
+					}
+				}
+			}
+			else {
 				//noinspection unchecked
-				var object = (Map<String, DeclaredVariable>) naftahObject.get(false);
+				var object = (Map<String, DeclaredVariable>) naftahObject.get();
 				for (; i < accessArray.length; i++) {
 					if (i < accessArray.length - 1) {
 
@@ -1214,7 +1422,7 @@ public final class NaftahParserHelper {
 							found = true;
 							//noinspection unchecked
 							object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
-									.getValue()).get(false);
+									.getValue()).get();
 						}
 					}
 					else if (Objects.nonNull(object)) {
@@ -1251,7 +1459,7 @@ public final class NaftahParserHelper {
 											"") :
 									""))
 							.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
-					throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
+					throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
 				}
 			}
 		}
@@ -1284,12 +1492,16 @@ public final class NaftahParserHelper {
 	 * @param qualifiedName  the colon-separated qualified name (e.g., {@code user:address؟:city})
 	 * @param currentContext the current evaluation context that holds top-level variables
 	 * @param newValue       the new value to assign to the final declared variable
+	 * @param line           source line number (used for error reporting)
+	 * @param column         source column number (used for error reporting)
 	 * @return the top-level {@link DeclaredVariable} (even if nested values were updated)
 	 * @throws NaftahBugError if a non-optional intermediate or final variable is not found
 	 */
 	public static Object setObjectUsingQualifiedName(   String qualifiedName,
 														DefaultContext currentContext,
-														Object newValue) {
+														Object newValue,
+														int line,
+														int column) {
 		var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
 		boolean[] optional = new boolean[accessArray.length - 1];
 
@@ -1301,13 +1513,71 @@ public final class NaftahParserHelper {
 		boolean found = false;
 		boolean safeChaining = false;
 
-		DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).b;
+		DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).getRight();
 
 		if (accessArray.length > 1 && objectVariable.getValue() instanceof NaftahObject naftahObject) {
 			int i = 1;
-			if (!naftahObject.fromJava()) {
+
+			if (naftahObject.fromJava()) {
+				var javaObject = naftahObject.get(true);
+				for (; i < accessArray.length; i++) {
+					if (i < accessArray.length - 1) {
+
+						if (accessArray[i].endsWith("؟")) {
+							optional[i] = true;
+							accessArray[i] = accessArray[i]
+									.substring(0, accessArray[i].length() - 1);
+						}
+
+						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
+						if (Objects.isNull(objectField)) {
+							safeChaining = IntStream
+									.range(0, optional.length)
+									.mapToObj(index -> optional[index])
+									.allMatch(Boolean.TRUE::equals);
+							found = false;
+							break;
+						}
+						else {
+							found = true;
+							javaObject = objectField;
+						}
+					}
+					else if (Objects.nonNull(javaObject)) {
+						var field = ObjectAccessUtils.findField(javaObject.getClass(), accessArray[i], true);
+						if (Objects.nonNull(field)) {
+							found = true;
+							var fieldValue = convertArgument(newValue, field.getType(), field.getGenericType(), false);
+							setObjectField(currentContext, javaObject, accessArray[i], fieldValue, line, column);
+
+							var afterUpdateFieldValue = accessObjectUsingQualifiedName( qualifiedName,
+																						currentContext,
+																						line,
+																						column);
+
+							if (!ObjectUtils.equals(fieldValue, afterUpdateFieldValue, true)) {
+								throw ExceptionUtils
+										.newNaftahSettingConstantError( qualifiedName,
+																		newIllegalFieldAccessException(field
+																				.getName()));
+							}
+
+						}
+						else {
+							found = false;
+						}
+					}
+					else {
+						safeChaining = IntStream
+								.range(0, optional.length)
+								.mapToObj(index -> optional[index])
+								.allMatch(Boolean.TRUE::equals);
+					}
+				}
+			}
+			else {
 				//noinspection unchecked
-				var object = (Map<String, DeclaredVariable>) naftahObject.get(false);
+				var object = (Map<String, DeclaredVariable>) naftahObject.get();
 				for (; i < accessArray.length; i++) {
 					if (i < accessArray.length - 1) {
 
@@ -1330,7 +1600,7 @@ public final class NaftahParserHelper {
 							found = true;
 							//noinspection unchecked
 							object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
-									.getValue()).get(false);
+									.getValue()).get();
 						}
 					}
 					else if (Objects.nonNull(object)) {
@@ -1351,6 +1621,7 @@ public final class NaftahParserHelper {
 					}
 				}
 			}
+
 			if (!found && !safeChaining) {
 				int finalI = i;
 				String traversedQualifiedName = IntStream
@@ -1362,7 +1633,7 @@ public final class NaftahParserHelper {
 										"") :
 								""))
 						.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
-				throw newNaftahBugVariableNotFoundError(traversedQualifiedName);
+				throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
 			}
 		}
 		else {
@@ -1445,32 +1716,41 @@ public final class NaftahParserHelper {
 	 * <li>If the selected function is a non-static {@link JvmFunction}, the first argument is treated as the
 	 * instance.</li>
 	 * <li>Delegates the actual invocation to
-	 * {@link #invokeFunction(String, JvmExecutable, Object[], List, Object, int, int)}.</li>
+	 * {@link #invokeFunction(String, boolean, JvmExecutable, Object[], List, Object, int, int)}.</li>
 	 * </ol>
 	 *
-	 * @param functionName the name of the function to invoke (used for error reporting)
-	 * @param jvmFunctions the collection of available {@link JvmExecutable} functions
-	 * @param naftahArgs   the list of arguments as {@link Pair}, where the first element may be the instance for
-	 *                     non-static methods
-	 * @param line         the source line number for error reporting
-	 * @param column       the source column number for error reporting
+	 * @param functionName    the name of the function to invoke (used for error reporting)
+	 * @param forceInvocation true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                        default
+	 * @param jvmFunctions    the collection of available {@link JvmExecutable} functions
+	 * @param naftahArgs      the list of arguments as {@link Pair}, where the first element may be the instance for
+	 *                        non-static methods
+	 * @param line            the source line number for error reporting
+	 * @param column          the source column number for error reporting
 	 * @return the result of the function invocation
 	 * @throws NaftahBugError if no suitable function is found or invocation fails
 	 */
 	public static Object invokeFunction(String functionName,
+										boolean forceInvocation,
 										Collection<JvmExecutable> jvmFunctions,
 										List<Pair<String, Object>> naftahArgs,
 										int line,
 										int column) throws NoSuchMethodException {
 		var bestMatch = findBestExecutable(jvmFunctions, new ArrayList<>(naftahArgs), true);
 
-		var selectedFunction = bestMatch.a;
+		var selectedFunction = bestMatch.getLeft();
 		Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
-				.isStatic() ? null : naftahArgs.remove(0).b;
+				.isStatic() ? null : naftahArgs.remove(0).getRight();
 
-		return invokeFunction(functionName, selectedFunction, bestMatch.b, naftahArgs, possibleInstance, line, column);
+		return invokeFunction(  functionName,
+								forceInvocation,
+								selectedFunction,
+								bestMatch.getRight(),
+								naftahArgs,
+								possibleInstance,
+								line,
+								column);
 	}
-
 
 	/**
 	 * Invokes a specific {@link JvmExecutable}, either a {@link BuiltinFunction} or {@link JvmFunction}.
@@ -1478,6 +1758,8 @@ public final class NaftahParserHelper {
 	 * <p>This overload delegates to the more general method with {@code executableArgs} set to {@code null}.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param selectedFunction the executable to invoke
 	 * @param naftahArgs       the arguments prepared for the executable
 	 * @param possibleInstance the instance to invoke on, or {@code null} for static methods
@@ -1488,12 +1770,20 @@ public final class NaftahParserHelper {
 	 */
 	public static Object invokeFunction(
 										String functionName,
+										boolean forceInvocation,
 										JvmExecutable selectedFunction,
 										List<Pair<String, Object>> naftahArgs,
 										Object possibleInstance,
 										int line,
 										int column) {
-		return invokeFunction(functionName, selectedFunction, null, naftahArgs, possibleInstance, line, column);
+		return invokeFunction(  functionName,
+								forceInvocation,
+								selectedFunction,
+								null,
+								naftahArgs,
+								possibleInstance,
+								line,
+								column);
 	}
 
 	/**
@@ -1507,6 +1797,8 @@ public final class NaftahParserHelper {
 	 * </ul>
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param selectedFunction the executable to invoke
 	 * @param executableArgs   the prepared arguments array for the executable (may be {@code null})
 	 * @param naftahArgs       the original list of {@link Pair} arguments
@@ -1518,6 +1810,7 @@ public final class NaftahParserHelper {
 	 */
 	public static Object invokeFunction(
 										String functionName,
+										boolean forceInvocation,
 										JvmExecutable selectedFunction,
 										Object[] executableArgs,
 										List<Pair<String, Object>> naftahArgs,
@@ -1535,6 +1828,7 @@ public final class NaftahParserHelper {
 		}
 		else if (selectedFunction instanceof JvmFunction jvmFunction) {
 			result = invokeJvmFunction( functionName,
+										forceInvocation,
 										jvmFunction,
 										executableArgs,
 										naftahArgs,
@@ -1552,21 +1846,102 @@ public final class NaftahParserHelper {
 	}
 
 	/**
-	 * Invokes a declared function with provided arguments in the given context.
+	 * Invokes a declared function within the current execution context, supporting
+	 * both synchronous and asynchronous execution models.
 	 *
-	 * @param declaredFunction           the declared function to invoke
+	 * <p>This method prepares the function’s parameters, binds argument values,
+	 * updates the execution context, and then invokes the function body using the
+	 * provided {@link DefaultNaftahParserVisitor}. If the function is declared as
+	 * asynchronous, its body is executed inside a spawned {@link Task} and the
+	 * task object is returned immediately. For synchronous functions, the body is
+	 * executed directly and the returned value becomes the result.</p>
+	 *
+	 * <p>All function calls are recorded in the context’s call stack using
+	 * {@link DefaultContext#pushCall}, and removed afterward via
+	 * {@link DefaultContext#popCall}, ensuring proper debugging and stack-trace
+	 * fidelity. For asynchronous functions, thread-local cleanup is performed
+	 * after execution via {@code currentContext.cleanThreadLocals()}.</p>
+	 *
+	 * @param depth                      the current recursion or call depth, used to generate a unique call ID
+	 * @param functionName               the name of the function to invoke
+	 * @param declaredFunction           the function to invoke; must not be null
 	 * @param defaultNaftahParserVisitor the visitor used to evaluate the function body
-	 * @param args                       the list of argument name/value pairs
-	 * @param currentContext             the current execution context
-	 * @return the result of invoking the declared function
+	 * @param args                       the list of (name, value) argument pairs to supply to the function
+	 * @param currentContext             the active execution context
+	 * @return for synchronous functions, the evaluated return value; for asynchronous
+	 *         functions, a {@link Task} representing the pending computation
+	 * @throws RuntimeException if evaluation of the function body fails
 	 */
-	public static Object invokeDeclaredFunction(DeclaredFunction declaredFunction,
+	public static Object invokeDeclaredFunction(
+												int depth,
+												String functionName,
+												DeclaredFunction declaredFunction,
 												DefaultNaftahParserVisitor defaultNaftahParserVisitor,
 												List<Pair<String, Object>> args,
 												DefaultContext currentContext
 	) {
+		if (declaredFunction.isAsync()) {
+			return spawnTask(   currentContext,
+								() -> {
+									var ctx = DefaultContext.getCurrentContext();
+									String functionCallId = generateCallId(depth, functionName);
+									ctx.setFunctionCallId(functionCallId);
+									Object result = doInvokeDeclaredFunction(   declaredFunction,
+																				defaultNaftahParserVisitor,
+																				args,
+																				ctx);
+									ctx.setFunctionCallId(null);
+									return result;
+								},
+								currentContext::cleanThreadLocals);
+		}
+		else {
+			return doInvokeDeclaredFunction(declaredFunction, defaultNaftahParserVisitor, args, currentContext);
+		}
+	}
+
+	/**
+	 * Executes a declared function within the specified context.
+	 * <p>
+	 * This method manages the full lifecycle of a function call, including:
+	 * </p>
+	 * <ul>
+	 * <li>Setting the implementation name in the current context.</li>
+	 * <li>Preparing the function’s parameter metadata and evaluating argument values.</li>
+	 * <li>Binding parameters and arguments into the current context for correct
+	 * resolution during body evaluation.</li>
+	 * <li>Maintaining the call stack by pushing the function call before evaluation
+	 * and popping it afterward.</li>
+	 * <li>Invoking the function body via the provided {@link DefaultNaftahParserVisitor}.</li>
+	 * <li>Returning {@link None#get()} if the function’s return type is {@link Void},
+	 * otherwise returning the evaluated result.</li>
+	 * </ul>
+	 * <p>
+	 * Callers should ensure {@link #prepareDeclaredFunction} has been invoked if any
+	 * prerequisite preparation is required for the function.
+	 * </p>
+	 * <p>
+	 * The call stack is updated even if an exception occurs during function execution,
+	 * guaranteeing that context state remains consistent. After the function is
+	 * popped, the implementation name in the context is restored to the parent call
+	 * or cleared if no parent exists.
+	 * </p>
+	 *
+	 * @param declaredFunction           the {@link DeclaredFunction} being executed
+	 * @param defaultNaftahParserVisitor the visitor used to evaluate the function body
+	 * @param args                       the raw argument name/value pairs supplied to the function
+	 * @param currentContext             the {@link DefaultContext} associated with the call
+	 * @return the evaluated result of the function body, or {@link None#get()} if
+	 *         the function has a {@link Void} return type
+	 */
+	public static Object doInvokeDeclaredFunction(  DeclaredFunction declaredFunction,
+													DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+													List<Pair<String, Object>> args,
+													DefaultContext currentContext
+	) {
 		boolean functionInStack = false;
 		try {
+			currentContext.setImplementationName(declaredFunction.getImplementationName());
 			prepareDeclaredFunction(defaultNaftahParserVisitor, declaredFunction);
 			Map<String, Object> finalArgs = isEmpty(declaredFunction.getParameters()) ?
 					Map.of() :
@@ -1589,16 +1964,24 @@ public final class NaftahParserHelper {
 			}
 
 			if (!isEmpty(declaredFunction.getParameters())) {
-				currentContext.defineFunctionArguments(finalArgs);
+				currentContext.defineFunctionArguments(finalArgs, declaredFunction.getDepth());
 			}
 
 			pushCall(declaredFunction, finalArgs);
 			functionInStack = true;
-			return defaultNaftahParserVisitor.visit(declaredFunction.getBody());
+			var result = defaultNaftahParserVisitor.visit(declaredFunction.getBody());
+			return declaredFunction.getReturnType().isOfType(Void.class) ? None.get() : result;
 		}
 		finally {
 			if (functionInStack) {
 				popCall();
+				Triple<DeclaredFunction, Map<String, Object>, Object> parentCall;
+				if (Objects.nonNull(parentCall = peekCall())) {
+					currentContext.setImplementationName(parentCall.getLeft().getImplementationName());
+				}
+				else {
+					currentContext.setImplementationName(null);
+				}
 			}
 		}
 	}
@@ -1703,7 +2086,6 @@ public final class NaftahParserHelper {
 		}
 	}
 
-
 	/**
 	 * Invokes a JVM function (static or instance) with automatic argument conversion.
 	 *
@@ -1714,6 +2096,8 @@ public final class NaftahParserHelper {
 	 * a {@link NaftahObject} representing {@code null} is returned.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param jvmFunction      the {@link JvmFunction} to invoke
 	 * @param naftahArgs       a list of arguments as {@link Pair} name/value pairs
 	 * @param possibleInstance the instance for instance methods; {@code null} for static methods
@@ -1724,18 +2108,28 @@ public final class NaftahParserHelper {
 	 *                        the function is non-invocable
 	 */
 	public static Object invokeJvmFunction( String functionName,
+											boolean forceInvocation,
 											JvmFunction jvmFunction,
 											List<Pair<String, Object>> naftahArgs,
 											Object possibleInstance,
 											int line,
 											int column) {
-		return invokeJvmFunction(functionName, jvmFunction, null, naftahArgs, possibleInstance, line, column);
+		return invokeJvmFunction(   functionName,
+									forceInvocation,
+									jvmFunction,
+									null,
+									naftahArgs,
+									possibleInstance,
+									line,
+									column);
 	}
 
 	/**
 	 * Invokes a JVM function with either pre-prepared argument array or {@link List} of {@link Pair} arguments.
 	 *
 	 * @param functionName     the name of the function for error reporting
+	 * @param forceInvocation  true in case of forcing invocation in case the {@link JvmExecutable} is not invocable by
+	 *                         default
 	 * @param jvmFunction      the {@link JvmFunction} to invoke
 	 * @param executableArgs   the pre-prepared argument array (nullable)
 	 * @param naftahArgs       a list of arguments as {@link Pair} name/value pairs
@@ -1747,6 +2141,7 @@ public final class NaftahParserHelper {
 	 *                        the function is non-invocable
 	 */
 	public static Object invokeJvmFunction( String functionName,
+											boolean forceInvocation,
 											JvmFunction jvmFunction,
 											Object[] executableArgs,
 											List<Pair<String, Object>> naftahArgs,
@@ -1754,7 +2149,7 @@ public final class NaftahParserHelper {
 											int line,
 											int column) {
 
-		if (jvmFunction.isInvocable()) {
+		if (forceInvocation || jvmFunction.isInvocable()) {
 			if (!jvmFunction.isStatic() && Objects.isNull(naftahArgs)) {
 				throw new NaftahBugError(INVALID_INSTANCE_METHOD_CALL_MSG
 						.apply( functionName,
@@ -1955,7 +2350,12 @@ public final class NaftahParserHelper {
 													int line,
 													int column) throws NoSuchMethodException {
 		var bestMatch = findBestExecutable(jvmClassInitializers, naftahArgs);
-		return invokeJvmClassInitializer(classInitializerName, bestMatch.a, bestMatch.b, naftahArgs, line, column);
+		return invokeJvmClassInitializer(   classInitializerName,
+											bestMatch.getLeft(),
+											bestMatch.getRight(),
+											naftahArgs,
+											line,
+											column);
 	}
 
 	/**
@@ -1984,6 +2384,8 @@ public final class NaftahParserHelper {
 	 * @param defaultNaftahParserVisitor the parser visitor driving the execution
 	 * @param currentContext             the execution context containing functions, variables, and state
 	 * @param functionName               the name of the function to invoke
+	 * @param forceInvocation            true in case of forcing invocation in case the {@link JvmExecutable} is not
+	 *                                   invocable by default
 	 * @param args                       a list of {@code Pair<String, Object>} representing the function arguments
 	 * @param functionIndex              an optional numeric index for selecting a function from a collection of
 	 *                                   overloaded or indexed functions; may be {@code null}
@@ -1999,18 +2401,7 @@ public final class NaftahParserHelper {
 	 * @throws NaftahBugError           if no function exists with the given name in the current context
 	 *
 	 *                                  <p><b>Example usage:</b></p>
-	 *                                  <pre>{@code
-	 *                                                                                                                                                                                                                                                                                                            visitFunctionCallInChain(
-	 *                                                                                                                                                                                                                                                                                                            0,
-	 *                                                                                                                                                                                                                                                                                                            visitor,
-	 *                                                                                                                                                                                                                                                                                                            context,
-	 *                                                                                                                                                                                                                                                                                                            "print",
-	 *                                                                                                                                                                                                                                                                                                             List.of(Pair.of("arg", "Hello, world!")),
-	 *                                                                                                                                                                                                                                                                                                             null,
-	 *                                                                                                                                                                                                                                                                                                             12,
-	 *                                                                                                                                                                                                                                                                                                             8
-	 *                                                                                                                                                                                                                                                                                                             );
-	 *                                                                                                                                                                                                                                                                                                                                                                                                                                                 }</pre>
+	 *                                  <pre>{@code visitFunctionCallInChain(0, visitor, context, "print", List.of(Pair.of("arg", "Hello, world!")), null, 12, 8); }</pre>
 	 * @see DeclaredFunction
 	 * @see BuiltinFunction
 	 * @see JvmFunction
@@ -2021,6 +2412,7 @@ public final class NaftahParserHelper {
 													DefaultNaftahParserVisitor defaultNaftahParserVisitor,
 													DefaultContext currentContext,
 													String functionName,
+													boolean forceInvocation,
 													List<Pair<String, Object>> args,
 													Number functionIndex,
 													int line,
@@ -2030,10 +2422,12 @@ public final class NaftahParserHelper {
 		String functionCallId = generateCallId(depth, functionName);
 		currentContext.setFunctionCallId(functionCallId);
 
-		if (currentContext.containsFunction(functionName)) {
-			Object function = currentContext.getFunction(functionName, false).b;
+		if (currentContext.containsFunction(functionName, -1)) {
+			Object function = currentContext.getFunction(functionName, false).getRight();
 			if (function instanceof DeclaredFunction declaredFunction) {
-				result = invokeDeclaredFunction(declaredFunction,
+				result = invokeDeclaredFunction(depth,
+												functionName,
+												declaredFunction,
 												defaultNaftahParserVisitor,
 												args,
 												currentContext);
@@ -2046,9 +2440,10 @@ public final class NaftahParserHelper {
 												column);
 			}
 			else if (function instanceof JvmFunction jvmFunction) {
-				Object possibleInstance = jvmFunction.isStatic() ? null : args.remove(0).b;
+				Object possibleInstance = jvmFunction.isStatic() ? null : args.remove(0).getRight();
 
 				result = invokeJvmFunction( functionName,
+											forceInvocation,
 											jvmFunction,
 											args,
 											possibleInstance,
@@ -2063,9 +2458,10 @@ public final class NaftahParserHelper {
 						var selectedFunction = getFunction(jvmExecutables, functionIndex);
 
 						Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
-								.isStatic() ? null : args.remove(0).b;
+								.isStatic() ? null : args.remove(0).getRight();
 
 						result = invokeFunction(functionName,
+												forceInvocation,
 												selectedFunction,
 												args,
 												possibleInstance,
@@ -2074,6 +2470,7 @@ public final class NaftahParserHelper {
 					}
 					else {
 						result = invokeFunction(functionName,
+												forceInvocation,
 												jvmExecutables,
 												args,
 												line,
@@ -2103,6 +2500,409 @@ public final class NaftahParserHelper {
 													column);
 		}
 		currentContext.setFunctionCallId(null);
+		return result;
+	}
+
+	/**
+	 * Retrieves the value of a field from the given target object using context-aware
+	 * resolution with default safety behavior.
+	 *
+	 * <p>This overload is equivalent to calling:
+	 * <br>
+	 * {@code getObjectField(currentContext, target, fieldName, true, false, line, column)}
+	 * </p>
+	 *
+	 * <p>Behavior defaults:</p>
+	 * <ul>
+	 * <li><strong>safe = true</strong> — any exceptions encountered during lookup or
+	 * reflective access are suppressed and result in a {@code null} value.</li>
+	 * <li><strong>failFast = false</strong> — getter resolution errors are ignored and
+	 * the method continues searching or falls back to direct reflection.</li>
+	 * </ul>
+	 *
+	 * @param currentContext the evaluation context containing available functions
+	 * @param target         the object from which the field value should be retrieved
+	 * @param fieldName      the name of the field to access
+	 * @param line           source line number (used for error reporting)
+	 * @param column         source column number (used for error reporting)
+	 * @return the resolved field value, or {@code null} if lookup fails or an error occurs
+	 */
+	public static Object getObjectField(DefaultContext currentContext,
+										Object target,
+										String fieldName,
+										int line,
+										int column) {
+		return getObjectField(currentContext, target, fieldName, true, false, line, column);
+	}
+
+	/**
+	 * Retrieves the value of a field from a target object using context-aware resolution.
+	 *
+	 * <p>The lookup proceeds in the following order:
+	 * <ol>
+	 * <li>Generate possible getter names for the field.</li>
+	 * <li>For each getter, check whether the {@link DefaultContext} defines
+	 * a corresponding function.</li>
+	 * <li>If the function is a {@link JvmFunction}, attempt to access the field
+	 * using its underlying Java method.</li>
+	 * <li>If the function represents multiple overloads, select the best match
+	 * via {@code findBestExecutable}. If resolution fails:
+	 * <ul>
+	 * <li>in <strong>fail-fast</strong> mode a {@link NaftahBugError}
+	 * is thrown immediately,</li>
+	 * <li>otherwise the error is ignored and resolution continues.</li>
+	 * </ul>
+	 * </li>
+	 * <li>If the function is of an unsupported type:
+	 * <ul>
+	 * <li>in fail-fast mode a {@link NaftahBugError} is thrown,</li>
+	 * <li>otherwise the error is ignored.</li>
+	 * </ul>
+	 * </li>
+	 * <li>If no suitable getter in the context is found or resolution fails,
+	 * fall back to direct reflective field access.</li>
+	 * </ol>
+	 *
+	 * <p>Error handling behavior is controlled by two flags:</p>
+	 * <ul>
+	 * <li><strong>failFast</strong> — if {@code true}, any getter-resolution error or
+	 * unsupported function type immediately throws an appropriate {@link NaftahBugError}.</li>
+	 * <li><strong>safe</strong> — if {@code true}, <em>any</em> thrown error results in
+	 * {@code null} being returned instead of propagating the exception.</li>
+	 * </ul>
+	 *
+	 * @param currentContext the evaluation context containing available functions
+	 * @param target         the object from which to retrieve the field value; must not be {@code null}
+	 * @param fieldName      the name of the field to retrieve
+	 * @param safe           whether to swallow any exceptions and return {@code null}
+	 * @param failFast       whether to throw immediately on resolution errors during getter lookup
+	 * @param line           source line number (for error reporting)
+	 * @param column         source column number (for error reporting)
+	 * @return the resolved field value, or {@code null} if not found or if {@code safe} mode suppresses an error
+	 * @throws NaftahBugError if fail-fast mode is enabled and:
+	 *                        <ul>
+	 *                        <li>an unsupported function type is found</li>
+	 *                        <li>an ambiguous or invalid overloaded function set is encountered</li>
+	 *                        </ul>
+	 * @throws Throwable      if an unexpected exception occurs and {@code safe == false}
+	 */
+	public static Object getObjectField(DefaultContext currentContext,
+										Object target,
+										String fieldName,
+										boolean safe,
+										boolean failFast,
+										int line,
+										int column) {
+		Set<String> functionNames = Arrays
+				.stream(ObjectAccessUtils.BUILD_GETTERS.apply(fieldName))
+				.map(functionName -> ClassUtils
+						.getQualifiedCall(  ClassUtils.getQualifiedName(target.getClass().getName()),
+											functionName))
+				.collect(Collectors.toSet());
+
+		try {
+			for (String functionName : functionNames) {
+
+				if (!currentContext.containsFunction(functionName, -1)) {
+					continue;
+				}
+
+				try {
+					Object function = currentContext.getFunction(functionName, false).getRight();
+					if (function instanceof JvmFunction jvmFunction) {
+						return ObjectAccessUtils.get(target, fieldName, jvmFunction.getMethod(), safe, failFast);
+					}
+					else if (function instanceof Collection<?> functions) {
+						//noinspection unchecked
+						var jvmExecutables = (Collection<JvmExecutable>) functions;
+						try {
+							var bestMatch = findBestExecutable(jvmExecutables, List.of(), true);
+
+							return ObjectAccessUtils
+									.get(   target,
+											fieldName,
+											(Method) bestMatch.getLeft().getExecutable(),
+											safe,
+											failFast);
+						}
+						catch (Throwable th) {
+							if (failFast) {
+								throw newNaftahInvocableListFoundError( functionName,
+																		jvmExecutables,
+																		th,
+																		line,
+																		column);
+							}
+						}
+					}
+					else {
+						if (failFast) {
+							throw newNaftahUnsupportedFunctionError(functionName,
+																	function.getClass(),
+																	line,
+																	column);
+						}
+					}
+				}
+				catch (Throwable th) {
+					if (failFast) {
+						throw th;
+					}
+				}
+
+			}
+
+			return ObjectAccessUtils.get(target, fieldName, null, safe, failFast);
+		}
+		catch (Throwable th) {
+			if (safe) {
+				return null;
+			}
+			else {
+				throw th instanceof NaftahBugError naftahBugError ? naftahBugError : new NaftahBugError(th);
+			}
+		}
+	}
+
+	/**
+	 * Sets the value of a field on a target object using context-aware resolution with
+	 * default safety behavior.
+	 *
+	 * <p>This is equivalent to calling:
+	 * <br>
+	 * {@code setObjectField(currentContext, target, fieldName, value, true, false, line, column)}
+	 *
+	 * @param currentContext the current evaluation context containing available functions
+	 * @param target         the object on which to set the field value
+	 * @param fieldName      the name of the field to set
+	 * @param value          the value to assign to the field
+	 * @param line           source line number for error reporting
+	 * @param column         source column number for error reporting
+	 */
+	public static void setObjectField(  DefaultContext currentContext,
+										Object target,
+										String fieldName,
+										Object value,
+										int line,
+										int column) {
+		setObjectField(currentContext, target, fieldName, value, true, false, line, column);
+	}
+
+	/**
+	 * Sets the value of a field on a target object using context-aware resolution.
+	 *
+	 * <p>The method proceeds as follows:
+	 * <ol>
+	 * <li>Constructs the qualified setter name for the target field.</li>
+	 * <li>If a matching setter exists in the {@link DefaultContext}:
+	 * <ul>
+	 * <li>If it is a {@link JvmFunction}, calls it using reflection.</li>
+	 * <li>If multiple overloads exist, selects the best match based on the value type.
+	 * If resolution fails:
+	 * <ul>
+	 * <li>in <strong>fail-fast</strong> mode, throws a {@link NaftahBugError} immediately,</li>
+	 * <li>otherwise the error is propagated or suppressed depending on {@code safe}.</li>
+	 * </ul>
+	 * </li>
+	 * <li>If the function type is unsupported:
+	 * <ul>
+	 * <li>in fail-fast mode, throws a {@link NaftahBugError},</li>
+	 * <li>otherwise the error is suppressed depending on {@code safe}.</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * </li>
+	 * <li>If no setter is found in the context, falls back to direct reflective field access.</li>
+	 * </ol>
+	 *
+	 * <p>Error handling behavior:</p>
+	 * <ul>
+	 * <li><strong>safe</strong> — if {@code true}, exceptions during resolution or reflective
+	 * access are swallowed; otherwise they are thrown.</li>
+	 * <li><strong>failFast</strong> — if {@code true}, resolution errors throw immediately without fallback.</li>
+	 * </ul>
+	 *
+	 * @param currentContext the current evaluation context containing available functions
+	 * @param target         the object on which to set the field value; must not be {@code null}
+	 * @param fieldName      the name of the field to set
+	 * @param value          the value to assign to the field
+	 * @param safe           whether to swallow exceptions instead of throwing
+	 * @param failFast       whether to throw immediately on resolution errors
+	 * @param line           source line number for error reporting
+	 * @param column         source column number for error reporting
+	 * @throws NaftahBugError if an unsupported function type is encountered
+	 * @throws NaftahBugError if an ambiguous set of overloaded invocables is found
+	 */
+	public static void setObjectField(  DefaultContext currentContext,
+										Object target,
+										String fieldName,
+										Object value,
+										boolean safe,
+										boolean failFast,
+										int line,
+										int column) {
+		String functionName = ClassUtils
+				.getQualifiedCall(  ClassUtils.getQualifiedName(target.getClass().getName()),
+									ObjectAccessUtils.BUILD_SETTER.apply(fieldName));
+		try {
+			if (currentContext.containsFunction(functionName, -1)) {
+				Object function = currentContext.getFunction(functionName, false).getRight();
+				if (function instanceof JvmFunction jvmFunction) {
+					ObjectAccessUtils.set(target, fieldName, jvmFunction.getMethod(), value, safe, failFast);
+				}
+				else if (function instanceof Collection<?> functions) {
+					//noinspection unchecked
+					var jvmExecutables = (Collection<JvmExecutable>) functions;
+					try {
+						var bestMatch = findBestExecutable( jvmExecutables,
+															List.of(ImmutablePair.of(null, value)),
+															true);
+
+						ObjectAccessUtils
+								.set(   target,
+										fieldName,
+										(Method) bestMatch.getLeft().getExecutable(),
+										bestMatch.getRight()[0],
+										safe,
+										failFast);
+					}
+					catch (Throwable th) {
+						throw newNaftahInvocableListFoundError( functionName,
+																jvmExecutables,
+																th,
+																line,
+																column);
+					}
+				}
+				else {
+					throw newNaftahUnsupportedFunctionError(functionName,
+															function.getClass(),
+															line,
+															column);
+				}
+			}
+			else {
+				ObjectAccessUtils.set(target, fieldName, null, value, safe, failFast);
+			}
+		}
+		catch (Throwable th) {
+			if (!safe) {
+				throw th instanceof NaftahBugError naftahBugError ? naftahBugError : new NaftahBugError(th);
+			}
+		}
+	}
+
+	/**
+	 * Visits each expression inside a
+	 * * {@link org.daiitech.naftah.parser.NaftahParser.CollectionMultipleElementsContext}
+	 * and collects the evaluated results into a list.
+	 *
+	 * <p>This method iterates over all expression nodes contained in the provided
+	 * {@code collectionMultipleElements} context, invokes the given
+	 * {@code defaultNaftahParserVisitor} on each one, and stores the returned values
+	 * in order inside a newly created {@link java.util.ArrayList}.</p>
+	 *
+	 * @param defaultNaftahParserVisitor the visitor used to evaluate each expression in the collection
+	 * @param collectionMultipleElements the parse-tree context containing multiple expression elements to visit
+	 * @return a list of objects representing the evaluated results of each expression
+	 */
+	public static List<Object> visitCollectionMultipleElements( DefaultNaftahParserVisitor defaultNaftahParserVisitor,
+																org.daiitech.naftah.parser.NaftahParser.CollectionMultipleElementsContext collectionMultipleElements) {
+		List<Object> elements = new ArrayList<>();
+
+		for (   int i = 0;
+				i < collectionMultipleElements
+						.expression()
+						.size();
+				i++) {
+			var elementValue = defaultNaftahParserVisitor
+					.visit(collectionMultipleElements
+							.expression(i));
+			elements.add(elementValue);
+		}
+		return elements;
+	}
+
+	/**
+	 * Spawns a new asynchronous task within the given execution context.
+	 *
+	 * <p>This method wraps the provided {@link Supplier} in a {@link Task},
+	 * registers it with the current context, executes it asynchronously,
+	 * and optionally tracks it in the current scope stack.</p>
+	 *
+	 * <p>The context's pending task counter is incremented, so that the context
+	 * will not be deregistered until all spawned tasks complete.</p>
+	 *
+	 * @param currentContext the context in which the task should execute
+	 * @param supplier       a {@link Supplier} providing the task's computation
+	 * @param cleaner        a {@link Runnable} to clean up thread-local state
+	 *                       or other resources after the task completes
+	 * @return the spawned {@link Task} object representing the asynchronous computation
+	 */
+	public static Task<Object> spawnTask(
+											DefaultContext currentContext,
+											Supplier<Object> supplier,
+											Runnable cleaner) {
+		Task<Object> task = Task.of(currentContext, supplier, cleaner);
+
+		task.spawn();
+
+		return task;
+	}
+
+	/**
+	 * Resolves the name of an implementation from a {@link org.daiitech.naftah.parser.NaftahParser.SelfOrIdContext}.
+	 *
+	 * <p>This method determines whether the context explicitly specifies an identifier
+	 * or implicitly refers to the current implementation in the execution context.</p>
+	 *
+	 * <ul>
+	 * <li>If {@code selfOrIdContext.ID()} is present, the method returns its text as the implementation name.</li>
+	 * <li>If no explicit ID is provided, the method retrieves the implementation name
+	 * from the provided {@link DefaultContext}.</li>
+	 * <li>If the implementation name cannot be determined (i.e., it is null in the current context),
+	 * the method throws a {@link NaftahBugError} with an Arabic message indicating that
+	 * {@code self} cannot be used outside an implementation definition.</li>
+	 * </ul>
+	 *
+	 * @param selfOrIdContext the parse context representing either {@code self} or an identifier
+	 * @param currentContext  the current {@link DefaultContext} providing execution state
+	 * @return the resolved implementation name, either explicitly from the context or from the current execution
+	 *         * context
+	 * @throws NaftahBugError if {@code self} is used outside a valid implementation context
+	 */
+	public static String matchImplementationName(   org.daiitech.naftah.parser.NaftahParser.SelfOrIdContext selfOrIdContext,
+													DefaultContext currentContext) {
+		String result;
+		if (hasChild(selfOrIdContext.ID())) {
+			result = selfOrIdContext.ID().getText();
+		}
+		else {
+			var implementationName = currentContext.getImplementationName();
+			if (Objects.isNull(implementationName)) {
+				throw new NaftahBugError(
+											"""
+											لا يمكن استخدام %s خارج سياق تعريف %s.
+											"""
+													.formatted(
+																getFormattedTokenSymbols(   PARSER_VOCABULARY,
+																							org.daiitech.naftah.parser.NaftahLexer.SELF,
+																							false),
+
+																getFormattedTokenSymbols(   PARSER_VOCABULARY,
+																							org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
+																							false)),
+											selfOrIdContext
+													.getStart()
+													.getLine(),
+											selfOrIdContext
+													.getStart()
+													.getCharPositionInLine()
+				);
+			}
+			result = implementationName;
+		}
+
 		return result;
 	}
 }

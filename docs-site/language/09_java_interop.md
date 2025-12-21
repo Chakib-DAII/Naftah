@@ -51,12 +51,12 @@ permalink: /language/java-interop
 <h2 id="-ملاحظات">🧠 ملاحظات</h2>
 
 <ul>
-  <li>يمكن استدعاء <strong>الدوال الثابتة والمثيلة</strong> من مكتبات جافا مباشرة داخل نفطة.</li>
+  <li>يمكن استدعاء <strong>الدوال الثابتة والمثيلة</strong> من مكتبات جافا مباشرة داخل نفطه.</li>
   <li>يدعم إنشاء الكائنات مثل <strong>Object، UUID، Optional، ArrayList</strong> بطرق متعددة (فارغ، من قيمة، من سلسلة).</li>
   <li>التعامل مع الأنواع الرقمية مثل <strong>Integer، Long، Double، Boolean</strong> مع إمكانية التحويل من وإلى السلاسل النصية.</li>
   <li>يمكن استخدام <strong>الدوال على الكائنات</strong> مثل <code class="language-plaintext highlighter-rouge">length</code>، <code class="language-plaintext highlighter-rouge">substring</code>، <code class="language-plaintext highlighter-rouge">add</code>، <code class="language-plaintext highlighter-rouge">get</code>، <code class="language-plaintext highlighter-rouge">size</code>، و<code class="language-plaintext highlighter-rouge">toString</code>.</li>
   <li>يدعم <strong>Optional</strong> للتحقق من وجود القيم أو استخدام قيمة افتراضية (<code class="language-plaintext highlighter-rouge">orElse</code>).</li>
-  <li>أسماء الدوال في نفطة عربية مع إمكانية التعامل مع <strong>الأرقام الصحيحة والعشرية</strong> و<strong>char/Character</strong>.</li>
+  <li>أسماء الدوال في نفطه عربية مع إمكانية التعامل مع <strong>الأرقام الصحيحة والعشرية</strong> و<strong>char/Character</strong>.</li>
   <li>التوافقية مع <strong>primitive ↔ wrapper</strong> تجعل استدعاءات الدوال مرنة وموثوقة.</li>
   <li>
     <p>الصياغة تعتمد على:</p>

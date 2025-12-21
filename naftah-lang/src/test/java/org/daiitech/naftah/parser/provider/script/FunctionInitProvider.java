@@ -30,14 +30,14 @@ public class FunctionInitProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								جافا:لغة:كائن() لا_يساوي فارغ
+								جافا:لغة:كائن_() لا_يساوي فارغ
 								""",
 								true,
 								null),
 					Arguments
 							.of(true,
 								"""
-								@جافا:لغة:كائن() لا_يساوي فارغ
+								@جافا:لغة:كائن_() لا_يساوي فارغ
 								""",
 								true,
 								null),
@@ -52,14 +52,14 @@ public class FunctionInitProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم(1)
+								أورغ:داعيتاك:نفطه:مدرجة_مدرجة:لغة:ديناميك_رقم(1)
 								""",
 								NaftahObject.of(DynamicNumber.of(1)),
 								null),
 					Arguments
 							.of(true,
 								"""
-								@أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم("01033301")
+								@أورغ:داعيتاك:نفطه:مدرجة_مدرجة:لغة:ديناميك_رقم("01033301")
 								""",
 								NaftahObject.of(DynamicNumber.of("01033301")),
 								null),

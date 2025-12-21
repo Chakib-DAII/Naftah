@@ -124,7 +124,7 @@ public final class StringInterpolator {
 	 * @param context  the variable context to resolve interpolated values
 	 * @return the interpolated result
 	 */
-	public static synchronized String interpolate(String template, DefaultContext context) {
+	public static String interpolate(String template, DefaultContext context) {
 		Function<String, Object> replacementFunction = varName -> getVariable(varName, context).orElse(NULL);
 		return interpolate(template, replacementFunction);
 	}
@@ -136,7 +136,7 @@ public final class StringInterpolator {
 	 * @param context  the variable map to resolve values
 	 * @return the interpolated result
 	 */
-	public static synchronized String interpolate(String template, Map<String, Object> context) {
+	public static String interpolate(String template, Map<String, Object> context) {
 		Function<String, Object> replacementFunction = varName -> context.getOrDefault(varName, NULL);
 		return interpolate(template, replacementFunction);
 	}
@@ -148,7 +148,7 @@ public final class StringInterpolator {
 	 * @param replacementFunction function used to resolve variable names to values
 	 * @return the interpolated string
 	 */
-	public static synchronized String interpolate(String template, Function<String, Object> replacementFunction) {
+	public static String interpolate(String template, Function<String, Object> replacementFunction) {
 		// TODO: this is not needed in windows after rechecking.
 		// template = POSSIBLE_SHAPING_FUNCTION.apply(template);
 

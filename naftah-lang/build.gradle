@@ -71,7 +71,7 @@ tasks.register('copyJavadoc', Copy) {
 tasks.register('extractLexerLiterals') {
 	description = 'Extracts all literal strings from lexer grammar rules.'
 
-	def lexerFile = file('src/main/antlr/NaftahLexer.g4')
+	def lexerFile = file("$projectDir/src/main/antlr/NaftahLexer.g4")
 	def outputFile = layout.buildDirectory.file("libs/lexer-literals").get().asFile
 
 	def tokensFile = layout.buildDirectory.file("libs/tokens-symbols.properties").get().asFile
@@ -238,6 +238,9 @@ jacoco {
 }
 
 test {
+	dependsOn tasks.named("extractLexerLiterals")
+	systemProperty "naftah.jarDir", "$projectDir/build/libs"
+
 	testLogging {
 		events "passed", "skipped", "failed"
 	}

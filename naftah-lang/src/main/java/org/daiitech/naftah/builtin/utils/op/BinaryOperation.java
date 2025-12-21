@@ -6,8 +6,10 @@ import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.booleanToInt;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
@@ -965,6 +967,177 @@ public enum BinaryOperation implements Operation {
 	},
 
 	/**
+	 * Represents the unsigned right bitwise shift operation.
+	 * <p>
+	 * Shifts the bits of the left-hand operand to the right by the number of
+	 * positions specified by the right-hand operand, filling with zeros.
+	 * <ul>
+	 * <li>If operands are numeric, performs a standard unsigned shift.</li>
+	 * <li>If one operand is non-numeric, its {@code size} is used as the shift value.</li>
+	 * <li>String operands are shifted based on their length.</li>
+	 * </ul>
+	 * Falsy operands result in {@link NaN}.
+	 */
+	BITWISE_USHR("BITWISE_USHR") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Number right) {
+			return NumberUtils.unsignedShiftRight(left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Object right) {
+			return NumberUtils.unsignedShiftRight(left, ObjectUtils.size(right));
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Object left, Number right) {
+			return NumberUtils.unsignedShiftRight(ObjectUtils.size(left), right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected String apply(String left, String right) {
+			return NumberUtils.unsignedShiftRight(ObjectUtils.size(left), ObjectUtils.size(right)).toString();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return NaN.get();
+		}
+	},
+
+	/**
+	 * Represents the signed right bitwise shift operation.
+	 * <p>
+	 * Shifts the bits of the left-hand operand to the right while preserving
+	 * the sign bit.
+	 * <ul>
+	 * <li>If operands are numeric, performs a signed arithmetic shift.</li>
+	 * <li>If one operand is non-numeric, its {@code size} is used as the shift value.</li>
+	 * <li>String operands are shifted based on their length.</li>
+	 * </ul>
+	 * Falsy operands result in {@link NaN}.
+	 */
+	BITWISE_SHR("BITWISE_SHR") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Number right) {
+			return NumberUtils.shiftRight(left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Object right) {
+			return NumberUtils.shiftRight(left, ObjectUtils.size(right));
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Object left, Number right) {
+			return NumberUtils.shiftRight(ObjectUtils.size(left), right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected String apply(String left, String right) {
+			return NumberUtils.shiftRight(ObjectUtils.size(left), ObjectUtils.size(right)).toString();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return NaN.get();
+		}
+	},
+
+	/**
+	 * Represents the left bitwise shift operation.
+	 * <p>
+	 * Shifts the bits of the left-hand operand to the left by the number of
+	 * positions specified by the right-hand operand.
+	 * <ul>
+	 * <li>If operands are numeric, performs a standard left shift.</li>
+	 * <li>If one operand is non-numeric, its {@code size} is used as the shift value.</li>
+	 * <li>String operands are shifted based on their length.</li>
+	 * </ul>
+	 * Falsy operands result in {@link NaN}.
+	 */
+	BITWISE_SHL("BITWISE_SHL") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Number right) {
+			return NumberUtils.shiftLeft(left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Object right) {
+			return NumberUtils.shiftLeft(left, ObjectUtils.size(right));
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Object left, Number right) {
+			return NumberUtils.shiftLeft(ObjectUtils.size(left), right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected String apply(String left, String right) {
+			return NumberUtils.shiftLeft(ObjectUtils.size(left), ObjectUtils.size(right)).toString();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			return NaN.get();
+		}
+	},
+
+	/**
 	 * Represents element-wise addition.
 	 * Applies addition operation to each corresponding element in collections or arrays.
 	 * Supports element-wise combination of compatible data structures.
@@ -1212,6 +1385,75 @@ public enum BinaryOperation implements Operation {
 		protected Object handleFalsy(Object left, Object right) {
 			return handleFalsyBitOrElementWiseArithmetic(left, right);
 		}
+	},
+
+	/**
+	 * Represents the {@code instanceof} type-check operation.
+	 * <p>
+	 * Evaluates whether the left-hand operand is an instance of the type
+	 * represented by the right-hand operand.
+	 * <ul>
+	 * <li>The right-hand operand must be a {@link JavaType}.</li>
+	 * <li>Returns {@code true} if the left operand is compatible with the given type.</li>
+	 * <li>All other operand combinations are considered invalid.</li>
+	 * </ul>
+	 *
+	 * @throws RuntimeException if the operands are not compatible with this operation
+	 */
+	INSTANCE_OF("INSTANCE_OF") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Boolean apply(Object left, Object right) {
+			if (right instanceof JavaType javaType) {
+				return ObjectUtils.instanceOf(left, javaType);
+			}
+			throw BinaryOperation.newNaftahBugError(this, left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Number apply(Number left, Number right) {
+			throw BinaryOperation.newNaftahBugError(this, left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Number left, Object right) {
+			throw BinaryOperation.newNaftahBugError(this, left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(Object left, Number right) {
+			throw BinaryOperation.newNaftahBugError(this, left, right);
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected String apply(String left, String right) {
+			throw BinaryOperation.newNaftahBugError(this, left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object handleFalsy(Object left, Object right) {
+			throw BinaryOperation.newNaftahBugError(this, left, right);
+		}
 	};
 
 	/**
@@ -1242,10 +1484,10 @@ public enum BinaryOperation implements Operation {
 				.formatted( getFormattedTokenSymbols(binaryOperation.toString(), false),
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(left.getClass().getName()) :
-									getNaftahType(PARSER_VOCABULARY, left.getClass()),
+									getNaftahType(PARSER_VOCABULARY, JavaType.of(left.getClass())),
 							Objects.isNull(PARSER_VOCABULARY) ?
 									getQualifiedName(right.getClass().getName()) :
-									getNaftahType(PARSER_VOCABULARY, right.getClass())));
+									getNaftahType(PARSER_VOCABULARY, JavaType.of(right.getClass()))));
 	}
 
 	/**

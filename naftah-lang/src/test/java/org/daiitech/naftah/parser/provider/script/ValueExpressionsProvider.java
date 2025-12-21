@@ -155,14 +155,16 @@ public class ValueExpressionsProvider implements ArgumentsProvider {
 											new LinkedHashMap<>(Map
 													.of("أ",
 														DeclaredVariable
-																.of(null,
+																.of(1,
+																	null,
 																	"أ",
 																	false,
 																	null,
 																	DynamicNumber.of(1)),
 														"ب",
 														DeclaredVariable
-																.of(null,
+																.of(1,
+																	null,
 																	"ب",
 																	false,
 																	null,

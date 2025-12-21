@@ -191,6 +191,10 @@ public final class Naftah {
 	 */
 	public static final String MULTILINE_CACHE_PROPERTY = "naftah.cache.multiline.active";
 	/**
+	 * Property to enable chunks of long words in text processing in Naftah.
+	 */
+	public static final String WORD_CHUNK_PROPERTY = "naftah.word.chunk.active";
+	/**
 	 * Property to enable caching of string interpolation text processing in Naftah.
 	 */
 	public static final String INTERPOLATION_CACHE_PROPERTY = "naftah.cache.interpolation.active";
@@ -206,6 +210,18 @@ public final class Naftah {
 	 * Property to specify which package of builtin function set to use in Naftah.
 	 */
 	public static final String BUILTIN_PACKAGES_PROPERTY = "naftah.builtinPackages";
+	/**
+	 * System property enabling or disabling deep reflection for Java object mapping.
+	 */
+	public static final String JAVA_OBJECT_REFLECT_ACTIVE_PROPERTY = "naftah.javaObject.deepReflect.active";
+	/**
+	 * System property specifying the maximum depth allowed during deep reflection.
+	 */
+	public static final String JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY = "naftah.javaObject.deepReflect.maxDepth";
+	/**
+	 * System property controlling whether null fields are skipped during reflection.
+	 */
+	public static final String JAVA_OBJECT_REFLECT_SKIP_NULLS_PROPERTY = "naftah.javaObject.deepReflect.skipNulls";
 	/**
 	 * Configuration key representing the classes of builtin function set.
 	 */
@@ -461,7 +477,7 @@ public final class Naftah {
 	 *
 	 * @param t the throwable whose error message will be printed with padding
 	 */
-	private static void printPaddedErrorMessageToString(Throwable t) {
+	public static void printPaddedErrorMessageToString(Throwable t) {
 		Throwable throwable = t;
 		if (!(throwable instanceof NaftahBugError)) {
 			throwable = new NaftahBugError(throwable);
@@ -508,7 +524,7 @@ public final class Naftah {
 		@Override
 		public String[] getVersion() {
 			return new String[]{"""
-								Naftah Version (إصدار نفطة): %s
+								Naftah Version (إصدار نفطه): %s
 								JVM (آلة جافا الافتراضية): %s
 								Vendor (المُصنّع): %s
 								OS (نظام التشغيل): %s
@@ -526,7 +542,7 @@ public final class Naftah {
 	 */
 	@Command(   name = NaftahCommand.NAME,
 				customSynopsis = "naftah [run/shell/init] [options] [filename] [args]",
-				description = {"The Naftah command line processor.", "معالج الأوامر الخاص بـلغة البرمجة نفطة"},
+				description = {"The Naftah command line processor.", "معالج الأوامر الخاص بـلغة البرمجة نفطه"},
 				sortOptions = false,
 				versionProvider = VersionProvider.class)
 	private static class NaftahCommand {
@@ -638,6 +654,7 @@ public final class Naftah {
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
 			System.setProperty(SCAN_JDK_PROPERTY, Boolean.toString(true));
 			System.setProperty(CACHE_SCANNING_RESULTS_PROPERTY, Boolean.toString(true));
+			System.setProperty(WORD_CHUNK_PROPERTY, Boolean.toString(true));
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
 			}
@@ -737,7 +754,7 @@ public final class Naftah {
 					customSynopsis = "naftah run [options] [filename] [args]",
 					description = {
 									"The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
-									"أمر تشغيل نفطة. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."},
+									"أمر تشغيل نفطه. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."},
 					sortOptions = false)
 		private static final class RunCommand extends NaftahCommand {
 			private static final String NAME = "run";
@@ -773,7 +790,7 @@ public final class Naftah {
 					description = { """
 									The Naftah init command. it prepares the classpath classes (java classpath) and process them to reuse inside naftah script.""",
 									"""
-									أمر بدء نفطة. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطة."""},
+									أمر بدء نفطه. يقوم بتحضير فئات مسار فئات جافا (Java classpath) ومعالجتها لإعادة استخدامها داخل سكربت نفطه."""},
 					sortOptions = false)
 		private static final class InitCommand extends NaftahCommand {
 			private static final String NAME = "init";
@@ -799,7 +816,7 @@ public final class Naftah {
 									"""
 									The Naftah manual command. It loads and displays documentation topics related to Naftah usage.""",
 									"""
-									أمر 'man' في نفطة. يعرض صفحات المساعدة والمواضيع الخاصة باستخدام نفطة."""
+									أمر 'man' في نفطه. يعرض صفحات المساعدة والمواضيع الخاصة باستخدام نفطه."""
 					},
 					sortOptions = false)
 		private static final class ManualCommand extends NaftahCommand {
@@ -989,9 +1006,9 @@ public final class Naftah {
 							\t- الأصناف أو classes -> الأصناف المتوفرة في Java مع أسمائها المؤهلة بالعربية.
 							\t- الأصناف-المتاحة أو accessible-classes -> الأصناف المتاحة في Java مع أسمائها المؤهلة بالعربية.
 							\t- الأصناف-القابلة-للتهيئة أو الأصناف-القابلة-للصنع أو instantiable-classes -> الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية.
-							\t- الدوال-المدمجة أو builtin-functions -> الدوال المدمجة في نظام نفطة.
+							\t- الدوال-المدمجة أو builtin-functions -> الدوال المدمجة في نظام نفطه.
 							\t- دوال-جافا أو jvm-functions -> دوال JVM المتوفرة مع استدعاءاتها المؤهلة بالعربية.
-							\t- <الاسم المؤهل لصنف Java> -> تحويل الاسم إلى الصيغة العربية (نفطة).
+							\t- <الاسم المؤهل لصنف Java> -> تحويل الاسم إلى الصيغة العربية (نفطه).
 							\t- مساعدة أو usage -> عرض هذه التعليمات.
 							\t- خروج أو exit -> إنهاء البرنامج.
 							""",
@@ -1024,7 +1041,7 @@ public final class Naftah {
 						}
 				else if (List.of("builtin-functions", "الدوال-المدمجة").contains(command)) {
 					matched = true;
-					padText("الدوال المدمجة في نظام نفطة:", true);
+					padText("الدوال المدمجة في نظام نفطه:", true);
 					printPaginated(builtinFunctions);
 				}
 				else if (List.of("jvm-functions", "دوال-جافا").contains(command)) {
@@ -1279,7 +1296,6 @@ public final class Naftah {
 					boolean validIndex = true;
 					if (classes.equals(target) && (validIndex = DefaultContext
 							.getClasses()
-							.entrySet()
 							.size() > index)) {
 						var element = CollectionUtils
 								.getElementAt(
@@ -1294,7 +1310,6 @@ public final class Naftah {
 					}
 					else if (accessibleClasses.equals(target) && (validIndex = DefaultContext
 							.getAccessibleClasses()
-							.entrySet()
 							.size() > index)) {
 								var element = CollectionUtils
 										.getElementAt(
@@ -1309,7 +1324,6 @@ public final class Naftah {
 							}
 					else if (instantiableClasses.equals(target) && (validIndex = DefaultContext
 							.getInstantiableClasses()
-							.entrySet()
 							.size() > index)) {
 								var element = CollectionUtils
 										.getElementAt(
@@ -1324,7 +1338,6 @@ public final class Naftah {
 							}
 					else if (builtinFunctions.equals(target) && (validIndex = DefaultContext
 							.getBuiltinFunctions()
-							.entrySet()
 							.size() > index)) {
 								var element = CollectionUtils
 										.getElementAt(
@@ -1339,7 +1352,6 @@ public final class Naftah {
 							}
 					else if (jvmFunctions.equals(target) && (validIndex = DefaultContext
 							.getJvmFunctions()
-							.entrySet()
 							.size() > index)) {
 								var element = CollectionUtils
 										.getElementAt(
@@ -1577,7 +1589,7 @@ public final class Naftah {
 					description = { """
 									The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code.""",
 									"""
-									يبدأ أمر نفطة شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."""
+									يبدأ أمر نفطه شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."""
 					},
 					sortOptions = false)
 		private static final class ShellCommand extends NaftahCommand {

@@ -1,8 +1,13 @@
 package org.daiitech.naftah.builtin.lang;
 
+import java.util.Objects;
+
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.NaftahParserHelper;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
+
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.validateType;
 
 /**
  * Represents a parameter declared in a Naftah function.
@@ -14,7 +19,7 @@ import org.daiitech.naftah.parser.NaftahParserHelper;
  *
  * @author Chakib Daii
  */
-public final class DeclaredParameter {
+public final class DeclaredParameter extends Declaration {
 
 	/**
 	 * The original ANTLR context of the parameter declaration.
@@ -34,7 +39,7 @@ public final class DeclaredParameter {
 	/**
 	 * The Java class representing the type of the parameter.
 	 */
-	private final Class<?> type;
+	private final JavaType type;
 
 	/**
 	 * The default value assigned to the parameter.
@@ -54,17 +59,20 @@ public final class DeclaredParameter {
 	/**
 	 * Constructs a declared parameter with its definition details.
 	 *
+	 * @param depth           the depth of context where declared
 	 * @param originalContext the original parse context of the parameter
 	 * @param name            the name of the parameter
 	 * @param constant        whether the parameter is constant
 	 * @param type            the type of the parameter
 	 * @param defaultValue    the default value of the parameter
 	 */
-	private DeclaredParameter(  NaftahParser.ParameterDeclarationContext originalContext,
+	private DeclaredParameter(  int depth,
+								NaftahParser.ParameterDeclarationContext originalContext,
 								String name,
 								boolean constant,
-								Class<?> type,
+								JavaType type,
 								Object defaultValue) {
+		super(depth);
 		this.originalContext = originalContext;
 		this.name = name;
 		this.constant = constant;
@@ -75,6 +83,7 @@ public final class DeclaredParameter {
 	/**
 	 * Factory method to create a new {@code DeclaredParameter}.
 	 *
+	 * @param depth           the depth of context where declared
 	 * @param originalContext the original parse context
 	 * @param name            the parameter name
 	 * @param constant        whether it is a constant
@@ -82,12 +91,18 @@ public final class DeclaredParameter {
 	 * @param defaultValue    the default value
 	 * @return a new instance of {@code DeclaredParameter}
 	 */
-	public static DeclaredParameter of( NaftahParser.ParameterDeclarationContext originalContext,
+	public static DeclaredParameter of( int depth,
+										NaftahParser.ParameterDeclarationContext originalContext,
 										String name,
 										boolean constant,
-										Class<?> type,
+										JavaType type,
 										Object defaultValue) {
-		return new DeclaredParameter(originalContext, name, constant, type, defaultValue);
+		validateType(   name,
+						defaultValue,
+						type,
+						Objects.isNull(originalContext) ? -1 : originalContext.getStart().getLine(),
+						Objects.isNull(originalContext) ? -1 : originalContext.getStart().getCharPositionInLine());
+		return new DeclaredParameter(depth, originalContext, name, constant, type, defaultValue);
 	}
 
 	/**
@@ -150,7 +165,12 @@ public final class DeclaredParameter {
 	 * @param currentValue the new value to assign
 	 * @throws NaftahBugError if attempting to modify a constant parameter
 	 */
-	public void setValue(Object currentValue) {
+	public synchronized void setValue(Object currentValue) {
+		validateType(   name,
+						currentValue,
+						type,
+						Objects.isNull(originalContext) ? -1 : originalContext.getStart().getLine(),
+						Objects.isNull(originalContext) ? -1 : originalContext.getStart().getCharPositionInLine());
 		if (constant) {
 			throw new NaftahBugError(("""
 										حدث خطأ أثناء إعادة تعيين القيمة الثابتة للمعامل: '%s'. لا يمكن إعادة تعيين ثابت.""")

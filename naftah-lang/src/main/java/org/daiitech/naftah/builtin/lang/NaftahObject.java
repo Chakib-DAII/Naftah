@@ -2,6 +2,7 @@ package org.daiitech.naftah.builtin.lang;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
+import static org.daiitech.naftah.Naftah.JAVA_OBJECT_REFLECT_ACTIVE_PROPERTY;
+import static org.daiitech.naftah.Naftah.JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY;
+import static org.daiitech.naftah.Naftah.JAVA_OBJECT_REFLECT_SKIP_NULLS_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createCollection;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createMap;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.isCollectionMapOrArray;
@@ -55,15 +59,33 @@ public record NaftahObject(
 ) {
 
 	/**
+	 * Maximum depth allowed for Java object reflection mapping.
+	 */
+	public static final int MAX_DEPTH;
+	/**
+	 * Whether null fields should be skipped during reflection mapping.
+	 */
+	public static final boolean SKIP_NULLS;
+	/**
 	 * Format pattern used for transliterating field or key names into Arabic script.
 	 * The resulting format will be {@code "<arabic> (<latin>)"}.
 	 */
 	public static final String KEY_OR_FIELD_TRANSLITERATION_FORMAT = "%s (%s)";
-
 	/**
 	 * Format pattern for field processing errors in Arabic: "[خطأ أثناء معالجة الحقل: %s]".
 	 */
 	public static final String FIELD_ERROR_FORMAT = "[خطأ أثناء معالجة الحقل: %s]";
+
+	static {
+		if (Boolean.getBoolean(JAVA_OBJECT_REFLECT_ACTIVE_PROPERTY)) {
+			MAX_DEPTH = Math.max(Integer.getInteger(JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY, 0), 0);
+			SKIP_NULLS = Boolean.getBoolean(JAVA_OBJECT_REFLECT_SKIP_NULLS_PROPERTY);
+		}
+		else {
+			MAX_DEPTH = 0;
+			SKIP_NULLS = false;
+		}
+	}
 
 	/**
 	 * Canonical constructor with validation logic.
@@ -134,7 +156,7 @@ public record NaftahObject(
 	 * @return a map representation of the object, or {@code null} if the input is {@code null}
 	 */
 	public static Map<String, Object> toMap(Object obj) {
-		return toMap(obj, new IdentityHashMap<>(), false);
+		return toMap(obj, new IdentityHashMap<>(), SKIP_NULLS, 0);
 	}
 
 	/**
@@ -146,7 +168,7 @@ public record NaftahObject(
 	 * @return a map representation of the object, or {@code null} if the input is {@code null}
 	 */
 	public static Map<String, Object> toMap(Object obj, boolean skipNulls) {
-		return toMap(obj, new IdentityHashMap<>(), skipNulls);
+		return toMap(obj, new IdentityHashMap<>(), skipNulls, 0);
 	}
 
 	/**
@@ -165,7 +187,8 @@ public record NaftahObject(
 	 */
 	private static Map<String, Object> toMap(   Object obj,
 												IdentityHashMap<Object, Boolean> visited,
-												boolean skipNulls) {
+												boolean skipNulls,
+												int depth) {
 		if (obj == null) {
 			return null;
 		}
@@ -175,9 +198,14 @@ public record NaftahObject(
 		}
 		visited.put(obj, true);
 
-		Map<String, Object> result = new LinkedHashMap<>();
+		// If depth exceeded, shallow print
+		if (depth > MAX_DEPTH) {
+			return Map.of("(value) القيمة", obj.toString());
+		}
 
 		Class<?> clazz = obj.getClass();
+
+		Map<String, Object> result = new LinkedHashMap<>();
 
 		// Handle records
 		if (clazz.isRecord()) {
@@ -185,7 +213,7 @@ public record NaftahObject(
 				try {
 					Object value = rc.getAccessor().invoke(obj);
 					if (!skipNulls || value != null) {
-						result.put(formatKeyOrFieldName(rc.getName()), convertValue(value, visited, skipNulls));
+						result.put(formatKeyOrFieldName(rc.getName()), convertValue(value, visited, skipNulls, depth));
 					}
 				}
 				catch (Exception e) {
@@ -201,14 +229,26 @@ public record NaftahObject(
 				if (Modifier.isStatic(field.getModifiers())) {
 					continue;
 				}
-				field.setAccessible(true);
 				try {
+					if (!field.canAccess(obj)) {
+						try {
+							field.setAccessible(true);
+						}
+						catch (InaccessibleObjectException e) {
+							result
+									.put(   formatKeyOrFieldName(field.getName()),
+											FIELD_ERROR_FORMAT.formatted(e.getMessage()));
+							continue;
+						}
+					}
 					Object value = field.get(obj);
 					if (!skipNulls || value != null) {
-						result.put(formatKeyOrFieldName(field.getName()), convertValue(value, visited, skipNulls));
+						result
+								.put(   formatKeyOrFieldName(field.getName()),
+										convertValue(value, visited, skipNulls, depth));
 					}
 				}
-				catch (IllegalAccessException e) {
+				catch (Exception e) {
 					result.put(formatKeyOrFieldName(field.getName()), FIELD_ERROR_FORMAT.formatted(e.getMessage()));
 				}
 			}
@@ -227,47 +267,64 @@ public record NaftahObject(
 	 * @param skipNulls whether to skip {@code null} entries
 	 * @return a converted value or map/list structure
 	 */
-	private static Object convertValue(Object value, IdentityHashMap<Object, Boolean> visited, boolean skipNulls) {
+	private static Object convertValue(
+										Object value,
+										IdentityHashMap<Object, Boolean> visited,
+										boolean skipNulls,
+										int depth) {
 		if (value == null || value instanceof String || value instanceof Number || value instanceof Boolean || value instanceof Character) {
 			return value;
 		}
 
-		if (value instanceof Map<?, ?> map) {
-			Map<Object, Object> nested = new LinkedHashMap<>();
-			for (var entry : map.entrySet()) {
-				Object key = entry.getKey();
-				Object val = entry.getValue();
-				if (!skipNulls || val != null) {
-					nested.put(convertValue(key, visited, skipNulls), convertValue(val, visited, skipNulls));
-				}
-			}
-			return nested;
+		if (depth > MAX_DEPTH) {
+			return value.toString();
 		}
 
+		Class<?> clazz = value.getClass();
+
+		// Maps
+		if (value instanceof Map<?, ?> map) {
+			Map<Object, Object> out = new LinkedHashMap<>();
+			for (var entry : map.entrySet()) {
+				Object k = entry.getKey();
+				Object v = entry.getValue();
+				if (!skipNulls || v != null) {
+					out
+							.put(
+									convertValue(k, visited, skipNulls, depth + 1),
+									convertValue(v, visited, skipNulls, depth + 1)
+							);
+				}
+			}
+			return out;
+		}
+
+		// Collections
 		if (value instanceof Collection<?> collection) {
-			List<Object> list = new ArrayList<>();
+			List<Object> out = new ArrayList<>();
 			for (var item : collection) {
 				if (!skipNulls || item != null) {
-					list.add(convertValue(item, visited, skipNulls));
+					out.add(convertValue(item, visited, skipNulls, depth + 1));
 				}
 			}
-			return list;
+			return out;
 		}
 
-		if (value.getClass().isArray()) {
+		// Arrays
+		if (clazz.isArray()) {
 			int length = Array.getLength(value);
-			List<Object> list = new ArrayList<>();
+			List<Object> out = new ArrayList<>(length);
 			for (int i = 0; i < length; i++) {
 				Object element = Array.get(value, i);
 				if (!skipNulls || element != null) {
-					list.add(convertValue(element, visited, skipNulls));
+					out.add(convertValue(element, visited, skipNulls, depth + 1));
 				}
 			}
-			return list;
+			return out;
 		}
 
 		// Recursively map object
-		return toMap(value, visited, skipNulls);
+		return toMap(value, visited, skipNulls, depth + 1);
 	}
 
 	/**
@@ -346,6 +403,19 @@ public record NaftahObject(
 	}
 
 	/**
+	 * Returns the evaluated representation of this object.
+	 *
+	 * <p>This is equivalent to calling {@link #get(boolean)} with
+	 * {@code original = false}.</p>
+	 *
+	 * @return the evaluated representation of this object
+	 */
+	public Object get() {
+		return get(false);
+	}
+
+
+	/**
 	 * Compares this {@code NaftahObject} to another object for equality.
 	 *
 	 * <p>Two {@code NaftahObject} instances are considered equal if and only if:
@@ -413,16 +483,17 @@ public record NaftahObject(
 	 * @return a human-readable Arabic/Latin mixed representation of the object
 	 */
 	@Override
+	@SuppressWarnings("NullableProblems")
 	public String toString() {
 		if (fromJava) {
 			if (isCollectionMapOrArray(javaObject)) {
-				return CollectionUtils.toString(get(false));
+				return CollectionUtils.toString(get());
 			}
 			if (None.isNone(javaObject) || isSimpleType(javaObject) || isBuiltinType(javaObject)) {
 				return ObjectUtils.getNaftahValueToString(javaObject);
 			}
 			else {
-				return "كائن: " + CollectionUtils.toString((Map<?, ?>) get(false), '{', '}');
+				return "كائن: " + CollectionUtils.toString((Map<?, ?>) get(), '{', '}');
 			}
 		}
 		else {
