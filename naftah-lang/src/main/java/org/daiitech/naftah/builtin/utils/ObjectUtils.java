@@ -7,15 +7,18 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Vocabulary;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
+import org.daiitech.naftah.builtin.lang.DeclaredImplementation;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
@@ -23,23 +26,35 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.utils.concurrent.Actor;
+import org.daiitech.naftah.builtin.utils.concurrent.Channel;
+import org.daiitech.naftah.builtin.utils.concurrent.Task;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.Triple;
+import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
+import org.daiitech.naftah.utils.reflect.type.TypeReference;
 
 import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.FunctionUtils.allMatch;
 import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahTypeMismatchError;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
+import static org.daiitech.naftah.parser.NaftahParserHelper.visit;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_NUMBER_FORMAT;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.latinNumberToArabicString;
 
@@ -129,6 +144,43 @@ public final class ObjectUtils {
 	}
 
 	/**
+	 * Compares two {@link Comparable} objects in a null-safe manner.
+	 *
+	 * <p>Rules for comparison:</p>
+	 * <ul>
+	 * <li>If both {@code left} and {@code right} are the same object (including both {@code null}), returns 0.</li>
+	 * <li>A {@code null} value is considered less than any non-null value (nulls-first).</li>
+	 * <li>If both values are non-null, their natural ordering (via {@link Comparable#compareTo}) is used.</li>
+	 * </ul>
+	 *
+	 * <p>Examples:</p>
+	 * <pre>
+	 * compare(null, null) = 0
+	 * compare(null, "abc") = -1
+	 * compare("abc", null) = 1
+	 * compare("abc", "def") = "abc".compareTo("def")
+	 * </pre>
+	 *
+	 * @param left  the first object to compare, may be {@code null}
+	 * @param right the second object to compare, may be {@code null}
+	 * @return a negative integer, zero, or a positive integer if {@code left} is less than, equal to,
+	 *         or greater than {@code right}, respectively
+	 */
+	public static int compare(Object left, Object right) {
+		if (left == right) {
+			return 0;
+		}
+		if (left == null) {
+			return -1;   // nulls-first
+		}
+		if (right == null) {
+			return 1;
+		}
+		//noinspection unchecked
+		return ((Comparable<Object>) left).compareTo(right);
+	}
+
+	/**
 	 * Safely compares two objects for equality using custom dynamic operations.
 	 *
 	 * <p>This method attempts to evaluate {@code left} and {@code right} using
@@ -213,7 +265,9 @@ public final class ObjectUtils {
 			return charSequence.isEmpty();
 		}
 		if (obj.getClass().isArray()) {
-			return Array.getLength(obj) == 0 || Arrays.stream((Object[]) obj).allMatch(Objects::isNull);
+			return Array.getLength(obj) == 0 || Arrays
+					.stream(CollectionUtils.toObjectArray(obj))
+					.allMatch(Objects::isNull);
 		}
 		if (obj instanceof Collection<?> collection) {
 			return collection.isEmpty() || collection.stream().allMatch(Objects::isNull);
@@ -229,31 +283,64 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Resolves the Java type from a Naftah type context.
+	 * Resolves a {@link JavaType} from a Naftah parser type context.
 	 *
-	 * @param naftahTypeContext the parser context for the type
-	 * @return the corresponding Java {@link Class}, or {@code Object.class} if unknown
+	 * <p>
+	 * This method inspects the supplied {@link ParserRuleContext} and maps Naftah
+	 * language type constructs to their corresponding Java types. It supports
+	 * return types, built-in types, complex built-ins, variable types, and
+	 * qualified names, delegating to specialized resolvers where appropriate.
+	 * </p>
+	 *
+	 * <p>
+	 * Qualified names are resolved against the current {@link DefaultContext},
+	 * including import matching. If a type cannot be resolved, the result
+	 * defaults to {@link Object}.
+	 * </p>
+	 *
+	 * <h3>Resolution behavior</h3>
+	 * <ul>
+	 * <li>{@code void} return types → {@link Void}</li>
+	 * <li>{@code var} or unresolved types → {@link Object}</li>
+	 * <li>Built-in types → mapped Java primitives or boxed types</li>
+	 * <li>Complex built-ins → resolved recursively</li>
+	 * <li>Qualified names → resolved via imports and context lookup</li>
+	 * </ul>
+	 *
+	 * @param naftahParserBaseVisitor the active parser visitor, used to resolve complex built-in types
+	 * @param currentContext          the current semantic context, used for import and type resolution
+	 * @param naftahTypeContext       the parser rule context representing a Naftah type
+	 * @return the resolved {@link JavaType}; {@link JavaType#ofObject()} if the type
+	 *         cannot be resolved
+	 * @apiNote This method performs runtime type checks against multiple parser rule
+	 *          variants and intentionally falls back to {@code Object} to allow graceful
+	 *          recovery from unknown or partially-specified types.
 	 */
-	public static Class<?> getJavaType(DefaultContext currentContext, ParserRuleContext naftahTypeContext) {
+	public static JavaType getJavaType( org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
+										DefaultContext currentContext,
+										ParserRuleContext naftahTypeContext) {
 		if (naftahTypeContext instanceof NaftahParser.ReturnTypeContext returnTypeContext) {
 			if (returnTypeContext instanceof NaftahParser.VoidReturnTypeContext) {
-				return Void.class;
+				return JavaType.of(Void.class);
 			}
 			else if (returnTypeContext instanceof NaftahParser.TypeReturnTypeContext typeReturnTypeContext) {
 				NaftahParser.TypeContext typeContext = typeReturnTypeContext.type();
 				if (typeContext instanceof NaftahParser.VarTypeContext) {
-					return Object.class;
+					return JavaType.ofObject();
 				}
 				else if (typeContext instanceof NaftahParser.BuiltInTypeContext builtInTypeContext) {
 					return getJavaType(builtInTypeContext.builtIn());
 				}
+				else if (typeContext instanceof NaftahParser.ComplexTypeContext builtInTypeContext) {
+					return getJavaType(naftahParserBaseVisitor, builtInTypeContext.complexBuiltIn());
+				}
 				else if (typeContext instanceof NaftahParser.QualifiedNameTypeContext qualifiedNameTypeContext) {
-					getJavaType(currentContext, qualifiedNameTypeContext);
+					return getJavaType(currentContext, qualifiedNameTypeContext);
 				}
 			}
 		}
 		else if (naftahTypeContext instanceof NaftahParser.VarTypeContext) {
-			return Object.class;
+			return JavaType.ofObject();
 		}
 		else if (naftahTypeContext instanceof NaftahParser.BuiltInTypeContext builtInTypeContext) {
 			return getJavaType(builtInTypeContext.builtIn());
@@ -261,8 +348,14 @@ public final class ObjectUtils {
 		else if (naftahTypeContext instanceof NaftahParser.BuiltInContext builtInContext) {
 			return getJavaType(builtInContext);
 		}
+		else if (naftahTypeContext instanceof NaftahParser.ComplexTypeContext complexTypeContext) {
+			return getJavaType(naftahParserBaseVisitor, complexTypeContext.complexBuiltIn());
+		}
+		else if (naftahTypeContext instanceof NaftahParser.ComplexBuiltInContext complexBuiltInContext) {
+			return getJavaType(naftahParserBaseVisitor, complexBuiltInContext);
+		}
 		else if (naftahTypeContext instanceof NaftahParser.QualifiedNameTypeContext qualifiedNameTypeContext) {
-			getJavaType(currentContext, qualifiedNameTypeContext);
+			return getJavaType(currentContext, qualifiedNameTypeContext);
 		}
 		else if (naftahTypeContext instanceof NaftahParser.QualifiedNameContext qualifiedNameContext) {
 			var qualifiedName = getQualifiedName(qualifiedNameContext);
@@ -272,12 +365,31 @@ public final class ObjectUtils {
 				qualifiedName = matchedImport;
 			}
 
-			return DefaultContext.getJavaType(qualifiedName);
+			return JavaType.of(DefaultContext.getJavaType(qualifiedName));
 		}
-		return Object.class;
+		return JavaType.ofObject();
 	}
 
-	public static Class<?> getJavaType( DefaultContext currentContext,
+	/**
+	 * Resolves a {@link JavaType} from a qualified-name type context.
+	 *
+	 * <p>
+	 * The type name is extracted either from a fully-qualified name or a simple
+	 * identifier and is then resolved against the current {@link DefaultContext},
+	 * including import matching.
+	 * </p>
+	 *
+	 * <p>
+	 * If a matching import is found, the imported type is used. Otherwise, the
+	 * resolved name is looked up directly. If resolution fails, the result
+	 * defaults to {@link Object}.
+	 * </p>
+	 *
+	 * @param currentContext           the current semantic context used for import resolution
+	 * @param qualifiedNameTypeContext the parser context representing a qualified-name type
+	 * @return the resolved {@link JavaType}, or {@link JavaType#ofObject()} if unresolved
+	 */
+	public static JavaType getJavaType( DefaultContext currentContext,
 										NaftahParser.QualifiedNameTypeContext qualifiedNameTypeContext) {
 		boolean hasQualifiedName = hasChild(qualifiedNameTypeContext
 				.qualifiedName());
@@ -292,108 +404,331 @@ public final class ObjectUtils {
 			type = matchedImport;
 		}
 
-		return DefaultContext.getJavaType(type);
+		return JavaType.of(DefaultContext.getJavaType(type));
 	}
 
 	/**
-	 * Resolves the Java type from a built-in type context in Naftah.
+	 * Resolves a {@link JavaType} from a built-in Naftah type.
 	 *
-	 * @param builtInContext the built-in type context
-	 * @return the corresponding Java type
+	 * <p>
+	 * Built-in types are mapped to their corresponding boxed Java types:
+	 * {@code boolean}, {@code char}, {@code byte}, {@code short}, {@code int},
+	 * {@code long}, {@code float}, {@code double}, and {@code string}.
+	 * </p>
+	 *
+	 * <p>
+	 * If the built-in type is not recognized, this method returns
+	 * {@link JavaType#ofObject()}.
+	 * </p>
+	 *
+	 * @param builtInContext the parser context representing a built-in type
+	 * @return the corresponding {@link JavaType}
 	 */
-	public static Class<?> getJavaType(NaftahParser.BuiltInContext builtInContext) {
+	public static JavaType getJavaType(NaftahParser.BuiltInContext builtInContext) {
 		if (hasChild(builtInContext.BOOLEAN())) {
-			return Boolean.class;
+			return JavaType.of(Boolean.class);
 		}
 		if (hasChild(builtInContext.CHAR())) {
-			return Character.class;
+			return JavaType.of(Character.class);
 		}
 		if (hasChild(builtInContext.BYTE())) {
-			return Byte.class;
+			return JavaType.of(Byte.class);
 		}
 		if (hasChild(builtInContext.SHORT())) {
-			return Short.class;
+			return JavaType.of(Short.class);
 		}
 		if (hasChild(builtInContext.INT())) {
-			return Integer.class;
+			return JavaType.of(Integer.class);
 		}
 		if (hasChild(builtInContext.LONG())) {
-			return Long.class;
+			return JavaType.of(Long.class);
+		}
+		if (hasChild(builtInContext.BIG_INT())) {
+			return JavaType.of(BigInteger.class);
 		}
 		if (hasChild(builtInContext.FLOAT())) {
-			return Float.class;
+			return JavaType.of(Float.class);
 		}
 		if (hasChild(builtInContext.DOUBLE())) {
-			return Double.class;
+			return JavaType.of(Double.class);
+		}
+		if (hasChild(builtInContext.BIG_DECIMAL())) {
+			return JavaType.of(BigDecimal.class);
+		}
+		if (hasChild(builtInContext.VAR_NUMBER())) {
+			return JavaType.of(DynamicNumber.class);
 		}
 		if (hasChild(builtInContext.STRING_TYPE())) {
-			return String.class;
+			return JavaType.of(String.class);
 		}
-		return Object.class;
+		return JavaType.ofObject();
 	}
 
 	/**
-	 * Maps a given Java type to its equivalent Naftah language type keyword,
-	 * using the provided ANTLR {@link Vocabulary}.
-	 * <p>
-	 * This method checks the Java class and returns a string representation of
-	 * the corresponding type in the Naftah language, such as {@code int}, {@code boolean},
-	 * {@code string}, etc., based on token types defined in {@code NaftahLexer}.
-	 * <p>
-	 * If the Java type is {@code null} or not explicitly recognized, the default
-	 * type {@code var} is returned.
+	 * Resolves a {@link JavaType} from a complex built-in type context.
 	 *
-	 * @param vocabulary the ANTLR {@link Vocabulary} used to resolve token names
-	 * @param javaType   the Java {@link Class} to map (e.g. {@code Integer.class}, {@code String.class})
-	 * @return the formatted Naftah type token as a {@link String}
+	 * <p>
+	 * Complex built-in types represent parameterized or structured constructs and
+	 * are resolved recursively using the provided parser visitor.
+	 * </p>
+	 *
+	 * <h3>Supported complex built-ins</h3>
+	 * <ul>
+	 * <li>{@code struct} → {@code Map&lt;String, DeclaredVariable&gt;}</li>
+	 * <li>{@code implementation} → {@code Map&lt;String, DeclaredFunction&gt;}</li>
+	 * <li>{@code pair&lt;T, U&gt;} → {@code Pair&lt;T, U&gt;}</li>
+	 * <li>{@code triple&lt;T, U, V&gt;} → {@code Triple&lt;T, U, V&gt;}</li>
+	 * <li>{@code list&lt;T&gt;} → {@code List&lt;T&gt;}</li>
+	 * <li>{@code set&lt;T&gt;} → {@code Set&lt;T&gt;}</li>
+	 * <li>{@code map&lt;K, V&gt;} → {@code Map&lt;K, V&gt;}</li>
+	 * <li>{@code tuple} → {@link Tuple}</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * Generic type arguments are resolved by visiting nested {@code type}
+	 * contexts via the supplied visitor.
+	 * </p>
+	 *
+	 * @param naftahParserBaseVisitor the active parser visitor used to resolve nested type parameters
+	 * @param complexBuiltInContext   the parser context representing a complex built-in type
+	 * @return the resolved {@link JavaType}, or {@link JavaType#ofObject()} if unresolved
+	 * @apiNote Parameterized types are constructed dynamically using
+	 *          {@link TypeReference#dynamicParameterizedType(Class, JavaType...)}.
 	 */
-	public static String getNaftahType(Vocabulary vocabulary, Class<?> javaType) {
+	public static JavaType getJavaType( org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
+										NaftahParser.ComplexBuiltInContext complexBuiltInContext) {
+		if (hasChild(complexBuiltInContext.STRUCT())) {
+			return JavaType.of(new TypeReference<Map<String, DeclaredVariable>>() {
+			});
+		}
+		if (hasChild(complexBuiltInContext.PAIR())) {
+			return JavaType
+					.of(TypeReference
+							.dynamicParameterizedType(
+														Pair.class,
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(0)),
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(1))
+							));
+		}
+		if (hasChild(complexBuiltInContext.TRIPLE())) {
+			return JavaType
+					.of(TypeReference
+							.dynamicParameterizedType(  Triple.class,
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(0)),
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(1)),
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(2))
+							));
+		}
+		if (hasChild(complexBuiltInContext.LIST())) {
+			return JavaType
+					.of(TypeReference
+							.dynamicParameterizedType(  List.class,
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(0))
+							));
+		}
+		if (hasChild(complexBuiltInContext.TUPLE())) {
+			return JavaType.of(NTuple.class);
+		}
+		if (hasChild(complexBuiltInContext.SET())) {
+			return JavaType
+					.of(TypeReference
+							.dynamicParameterizedType(  Set.class,
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(0))
+							));
+		}
+		if (hasChild(complexBuiltInContext.MAP())) {
+			return JavaType
+					.of(TypeReference
+							.dynamicParameterizedType(  Map.class,
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(0)),
+														(JavaType) visit(   naftahParserBaseVisitor,
+																			complexBuiltInContext.type(1))
+							));
+		}
+		return JavaType.ofObject();
+	}
+
+	/**
+	 * Maps a {@link JavaType} to its equivalent Naftah language type representation
+	 * using the supplied ANTLR {@link Vocabulary}.
+	 *
+	 * <p>
+	 * Primitive wrapper types and {@link String} are mapped to their corresponding
+	 * Naftah built-in type keywords (e.g. {@code int}, {@code boolean}, {@code string}).
+	 * </p>
+	 *
+	 * <p>
+	 * Parameterized and structured Java types are mapped as follows:
+	 * <ul>
+	 * <li>{@code Map&lt;String, DeclaredVariable&gt;} → {@code struct}</li>
+	 * <li>{@code Map&lt;String, DeclaredFunction&gt;} → {@code implementation}</li>
+	 * <li>{@code Map&lt;K, V&gt;} → {@code map&lt;K, V&gt;}</li>
+	 * <li>{@code Pair&lt;A, B&gt;} → {@code pair&lt;A, B&gt;}</li>
+	 * <li>{@code Triple&lt;A, B, C&gt;} → {@code triple&lt;A, B, C&gt;}</li>
+	 * <li>{@code List&lt;T&gt;} → {@code list&lt;T&gt;}</li>
+	 * <li>{@code Set&lt;T&gt;} → {@code set&lt;T&gt;}</li>
+	 * <li>{@link Tuple} → {@code tuple}</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * <p>
+	 * Generic type parameters are resolved recursively to produce fully-formed
+	 * Naftah type expressions.
+	 * </p>
+	 *
+	 * <p>
+	 * If {@code javaType} is {@code null} or cannot be mapped explicitly, the
+	 * fallback type {@code var} is returned.
+	 * </p>
+	 *
+	 * @param vocabulary the ANTLR {@link Vocabulary} used to resolve token symbols
+	 * @param javaType   the Java type to map
+	 * @return the formatted Naftah type representation
+	 * @apiNote This method relies on {@link JavaType} structural inspection rather than
+	 *          raw {@link Class} equality and assumes canonical generic parameter ordering.
+	 */
+	public static String getNaftahType(Vocabulary vocabulary, JavaType javaType) {
 		if (Objects.isNull(javaType)) {
 			return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
 		}
 		else {
-			if (Boolean.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(Boolean.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN, false);
 			}
-			if (Character.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(Character.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.CHAR, false);
 			}
-			if (Byte.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(Byte.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.BYTE, false);
 			}
-			if (Short.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(Short.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.SHORT, false);
 			}
-			if (Integer.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(Integer.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.INT, false);
 			}
-			if (Long.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(Long.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.LONG, false);
 			}
-			if (Float.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(BigInteger.class)) {
+				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.BIG_INT, false);
+			}
+			if (javaType.isOfType(Float.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.FLOAT, false);
 			}
-			if (Double.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(Double.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.DOUBLE, false);
 			}
-			if (String.class.isAssignableFrom(javaType)) {
+			if (javaType.isOfType(BigDecimal.class)) {
+				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.BIG_DECIMAL, false);
+			}
+			if (javaType.isOfType(DynamicNumber.class)) {
+				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR_NUMBER, false);
+			}
+			if (javaType.isOfType(String.class)) {
 				return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, false);
+			}
+			if (javaType.isOfType(DeclaredImplementation.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
+												false);
+			}
+			if (javaType.isOfType(Channel.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.CHANNEL,
+												false);
+			}
+			if (javaType.isOfType(Actor.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.ACTOR,
+												false);
+			}
+			if (javaType.isMap()) {
+				List<JavaType> params = javaType.getTypeParameters();
+				var keyType = params.get(0);
+				var valueType = params.get(1);
+				if (keyType.isOfType(String.class) && valueType.isOfType(DeclaredVariable.class)) {
+					return getFormattedTokenSymbols(vocabulary,
+													org.daiitech.naftah.parser.NaftahLexer.STRUCT,
+													false);
+				}
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.MAP,
+												false) + "<: " + getNaftahType( vocabulary,
+																				keyType) + ", " + getNaftahType(
+																												vocabulary,
+																												valueType) + " :>";
+			}
+
+			if (javaType.isPair()) {
+				List<JavaType> params = javaType.getTypeParameters();
+				var leftType = params.get(0);
+				var rightType = params.get(1);
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.PAIR,
+												false) + "<: " + getNaftahType( vocabulary,
+																				leftType) + ", " + getNaftahType(
+																													vocabulary,
+																													rightType) + " :>";
+			}
+
+			if (javaType.isTriple()) {
+				List<JavaType> params = javaType.getTypeParameters();
+				var leftType = params.get(0);
+				var middleType = params.get(1);
+				var rightType = params.get(2);
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.TRIPLE,
+												false) + "<: " + getNaftahType( vocabulary,
+																				leftType) + ", " + getNaftahType(
+																													vocabulary,
+																													middleType) + ", " + getNaftahType( vocabulary,
+																																						rightType) + " :>";
+			}
+
+			if (javaType.isCollection()) {
+				if (javaType.isTuple()) {
+					return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.TUPLE, false);
+				}
+				List<JavaType> params = javaType.getTypeParameters();
+				var paramType = params.get(0);
+				if (javaType.isList()) {
+					return getFormattedTokenSymbols(vocabulary,
+													org.daiitech.naftah.parser.NaftahLexer.LIST,
+													false) + "<: " + getNaftahType(vocabulary, paramType) + " :>";
+				}
+				if (javaType.isSet()) {
+					return getFormattedTokenSymbols(vocabulary,
+													org.daiitech.naftah.parser.NaftahLexer.SET,
+													false) + "<: " + getNaftahType(vocabulary, paramType) + " :>";
+				}
 			}
 		}
 		return getFormattedTokenSymbols(vocabulary, org.daiitech.naftah.parser.NaftahLexer.VAR, false);
 	}
 
 	/**
-	 * Resolves a Java type to its corresponding Naftah language type using a parser's vocabulary.
-	 * <p>
-	 * This is a convenience method that internally retrieves the {@link Vocabulary} from
-	 * the given {@link Parser} and delegates to {@link #getNaftahType(Vocabulary, Class)}.
+	 * Maps a {@link JavaType} to its corresponding Naftah language type using the
+	 * {@link Vocabulary} associated with the given ANTLR {@link Parser}.
 	 *
-	 * @param parser   the ANTLR {@link Parser} instance
-	 * @param javaType the Java type to convert
-	 * @return the Naftah language type token as a {@link String}
+	 * <p>
+	 * This is a convenience overload that delegates to
+	 * {@link #getNaftahType(Vocabulary, JavaType)}.
+	 * </p>
+	 *
+	 * @param parser   the ANTLR {@link Parser} providing the vocabulary
+	 * @param javaType the Java type to map
+	 * @return the formatted Naftah type representation
 	 */
-	public static String getNaftahType(Parser parser, Class<?> javaType) {
+	public static String getNaftahType(Parser parser, JavaType javaType) {
 		Vocabulary vocabulary = parser.getVocabulary();
 		return getNaftahType(vocabulary, javaType);
 	}
@@ -409,7 +744,81 @@ public final class ObjectUtils {
 			return false;
 		}
 		Class<?> cls = obj.getClass();
-		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class;
+		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class || cls == Task.class || cls == Channel.class || Actor.class
+				.isAssignableFrom(cls);
+	}
+
+	/**
+	 * Checks whether the given object is an instance of the specified {@link JavaType}.
+	 *
+	 * <p>This method behaves similarly to the Java {@code instanceof} operator,
+	 * but works with {@link JavaType} to support runtime inspection of generic
+	 * type parameters.</p>
+	 *
+	 * <p>Unlike strict type equality checks, this method uses assignability
+	 * semantics. This means that an object whose type is more specific may
+	 * still be considered an instance of a more general target type.</p>
+	 *
+	 * <p>Examples:</p>
+	 * <pre>{@code
+	 * JavaType objectType = JavaType.of(Object.class);
+	 * JavaType numberType = JavaType.of(Number.class);
+	 * JavaType listOfObjects = JavaType.of(new TypeReference<List<Object>>() {});
+	 *
+	 * instanceOf("hello", objectType); // true
+	 * instanceOf(42, numberType); // true
+	 * instanceOf(List.of("a"), listOfObjects); // true
+	 * }</pre>
+	 *
+	 * <p>If either the object or the target type is {@code null}, this method
+	 * returns {@code false}.</p>
+	 *
+	 * @param obj        the object to check; may be null
+	 * @param targetType the {@link JavaType} to check against; may be null
+	 * @return {@code true} if the object is an instance of the specified type
+	 *         according to assignability rules; {@code false} otherwise
+	 */
+	public static boolean instanceOf(Object obj, JavaType targetType) {
+		if (obj == null || targetType == null) {
+			return false;
+		}
+
+		return JavaType.isAssignableFrom(obj, targetType);
+	}
+
+	/**
+	 * Validates that a runtime value conforms to the expected {@link JavaType}.
+	 *
+	 * <p>If the provided value is non-null and does not match the expected type,
+	 * this method throws a Naftah type-mismatch error. Type matching is performed
+	 * using {@link ObjectUtils#instanceOf(Object, JavaType)}, which supports
+	 * raw types, generic parameters, and wildcard assignability.</p>
+	 *
+	 * <p>This method is typically used to validate function arguments, variable
+	 * assignments, and return values at runtime.</p>
+	 *
+	 * <p>Null values are considered valid for any type and will not trigger
+	 * a validation error.</p>
+	 *
+	 * <p>Example usage:</p>
+	 * <pre>{@code
+	 * JavaType expectedType = JavaType.of(new TypeReference<List<String>>() {});
+	 * validateType("items", List.of("a", "b"), expectedType); // valid
+	 *
+	 * validateType("items", List.of(1, 2), expectedType); // throws type mismatch error
+	 * }</pre>
+	 *
+	 * @param name  the name of the variable, parameter, or value being validated;
+	 *              used for error reporting
+	 * @param value the runtime value to validate; may be {@code null}
+	 * @param type  the expected {@link JavaType} of the value
+	 * @throws NaftahBugError if the value is non-null and does not conform
+	 *                        to the expected type
+	 */
+	public static void validateType(String name, Object value, JavaType type, int line, int column) {
+		if (Objects.nonNull(type) && Objects.nonNull(value) && !ObjectUtils.instanceOf(value, type)) {
+			throw newNaftahTypeMismatchError(name, getNaftahType(PARSER_VOCABULARY, type), line, column);
+		}
 	}
 
 	/**
@@ -434,7 +843,7 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Checks whether the object or its components are simple, built-in, or collections/maps of such types.
+	 * Checks whether the object or its components are simple, built-in, or collections/maps/tuple of such types.
 	 *
 	 * @param obj the object to evaluate
 	 * @return {@code true} if the object is simple or composed only of simple/builtin types
@@ -480,6 +889,29 @@ public final class ObjectUtils {
 				}
 			}
 			return true;
+		}
+
+		if (obj instanceof Pair<?, ?> pair) {
+
+			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(pair.get(0))) {
+				return false;
+			}
+			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(pair.get(1))) {
+				return false;
+			}
+		}
+
+
+		if (obj instanceof Triple<?, ?, ?> triple) {
+			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(0))) {
+				return false;
+			}
+			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(1))) {
+				return false;
+			}
+			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(2))) {
+				return false;
+			}
 		}
 
 		// Map with simple keys and values
@@ -537,6 +969,33 @@ public final class ObjectUtils {
 
 		// Number vs Boolean/Character/String/collection
 		if (left instanceof Number number) {
+			// Number vs NTuple (scalar multiplication)
+			if (right instanceof NTuple nTuple) {
+				// Pair
+				if (nTuple instanceof Pair<?, ?> pair) {
+					return Pair
+							.of(
+								applyOperation(number, pair.getLeft(), operation),
+								applyOperation(number, pair.getRight(), operation)
+							);
+				}
+
+				// Triple
+				if (nTuple instanceof Triple<?, ?, ?> triple) {
+					return Triple
+							.of(
+								applyOperation(number, triple.getLeft(), operation),
+								applyOperation(number, triple.getMiddle(), operation),
+								applyOperation(number, triple.getRight(), operation)
+							);
+				}
+
+				// Tuple as collection
+				if (nTuple instanceof Collection<?> collection) {
+					return Tuple.of((List<?>) CollectionUtils.applyOperation(collection, number, false, operation));
+				}
+			}
+
 			// Number vs Collection (scalar multiplication)
 			if (right instanceof Collection<?> collection) {
 				return CollectionUtils.applyOperation(collection, number, false, operation);
@@ -556,6 +1015,33 @@ public final class ObjectUtils {
 		}
 
 		if (right instanceof Number number) {
+			// Number vs NTuple (scalar multiplication)
+			if (left instanceof NTuple nTuple) {
+				// Pair
+				if (nTuple instanceof Pair<?, ?> pair) {
+					return Pair
+							.of(
+								applyOperation(pair.getLeft(), number, operation),
+								applyOperation(pair.getRight(), number, operation)
+							);
+				}
+
+				// Triple
+				if (nTuple instanceof Triple<?, ?, ?> triple) {
+					return Triple
+							.of(
+								applyOperation(triple.getLeft(), number, operation),
+								applyOperation(triple.getMiddle(), number, operation),
+								applyOperation(triple.getRight(), number, operation)
+							);
+				}
+
+				// Tuple as collection
+				if (nTuple instanceof Collection<?> collection) {
+					return Tuple.of((List<?>) CollectionUtils.applyOperation(collection, number, true, operation));
+				}
+			}
+
 			// Collection vs Number (scalar multiplication)
 			if (left instanceof Collection<?> collection) {
 				return CollectionUtils.applyOperation(collection, number, true, operation);
@@ -574,11 +1060,49 @@ public final class ObjectUtils {
 			return operation.apply(left, number);
 		}
 
+		// String vs any
+		if (left instanceof String string) {
+			return operation.apply(string, getNaftahValueToString(right));
+		}
+
+		// Character vs any
+		if (left instanceof Character character) {
+			return operation.apply(character, getNaftahValueToString(right));
+		}
+
+		// Collection vs Collection or Array (element-wise)
+		if (left instanceof NTuple nTuple1) {
+			if (right instanceof NTuple nTuple2) {
+				return NTuple.of(CollectionUtils.applyOperation(nTuple1.toArray(), nTuple2.toArray(), operation));
+			}
+
+			if (right instanceof Collection<?> collection2) {
+				return NTuple
+						.of(CollectionUtils
+								.applyOperation(nTuple1.toArray(),
+												collection2.toArray(Object[]::new),
+												operation));
+			}
+
+			if (right.getClass().isArray()) {
+				return NTuple
+						.of(CollectionUtils
+								.applyOperation(nTuple1.toArray(),
+												CollectionUtils.toObjectArray(right),
+												operation));
+			}
+		}
+
 		// Collection vs Collection or Array (element-wise)
 		if (left instanceof Collection<?> collection1) {
+			if (right instanceof NTuple nTuple) {
+				return CollectionUtils.applyOperation(collection1.toArray(), nTuple.toArray(), operation);
+			}
+
 			if (right instanceof Collection<?> collection2) {
 				return CollectionUtils.applyOperation(collection1, collection2, operation);
 			}
+
 			if (right.getClass().isArray()) {
 				return CollectionUtils
 						.applyOperation(collection1.toArray(Object[]::new),
@@ -595,6 +1119,14 @@ public final class ObjectUtils {
 										CollectionUtils.toObjectArray(right),
 										operation);
 			}
+
+			if (right instanceof NTuple nTuple) {
+				return CollectionUtils
+						.applyOperation(CollectionUtils.toObjectArray(left),
+										nTuple.toArray(),
+										operation);
+			}
+
 			if (right instanceof Collection<?> collection2) {
 				return CollectionUtils
 						.applyOperation(CollectionUtils.toObjectArray(left),
@@ -632,6 +1164,33 @@ public final class ObjectUtils {
 		if (NaN.isNaN(a) || None
 				.isNone(a) || a instanceof Number || a instanceof Boolean || a instanceof Character || a instanceof String) {
 			return operation.apply(a);
+		}
+
+		// NTuple
+		if (a instanceof NTuple nTuple) {
+			// Pair
+			if (nTuple instanceof Pair<?, ?> pair) {
+				return Pair
+						.of(
+							applyOperation(pair.getLeft(), operation),
+							applyOperation(pair.getRight(), operation)
+						);
+			}
+
+			// Triple
+			if (nTuple instanceof Triple<?, ?, ?> triple) {
+				return Triple
+						.of(
+							applyOperation(triple.getLeft(), operation),
+							applyOperation(triple.getMiddle(), operation),
+							applyOperation(triple.getRight(), operation)
+						);
+			}
+
+			// Tuple as collection
+			if (nTuple instanceof Collection<?> collection) {
+				return Tuple.of((List<?>) CollectionUtils.applyOperation(collection, operation));
+			}
 		}
 
 		// Collection
@@ -760,10 +1319,7 @@ public final class ObjectUtils {
 	 */
 	public static String numberToString(Number number) {
 		if (Boolean.getBoolean(ARABIC_NUMBER_FORMATTER_PROPERTY)) {
-			//noinspection SynchronizeOnNonFinalField
-			synchronized (ARABIC_NUMBER_FORMAT) {
-				return ARABIC_NUMBER_FORMAT.format(number);
-			}
+			return ARABIC_NUMBER_FORMAT.get().format(number);
 		}
 		else {
 			return latinNumberToArabicString(number);
@@ -792,9 +1348,13 @@ public final class ObjectUtils {
 	 * @param obj the object whose size is to be determined; may be {@code null}
 	 * @return the size or length of the given object, or {@code 0} if {@code null}
 	 */
-	public static int size(Object obj) {
-		if (obj == null) {
+	public static Number size(Object obj) {
+		if (obj == null || NaN.isNaN(obj) || None.isNone(obj)) {
 			return 0;
+		}
+
+		if (obj instanceof NaftahObject naftahObject) {
+			obj = naftahObject.get(true);
 		}
 
 		Class<?> clazz = obj.getClass();
@@ -805,18 +1365,18 @@ public final class ObjectUtils {
 		}
 
 		// Collection (List, Set, etc.)
-		if (obj instanceof Collection<?>) {
-			return ((Collection<?>) obj).size();
+		if (obj instanceof Collection<?> collection) {
+			return collection.size();
 		}
 
 		// Map
-		if (obj instanceof Map<?, ?>) {
-			return ((Map<?, ?>) obj).size();
+		if (obj instanceof Map<?, ?> map) {
+			return map.size();
 		}
 
 		// String
-		if (obj instanceof String) {
-			return ((String) obj).length();
+		if (obj instanceof String string) {
+			return string.length();
 		}
 
 		// Boxed primitives: Integer, Double, Boolean, etc.

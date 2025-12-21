@@ -1,9 +1,10 @@
-package org.daiitech.naftah.builtin.lang;
+package org.daiitech.naftah.utils.reflect;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.JvmFunction;
 
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinMethods;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getClassMethods;

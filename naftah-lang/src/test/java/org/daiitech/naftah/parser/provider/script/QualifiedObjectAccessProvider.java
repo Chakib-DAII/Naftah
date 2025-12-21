@@ -6,7 +6,8 @@ import java.util.stream.Stream;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
-import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -167,7 +168,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 											5488940234982179551L),
 								null),
 					Arguments.of(true, """
-										ثابت ديناميك_رقم تعيين أورغ:داعيتاك:نفطة:مدرجة_مدرجة:لغة:ديناميك_رقم(1)
+										ثابت ديناميك_رقم تعيين أورغ:داعيتاك:نفطه:مدرجة_مدرجة:لغة:ديناميك_رقم(1)
 
 
 										(
@@ -177,21 +178,21 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 										--- أمثلة على الوصول إلى الحقول باستخدام الأقواس المربعة []
 										ديناميك_رقم؟["قيمة"]
 										)
-										""", Tuple.of(1, 1), null),
+										""", Pair.of(1, 1), null),
 					Arguments
 							.of(true,
 								"""
-								ثابت قائمة تعيين جافا:أدة:صفائف_القائمة([1؛100؛0])
+								ثابت قائمة_ تعيين جافا:أدة:صفائف_القائمة([1؛100؛0])
 
 
 								(
 								--- أمثلة على الوصول المشروط والاختياري مع وجود علامات استفهام
-								قائمة:الحجم,
-								قائمة:عنصر_بيانات,
+								قائمة_:الحجم,
+								قائمة_:عنصر_بيانات,
 
 								--- أمثلة على الوصول إلى الحقول باستخدام الأقواس المربعة []
-								قائمة["الحجم"],
-								قائمة["عنصر_بيانات"]
+								قائمة_["الحجم"],
+								قائمة_["عنصر_بيانات"]
 								)
 								""",
 								Tuple

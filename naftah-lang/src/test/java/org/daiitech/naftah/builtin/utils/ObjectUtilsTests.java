@@ -18,6 +18,7 @@ import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.parser.LoopSignal;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -112,8 +113,8 @@ public class ObjectUtilsTests {
 					Arguments.of(BuiltinFunction.of(method, null, null), true),
 					Arguments.of(JvmFunction.of("equals", clazz, method), true),
 //				Arguments.of(DeclaredFunction.of(null), true),
-					Arguments.of(DeclaredParameter.of(null, "param", true, Object.class, null), true),
-					Arguments.of(DeclaredVariable.of(null, "var", false, Object.class, null), true),
+					Arguments.of(DeclaredParameter.of(-1, null, "param", true, JavaType.ofObject(), null), true),
+					Arguments.of(DeclaredVariable.of(-1, null, "var", false, JavaType.ofObject(), null), true),
 					Arguments.of(DynamicNumber.of(42), true),
 					Arguments.of(LoopSignal.LoopSignalDetails.of(LoopSignal.CONTINUE, null), true),
 					Arguments.of("a string", false),
@@ -158,8 +159,8 @@ public class ObjectUtilsTests {
 				.of(
 					Arguments.of(BuiltinFunction.of(method, null, null), true),
 					Arguments.of(JvmFunction.of("equals", clazz, method), true),
-					Arguments.of(DeclaredParameter.of(null, "param", true, Object.class, null), true),
-					Arguments.of(DeclaredVariable.of(null, "var", false, Object.class, null), true),
+					Arguments.of(DeclaredParameter.of(-1, null, "param", true, JavaType.ofObject(), null), true),
+					Arguments.of(DeclaredVariable.of(-1, null, "var", false, JavaType.ofObject(), null), true),
 					Arguments.of(DynamicNumber.of(42), true),
 					Arguments.of(LoopSignal.LoopSignalDetails.of(LoopSignal.CONTINUE, null), true),
 					Arguments.of("a string", true),

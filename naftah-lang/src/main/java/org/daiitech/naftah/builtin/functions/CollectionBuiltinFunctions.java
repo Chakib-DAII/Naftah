@@ -1,15 +1,21 @@
 package org.daiitech.naftah.builtin.functions;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Map;
 
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
+import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
+import static org.daiitech.naftah.errors.ExceptionUtils.newIllegalArgumentException;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
@@ -824,7 +830,7 @@ public final class CollectionBuiltinFunctions {
 				parameterTypes = {Collection.class, Number.class},
 				returnType = Object.class
 	)
-	public static <I extends Number> Object getElementAt(Collection<?> collection, I targetIndex) {
+	public static <I extends Number, T> Object getElementAt(Collection<T> collection, I targetIndex) {
 		return CollectionUtils.getElementAt(collection, targetIndex.intValue());
 	}
 
@@ -839,7 +845,7 @@ public final class CollectionBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "تعيين_عنصر",
-				aliases = {"تعيين", "استبدال_عنصر"},
+				aliases = {"استبدال_عنصر"},
 				description = "استبدال عنصر في مجموعة عند فهرس معين.",
 				usage = """
 						دوال:الحزم::تعيين_عنصر([1 , 2 , 3], 1 , 99)
@@ -853,7 +859,228 @@ public final class CollectionBuiltinFunctions {
 	}
 
 	/**
-	 * Checks if at least one of the two parameters is a collection, map, or array.
+	 * Removes an element from a collection at a given index.
+	 *
+	 * @param collection  the collection to modify
+	 * @param targetIndex index of the element to remove
+	 * @param <T>         type of element
+	 * @param <I>         type of index
+	 */
+	@NaftahFn(
+				name = "حذف_عنصر_عند_فهرس",
+				aliases = {"حذف_عنصر", "ازالة_عنصر_عند_فهرس"},
+				description = "يزيل عنصراً من المجموعة عند فهرس معين.",
+				usage = """
+						دوال:الحزم::حذف_عنصر_عند_فهرس([1 , 2 , 3], 1)
+						دوال:الحزم::حذف_عنصر_عند_فهرس({1 , 2}, 0)
+						""",
+				parameterTypes = {Collection.class, Number.class},
+				returnType = void.class
+	)
+	public static <I extends Number, T> Object removeElementAt(Collection<T> collection, I targetIndex) {
+		return CollectionUtils.removeElementAt(collection, targetIndex.intValue());
+	}
+
+	/**
+	 * Checks if a tuple, collection, map, or array contains a specific element.
+	 *
+	 * @param x       collection, map, or array to check
+	 * @param element element to look for
+	 * @param <T>     type of collection/map/array
+	 * @return true if the element is found, false otherwise
+	 */
+	@NaftahFn(
+				name = "يحتوي_عنصر",
+				aliases = {"يحتوي", "تواجد_عنصر"},
+				description = "يتحقق مما إذا كانت مجموعة أو خريطة أو مصفوفة تحتوي على عنصر معين.",
+				usage = """
+						دوال:الحزم::يحتوي_عنصر([1 , 2 , 3], 2)
+						دوال:الحزم::يحتوي_عنصر({ 'a': 1, 'b': 2 }, 2)
+						""",
+				parameterTypes = {Object.class, Object.class},
+				returnType = boolean.class
+	)
+	public static <T> boolean containsElement(T x, Object element) {
+		checkParam(x);
+		if (x instanceof NTuple nTuple) {
+			return nTuple.contains(element);
+		}
+		else if (x instanceof Collection<?> collection) {
+			return collection.contains(element);
+		}
+		else if (x instanceof Map<?, ?> map) {
+			return map.containsValue(element);
+		}
+		else {
+			int length = Array.getLength(x);
+			for (int i = 0; i < length; i++) {
+				Object item = Array.get(x, i);
+				if (ObjectUtils.equals(item, element, true)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Checks if a map contains a specific key.
+	 *
+	 * @param map the map to check
+	 * @param key the key to look for
+	 * @param <K> type of the key
+	 * @param <V> type of the value
+	 * @return true if the map contains the key, false otherwise
+	 */
+	@NaftahFn(
+				name = "يحتوي_مفتاح",
+				aliases = {"يحتوي_على_مفتاح", "تواجد_مفتاح"},
+				description = "يتحقق مما إذا كانت الخريطة تحتوي على مفتاح معين.",
+				usage = """
+						دوال:الحزم::يحتوي_مفتاح({'a': 1, 'b': 2}, 'a')
+						دوال:الحزم::يحتوي_مفتاح({'x': 10}, 'y')
+						""",
+				parameterTypes = {Map.class, Object.class},
+				returnType = boolean.class
+	)
+	public static <K, V> boolean containsKey(Map<K, V> map, K key) {
+		checkParam(map);
+		return map.containsKey(key);
+	}
+
+	/**
+	 * Adds an element to a collection or a map.
+	 *
+	 * @param x       collection or map to modify
+	 * @param element element to add
+	 * @return true if the collection/map was modified
+	 */
+	@NaftahFn(
+				name = "اضافة_عنصر",
+				aliases = {"اضافة", "ادراج_عنصر"},
+				description = "يضيف عنصراً إلى المجموعة أو قيمة إلى الخريطة.",
+				usage = """
+						دوال:الحزم::اضافة_عنصر([1 , 2], 3)
+						دوال:الحزم::اضافة_عنصر({'a': 1}, 2)
+						""",
+				parameterTypes = {Object.class, Object.class},
+				returnType = boolean.class
+	)
+	public static boolean addElement(Object x, Object element) {
+		if (x instanceof NaftahObject naftahObject) {
+			x = naftahObject.get(true);
+		}
+		if (element instanceof NaftahObject naftahObject) {
+			element = naftahObject.get(true);
+		}
+		checkParam(x);
+		if (x instanceof Collection<?> collection) {
+			//noinspection unchecked
+			return ((Collection<? super Object>) collection).add(element);
+		}
+		else if (x instanceof Map<?, ?> map && element instanceof Map.Entry<?, ?> entry) {
+			//noinspection unchecked
+			((Map<? super Object, ? super Object>) map).put(entry.getKey(), entry.getValue());
+			return true;
+		}
+		throw newIllegalArgumentException(x, element);
+	}
+
+	/**
+	 * Removes an element from a collection or a map.
+	 *
+	 * @param x       collection or map to modify
+	 * @param element element to remove
+	 * @return true if the collection/map was modified
+	 */
+	@NaftahFn(
+				name = "حذف_عنصر",
+				aliases = {"حذف", "ازالة_عنصر"},
+				description = "يزيل عنصراً من المجموعة أو الخريطة.",
+				usage = """
+						دوال:الحزم::حذف_عنصر([1 , 2 , 3], 2)
+						دوال:الحزم::حذف_عنصر({'a': 1, 'b': 2}, 2)
+						""",
+				parameterTypes = {Object.class, Object.class},
+				returnType = boolean.class
+	)
+	public static boolean removeElement(Object x, Object element) {
+		if (x instanceof NaftahObject naftahObject) {
+			x = naftahObject.get(true);
+		}
+		if (element instanceof NaftahObject naftahObject) {
+			element = naftahObject.get(true);
+		}
+		checkParam(x);
+		if (x instanceof Collection<?> collection) {
+			return collection.remove(element);
+		}
+		else if (x instanceof Map<?, ?> map) {
+			//noinspection unchecked
+			((Map<? super Object, ? super Object>) map).remove(element);
+			return true;
+		}
+		throw newIllegalArgumentException(x, element);
+	}
+
+	/**
+	 * Retains only the elements in a collection that are contained in another collection.
+	 *
+	 * @param collection      the collection to modify
+	 * @param otherCollection collection with elements to retain
+	 * @return true if the collection was modified
+	 */
+	@NaftahFn(
+				name = "الاحتفاظ_بالعناصر",
+				aliases = {"احتفاظ", "احتفظ_بالعناصر"},
+				description = "يحتفظ بالعناصر الموجودة في مجموعة أخرى ويزيل الباقي.",
+				usage = """
+						دوال:الحزم::الاحتفاظ_بالعناصر([1 , 2 , 3], [2, 3, 4])
+						""",
+				parameterTypes = {Collection.class, Collection.class},
+				returnType = boolean.class
+	)
+	public static <T> boolean retainElements(Collection<T> collection, Collection<T> otherCollection) {
+		return collection.retainAll(otherCollection);
+	}
+
+	/**
+	 * Clears all elements from a collection, map, or array.
+	 *
+	 * @param x the collection, map, or array to clear
+	 */
+	@NaftahFn(
+				name = "مسح_المجموعة",
+				aliases = {"مسح", "افراغ_المجموعة"},
+				description = "يمسح جميع العناصر من المجموعة أو الخريطة أو يملأ المصفوفة بالقيم الافتراضية.",
+				usage = """
+						دوال:الحزم::مسح_المجموعة([1 , 2 , 3])
+						دوال:الحزم::مسح_المجموعة({'a': 1, 'b': 2})
+						""",
+				parameterTypes = {Object.class},
+				returnType = void.class
+	)
+	public static void clearCollection(Object x) {
+		checkParam(x);
+		if (x instanceof Collection<?> collection) {
+			collection.clear();
+		}
+		else if (x instanceof Map<?, ?> map) {
+			map.clear();
+		}
+		else if (x != null && x.getClass().isArray()) {
+			int length = Array.getLength(x);
+			for (int i = 0; i < length; i++) {
+				Array.set(x, i, null);
+			}
+		}
+		else {
+			throw newIllegalArgumentException(x);
+		}
+	}
+
+	/**
+	 * Checks if at least one of the two parameters is a tuple, collection, map, or array.
 	 * Throws a NaftahBugError with an Arabic message if the check fails.
 	 *
 	 * @param left  first value to check
@@ -862,13 +1089,14 @@ public final class CollectionBuiltinFunctions {
 	 * @throws NaftahBugError if neither left nor right is a collection, map, or array
 	 */
 	private static <T> void checkParams(T left, T right) {
-		if (!(CollectionUtils.isCollectionMapOrArray(left) || CollectionUtils.isCollectionMapOrArray(right))) {
+		if (!(CollectionUtils.isCollectionMapOrArrayOrTuple(left) || CollectionUtils
+				.isCollectionMapOrArrayOrTuple(right))) {
 			throw newNaftahNotCollectionOrMapArgumentError(false);
 		}
 	}
 
 	/**
-	 * Checks if the parameter is a collection, map, or array.
+	 * Checks if the parameter is a tuple, collection, map, or array.
 	 * Throws a NaftahBugError with an Arabic message if the check fails.
 	 *
 	 * @param x   value to check
@@ -876,7 +1104,7 @@ public final class CollectionBuiltinFunctions {
 	 * @throws NaftahBugError if x is not a collection, map, or array
 	 */
 	private static <T> void checkParam(T x) {
-		if (!CollectionUtils.isCollectionMapOrArray(x)) {
+		if (!CollectionUtils.isCollectionMapOrArrayOrTuple(x)) {
 			throw newNaftahNotCollectionOrMapArgumentError(true);
 		}
 	}

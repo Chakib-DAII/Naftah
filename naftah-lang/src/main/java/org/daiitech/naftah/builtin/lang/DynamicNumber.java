@@ -9,6 +9,7 @@ import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputError;
+import static org.daiitech.naftah.utils.reflect.ClassUtils.normalizePrimitive;
 
 /**
  * A wrapper class for numeric values that supports dynamic typing and
@@ -120,6 +121,106 @@ public class DynamicNumber extends Number implements Comparable<DynamicNumber>, 
 			return Float.isInfinite(f);
 		}
 		return false;
+	}
+
+	/**
+	 * Determines whether a value of the given runtime class can be assigned to
+	 * a target type using relaxed numeric and primitive compatibility rules.
+	 *
+	 * <p>This method extends {@link Class#isAssignableFrom(Class)} semantics by:</p>
+	 * <ul>
+	 * <li>Normalizing primitive types to their boxed equivalents</li>
+	 * <li>Allowing numeric widening conversions between {@link Number} types
+	 * based on a predefined numeric rank hierarchy</li>
+	 * </ul>
+	 *
+	 * <p>Two types are considered compatible if:</p>
+	 * <ul>
+	 * <li>They are equal after primitive normalization, or</li>
+	 * <li>Both are subclasses of {@link Number} and the value type’s numeric rank
+	 * is less than or equal to the target type’s numeric rank</li>
+	 * </ul>
+	 *
+	 * <p>If either {@code valueClass} or {@code targetType} is {@code null},
+	 * this method returns {@code false}.</p>
+	 *
+	 * @param valueClass
+	 *                   the runtime class of the value being assigned
+	 * @param targetType
+	 *                   the desired target type
+	 *
+	 * @return
+	 *         {@code true} if a value of {@code valueClass} can be assigned to
+	 *         {@code targetType} under these rules; {@code false} otherwise
+	 */
+	public static boolean isAssignableFrom(Class<?> valueClass, Class<?> targetType) {
+		if (valueClass == null || targetType == null) {
+			return false;
+		}
+
+		// Normalize primitives to wrappers
+		targetType = normalizePrimitive(targetType);
+		valueClass = normalizePrimitive(valueClass);
+
+		if (valueClass.equals(targetType)) {
+			return true;
+		}
+
+		if (Number.class.isAssignableFrom(valueClass) && Number.class.isAssignableFrom(targetType)) {
+			// Widening hierarchy: Byte < Short < Integer < Long < BigInteger < Float < Double < BigDecimal
+			int valueRank = numericRank(valueClass);
+			int targetRank = numericRank(targetType);
+			return valueRank <= targetRank;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns the numeric rank of a class to determine widening order.
+	 * <p>
+	 * The hierarchy is:
+	 * <pre>
+	 * Byte: 1
+	 * Short: 2
+	 * Integer: 3
+	 * Long: 4
+	 * BigInteger: 5
+	 * Float: 6
+	 * Double: 7
+	 * BigDecimal: 8
+	 * </pre>
+	 * Any unknown numeric class returns {@link Integer#MAX_VALUE}.
+	 *
+	 * @param clazz the numeric class
+	 * @return the rank of the numeric type
+	 */
+	private static int numericRank(Class<?> clazz) {
+		if (clazz == Byte.class) {
+			return 1;
+		}
+		if (clazz == Short.class) {
+			return 2;
+		}
+		if (clazz == Integer.class) {
+			return 3;
+		}
+		if (clazz == Long.class) {
+			return 4;
+		}
+		if (clazz == BigInteger.class) {
+			return 5;
+		}
+		if (clazz == Float.class) {
+			return 6;
+		}
+		if (clazz == Double.class) {
+			return 7;
+		}
+		if (clazz == BigDecimal.class) {
+			return 8;
+		}
+		return Integer.MAX_VALUE; // unknown numeric type
 	}
 
 	/**
@@ -303,7 +404,7 @@ public class DynamicNumber extends Number implements Comparable<DynamicNumber>, 
 	 */
 	public DynamicNumber set(Number value) {
 		if (value == null) {
-			throw newNaftahBugNullInputError(true, value);
+			throw newNaftahBugNullInputError(true, (Object) null);
 		}
 		this.value = value instanceof DynamicNumber dynamicNumber ? dynamicNumber.value : value;
 		return this;
@@ -563,5 +664,24 @@ public class DynamicNumber extends Number implements Comparable<DynamicNumber>, 
 							@SuppressWarnings("NullableProblems")
 							DynamicNumber anotherDynamicNumber) {
 		return NumberUtils.compare(this, anotherDynamicNumber);
+	}
+
+	/**
+	 * Checks if the current numeric value can be assigned to the specified target type.
+	 * <p>
+	 * This is a strict numeric assignability check for {@link Number} values.
+	 * It allows "widening" conversions only, according to the following hierarchy:
+	 * <pre>
+	 * Byte &lt; Short &lt; Integer &lt; Long &lt; BigInteger &lt; Float &lt; Double &lt; BigDecimal
+	 * </pre>
+	 * For example, a {@code Byte} value can be assigned to {@code Integer}, but an
+	 * {@code Integer} value cannot be assigned to {@code Byte}.
+	 * </p>
+	 *
+	 * @param targetType the target {@link Class} to check against; must not be null
+	 * @return {@code true} if the value can be safely assigned to {@code targetType}, {@code false} otherwise
+	 */
+	public boolean isAssignableFrom(Class<?> targetType) {
+		return isAssignableFrom(this.normalize().value.getClass(), targetType);
 	}
 }

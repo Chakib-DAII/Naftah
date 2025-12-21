@@ -7,7 +7,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.daiitech.naftah.builtin.utils.Tuple;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -47,29 +48,29 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 																																			1))))))))),
 								null),
 					Arguments.of(true, "()", Tuple.of(), null),
-					Arguments.of(true, "(٣٢، ٤٥)", Tuple.of(32, 45), null),
+					Arguments.of(true, "(٣٢، ٤٥)", Pair.of(32, 45), null),
 					Arguments.of(true, "(٣٢،)", Tuple.of(32), null),
 					Arguments.of(true, "(٣٢؛)", Tuple.of(32), null),
 					Arguments
 							.of(true,
 								"(١٠، (٩، (٨، (٧، (٦، (٥، (٤، (٣، (٢، ١)))))))))",
-								Tuple
+								Pair
 										.of(10,
-											Tuple
+											Pair
 													.of(9,
-														Tuple
+														Pair
 																.of(8,
-																	Tuple
+																	Pair
 																			.of(7,
-																				Tuple
+																				Pair
 																						.of(6,
-																							Tuple
+																							Pair
 																									.of(5,
-																										Tuple
+																										Pair
 																												.of(4,
-																													Tuple
+																													Pair
 																															.of(3,
-																																Tuple
+																																Pair
 																																		.of(2,
 																																			1))))))
 																))),
@@ -191,7 +192,7 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 						{
 							put("الاسم", "سارة");
 							put("العناوين", List.of("المنزل", "العمل"));
-							put("الأرقام", Tuple.of(1001, 2002));
+							put("الأرقام", Pair.of(1001, 2002));
 						}
 					}, null),
 					Arguments.of(true, "2 * [٨٥، ٩٠، ٧٨، ٩٢]", List.of(170, 180, 156, 184), null),

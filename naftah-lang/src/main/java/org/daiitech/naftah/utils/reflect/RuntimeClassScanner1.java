@@ -17,7 +17,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import org.daiitech.naftah.builtin.lang.ScannedClass;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;

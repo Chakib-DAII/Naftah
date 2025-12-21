@@ -8,9 +8,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.JvmExecutable;
+import org.daiitech.naftah.builtin.utils.CollectionUtils;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
@@ -207,10 +209,12 @@ public final class ExceptionUtils {
 											.formatted( number,
 														Objects.isNull(PARSER_VOCABULARY) ?
 																getQualifiedName(number.getClass().getName()) :
-																getNaftahType(PARSER_VOCABULARY, number.getClass()),
+																getNaftahType(  PARSER_VOCABULARY,
+																				JavaType.of(number.getClass())),
 														Objects.isNull(PARSER_VOCABULARY) ?
 																getQualifiedName(targetClass.getName()) :
-																getNaftahType(PARSER_VOCABULARY, targetClass),
+																getNaftahType(  PARSER_VOCABULARY,
+																				JavaType.of(targetClass)),
 														overflow ? "بسبب: تجاوز السعة" : ""));
 	}
 
@@ -269,10 +273,11 @@ public final class ExceptionUtils {
 		return new NaftahBugError(  "قيمة رقمية غير صالحة: '%s' في النظام العددي %d"
 											.formatted(
 														object instanceof Pair<?, ?> pair ?
-																(!pair.b.equals(pair.a) ?
+																(!pair.getRight().equals(pair.getLeft()) ?
 																		"%s ← %s"
-																				.formatted(pair.b, pair.a) :
-																		pair.a) :
+																				.formatted( pair.getRight(),
+																							pair.getLeft()) :
+																		pair.getLeft()) :
 																object,
 														radix),
 									exception);
@@ -292,10 +297,10 @@ public final class ExceptionUtils {
 				.stream(dn)
 				.map(dynamicNumber -> Objects.isNull(PARSER_VOCABULARY) ?
 						getQualifiedName(dynamicNumber.get().getClass().getName()) :
-						getNaftahType(PARSER_VOCABULARY, dynamicNumber.get().getClass()))
+						getNaftahType(PARSER_VOCABULARY, JavaType.of(dynamicNumber.get().getClass())))
 				.toArray(String[]::new);
 		return new NaftahBugError((singleInput ? "نوع الرقم غير مدعوم: '%s'" : "أنواع الأرقام غير مدعومة: '%s'، '%s'")
-				.formatted((Object[]) args));
+				.formatted(CollectionUtils.toObjectArray(args)));
 	}
 
 
@@ -496,6 +501,18 @@ public final class ExceptionUtils {
 											.formatted(functionName),
 									line,
 									column);
+	}
+
+	/**
+	 * Creates a new {@link NaftahBugError} for a missing invocable
+	 * without specifying source line or column.
+	 *
+	 * @param functionName the name of the missing invocable (method or constructor)
+	 * @return never returns normally; this method always creates a {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate a missing invocable
+	 */
+	public static NaftahBugError newNaftahInvocableNotFoundError(String functionName) {
+		return newNaftahInvocableNotFoundError(functionName, -1, -1);
 	}
 
 	/**
@@ -716,5 +733,76 @@ public final class ExceptionUtils {
 											JVM ignored reflective write to constant field '%s'.
 											"""
 													.formatted(fieldName));
+	}
+
+	/**
+	 * Creates a {@link NaftahBugError} representing a type-mismatch error with
+	 * source location information.
+	 *
+	 * <p>This overload is used when the type mismatch can be associated with a
+	 * specific position in the source code (line and column).</p>
+	 *
+	 * <p>The generated error message is localized (Arabic) and indicates that
+	 * the provided value does not match the expected type.</p>
+	 *
+	 * @param name   the name of the value, variable, or parameter that caused the mismatch
+	 * @param type   the expected type description (usually produced by the Naftah type system)
+	 * @param line   the source line number where the error occurred, or {@code -1} if unknown
+	 * @param column the character position in the line where the error occurred, or {@code -1} if unknown
+	 * @return a {@link NaftahBugError} describing the type mismatch
+	 */
+	public static NaftahBugError newNaftahTypeMismatchError(String name, String type, int line, int column) {
+		return new NaftahBugError("القيمة '%s' لا تتوافق مع النوع المتوقع (%s)."
+				.formatted(name, type), line, column);
+	}
+
+	/**
+	 * Creates an {@link IllegalArgumentException} indicating that a value has an
+	 * unsupported runtime type.
+	 *
+	 * <p>The generated error message is localized (Arabic) and includes the fully
+	 * qualified class name of the offending object when available. If the provided
+	 * object is {@code null}, the message explicitly reports {@code null} as the
+	 * unsupported type.</p>
+	 *
+	 * <p>This exception does not include source location information and is intended
+	 * for internal runtime type validation failures.</p>
+	 *
+	 * @param object the object whose runtime type is unsupported; may be {@code null}
+	 * @return an {@link IllegalArgumentException} describing the unsupported type
+	 */
+	public static IllegalArgumentException newIllegalArgumentException(Object object) {
+		return new IllegalArgumentException("نوع غير مدعوم: " + (Objects.isNull(object) ?
+				null :
+				object.getClass().getName()));
+	}
+
+	/**
+	 * Creates an {@link IllegalArgumentException} indicating that a combination of
+	 * values has unsupported or incompatible runtime types.
+	 *
+	 * <p>The generated error message is localized (Arabic) and includes the fully
+	 * qualified class names of both offending objects when available. If either
+	 * object is {@code null}, {@code null} is reported explicitly for that position
+	 * in the message.</p>
+	 *
+	 * <p>This overload is typically used when validating operations involving two
+	 * operands whose runtime types are unsupported or incompatible in combination.</p>
+	 *
+	 * <p>This exception does not include source location information and is intended
+	 * for internal runtime type validation failures.</p>
+	 *
+	 * @param object  the first object with an unsupported runtime type; may be {@code null}
+	 * @param object1 the second object with an unsupported runtime type; may be {@code null}
+	 * @return an {@link IllegalArgumentException} describing the unsupported types
+	 */
+	public static IllegalArgumentException newIllegalArgumentException(Object object, Object object1) {
+		return new IllegalArgumentException("نوع غير مدعوم: %s, %s"
+				.formatted( Objects.isNull(object) ?
+									null :
+									object.getClass().getName(),
+							Objects.isNull(object1) ?
+									null :
+									object1.getClass().getName()));
 	}
 }

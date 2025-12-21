@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -77,7 +78,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								List
 										.of(
 											List.of(1, 0),
-											List.of(-1, -2)
+											Pair.of(-1, -2)
 										),
 								null
 							),
@@ -88,15 +89,15 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								إجلب جافا:أدة:اختياري::[وف تحت_إسم من_خلال, گت مثل خذ , أو_لس تحت_إسم أو_خذ , وف_فارغابل تحت_إسم من_فارغ]
 								[
 								من_خلال(10):::خذ() ،
-								من_فارغ(فارغ):::أو_خذ("لغة نفطة") ،
+								من_فارغ(فارغ):::أو_خذ("لغة نفطه") ،
 								]
-									""",
+								""",
 
 								List
 										.of(
 
 											NaftahObject.of(10),
-											NaftahObject.of("لغة نفطة")
+											NaftahObject.of("لغة نفطه")
 										),
 								null
 							),
@@ -106,7 +107,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								"""
 								إجلب جافا:أدة:اختياري::وف تحت_إسم من_خلال
 								من_خلال(10):::گت()
-									""",
+								""",
 
 								NaftahObject.of(10),
 								null
@@ -122,7 +123,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 								@سلسلة("مرحبا"):::سلسلة_فرعية(1؛3) ،
 								@سلسلة("مرحبا"):::إلى_سلسلة() ،
 								]
-									""",
+								""",
 								List
 										.of(
 											NaftahObject.of(5),
@@ -136,13 +137,13 @@ public class ImportStatementProvider implements ArgumentsProvider {
 							.of(
 								true,
 								"""
-								إجلب جافا:أدة:[صفائف_القائمة تحت_إسم قائمة , صفائف_القائمة::إضافة مثل إضافة ، صفائف_القائمة::گت تحت_إسم خذ ، صفائف_القائمة::الحجم تحت_إسم الحجم]
+								إجلب جافا:أدة:[صفائف_القائمة تحت_إسم قائمة_ , صفائف_القائمة::إضافة مثل إضافة ، صفائف_القائمة::گت تحت_إسم خذ ، صفائف_القائمة::الحجم تحت_إسم الحجم]
 								[
-								@قائمة([1؛100؛0])::إضافة(100) ،
-								@قائمة([1؛100؛0])::خذ(0) ،
-								@قائمة([1؛100؛0])::الحجم() ،
+								@قائمة_([1؛100؛0])::إضافة(100) ،
+								@قائمة_([1؛100؛0])::خذ(0) ،
+								@قائمة_([1؛100؛0])::الحجم() ،
 								]
-									""",
+								""",
 
 								List
 										.of(
@@ -156,9 +157,9 @@ public class ImportStatementProvider implements ArgumentsProvider {
 							.of(
 								true,
 								"""
-								إجلب جافا:لغة:كائن تحت_إسم كائن
-								@كائن() لا_يساوي فارغ
-									""",
+								إجلب جافا:لغة:كائن_ تحت_إسم كائن_
+								@كائن_() لا_يساوي فارغ
+								""",
 								true,
 								null
 							),
@@ -170,7 +171,7 @@ public class ImportStatementProvider implements ArgumentsProvider {
 
 								ثابت معرف_مستخدم : معرف_مستخدم تعيين @معرف_مستخدم(6161415689025233999؛5488940234982179551)
 								معرف_مستخدم
-									""",
+								""",
 								NaftahObject.of(new UUID(6161415689025233999L, 5488940234982179551L)),
 								null
 							)

@@ -7,8 +7,8 @@ import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.antlr.v4.runtime.misc.Pair;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static java.math.MathContext.DECIMAL128;
@@ -235,7 +235,7 @@ public final class NumberUtils {
 			throw radix == 10 ?
 					newNaftahBugInvalidNumberValueError(text, ex) :
 					newNaftahBugInvalidNumberValueError(Objects.nonNull(originalText) ?
-							new Pair<>(text, originalText) :
+							ImmutablePair.of(text, originalText) :
 							text, radix, ex);
 		}
 		return dx;

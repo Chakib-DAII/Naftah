@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import org.antlr.v4.runtime.misc.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 
@@ -163,7 +163,7 @@ public final class ObjectAccessUtils {
 				InvocationUtils
 						.invokeJvmExecutable(   target,
 												setter,
-												List.of(new Pair<>(null, value)),
+												List.of(ImmutablePair.of(null, value)),
 												setter.getReturnType(),
 												false);
 				return true;

@@ -1,0 +1,10 @@
+# Memory
+-Xms50m                     # initial heap size
+-Xmx1G                       # maximum heap size
+-Xss512k                      # thread stack size
+
+# Garbage Collector
+-XX:+UseG1GC                 # enable G1 garbage collector
+-XX:MaxGCPauseMillis=200     # target max GC pause in ms
+-XX:InitiatingHeapOccupancyPercent=45  # start concurrent GC at 45% heap usage
+-XX:+ParallelRefProcEnabled  # parallel processing of references during GC

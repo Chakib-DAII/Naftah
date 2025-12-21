@@ -8,7 +8,8 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Pair;
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.utils.repl.BaseHighlighter;
 import org.jline.reader.EOFError;
 import org.jline.reader.Highlighter;
@@ -94,7 +95,7 @@ public class SyntaxHighlighter extends BaseHighlighter {
 			// Add unmatched text before this token
 			if (tokenStartIndex > lastIndex && lastIndex >= 0 && tokenStartIndex <= buffer.length()) {
 				String gapText = buffer.substring(lastIndex, tokenStartIndex);
-				styledSegments.add(new Pair<>(gapText, AttributedStyle.DEFAULT));
+				styledSegments.add(ImmutablePair.of(gapText, AttributedStyle.DEFAULT));
 			}
 
 			AttributedStyle style = getStyleForTokenType(type);
@@ -109,14 +110,14 @@ public class SyntaxHighlighter extends BaseHighlighter {
 				}
 			}
 
-			styledSegments.add(new Pair<>(shaped, style));
+			styledSegments.add(ImmutablePair.of(shaped, style));
 			lastIndex = tokenStopIndex + 1;
 		}
 
 		// Add any unmatched trailing text after the last token
 		if (lastIndex < buffer.length()) {
 			String trailingText = buffer.substring(lastIndex);
-			styledSegments.add(new Pair<>(trailingText, AttributedStyle.DEFAULT));
+			styledSegments.add(ImmutablePair.of(trailingText, AttributedStyle.DEFAULT));
 		}
 
 		if (shouldReshape()) {
@@ -126,7 +127,7 @@ public class SyntaxHighlighter extends BaseHighlighter {
 
 		// Build lines with wrapping and right-alignment
 		for (Pair<CharSequence, AttributedStyle> part : styledSegments) {
-			AttributedString fragment = new AttributedString(part.a.toString(), part.b);
+			AttributedString fragment = new AttributedString(part.getLeft().toString(), part.getRight());
 			int fragWidth = fragment.columnLength();
 
 			if (currentLineWidth + fragWidth > terminalWidth) {
@@ -175,14 +176,24 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.UNTIL, org.daiitech.naftah.parser.NaftahLexer.WHILE,
 					org.daiitech.naftah.parser.NaftahLexer.CASE, org.daiitech.naftah.parser.NaftahLexer.OF,
 					org.daiitech.naftah.parser.NaftahLexer.TRY, org.daiitech.naftah.parser.NaftahLexer.ARROW,
-					org.daiitech.naftah.parser.NaftahLexer.IMPORT, org.daiitech.naftah.parser.NaftahLexer.AS ->
+					org.daiitech.naftah.parser.NaftahLexer.IMPORT, org.daiitech.naftah.parser.NaftahLexer.AS,
+					org.daiitech.naftah.parser.NaftahLexer.ASYNC, org.daiitech.naftah.parser.NaftahLexer.SPAWN,
+					org.daiitech.naftah.parser.NaftahLexer.AWAIT, org.daiitech.naftah.parser.NaftahLexer.SCOPE,
+					org.daiitech.naftah.parser.NaftahLexer.CHANNEL, org.daiitech.naftah.parser.NaftahLexer.ACTOR,
+					org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
+					org.daiitech.naftah.parser.NaftahLexer.SELF ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.BLUE);
 			case org.daiitech.naftah.parser.NaftahLexer.VAR, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN,
 					org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, org.daiitech.naftah.parser.NaftahLexer.CHAR,
 					org.daiitech.naftah.parser.NaftahLexer.BYTE, org.daiitech.naftah.parser.NaftahLexer.SHORT,
-					org.daiitech.naftah.parser.NaftahLexer.INT, org.daiitech.naftah.parser.NaftahLexer.LONG,
-					org.daiitech.naftah.parser.NaftahLexer.FLOAT, org.daiitech.naftah.parser.NaftahLexer.DOUBLE ->
-				AttributedStyle.BOLD.foreground(AttributedStyle.MAGENTA);
+					org.daiitech.naftah.parser.NaftahLexer.INT, org.daiitech.naftah.parser.NaftahLexer.BIG_INT,
+					org.daiitech.naftah.parser.NaftahLexer.LONG, org.daiitech.naftah.parser.NaftahLexer.FLOAT,
+					org.daiitech.naftah.parser.NaftahLexer.DOUBLE, org.daiitech.naftah.parser.NaftahLexer.BIG_DECIMAL,
+					org.daiitech.naftah.parser.NaftahLexer.VAR_NUMBER, org.daiitech.naftah.parser.NaftahLexer.STRUCT,
+					org.daiitech.naftah.parser.NaftahLexer.PAIR, org.daiitech.naftah.parser.NaftahLexer.LIST,
+					org.daiitech.naftah.parser.NaftahLexer.TUPLE, org.daiitech.naftah.parser.NaftahLexer.SET,
+					org.daiitech.naftah.parser.NaftahLexer.MAP -> AttributedStyle.BOLD
+							.foreground(AttributedStyle.MAGENTA);
 			case org.daiitech.naftah.parser.NaftahLexer.CHARACTER, org.daiitech.naftah.parser.NaftahLexer.STRING,
 					org.daiitech.naftah.parser.NaftahLexer.NUMBER, org.daiitech.naftah.parser.NaftahLexer.BASE_DIGITS,
 					org.daiitech.naftah.parser.NaftahLexer.TRUE, org.daiitech.naftah.parser.NaftahLexer.FALSE ->
@@ -211,8 +222,8 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.RAW, org.daiitech.naftah.parser.NaftahLexer.BYTE_ARRAY,
 					org.daiitech.naftah.parser.NaftahLexer.OK, org.daiitech.naftah.parser.NaftahLexer.ERROR,
 					org.daiitech.naftah.parser.NaftahLexer.SOME, org.daiitech.naftah.parser.NaftahLexer.NONE,
-					org.daiitech.naftah.parser.NaftahLexer.ORDERED ->
-				AttributedStyle.BOLD.foreground(AttributedStyle.RED);
+					org.daiitech.naftah.parser.NaftahLexer.ORDERED -> AttributedStyle.BOLD
+							.foreground(AttributedStyle.RED);
 			case org.daiitech.naftah.parser.NaftahLexer.LPAREN, org.daiitech.naftah.parser.NaftahLexer.RPAREN,
 					org.daiitech.naftah.parser.NaftahLexer.LBRACE, org.daiitech.naftah.parser.NaftahLexer.RBRACE,
 					org.daiitech.naftah.parser.NaftahLexer.LBRACK, org.daiitech.naftah.parser.NaftahLexer.RBRACK,
@@ -226,7 +237,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.HASH_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.AT_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.DOLLAR_SIGN,
-					org.daiitech.naftah.parser.NaftahLexer.STAR_SIGN ->
+					org.daiitech.naftah.parser.NaftahLexer.STAR_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.LT_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.GT_SIGN ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.CYAN);
 			case org.daiitech.naftah.parser.NaftahLexer.ID -> AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW);
 			default -> AttributedStyle.BOLD.foreground(AttributedStyle.WHITE);

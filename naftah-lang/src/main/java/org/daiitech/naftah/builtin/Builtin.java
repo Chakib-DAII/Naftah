@@ -9,13 +9,16 @@ import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 
 import static org.daiitech.naftah.builtin.utils.FunctionUtils.allMatch;
 import static org.daiitech.naftah.builtin.utils.FunctionUtils.reduce;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.applyOperation;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 
@@ -80,7 +83,10 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 										"قسمة_عنصر_ب_عنصر",
 										"باقي_القسمة_عنصر_ب_عنصر",
 										"عكس_الإشارة",
-										"نفي_منطقي"
+										"نفي_منطقي",
+										"حجم",
+										"نوع",
+										"مثيل_من"
 					})
 public final class Builtin {
 
@@ -1011,6 +1017,26 @@ public final class Builtin {
 		return reduce(applyOperation(x, UnaryOperation.NOT), BinaryOperation.ADD::apply);
 	}
 
+	/**
+	 * Parses a textual number according to a specified dynamic numeric system (radix)
+	 * and returns the most appropriate numeric type.
+	 *
+	 * <p>This method handles numeric strings containing Arabic digits and converts
+	 * them to Latin digits before parsing. The returned {@link Number} type depends
+	 * on the input value and the specified radix.</p>
+	 *
+	 * <p>Example usage:</p>
+	 * <pre>{@code
+	 * DynamicNumber radix = DynamicNumber.DECIMAL;
+	 * Number n = parseDynamicNumber("١٢٣", radix); // returns 123 as Integer
+	 * }</pre>
+	 *
+	 * @param text  the textual representation of the number; may contain Arabic digits
+	 * @param radix the dynamic numeric system used for parsing (e.g., decimal, hexadecimal)
+	 * @return the parsed {@link Number}, type determined dynamically (Integer, Long, Double, etc.)
+	 * @throws NullPointerException  if text or radix is null
+	 * @throws NumberFormatException if the text cannot be parsed as a valid number in the given radix
+	 */
 	@NaftahFn(
 				name = "تحليل_رقم_بنظام_العد",
 				description = """
@@ -1025,10 +1051,35 @@ public final class Builtin {
 		return NumberUtils.parseDynamicNumber(value, radix, text);
 	}
 
+	/**
+	 * Computes the size of an object in a generic manner.
+	 *
+	 * <p>The meaning of "size" depends on the object type:</p>
+	 * <ul>
+	 * <li><b>Array</b>: length of the array</li>
+	 * <li><b>Collection (List, Set)</b>: number of elements</li>
+	 * <li><b>Map</b>: number of entries</li>
+	 * <li><b>String</b>: length of the string</li>
+	 * <li><b>Number or Boolean</b>: 1</li>
+	 * <li><b>Other Objects</b>: number of non-static fields</li>
+	 * </ul>
+	 *
+	 * <p>Example usage:</p>
+	 * <pre>{@code
+	 * List<String> list = List.of("a", "b", "c");
+	 * Number size = size(list); // returns 3
+	 *
+	 * int[] arr = {1, 2, 3, 4};
+	 * Number arrSize = size(arr); // returns 4
+	 * }</pre>
+	 *
+	 * @param obj the object whose size is to be determined; may be null
+	 * @return the size as a {@link Number}; 0 for null objects
+	 */
 	@NaftahFn(
-				name = "حجم",
+				name = "ما_حجم",
 				description = """
-								دالة (حجم) لحساب حجم الكائن.
+								دالة (ما_حجم) لحساب حجم الكائن.
 								- للمصفوفات: طول المصفوفة
 								- للقوائم والمجموعات: عدد العناصر
 								- للخرائط: عدد المدخلات
@@ -1036,7 +1087,7 @@ public final class Builtin {
 								- للأنواع العددية والمنطقية: 1
 								- للكائنات الأخرى: عدد الحقول غير الثابتة
 								""",
-				usage = "حجم(الكائن)",
+				usage = "ما_حجم(الكائن_)",
 				parameterTypes = {Object.class},
 				returnType = Number.class
 	)
@@ -1044,4 +1095,66 @@ public final class Builtin {
 		return ObjectUtils.size(obj);
 	}
 
+	/**
+	 * Returns a string representing the type of the provided object according
+	 * to the Naftah type system.
+	 *
+	 * <p>This method internally uses {@link JavaType} to capture both raw
+	 * and generic type information, providing a human-readable description
+	 * of the type. Useful for dynamic type inspection and error reporting.</p>
+	 *
+	 * <p>Example usage:</p>
+	 * <pre>{@code
+	 * String typeStr = getType(List.of("a", "b")); // "java.util.List<java.lang.String>"
+	 * }</pre>
+	 *
+	 * @param obj the object to inspect; may be null
+	 * @return a string describing the object's type; "null" if the object is null
+	 */
+	@NaftahFn(
+				name = "ما_نوع",
+				description = """
+								دالة (ما_نوع) لإرجاع نوع الكائن وفق لغة نفطه.
+											- تستخدم JavaType للحصول على النوع الخام والمُعرف بالمعلمات إذا كانت موجودة.""",
+				usage = "ما_نوع(الكائن_)",
+				parameterTypes = {Object.class},
+				returnType = String.class
+	)
+	public static String getType(Object obj) {
+		return getNaftahType(   PARSER_VOCABULARY,
+								JavaType.getJavaType(obj));
+	}
+
+	/**
+	 * Checks whether the given object is an instance of the specified {@link JavaType}.
+	 *
+	 * <p>This method performs type checking similar to the Java {@code instanceof} operator,
+	 * but also compares generic type parameters if available. It ensures that the object's
+	 * raw type is assignable from the target type and that generic parameters match exactly.</p>
+	 *
+	 * <p>Example usage:</p>
+	 * <pre>{@code
+	 * JavaType pairType = JavaType.of(new TypeReference<Pair<String, Integer>>() {});
+	 * Pair<String, Integer> pair = new Pair<>("hello", 42);
+	 * boolean result = instanceOf(pair, pairType); // true
+	 * }</pre>
+	 *
+	 * @param obj      the object to check; may be null
+	 * @param javaType the target {@link JavaType} to check against; may be null
+	 * @return {@code true} if obj is an instance of javaType (including generic parameters), {@code false} otherwise
+	 */
+	@NaftahFn(
+				name = "هل_مثيل_من",
+				description = """
+								دالة (هل_مثيل_من) للتحقق مما إذا كان الكائن من النوع المحدد.
+								- تدعم المقارنة باستخدام JavaType بما في ذلك النوع الخام والمعلمات.
+								- تعمل بشكل مشابه لـ instanceof ولكن بدعم للمعلمات العامة إذا كانت موجودة.
+								""",
+				usage = "هل_مثيل_من(الكائن_، النوع)",
+				parameterTypes = {Object.class, JavaType.class},
+				returnType = Boolean.class
+	)
+	public static boolean instanceOf(Object obj, JavaType javaType) {
+		return ObjectUtils.instanceOf(obj, javaType);
+	}
 }

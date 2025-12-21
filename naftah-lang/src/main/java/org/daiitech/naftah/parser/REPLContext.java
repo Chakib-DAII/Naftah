@@ -29,7 +29,6 @@ public class REPLContext extends DefaultContext {
 
 	static {
 		ETERNAL_CONTEXT = DefaultContext.registerContext(new HashMap<>(), new HashMap<>());
-		ETERNAL_CONTEXT.prepareParseTreeExecution();
 	}
 
 	/**
@@ -41,9 +40,7 @@ public class REPLContext extends DefaultContext {
 	 * @return a new {@link DefaultContext} instance with {@link #ETERNAL_CONTEXT} as parent
 	 */
 	public static DefaultContext registerContext() {
-		DefaultContext context = registerContext(ETERNAL_CONTEXT);
-		context.prepareParseTreeExecution();
-		return context;
+		return registerContext(ETERNAL_CONTEXT);
 	}
 
 	/**
@@ -59,9 +56,7 @@ public class REPLContext extends DefaultContext {
 	 */
 	public static DefaultContext registerContext(   Map<String, DeclaredParameter> parameters,
 													Map<String, Object> arguments) {
-		DefaultContext context = new DefaultContext(ETERNAL_CONTEXT, null, parameters, arguments);
-		context.prepareParseTreeExecution();
-		return context;
+		return new DefaultContext(ETERNAL_CONTEXT, null, parameters, arguments);
 	}
 
 	/**
@@ -75,9 +70,7 @@ public class REPLContext extends DefaultContext {
 	 * @return a new {@link DefaultContext} instance linked to the specified parent
 	 */
 	public static DefaultContext registerContext(DefaultContext parent) {
-		DefaultContext context = new DefaultContext(parent, null, null, null);
-		context.prepareParseTreeExecution();
-		return context;
+		return new DefaultContext(parent, null, null, null);
 	}
 
 	/**
@@ -94,9 +87,7 @@ public class REPLContext extends DefaultContext {
 	 * @return a new {@link DefaultContext} instance configured with the specified parent and block imports
 	 */
 	public static DefaultContext registerContext(DefaultContext parent, Map<String, String> blockImports) {
-		DefaultContext context = new DefaultContext(parent, blockImports, null, null);
-		context.prepareParseTreeExecution();
-		return context;
+		return new DefaultContext(parent, blockImports, null, null);
 	}
 
 	/**
@@ -119,36 +110,6 @@ public class REPLContext extends DefaultContext {
 													Map<String, String> blockImports,
 													Map<String, DeclaredParameter> parameters,
 													Map<String, Object> arguments) {
-		DefaultContext context = new DefaultContext(parent, blockImports, parameters, arguments);
-		context.prepareParseTreeExecution();
-		return context;
-	}
-
-	/**
-	 * Deregisters a context at the given depth.
-	 * <p>
-	 * If the depth is greater than zero, removes the context from the static
-	 * {@code CONTEXTS} map and merges its variables, functions, and parse tree
-	 * execution state into its parent context.
-	 * <p>
-	 * If the depth is zero or less, returns the context at depth zero.
-	 * </p>
-	 *
-	 * @param depth the depth index of the context to deregister
-	 * @return the deregistered context if depth > 0, otherwise the context at depth zero
-	 */
-	public static DefaultContext deregisterContext(int depth) {
-		if (depth > 0) {
-			DefaultContext context = CONTEXTS.remove(depth);
-			if (context.parent != null) {
-				context.parent.variables.putAll(context.variables);
-				context.parent.functions.putAll(context.functions);
-				if (context.parseTreeExecution != null) {
-					context.parent.parseTreeExecution.copyFrom(context.parseTreeExecution);
-				}
-			}
-			return context;
-		}
-		return CONTEXTS.get(0);
+		return new DefaultContext(parent, blockImports, parameters, arguments);
 	}
 }

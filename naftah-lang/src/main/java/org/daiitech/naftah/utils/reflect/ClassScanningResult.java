@@ -1,10 +1,14 @@
-package org.daiitech.naftah.builtin.lang;
+package org.daiitech.naftah.utils.reflect;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
+import org.daiitech.naftah.builtin.lang.JvmFunction;
 
 /**
  * Holds the results of a classpath or module scanning operation.
@@ -41,9 +45,9 @@ public class ClassScanningResult implements Serializable {
 	private Set<String> classQualifiers;
 
 	/**
-	 * Set of fully qualified class names in Arabic notation.
+	 * Set of fully qualified class names in Arabic notation mapped to original java qualified class name.
 	 */
-	private Set<String> arabicClassQualifiers;
+	private Map<String, String> arabicClassQualifiers;
 
 	/**
 	 * Maps fully qualified class names to their corresponding Class objects.
@@ -92,11 +96,11 @@ public class ClassScanningResult implements Serializable {
 		this.classQualifiers = classQualifiers;
 	}
 
-	public Set<String> getArabicClassQualifiers() {
+	public Map<String, String> getArabicClassQualifiers() {
 		return arabicClassQualifiers;
 	}
 
-	public void setArabicClassQualifiers(Set<String> arabicClassQualifiers) {
+	public void setArabicClassQualifiers(Map<String, String> arabicClassQualifiers) {
 		this.arabicClassQualifiers = arabicClassQualifiers;
 	}
 

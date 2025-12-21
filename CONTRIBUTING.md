@@ -207,15 +207,24 @@ Enable signing in `build.gradle` by uncommenting the `signing { ... }` section.
 ## 🧱 Project Structure
 
 ```
-├── build.gradle          # Main Gradle build config
-├── src/main/java         # Core language implementation
-├── src/main/antlr        # Naftah grammar files (ANTLR)
-├── src/main/bin          # CLI / REPL scripts (.sh / .bat)
-├── src/test/        	  # JUnit tests
-├── src/benchmark/        # JMH performance tests
-├── learn-by-example/     # Sample .naftah scripts
-├── config/               # Code style and formatter config
-└── build/                # Gradle output (compiled classes, zips, etc.)
+├── build.gradle      			# Main Gradle build config
+├── naftah-builtin-core         # Core builtin extensions dependency
+	├── src/main/java         	# Core builtin annotations
+	├── src/test/        	  	# JUnit tests
+	├── build.gradle      		# Gradle build config
+	└── build/                	# Gradle output (compiled classes, zips, etc.)
+├── naftah-lang         		# Core language implementation
+	├── src/main/java         	# Core language classes
+	├── src/main/resources      # Core language resources
+	├── src/main/antlr        	# Naftah grammar files (ANTLR)
+	├── src/main/bin          	# CLI / REPL scripts (.sh / .bat)
+	├── src/test/        	  	# JUnit tests
+	├── src/benchmark/        	# JMH performance tests
+	├── build.gradle      		# Gradle build config
+	└── build/                	# Gradle output (compiled classes, zips, etc.)
+├── learn-by-example/     		# Sample .naftah scripts
+├── docs-site/     				# documentation site
+└── config/               		# Code style and formatter config
 ```
 
 ---
@@ -238,8 +247,9 @@ If you use **IntelliJ IDEA**:
 2. Create a new branch:
    `git checkout -b feature/my-new-feature`
 3. Make your changes.
-4. Run tests: `./gradlew build`
-5. Open a PR on GitHub.
+4. Run build: `./gradlew build`
+5. Run tests: `./gradlew test`
+6. Open a PR on GitHub.
 
 Please include:
 

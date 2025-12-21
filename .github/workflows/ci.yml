@@ -113,10 +113,8 @@ jobs:
           restore-keys: |
             naftah_cache-${{ runner.os }}-
 
-      - name: Run tests with coverage
-        #      - name: Run tests with coverage and enforce threshold
-        run: ./gradlew test jacocoTestReport
-      #        run: ./gradlew test jacocoTestReport jacocoTestCoverageVerification
+      - name: Run tests with coverage and enforce threshold
+        run: ./gradlew test jacocoTestReport jacocoTestCoverageVerification
 
       - name: Upload Gradle test results artifact
         uses: actions/upload-artifact@v4

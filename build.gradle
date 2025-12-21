@@ -93,7 +93,9 @@ ext.sharedJvmArgs = [
 		'--add-opens', 'java.base/jdk.internal.misc=ALL-UNNAMED',
 		'--add-opens', 'java.base/jdk.internal.vm=ALL-UNNAMED',
 		'--add-opens', 'java.base/jdk.internal.logger=ALL-UNNAMED',
-		'--add-opens', 'java.base/jdk.internal.event=ALL-UNNAMED'
+		'--add-opens', 'java.base/jdk.internal.event=ALL-UNNAMED',
+		'--add-opens', 'java.base/jdk.internal.loader=ALL-UNNAMED',
+		'--add-opens', 'java.base/jdk.internal.module=ALL-UNNAMED'
 ]
 
 tasks.register('javadocAll', Javadoc) {

@@ -46,8 +46,8 @@ import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 										"اسم_النظام",
 										"إسم_المستخدم",
 										"مجلد_المستخدم",
-										"إصدار_نفطة",
-										"إصدار_قصير_نفطة"
+										"إصدار_نفطه",
+										"إصدار_قصير_نفطه"
 					}
 )
 public final class SystemBuiltinFunctions {
@@ -200,9 +200,9 @@ public final class SystemBuiltinFunctions {
 	 * @return the full Naftah version string
 	 */
 	@NaftahFn(
-				name = "إصدار_نفطة",
-				description = "تعيد الإصدار الكامل الحالي لنفطة، مثل \"1.2.3\".",
-				usage = "إصدار_نفطة()",
+				name = "إصدار_نفطه",
+				description = "تعيد الإصدار الكامل الحالي لنفطه، مثل \"1.2.3\".",
+				usage = "إصدار_نفطه()",
 				returnType = String.class
 	)
 	public static String getVersion() {
@@ -219,12 +219,12 @@ public final class SystemBuiltinFunctions {
 	 * @return the short Naftah version
 	 */
 	@NaftahFn(
-				name = "إصدار_قصير_نفطة",
+				name = "إصدار_قصير_نفطه",
 				description = """
-								تعيد شكل الإصدار المختصر لنفطة، يحتوي فقط على الأجزاء الرئيسية والثانوية، مثل "1.2".
+								تعيد شكل الإصدار المختصر لنفطه، يحتوي فقط على الأجزاء الرئيسية والثانوية، مثل "1.2".
 								ترمي خطأً إذا كان تنسيق الإصدار غير متوقع.
 								""",
-				usage = "إصدار_قصير_نفطة()",
+				usage = "إصدار_قصير_نفطه()",
 				returnType = String.class
 	)
 	public static String getShortVersion() {
