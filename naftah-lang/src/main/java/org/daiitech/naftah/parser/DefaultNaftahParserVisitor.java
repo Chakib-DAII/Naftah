@@ -24,6 +24,7 @@ import org.antlr.v4.runtime.Vocabulary;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
+import org.daiitech.naftah.builtin.lang.DeclaredImplementation;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
 import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
@@ -113,6 +114,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChildOrSubChildOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.invokeJvmClassInitializer;
+import static org.daiitech.naftah.parser.NaftahParserHelper.matchImplementationName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
@@ -1113,7 +1115,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									else {
 										org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext collectionAccessContext = singleAssignment
 												.collectionAccess();
-										Object variable = result = getVariable( collectionAccessContext.ID().getText(),
+										Object variable = result = getVariable( matchImplementationName(collectionAccessContext
+																						.selfOrId(),
+																										currentContext),
 																				currentContext).get();
 										Number number = -1;
 										int size = collectionAccessContext.collectionAccessIndex().size();
@@ -1306,9 +1310,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										else {
 											org.daiitech.naftah.parser.NaftahParser.CollectionAccessContext collectionAccessContext = singleAssignment
 													.collectionAccess();
-											Object variable = getVariable(  collectionAccessContext
-																					.ID()
-																					.getText(),
+											Object variable = getVariable(  matchImplementationName(collectionAccessContext
+																					.selfOrId(),
+																									currentContext),
 																			currentContext).get();
 											Number number = -1;
 											int size = collectionAccessContext.collectionAccessIndex().size();
@@ -1467,14 +1471,29 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							getCurrentContext(),
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, functionDeclarationContext) -> {
+								boolean creatingImplementationFunction = hasAnyParentOfType(functionDeclarationContext,
+																							org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationContext.class);
+
+								String implementationName = creatingImplementationFunction ?
+										((org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationContext) functionDeclarationContext
+												.getParent()
+												.getParent())
+												.ID()
+												.getText() :
+										null;
 								String functionName = functionDeclarationContext.ID().getText();
-								if (currentContext.containsFunction(functionName, currentContext.depth)) {
+								if (!creatingImplementationFunction && currentContext
+										.containsFunction(  functionName,
+															currentContext.depth)) {
 									throw newNaftahBugExistentFunctionError(functionName);
 								}
 								DeclaredFunction declaredFunction = DeclaredFunction
 										.of(currentContext.depth,
-											functionDeclarationContext);
-								currentContext.defineFunction(functionName, declaredFunction);
+											functionDeclarationContext,
+											implementationName);
+								if (!creatingImplementationFunction) {
+									currentContext.defineFunction(functionName, declaredFunction);
+								}
 								return declaredFunction;
 							}
 		);
@@ -1694,7 +1713,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 														.visit(callSegmentContext
 																.primaryCall()
 																.qualifiedCall()) :
-												callSegmentContext.primaryCall().ID().getText();
+												matchImplementationName(callSegmentContext.primaryCall().selfOrId(),
+																		currentContext);
 
 										matchedImport = currentContext.matchImport(functionName);
 										if (Objects.nonNull(matchedImport)) {
@@ -1768,7 +1788,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 												.visit(functionCallContext
 														.primaryCall()
 														.qualifiedCall()) :
-										functionCallContext.primaryCall().ID().getText();
+										matchImplementationName(functionCallContext.primaryCall().selfOrId(),
+																currentContext);
 
 								Triple<String, Boolean, Object> matchedVariableQualifiedCallAndForceInvocationWithValue = null;
 								if (hasQualifiedCall) {
@@ -1856,7 +1877,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 														.visit(callSegmentContext
 																.primaryCall()
 																.qualifiedCall()) :
-												callSegmentContext.primaryCall().ID().getText();
+												matchImplementationName(callSegmentContext.primaryCall().selfOrId(),
+																		currentContext);
 
 										matchedImport = currentContext.matchImport(functionName);
 										if (Objects.nonNull(matchedImport)) {
@@ -1926,11 +1948,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(   defaultNaftahParserVisitor,
 								currentContext,
-								simpleCallContext) -> simpleCallContext.ID(0).getText() + simpleCallContext
-										.COLON(0)
-										.getText() + simpleCallContext
-												.COLON(1)
-												.getText() + simpleCallContext.ID(1).getText()
+								simpleCallContext) -> matchImplementationName(  simpleCallContext.selfOrId(),
+																				currentContext) + simpleCallContext
+																						.COLON(0)
+																						.getText() + simpleCallContext
+																								.COLON(1)
+																								.getText() + simpleCallContext
+																										.ID()
+																										.getText()
 		);
 	}
 
@@ -3456,6 +3481,129 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitImplementationDeclarationStatement(org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationStatementContext ctx) {
+		return visitContext(
+							this,
+							"visitImplementationDeclarationStatement",
+							getCurrentContext(),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								implementationDeclarationStatementContext) -> defaultNaftahParserVisitor
+										.visit(
+												implementationDeclarationStatementContext.implementationDeclaration())
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitImplementationDeclaration(org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationContext ctx) {
+		return visitContext(
+							this,
+							"visitImplementationDeclaration",
+							getCurrentContext(),
+							ctx,
+							(   defaultNaftahParserVisitor,
+								currentContext,
+								implementationDeclarationContext) -> {
+								var implementationName = implementationDeclarationContext.ID().getText();
+								var objectVariable = getVariable(implementationName, currentContext);
+								Map<String, DeclaredVariable> objectFields;
+								if (objectVariable.isFound()) {
+									if (objectVariable.get() instanceof NaftahObject naftahObject && !naftahObject
+											.fromJava()) {
+										objectFields = naftahObject.objectFields();
+									}
+									else {
+										throw new NaftahBugError(
+																	"لا يمكن تعريف سلوك للاسم '%s' لأنه ليس كائنًا أو هيكلًا صالحًا."
+																			.formatted(implementationName),
+																	implementationDeclarationContext
+																			.getStart()
+																			.getLine(),
+																	implementationDeclarationContext
+																			.getStart()
+																			.getCharPositionInLine()
+										);
+									}
+								}
+								else {
+									throw new NaftahBugError(   """
+																لا يمكن تعريف سلوك للكائن '%s'، هذا الكائن غير موجود أو غير مُعرّف في السياق الحالي.
+																"""
+																		.formatted(implementationName),
+																implementationDeclarationContext.getStart().getLine(),
+																implementationDeclarationContext
+																		.getStart()
+																		.getCharPositionInLine());
+								}
+								//noinspection unchecked
+								DeclaredImplementation declaredImplementation = DeclaredImplementation
+										.of(depth,
+											implementationDeclarationContext,
+											objectFields,
+											(Map<String, DeclaredFunction>) defaultNaftahParserVisitor
+													.visit(implementationDeclarationContext.implementationFunctions())
+										);
+
+								currentContext.defineImplementation(implementationName, declaredImplementation);
+
+								return declaredImplementation;
+							},
+							DeclaredImplementation.class
+		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object visitImplementationFunctions(org.daiitech.naftah.parser.NaftahParser.ImplementationFunctionsContext ctx) {
+		//noinspection unchecked
+		return (Map<String, DeclaredVariable>) visitContext(
+															this,
+															"visitImplementationFunctions",
+															getCurrentContext(),
+															ctx,
+															(   defaultNaftahParserVisitor,
+																currentContext,
+																implementationFunctionsContext) -> {
+																var implementationName = ((org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationContext) implementationFunctionsContext
+																		.getParent())
+																		.ID()
+																		.getText();
+
+																var result = new LinkedHashMap<String, DeclaredFunction>();
+
+																for (   int i = 0;
+																		i < implementationFunctionsContext
+																				.functionDeclaration()
+																				.size();
+																		i++) {
+																	var functionDeclarationContext = implementationFunctionsContext
+																			.functionDeclaration(i);
+																	var functionName = functionDeclarationContext
+																			.ID()
+																			.getText();
+																	if (result.containsKey(functionName)) {
+																		throw newNaftahBugExistentFunctionError(implementationName + QUALIFIED_CALL_SEPARATOR + functionName);
+																	}
+																	var function = (DeclaredFunction) defaultNaftahParserVisitor
+																			.visit(functionDeclarationContext);
+																	result.put(functionName, function);
+																}
+
+																return result;
+															},
+															Map.class
+		);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -3577,7 +3725,8 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(   defaultNaftahParserVisitor,
 								currentContext,
 								collectionAccessContext) -> {
-								Object result = getVariable(collectionAccessContext.ID().getText(), currentContext)
+								Object result = getVariable(matchImplementationName(collectionAccessContext.selfOrId(),
+																					currentContext), currentContext)
 										.get();
 								Number number = -1;
 								try {
@@ -4775,7 +4924,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 													.visit(possibleFunctionCallContext
 															.primaryCall()
 															.qualifiedCall()) :
-											possibleFunctionCallContext.primaryCall().ID().getText();
+											matchImplementationName(possibleFunctionCallContext
+													.primaryCall()
+													.selfOrId(), currentContext);
 
 									if (currentContext.containsFunction(functionName, -1)) {
 										Object function = currentContext.getFunction(functionName, false).getRight();
