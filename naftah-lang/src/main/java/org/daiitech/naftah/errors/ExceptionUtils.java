@@ -504,6 +504,18 @@ public final class ExceptionUtils {
 	}
 
 	/**
+	 * Creates a new {@link NaftahBugError} for a missing invocable
+	 * without specifying source line or column.
+	 *
+	 * @param functionName the name of the missing invocable (method or constructor)
+	 * @return never returns normally; this method always creates a {@link NaftahBugError}
+	 * @throws NaftahBugError always thrown to indicate a missing invocable
+	 */
+	public static NaftahBugError newNaftahInvocableNotFoundError(String functionName) {
+		return newNaftahInvocableNotFoundError(functionName, -1, -1);
+	}
+
+	/**
 	 * Creates and throws a {@link NaftahBugError} when a collection of invocable
 	 * functions or class initializers is found, but the caller did not specify
 	 * an index to select which one to invoke.
