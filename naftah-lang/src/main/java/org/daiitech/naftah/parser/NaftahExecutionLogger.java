@@ -123,6 +123,9 @@ public final class NaftahExecutionLogger {
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationStatementContext context) {
 			result = logExecution(doLog, context);
 		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationStatementContext context) {
+			result = logExecution(doLog, context);
+		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ObjectAccessContext context) {
 			result = logExecution(doLog, context);
 		}
@@ -181,6 +184,12 @@ public final class NaftahExecutionLogger {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationContext context) {
+			result = logExecution(doLog, context);
+		}
+		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ImplementationFunctionsContext context) {
 			result = logExecution(doLog, context);
 		}
 		else if (ctx instanceof org.daiitech.naftah.parser.NaftahParser.ParameterDeclarationListContext context) {
@@ -505,13 +514,13 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											QualifiedObjectAccessContext::ID -> %s
+											QualifiedObjectAccessContext::selfOrId -> %s
 											QualifiedObjectAccessContext::QUESTION -> %s
 											QualifiedObjectAccessContext::propertyAccess -> %s
 											"""
 										.formatted(
-													Objects.nonNull(context.ID()) ?
-															context.ID().getText() :
+													Objects.nonNull(context.selfOrId()) ?
+															context.selfOrId().getText() :
 															null,
 													join(context.QUESTION()),
 													join(context.propertyAccess())));
@@ -626,6 +635,21 @@ public final class NaftahExecutionLogger {
 											"""
 										.formatted(Objects.nonNull(context.functionDeclaration()) ?
 												context.functionDeclaration().getText() :
+												null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationStatementContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ImplementationDeclarationStatementContext::implementationDeclaration: -> {
+												%s
+											}
+											"""
+										.formatted(Objects.nonNull(context.implementationDeclaration()) ?
+												context.implementationDeclaration().getText() :
 												null));
 
 	}
@@ -1324,6 +1348,52 @@ public final class NaftahExecutionLogger {
 	}
 
 	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ImplementationDeclarationContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ImplementationDeclarationContext::IMPLEMENTATION -> %s
+											ImplementationDeclarationContext::ID -> %s
+											ImplementationDeclarationContext::LBRACE -> %s
+											ImplementationDeclarationContext::implementationFunctions -> {
+												%s
+											}
+											ImplementationDeclarationContext::RBRACE -> %s
+											"""
+										.formatted( Objects.nonNull(context.IMPLEMENTATION()) ?
+															context.IMPLEMENTATION().getText() :
+															null,
+													Objects.nonNull(context.ID()) ?
+															context.ID().getText() :
+															null,
+													Objects.nonNull(context.LBRACE()) ?
+															context.LBRACE().getText() :
+															null,
+													Objects.nonNull(context.implementationFunctions()) ?
+															context.implementationFunctions().getText() :
+															null,
+													Objects.nonNull(context.RBRACE()) ?
+															context.RBRACE().getText() :
+															null));
+
+	}
+
+	public static String logExecution(  boolean doLog,
+										org.daiitech.naftah.parser.NaftahParser.ImplementationFunctionsContext ctx) {
+		return doLogExecution(  doLog,
+								ctx,
+								context -> """
+											ImplementationFunctionsContext::END -> %s
+											ImplementationFunctionsContext::functionDeclaration -> {
+												%s
+											}
+											"""
+										.formatted( join(context.END()),
+													join(context.functionDeclaration())));
+
+	}
+
+	public static String logExecution(  boolean doLog,
 										org.daiitech.naftah.parser.NaftahParser.FunctionDeclarationContext ctx) {
 		return doLogExecution(  doLog,
 								ctx,
@@ -1415,20 +1485,20 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											SimpleCallContext::ID -> %s
+											SimpleCallContext::selfOrId -> %s
 											SimpleCallContext::COLON -> %s
 											SimpleCallContext::COLON -> %s
 											SimpleCallContext::ID -> %s
 											"""
 										.formatted(
-													Objects.nonNull(context.ID()) ? context.ID(0).getText() : null,
+													Objects.nonNull(context.selfOrId()) ? context.selfOrId() : null,
 													Objects.nonNull(context.COLON(0)) ?
 															context.COLON(0).getText() :
 															null,
 													Objects.nonNull(context.COLON(1)) ?
 															context.COLON(1).getText() :
 															null,
-													Objects.nonNull(context.ID()) ? context.ID(1).getText() : null));
+													Objects.nonNull(context.ID()) ? context.ID().getText() : null));
 
 	}
 
@@ -1533,7 +1603,7 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											PrimaryCallContext::ID -> %s
+											PrimaryCallContext::selfOrId -> %s
 											PrimaryCallContext::qualifiedCall -> %s
 											PrimaryCallContext::targetExecutableIndex -> %s
 											PrimaryCallContext::LPAREN -> %s
@@ -1542,7 +1612,9 @@ public final class NaftahExecutionLogger {
 											}
 											PrimaryCallContext::RPAREN -> %s
 											"""
-										.formatted( Objects.nonNull(context.ID()) ? context.ID().getText() : null,
+										.formatted( Objects.nonNull(context.selfOrId()) ?
+															context.selfOrId().getText() :
+															null,
 													Objects.nonNull(context.qualifiedCall()) ?
 															context.qualifiedCall().getText() :
 															null,
@@ -1883,7 +1955,6 @@ public final class NaftahExecutionLogger {
 								ctx,
 								context -> """
 											ComplexBuiltInContext::STRUCT -> %s
-											ComplexBuiltInContext::IMPLEMENTATION -> %s
 											ComplexBuiltInContext::PAIR -> %s
 											ComplexBuiltInContext::TRIPLE -> %s
 											ComplexBuiltInContext::LIST -> %s
@@ -1898,9 +1969,6 @@ public final class NaftahExecutionLogger {
 											"""
 										.formatted( Objects.nonNull(context.STRUCT()) ?
 															context.STRUCT().getText() :
-															null,
-													Objects.nonNull(context.IMPLEMENTATION()) ?
-															context.IMPLEMENTATION().getText() :
 															null,
 													Objects.nonNull(context.PAIR()) ? context.PAIR().getText() : null,
 													Objects.nonNull(context.TRIPLE()) ?
@@ -1996,11 +2064,14 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
+											QualifiedNameContext::selfOrId -> %s
 											QualifiedNameContext::ID -> %s
 											QualifiedNameContext::QUESTION -> %s
 											QualifiedNameContext::COLON -> %s
 											"""
-										.formatted( join(context.ID()),
+										.formatted(
+													Objects.nonNull(context.selfOrId()) ? context.selfOrId() : null,
+													join(context.ID()),
 													join(context.QUESTION()),
 													join(context.COLON())));
 
@@ -2384,13 +2455,13 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											CollectionAccessContext::ID -> %s
+											CollectionAccessContext::selfOrId -> %s
 											CollectionAccessContext::QUESTION -> %s
 											CollectionAccessContext::LBRACK -> %s
 											CollectionAccessContext::collectionAccessIndex -> %s
 											CollectionAccessContext::RBRACK -> %s"""
-										.formatted( Objects.nonNull(context.ID()) ?
-															context.ID().getText() :
+										.formatted( Objects.nonNull(context.selfOrId()) ?
+															context.selfOrId().getText() :
 															null,
 													join(context.QUESTION()),
 													join(context.LBRACK()),
