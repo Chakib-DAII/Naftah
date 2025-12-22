@@ -27,9 +27,6 @@ import static org.daiitech.naftah.builtin.utils.CollectionUtils.isCollectionMapO
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isBuiltinType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleType;
 
-// TODO: use for object access and so on
-// TODO: use later for dates. for now dte time are treated as java object which will change with dates support
-
 /**
  * Represents a dynamic "Naftah" object — a flexible wrapper that can encapsulate
  * either a native Java object or a declarative structure of named fields.
