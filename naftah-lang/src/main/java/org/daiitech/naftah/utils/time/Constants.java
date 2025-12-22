@@ -21,50 +21,104 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  */
 public final class Constants {
 	/**
-	 * The Arabic prefix used to indicate a time zone.
+	 * Arabic prefix used to indicate a time zone.
 	 */
 	public static final String ZONE_PREFIX_AR = "بتوقيت";
 	/**
-	 * The Arabic prefix used to indicate a calendar.
+	 * Arabic prefix used to indicate a calendar.
 	 */
 	public static final String CALENDAR_PREFIX_AR = "بالتقويم";
 	/**
-	 * Default Gregorian calendar names in Arabic, including aliases.
+	 * Default Gregorian calendar name in Arabic.
 	 */
 	public static final String DEFAULT_CALENDAR_NAME = "ميلادي";
+	/**
+	 * Alternative Arabic spelling for the Gregorian calendar.
+	 */
 	public static final String DEFAULT_CALENDAR_NAME_1 = "الميلادي";
+	/**
+	 * Alternative Arabic spelling for the Gregorian calendar.
+	 */
 	public static final String DEFAULT_CALENDAR_NAME_2 = "التقويم الميلادي";
+	/**
+	 * Alternative Arabic spelling for the Gregorian calendar (Latin-based alias).
+	 */
 	public static final String DEFAULT_CALENDAR_NAME_3 = "جرجوري";
 	/**
-	 * Hijri (Islamic) calendar names in Arabic, including aliases.
+	 * Hijri (Islamic) calendar name in Arabic.
 	 */
 	public static final String HIJRI_CALENDAR_NAME = "هجري";
+	/**
+	 * Alternative Arabic spelling for the Hijri calendar.
+	 */
 	public static final String HIJRI_CALENDAR_NAME_1 = "الهجري";
+	/**
+	 * Alternative Arabic spelling for the Hijri calendar.
+	 */
 	public static final String HIJRI_CALENDAR_NAME_2 = "التقويم الهجري";
 	/**
-	 * Arabic markers for AM (morning) and their variations.
+	 * Arabic short marker for AM (morning).
 	 */
 	public static final String AM_SHORT = "ص";
+	/**
+	 * Arabic full marker for AM (morning).
+	 */
 	public static final String AM_FULL_1 = "صباحاً";
+	/**
+	 * Alternative Arabic full marker for AM (morning).
+	 */
 	public static final String AM_FULL_2 = "صباحا";
 	/**
-	 * Arabic markers for PM (evening) and their variations.
+	 * Arabic short marker for PM (evening).
 	 */
 	public static final String PM_SHORT = "م";
+	/**
+	 * Arabic full marker for PM (evening).
+	 */
 	public static final String PM_FULL_1 = "مساءً";
+	/**
+	 * Alternative Arabic full marker for PM (evening).
+	 */
 	public static final String PM_FULL_2 = "مساءا";
 	/**
-	 * Gregorian month names in Arabic and Latin variants.
+	 * January in Arabic.
 	 */
 	public static final String JANUARY_AR = "يناير";
+	/**
+	 * January in Latin variant.
+	 */
 	public static final String JANUARY_LATIN = "جانفي";
+	/**
+	 * February in Arabic.
+	 */
 	public static final String FEBRUARY_AR = "فبراير";
+	/**
+	 * February in Latin variant.
+	 */
 	public static final String FEBRUARY_LATIN = "فيفري";
+	/**
+	 * March in Arabic.
+	 */
 	public static final String MARCH = "مارس";
+	/**
+	 * April in Arabic.
+	 */
 	public static final String APRIL_AR = "أبريل";
+	/**
+	 * April in Latin variant.
+	 */
 	public static final String APRIL_LATIN = "أفريل";
+	/**
+	 * May in Arabic.
+	 */
 	public static final String MAY_AR = "مايو";
+	/**
+	 * May in Latin variant.
+	 */
 	public static final String MAY_LATIN = "ماي";
+	/**
+	 * June in Arabic.
+	 */
 	public static final String JUNE_AR = "يونيو";
 	/**
 	 * June in Latin variant.
