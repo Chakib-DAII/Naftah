@@ -1832,14 +1832,17 @@ public final class NaftahExecutionLogger {
 											StringValueContext::RAW -> %s
 											StringValueContext::BYTE_ARRAY -> %s
 											StringValueContext::STRING -> %s
+											StringValueContext::DATE -> %s
 											"""
 										.formatted( Objects.nonNull(context.RAW()) ? context.RAW().getText() : null,
 													Objects.nonNull(context.BYTE_ARRAY()) ?
 															context.BYTE_ARRAY().getText() :
 															null,
-
 													Objects.nonNull(context.STRING()) ?
 															context.STRING().getText() :
+															null,
+													Objects.nonNull(context.DATE()) ?
+															context.DATE().getText() :
 															null
 										));
 
