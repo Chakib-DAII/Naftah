@@ -47,6 +47,7 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.parser.time.ArabicDateParserHelper;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.daiitech.naftah.utils.reflect.type.TypeReference;
@@ -4297,17 +4298,32 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, stringValueContext) -> {
 								String value = stringValueContext.STRING().getText();
 								Object result;
-								if (Objects.isNull(stringValueContext.RAW()) && Objects
-										.isNull(stringValueContext.BYTE_ARRAY())) {
-									result = StringInterpolator.process(value, currentContext);
+								if (Objects.nonNull(stringValueContext.RAW())) {
+									result = StringInterpolator.cleanInput(value);
 								}
 								else {
-									value = StringInterpolator.cleanInput(value);
-									if (Objects.nonNull(stringValueContext.BYTE_ARRAY())) {
-										result = value.getBytes(StandardCharsets.UTF_8);
+									result = value = StringInterpolator.process(value, currentContext);
+									if (Objects.nonNull(stringValueContext.DATE())) {
+										try {
+											result = ArabicDateParserHelper.run(value);
+										}
+										catch (Throwable throwable) {
+											throw new NaftahBugError(   """
+																		فشل تحليل التاريخ: "%s"
+																		الرجاء استخدام صيغة مشابهة للأمثلة التالية:
+																		٣٠ أكتوبر ٢٠٢٢ بالتقويم الميلادي ٢٢:١٥ بتوقيت تونس
+																		صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ بتوقيت بيروت
+																		"""
+																				.formatted(value),
+																		throwable,
+																		stringValueContext.getStart().getLine(),
+																		stringValueContext
+																				.getStart()
+																				.getCharPositionInLine());
+										}
 									}
-									else {
-										result = value;
+									else if (Objects.nonNull(stringValueContext.BYTE_ARRAY())) {
+										result = value.getBytes(StandardCharsets.UTF_8);
 									}
 								}
 
