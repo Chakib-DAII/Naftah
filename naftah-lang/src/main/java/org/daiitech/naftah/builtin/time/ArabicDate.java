@@ -9,6 +9,7 @@ import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.numberToString;
+import static org.daiitech.naftah.utils.time.Constants.CALENDAR_PREFIX_AR;
 import static org.daiitech.naftah.utils.time.Constants.DEFAULT_CALENDAR_NAME_1;
 import static org.daiitech.naftah.utils.time.MonthUtils.arabicMonthToInt;
 import static org.daiitech.naftah.utils.time.MonthUtils.monthNumberToArabicName;
@@ -248,7 +249,7 @@ public record ArabicDate(
 		 */
 		@Override
 		public String toString() {
-			return "التقويم: " + arabicCalendar;
+			return CALENDAR_PREFIX_AR + " " + arabicCalendar;
 		}
 	}
 }

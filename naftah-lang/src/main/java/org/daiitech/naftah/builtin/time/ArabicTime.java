@@ -11,6 +11,7 @@ import org.daiitech.naftah.utils.time.ZoneUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.numberToString;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.padZero;
+import static org.daiitech.naftah.utils.time.Constants.ZONE_PREFIX_AR;
 import static org.daiitech.naftah.utils.time.ZoneUtils.parseZoneOffset;
 
 /**
@@ -267,7 +268,7 @@ public record ArabicTime(
 				return arabicZoneOrOffset;
 			}
 			else if (!ObjectUtils.isEmpty(arabicZoneOrOffset)) {
-				return "بتوقيت " + arabicZoneOrOffset;
+				return ZONE_PREFIX_AR + " " + arabicZoneOrOffset;
 			}
 			else {
 				return "";
