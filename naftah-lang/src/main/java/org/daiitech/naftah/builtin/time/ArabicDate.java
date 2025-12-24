@@ -1,21 +1,24 @@
 package org.daiitech.naftah.builtin.time;
 
 import java.time.chrono.Chronology;
-import java.time.temporal.TemporalAccessor;
+import java.time.temporal.ChronoField;
+import java.time.temporal.Temporal;
 import java.util.Objects;
 
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.numberToString;
 import static org.daiitech.naftah.utils.time.Constants.DEFAULT_CALENDAR_NAME_1;
 import static org.daiitech.naftah.utils.time.MonthUtils.arabicMonthToInt;
+import static org.daiitech.naftah.utils.time.MonthUtils.monthNumberToArabicName;
 
 /**
  * Represents an immutable Arabic date composed of:
  * <ul>
  * <li>A {@link Date} component (day, month, year)</li>
  * <li>An optional {@link Calendar} component</li>
- * <li>A resolved {@link TemporalAccessor} representation</li>
+ * <li>A resolved {@link Temporal} representation</li>
  * </ul>
  * <p>
  * This record is typically produced after parsing Arabic date expressions
@@ -26,28 +29,70 @@ import static org.daiitech.naftah.utils.time.MonthUtils.arabicMonthToInt;
  *
  * @param date     the parsed date component
  * @param calendar the optional calendar specification
- * @param temporal the resolved temporal accessor
+ * @param temporal the resolved temporal
  * @author Chakib Daii
  */
 public record ArabicDate(
 		Date date,
 		Calendar calendar,
-		TemporalAccessor temporal
-) implements ArabicTemporal {
+		Temporal temporal
+) implements ArabicTemporalPoint {
 
 	/**
-	 * Creates a new {@code ArabicDate} instance.
+	 * Creates a new {@code ArabicDate} instance from its individual components.
 	 *
-	 * @param date     the date component
-	 * @param calendar the calendar component
-	 * @param temporal the resolved temporal accessor
-	 * @return a new {@code ArabicDate} instance
+	 * <p>This factory method is used when the parsed date, calendar,
+	 * and the resolved {@link Temporal} are already known.</p>
+	 *
+	 * @param date     the parsed date component (day, month, year) according to the calendar
+	 * @param calendar the calendar associated with this date (e.g. Gregorian or Hijri)
+	 * @param temporal the resolved temporal representation backing this date
+	 * @return a new {@code ArabicDate} instance combining all components
 	 */
 	public static ArabicDate of(Date date,
 								Calendar calendar,
-								TemporalAccessor temporal) {
+								Temporal temporal) {
 		return new ArabicDate(date, calendar, temporal);
 	}
+
+	/**
+	 * Creates a new {@code ArabicDate} from a {@link Temporal} and a calendar.
+	 *
+	 * <p>This method extracts the {@code day}, {@code month}, and {@code year}
+	 * fields from the given temporal object and constructs an {@code ArabicDate}
+	 * using the provided calendar's chronology.</p>
+	 *
+	 * <p>The temporal must support the following fields:
+	 * <ul>
+	 *   <li>{@link ChronoField#DAY_OF_MONTH}</li>
+	 *   <li>{@link ChronoField#MONTH_OF_YEAR}</li>
+	 *   <li>{@link ChronoField#YEAR}</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param calendar the calendar that determines the chronology of the date
+	 * @param temporal the temporal object containing date information
+	 * @return a new {@code ArabicDate} instance derived from the temporal
+	 * @throws IllegalArgumentException if the temporal does not support day, month, or year fields
+	 */
+	public static ArabicDate of(Calendar calendar, Temporal temporal) {
+		if (!temporal.isSupported(ChronoField.DAY_OF_MONTH)
+				|| !temporal.isSupported(ChronoField.MONTH_OF_YEAR)
+				|| !temporal.isSupported(ChronoField.YEAR)) {
+			throw new IllegalArgumentException(
+					"النقطة الزمنية المقدم لا يدعم اليوم أو الشهر أو السنة: " + temporal
+			);
+		}
+
+		int day = temporal.get(ChronoField.DAY_OF_MONTH);
+		int month = temporal.get(ChronoField.MONTH_OF_YEAR);
+		int year = temporal.get(ChronoField.YEAR);
+
+		var date = ArabicDate.Date.of(day, month, calendar.chronology(), year);
+
+		return new ArabicDate(date, calendar, temporal);
+	}
+
 
 	/**
 	 * Returns a string representation of this {@link ArabicDate} in the format:
@@ -97,31 +142,58 @@ public record ArabicDate(
 		}
 
 		/**
-		 * Creates a {@code Date} instance by resolving the Arabic month name
+		 * Creates a {@code Date} instance by resolving an Arabic month name
 		 * into its numeric value using the provided chronology.
 		 *
-		 * @param day         the day of month
-		 * @param arabicMonth the Arabic month name
-		 * @param chronology  the chronology used to resolve the month
+		 * <p>The month name is interpreted according to the given chronology:
+		 * Hijri chronologies resolve Hijri month names, while non-Hijri
+		 * chronologies resolve Gregorian month names.</p>
+		 *
+		 * @param day         the day of the month
+		 * @param arabicMonth the Arabic month name (e.g. "رمضان", "يناير")
+		 * @param chronology  the chronology used to resolve the month value
 		 * @param year        the year value
 		 * @return a new {@code Date} instance
-		 * @throws IllegalArgumentException if the month cannot be resolved
+		 * @throws IllegalArgumentException if the month name cannot be resolved for the given chronology
 		 */
 		public static Date of(int day, String arabicMonth, Chronology chronology, int year) {
 			return new Date(day, arabicMonth, arabicMonthToInt(arabicMonth, chronology), year);
 		}
 
 		/**
-		 * Returns a string representation of this {@link Date} in the format:
-		 * "day arabicMonth year".
+		 * Creates a {@code Date} instance using a numeric month value.
 		 *
-		 * <p>The Arabic month name is preserved as originally provided.</p>
+		 * <p>The numeric month is converted back to its Arabic name according
+		 * to the provided chronology. This ensures that the Arabic month name
+		 * remains consistent with the calendar system.</p>
 		 *
-		 * @return a formatted string representing the day, month, and year
+		 * @param day        the day of the month
+		 * @param monthValue the numeric month value (1–12)
+		 * @param chronology the chronology used to resolve the Arabic month name
+		 * @param year       the year value
+		 * @return a new {@code Date} instance
+		 * @throws IllegalArgumentException if the month value cannot be resolved for the given chronology
+		 */
+		public static Date of(int day, int monthValue, Chronology chronology, int year) {
+			return new Date(day, monthNumberToArabicName(monthValue, chronology), monthValue, year);
+		}
+
+		/**
+		 * Returns a string representation of this {@link Date}.
+		 *
+		 * <p>The format is:</p>
+		 * <pre>
+		 * day arabicMonth year
+		 * </pre>
+		 *
+		 * <p>Numeric values are rendered using the configured number formatter,
+		 * and the Arabic month name is preserved exactly as stored.</p>
+		 *
+		 * @return a formatted string representing this date
 		 */
 		@Override
 		public String toString() {
-			return day + " " + arabicMonth + " " + year;
+			return numberToString(day) + " " + arabicMonth + " " + numberToString(year);
 		}
 	}
 
