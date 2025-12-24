@@ -1,5 +1,7 @@
 package org.daiitech.naftah.builtin.time;
 
+import java.time.Duration;
+import java.time.Period;
 import java.time.temporal.TemporalAmount;
 
 /**
@@ -29,7 +31,68 @@ public record ArabicPeriodWithDuration(
 	public static ArabicPeriodWithDuration of(
 												ArabicPeriod arabicPeriod,
 												ArabicDuration arabicDuration) {
-		return new ArabicPeriodWithDuration(arabicPeriod, arabicDuration);
+		return adjustDurationIntoPeriod(arabicPeriod, arabicDuration);
+	}
+
+	/**
+	 * Adjusts durations of 24 hours or more by converting full days into the period.
+	 *
+	 * @param period   the original ArabicPeriod
+	 * @param duration the original ArabicDuration
+	 * @return a new {@code ArabicPeriodWithDuration} with normalized duration and adjusted period
+	 */
+	private static ArabicPeriodWithDuration adjustDurationIntoPeriod(
+																		ArabicPeriod period,
+																		ArabicDuration duration) {
+
+		long totalHours = duration.temporalAmount().toHours();
+
+		if (totalHours >= 24) {
+			long extraDays = totalHours / 24;
+			long remainingHours = totalHours % 24;
+
+			// Adjust period
+			Period newPeriod = period.temporalAmount().plusDays(extraDays);
+
+			// Adjust duration to less than 24 hours
+			Duration newDuration = duration.temporalAmount().minusHours(extraDays * 24);
+
+			ArabicPeriod.PeriodDefinition oldPeriodDefinition = period.periodDefinition();
+			ArabicPeriod adjustedPeriod = ArabicPeriod
+					.of(
+						ArabicPeriod.PeriodDefinition
+								.of(
+									newPeriod.getYears(),
+									oldPeriodDefinition.yearText(),
+									newPeriod.getMonths(),
+									oldPeriodDefinition.monthText(),
+									newPeriod.getDays(),
+									oldPeriodDefinition.dayText()
+								),
+						newPeriod
+					);
+
+			ArabicDuration.DurationDefinition oldDurationDefinition = duration.durationDefinition();
+			ArabicDuration adjustedDuration = ArabicDuration
+					.of(
+						ArabicDuration.DurationDefinition
+								.of(
+									(int) remainingHours,
+									oldDurationDefinition.hourText(),
+									oldDurationDefinition.minutes(),
+									oldDurationDefinition.minuteText(),
+									oldDurationDefinition.seconds(),
+									oldDurationDefinition.millis(),
+									oldDurationDefinition.secondText(),
+									oldDurationDefinition.nanos(),
+									oldDurationDefinition.nanoText()
+								),
+						newDuration
+					);
+			return new ArabicPeriodWithDuration(adjustedPeriod, adjustedDuration);
+		}
+
+		return new ArabicPeriodWithDuration(period, duration);
 	}
 
 	/**
