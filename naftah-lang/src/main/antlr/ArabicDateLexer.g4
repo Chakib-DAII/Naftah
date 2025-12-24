@@ -32,7 +32,7 @@
 
 lexer grammar ArabicDateLexer;
 
-MONTH
+MONTH_NAME
     // Gregorian + Tunisian
     : 'يناير' | 'جانفي'
     | 'فبراير' | 'فيفري'
@@ -69,6 +69,26 @@ AMPM	: 'ص' | 'صباحاً' | 'صباحا'
 
 ZONE_PREFIX		:  'بتوقيت';
 CALENDAR_PREFIX	:  'بالتقويم';
+
+DURATION_PREFIX	: 'مدة';
+PERIOD_PREFIX	: 'فترة';
+
+AND				: 'و';
+
+HOUR			: 'ساعة' | 'ساعات';
+MINUTE			: 'دقيقة' | 'دقائق';
+SECOND			: 'ثانية' | 'ثواني';
+NANOSECOND		: 'نانوثانية' | 'نانوثواني';
+
+DAY				: 'يوم' | 'أيام';
+MONTH			: 'شهر' | 'أشهر';
+YEAR			: 'سنة' | 'سنوات';
+
+NOW				: 'الآن';
+
+DATE			: 'تاريخ';
+TIME			: 'وقت';
+DATE_TIME		: 'تاريخ و وقت';
 
 COLON      		: ':';
 DOT       		: '.';
