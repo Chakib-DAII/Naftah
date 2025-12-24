@@ -52,9 +52,9 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance
 	 */
 	public static ArabicTime of(
-			Time time,
-			ZoneOrOffset zoneOrOffset,
-			Temporal temporal) {
+								Time time,
+								ZoneOrOffset zoneOrOffset,
+								Temporal temporal) {
 		return new ArabicTime(time, zoneOrOffset, temporal);
 	}
 
@@ -64,10 +64,10 @@ public record ArabicTime(
 	 *
 	 * <p>The following fields are resolved if supported by the temporal:
 	 * <ul>
-	 *   <li>{@link ChronoField#HOUR_OF_DAY}</li>
-	 *   <li>{@link ChronoField#MINUTE_OF_HOUR}</li>
-	 *   <li>{@link ChronoField#SECOND_OF_MINUTE}</li>
-	 *   <li>{@link ChronoField#NANO_OF_SECOND}</li>
+	 * <li>{@link ChronoField#HOUR_OF_DAY}</li>
+	 * <li>{@link ChronoField#MINUTE_OF_HOUR}</li>
+	 * <li>{@link ChronoField#SECOND_OF_MINUTE}</li>
+	 * <li>{@link ChronoField#NANO_OF_SECOND}</li>
 	 * </ul>
 	 * Unsupported fields default to {@code 0}.</p>
 	 *
@@ -80,13 +80,13 @@ public record ArabicTime(
 	 * @throws IllegalArgumentException if the temporal cannot represent a valid time
 	 */
 	public static ArabicTime of(
-			ZoneOrOffset zoneOrOffset,
-			Temporal temporal) {
+								ZoneOrOffset zoneOrOffset,
+								Temporal temporal) {
 		int hour = temporal.isSupported(ChronoField.HOUR_OF_DAY) ? temporal.get(ChronoField.HOUR_OF_DAY) : 0;
 		int minute = temporal.isSupported(ChronoField.MINUTE_OF_HOUR) ? temporal.get(ChronoField.MINUTE_OF_HOUR) : 0;
 		int second = temporal.isSupported(ChronoField.SECOND_OF_MINUTE) ?
-					 temporal.get(ChronoField.SECOND_OF_MINUTE) :
-					 0;
+				temporal.get(ChronoField.SECOND_OF_MINUTE) :
+				0;
 		int nano = temporal.isSupported(ChronoField.NANO_OF_SECOND) ? temporal.get(ChronoField.NANO_OF_SECOND) : 0;
 
 		var time = ArabicTime.Time.of(hour, minute, second, nano, null);
@@ -136,7 +136,7 @@ public record ArabicTime(
 			if (Objects.nonNull(isPM)) {
 				if (hour < 1 || hour > 12) {
 					throw new IllegalArgumentException(
-							"الساعة يجب أن تكون من 1 إلى 12 عند استخدام ص/م"
+														"الساعة يجب أن تكون من 1 إلى 12 عند استخدام ص/م"
 					);
 				}
 			}
