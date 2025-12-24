@@ -9,6 +9,9 @@
  * - Combined date-time expressions
  * - Optional time zone or numeric offset specifiers
  * - Optional calendar specification (e.g. Hijri, Gregorian)
+ * - Duration-only expressions
+ * - Period-only expressions
+ * - Combined period-duration expressions
  *
  * This parser focuses on composing meaningful date/time structures from
  * previously tokenized Arabic text.
@@ -35,12 +38,20 @@ parser grammar ArabicDateParser;
 
 options { tokenVocab = ArabicDateLexer; }
 
-root: dateSpecifier zonedOrOffsetTimeSpecifier? #dateTime
-    | dateSpecifier #date
-    | zonedOrOffsetTimeSpecifier #time
-    ;
+root: nowSpecifier 									#now
+    | dateSpecifier zonedOrOffsetTimeSpecifier? 	#dateTime
+    | zonedOrOffsetTimeSpecifier 					#time
+    | periodSpecifier (AND timeAmount)?    			#periodWithDuration
+	| periodSpecifier                       		#period
+	| durationSpecifier                     		#duration
+	;
 
-dateSpecifier: NUMBER MONTH NUMBER calendarSpecifier?;
+nowSpecifier: DATE NOW calendarSpecifier? zoneOrOffsetSpecifier?		#nowAsDate
+			| TIME NOW zoneOrOffsetSpecifier? 							#nowAsTime
+			| DATE_TIME? NOW calendarSpecifier? zoneOrOffsetSpecifier? 	#nowAsDateTime
+			;
+
+dateSpecifier: NUMBER MONTH_NAME NUMBER calendarSpecifier?;
 
 zonedOrOffsetTimeSpecifier: timeSpecifier zoneOrOffsetSpecifier?;
 
@@ -52,4 +63,18 @@ zoneOrOffsetSpecifier: ZONE_PREFIX ARABIC_WORDS #zoneSpecifier
 
 calendarSpecifier: CALENDAR_PREFIX ARABIC_WORDS;
 
+durationSpecifier: DURATION_PREFIX timeAmount;
+
+timeAmount: (NUMBER HOUR)?
+	  		(AND NUMBER MINUTE)?
+	  		(AND NUMBER SECOND)?
+	  		((AND NUMBER NANOSECOND) | (DOT NUMBER))?
+			;
+
+periodSpecifier: PERIOD_PREFIX dateAmount;
+
+dateAmount: (NUMBER YEAR)?
+			(AND NUMBER MONTH)?
+  			(AND NUMBER DAY)?
+  			;
 
