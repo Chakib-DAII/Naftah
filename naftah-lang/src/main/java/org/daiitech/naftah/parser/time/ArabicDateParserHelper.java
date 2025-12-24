@@ -5,13 +5,19 @@ import java.util.List;
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.daiitech.naftah.builtin.time.ArabicDate;
 import org.daiitech.naftah.builtin.time.ArabicTemporal;
+import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.ArabicDateLexer;
 import org.daiitech.naftah.parser.ArabicDateParser;
+import org.daiitech.naftah.parser.ArabicDateParserBaseVisitor;
 import org.daiitech.naftah.parser.NaftahErrorListener;
 import org.daiitech.naftah.parser.NaftahParserHelper;
+import org.daiitech.naftah.utils.time.ChronologyUtils;
+import org.daiitech.naftah.utils.time.TemporalUtils;
 
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -109,16 +115,30 @@ public final class ArabicDateParserHelper {
 	}
 
 	/**
-	 * Parses a string containing an Arabic date expression and returns
-	 * the corresponding {@link ArabicTemporal} object.
+	 * Parses an Arabic date/time expression and returns a typed temporal result.
 	 *
-	 * <p>This method handles lexer and parser creation, attaches error listeners,
-	 * and uses the {@link DefaultArabicDateParserVisitor} to traverse the parse tree.</p>
+	 * <p>This method performs the full parsing pipeline:
+	 * <ul>
+	 * <li>Creates a lexer and parser from the input string</li>
+	 * <li>Registers the default error listener</li>
+	 * <li>Traverses the parse tree using {@link DefaultArabicDateParserVisitor}</li>
+	 * <li>Returns the parsed result cast to the requested temporal type</li>
+	 * </ul>
 	 *
-	 * @param arabicDate the Arabic date expression as a string
-	 * @return the parsed {@link ArabicTemporal} representation
+	 * <p>The returned object may represent:
+	 * <ul>
+	 * <li>A temporal point (date, time, or date-time)</li>
+	 * <li>A temporal amount (duration, period, or a combination)</li>
+	 * </ul>
+	 *
+	 * @param arabicDate the Arabic date/time expression to parse
+	 * @param tClass     the expected result type
+	 * @param <T>        the concrete {@link ArabicTemporal} subtype to return
+	 * @return the parsed temporal representation
+	 * @throws ClassCastException if the parsed result cannot be cast to {@code tClass}
+	 * @throws RuntimeException   if a parsing or semantic error occurs
 	 */
-	public static ArabicTemporal run(String arabicDate) {
+	public static <T extends ArabicTemporal> T run(String arabicDate, Class<T> tClass) {
 		// Create an input stream from the Naftah code
 		CharStream input = getCharStream(arabicDate);
 
@@ -127,6 +147,83 @@ public final class ArabicDateParserHelper {
 		// Create a visitor and visit the parse tree
 		DefaultArabicDateParserVisitor visitor = new DefaultArabicDateParserVisitor(parser);
 		// Parse the input and get the parse tree
-		return (ArabicTemporal) visitor.visit();
+		return tClass.cast(visitor.visit());
+	}
+
+	/**
+	 * Visits the given parse tree using the provided Arabic date parser visitor.
+	 *
+	 * <p>This is a convenience method that delegates directly to
+	 * {@link ArabicDateParserBaseVisitor#visit(ParseTree)}.</p>
+	 *
+	 * @param arabicDateParserBaseVisitor the visitor used to traverse the parse tree
+	 * @param tree                        the parse tree to visit
+	 * @return the result produced by the visitor
+	 */
+	public static Object visit( ArabicDateParserBaseVisitor<?> arabicDateParserBaseVisitor,
+								ParseTree tree) {
+		return arabicDateParserBaseVisitor.visit(tree);
+	}
+
+	/**
+	 * Resolves and returns the current time as an {@link ArabicTime} instance.
+	 *
+	 * <p>If a zone or offset specifier is present, it is first visited and resolved
+	 * using the provided visitor, then applied when computing the current time.</p>
+	 *
+	 * <p>If no zone or offset specifier is provided, the system default is used.</p>
+	 *
+	 * @param arabicDateParserBaseVisitor the visitor used to resolve the zone or offset
+	 * @param zoneOrOffsetSpecifier       the optional zone or offset parse context
+	 * @return an {@link ArabicTime} representing the current time
+	 */
+	public static ArabicTime currentTime(   ArabicDateParserBaseVisitor<?> arabicDateParserBaseVisitor,
+											ArabicDateParser.ZoneOrOffsetSpecifierContext zoneOrOffsetSpecifier) {
+		ArabicTime.ZoneOrOffset zoneOrOffset = NaftahParserHelper.hasChild(zoneOrOffsetSpecifier) ?
+				(ArabicTime.ZoneOrOffset) visit(arabicDateParserBaseVisitor,
+												zoneOrOffsetSpecifier) :
+				null;
+
+		return ArabicTime
+				.of(zoneOrOffset,
+					TemporalUtils
+							.currentTime(
+											zoneOrOffset
+							)
+				);
+	}
+
+
+	/**
+	 * Resolves and returns the current date as an {@link ArabicDate} instance.
+	 *
+	 * <p>The calendar is resolved from the provided calendar specifier if present;
+	 * otherwise, the default chronology is used.</p>
+	 *
+	 * <p>If a zone or offset specifier is provided, it is applied when determining
+	 * the current date.</p>
+	 *
+	 * @param arabicDateParserBaseVisitor the visitor used to resolve calendar and zone
+	 * @param calendarSpecifier           the optional calendar parse context
+	 * @param zoneOrOffsetSpecifier       the optional zone or offset parse context
+	 * @return an {@link ArabicDate} representing the current date
+	 */
+	public static ArabicDate currentDate(   ArabicDateParserBaseVisitor<?> arabicDateParserBaseVisitor,
+											ArabicDateParser.CalendarSpecifierContext calendarSpecifier,
+											ArabicDateParser.ZoneOrOffsetSpecifierContext zoneOrOffsetSpecifier) {
+		ArabicDate.Calendar calendar = NaftahParserHelper.hasChild(calendarSpecifier) ?
+				(ArabicDate.Calendar) visit(arabicDateParserBaseVisitor,
+											calendarSpecifier) :
+				ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+
+		ArabicTime.ZoneOrOffset zoneOrOffset = NaftahParserHelper.hasChild(zoneOrOffsetSpecifier) ?
+				(ArabicTime.ZoneOrOffset) visit(arabicDateParserBaseVisitor,
+												zoneOrOffsetSpecifier) :
+				null;
+
+		return ArabicDate
+				.of(calendar,
+					TemporalUtils.currentDate(calendar, zoneOrOffset)
+				);
 	}
 }
