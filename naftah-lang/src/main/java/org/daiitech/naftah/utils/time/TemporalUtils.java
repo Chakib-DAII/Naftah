@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.chrono.Chronology;
-import java.time.temporal.TemporalAccessor;
+import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -25,7 +25,7 @@ import static org.daiitech.naftah.utils.time.ChronologyUtils.HIJRAH_CHRONOLOGY;
 import static org.daiitech.naftah.utils.time.Constants.PM_SHORT;
 
 /**
- * Utility class for creating and manipulating Java {@link TemporalAccessor} instances
+ * Utility class for creating and manipulating Java {@link Temporal} instances
  * from Arabic date and time components.
  *
  * <p>Provides methods to create:
@@ -40,25 +40,25 @@ import static org.daiitech.naftah.utils.time.Constants.PM_SHORT;
  *
  * @author Chakib Daii
  */
-public final class DateTimeUtils {
+public final class TemporalUtils {
 	/**
 	 * Private constructor to prevent instantiation.
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
-	private DateTimeUtils() {
+	private TemporalUtils() {
 		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
-	 * Creates a {@link TemporalAccessor} representing the given Arabic time,
+	 * Creates a {@link Temporal} representing the given Arabic time,
 	 * optionally including a time zone or offset.
 	 *
 	 * @param time         the Arabic time component
 	 * @param zoneOrOffset the optional time zone or offset
-	 * @return a TemporalAccessor representing the time, either {@link LocalTime},
+	 * @return a Temporal representing the time, either {@link LocalTime},
 	 *         {@link OffsetTime}, or {@link ZonedDateTime} depending on the zone/offset
 	 */
-	public static TemporalAccessor createTime(ArabicTime.Time time, ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static Temporal createTime(ArabicTime.Time time, ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return createTime(
 							time.getHour24(),
 							time.minute(),
@@ -69,21 +69,21 @@ public final class DateTimeUtils {
 	}
 
 	/**
-	 * Creates a {@link TemporalAccessor} representing a time with explicit components.
+	 * Creates a {@link Temporal} representing a time with explicit components.
 	 *
 	 * @param hour24 the hour in 24-hour format
-	 * @param minute the minute of the hour
+	 * @param minute the minute of the hour, may be null
 	 * @param second the second of the minute, may be null
 	 * @param nano   the nanosecond part, may be null
 	 * @param zoneId the optional {@link ZoneId}, may be null
-	 * @return a TemporalAccessor representing the specified time
+	 * @return a {@link Temporal} representing the specified time
 	 */
-	public static TemporalAccessor createTime(
-												int hour24,
-												Integer minute,
-												Integer second,
-												Integer nano,
-												ZoneId zoneId) {
+	public static Temporal createTime(
+										int hour24,
+										Integer minute,
+										Integer second,
+										Integer nano,
+										ZoneId zoneId) {
 
 		// Handle minutes, seconds and nanos
 		int minuteValue = Objects.nonNull(minute) ? minute : 0;
@@ -97,7 +97,48 @@ public final class DateTimeUtils {
 					secondValue,
 					nanoValue);
 
+		return createTime(time, zoneId);
+	}
 
+	/**
+	 * Returns the current {@link Temporal} representing the time in the specified zone or offset.
+	 *
+	 * @param zoneOrOffset the optional {@link ArabicTime.ZoneOrOffset}, may be null
+	 * @return a {@link Temporal} representing the current time in the given zone or offset
+	 */
+	public static Temporal currentTime(ArabicTime.ZoneOrOffset zoneOrOffset) {
+		return currentTime(
+							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+		);
+	}
+
+	/**
+	 * Returns the current {@link Temporal} representing the time in the specified {@link ZoneId}.
+	 *
+	 * @param zoneId the optional {@link ZoneId}, may be null
+	 * @return a {@link Temporal} representing the current time in the given zone
+	 */
+	public static Temporal currentTime(ZoneId zoneId) {
+		return createTime(LocalTime.now(), zoneId);
+	}
+
+	/**
+	 * Creates a {@link Temporal} from a {@link LocalTime} and an optional {@link ZoneId}.
+	 *
+	 * <p>If a {@link ZoneId} is provided:
+	 * <ul>
+	 * <li>If it is a {@link ZoneOffset}, returns an {@link OffsetTime}.</li>
+	 * <li>Otherwise, returns a {@link ZonedDateTime} anchored to today in that zone.</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * <p>If no {@link ZoneId} is provided, returns the {@link LocalTime} as-is.</p>
+	 *
+	 * @param time   the {@link LocalTime} to wrap
+	 * @param zoneId the optional {@link ZoneId}, may be null
+	 * @return a {@link Temporal} representing the given time with the zone applied if present
+	 */
+	public static Temporal createTime(LocalTime time, ZoneId zoneId) {
 		// If time + zoneId
 		if (Objects.nonNull(zoneId)) {
 			if (zoneId instanceof ZoneOffset offset) {
@@ -119,7 +160,7 @@ public final class DateTimeUtils {
 	 * @param monthValue the month value (1–12)
 	 * @param year       the year
 	 * @param chronology the chronology to use (e.g., ISO or Hijrah)
-	 * @return a ChronoLocalDate representing the specified date
+	 * @return a {@link ChronoLocalDate} representing the specified date
 	 */
 	public static ChronoLocalDate createDate(
 												int day,
@@ -131,19 +172,51 @@ public final class DateTimeUtils {
 	}
 
 	/**
-	 * Creates a {@link TemporalAccessor} representing the given Arabic date and time,
+	 * Returns the current {@link Temporal} for the specified {@link ArabicDate.Calendar}
+	 * and optional {@link ArabicTime.ZoneOrOffset}.
+	 *
+	 * @param calendar     the Arabic calendar
+	 * @param zoneOrOffset the optional zone or offset, may be null
+	 * @return a {@link Temporal} representing the current date in the given calendar and zone
+	 */
+	public static Temporal currentDate(ArabicDate.Calendar calendar, ArabicTime.ZoneOrOffset zoneOrOffset) {
+		return currentDate(
+							calendar.chronology(),
+							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+		);
+	}
+
+	/**
+	 * Returns the current {@link ChronoLocalDate} for the specified {@link Chronology}
+	 * and optional {@link ZoneId}.
+	 *
+	 * @param chronology the chronology to use (e.g., ISO or Hijrah)
+	 * @param zoneId     the optional {@link ZoneId}, may be null
+	 * @return a {@link ChronoLocalDate} representing the current date in the given chronology and zone
+	 */
+	public static ChronoLocalDate currentDate(Chronology chronology, ZoneId zoneId) {
+		// If date + zoneId
+		if (Objects.nonNull(zoneId)) {
+			return chronology.dateNow(zoneId);
+		}
+
+		return chronology.dateNow();
+	}
+
+	/**
+	 * Creates a {@link Temporal} representing the given Arabic date and time,
 	 * optionally including a time zone or offset.
 	 *
 	 * @param date         the Arabic date component
 	 * @param calendar     the Arabic calendar component
 	 * @param time         the Arabic time component
 	 * @param zoneOrOffset the optional time zone or offset
-	 * @return a TemporalAccessor representing the date and time
+	 * @return a Temporal representing the date and time
 	 */
-	public static TemporalAccessor createDateTime(  ArabicDate.Date date,
-													ArabicDate.Calendar calendar,
-													ArabicTime.Time time,
-													ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static Temporal createDateTime(  ArabicDate.Date date,
+											ArabicDate.Calendar calendar,
+											ArabicTime.Time time,
+											ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return createDateTime(
 								date.day(),
 								date.monthValue(),
@@ -158,7 +231,7 @@ public final class DateTimeUtils {
 	}
 
 	/**
-	 * Creates a {@link TemporalAccessor} representing a date and time with optional time zone or offset.
+	 * Creates a {@link Temporal} representing a date and time with optional time zone or offset.
 	 *
 	 * <p>This method constructs the appropriate temporal object based on the inputs:
 	 * <ul>
@@ -178,18 +251,18 @@ public final class DateTimeUtils {
 	 * @param second     the second of the minute, may be null
 	 * @param nano       the nanosecond fraction, may be null
 	 * @param zoneId     the optional {@link ZoneId} or {@link ZoneOffset}, may be null
-	 * @return a {@link TemporalAccessor} representing the date and time with optional zone/offset
+	 * @return a {@link Temporal} representing the date and time with optional zone/offset
 	 */
-	public static TemporalAccessor createDateTime(
-													int day,
-													int monthValue,
-													int year,
-													Chronology chronology,
-													int hour24,
-													Integer minute,
-													Integer second,
-													Integer nano,
-													ZoneId zoneId) {
+	public static Temporal createDateTime(
+											int day,
+											int monthValue,
+											int year,
+											Chronology chronology,
+											int hour24,
+											Integer minute,
+											Integer second,
+											Integer nano,
+											ZoneId zoneId) {
 
 		ChronoLocalDate date = createDate(day, monthValue, year, chronology);
 
