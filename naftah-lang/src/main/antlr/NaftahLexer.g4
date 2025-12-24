@@ -144,17 +144,18 @@ LT_TYPE_SIGN    : COLON LT_SIGN;
 GT_TYPE_SIGN    : GT_SIGN COLON;
 
 // Literals
-BASE_DIGITS	: (Digit | Character)+ QuotationMark QuotationMark;  // Digits for base up to 36 (including a-z for bases > 10)
-BASE_RADIX	: ([2-9٢-٩] | ([1-3١-٣] [0-9٠-٩])) QuotationMark; // base 2 to 36 radices
-NUMBER      : Digit+ (COMMA Digit+)?;
-NAN			: 'ليس_رقم' | 'قيمة_غير_رقمية' | 'رقم_غير_صالح' | 'غير_عددي' | 'ليس_عددي';
-CHARACTER   : QuotationMark Character QuotationMark;
-RAW		    : 'خام' | 'نص_خام'| 'سلسلة_خام';
-DATE		: 'تاريخ';
-BYTE_ARRAY	: 'ثمانية_بت' | 'بايتات' |'سلسلة_ثمانية_بت' |'مصفوفة_ثمانية_بت' | 'سلسلة_بايتات'| 'مصفوفة_بايتات';
-STRING      : DoubleQuotationMark String DoubleQuotationMark
-			| DoubleQuotationMarkLeft String DoubleQuotationMarkRight;
-ID          : [ء-يڠ-ۿﹼپ_٠-٩0-9\u064B-\u065F]* [ء-يڠ-ۿﹼپ_\u064B-\u065F] [ء-يڠ-ۿﹼپ_٠-٩0-9\u064B-\u065F]*;
+BASE_DIGITS		: (Digit | Character)+ QuotationMark QuotationMark;  // Digits for base up to 36 (including a-z for bases > 10)
+BASE_RADIX		: ([2-9٢-٩] | ([1-3١-٣] [0-9٠-٩])) QuotationMark; // base 2 to 36 radices
+NUMBER      	: Digit+ (COMMA Digit+)?;
+NAN				: 'ليس_رقم' | 'قيمة_غير_رقمية' | 'رقم_غير_صالح' | 'غير_عددي' | 'ليس_عددي';
+CHARACTER   	: QuotationMark Character QuotationMark;
+RAW		    	: 'خام' | 'نص_خام'| 'سلسلة_خام';
+TEMPORAL_POINT	: 'زمن' | 'نقطة_زمنية';
+TEMPORAL_AMOUNT	: 'مقدار_زمني' | 'قيمة_زمنية';
+BYTE_ARRAY		: 'ثمانية_بت' | 'بايتات' |'سلسلة_ثمانية_بت' |'مصفوفة_ثمانية_بت' | 'سلسلة_بايتات'| 'مصفوفة_بايتات';
+STRING      	: DoubleQuotationMark String DoubleQuotationMark
+				| DoubleQuotationMarkLeft String DoubleQuotationMarkRight;
+ID          	: [ء-يڠ-ۿﹼپ_٠-٩0-9\u064B-\u065F]* [ء-يڠ-ۿﹼپ_\u064B-\u065F] [ء-يڠ-ۿﹼپ_٠-٩0-9\u064B-\u065F]*;
 
 QuotationMark 				: '\'' | '’';
 DoubleQuotationMark 		: '"';
