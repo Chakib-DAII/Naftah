@@ -1,53 +1,96 @@
 package org.daiitech.naftah.builtin.time;
 
 import java.time.ZoneId;
-import java.time.temporal.TemporalAccessor;
+import java.time.temporal.ChronoField;
+import java.time.temporal.Temporal;
 import java.util.Objects;
 
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
-import org.daiitech.naftah.utils.time.DateTimeUtils;
+import org.daiitech.naftah.utils.time.TemporalUtils;
 import org.daiitech.naftah.utils.time.ZoneUtils;
 
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.numberToString;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.padZero;
 import static org.daiitech.naftah.utils.time.ZoneUtils.parseZoneOffset;
 
 /**
  * Represents an Arabic time expression, optionally including a time zone or offset,
- * and a resolved {@link TemporalAccessor} representation.
+ * and a resolved {@link Temporal} representation.
  *
  * <p>Implemented as a record with the components:
  * <ul>
  * <li>{@link Time} – the hour, minute, optional second and nanosecond, and AM/PM indicator</li>
  * <li>{@link ZoneOrOffset} – optional time zone or numeric offset</li>
- * <li>{@link TemporalAccessor} – the resolved temporal representation</li>
+ * <li>{@link Temporal} – the resolved temporal representation</li>
  * </ul>
  *
- * <p>This record implements {@link ArabicTemporal} and is typically produced
+ * <p>This record implements {@link ArabicTemporalPoint} and is typically produced
  * after parsing Arabic time expressions.</p>
  *
  * @param time         the time component
  * @param zoneOrOffset the optional time zone or offset component
- * @param temporal     the resolved {@link TemporalAccessor} representation
+ * @param temporal     the resolved {@link Temporal} representation
  * @author Chakib Daii
  * @return a new {@code ArabicTime} instance
  */
 public record ArabicTime(
 		Time time,
 		ZoneOrOffset zoneOrOffset,
-		TemporalAccessor temporal
-) implements ArabicTemporal {
+		Temporal temporal
+) implements ArabicTemporalPoint {
 
 	/**
-	 * Creates a new {@code ArabicTime} instance.
+	 * Creates a new {@code ArabicTime} instance using explicit components.
 	 *
-	 * @param time         the time component
-	 * @param zoneOrOffset the optional time zone or offset component
-	 * @param temporal     the resolved {@link TemporalAccessor} representation
+	 * <p>This factory method is typically used when the parsed time,
+	 * optional zone/offset, and the resolved {@link Temporal} representation
+	 * are already available.</p>
+	 *
+	 * @param time         the logical time component (hour, minute, second, nano, AM/PM)
+	 * @param zoneOrOffset the optional time zone or offset information, may be {@code null}
+	 * @param temporal     the resolved {@link Temporal} representation backing this time
 	 * @return a new {@code ArabicTime} instance
 	 */
 	public static ArabicTime of(
-								Time time,
-								ZoneOrOffset zoneOrOffset,
-								TemporalAccessor temporal) {
+			Time time,
+			ZoneOrOffset zoneOrOffset,
+			Temporal temporal) {
+		return new ArabicTime(time, zoneOrOffset, temporal);
+	}
+
+	/**
+	 * Creates a new {@code ArabicTime} instance by extracting time fields
+	 * directly from a {@link Temporal} object.
+	 *
+	 * <p>The following fields are resolved if supported by the temporal:
+	 * <ul>
+	 *   <li>{@link ChronoField#HOUR_OF_DAY}</li>
+	 *   <li>{@link ChronoField#MINUTE_OF_HOUR}</li>
+	 *   <li>{@link ChronoField#SECOND_OF_MINUTE}</li>
+	 *   <li>{@link ChronoField#NANO_OF_SECOND}</li>
+	 * </ul>
+	 * Unsupported fields default to {@code 0}.</p>
+	 *
+	 * <p>The resulting {@link ArabicTime.Time} instance is created using
+	 * a 24-hour clock representation, with no AM/PM marker.</p>
+	 *
+	 * @param zoneOrOffset the optional time zone or offset information, may be {@code null}
+	 * @param temporal     the temporal object from which time fields are extracted
+	 * @return a new {@code ArabicTime} instance
+	 * @throws IllegalArgumentException if the temporal cannot represent a valid time
+	 */
+	public static ArabicTime of(
+			ZoneOrOffset zoneOrOffset,
+			Temporal temporal) {
+		int hour = temporal.isSupported(ChronoField.HOUR_OF_DAY) ? temporal.get(ChronoField.HOUR_OF_DAY) : 0;
+		int minute = temporal.isSupported(ChronoField.MINUTE_OF_HOUR) ? temporal.get(ChronoField.MINUTE_OF_HOUR) : 0;
+		int second = temporal.isSupported(ChronoField.SECOND_OF_MINUTE) ?
+					 temporal.get(ChronoField.SECOND_OF_MINUTE) :
+					 0;
+		int nano = temporal.isSupported(ChronoField.NANO_OF_SECOND) ? temporal.get(ChronoField.NANO_OF_SECOND) : 0;
+
+		var time = ArabicTime.Time.of(hour, minute, second, nano, null);
+
 		return new ArabicTime(time, zoneOrOffset, temporal);
 	}
 
@@ -93,7 +136,7 @@ public record ArabicTime(
 			if (Objects.nonNull(isPM)) {
 				if (hour < 1 || hour > 12) {
 					throw new IllegalArgumentException(
-														"الساعة يجب أن تكون من 1 إلى 12 عند استخدام ص/م"
+							"الساعة يجب أن تكون من 1 إلى 12 عند استخدام ص/م"
 					);
 				}
 			}
@@ -135,7 +178,7 @@ public record ArabicTime(
 		 * @return the hour in 24-hour format
 		 */
 		public int getHour24() {
-			return DateTimeUtils.getHour24(hour, isPM);
+			return TemporalUtils.getHour24(hour, isPM);
 		}
 
 		/**
@@ -151,12 +194,12 @@ public record ArabicTime(
 			StringBuilder sb = new StringBuilder();
 			int displayHour = getHour24();
 
-			sb.append(displayHour).append(":").append(String.format("%02d", minute));
+			sb.append(numberToString(displayHour)).append(":").append(padZero(numberToString(minute), 2));
 			if (Objects.nonNull(second)) {
-				sb.append(":").append(String.format("%02d", second));
+				sb.append(":").append(padZero(numberToString(second), 2));
 			}
 			if (Objects.nonNull(nano)) {
-				sb.append(".").append(String.format("%09d", nano));
+				sb.append(".").append(padZero(numberToString(nano), 9));
 			}
 			if (Objects.nonNull(isPM)) {
 				sb.append(isPM ? " م" : " ص");
