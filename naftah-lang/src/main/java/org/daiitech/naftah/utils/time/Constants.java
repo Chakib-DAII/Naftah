@@ -221,7 +221,42 @@ public final class Constants {
 	 * Dhu al-Hijjah, the twelfth month in Hijri calendar.
 	 */
 	public static final String DHU_AL_HIJJAH = "ذو الحجة";
-
+	/**
+	 * Prefix used to indicate a duration.
+	 */
+	public static final String DURATION_PREFIX = "مدة";
+	/**
+	 * Prefix used to indicate a period.
+	 */
+	public static final String PERIOD_PREFIX = "فترة";
+	/**
+	 * Represents a day in Arabic.
+	 */
+	public static final String DAY = "يوم";
+	/**
+	 * Represents a month in Arabic.
+	 */
+	public static final String MONTH = "شهر";
+	/**
+	 * Represents a year in Arabic.
+	 */
+	public static final String YEAR = "سنة";
+	/**
+	 * Represents an hour in Arabic.
+	 */
+	public static final String HOUR = "ساعة";
+	/**
+	 * Represents a minute in Arabic.
+	 */
+	public static final String MINUTE = "دقيقة";
+	/**
+	 * Represents a second in Arabic.
+	 */
+	public static final String SECOND = "ثانية";
+	/**
+	 * Represents a nanosecond in Arabic.
+	 */
+	public static final String NANOSECOND = "نانوثانية";
 
 	/**
 	 * Private constructor to prevent instantiation.
