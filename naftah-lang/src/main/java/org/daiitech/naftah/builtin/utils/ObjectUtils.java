@@ -1327,6 +1327,27 @@ public final class ObjectUtils {
 	}
 
 	/**
+	 * Pads the given string with leading zeros to ensure it reaches the specified length.
+	 *
+	 * <p>If the input string is shorter than the desired length, zeros are added at the beginning.
+	 * If the string is already equal to or longer than the specified length, it is returned unchanged.
+	 *
+	 * <p>Example:
+	 * <pre>
+	 * padZero("5", 2) // returns "05"
+	 * padZero("123", 5) // returns "00123"
+	 * padZero("42", 1) // returns "42"
+	 * </pre>
+	 *
+	 * @param str    the input string to pad
+	 * @param length the desired minimum length of the resulting string
+	 * @return the input string left-padded with zeros to the specified length
+	 */
+	public static String padZero(String str, int length) {
+		return "0".repeat(Math.max(0, length - str.length())) + str;
+	}
+
+	/**
 	 * Returns the size or length of the given object, depending on its type.
 	 *
 	 * <p>This method provides a unified way to determine the "size" of various types
