@@ -12,10 +12,10 @@ package org.daiitech.naftah.builtin.time;
  *
  * <p>Permitted subtypes:
  * <ul>
- *   <li>{@link ArabicTemporalPoint} – represents a specific point in time
- *       (e.g. date, time, or date-time)</li>
- *   <li>{@link ArabicTemporalAmount} – represents a temporal amount
- *       (e.g. duration or period)</li>
+ * <li>{@link ArabicTemporalPoint} – represents a specific point in time
+ * (e.g. date, time, or date-time)</li>
+ * <li>{@link ArabicTemporalAmount} – represents a temporal amount
+ * (e.g. duration or period)</li>
  * </ul>
  * </p>
  *
