@@ -64,9 +64,9 @@ public record ArabicDate(
 	 *
 	 * <p>The temporal must support the following fields:
 	 * <ul>
-	 *   <li>{@link ChronoField#DAY_OF_MONTH}</li>
-	 *   <li>{@link ChronoField#MONTH_OF_YEAR}</li>
-	 *   <li>{@link ChronoField#YEAR}</li>
+	 * <li>{@link ChronoField#DAY_OF_MONTH}</li>
+	 * <li>{@link ChronoField#MONTH_OF_YEAR}</li>
+	 * <li>{@link ChronoField#YEAR}</li>
 	 * </ul>
 	 * </p>
 	 *
@@ -76,11 +76,10 @@ public record ArabicDate(
 	 * @throws IllegalArgumentException if the temporal does not support day, month, or year fields
 	 */
 	public static ArabicDate of(Calendar calendar, Temporal temporal) {
-		if (!temporal.isSupported(ChronoField.DAY_OF_MONTH)
-				|| !temporal.isSupported(ChronoField.MONTH_OF_YEAR)
-				|| !temporal.isSupported(ChronoField.YEAR)) {
+		if (!temporal.isSupported(ChronoField.DAY_OF_MONTH) || !temporal
+				.isSupported(ChronoField.MONTH_OF_YEAR) || !temporal.isSupported(ChronoField.YEAR)) {
 			throw new IllegalArgumentException(
-					"النقطة الزمنية المقدم لا يدعم اليوم أو الشهر أو السنة: " + temporal
+												"النقطة الزمنية المقدم لا يدعم اليوم أو الشهر أو السنة: " + temporal
 			);
 		}
 
