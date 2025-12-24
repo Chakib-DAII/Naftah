@@ -42,7 +42,6 @@ root: nowSpecifier 									#now
     | dateSpecifier zonedOrOffsetTimeSpecifier? 	#dateTime
     | zonedOrOffsetTimeSpecifier 					#time
     | periodSpecifier (AND timeAmount)?    			#periodWithDuration
-	| periodSpecifier                       		#period
 	| durationSpecifier                     		#duration
 	;
 
@@ -66,15 +65,15 @@ calendarSpecifier: CALENDAR_PREFIX ARABIC_WORDS;
 durationSpecifier: DURATION_PREFIX timeAmount;
 
 timeAmount: (NUMBER HOUR)?
-	  		(AND NUMBER MINUTE)?
-	  		(AND NUMBER SECOND)?
-	  		((AND NUMBER NANOSECOND) | (DOT NUMBER))?
+	  		(AND? NUMBER MINUTE)?
+	  		(AND? NUMBER (DOT NUMBER)? SECOND)?
+	  		(AND? NUMBER NANOSECOND)?
 			;
 
 periodSpecifier: PERIOD_PREFIX dateAmount;
 
 dateAmount: (NUMBER YEAR)?
-			(AND NUMBER MONTH)?
-  			(AND NUMBER DAY)?
+			(AND? NUMBER MONTH)?
+  			(AND? NUMBER DAY)?
   			;
 
