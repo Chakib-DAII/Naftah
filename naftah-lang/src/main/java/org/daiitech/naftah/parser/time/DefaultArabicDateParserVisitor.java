@@ -1,10 +1,17 @@
 package org.daiitech.naftah.parser.time;
 
 
+import java.time.Duration;
+import java.time.Period;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.time.ArabicDate;
 import org.daiitech.naftah.builtin.time.ArabicDateTime;
+import org.daiitech.naftah.builtin.time.ArabicDuration;
+import org.daiitech.naftah.builtin.time.ArabicPeriod;
+import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
 import org.daiitech.naftah.builtin.time.ArabicTemporal;
+import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
 import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
 import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
@@ -13,6 +20,14 @@ import org.daiitech.naftah.parser.ArabicDateParserBaseVisitor;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
+
+import static org.daiitech.naftah.utils.time.Constants.DAY;
+import static org.daiitech.naftah.utils.time.Constants.HOUR;
+import static org.daiitech.naftah.utils.time.Constants.MINUTE;
+import static org.daiitech.naftah.utils.time.Constants.MONTH;
+import static org.daiitech.naftah.utils.time.Constants.NANOSECOND;
+import static org.daiitech.naftah.utils.time.Constants.SECOND;
+import static org.daiitech.naftah.utils.time.Constants.YEAR;
 
 /**
  * A default visitor implementation for parsing Arabic date and time expressions.
@@ -181,14 +196,15 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 */
 	@Override
 	public ArabicTime.Time visitTimeSpecifier(ArabicDateParser.TimeSpecifierContext ctx) {
-		int hour = NumberUtils.parseDynamicNumber(ctx.NUMBER(0).getText()).intValue();
-		int minute = NumberUtils.parseDynamicNumber(ctx.NUMBER(1).getText()).intValue();
+		int numberIndex = 0;
+		int hour = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
+		int minute = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
 
-		Integer second = NaftahParserHelper.hasChild(ctx.NUMBER(2)) ?
-				NumberUtils.parseDynamicNumber(ctx.NUMBER(2).getText()).intValue() :
+		Integer second = NaftahParserHelper.hasChild(ctx.NUMBER(numberIndex)) ?
+				NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue() :
 				null;
-		Integer nano = NaftahParserHelper.hasChild(ctx.NUMBER(3)) ?
-				NumberUtils.parseDynamicNumber(ctx.NUMBER(3).getText()).intValue() :
+		Integer nano = NaftahParserHelper.hasChild(ctx.NUMBER(numberIndex)) ?
+				TemporalUtils.parseFractionToNanos(ctx.NUMBER(numberIndex).getText()) :
 				null;
 		Boolean isPM = NaftahParserHelper.hasChild(ctx.AMPM()) ?
 				TemporalUtils.isPM(ctx.AMPM().getText()) :
@@ -221,5 +237,136 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 		return ArabicDate.Calendar
 				.of(ctx.ARABIC_WORDS().getText(),
 					ChronologyUtils.getChronologyByName(ctx.ARABIC_WORDS().getText()));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicTemporalAmount visitPeriodWithDuration(ArabicDateParser.PeriodWithDurationContext ctx) {
+		ArabicPeriod arabicPeriod = (ArabicPeriod) visit(ctx.periodSpecifier());
+
+		if (NaftahParserHelper.hasChild(ctx.timeAmount())) {
+			ArabicDuration arabicDuration = (ArabicDuration) visit(ctx.timeAmount());
+
+			return ArabicPeriodWithDuration.of(arabicPeriod, arabicDuration);
+		}
+
+		return arabicPeriod;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicDuration visitDuration(ArabicDateParser.DurationContext ctx) {
+		return (ArabicDuration) visit(ctx.durationSpecifier());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicDuration visitDurationSpecifier(ArabicDateParser.DurationSpecifierContext ctx) {
+		return (ArabicDuration) visit(ctx.timeAmount());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicDuration visitTimeAmount(ArabicDateParser.TimeAmountContext ctx) {
+		int hours = 0;
+		int minutes = 0;
+		int seconds = 0;
+		int millis = 0;
+		int nanos = 0;
+		String hourText = HOUR;
+		String minuteText = MINUTE;
+		String secondText = SECOND;
+		String nanoText = NANOSECOND;
+		int numberIndex = 0;
+		if (NaftahParserHelper.hasChild(ctx.HOUR())) {
+			hours = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
+			hourText = ctx.HOUR().getText();
+		}
+		if (NaftahParserHelper.hasChild(ctx.MINUTE())) {
+			minutes = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
+			minuteText = ctx.MINUTE().getText();
+		}
+		if (NaftahParserHelper.hasChild(ctx.SECOND())) {
+			seconds = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
+			secondText = ctx.SECOND().getText();
+
+			if (NaftahParserHelper.hasChild(ctx.DOT())) {
+				millis = TemporalUtils.parseMillisFraction(ctx.NUMBER(numberIndex++).getText());
+			}
+		}
+		if (NaftahParserHelper.hasChild(ctx.NANOSECOND())) {
+			nanos = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex).getText()).intValue();
+			nanoText = ctx.NANOSECOND().getText();
+		}
+
+
+		return ArabicDuration
+				.of(
+					ArabicDuration.DurationDefinition
+							.of(hours,
+								hourText,
+								minutes,
+								minuteText,
+								seconds,
+								millis,
+								secondText,
+								nanos,
+								nanoText),
+					Duration
+							.ofHours(hours)
+							.plusMinutes(minutes)
+							.plusMillis(millis)
+							.plusSeconds(seconds)
+							.plusNanos(nanos)
+				);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicPeriod visitPeriodSpecifier(ArabicDateParser.PeriodSpecifierContext ctx) {
+		return (ArabicPeriod) visit(ctx.dateAmount());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicPeriod visitDateAmount(ArabicDateParser.DateAmountContext ctx) {
+		int years = 0;
+		int months = 0;
+		int days = 0;
+		String yearText = YEAR;
+		String monthText = MONTH;
+		String dayText = DAY;
+		int numberIndex = 0;
+		if (NaftahParserHelper.hasChild(ctx.YEAR())) {
+			years = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
+			yearText = ctx.YEAR().getText();
+		}
+		if (NaftahParserHelper.hasChild(ctx.MONTH())) {
+			months = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
+			monthText = ctx.MONTH().getText();
+		}
+		if (NaftahParserHelper.hasChild(ctx.DAY())) {
+			days = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex).getText()).intValue();
+			dayText = ctx.DAY().getText();
+		}
+
+
+		return ArabicPeriod
+				.of(
+					ArabicPeriod.PeriodDefinition.of(years, yearText, months, monthText, days, dayText),
+					Period.of(years, months, days)
+				);
 	}
 }
