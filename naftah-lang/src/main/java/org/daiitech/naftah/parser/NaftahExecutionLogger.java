@@ -1832,7 +1832,8 @@ public final class NaftahExecutionLogger {
 											StringValueContext::RAW -> %s
 											StringValueContext::BYTE_ARRAY -> %s
 											StringValueContext::STRING -> %s
-											StringValueContext::DATE -> %s
+											StringValueContext::TEMPORAL_POINT -> %s
+											StringValueContext::TEMPORAL_AMOUNT -> %s
 											"""
 										.formatted( Objects.nonNull(context.RAW()) ? context.RAW().getText() : null,
 													Objects.nonNull(context.BYTE_ARRAY()) ?
@@ -1841,8 +1842,11 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.STRING()) ?
 															context.STRING().getText() :
 															null,
-													Objects.nonNull(context.DATE()) ?
-															context.DATE().getText() :
+													Objects.nonNull(context.TEMPORAL_POINT()) ?
+															context.TEMPORAL_POINT().getText() :
+															null,
+													Objects.nonNull(context.TEMPORAL_AMOUNT()) ?
+															context.TEMPORAL_AMOUNT().getText() :
 															null
 										));
 
