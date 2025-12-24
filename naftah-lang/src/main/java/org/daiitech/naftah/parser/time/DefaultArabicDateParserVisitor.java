@@ -5,13 +5,14 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.time.ArabicDate;
 import org.daiitech.naftah.builtin.time.ArabicDateTime;
 import org.daiitech.naftah.builtin.time.ArabicTemporal;
+import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
 import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.parser.ArabicDateParser;
 import org.daiitech.naftah.parser.ArabicDateParserBaseVisitor;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
-import org.daiitech.naftah.utils.time.DateTimeUtils;
+import org.daiitech.naftah.utils.time.TemporalUtils;
 
 /**
  * A default visitor implementation for parsing Arabic date and time expressions.
@@ -45,18 +46,66 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 *
 	 * @return the result of visiting the parse tree
 	 */
-	public Object visit() {
+	public ArabicTemporal visit() {
 		// Parse the input and get the parse tree
 		ParseTree tree = parser.root();
-		return visit(tree);
+		return (ArabicTemporal) visit(tree);
 	}
-
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporal visitDateTime(ArabicDateParser.DateTimeContext ctx) {
+	public ArabicTemporalPoint visitNow(ArabicDateParser.NowContext ctx) {
+		return (ArabicTemporalPoint) visit(ctx.nowSpecifier());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicTemporalPoint visitNowAsDateTime(ArabicDateParser.NowAsDateTimeContext ctx) {
+		ArabicDate date = ArabicDateParserHelper
+				.currentDate(   this,
+								ctx.calendarSpecifier(),
+								ctx.zoneOrOffsetSpecifier());
+
+
+		ArabicTime time = ArabicDateParserHelper.currentTime(this, ctx.zoneOrOffsetSpecifier());
+
+		return ArabicDateTime
+				.of(
+					date,
+					time,
+					TemporalUtils
+							.createDateTime(date.date(),
+											date.calendar(),
+											time.time(),
+											time.zoneOrOffset())
+				);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicDate visitNowAsDate(ArabicDateParser.NowAsDateContext ctx) {
+		return ArabicDateParserHelper.currentDate(this, ctx.calendarSpecifier(), ctx.zoneOrOffsetSpecifier());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicTime visitNowAsTime(ArabicDateParser.NowAsTimeContext ctx) {
+		return ArabicDateParserHelper.currentTime(this, ctx.zoneOrOffsetSpecifier());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicTemporalPoint visitDateTime(ArabicDateParser.DateTimeContext ctx) {
 		ArabicDate date = (ArabicDate) visit(ctx.dateSpecifier());
 
 		if (NaftahParserHelper.hasChild(ctx.zonedOrOffsetTimeSpecifier())) {
@@ -66,7 +115,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 					.of(
 						date,
 						time,
-						DateTimeUtils
+						TemporalUtils
 								.createDateTime(date.date(),
 												date.calendar(),
 												time.time(),
@@ -74,14 +123,6 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 					);
 		}
 		return date;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ArabicDate visitDate(ArabicDateParser.DateContext ctx) {
-		return (ArabicDate) visit(ctx.dateSpecifier());
 	}
 
 	/**
@@ -109,7 +150,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 		return ArabicDate
 				.of(date,
 					calendar,
-					DateTimeUtils.createDate(day, date.monthValue(), year, calendar.chronology())
+					TemporalUtils.createDate(day, date.monthValue(), year, calendar.chronology())
 				);
 	}
 
@@ -127,7 +168,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 		return ArabicTime
 				.of(time,
 					zoneOrOffset,
-					DateTimeUtils
+					TemporalUtils
 							.createTime(
 										time,
 										zoneOrOffset
@@ -150,7 +191,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 				NumberUtils.parseDynamicNumber(ctx.NUMBER(3).getText()).intValue() :
 				null;
 		Boolean isPM = NaftahParserHelper.hasChild(ctx.AMPM()) ?
-				DateTimeUtils.isPM(ctx.AMPM().getText()) :
+				TemporalUtils.isPM(ctx.AMPM().getText()) :
 				null;
 
 		return ArabicTime.Time.of(hour, minute, second, nano, isPM);
