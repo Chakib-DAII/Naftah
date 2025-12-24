@@ -33,6 +33,8 @@ import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.lang.Result;
+import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
@@ -4303,16 +4305,42 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								}
 								else {
 									result = value = StringInterpolator.process(value, currentContext);
-									if (Objects.nonNull(stringValueContext.DATE())) {
+									if (Objects.nonNull(stringValueContext.TEMPORAL_POINT())) {
 										try {
-											result = ArabicDateParserHelper.run(value);
+											result = ArabicDateParserHelper.run(value, ArabicTemporalPoint.class);
 										}
 										catch (Throwable throwable) {
 											throw new NaftahBugError(   """
-																		فشل تحليل التاريخ: "%s"
+																		فشل تحليل النقطة الزمنية: '%s'
 																		الرجاء استخدام صيغة مشابهة للأمثلة التالية:
 																		٣٠ أكتوبر ٢٠٢٢ بالتقويم الميلادي ٢٢:١٥ بتوقيت تونس
 																		صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ بتوقيت بيروت
+																		"""
+																				.formatted(value),
+																		throwable,
+																		stringValueContext.getStart().getLine(),
+																		stringValueContext
+																				.getStart()
+																				.getCharPositionInLine());
+										}
+									}
+									else if (Objects.nonNull(stringValueContext.TEMPORAL_AMOUNT())) {
+										try {
+											result = ArabicDateParserHelper.run(value, ArabicTemporalAmount.class);
+										}
+										catch (Throwable throwable) {
+											throw new NaftahBugError(   """
+																		فشل تحليل القيمة الزمنية: '%s'
+																		الرجاء استخدام صيغة مشابهة للأمثلة التالية:
+																		مقدار_زمني "مدة 3 ساعات"
+																		قيمة_زمنية "مدة 1 ساعة و15 دقيقة"
+																		قيمة_زمنية "مدة 2 ساعات و10 دقائق و5 ثوانٍ"
+																		مقدار_زمني "مدة 1 ثانية و 500 نانوثانية"
+																		قيمة_زمنية "مدة 1 ساعة و 30.75 ثانية"
+																		مقدار_زمني "فترة 1 سنة"
+																		مقدار_زمني "فترة 5 سنوات"
+																		قيمة_زمنية "فترة 1 شهر و 10 أيام"
+																		قيمة_زمنية "فترة 14 يوم"
 																		"""
 																				.formatted(value),
 																		throwable,
