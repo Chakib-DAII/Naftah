@@ -56,15 +56,15 @@ public final class TemporalUtils {
 	 * @param time         the Arabic time component
 	 * @param zoneOrOffset the optional time zone or offset
 	 * @return a Temporal representing the time, either {@link LocalTime},
-	 * {@link OffsetTime}, or {@link ZonedDateTime} depending on the zone/offset
+	 *         {@link OffsetTime}, or {@link ZonedDateTime} depending on the zone/offset
 	 */
 	public static Temporal createTime(ArabicTime.Time time, ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return createTime(
-				time.getHour24(),
-				time.minute(),
-				time.second(),
-				time.nano(),
-				Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+							time.getHour24(),
+							time.minute(),
+							time.second(),
+							time.nano(),
+							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
 	}
 
@@ -79,11 +79,11 @@ public final class TemporalUtils {
 	 * @return a {@link Temporal} representing the specified time
 	 */
 	public static Temporal createTime(
-			int hour24,
-			Integer minute,
-			Integer second,
-			Integer nano,
-			ZoneId zoneId) {
+										int hour24,
+										Integer minute,
+										Integer second,
+										Integer nano,
+										ZoneId zoneId) {
 
 		// Handle minutes, seconds and nanos
 		int minuteValue = Objects.nonNull(minute) ? minute : 0;
@@ -108,7 +108,7 @@ public final class TemporalUtils {
 	 */
 	public static Temporal currentTime(ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return currentTime(
-				Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
 	}
 
@@ -163,10 +163,10 @@ public final class TemporalUtils {
 	 * @return a {@link ChronoLocalDate} representing the specified date
 	 */
 	public static ChronoLocalDate createDate(
-			int day,
-			int monthValue,
-			int year,
-			Chronology chronology) {
+												int day,
+												int monthValue,
+												int year,
+												Chronology chronology) {
 		// Create ChronoLocalDate from chronology and date parts
 		return chronology.date(year, monthValue, day);
 	}
@@ -181,8 +181,8 @@ public final class TemporalUtils {
 	 */
 	public static Temporal currentDate(ArabicDate.Calendar calendar, ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return currentDate(
-				calendar.chronology(),
-				Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+							calendar.chronology(),
+							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
 	}
 
@@ -213,20 +213,20 @@ public final class TemporalUtils {
 	 * @param zoneOrOffset the optional time zone or offset
 	 * @return a Temporal representing the date and time
 	 */
-	public static Temporal createDateTime(ArabicDate.Date date,
-										  ArabicDate.Calendar calendar,
-										  ArabicTime.Time time,
-										  ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static Temporal createDateTime(  ArabicDate.Date date,
+											ArabicDate.Calendar calendar,
+											ArabicTime.Time time,
+											ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return createDateTime(
-				date.day(),
-				date.monthValue(),
-				date.year(),
-				calendar.chronology(),
-				time.getHour24(),
-				time.minute(),
-				time.second(),
-				time.nano(),
-				Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+								date.day(),
+								date.monthValue(),
+								date.year(),
+								calendar.chronology(),
+								time.getHour24(),
+								time.minute(),
+								time.second(),
+								time.nano(),
+								Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
 	}
 
@@ -254,15 +254,15 @@ public final class TemporalUtils {
 	 * @return a {@link Temporal} representing the date and time with optional zone/offset
 	 */
 	public static Temporal createDateTime(
-			int day,
-			int monthValue,
-			int year,
-			Chronology chronology,
-			int hour24,
-			Integer minute,
-			Integer second,
-			Integer nano,
-			ZoneId zoneId) {
+											int day,
+											int monthValue,
+											int year,
+											Chronology chronology,
+											int hour24,
+											Integer minute,
+											Integer second,
+											Integer nano,
+											ZoneId zoneId) {
 
 		ChronoLocalDate date = createDate(day, monthValue, year, chronology);
 
@@ -296,30 +296,30 @@ public final class TemporalUtils {
 											offset);
 			}
 			// If date + time + zoneId -> ZonedDateTime
-			return createZonedDateTime(chronology,
-									   () -> date.atTime(time),
-									   () -> LocalDateTime
-											   .of(year,
-												   monthValue,
-												   day,
-												   hour24,
-												   minuteValue,
-												   secondValue,
-												   nanoValue),
-									   zoneId);
+			return createZonedDateTime( chronology,
+										() -> date.atTime(time),
+										() -> LocalDateTime
+												.of(year,
+													monthValue,
+													day,
+													hour24,
+													minuteValue,
+													secondValue,
+													nanoValue),
+										zoneId);
 		}
 
 		// If date + time no zone/offset
-		return createLocalDateTime(chronology,
-								   () -> date.atTime(time),
-								   () -> LocalDateTime
-										   .of(year,
-											   monthValue,
-											   day,
-											   hour24,
-											   minuteValue,
-											   secondValue,
-											   nanoValue));
+		return createLocalDateTime( chronology,
+									() -> date.atTime(time),
+									() -> LocalDateTime
+											.of(year,
+												monthValue,
+												day,
+												hour24,
+												minuteValue,
+												secondValue,
+												nanoValue));
 	}
 
 	/**
@@ -363,9 +363,9 @@ public final class TemporalUtils {
 	 * @return the resulting LocalDateTime
 	 */
 	public static LocalDateTime createLocalDateTime(
-			Chronology chronology,
-			Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
-			Supplier<LocalDateTime> localDateTimeSupplier) {
+													Chronology chronology,
+													Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
+													Supplier<LocalDateTime> localDateTimeSupplier) {
 		if (HIJRAH_CHRONOLOGY.equals(chronology)) {
 			// Non-ISO chronology (e.g. Hijri) to ISO LocalDateTime
 			return LocalDateTime.from(chronoLocalDateTimeSupplier.get());
@@ -388,16 +388,16 @@ public final class TemporalUtils {
 	 * @return the resulting OffsetDateTime
 	 */
 	public static OffsetDateTime createOffsetDateTime(
-			Chronology chronology,
-			Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
-			Supplier<LocalDateTime> localDateTimeSupplier,
-			ZoneOffset offset) {
+														Chronology chronology,
+														Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
+														Supplier<LocalDateTime> localDateTimeSupplier,
+														ZoneOffset offset) {
 		if (HIJRAH_CHRONOLOGY.equals(chronology)) {
 			// Non-ISO chronology (e.g. Hijri)
 			return OffsetDateTime
 					.from(chronoLocalDateTimeSupplier
-								  .get()
-								  .atZone(ZoneOffset.UTC))
+							.get()
+							.atZone(ZoneOffset.UTC))
 					.withOffsetSameInstant(offset);
 		}
 		else {
@@ -418,10 +418,10 @@ public final class TemporalUtils {
 	 * @return the resulting ZonedDateTime
 	 */
 	public static ZonedDateTime createZonedDateTime(
-			Chronology chronology,
-			Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
-			Supplier<LocalDateTime> localDateTimeSupplier,
-			ZoneId zoneId) {
+													Chronology chronology,
+													Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
+													Supplier<LocalDateTime> localDateTimeSupplier,
+													ZoneId zoneId) {
 		if (HIJRAH_CHRONOLOGY.equals(chronology)) {
 			// Non-ISO chronology (e.g. Hijri)
 			return ZonedDateTime.from(chronoLocalDateTimeSupplier.get().atZone(zoneId));
@@ -485,7 +485,7 @@ public final class TemporalUtils {
 
 		if (fraction.length() > 3) {
 			throw new IllegalArgumentException(
-					"الجزء العشري بعد الثانية يجب ألا يتجاوز 3 أرقام (ملي ثانية)"
+												"الجزء العشري بعد الثانية يجب ألا يتجاوز 3 أرقام (ملي ثانية)"
 			);
 		}
 
@@ -518,7 +518,7 @@ public final class TemporalUtils {
 
 		if (length > 9) {
 			throw new IllegalArgumentException(
-					"الجزء العشري بعد الثانية يجب ألا يتجاوز 9 أرقام (نانو ثانية)"
+												"الجزء العشري بعد الثانية يجب ألا يتجاوز 9 أرقام (نانو ثانية)"
 			);
 		}
 
