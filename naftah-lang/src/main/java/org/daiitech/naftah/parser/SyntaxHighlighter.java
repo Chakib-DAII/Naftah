@@ -181,8 +181,8 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.AWAIT, org.daiitech.naftah.parser.NaftahLexer.SCOPE,
 					org.daiitech.naftah.parser.NaftahLexer.CHANNEL, org.daiitech.naftah.parser.NaftahLexer.ACTOR,
 					org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
-					org.daiitech.naftah.parser.NaftahLexer.SELF ->
-				AttributedStyle.BOLD.foreground(AttributedStyle.BLUE);
+					org.daiitech.naftah.parser.NaftahLexer.SELF -> AttributedStyle.BOLD
+							.foreground(AttributedStyle.BLUE);
 			case org.daiitech.naftah.parser.NaftahLexer.VAR, org.daiitech.naftah.parser.NaftahLexer.BOOLEAN,
 					org.daiitech.naftah.parser.NaftahLexer.STRING_TYPE, org.daiitech.naftah.parser.NaftahLexer.CHAR,
 					org.daiitech.naftah.parser.NaftahLexer.BYTE, org.daiitech.naftah.parser.NaftahLexer.SHORT,
@@ -190,6 +190,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.LONG, org.daiitech.naftah.parser.NaftahLexer.FLOAT,
 					org.daiitech.naftah.parser.NaftahLexer.DOUBLE, org.daiitech.naftah.parser.NaftahLexer.BIG_DECIMAL,
 					org.daiitech.naftah.parser.NaftahLexer.VAR_NUMBER, org.daiitech.naftah.parser.NaftahLexer.STRUCT,
+					org.daiitech.naftah.parser.NaftahLexer.DURATION, org.daiitech.naftah.parser.NaftahLexer.PERIOD,
+					org.daiitech.naftah.parser.NaftahLexer.PERIOD_DURATION, org.daiitech.naftah.parser.NaftahLexer.DATE,
+					org.daiitech.naftah.parser.NaftahLexer.TIME, org.daiitech.naftah.parser.NaftahLexer.DATE_TIME,
 					org.daiitech.naftah.parser.NaftahLexer.PAIR, org.daiitech.naftah.parser.NaftahLexer.LIST,
 					org.daiitech.naftah.parser.NaftahLexer.TUPLE, org.daiitech.naftah.parser.NaftahLexer.SET,
 					org.daiitech.naftah.parser.NaftahLexer.MAP -> AttributedStyle.BOLD
@@ -219,7 +222,10 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_DIV,
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MOD,
 					org.daiitech.naftah.parser.NaftahLexer.BASE_RADIX,
-					org.daiitech.naftah.parser.NaftahLexer.RAW, org.daiitech.naftah.parser.NaftahLexer.BYTE_ARRAY,
+					org.daiitech.naftah.parser.NaftahLexer.RAW,
+					org.daiitech.naftah.parser.NaftahLexer.BYTE_ARRAY,
+					org.daiitech.naftah.parser.NaftahLexer.TEMPORAL_POINT,
+					org.daiitech.naftah.parser.NaftahLexer.TEMPORAL_AMOUNT,
 					org.daiitech.naftah.parser.NaftahLexer.OK, org.daiitech.naftah.parser.NaftahLexer.ERROR,
 					org.daiitech.naftah.parser.NaftahLexer.SOME, org.daiitech.naftah.parser.NaftahLexer.NONE,
 					org.daiitech.naftah.parser.NaftahLexer.ORDERED -> AttributedStyle.BOLD
