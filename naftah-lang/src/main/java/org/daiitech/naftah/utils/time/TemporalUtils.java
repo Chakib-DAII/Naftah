@@ -21,6 +21,10 @@ import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
+import static org.daiitech.naftah.utils.time.ChronoConversionUtils.toIsoDate;
+import static org.daiitech.naftah.utils.time.ChronoConversionUtils.toIsoDateTime;
+import static org.daiitech.naftah.utils.time.ChronoConversionUtils.toIsoOffsetDateTime;
+import static org.daiitech.naftah.utils.time.ChronoConversionUtils.toIsoZonedDateTime;
 import static org.daiitech.naftah.utils.time.ChronologyUtils.HIJRAH_CHRONOLOGY;
 import static org.daiitech.naftah.utils.time.Constants.PM_SHORT;
 
@@ -56,15 +60,15 @@ public final class TemporalUtils {
 	 * @param time         the Arabic time component
 	 * @param zoneOrOffset the optional time zone or offset
 	 * @return a Temporal representing the time, either {@link LocalTime},
-	 *         {@link OffsetTime}, or {@link ZonedDateTime} depending on the zone/offset
+	 * {@link OffsetTime}, or {@link ZonedDateTime} depending on the zone/offset
 	 */
 	public static Temporal createTime(ArabicTime.Time time, ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return createTime(
-							time.getHour24(),
-							time.minute(),
-							time.second(),
-							time.nano(),
-							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+				time.getHour24(),
+				time.minute(),
+				time.second(),
+				time.nano(),
+				Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
 	}
 
@@ -79,11 +83,11 @@ public final class TemporalUtils {
 	 * @return a {@link Temporal} representing the specified time
 	 */
 	public static Temporal createTime(
-										int hour24,
-										Integer minute,
-										Integer second,
-										Integer nano,
-										ZoneId zoneId) {
+			int hour24,
+			Integer minute,
+			Integer second,
+			Integer nano,
+			ZoneId zoneId) {
 
 		// Handle minutes, seconds and nanos
 		int minuteValue = Objects.nonNull(minute) ? minute : 0;
@@ -108,7 +112,7 @@ public final class TemporalUtils {
 	 */
 	public static Temporal currentTime(ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return currentTime(
-							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+				Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
 	}
 
@@ -154,21 +158,49 @@ public final class TemporalUtils {
 	}
 
 	/**
-	 * Creates a {@link ChronoLocalDate} from the given day, month, year, and chronology.
+	 * Creates a {@link ChronoLocalDate} using the specified day, month, year, and chronology.
+	 * <p>
+	 * This method preserves the original chronology, so it can represent dates in
+	 * non-ISO calendars such as {@link java.time.chrono.HijrahChronology}.
+	 * </p>
 	 *
-	 * @param day        the day of the month
-	 * @param monthValue the month value (1–12)
-	 * @param year       the year
-	 * @param chronology the chronology to use (e.g., ISO or Hijrah)
-	 * @return a {@link ChronoLocalDate} representing the specified date
+	 * @param day        the day of the month (1–31, depending on month and chronology)
+	 * @param monthValue the month number (1–12)
+	 * @param year       the year in the specified chronology
+	 * @param chronology the {@link Chronology} to use (e.g., {@link java.time.chrono.IsoChronology} or
+	 *                   * HijrahChronology)
+	 * @return a {@link ChronoLocalDate} representing the specified date in the given chronology
 	 */
-	public static ChronoLocalDate createDate(
-												int day,
-												int monthValue,
-												int year,
-												Chronology chronology) {
+	private static ChronoLocalDate createChronoLocalDate(
+			int day,
+			int monthValue,
+			int year,
+			Chronology chronology) {
 		// Create ChronoLocalDate from chronology and date parts
 		return chronology.date(year, monthValue, day);
+	}
+
+	/**
+	 * Creates a {@link LocalDate} (ISO calendar) from the specified day, month, year, and chronology.
+	 * <p>
+	 * If a non-ISO chronology is provided (e.g., HijrahChronology), the date is converted
+	 * to the ISO calendar system. This is useful for storing or processing dates
+	 * in a standardized ISO format while preserving the original calendar's meaning.
+	 * </p>
+	 *
+	 * @param day        the day of the month (1–31)
+	 * @param monthValue the month number (1–12)
+	 * @param year       the year in the specified chronology
+	 * @param chronology the {@link Chronology} to use (e.g., ISO or Hijrah)
+	 * @return a {@link LocalDate} in the ISO calendar representing the same date
+	 * as the specified chronology
+	 */
+	public static LocalDate createDate(
+			int day,
+			int monthValue,
+			int year,
+			Chronology chronology) {
+		return toIsoDate(createChronoLocalDate(day, monthValue, year, chronology));
 	}
 
 	/**
@@ -181,8 +213,8 @@ public final class TemporalUtils {
 	 */
 	public static Temporal currentDate(ArabicDate.Calendar calendar, ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return currentDate(
-							calendar.chronology(),
-							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+				calendar.chronology(),
+				Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
 	}
 
@@ -213,20 +245,20 @@ public final class TemporalUtils {
 	 * @param zoneOrOffset the optional time zone or offset
 	 * @return a Temporal representing the date and time
 	 */
-	public static Temporal createDateTime(  ArabicDate.Date date,
-											ArabicDate.Calendar calendar,
-											ArabicTime.Time time,
-											ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static Temporal createDateTime(ArabicDate.Date date,
+										  ArabicDate.Calendar calendar,
+										  ArabicTime.Time time,
+										  ArabicTime.ZoneOrOffset zoneOrOffset) {
 		return createDateTime(
-								date.day(),
-								date.monthValue(),
-								date.year(),
-								calendar.chronology(),
-								time.getHour24(),
-								time.minute(),
-								time.second(),
-								time.nano(),
-								Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+				date.day(),
+				date.monthValue(),
+				date.year(),
+				calendar.chronology(),
+				time.getHour24(),
+				time.minute(),
+				time.second(),
+				time.nano(),
+				Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
 	}
 
@@ -254,17 +286,17 @@ public final class TemporalUtils {
 	 * @return a {@link Temporal} representing the date and time with optional zone/offset
 	 */
 	public static Temporal createDateTime(
-											int day,
-											int monthValue,
-											int year,
-											Chronology chronology,
-											int hour24,
-											Integer minute,
-											Integer second,
-											Integer nano,
-											ZoneId zoneId) {
+			int day,
+			int monthValue,
+			int year,
+			Chronology chronology,
+			int hour24,
+			Integer minute,
+			Integer second,
+			Integer nano,
+			ZoneId zoneId) {
 
-		ChronoLocalDate date = createDate(day, monthValue, year, chronology);
+		ChronoLocalDate date = createChronoLocalDate(day, monthValue, year, chronology);
 
 		// Handle minutes, seconds and nanos
 		int minuteValue = Objects.nonNull(minute) ? minute : 0;
@@ -296,30 +328,30 @@ public final class TemporalUtils {
 											offset);
 			}
 			// If date + time + zoneId -> ZonedDateTime
-			return createZonedDateTime( chronology,
-										() -> date.atTime(time),
-										() -> LocalDateTime
-												.of(year,
-													monthValue,
-													day,
-													hour24,
-													minuteValue,
-													secondValue,
-													nanoValue),
-										zoneId);
+			return createZonedDateTime(chronology,
+									   () -> date.atTime(time),
+									   () -> LocalDateTime
+											   .of(year,
+												   monthValue,
+												   day,
+												   hour24,
+												   minuteValue,
+												   secondValue,
+												   nanoValue),
+									   zoneId);
 		}
 
 		// If date + time no zone/offset
-		return createLocalDateTime( chronology,
-									() -> date.atTime(time),
-									() -> LocalDateTime
-											.of(year,
-												monthValue,
-												day,
-												hour24,
-												minuteValue,
-												secondValue,
-												nanoValue));
+		return createLocalDateTime(chronology,
+								   () -> date.atTime(time),
+								   () -> LocalDateTime
+										   .of(year,
+											   monthValue,
+											   day,
+											   hour24,
+											   minuteValue,
+											   secondValue,
+											   nanoValue));
 	}
 
 	/**
@@ -363,12 +395,12 @@ public final class TemporalUtils {
 	 * @return the resulting LocalDateTime
 	 */
 	public static LocalDateTime createLocalDateTime(
-													Chronology chronology,
-													Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
-													Supplier<LocalDateTime> localDateTimeSupplier) {
-		if (HIJRAH_CHRONOLOGY.equals(chronology)) {
+			Chronology chronology,
+			Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
+			Supplier<LocalDateTime> localDateTimeSupplier) {
+		if (isHijrah(chronology)) {
 			// Non-ISO chronology (e.g. Hijri) to ISO LocalDateTime
-			return LocalDateTime.from(chronoLocalDateTimeSupplier.get());
+			return toIsoDateTime(chronoLocalDateTimeSupplier.get());
 		}
 		else {
 			// For ISO and other non-ISO chronology fallback to ISO
@@ -388,17 +420,13 @@ public final class TemporalUtils {
 	 * @return the resulting OffsetDateTime
 	 */
 	public static OffsetDateTime createOffsetDateTime(
-														Chronology chronology,
-														Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
-														Supplier<LocalDateTime> localDateTimeSupplier,
-														ZoneOffset offset) {
-		if (HIJRAH_CHRONOLOGY.equals(chronology)) {
+			Chronology chronology,
+			Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
+			Supplier<LocalDateTime> localDateTimeSupplier,
+			ZoneOffset offset) {
+		if (isHijrah(chronology)) {
 			// Non-ISO chronology (e.g. Hijri)
-			return OffsetDateTime
-					.from(chronoLocalDateTimeSupplier
-							.get()
-							.atZone(ZoneOffset.UTC))
-					.withOffsetSameInstant(offset);
+			return toIsoOffsetDateTime(chronoLocalDateTimeSupplier.get(), offset);
 		}
 		else {
 			// For ISO and other non-ISO chronology fallback to ISO
@@ -418,13 +446,13 @@ public final class TemporalUtils {
 	 * @return the resulting ZonedDateTime
 	 */
 	public static ZonedDateTime createZonedDateTime(
-													Chronology chronology,
-													Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
-													Supplier<LocalDateTime> localDateTimeSupplier,
-													ZoneId zoneId) {
-		if (HIJRAH_CHRONOLOGY.equals(chronology)) {
+			Chronology chronology,
+			Supplier<ChronoLocalDateTime<?>> chronoLocalDateTimeSupplier,
+			Supplier<LocalDateTime> localDateTimeSupplier,
+			ZoneId zoneId) {
+		if (isHijrah(chronology)) {
 			// Non-ISO chronology (e.g. Hijri)
-			return ZonedDateTime.from(chronoLocalDateTimeSupplier.get().atZone(zoneId));
+			return toIsoZonedDateTime(chronoLocalDateTimeSupplier.get(), zoneId);
 		}
 		else {
 			// For ISO and other non-ISO chronology fallback to ISO
@@ -485,7 +513,7 @@ public final class TemporalUtils {
 
 		if (fraction.length() > 3) {
 			throw new IllegalArgumentException(
-												"الجزء العشري بعد الثانية يجب ألا يتجاوز 3 أرقام (ملي ثانية)"
+					"الجزء العشري بعد الثانية يجب ألا يتجاوز 3 أرقام (ملي ثانية)"
 			);
 		}
 
@@ -518,7 +546,7 @@ public final class TemporalUtils {
 
 		if (length > 9) {
 			throw new IllegalArgumentException(
-												"الجزء العشري بعد الثانية يجب ألا يتجاوز 9 أرقام (نانو ثانية)"
+					"الجزء العشري بعد الثانية يجب ألا يتجاوز 9 أرقام (نانو ثانية)"
 			);
 		}
 
@@ -528,5 +556,16 @@ public final class TemporalUtils {
 		return Integer.parseInt(nanos);
 	}
 
-
+	/**
+	 * Determines whether the given {@link Chronology} represents the Hijrah (Islamic) calendar.
+	 *
+	 * <p>This method compares the provided chronology against the system-supported
+	 * Hijrah chronology used by the library.</p>
+	 *
+	 * @param chronology the chronology to test, may be {@code null}
+	 * @return {@code true} if the chronology is the Hijrah calendar, {@code false} otherwise
+	 */
+	private static boolean isHijrah(Chronology chronology) {
+		return HIJRAH_CHRONOLOGY.equals(chronology);
+	}
 }
