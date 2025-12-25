@@ -345,6 +345,12 @@ builtIn: BOOLEAN
     |   BIG_DECIMAL
     |   VAR_NUMBER
     |   STRING_TYPE
+    |   DURATION
+    |   PERIOD
+    |   PERIOD_DURATION
+    |   DATE
+    |   TIME
+    |   DATE_TIME
     ;
 
 // QualifiedName: ID separated by COLONs

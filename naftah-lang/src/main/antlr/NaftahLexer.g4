@@ -140,6 +140,12 @@ LIST			: 'قائمة';
 TUPLE			: 'تركيبة';
 SET				: 'مجموعة';
 MAP				: 'مصفوفة_ترابطية';
+DURATION		: 'مدة';
+PERIOD			: 'فترة';
+PERIOD_DURATION	: 'فترة_و_مدة';
+DATE			: 'تاريخ';
+TIME			: 'وقت';
+DATE_TIME		: 'تاريخ_و_وقت';
 LT_TYPE_SIGN    : COLON LT_SIGN;
 GT_TYPE_SIGN    : GT_SIGN COLON;
 
