@@ -13,6 +13,7 @@ import org.daiitech.naftah.parser.provider.script.CaseStatementProvider;
 import org.daiitech.naftah.parser.provider.script.CollectionAccessProvider;
 import org.daiitech.naftah.parser.provider.script.CollectionExpressionProvider;
 import org.daiitech.naftah.parser.provider.script.ConcurrencyProvider;
+import org.daiitech.naftah.parser.provider.script.DateTimeProvider;
 import org.daiitech.naftah.parser.provider.script.DeclarationProvider;
 import org.daiitech.naftah.parser.provider.script.ForStatementProvider;
 import org.daiitech.naftah.parser.provider.script.FunctionCallProvider;
@@ -295,6 +296,15 @@ public class DefaultNaftahParserVisitorTests {
 							String script,
 							Object expectedValue,
 							NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(DateTimeProvider.class)
+	void dateTimeTests( boolean validScript,
+						String script,
+						Object expectedValue,
+						NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 
