@@ -856,6 +856,42 @@ public class FunctionCallProvider implements ArgumentsProvider {
 										هل_مثيل_من(درجات , مصفوفة_ترابطية<:تسلسل_حروف,أي_نوع:>)""",
 								true,
 								null),
+					Arguments.of(true, """
+										هل_مثيل_من(مقدار_زمني "مدة 3 ساعات" , مدة)""", true, null),
+					Arguments.of(true, """
+										هل_مثيل_من(قيمة_زمنية "فترة 14 يوم" , فترة)""", true, null),
+					Arguments
+							.of(true,
+								"""
+								هل_مثيل_من(قيمة_زمنية "فترة 14 يوم و 28 ساعات" , فترة_و_مدة)""",
+								true,
+								null),
+					Arguments.of(true, """
+										هل_مثيل_من(زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي" , تاريخ)""", true, null),
+					Arguments.of(true, """
+										هل_مثيل_من(زمن "٠٩:٤٥:١٥ بتوقيت دبي" , وقت)""", true, null),
+					Arguments
+							.of(true,
+								"""
+								هل_مثيل_من(زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" , تاريخ_و_وقت)""",
+								true,
+								null),
+					Arguments.of(true, """
+										ما_نوع(مقدار_زمني "مدة 3 ساعات") """, "'مدة'", null),
+					Arguments.of(true, """
+										ما_نوع(قيمة_زمنية "فترة 14 يوم") """, "'فترة'", null),
+					Arguments.of(true, """
+										ما_نوع(قيمة_زمنية "فترة 14 يوم و 28 ساعات") """, "'فترة_و_مدة'", null),
+					Arguments.of(true, """
+										ما_نوع(زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي") """, "'تاريخ'", null),
+					Arguments.of(true, """
+										ما_نوع(زمن "٠٩:٤٥:١٥ بتوقيت دبي") """, "'وقت'", null),
+					Arguments
+							.of(true,
+								"""
+								ما_نوع(زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي") """,
+								"'تاريخ_و_وقت'",
+								null),
 					Arguments.of(true, "اقرأ_متغير_بيئة(\"JAVA_HOME\")", System.getenv("JAVA_HOME"), null),
 					Arguments.of(true, "اقرأ_خاصية(\"os.name\")", System.getProperty("os.name"), null),
 					Arguments.of(true, "اكتب_خاصية(\"my.prop\", \"value\")", None.get(), null),
