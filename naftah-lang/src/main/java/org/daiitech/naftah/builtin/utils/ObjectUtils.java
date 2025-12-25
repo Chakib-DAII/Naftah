@@ -26,6 +26,12 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.time.ArabicDate;
+import org.daiitech.naftah.builtin.time.ArabicDateTime;
+import org.daiitech.naftah.builtin.time.ArabicDuration;
+import org.daiitech.naftah.builtin.time.ArabicPeriod;
+import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
+import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
 import org.daiitech.naftah.builtin.utils.concurrent.Channel;
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
@@ -461,6 +467,24 @@ public final class ObjectUtils {
 		if (hasChild(builtInContext.STRING_TYPE())) {
 			return JavaType.of(String.class);
 		}
+		if (hasChild(builtInContext.DURATION())) {
+			return JavaType.of(ArabicDuration.class);
+		}
+		if (hasChild(builtInContext.PERIOD())) {
+			return JavaType.of(ArabicPeriod.class);
+		}
+		if (hasChild(builtInContext.PERIOD_DURATION())) {
+			return JavaType.of(ArabicPeriodWithDuration.class);
+		}
+		if (hasChild(builtInContext.DATE())) {
+			return JavaType.of(ArabicDate.class);
+		}
+		if (hasChild(builtInContext.TIME())) {
+			return JavaType.of(ArabicTime.class);
+		}
+		if (hasChild(builtInContext.DATE_TIME())) {
+			return JavaType.of(ArabicDateTime.class);
+		}
 		return JavaType.ofObject();
 	}
 
@@ -649,6 +673,36 @@ public final class ObjectUtils {
 			if (javaType.isOfType(Actor.class)) {
 				return getFormattedTokenSymbols(vocabulary,
 												org.daiitech.naftah.parser.NaftahLexer.ACTOR,
+												false);
+			}
+			if (javaType.isOfType(ArabicDuration.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.DURATION,
+												false);
+			}
+			if (javaType.isOfType(ArabicPeriod.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.PERIOD,
+												false);
+			}
+			if (javaType.isOfType(ArabicPeriodWithDuration.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.PERIOD_DURATION,
+												false);
+			}
+			if (javaType.isOfType(ArabicDate.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.DATE,
+												false);
+			}
+			if (javaType.isOfType(ArabicTime.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.TIME,
+												false);
+			}
+			if (javaType.isOfType(ArabicDateTime.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.DATE_TIME,
 												false);
 			}
 			if (javaType.isMap()) {
