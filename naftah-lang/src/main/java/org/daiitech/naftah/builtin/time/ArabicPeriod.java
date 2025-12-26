@@ -27,16 +27,39 @@ public record ArabicPeriod(
 ) implements ArabicTemporalAmount {
 
 	/**
-	 * Creates a new {@code ArabicPeriod} instance.
+	 * Creates a new {@link ArabicPeriod} instance using the provided
+	 * Arabic period definition and the underlying {@link Period}.
 	 *
-	 * @param periodDefinition the definition of the period in Arabic text
-	 * @param temporalAmount   the actual period value
-	 * @return a new {@code ArabicPeriod} instance
+	 * @param periodDefinition the Arabic textual definition describing the period
+	 *                         (years, months, and days)
+	 * @param temporalAmount   the underlying {@link Period} representing the actual
+	 *                         date-based amount
+	 * @return a new {@link ArabicPeriod} instance
 	 */
 	public static ArabicPeriod of(
 									PeriodDefinition periodDefinition,
 									Period temporalAmount) {
 		return new ArabicPeriod(periodDefinition, temporalAmount);
+	}
+
+	/**
+	 * Creates a new {@link ArabicPeriod} instance from a {@link Period}.
+	 * <p>
+	 * The period is decomposed into its date-based components
+	 * (years, months, and days) to build the corresponding
+	 * Arabic textual representation.
+	 * </p>
+	 *
+	 * @param period the {@link Period} to convert into an {@link ArabicPeriod}
+	 * @return a new {@link ArabicPeriod} instance representing the given period
+	 */
+	public static ArabicPeriod of(Period period) {
+		return of(PeriodDefinition
+				.of(
+					period.getYears(),
+					period.getMonths(),
+					period.getDays()
+				), period);
 	}
 
 	/**
@@ -70,17 +93,23 @@ public record ArabicPeriod(
 			String dayText
 	) {
 		/**
-		 * Creates a new {@code PeriodDefinition} instance, filling missing text labels with default Arabic terms.
+		 * Creates a new {@link PeriodDefinition} instance.
+		 * <p>
+		 * Any missing Arabic text labels are automatically filled using the
+		 * default Arabic date unit terms defined in
+		 * {@link org.daiitech.naftah.utils.time.Constants}.
+		 * </p>
 		 *
 		 * @param years     the number of years
-		 * @param yearText  the Arabic word for years (default is
-		 *                  * {@link org.daiitech.naftah.utils.time.Constants#YEAR})
+		 * @param yearText  the Arabic text used for the year unit; if {@code null},
+		 *                  {@link org.daiitech.naftah.utils.time.Constants#YEAR} is used
 		 * @param months    the number of months
-		 * @param monthText the Arabic word for months (default is
-		 *                  * {@link org.daiitech.naftah.utils.time.Constants#MONTH})
+		 * @param monthText the Arabic text used for the month unit; if {@code null},
+		 *                  {@link org.daiitech.naftah.utils.time.Constants#MONTH} is used
 		 * @param days      the number of days
-		 * @param dayText   the Arabic word for days (default is {@link org.daiitech.naftah.utils.time.Constants#DAY})
-		 * @return a new {@code PeriodDefinition} instance
+		 * @param dayText   the Arabic text used for the day unit; if {@code null},
+		 *                  {@link org.daiitech.naftah.utils.time.Constants#DAY} is used
+		 * @return a new {@link PeriodDefinition} instance
 		 */
 		public static PeriodDefinition of(
 											int years,
@@ -95,6 +124,27 @@ public record ArabicPeriod(
 										Objects.requireNonNullElse(monthText, MONTH),
 										days,
 										Objects.requireNonNullElse(dayText, DAY));
+		}
+
+		/**
+		 * Creates a new {@link PeriodDefinition} instance using the default
+		 * Arabic date unit labels.
+		 *
+		 * @param years  the number of years
+		 * @param months the number of months
+		 * @param days   the number of days
+		 * @return a new {@link PeriodDefinition} instance
+		 */
+		public static PeriodDefinition of(
+											int years,
+											int months,
+											int days) {
+			return new PeriodDefinition(years,
+										YEAR,
+										months,
+										MONTH,
+										days,
+										DAY);
 		}
 
 		/**
