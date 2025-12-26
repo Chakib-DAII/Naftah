@@ -39,16 +39,19 @@ parser grammar ArabicDateParser;
 options { tokenVocab = ArabicDateLexer; }
 
 root: nowSpecifier 									#now
-    | dateSpecifier zonedOrOffsetTimeSpecifier? 	#dateTime
+    | dateTimeSpecifier								#dateTime
     | zonedOrOffsetTimeSpecifier 					#time
     | periodSpecifier (AND timeAmount)?    			#periodWithDuration
 	| durationSpecifier                     		#duration
+	| betweenSpecifier                     			#betweenTemporalAmount
 	;
 
 nowSpecifier: DATE NOW calendarSpecifier? zoneOrOffsetSpecifier?		#nowAsDate
 			| TIME NOW zoneOrOffsetSpecifier? 							#nowAsTime
 			| DATE_TIME? NOW calendarSpecifier? zoneOrOffsetSpecifier? 	#nowAsDateTime
 			;
+
+dateTimeSpecifier: dateSpecifier zonedOrOffsetTimeSpecifier?;
 
 dateSpecifier: NUMBER MONTH_NAME NUMBER calendarSpecifier?;
 
@@ -77,3 +80,9 @@ dateAmount: (NUMBER YEAR)?
   			(AND? NUMBER DAY)?
   			;
 
+betweenSpecifier: BETWEEN betweenTimeSpecifier AND betweenTimeSpecifier;
+
+betweenTimeSpecifier: nowSpecifier
+    				| dateTimeSpecifier
+    				| zonedOrOffsetTimeSpecifier
+    				;
