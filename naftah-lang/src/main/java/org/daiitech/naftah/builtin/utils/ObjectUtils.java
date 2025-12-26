@@ -31,6 +31,7 @@ import org.daiitech.naftah.builtin.time.ArabicDateTime;
 import org.daiitech.naftah.builtin.time.ArabicDuration;
 import org.daiitech.naftah.builtin.time.ArabicPeriod;
 import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
+import org.daiitech.naftah.builtin.time.ArabicTemporal;
 import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
 import org.daiitech.naftah.builtin.utils.concurrent.Channel;
@@ -799,7 +800,7 @@ public final class ObjectUtils {
 		}
 		Class<?> cls = obj.getClass();
 		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class || cls == Task.class || cls == Channel.class || Actor.class
-				.isAssignableFrom(cls);
+				.isAssignableFrom(cls) || ArabicTemporal.class.isAssignableFrom(cls);
 	}
 
 	/**
