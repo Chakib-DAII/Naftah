@@ -73,6 +73,7 @@ CALENDAR_PREFIX	:  'بالتقويم';
 DURATION_PREFIX	: 'مدة';
 PERIOD_PREFIX	: 'فترة';
 
+BETWEEN         : 'بين' | 'ما بين';
 AND				: 'و';
 
 HOUR			: 'ساعة' | 'ساعات';
