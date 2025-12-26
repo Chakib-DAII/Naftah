@@ -1,23 +1,27 @@
 package org.daiitech.naftah.utils.time;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.chrono.Chronology;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.daiitech.naftah.builtin.time.ArabicDate;
 import org.daiitech.naftah.builtin.time.ArabicTime;
+import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -490,6 +494,97 @@ public final class TemporalUtils {
 		}
 
 		return hour24;
+	}
+
+	/**
+	 * Computes the temporal difference between two {@link Temporal} instances.
+	 * <p>
+	 * The result is returned as an {@link NTuple} containing:
+	 * </p>
+	 * <ul>
+	 * <li>a {@link Duration} if the difference is less than 24 hours</li>
+	 * <li>a {@link Period} if the difference is date-based only</li>
+	 * <li>a {@link Period} and a {@link Duration} if the difference spans
+	 * both date and time components</li>
+	 * </ul>
+	 *
+	 * @param start the start temporal point
+	 * @param end   the end temporal point
+	 * @return an {@link NTuple} containing the computed temporal amount(s)
+	 * @throws IllegalArgumentException if the temporal type is not supported
+	 */
+	public static NTuple between(Temporal start, Temporal end) {
+		// Handle date-only case directly
+		if (start instanceof LocalDate d1 && end instanceof LocalDate d2) {
+			return NTuple.of(Period.between(d1, d2));
+		}
+
+		// Normalize to LocalDateTime
+		LocalDateTime startDT = toLocalDateTime(start);
+		LocalDateTime endDT = toLocalDateTime(end);
+
+		// Compute total difference in seconds
+		long secondsDiff = ChronoUnit.SECONDS.between(startDT, endDT);
+
+		// Short duration (<24h) → Duration
+		if (Math.abs(secondsDiff) < 24 * 3600) {
+			return NTuple.of(Duration.ofSeconds(secondsDiff));
+		}
+
+		// Compute full days
+		Period period = Period.between(startDT.toLocalDate(), endDT.toLocalDate());
+
+		// Compute remaining time part
+		Duration timeDuration = Duration.between(startDT.toLocalTime(), endDT.toLocalTime());
+
+		// Adjust if negative
+		if (timeDuration.isNegative()) {
+			timeDuration = timeDuration.plusDays(1);
+			period = period.minusDays(1);
+		}
+
+		// Only period → return period
+		if (timeDuration.isZero()) {
+			return NTuple.of(period);
+		}
+
+		// Mixed period + duration
+		return NTuple.of(period, timeDuration);
+	}
+
+	/**
+	 * Converts a {@link Temporal} instance to a {@link LocalDateTime}.
+	 * <p>
+	 * Supported types:
+	 * {@link LocalDateTime}, {@link LocalDate}, {@link LocalTime},
+	 * {@link ZonedDateTime}, {@link OffsetDateTime}, and {@link Instant}.
+	 * </p>
+	 *
+	 * @param t the temporal value to convert
+	 * @return a {@link LocalDateTime} representation of the temporal value
+	 * @throws IllegalArgumentException if the temporal type is not supported
+	 */
+	private static LocalDateTime toLocalDateTime(Temporal t) {
+		if (t instanceof LocalDateTime ldt) {
+			return ldt;
+		}
+		if (t instanceof LocalDate ld) {
+			return ld.atStartOfDay();
+		}
+		if (t instanceof LocalTime lt) {
+			return LocalDate.now().atTime(lt);
+		}
+		if (t instanceof ZonedDateTime zdt) {
+			return zdt.toLocalDateTime();
+		}
+		if (t instanceof OffsetDateTime odt) {
+			return odt.toLocalDateTime();
+		}
+		if (t instanceof Instant instant) {
+			return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		}
+
+		throw new IllegalArgumentException("Unsupported temporal type: " + t.getClass());
 	}
 
 	/**
