@@ -492,6 +492,30 @@ public class DateTimeProvider implements ArgumentsProvider {
 														null,
 														null),
 								null
+							),
+					Arguments
+							.of(true,
+								"""
+								نوع (نقطة_زمنية "الآن بالتقويم الهجري +02:00") يساوي "'تاريخ_و_وقت'"
+								""",
+								true,
+								null
+							),
+					Arguments
+							.of(true,
+								"""
+								نوع (نقطة_زمنية "تاريخ الآن بالتقويم الهجري +02:00") يساوي "'تاريخ'"
+								""",
+								true,
+								null
+							),
+					Arguments
+							.of(true,
+								"""
+								نوع (نقطة_زمنية "وقت الآن +02:00") يساوي "'وقت'"
+								""",
+								true,
+								null
 							)
 				);
 	}
