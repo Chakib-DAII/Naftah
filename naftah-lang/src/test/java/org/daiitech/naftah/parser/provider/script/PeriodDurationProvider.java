@@ -2,11 +2,20 @@ package org.daiitech.naftah.parser.provider.script;
 
 import java.time.Duration;
 import java.time.Period;
+import java.time.ZoneId;
+import java.time.chrono.Chronology;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.time.ArabicDuration;
 import org.daiitech.naftah.builtin.time.ArabicPeriod;
 import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
+import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.utils.time.ChronologyUtils;
+import org.daiitech.naftah.utils.time.TemporalUtils;
+import org.daiitech.naftah.utils.time.ZoneUtils;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -18,8 +27,67 @@ import static org.daiitech.naftah.utils.time.Constants.MONTH;
 import static org.daiitech.naftah.utils.time.Constants.NANOSECOND;
 import static org.daiitech.naftah.utils.time.Constants.SECOND;
 import static org.daiitech.naftah.utils.time.Constants.YEAR;
+import static org.daiitech.naftah.utils.time.ZoneUtils.parseZoneOffset;
 
 public class PeriodDurationProvider implements ArgumentsProvider {
+	private ArabicTemporalAmount createArabicPeriodWithDuration(Temporal start, Temporal end) {
+		var durationPeriodTuple = TemporalUtils.between(start, end);
+
+		if (durationPeriodTuple.arity() == 1) {
+			TemporalAmount temporalAmount = (TemporalAmount) durationPeriodTuple.get(0);
+			if (temporalAmount instanceof Duration duration) {
+				return ArabicDuration.of(duration);
+			}
+			else {
+				return ArabicPeriod.of((Period) temporalAmount);
+			}
+		}
+		else {
+			return ArabicPeriodWithDuration
+					.of(
+						ArabicPeriod.of((Period) durationPeriodTuple.get(0)),
+						ArabicDuration.of((Duration) durationPeriodTuple.get(1))
+					);
+		}
+	}
+
+	private Temporal createDateTime(int day,
+									int monthValue,
+									Chronology chronology,
+									int year,
+									Boolean offset,
+									String arabicZoneOrOffset,
+									int hour,
+									int minute,
+									Integer second,
+									Integer nano,
+									Boolean isPM
+	) {
+
+		ZoneId zoneId = null;
+		if (Objects.nonNull(arabicZoneOrOffset)) {
+			if (Boolean.TRUE.equals(offset)) {
+				zoneId = parseZoneOffset(arabicZoneOrOffset);
+			}
+			else {
+				zoneId = ZoneId.of(ZoneUtils.arabicZoneNameToJava(arabicZoneOrOffset));
+			}
+		}
+
+		return TemporalUtils
+				.createDateTime(
+								day,
+								monthValue,
+								year,
+								chronology,
+								TemporalUtils.getHour24(hour, isPM),
+								minute,
+								second,
+								nano,
+								zoneId
+				);
+	}
+
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
 		return Stream
@@ -603,7 +671,302 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 															),
 														Duration
 																.ofHours(4))),
-								null)
+								null),
+					Arguments
+							.of(true,
+								"""
+								قيمة_زمنية "بين ١ يناير ٢٠٢٤ بالتقويم الميلادي ١٢:٠٠ صباحاً بتوقيت القاهرة و ٥ رجب ١٤٤٥ بالتقويم الهجري ٣:٣٠ مساءً بتوقيت مكة"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 1,
+																				1,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2024,
+																				false,
+																				"القاهرة",
+																				12,
+																				0,
+																				null,
+																				null,
+																				false),
+																createDateTime( 5,
+																				7,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1445,
+																				false,
+																				"مكة",
+																				3,
+																				30,
+																				null,
+																				null,
+																				true)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "بين ١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي و ٢٩ رمضان ١٤٤٤ بالتقويم الهجري ١٢:٠٠:٠٠.٥٠٠ صباحاً بتوقيت الرياض"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 15,
+																				3,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2023,
+																				false,
+																				"دبي",
+																				9,
+																				45,
+																				15,
+																				null,
+																				null),
+																createDateTime( 29,
+																				9,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1444,
+																				false,
+																				"الرياض",
+																				12,
+																				0,
+																				0,
+																				500000000,
+																				false)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								قيمة_زمنية "بين ٣٠ أكتوبر ٢٠٢٢ بالتقويم الميلادي ٢٢:١٥ بتوقيت تونس و ١ شوال ١٤٤٥ بالتقويم الهجري ١٤:٠٠ بتوقيت الدوحة"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 30,
+																				10,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2022,
+																				false,
+																				"تونس",
+																				22,
+																				15,
+																				null,
+																				null,
+																				null),
+																createDateTime( 1,
+																				10,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1445,
+																				false,
+																				"الدوحة",
+																				14,
+																				0,
+																				null,
+																				null,
+																				null)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								قيمة_زمنية "ما بين ٢٥ يوليو ٢٠٢١ بالتقويم الميلادي ٠٦:٣٠ مساءً بتوقيت الكويت و ١ يناير ٢٠٢٤ بالتقويم الميلادي ١٢:٠٠ صباحاً +02:00"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 25,
+																				7,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2021,
+																				false,
+																				"الكويت",
+																				6,
+																				30,
+																				null,
+																				null,
+																				true),
+																createDateTime( 1,
+																				1,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2024,
+																				true,
+																				"+02:00",
+																				12,
+																				0,
+																				null,
+																				null,
+																				false)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								قيمة_زمنية "ما بين ١٣ ذو الحجة ١٤٤٢ بالتقويم الهجري ١١:٤٥:٣٠ بتوقيت أبوظبي و ٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 13,
+																				12,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1442,
+																				false,
+																				"أبوظبي",
+																				11,
+																				45,
+																				30,
+																				null,
+																				null),
+																createDateTime( 7,
+																				2,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1443,
+																				true,
+																				"+02:00",
+																				8,
+																				20,
+																				45,
+																				null,
+																				null)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								قيمة_زمنية "بين ٤ سبتمبر ٢٠٢٠ بالتقويم الميلادي ٠٧:٠٠:٠٠ بتوقيت عمان و ٤ سبتمبر ٢٠٢٠ بالتقويم الميلادي ٠٧:٠٠:٠٠ +04:00"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 4,
+																				9,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2020,
+																				false,
+																				"عمان",
+																				7,
+																				0,
+																				0,
+																				null,
+																				null),
+																createDateTime( 4,
+																				9,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2020,
+																				true,
+																				"+04:00",
+																				7,
+																				0,
+																				0,
+																				null,
+																				null)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								قيمة_زمنية "بين ٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ بتوقيت بيروت و ٢٥ يوليو ٢٠٢١ بالتقويم الميلادي ٠٦:٣٠ مساءً +03:00"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 7,
+																				2,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1443,
+																				false,
+																				"بيروت",
+																				8,
+																				20,
+																				45,
+																				null,
+																				null),
+																createDateTime( 25,
+																				7,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2021,
+																				true,
+																				"+03:00",
+																				6,
+																				30,
+																				null,
+																				null,
+																				true)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "بين ٥ رجب ١٤٤٥ بالتقويم الهجري ٣:٣٠ مساءً +03:00 و ١٣ ذو الحجة ١٤٤٢ بالتقويم الهجري ١١:٤٥:٣٠ +04:00"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 5,
+																				7,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1445,
+																				true,
+																				"+03:00",
+																				3,
+																				30,
+																				null,
+																				null,
+																				true),
+
+																createDateTime( 13,
+																				12,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1442,
+																				true,
+																				"+04:00",
+																				11,
+																				45,
+																				30,
+																				null,
+																				null)),
+								null
+							),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "بين ١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ +04:00 و ٢٩ رمضان ١٤٤٤ بالتقويم الهجري ١٢:٠٠:٠٠.٥٠٠ صباحاً +03:00"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 15,
+																				3,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2023,
+																				true,
+																				"+04:00",
+																				9,
+																				45,
+																				15,
+																				null,
+																				null),
+																createDateTime( 29,
+																				9,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1444,
+																				true,
+																				"+03:00",
+																				12,
+																				0,
+																				0,
+																				500000000,
+																				false)),
+								null
+							),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "ما بين ٣٠ أكتوبر ٢٠٢٢ بالتقويم الميلادي ٢٢:١٥ +01:00 و ١ شوال ١٤٤٥ بالتقويم الهجري ١٤:٠٠ +03:00"
+								""",
+								createArabicPeriodWithDuration(
+																createDateTime( 30,
+																				10,
+																				ChronologyUtils.DEFAULT_CHRONOLOGY,
+																				2022,
+																				true,
+																				"+01:00",
+																				22,
+																				15,
+																				null,
+																				null,
+																				null),
+
+																createDateTime( 1,
+																				10,
+																				ChronologyUtils.HIJRAH_CHRONOLOGY,
+																				1445,
+																				true,
+																				"+03:00",
+																				14,
+																				0,
+																				null,
+																				null,
+																				null)),
+								null
+							)
 				);
 
 	}
