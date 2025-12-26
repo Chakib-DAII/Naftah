@@ -3,6 +3,7 @@ package org.daiitech.naftah.parser.time;
 
 import java.time.Duration;
 import java.time.Period;
+import java.time.temporal.TemporalAmount;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.time.ArabicDate;
@@ -121,6 +122,22 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 */
 	@Override
 	public ArabicTemporalPoint visitDateTime(ArabicDateParser.DateTimeContext ctx) {
+		return (ArabicTemporalPoint) visit(ctx.dateTimeSpecifier());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicTime visitTime(ArabicDateParser.TimeContext ctx) {
+		return (ArabicTime) visit(ctx.zonedOrOffsetTimeSpecifier());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicTemporalPoint visitDateTimeSpecifier(ArabicDateParser.DateTimeSpecifierContext ctx) {
 		ArabicDate date = (ArabicDate) visit(ctx.dateSpecifier());
 
 		if (NaftahParserHelper.hasChild(ctx.zonedOrOffsetTimeSpecifier())) {
@@ -138,14 +155,6 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 					);
 		}
 		return date;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ArabicTime visitTime(ArabicDateParser.TimeContext ctx) {
-		return (ArabicTime) visit(ctx.zonedOrOffsetTimeSpecifier());
 	}
 
 	/**
@@ -267,6 +276,14 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 * {@inheritDoc}
 	 */
 	@Override
+	public ArabicTemporalAmount visitBetweenTemporalAmount(ArabicDateParser.BetweenTemporalAmountContext ctx) {
+		return (ArabicTemporalAmount) visit(ctx.betweenSpecifier());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public ArabicDuration visitDurationSpecifier(ArabicDateParser.DurationSpecifierContext ctx) {
 		return (ArabicDuration) visit(ctx.timeAmount());
 	}
@@ -368,5 +385,49 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 					ArabicPeriod.PeriodDefinition.of(years, yearText, months, monthText, days, dayText),
 					Period.of(years, months, days)
 				);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicTemporalAmount visitBetweenSpecifier(ArabicDateParser.BetweenSpecifierContext ctx) {
+		ArabicTemporalPoint left = (ArabicTemporalPoint) visit(ctx.betweenTimeSpecifier(0));
+		ArabicTemporalPoint right = (ArabicTemporalPoint) visit(ctx.betweenTimeSpecifier(1));
+		var durationPeriodTuple = TemporalUtils.between(left.temporal(), right.temporal());
+		if (durationPeriodTuple.arity() == 1) {
+			TemporalAmount temporalAmount = (TemporalAmount) durationPeriodTuple.get(0);
+			if (temporalAmount instanceof Duration duration) {
+				return ArabicDuration.of(duration);
+			}
+			else {
+				return ArabicPeriod.of((Period) temporalAmount);
+			}
+		}
+		else {
+			return ArabicPeriodWithDuration
+					.of(
+						ArabicPeriod.of((Period) durationPeriodTuple.get(0)),
+						ArabicDuration.of((Duration) durationPeriodTuple.get(1))
+					);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ArabicTemporalPoint visitBetweenTimeSpecifier(ArabicDateParser.BetweenTimeSpecifierContext ctx) {
+		ArabicTemporalPoint result;
+		if (NaftahParserHelper.hasChild(ctx.nowSpecifier())) {
+			result = (ArabicTemporalPoint) visit(ctx.nowSpecifier());
+		}
+		else if (NaftahParserHelper.hasChild(ctx.dateTimeSpecifier())) {
+			result = (ArabicTemporalPoint) visit(ctx.dateTimeSpecifier());
+		}
+		else {
+			result = (ArabicTemporalPoint) visit(ctx.zonedOrOffsetTimeSpecifier());
+		}
+		return result;
 	}
 }
