@@ -654,7 +654,9 @@ public final class Naftah {
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
 			System.setProperty(SCAN_JDK_PROPERTY, Boolean.toString(true));
 			System.setProperty(CACHE_SCANNING_RESULTS_PROPERTY, Boolean.toString(true));
-			System.setProperty(WORD_CHUNK_PROPERTY, Boolean.toString(true));
+			if (Objects.isNull(System.getProperty(WORD_CHUNK_PROPERTY))) {
+				System.setProperty(WORD_CHUNK_PROPERTY, Boolean.toString(true));
+			}
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
 			}
