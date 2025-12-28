@@ -285,3 +285,25 @@ footer.site-footer {
   }
 }
 
+.code-block {
+  position: relative;
+  margin: 1em 0;
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+  padding: 0.3em 0.6em;
+  font-size: 0.8em;
+  cursor: pointer;
+  border: none;
+  background: $bg-color;
+  color: $text-color;
+  border-radius: 3px;
+}
+
+.copy-button:hover {
+  background: $footer-bg;
+}
+
