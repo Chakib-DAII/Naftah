@@ -559,6 +559,15 @@ public final class TemporalUtils {
 	 * {@link LocalDateTime}, {@link LocalDate}, {@link LocalTime},
 	 * {@link ZonedDateTime}, {@link OffsetDateTime}, and {@link Instant}.
 	 * </p>
+	 * <p>
+	 * Conversion rules:
+	 * <ul>
+	 * <li>{@link LocalDate} → start of day</li>
+	 * <li>{@link LocalTime} → combined with the current system date</li>
+	 * <li>{@link ZonedDateTime}/{@link OffsetDateTime} → zone/offset discarded</li>
+	 * <li>{@link Instant} → converted using the system default time zone</li>
+	 * </ul>
+	 * </p>
 	 *
 	 * @param t the temporal value to convert
 	 * @return a {@link LocalDateTime} representation of the temporal value
@@ -585,6 +594,73 @@ public final class TemporalUtils {
 		}
 
 		throw new IllegalArgumentException("Unsupported temporal type: " + t.getClass());
+	}
+
+	/**
+	 * Converts a {@link Temporal} instance to an {@link Instant}.
+	 * <p>
+	 * Supported types:
+	 * {@link Instant}, {@link ZonedDateTime}, {@link OffsetDateTime},
+	 * {@link LocalDateTime}, {@link LocalDate}, and {@link LocalTime}.
+	 * </p>
+	 * <p>
+	 * Conversion rules:
+	 * <ul>
+	 * <li>{@link ZonedDateTime}/{@link OffsetDateTime} → converted directly</li>
+	 * <li>{@link LocalDateTime} → interpreted using the system default time zone</li>
+	 * <li>{@link LocalDate} → start of day in the system default time zone</li>
+	 * <li>{@link LocalTime} → combined with the current system date and zone</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param t the temporal value to convert
+	 * @return an {@link Instant} representing the temporal value
+	 * @throws IllegalArgumentException if the temporal type is not supported
+	 */
+	public static Instant toInstant(Temporal t) {
+		if (t instanceof Instant instant) {
+			return instant;
+		}
+		if (t instanceof ZonedDateTime zdt) {
+			return zdt.toInstant();
+		}
+		if (t instanceof OffsetDateTime odt) {
+			return odt.toInstant();
+		}
+		if (t instanceof LocalDateTime ldt) {
+			return ldt.atZone(ZoneId.systemDefault()).toInstant();
+		}
+		if (t instanceof LocalDate ld) {
+			return ld.atStartOfDay(ZoneId.systemDefault()).toInstant();
+		}
+		if (t instanceof LocalTime lt) {
+			return LocalDate.now(ZoneId.systemDefault()).atTime(lt).atZone(ZoneId.systemDefault()).toInstant();
+		}
+
+		throw new IllegalArgumentException("Unsupported temporal: " + t.getClass());
+	}
+
+	/**
+	 * Compares two {@link Period} instances by years, then months, then days.
+	 * <p>
+	 * Comparison is performed lexicographically:
+	 * years → months → days.
+	 * </p>
+	 *
+	 * @param p1 the first period to compare
+	 * @param p2 the second period to compare
+	 * @return a negative integer, zero, or a positive integer as {@code p1}
+	 *         is less than, equal to, or greater than {@code p2}
+	 */
+	public static int compare(Period p1, Period p2) {
+		int compare = Integer.compare(p1.getYears(), p2.getYears());
+		if (compare == 0) {
+			compare = Integer.compare(p1.getMonths(), p2.getMonths());
+			if (compare == 0) {
+				compare = Integer.compare(p1.getDays(), p2.getDays());
+			}
+		}
+		return compare;
 	}
 
 	/**
