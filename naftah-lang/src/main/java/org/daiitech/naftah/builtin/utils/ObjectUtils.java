@@ -32,6 +32,8 @@ import org.daiitech.naftah.builtin.time.ArabicDuration;
 import org.daiitech.naftah.builtin.time.ArabicPeriod;
 import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
 import org.daiitech.naftah.builtin.time.ArabicTemporal;
+import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
 import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
 import org.daiitech.naftah.builtin.utils.concurrent.Channel;
@@ -1018,7 +1020,7 @@ public final class ObjectUtils {
 
 		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
 		if ((NaN.isNaN(left) || NaN.isNaN(right)) || (None.isNone(left) || None
-				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String)) {
+				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String) || (left instanceof ArabicTemporalPoint && right instanceof ArabicTemporalAmount) || (left instanceof ArabicTemporalPoint && right instanceof ArabicTemporalPoint) || (left instanceof ArabicTemporalAmount && right instanceof ArabicTemporalAmount)) {
 			return operation.apply(left, right);
 		}
 
