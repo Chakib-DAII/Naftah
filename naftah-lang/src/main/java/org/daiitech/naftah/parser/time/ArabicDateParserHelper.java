@@ -1,5 +1,8 @@
 package org.daiitech.naftah.parser.time;
 
+import java.time.Duration;
+import java.time.Period;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
@@ -7,7 +10,12 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.time.ArabicDate;
+import org.daiitech.naftah.builtin.time.ArabicDuration;
+import org.daiitech.naftah.builtin.time.ArabicPeriod;
+import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
 import org.daiitech.naftah.builtin.time.ArabicTemporal;
+import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
 import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -225,5 +233,46 @@ public final class ArabicDateParserHelper {
 				.of(calendar,
 					TemporalUtils.currentDate(calendar, zoneOrOffset)
 				);
+	}
+
+	/**
+	 * Computes the Arabic temporal amount between two {@link ArabicTemporalPoint} instances.
+	 *
+	 * <p>The result represents the difference between {@code left} and {@code right} and
+	 * can be one of the following, depending on the underlying {@link java.time.temporal.Temporal} objects:</p>
+	 *
+	 * <ul>
+	 * <li>{@link ArabicDuration} – if the difference is time-based only (hours, minutes, seconds)</li>
+	 * <li>{@link ArabicPeriod} – if the difference is date-based only (years, months, days)</li>
+	 * <li>{@link ArabicPeriodWithDuration} – if the difference includes both a period and a duration</li>
+	 * </ul>
+	 *
+	 * <p>This method uses {@link TemporalUtils#between(java.time.temporal.Temporal, java.time.temporal.Temporal)} to
+	 * calculate
+	 * the raw {@link TemporalAmount} and then wraps it in the appropriate Arabic-aware type.</p>
+	 *
+	 * @param left  the starting temporal point
+	 * @param right the ending temporal point
+	 * @return an {@link ArabicTemporalAmount} representing the difference between {@code left} and {@code right}
+	 */
+	public static ArabicTemporalAmount getArabicTemporalAmountBetween(  ArabicTemporalPoint left,
+																		ArabicTemporalPoint right) {
+		var durationPeriodTuple = TemporalUtils.between(left.temporal(), right.temporal());
+		if (durationPeriodTuple.arity() == 1) {
+			TemporalAmount temporalAmount = (TemporalAmount) durationPeriodTuple.get(0);
+			if (temporalAmount instanceof Duration duration) {
+				return ArabicDuration.of(duration);
+			}
+			else {
+				return ArabicPeriod.of((Period) temporalAmount);
+			}
+		}
+		else {
+			return ArabicPeriodWithDuration
+					.of(
+						ArabicPeriod.of((Period) durationPeriodTuple.get(0)),
+						ArabicDuration.of((Duration) durationPeriodTuple.get(1))
+					);
+		}
 	}
 }
