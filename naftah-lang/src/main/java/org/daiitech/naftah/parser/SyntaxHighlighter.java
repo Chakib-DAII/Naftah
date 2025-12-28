@@ -1,6 +1,7 @@
 package org.daiitech.naftah.parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +23,9 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import static org.daiitech.naftah.utils.repl.REPLHelper.ESCAPE_CHARS_REGEX;
+import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
+import static org.daiitech.naftah.utils.repl.REPLHelper.TEXT_PASTE_DETECTED;
+import static org.daiitech.naftah.utils.repl.REPLHelper.println;
 import static org.daiitech.naftah.utils.repl.REPLHelper.rightAlign;
 
 /**
@@ -60,65 +64,84 @@ public class SyntaxHighlighter extends BaseHighlighter {
 			return new AttributedString(buffer);
 		}
 
-		if (buffer.split(ESCAPE_CHARS_REGEX).length > 1) {
-			throw new EOFError(-1, -1, "Escaped new line", "newline");
+		long linesCount = Arrays.stream(buffer.split(ESCAPE_CHARS_REGEX)).filter(s -> !s.isBlank()).count();
+		if (linesCount > 1) {
+			if (!TEXT_PASTE_DETECTED) {
+				throw new EOFError(-1, -1, "Escaped new line", "newline");
+			}
+			MULTILINE_IS_ACTIVE = true;
+			println(reader);
 		}
 
-		// Create input stream from buffer
-		CharStream input = CharStreams.fromString(buffer);
 
-		// Get all tokens from lexer
-		CommonTokenStream tokens = NaftahParserHelper.getCommonTokenStream(input);
-		tokens.fill();
+		// Remove escaped newlines
+		buffer = buffer.replaceAll(ESCAPE_CHARS_REGEX, "");
 
-		int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
-
-		List<AttributedString> lines = new ArrayList<>();
-		AttributedStringBuilder currentLine = new AttributedStringBuilder();
-		int currentLineWidth = 0;
-
-		int lastIndex = 0;
+		String[] bufferLines = buffer.split("\\r?\\n");
 
 		List<Pair<CharSequence, AttributedStyle>> styledSegments = new ArrayList<>();
 
-		for (Token token : tokens.getTokens()) {
-			int type = token.getType();
-			String text = token.getText();
-
-			if (type == -1 || text == null) {
+		for (String line : bufferLines) {
+			if (line.isBlank()) {
 				continue;
 			}
 
-			int tokenStartIndex = token.getStartIndex();
-			int tokenStopIndex = token.getStopIndex();
+			// Remove escaped characters before tokenization
+			String cleanedLine = line.replaceAll(ESCAPE_CHARS_REGEX, "");
 
-			// Add unmatched text before this token
-			if (tokenStartIndex > lastIndex && lastIndex >= 0 && tokenStartIndex <= buffer.length()) {
-				String gapText = buffer.substring(lastIndex, tokenStartIndex);
-				styledSegments.add(ImmutablePair.of(gapText, AttributedStyle.DEFAULT));
+			// Create input stream from buffer
+			CharStream input = CharStreams.fromString(cleanedLine);
+
+			// Tokenize this line
+			CommonTokenStream tokens = NaftahParserHelper.getCommonTokenStream(input);
+			tokens.fill();
+
+			int lastIndex = 0;
+
+			for (Token token : tokens.getTokens()) {
+				if (token.getType() == -1 || token.getText() == null) {
+					continue;
+				}
+
+				int tokenStartIndex = token.getStartIndex();
+				int tokenStopIndex = token.getStopIndex();
+
+				// Add unmatched text before this token
+				if (tokenStartIndex > lastIndex && lastIndex >= 0 && tokenStartIndex <= cleanedLine.length()) {
+					String gapText = cleanedLine.substring(lastIndex, tokenStartIndex);
+					styledSegments.add(ImmutablePair.of(gapText, AttributedStyle.DEFAULT));
+				}
+
+				// Get style for token type
+				AttributedStyle style = getStyleForTokenType(token.getType());
+				String shapedText = token.getText();
+				if (shouldReshape()) {
+					try {
+						shapedText = shape(shapedText);
+					}
+					catch (Exception e) {
+						// fallback to original
+					}
+				}
+
+				styledSegments.add(ImmutablePair.of(shapedText, style));
+				lastIndex = tokenStopIndex + 1;
 			}
 
-			AttributedStyle style = getStyleForTokenType(type);
-			String shaped = text;
-
-			if (shouldReshape()) {
-				try {
-					shaped = shape(text);
-				}
-				catch (Exception e) {
-					// fallback: use original
-				}
+			// Add unmatched trailing text
+			if (lastIndex < cleanedLine.length()) {
+				String trailingText = cleanedLine.substring(lastIndex);
+				styledSegments.add(ImmutablePair.of(trailingText, AttributedStyle.DEFAULT));
 			}
 
-			styledSegments.add(ImmutablePair.of(shaped, style));
-			lastIndex = tokenStopIndex + 1;
+			// Explicitly add newline after each logical line
+			styledSegments.add(ImmutablePair.of("\n", AttributedStyle.DEFAULT));
 		}
 
-		// Add any unmatched trailing text after the last token
-		if (lastIndex < buffer.length()) {
-			String trailingText = buffer.substring(lastIndex);
-			styledSegments.add(ImmutablePair.of(trailingText, AttributedStyle.DEFAULT));
-		}
+		int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY, 80); // fallback to 80
+		List<AttributedString> lines = new ArrayList<>();
+		AttributedStringBuilder currentLine = new AttributedStringBuilder();
+		int currentLineWidth = 0;
 
 		if (shouldReshape()) {
 			// Reverse for RTL visual order (not buffer)
@@ -127,16 +150,20 @@ public class SyntaxHighlighter extends BaseHighlighter {
 
 		// Build lines with wrapping and right-alignment
 		for (Pair<CharSequence, AttributedStyle> part : styledSegments) {
-			AttributedString fragment = new AttributedString(part.getLeft().toString(), part.getRight());
+			String fragText = part.getLeft().toString();
+			AttributedString fragment = new AttributedString(fragText, part.getRight());
 			int fragWidth = fragment.columnLength();
 
-			if (currentLineWidth + fragWidth > terminalWidth) {
-				// Right-align and add current line
-				AttributedString rightAligned = rightAlign(currentLine.toAttributedString(), terminalWidth);
-				lines.add(rightAligned);
-
-				currentLine = new AttributedStringBuilder();
-				currentLineWidth = 0;
+			if (fragText.equals("\n") || currentLineWidth + fragWidth > terminalWidth) {
+				if (!currentLine.isEmpty()) {
+					// Right-align and add current line
+					lines.add(rightAlign(currentLine.toAttributedString(), terminalWidth));
+					currentLine = new AttributedStringBuilder();
+					currentLineWidth = 0;
+				}
+				if (fragText.equals("\n")) {
+					continue; // skip newline fragment
+				}
 			}
 
 			currentLine.append(fragment);
