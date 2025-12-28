@@ -3,7 +3,6 @@ package org.daiitech.naftah.parser.time;
 
 import java.time.Duration;
 import java.time.Period;
-import java.time.temporal.TemporalAmount;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.daiitech.naftah.builtin.time.ArabicDate;
@@ -340,8 +339,8 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 					Duration
 							.ofHours(hours)
 							.plusMinutes(minutes)
-							.plusMillis(millis)
 							.plusSeconds(seconds)
+							.plusMillis(millis)
 							.plusNanos(nanos)
 				);
 	}
@@ -394,23 +393,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	public ArabicTemporalAmount visitBetweenSpecifier(ArabicDateParser.BetweenSpecifierContext ctx) {
 		ArabicTemporalPoint left = (ArabicTemporalPoint) visit(ctx.betweenTimeSpecifier(0));
 		ArabicTemporalPoint right = (ArabicTemporalPoint) visit(ctx.betweenTimeSpecifier(1));
-		var durationPeriodTuple = TemporalUtils.between(left.temporal(), right.temporal());
-		if (durationPeriodTuple.arity() == 1) {
-			TemporalAmount temporalAmount = (TemporalAmount) durationPeriodTuple.get(0);
-			if (temporalAmount instanceof Duration duration) {
-				return ArabicDuration.of(duration);
-			}
-			else {
-				return ArabicPeriod.of((Period) temporalAmount);
-			}
-		}
-		else {
-			return ArabicPeriodWithDuration
-					.of(
-						ArabicPeriod.of((Period) durationPeriodTuple.get(0)),
-						ArabicDuration.of((Duration) durationPeriodTuple.get(1))
-					);
-		}
+		return ArabicDateParserHelper.getArabicTemporalAmountBetween(left, right);
 	}
 
 	/**
