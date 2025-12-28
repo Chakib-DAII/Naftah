@@ -121,6 +121,10 @@ public class DefaultContext {
 	 * The path used for caching runtime data.
 	 */
 	public static final Path CACHE_PATH = Paths.get(".naftah/.naftah_cache");
+	/**
+	 * The path used for caching minimal runtime data.
+	 */
+	public static final Path MINIMAL_CACHE_PATH = Paths.get(".naftah/.naftah_minimal_cache");
 
 	/**
 	 * Global map holding contexts indexed by their depth.
@@ -309,7 +313,7 @@ public class DefaultContext {
 		else {
 			setContextFromClassScanningResult(result);
 			if (Boolean.getBoolean(CACHE_SCANNING_RESULTS_PROPERTY)) {
-				serializeClassScanningResult(result);
+				serializeClassScanningResult(result, CACHE_PATH);
 			}
 		}
 	};
@@ -330,6 +334,9 @@ public class DefaultContext {
 		}
 		else {
 			setContextFromClassScanningResult(result);
+			if (Boolean.getBoolean(CACHE_SCANNING_RESULTS_PROPERTY)) {
+				serializeClassScanningResult(result, MINIMAL_CACHE_PATH);
+			}
 		}
 	};
 
@@ -1218,12 +1225,13 @@ public class DefaultContext {
 	/**
 	 * Serializes the class scanning result to a cache file.
 	 *
-	 * @param result the class scanning result to serialize
+	 * @param result    the class scanning result to serialize
+	 * @param cachePath the file path where the Base64 string should be saved
 	 * @throws NaftahBugError if serialization fails
 	 */
-	protected static void serializeClassScanningResult(ClassScanningResult result) {
+	protected static void serializeClassScanningResult(ClassScanningResult result, Path cachePath) {
 		try {
-			var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
+			var path = Base64SerializationUtils.serialize(result, cachePath);
 			if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY)) {
 				padText("تم حفظ البيانات في: " + path, true);
 			}
@@ -1236,10 +1244,12 @@ public class DefaultContext {
 	/**
 	 * Attempts to deserialize a previously cached class scanning result.
 	 * If deserialization fails, triggers class loading asynchronously if configured.
+	 *
+	 * @param cachePath the file path where the Base64 string should be saved
 	 */
-	protected static void deserializeClassScanningResult() {
+	protected static void deserializeClassScanningResult(Path cachePath) {
 		try {
-			var result = (ClassScanningResult) Base64SerializationUtils.deserialize(CACHE_PATH);
+			var result = (ClassScanningResult) Base64SerializationUtils.deserialize(cachePath);
 			setContextFromClassScanningResult(result);
 		}
 		catch (Exception e) {
@@ -1285,6 +1295,7 @@ public class DefaultContext {
 		SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
 		ASYNC_BOOT_STRAP = async;
 		long start = System.nanoTime();
+		FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
 		if (SHOULD_BOOT_STRAP) {
 			try {
 				Files.createDirectories(CACHE_PATH.getParent());
@@ -1293,18 +1304,21 @@ public class DefaultContext {
 				throw new NaftahBugError(e);
 			}
 
-			FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
-
 			if (FORCE_BOOT_STRAP || !Files.exists(CACHE_PATH)) {
 				callLoader(ASYNC_BOOT_STRAP, LOADER_TASK, LOADER_CONSUMER);
 			}
 			else {
-				deserializeClassScanningResult();
+				deserializeClassScanningResult(CACHE_PATH);
 			}
 		}
 		else {
 			defaultBootstrap();
-			callLoader(false, MINIMAL_LOADER_TASK, MINIMAL_LOADER_CONSUMER);
+			if (FORCE_BOOT_STRAP || !Files.exists(MINIMAL_CACHE_PATH)) {
+				callLoader(false, MINIMAL_LOADER_TASK, MINIMAL_LOADER_CONSUMER);
+			}
+			else {
+				deserializeClassScanningResult(MINIMAL_CACHE_PATH);
+			}
 		}
 		if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 			long end = System.nanoTime();
