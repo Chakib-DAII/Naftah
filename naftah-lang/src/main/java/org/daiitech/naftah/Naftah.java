@@ -40,6 +40,7 @@ import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.MaskingCallback;
 import org.jline.reader.UserInterruptException;
@@ -78,6 +79,7 @@ import static org.daiitech.naftah.utils.repl.REPLHelper.LAST_PRINTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
+import static org.daiitech.naftah.utils.repl.REPLHelper.TEXT_PASTE_DETECTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.clearScreen;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getLineReader;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getMarkdownAsString;
@@ -1630,13 +1632,20 @@ public final class Naftah {
 						استمتع بالتجربة وتعلم بسرعة!
 						""", true);
 
-				StringBuilder fullLine = new StringBuilder();
+				History history = reader.getHistory();
 
+				StringBuilder fullLine = new StringBuilder();
+				String line;
 				while (true) {
 					try {
-						String line = MULTILINE_IS_ACTIVE ?
-								reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null) :
-								reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
+						try {
+							line = MULTILINE_IS_ACTIVE ?
+									reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null) :
+									reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
+						}
+						catch (IndexOutOfBoundsException ignored) {
+							line = "";
+						}
 
 						if (!MULTILINE_IS_ACTIVE && line.isBlank()) {
 							continue;
@@ -1651,8 +1660,16 @@ public final class Naftah {
 						var input = getCharStream(false, fullLine.toString());
 
 						if (MULTILINE_IS_ACTIVE) {
-							reader.getHistory().add(fullLine.toString());
+							String historyLine = fullLine
+									.toString()
+									.replace("\r\n", " ")
+									.replace("\n", " ")
+									.trim();
+
+							history.add(historyLine);
+
 							MULTILINE_IS_ACTIVE = false;
+							TEXT_PASTE_DETECTED = false;
 						}
 
 						fullLine.delete(0, fullLine.length());
@@ -1687,7 +1704,7 @@ public final class Naftah {
 					}
 					finally {
 						// Save history explicitly (though it's usually done automatically)
-						reader.getHistory().save();
+						history.save();
 					}
 				}
 			}
