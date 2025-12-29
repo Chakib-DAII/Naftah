@@ -7,7 +7,10 @@ import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.time.ArabicDate;
 import org.daiitech.naftah.builtin.time.ArabicDateTime;
+import org.daiitech.naftah.builtin.time.ArabicDuration;
+import org.daiitech.naftah.builtin.time.ArabicPeriod;
 import org.daiitech.naftah.builtin.time.ArabicTime;
+import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
 import org.daiitech.naftah.utils.time.ZoneUtils;
@@ -15,11 +18,14 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
+import static org.daiitech.naftah.utils.time.Constants.APRIL_LATIN;
+import static org.daiitech.naftah.utils.time.Constants.DECEMBER_LATIN;
 import static org.daiitech.naftah.utils.time.Constants.DEFAULT_CALENDAR_NAME_1;
 import static org.daiitech.naftah.utils.time.Constants.DHU_AL_HIJJAH;
 import static org.daiitech.naftah.utils.time.Constants.HIJRI_CALENDAR_NAME_1;
 import static org.daiitech.naftah.utils.time.Constants.JANUARY_AR;
 import static org.daiitech.naftah.utils.time.Constants.JULY_AR;
+import static org.daiitech.naftah.utils.time.Constants.JUNE_LATIN;
 import static org.daiitech.naftah.utils.time.Constants.MARCH;
 import static org.daiitech.naftah.utils.time.Constants.OCTOBER;
 import static org.daiitech.naftah.utils.time.Constants.RAJAB;
@@ -516,7 +522,291 @@ public class DateTimeProvider implements ArgumentsProvider {
 								""",
 								true,
 								null
-							)
+							),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" + قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								createArabicDateTime(   7,
+														SAFAR,
+														2,
+														ChronologyUtils.HIJRAH_CHRONOLOGY,
+														HIJRI_CALENDAR_NAME_1,
+														1443,
+														true,
+														"+02:00",
+														10,
+														30,
+														50,
+														0,
+														null),
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" - قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								createArabicDateTime(   7,
+														SAFAR,
+														2,
+														ChronologyUtils.HIJRAH_CHRONOLOGY,
+														HIJRI_CALENDAR_NAME_1,
+														1443,
+														true,
+														"+02:00",
+														6,
+														10,
+														40,
+														0,
+														null),
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" > نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" أصغر_من نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" < نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" أكبر_من نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" => نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" أصغر_أو_يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" >= نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" أكبر_أو_يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" =! نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" لا_يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" == نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" + قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								createArabicDateTime(   25,
+														JUNE_LATIN,
+														6,
+														ChronologyUtils.DEFAULT_CHRONOLOGY,
+														DEFAULT_CALENDAR_NAME_1,
+														2024,
+														false,
+														"دبي",
+														9,
+														45,
+														15,
+														null,
+														null),
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" - قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								createArabicDateTime(   5,
+														DECEMBER_LATIN,
+														12,
+														ChronologyUtils.DEFAULT_CHRONOLOGY,
+														DEFAULT_CALENDAR_NAME_1,
+														2021,
+														false,
+														"دبي",
+														9,
+														45,
+														15,
+														null,
+														null),
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" أصغر_من نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" أكبر_من نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" أصغر_أو_يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" أكبر_أو_يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" لا_يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١ يناير ٢٠٢٤ بالتقويم الميلادي ١٢:٠٠ صباحاً +02:00" + قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								createArabicDateTime(   11,
+														APRIL_LATIN,
+														4,
+														ChronologyUtils.DEFAULT_CHRONOLOGY,
+														DEFAULT_CALENDAR_NAME_1,
+														2025,
+														true,
+														"+02:00",
+														12,
+														0,
+														null,
+														null,
+														false),
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١ يناير ٢٠٢٤ بالتقويم الميلادي ١٢:٠٠ صباحاً +02:00" - قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								createArabicDateTime(   21,
+														SEPTEMBER,
+														9,
+														ChronologyUtils.DEFAULT_CHRONOLOGY,
+														DEFAULT_CALENDAR_NAME_1,
+														2022,
+														true,
+														"+02:00",
+														12,
+														0,
+														null,
+														null,
+														false),
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١ يناير ٢٠٢٤ بالتقويم الميلادي ١٢:٠٠ صباحاً +02:00" لا_يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								زمن "١ يناير ٢٠٢٤ بالتقويم الميلادي ١٢:٠٠ صباحاً +02:00" يساوي نقطة_زمنية "الآن بالتقويم الهجري +02:00"
+								""",
+								false,
+								null),
+					Arguments
+							.of(false,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" أصغر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								null,
+								BinaryOperation
+										.newNaftahBugError( BinaryOperation.LESS_THAN,
+															ArabicDateTime.now(),
+															ArabicPeriod.ofZero())),
+					Arguments
+							.of(false,
+								"""
+								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" أكبر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								null,
+								BinaryOperation
+										.newNaftahBugError( BinaryOperation.GREATER_THAN,
+															ArabicDateTime.now(),
+															ArabicPeriod.ofZero())),
+					Arguments
+							.of(false,
+								"""
+								زمن "١ يناير ٢٠٢٤ بالتقويم الميلادي ١٢:٠٠ صباحاً +02:00" أصغر_أو_يساوي قيمة_زمنية "مدة 3 ساعات"
+								""",
+								null,
+								BinaryOperation
+										.newNaftahBugError( BinaryOperation.LESS_THAN_EQUALS,
+															ArabicDateTime.now(),
+															ArabicDuration.ofZero()))
 				);
 	}
 }
