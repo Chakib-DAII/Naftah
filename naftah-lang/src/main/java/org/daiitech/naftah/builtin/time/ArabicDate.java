@@ -3,14 +3,16 @@ package org.daiitech.naftah.builtin.time;
 import java.time.chrono.Chronology;
 import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
+import org.daiitech.naftah.utils.time.TemporalUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.numberToString;
 import static org.daiitech.naftah.utils.time.Constants.CALENDAR_PREFIX_AR;
-import static org.daiitech.naftah.utils.time.Constants.DEFAULT_CALENDAR_NAME_1;
 import static org.daiitech.naftah.utils.time.MonthUtils.arabicMonthToInt;
 import static org.daiitech.naftah.utils.time.MonthUtils.monthNumberToArabicName;
 
@@ -38,6 +40,107 @@ public record ArabicDate(
 		Calendar calendar,
 		Temporal temporal
 ) implements ArabicTemporalPoint {
+
+	/**
+	 * Obtains the current date using the default chronology
+	 * and the system default time zone.
+	 *
+	 * <p>
+	 * This method is equivalent to invoking:
+	 * {@code now(ChronologyUtils.DEFAULT_CHRONOLOGY, null)}.
+	 * </p>
+	 *
+	 * @return the current {@code ArabicDate}
+	 */
+	public static ArabicDate now() {
+		return now(ChronologyUtils.DEFAULT_CHRONOLOGY);
+	}
+
+	/**
+	 * Obtains the current date using the specified chronology
+	 * and the system default time zone.
+	 *
+	 * <p>
+	 * The supplied chronology determines how the current
+	 * day, month, and year are interpreted.
+	 * </p>
+	 *
+	 * @param chronology the chronology to use (not {@code null})
+	 * @return the current {@code ArabicDate}
+	 * @throws NullPointerException if {@code chronology} is {@code null}
+	 */
+	public static ArabicDate now(Chronology chronology) {
+		var calendar = ArabicDate.Calendar.of(chronology);
+		return now(calendar);
+	}
+
+	/**
+	 * Obtains the current date using the specified calendar
+	 * and the system default time zone.
+	 *
+	 * @param calendar the calendar to use (not {@code null})
+	 * @return the current {@code ArabicDate}
+	 * @throws NullPointerException if {@code calendar} is {@code null}
+	 */
+	public static ArabicDate now(Calendar calendar) {
+		return now(calendar, null);
+	}
+
+	/**
+	 * Obtains the current date using the default chronology
+	 * and the specified zone or offset.
+	 *
+	 * <p>
+	 * This method is useful when resolving the current date
+	 * relative to a specific time zone or fixed offset.
+	 * </p>
+	 *
+	 * @param zoneOrOffset the zone or offset to use, or {@code null}
+	 *                     to use the system default
+	 * @return the current {@code ArabicDate}
+	 */
+	public static ArabicDate now(ArabicTime.ZoneOrOffset zoneOrOffset) {
+		var calendar = ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+		return now(calendar, zoneOrOffset);
+	}
+
+	/**
+	 * Obtains the current date using the specified chronology
+	 * and zone or offset.
+	 *
+	 * @param chronology   the chronology to use (not {@code null})
+	 * @param zoneOrOffset the zone or offset to use, or {@code null}
+	 *                     to use the system default
+	 * @return the current {@code ArabicDate}
+	 * @throws NullPointerException if {@code chronology} is {@code null}
+	 */
+	public static ArabicDate now(Chronology chronology, ArabicTime.ZoneOrOffset zoneOrOffset) {
+		var calendar = ArabicDate.Calendar.of(chronology);
+		return now(calendar, zoneOrOffset);
+	}
+
+	/**
+	 * Obtains the current date using the specified calendar
+	 * and zone or offset.
+	 *
+	 * <p>
+	 * The returned {@code ArabicDate} represents the current
+	 * calendar date as resolved by the provided calendar and
+	 * zone or offset.
+	 * </p>
+	 *
+	 * @param calendar     the calendar to use (not {@code null})
+	 * @param zoneOrOffset the zone or offset to use, or {@code null}
+	 *                     to use the system default
+	 * @return the current {@code ArabicDate}
+	 * @throws NullPointerException if {@code calendar} is {@code null}
+	 */
+	public static ArabicDate now(Calendar calendar, ArabicTime.ZoneOrOffset zoneOrOffset) {
+		return ArabicDate
+				.of(calendar,
+					TemporalUtils.currentDate(calendar, zoneOrOffset)
+				);
+	}
 
 	/**
 	 * Creates a new {@code ArabicDate} instance from its individual components.
@@ -93,6 +196,72 @@ public record ArabicDate(
 		return new ArabicDate(date, calendar, temporal);
 	}
 
+	/**
+	 * Returns a new {@code ArabicDate} obtained by adding the given Arabic temporal
+	 * amount to this date.
+	 *
+	 * @param arabicTemporalAmount the temporal amount to add
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate plus(ArabicTemporalAmount arabicTemporalAmount) {
+		return compute(arabicTemporalAmount, this.temporal::plus);
+	}
+
+	/**
+	 * Returns a new {@code ArabicDate} obtained by subtracting the given Arabic temporal
+	 * amount from this date.
+	 *
+	 * @param arabicTemporalAmount the temporal amount to subtract
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate minus(ArabicTemporalAmount arabicTemporalAmount) {
+		return compute(arabicTemporalAmount, this.temporal::minus);
+
+	}
+
+	/**
+	 * Computes a new {@code ArabicDate} by applying the given temporal computation.
+	 *
+	 * <p>
+	 * Date-based arithmetic supports:
+	 * <ul>
+	 * <li>{@link ArabicPeriod}</li>
+	 * <li>{@link ArabicDuration} of at least 24 hours</li>
+	 * <li>{@link ArabicPeriodWithDuration}</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * <p>
+	 * Durations shorter than 24 hours are not permitted for date-only values.
+	 * </p>
+	 *
+	 * @param arabicTemporalAmount the temporal amount to apply
+	 * @param computeFunction      the temporal computation function
+	 * @return a new {@code ArabicDate} instance
+	 * @throws IllegalArgumentException if the operation is not supported
+	 */
+	ArabicDate compute( ArabicTemporalAmount arabicTemporalAmount,
+						Function<TemporalAmount, Temporal> computeFunction) {
+		if (arabicTemporalAmount instanceof ArabicDuration duration) {
+			long hours = duration.temporalAmount().toHours();
+
+			if (hours < 24) {
+				throw new IllegalArgumentException(
+													"لا يمكن إضافة مدة تقل عن 24 ساعة إلى قيمة زمنية فقط"
+				);
+			}
+
+			return of(calendar, computeFunction.apply(duration.temporalAmount()));
+		}
+		else if (arabicTemporalAmount instanceof ArabicPeriodWithDuration arabicPeriodWithDuration) {
+			return of(calendar, computeFunction.apply(arabicPeriodWithDuration.arabicPeriod().temporalAmount()));
+		}
+		else {
+			return of(calendar, computeFunction.apply(arabicTemporalAmount.temporalAmount()));
+		}
+	}
 
 	/**
 	 * Returns a string representation of this {@link ArabicDate} in the format:
@@ -212,7 +381,9 @@ public record ArabicDate(
 
 		public Calendar {
 			chronology = Objects.nonNull(chronology) ? chronology : ChronologyUtils.DEFAULT_CHRONOLOGY;
-			arabicCalendar = Objects.nonNull(arabicCalendar) ? arabicCalendar : DEFAULT_CALENDAR_NAME_1;
+			arabicCalendar = Objects.nonNull(arabicCalendar) ?
+					arabicCalendar :
+					ChronologyUtils.getChronologyName(chronology);
 		}
 
 		/**
