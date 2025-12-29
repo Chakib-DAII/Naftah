@@ -3,7 +3,9 @@ package org.daiitech.naftah.builtin.time;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
@@ -39,6 +41,41 @@ public record ArabicTime(
 		ZoneOrOffset zoneOrOffset,
 		Temporal temporal
 ) implements ArabicTemporalPoint {
+
+	/**
+	 * Obtains the current time using the system default time zone.
+	 *
+	 * <p>
+	 * This method is equivalent to invoking {@code now(null)}.
+	 * </p>
+	 *
+	 * @return the current {@code ArabicTime}
+	 */
+	public static ArabicTime now() {
+		return now(null);
+	}
+
+	/**
+	 * Obtains the current time using the specified zone or offset.
+	 *
+	 * <p>
+	 * If {@code zoneOrOffset} is {@code null}, the system default
+	 * time zone is used.
+	 * </p>
+	 *
+	 * @param zoneOrOffset the zone or offset to use, or {@code null}
+	 *                     to use the system default
+	 * @return the current {@code ArabicTime}
+	 */
+	public static ArabicTime now(ArabicTime.ZoneOrOffset zoneOrOffset) {
+		return ArabicTime
+				.of(zoneOrOffset,
+					TemporalUtils
+							.currentTime(
+											zoneOrOffset
+							)
+				);
+	}
 
 	/**
 	 * Creates a new {@code ArabicTime} instance using explicit components.
@@ -93,6 +130,64 @@ public record ArabicTime(
 		var time = ArabicTime.Time.of(hour, minute, second, nano, null);
 
 		return new ArabicTime(time, zoneOrOffset, temporal);
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} obtained by adding the given Arabic temporal
+	 * amount to this time.
+	 *
+	 * @param arabicTemporalAmount the temporal amount to add
+	 * @return a new {@code ArabicTime} instance
+	 */
+	@Override
+	public ArabicTime plus(ArabicTemporalAmount arabicTemporalAmount) {
+		return compute(arabicTemporalAmount, this.temporal::plus);
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} obtained by subtracting the given Arabic temporal
+	 * amount from this time.
+	 *
+	 * @param arabicTemporalAmount the temporal amount to subtract
+	 * @return a new {@code ArabicTime} instance
+	 */
+	@Override
+	public ArabicTime minus(ArabicTemporalAmount arabicTemporalAmount) {
+		return compute(arabicTemporalAmount, this.temporal::minus);
+	}
+
+	/**
+	 * Computes a new {@code ArabicTime} by applying the given temporal computation.
+	 *
+	 * <p>
+	 * Only duration-based arithmetic is supported for time-only values.
+	 * Period-based operations are not permitted.
+	 * </p>
+	 *
+	 * @param arabicTemporalAmount the temporal amount to apply
+	 * @param computeFunction      the temporal computation function
+	 * @return a new {@code ArabicTime} instance
+	 * @throws IllegalArgumentException if the operation is not supported
+	 */
+	ArabicTime compute( ArabicTemporalAmount arabicTemporalAmount,
+						Function<TemporalAmount, Temporal> computeFunction) {
+		if (arabicTemporalAmount instanceof ArabicDuration duration) {
+			long hours = duration.temporalAmount().toHours();
+
+			if (hours > 24) {
+				throw new IllegalArgumentException(
+													"لا يمكن إضافة مدة تزيد عن 24 ساعة إلى قيمة زمنية فقط"
+				);
+			}
+
+			return of(zoneOrOffset, computeFunction.apply(duration.temporalAmount()));
+		}
+		else if (arabicTemporalAmount instanceof ArabicPeriodWithDuration arabicPeriodWithDuration) {
+			return of(zoneOrOffset, computeFunction.apply(arabicPeriodWithDuration.arabicDuration().temporalAmount()));
+		}
+		throw new IllegalArgumentException(
+											"لا يمكن إضافة فترة (Period) إلى قيمة زمنية فقط"
+		);
 	}
 
 	/**
