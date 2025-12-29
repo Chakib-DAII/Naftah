@@ -75,6 +75,513 @@ public record ArabicDuration(
 	}
 
 	/**
+	 * Returns an {@link ArabicDuration} representing a zero duration.
+	 *
+	 * <p>The returned duration has all components set to zero: hours, minutes, seconds,
+	 * milliseconds, and nanoseconds.</p>
+	 *
+	 * @return an {@link ArabicDuration} representing a duration of zero
+	 */
+	public static ArabicDuration ofZero() {
+		return of(DurationDefinition
+				.of(
+					0,
+					0,
+					0,
+					0,
+					0
+				), Duration.ZERO);
+	}
+
+	/**
+	 * Obtains a {@code ArabicDuration} representing a number of standard 24 hour days.
+	 * <p>
+	 * The seconds are calculated based on the standard definition of a day,
+	 * where each day is 86400 seconds which implies a 24 hour day.
+	 * The nanosecond in second field is set to zero.
+	 *
+	 * @param days the number of days, positive or negative
+	 * @return a {@code ArabicDuration}, not null
+	 * @throws ArithmeticException if the input days exceeds the capacity of {@code Duration}
+	 */
+	public static ArabicDuration ofDays(long days) {
+		return of(Duration.ofDays(days));
+	}
+
+	/**
+	 * Obtains a {@code ArabicDuration} representing a number of standard hours.
+	 * <p>
+	 * The seconds are calculated based on the standard definition of an hour,
+	 * where each hour is 3600 seconds.
+	 * The nanosecond in second field is set to zero.
+	 *
+	 * @param hours the number of hours, positive or negative
+	 * @return a {@code ArabicDuration}, not null
+	 * @throws ArithmeticException if the input hours exceeds the capacity of {@code Duration}
+	 */
+	public static ArabicDuration ofHours(long hours) {
+		return of(Duration.ofHours(hours));
+	}
+
+	/**
+	 * Obtains a {@code ArabicDuration} representing a number of standard minutes.
+	 * <p>
+	 * The seconds are calculated based on the standard definition of a minute,
+	 * where each minute is 60 seconds.
+	 * The nanosecond in second field is set to zero.
+	 *
+	 * @param minutes the number of minutes, positive or negative
+	 * @return a {@code ArabicDuration}, not null
+	 * @throws ArithmeticException if the input minutes exceeds the capacity of {@code Duration}
+	 */
+	public static ArabicDuration ofMinutes(long minutes) {
+		return of(Duration.ofMinutes(minutes));
+	}
+
+	/**
+	 * Obtains a {@code ArabicDuration} representing a number of seconds.
+	 * <p>
+	 * The nanosecond in second field is set to zero.
+	 *
+	 * @param seconds the number of seconds, positive or negative
+	 * @return a {@code ArabicDuration}, not null
+	 */
+	public static ArabicDuration ofSeconds(long seconds) {
+		return of(Duration.ofSeconds(seconds));
+	}
+
+	/**
+	 * Obtains a {@code ArabicDuration} representing a number of seconds and an
+	 * adjustment in nanoseconds.
+	 * <p>
+	 * This method allows an arbitrary number of nanoseconds to be passed in.
+	 * The factory will alter the values of the second and nanosecond in order
+	 * to ensure that the stored nanosecond is in the range 0 to 999,999,999.
+	 * For example, the following will result in exactly the same duration:
+	 * <pre>
+	 * Duration.ofSeconds(3, 1);
+	 * Duration.ofSeconds(4, -999_999_999);
+	 * Duration.ofSeconds(2, 1000_000_001);
+	 * </pre>
+	 *
+	 * @param seconds        the number of seconds, positive or negative
+	 * @param nanoAdjustment the nanosecond adjustment to the number of seconds, positive or negative
+	 * @return a {@code ArabicDuration}, not null
+	 * @throws ArithmeticException if the adjustment causes the seconds to exceed the capacity of {@code Duration}
+	 */
+	public static ArabicDuration ofSeconds(long seconds, long nanoAdjustment) {
+		return of(Duration.ofSeconds(seconds, nanoAdjustment));
+	}
+
+	/**
+	 * Obtains a {@code ArabicDuration} representing a number of milliseconds.
+	 * <p>
+	 * The seconds and nanoseconds are extracted from the specified milliseconds.
+	 *
+	 * @param millis the number of milliseconds, positive or negative
+	 * @return a {@code ArabicDuration}, not null
+	 */
+	public static ArabicDuration ofMillis(long millis) {
+		return of(Duration.ofMillis(millis));
+	}
+
+	/**
+	 * Obtains a {@code ArabicDuration} representing a number of nanoseconds.
+	 * <p>
+	 * The seconds and nanoseconds are extracted from the specified nanoseconds.
+	 *
+	 * @param nanos the number of nanoseconds, positive or negative
+	 * @return a {@code ArabicDuration}, not null
+	 */
+	public static ArabicDuration ofNanos(long nanos) {
+		return of(Duration.ofNanos(nanos));
+	}
+
+	/**
+	 * Returns the total number of hours in this duration.
+	 *
+	 * @return the total hours
+	 */
+	public long getHours() {
+		return temporalAmount.toHours();
+	}
+
+	/**
+	 * Returns the minute-of-hour component of this duration.
+	 * <p>
+	 * This is calculated as the total minutes modulo 60, representing the
+	 * remaining minutes after full hours are accounted for.
+	 * </p>
+	 *
+	 * @return the minutes within the current hour (0-59)
+	 */
+	public long getMinutes() {
+		return temporalAmount.toMinutes() % 60;
+	}
+
+	/**
+	 * Returns the second-of-minute component of this duration.
+	 * <p>
+	 * This is calculated as the total seconds modulo 60, representing the
+	 * remaining seconds after full minutes are accounted for.
+	 * </p>
+	 *
+	 * @return the seconds within the current minute (0-59)
+	 */
+	public long getSeconds() {
+		return temporalAmount.getSeconds() % 60;
+	}
+
+	/**
+	 * Returns the millisecond-of-second component of this duration.
+	 * <p>
+	 * This is calculated as the total milliseconds modulo 1000, representing
+	 * the remaining milliseconds after full seconds are accounted for.
+	 * </p>
+	 *
+	 * @return the milliseconds within the current second (0-999)
+	 */
+	public long getMillis() {
+		return temporalAmount.toMillis() % 1000;
+	}
+
+	/**
+	 * Returns the nanosecond-of-second component of this duration.
+	 *
+	 * @return the nanoseconds within the current second (0-999,999,999)
+	 */
+	public int getNano() {
+		return temporalAmount.getNano();
+	}
+
+	/**
+	 * Returns a new {@code ArabicDuration} obtained by adding the given
+	 * Arabic temporal amount to this duration.
+	 *
+	 * <p>
+	 * Addition is supported only when the other amount is also an
+	 * {@code ArabicDuration}.
+	 * </p>
+	 *
+	 * @param other the temporal amount to add
+	 * @return a new {@code ArabicDuration} instance
+	 */
+	@Override
+	public ArabicDuration plus(ArabicTemporalAmount other) {
+		if (other instanceof ArabicDuration otherDur) {
+			Duration result = temporalAmount.plus(otherDur.temporalAmount());
+			return ArabicDuration.of(result);
+		}
+		return (ArabicDuration) ArabicTemporalAmount.super.plus(other);
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in standard 24 hour days added.
+	 * <p>
+	 * The number of days is multiplied by 86400 to obtain the number of seconds to add.
+	 * This is based on the standard definition of a day as 24 hours.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param daysToAdd the days to add, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified days added, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration plusDays(long daysToAdd) {
+		if (daysToAdd == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.plusDays(daysToAdd));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in hours added.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param hoursToAdd the hours to add, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified hours added, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration plusHours(long hoursToAdd) {
+		if (hoursToAdd == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.plusHours(hoursToAdd));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in minutes added.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param minutesToAdd the minutes to add, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified minutes added, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration plusMinutes(long minutesToAdd) {
+		if (minutesToAdd == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.plusMinutes(minutesToAdd));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in seconds added.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param secondsToAdd the seconds to add, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified seconds added, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration plusSeconds(long secondsToAdd) {
+		if (secondsToAdd == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.plusSeconds(secondsToAdd));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in milliseconds added.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param millisToAdd the milliseconds to add, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified milliseconds added, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration plusMillis(long millisToAdd) {
+		if (millisToAdd == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.plusMillis(millisToAdd));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in nanoseconds added.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param nanosToAdd the nanoseconds to add, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified nanoseconds added, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration plusNanos(long nanosToAdd) {
+		if (nanosToAdd == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.plusNanos(nanosToAdd));
+	}
+
+	/**
+	 * Returns a new {@code ArabicDuration} obtained by subtracting the given
+	 * Arabic temporal amount from this duration.
+	 *
+	 * <p>
+	 * Subtraction is supported only when the other amount is also an
+	 * {@code ArabicDuration}.
+	 * </p>
+	 *
+	 * @param other the temporal amount to subtract
+	 * @return a new {@code ArabicDuration} instance
+	 */
+	@Override
+	public ArabicDuration minus(ArabicTemporalAmount other) {
+		if (other instanceof ArabicDuration otherDur) {
+			Duration result = temporalAmount.minus(otherDur.temporalAmount());
+			return ArabicDuration.of(result);
+		}
+		return (ArabicDuration) ArabicTemporalAmount.super.minus(other);
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in standard 24 hour days subtracted.
+	 * <p>
+	 * The number of days is multiplied by 86400 to obtain the number of seconds to subtract.
+	 * This is based on the standard definition of a day as 24 hours.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param daysToSubtract the days to subtract, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified days subtracted, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration minusDays(long daysToSubtract) {
+		if (daysToSubtract == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.minusDays(daysToSubtract));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in hours subtracted.
+	 * <p>
+	 * The number of hours is multiplied by 3600 to obtain the number of seconds to subtract.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param hoursToSubtract the hours to subtract, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified hours subtracted, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration minusHours(long hoursToSubtract) {
+		if (hoursToSubtract == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.minusHours(hoursToSubtract));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in minutes subtracted.
+	 * <p>
+	 * The number of hours is multiplied by 60 to obtain the number of seconds to subtract.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param minutesToSubtract the minutes to subtract, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified minutes subtracted, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration minusMinutes(long minutesToSubtract) {
+		if (minutesToSubtract == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.minusMinutes(minutesToSubtract));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in seconds subtracted.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param secondsToSubtract the seconds to subtract, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified seconds subtracted, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration minusSeconds(long secondsToSubtract) {
+		if (secondsToSubtract == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.minusSeconds(secondsToSubtract));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in milliseconds subtracted.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param millisToSubtract the milliseconds to subtract, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified milliseconds subtracted, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration minusMillis(long millisToSubtract) {
+		if (millisToSubtract == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.minusMillis(millisToSubtract));
+	}
+
+	/**
+	 * Returns a copy of this duration with the specified duration in nanoseconds subtracted.
+	 * <p>
+	 * This instance is immutable and unaffected by this method call.
+	 *
+	 * @param nanosToSubtract the nanoseconds to subtract, positive or negative
+	 * @return a {@code ArabicDuration} based on this duration with the specified nanoseconds subtracted, not null
+	 * @throws ArithmeticException if numeric overflow occurs
+	 */
+	public ArabicDuration minusNanos(long nanosToSubtract) {
+		if (nanosToSubtract == 0) {
+			return this;
+		}
+		return ArabicDuration.of(temporalAmount.minusNanos(nanosToSubtract));
+	}
+
+	/**
+	 * Determines whether this duration is equal to the given temporal amount.
+	 *
+	 * @param other the temporal amount to compare with
+	 * @return {@code true} if the amounts are equal; {@code false} otherwise
+	 */
+	@Override
+	public boolean isEquals(ArabicTemporalAmount other) {
+		if (other instanceof ArabicDuration otherDur) {
+			return temporalAmount.equals(otherDur.temporalAmount());
+		}
+		return false;
+	}
+
+	/**
+	 * Determines whether this duration is not equal to the given temporal amount.
+	 *
+	 * @param other the temporal amount to compare with
+	 * @return {@code true} if the amounts are not equal; {@code false} otherwise
+	 */
+	@Override
+	public boolean notEquals(ArabicTemporalAmount other) {
+		return !isEquals(other);
+	}
+
+	/**
+	 * Determines whether this duration is greater than the given temporal amount.
+	 *
+	 * @param other the temporal amount to compare with
+	 * @return {@code true} if this duration is greater
+	 */
+	@Override
+	public boolean greaterThan(ArabicTemporalAmount other) {
+		if (other instanceof ArabicDuration otherDur) {
+			return temporalAmount.compareTo(otherDur.temporalAmount()) > 0;
+		}
+		return ArabicTemporalAmount.super.greaterThan(other);
+	}
+
+	/**
+	 * Determines whether this duration is greater than or equal to the
+	 * given temporal amount.
+	 *
+	 * @param other the temporal amount to compare with
+	 * @return {@code true} if this duration is greater than or equal
+	 */
+	@Override
+	public boolean greaterThanEquals(ArabicTemporalAmount other) {
+		if (other instanceof ArabicDuration otherDur) {
+			return temporalAmount.compareTo(otherDur.temporalAmount()) >= 0;
+		}
+		return ArabicTemporalAmount.super.greaterThanEquals(other);
+	}
+
+	/**
+	 * Determines whether this duration is less than the given temporal amount.
+	 *
+	 * @param other the temporal amount to compare with
+	 * @return {@code true} if this duration is less
+	 */
+	@Override
+	public boolean lessThan(ArabicTemporalAmount other) {
+		if (other instanceof ArabicDuration otherDur) {
+			return temporalAmount.compareTo(otherDur.temporalAmount()) < 0;
+		}
+		return ArabicTemporalAmount.super.lessThan(other);
+	}
+
+	/**
+	 * Determines whether this duration is less than or equal to the
+	 * given temporal amount.
+	 *
+	 * @param other the temporal amount to compare with
+	 * @return {@code true} if this duration is less than or equal
+	 */
+	@Override
+	public boolean lessThanEquals(ArabicTemporalAmount other) {
+		if (other instanceof ArabicDuration otherDur) {
+			return temporalAmount.compareTo(otherDur.temporalAmount()) <= 0;
+		}
+		return ArabicTemporalAmount.super.lessThanEquals(other);
+	}
+
+	/**
 	 * Returns the Arabic textual representation of the duration.
 	 *
 	 * @return a string describing the duration in Arabic
