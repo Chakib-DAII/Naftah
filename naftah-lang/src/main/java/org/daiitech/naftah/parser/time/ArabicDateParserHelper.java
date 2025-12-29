@@ -192,13 +192,7 @@ public final class ArabicDateParserHelper {
 												zoneOrOffsetSpecifier) :
 				null;
 
-		return ArabicTime
-				.of(zoneOrOffset,
-					TemporalUtils
-							.currentTime(
-											zoneOrOffset
-							)
-				);
+		return ArabicTime.now(zoneOrOffset);
 	}
 
 
@@ -229,10 +223,7 @@ public final class ArabicDateParserHelper {
 												zoneOrOffsetSpecifier) :
 				null;
 
-		return ArabicDate
-				.of(calendar,
-					TemporalUtils.currentDate(calendar, zoneOrOffset)
-				);
+		return ArabicDate.now(calendar, zoneOrOffset);
 	}
 
 	/**
