@@ -13,6 +13,7 @@ import org.daiitech.naftah.builtin.time.ArabicDuration;
 import org.daiitech.naftah.builtin.time.ArabicPeriod;
 import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
 import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
 import org.daiitech.naftah.utils.time.ZoneUtils;
@@ -966,7 +967,316 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																				null,
 																				null)),
 								null
-							)
+							),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" + قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								ArabicDuration
+										.of(ArabicDuration.DurationDefinition
+												.of(5,
+													HOUR,
+													10,
+													MINUTE,
+													5,
+													0,
+													SECOND,
+													0,
+													NANOSECOND
+												),
+											Duration
+													.ofHours(5)
+													.plusMinutes(10)
+													.plusSeconds(5)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" - قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								ArabicDuration
+										.of(ArabicDuration.DurationDefinition
+												.of(0,
+													HOUR,
+													49,
+													MINUTE,
+													55,
+													0,
+													SECOND,
+													0,
+													NANOSECOND
+												),
+											Duration
+													.ofMinutes(49)
+													.plusSeconds(55)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" > قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" أصغر_من قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" < قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" أكبر_من قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" => قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" أصغر_أو_يساوي قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" >= قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" أكبر_أو_يساوي قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" =! قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" لا_يساوي قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" == قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "مدة 3 ساعات" يساوي قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات" + قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								ArabicPeriod
+										.of(ArabicPeriod.PeriodDefinition
+												.of(6,
+													YEAR,
+													3,
+													MONTH,
+													10,
+													DAY
+												),
+											Period.of(6, 3, 10)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات" - قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								ArabicPeriod
+										.of(ArabicPeriod.PeriodDefinition
+												.of(4,
+													YEAR,
+													-3,
+													MONTH,
+													-10,
+													DAY
+												),
+											Period.of(4, -3, -10)),
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات" أصغر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات" أكبر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات" أصغر_أو_يساوي قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات" أكبر_أو_يساوي قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات" لا_يساوي قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات" يساوي قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات و 3 ساعات" + قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								ArabicPeriodWithDuration
+										.of(
+											ArabicPeriod
+													.of(ArabicPeriod.PeriodDefinition
+															.of(6,
+																YEAR,
+																3,
+																MONTH,
+																10,
+																DAY
+															),
+														Period.of(6, 3, 10)),
+											ArabicDuration
+													.of(ArabicDuration.DurationDefinition
+															.of(3,
+																"ساعات",
+																0,
+																MINUTE,
+																0,
+																0,
+																SECOND,
+																0,
+																NANOSECOND
+															),
+														Duration
+																.ofHours(3))),
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات و 3 ساعات" - قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								ArabicPeriodWithDuration
+										.of(
+											ArabicPeriod
+													.of(ArabicPeriod.PeriodDefinition
+															.of(4,
+																YEAR,
+																-3,
+																MONTH,
+																-10,
+																DAY
+															),
+														Period.of(4, -3, -10)),
+											ArabicDuration
+													.of(ArabicDuration.DurationDefinition
+															.of(3,
+																"ساعات",
+																0,
+																MINUTE,
+																0,
+																0,
+																SECOND,
+																0,
+																NANOSECOND
+															),
+														Duration
+																.ofHours(3))),
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات و 3 ساعات" لا_يساوي قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								مقدار_زمني "فترة 5 سنوات و 3 ساعات" يساوي قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								false,
+								null),
+					Arguments
+							.of(false,
+								"""
+								مقدار_زمني "فترة 5 سنوات و 3 ساعات" أصغر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								null,
+								BinaryOperation
+										.newNaftahBugError( BinaryOperation.LESS_THAN,
+															ArabicPeriodWithDuration.ofZero(),
+															ArabicPeriod.ofZero())),
+					Arguments
+							.of(false,
+								"""
+								مقدار_زمني "مدة 3 ساعات" أكبر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
+								""",
+								null,
+								BinaryOperation
+										.newNaftahBugError( BinaryOperation.GREATER_THAN,
+															ArabicDuration.ofZero(),
+															ArabicPeriod.ofZero())),
+					Arguments
+							.of(false,
+								"""
+								مقدار_زمني "فترة 5 سنوات و 3 ساعات" أصغر_أو_يساوي قيمة_زمنية "مدة 3 ساعات"
+								""",
+								null,
+								BinaryOperation
+										.newNaftahBugError( BinaryOperation.LESS_THAN_EQUALS,
+															ArabicPeriodWithDuration.ofZero(),
+															ArabicDuration.ofZero()))
 				);
 
 	}
