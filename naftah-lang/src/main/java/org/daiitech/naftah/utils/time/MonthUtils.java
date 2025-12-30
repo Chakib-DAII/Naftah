@@ -228,4 +228,35 @@ public final class MonthUtils {
 			throw new IllegalArgumentException("اسم الشهر غير معروف: " + month, ex);
 		}
 	}
+
+	/**
+	 * Returns the number of days in a given month for the specified chronology and year.
+	 *
+	 * @param month      the month number (1–12)
+	 * @param year       the year
+	 * @param chronology the chronology (Gregorian or Hijri)
+	 * @return the number of days in the month
+	 * @throws IllegalArgumentException if month is not in 1–12
+	 */
+	public static int getMonthLength(int month, int year, Chronology chronology) {
+		if (chronology.equals(HijrahChronology.INSTANCE)) {
+			// Hijri months: odd=30, even=29, last month 30 in leap year
+			return switch (month) {
+				case 1, 3, 5, 7, 9, 11 -> 30;
+				case 12 -> (chronology.isLeapYear(year) ? 30 : 29);
+				case 2, 4, 6, 8, 10 -> 29;
+				default -> throw new IllegalArgumentException("رقم الشهر الهجري غير صالح: " + month);
+			};
+		}
+		else {
+			// Gregorian months
+			return switch (month) {
+				case 2 -> (chronology.isLeapYear(year) ? 29 : 28);
+				case 4, 6, 9, 11 -> 30;
+				case 1, 3, 5, 7, 8, 10, 12 -> 31;
+				default -> throw new IllegalArgumentException("رقم الشهر الميلادي غير صالح: " + month);
+			};
+		}
+	}
+
 }
