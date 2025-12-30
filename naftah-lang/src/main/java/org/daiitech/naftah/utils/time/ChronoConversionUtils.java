@@ -51,13 +51,13 @@ public final class ChronoConversionUtils {
 	}
 
 	/**
-	 * Converts an ISO {@link LocalDate} to a {@link ChronoLocalDate} in the given chronology.
+	 * Converts an ISO {@link Temporal} to a {@link ChronoLocalDate} in the given chronology.
 	 *
-	 * @param isoDate    the ISO {@link LocalDate}
+	 * @param isoDate    the ISO {@link Temporal}
 	 * @param chronology the chronology to use
 	 * @return a {@link ChronoLocalDate} in the specified chronology
 	 */
-	public static ChronoLocalDate toChronoDate(LocalDate isoDate, Chronology chronology) {
+	public static ChronoLocalDate toChronoDate(Temporal isoDate, Chronology chronology) {
 		return chronology.date(isoDate);
 	}
 
