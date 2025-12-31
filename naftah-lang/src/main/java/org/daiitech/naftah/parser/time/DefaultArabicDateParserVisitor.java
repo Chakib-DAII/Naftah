@@ -91,12 +91,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 		return ArabicDateTime
 				.of(
 					date,
-					time,
-					TemporalUtils
-							.createDateTime(date.date(),
-											date.calendar(),
-											time.time(),
-											time.zoneOrOffset())
+					time
 				);
 	}
 
@@ -145,12 +140,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 			return ArabicDateTime
 					.of(
 						date,
-						time,
-						TemporalUtils
-								.createDateTime(date.date(),
-												date.calendar(),
-												time.time(),
-												time.zoneOrOffset())
+						time
 					);
 		}
 		return date;
@@ -172,8 +162,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 
 		return ArabicDate
 				.of(date,
-					calendar,
-					TemporalUtils.createDate(day, date.monthValue(), year, calendar.chronology())
+					calendar
 				);
 	}
 
@@ -190,12 +179,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 
 		return ArabicTime
 				.of(time,
-					zoneOrOffset,
-					TemporalUtils
-							.createTime(
-										time,
-										zoneOrOffset
-							)
+					zoneOrOffset
 				);
 	}
 
