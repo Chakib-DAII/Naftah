@@ -1,7 +1,9 @@
 package org.daiitech.naftah.builtin.time;
 
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.Objects;
@@ -34,13 +36,12 @@ import static org.daiitech.naftah.utils.time.ZoneUtils.parseZoneOffset;
  * @param zoneOrOffset the optional time zone or offset component
  * @param temporal     the resolved {@link Temporal} representation
  * @author Chakib Daii
- * @return a new {@code ArabicTime} instance
  */
 public record ArabicTime(
 		Time time,
 		ZoneOrOffset zoneOrOffset,
 		Temporal temporal
-) implements ArabicTemporalPoint {
+) implements ArabicTemporalPoint, TimeSupport {
 
 	/**
 	 * Obtains the current time using the system default time zone.
@@ -78,6 +79,162 @@ public record ArabicTime(
 	}
 
 	/**
+	 * Creates an {@code ArabicTime} instance from hour and minute.
+	 *
+	 * <p>Seconds and nanoseconds default to {@code 0}.</p>
+	 *
+	 * @param hour   the hour-of-day (0–23)
+	 * @param minute the minute-of-hour (0–59)
+	 * @return a new {@code ArabicTime} instance
+	 */
+	public static ArabicTime of(int hour, int minute) {
+		return of(hour, minute, 0, 0);
+	}
+
+
+	/**
+	 * Creates an {@code ArabicTime} instance from hour and minute,
+	 * optionally associated with a time zone or offset.
+	 * <p>
+	 * The second and nanosecond fields are set to {@code 0}.
+	 *
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return a new {@code ArabicTime} instance, not null
+	 */
+	public static ArabicTime of(int hour,
+								int minute,
+								ArabicTime.ZoneOrOffset zoneOrOffset) {
+		return of(hour, minute, 0, 0, zoneOrOffset);
+	}
+
+
+	/**
+	 * Creates an {@code ArabicTime} instance from hour, minute, and second.
+	 *
+	 * <p>Nano-of-second defaults to {@code 0}.</p>
+	 *
+	 * @param hour   the hour-of-day (0–23)
+	 * @param minute the minute-of-hour (0–59)
+	 * @param second the second-of-minute (0–59)
+	 * @return a new {@code ArabicTime} instance
+	 */
+	public static ArabicTime of(int hour, int minute, int second) {
+		return of(hour, minute, second, 0);
+	}
+
+	/**
+	 * Creates an {@code ArabicTime} instance from hour, minute, and second,
+	 * optionally associated with a time zone or offset.
+	 * <p>
+	 * The nanosecond field is set to {@code 0}.
+	 *
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return a new {@code ArabicTime} instance, not null
+	 */
+	public static ArabicTime of(int hour,
+								int minute,
+								int second,
+								ArabicTime.ZoneOrOffset zoneOrOffset) {
+		return of(hour, minute, second, 0, zoneOrOffset);
+	}
+
+	/**
+	 * Creates an {@code ArabicTime} instance from hour, minute, second, and nanosecond.
+	 *
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
+	 * @return a new {@code ArabicTime} instance
+	 */
+	public static ArabicTime of(int hour,
+								int minute,
+								int second,
+								int nanoOfSecond) {
+		return of(hour, minute, second, nanoOfSecond, null);
+	}
+
+	/**
+	 * Creates an {@code ArabicTime} instance from hour, minute, second,
+	 * and nanosecond, optionally associated with a time zone or offset.
+	 *
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return a new {@code ArabicTime} instance, not null
+	 */
+	public static ArabicTime of(int hour,
+								int minute,
+								int second,
+								int nanoOfSecond,
+								ArabicTime.ZoneOrOffset zoneOrOffset) {
+		var time = Time.of(hour, minute, second, nanoOfSecond, null);
+		var temporal = TemporalUtils.createTime(hour, minute, second, nanoOfSecond, zoneOrOffset);
+		return of(time, zoneOrOffset, temporal);
+	}
+
+	/**
+	 * Creates an {@code ArabicTime} instance from the total number of seconds
+	 * since midnight.
+	 *
+	 * @param secondOfDay the second-of-day (0–86,399)
+	 * @return a new {@code ArabicTime} instance
+	 */
+	public static ArabicTime ofSecondOfDay(long secondOfDay) {
+		return ofSecondOfDay(secondOfDay, null);
+	}
+
+	/**
+	 * Creates an {@code ArabicTime} instance from the total number of seconds
+	 * since midnight, optionally associated with a time zone or offset.
+	 *
+	 * @param secondOfDay  the second-of-day (0–86,399)
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return a new {@code ArabicTime} instance, not null
+	 */
+	public static ArabicTime ofSecondOfDay(long secondOfDay, ArabicTime.ZoneOrOffset zoneOrOffset) {
+		var timeAndTemporal = TemporalUtils.createTimeOfSecondOfDay(secondOfDay, zoneOrOffset);
+		LocalTime lt = (LocalTime) timeAndTemporal.get(0);
+		Temporal temporal = (Temporal) timeAndTemporal.get(1);
+		var time = Time.of(lt.getHour(), lt.getMinute(), lt.getSecond(), lt.getNano(), null);
+		return of(time, zoneOrOffset, temporal);
+	}
+
+	/**
+	 * Creates an {@code ArabicTime} instance from the total number of nanoseconds
+	 * since midnight.
+	 *
+	 * @param nanoOfDay the nano-of-day (0–86,399,999,999,999)
+	 * @return a new {@code ArabicTime} instance
+	 */
+	public static ArabicTime ofNanoOfDay(long nanoOfDay) {
+		return ofNanoOfDay(nanoOfDay, null);
+	}
+
+	/**
+	 * Creates an {@code ArabicTime} instance from the total number of nanoseconds
+	 * since midnight, optionally associated with a time zone or offset.
+	 *
+	 * @param nanoOfDay    the nano-of-day (0–86,399,999,999,999)
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return a new {@code ArabicTime} instance, not null
+	 */
+	public static ArabicTime ofNanoOfDay(long nanoOfDay, ArabicTime.ZoneOrOffset zoneOrOffset) {
+		var timeAndTemporal = TemporalUtils.createTimeOfNanoOfDay(nanoOfDay, zoneOrOffset);
+		LocalTime lt = (LocalTime) timeAndTemporal.get(0);
+		Temporal temporal = (Temporal) timeAndTemporal.get(1);
+		var time = Time.of(lt.getHour(), lt.getMinute(), lt.getSecond(), lt.getNano(), null);
+		return of(time, zoneOrOffset, temporal);
+	}
+
+	/**
 	 * Creates a new {@code ArabicTime} instance using explicit components.
 	 *
 	 * <p>This factory method is typically used when the parsed time,
@@ -95,6 +252,27 @@ public record ArabicTime(
 								Temporal temporal) {
 		return new ArabicTime(time, zoneOrOffset, temporal);
 	}
+
+	/**
+	 * Creates a new {@code ArabicTime} instance using explicit components
+	 * and resolves the backing {@link Temporal} automatically.
+	 *
+	 * @param time         the logical time component, not null
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return a new {@code ArabicTime} instance, not null
+	 */
+	public static ArabicTime of(
+								Time time,
+								ZoneOrOffset zoneOrOffset) {
+		return new ArabicTime(  time,
+								zoneOrOffset,
+								TemporalUtils
+										.createTime(
+													time,
+													zoneOrOffset
+										));
+	}
+
 
 	/**
 	 * Creates a new {@code ArabicTime} instance by extracting time fields
@@ -133,6 +311,46 @@ public record ArabicTime(
 	}
 
 	/**
+	 * Gets the hour-of-day field.
+	 *
+	 * @return the hour-of-day, from 0 to 23
+	 */
+	@Override
+	public int getHour() {
+		return time.getHour24();
+	}
+
+	/**
+	 * Gets the minute-of-hour field.
+	 *
+	 * @return the minute-of-hour, from 0 to 59
+	 */
+	@Override
+	public int getMinute() {
+		return time.minute;
+	}
+
+	/**
+	 * Gets the second-of-minute field.
+	 *
+	 * @return the second-of-minute, from 0 to 59
+	 */
+	@Override
+	public int getSecond() {
+		return time.second;
+	}
+
+	/**
+	 * Gets the nano-of-second field.
+	 *
+	 * @return the nano-of-second, from 0 to 999,999,999
+	 */
+	@Override
+	public int getNano() {
+		return time.nano;
+	}
+
+	/**
 	 * Returns a new {@code ArabicTime} obtained by adding the given Arabic temporal
 	 * amount to this time.
 	 *
@@ -145,6 +363,70 @@ public record ArabicTime(
 	}
 
 	/**
+	 * Returns a new {@code ArabicTime} with the specified number of hours added.
+	 *
+	 * <p>If {@code hoursToAdd} is zero, this instance is returned unchanged.</p>
+	 *
+	 * @param hoursToAdd the number of hours to add, may be negative
+	 * @return a new {@code ArabicTime} instance with the hours added
+	 */
+	@Override
+	public ArabicTime plusHours(long hoursToAdd) {
+		if (hoursToAdd == 0) {
+			return this;
+		}
+		return of(zoneOrOffset, temporal.plus(hoursToAdd, ChronoUnit.HOURS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} with the specified number of minutes added.
+	 *
+	 * <p>If {@code minutesToAdd} is zero, this instance is returned unchanged.</p>
+	 *
+	 * @param minutesToAdd the number of minutes to add, may be negative
+	 * @return a new {@code ArabicTime} instance with the minutes added
+	 */
+	@Override
+	public ArabicTime plusMinutes(long minutesToAdd) {
+		if (minutesToAdd == 0) {
+			return this;
+		}
+		return of(zoneOrOffset, temporal.plus(minutesToAdd, ChronoUnit.MINUTES));
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} with the specified number of seconds added.
+	 *
+	 * <p>If {@code secondsToAdd} is zero, this instance is returned unchanged.</p>
+	 *
+	 * @param secondsToAdd the number of seconds to add, may be negative
+	 * @return a new {@code ArabicTime} instance with the seconds added
+	 */
+	@Override
+	public ArabicTime plusSeconds(long secondsToAdd) {
+		if (secondsToAdd == 0) {
+			return this;
+		}
+		return of(zoneOrOffset, temporal.plus(secondsToAdd, ChronoUnit.SECONDS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} with the specified number of nanoseconds added.
+	 *
+	 * <p>If {@code nanosToAdd} is zero, this instance is returned unchanged.</p>
+	 *
+	 * @param nanosToAdd the number of nanoseconds to add, may be negative
+	 * @return a new {@code ArabicTime} instance with the nanoseconds added
+	 */
+	@Override
+	public ArabicTime plusNanos(long nanosToAdd) {
+		if (nanosToAdd == 0) {
+			return this;
+		}
+		return of(zoneOrOffset, temporal.plus(nanosToAdd, ChronoUnit.NANOS));
+	}
+
+	/**
 	 * Returns a new {@code ArabicTime} obtained by subtracting the given Arabic temporal
 	 * amount from this time.
 	 *
@@ -154,6 +436,70 @@ public record ArabicTime(
 	@Override
 	public ArabicTime minus(ArabicTemporalAmount arabicTemporalAmount) {
 		return compute(arabicTemporalAmount, this.temporal::minus);
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} with the specified number of hours subtracted.
+	 *
+	 * <p>If {@code hoursToSubtract} is zero, this instance is returned unchanged.</p>
+	 *
+	 * @param hoursToSubtract the number of hours to subtract, may be negative
+	 * @return a new {@code ArabicTime} instance with the hours subtracted
+	 */
+	@Override
+	public ArabicTime minusHours(long hoursToSubtract) {
+		if (hoursToSubtract == 0) {
+			return this;
+		}
+		return of(zoneOrOffset, temporal.minus(hoursToSubtract, ChronoUnit.HOURS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} with the specified number of minutes subtracted.
+	 *
+	 * <p>If {@code minutesToSubtract} is zero, this instance is returned unchanged.</p>
+	 *
+	 * @param minutesToSubtract the number of minutes to subtract, may be negative
+	 * @return a new {@code ArabicTime} instance with the minutes subtracted
+	 */
+	@Override
+	public ArabicTime minusMinutes(long minutesToSubtract) {
+		if (minutesToSubtract == 0) {
+			return this;
+		}
+		return of(zoneOrOffset, temporal.minus(minutesToSubtract, ChronoUnit.MINUTES));
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} with the specified number of seconds subtracted.
+	 *
+	 * <p>If {@code secondsToSubtract} is zero, this instance is returned unchanged.</p>
+	 *
+	 * @param secondsToSubtract the number of seconds to subtract, may be negative
+	 * @return a new {@code ArabicTime} instance with the seconds subtracted
+	 */
+	@Override
+	public ArabicTime minusSeconds(long secondsToSubtract) {
+		if (secondsToSubtract == 0) {
+			return this;
+		}
+		return of(zoneOrOffset, temporal.minus(secondsToSubtract, ChronoUnit.SECONDS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicTime} with the specified number of nanoseconds subtracted.
+	 *
+	 * <p>If {@code nanosToSubtract} is zero, this instance is returned unchanged.</p>
+	 *
+	 * @param nanosToSubtract the number of nanoseconds to subtract, may be negative
+	 * @return a new {@code ArabicTime} instance with the nanoseconds subtracted
+	 */
+	@Override
+	public ArabicTime minusNanos(long nanosToSubtract) {
+		if (nanosToSubtract == 0) {
+			return this;
+		}
+		return of(zoneOrOffset, temporal.minus(nanosToSubtract, ChronoUnit.NANOS));
 	}
 
 	/**
@@ -265,7 +611,7 @@ public record ArabicTime(
 		 * @throws IllegalArgumentException if any value is out of valid range
 		 */
 		public static Time of(int hour, int minute, Integer second, Integer nano, Boolean isPM) {
-			return new ArabicTime.Time(hour, minute, second, nano, isPM);
+			return new Time(hour, minute, second, nano, isPM);
 		}
 
 		/**
