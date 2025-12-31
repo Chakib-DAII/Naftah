@@ -953,9 +953,7 @@ public final class ObjectUtils {
 			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(pair.get(0))) {
 				return false;
 			}
-			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(pair.get(1))) {
-				return false;
-			}
+			return isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(pair.get(1));
 		}
 
 
@@ -966,9 +964,7 @@ public final class ObjectUtils {
 			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(1))) {
 				return false;
 			}
-			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(2))) {
-				return false;
-			}
+			return isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(2));
 		}
 
 		// Map with simple keys and values
