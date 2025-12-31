@@ -20,9 +20,20 @@ scmVersion {
 //	versionIncrementer 'incrementPatch'
 }
 
+buildscript {
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
+
 allprojects {
 	group = 'org.daiitech'
 	version = scmVersion.version
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+	}
 }
 
 description = "Naftah Programming Language – Write programs in Arabic naturally, like living in Naftah"
@@ -31,11 +42,6 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
-}
-
-repositories {
-	gradlePluginPortal()
-	mavenCentral()
 }
 
 ext.sharedJvmArgs = [
@@ -219,10 +225,6 @@ subprojects {
 			// Show deprecated members in docs
 			addBooleanOption('Xdoclint:none', true)  // disables strict lint checks
 		}
-	}
-
-	repositories {
-		mavenCentral()
 	}
 
 	dependencies {
