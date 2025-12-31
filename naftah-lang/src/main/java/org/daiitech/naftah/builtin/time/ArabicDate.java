@@ -1,14 +1,19 @@
 package org.daiitech.naftah.builtin.time;
 
+import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.Chronology;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.Objects;
 import java.util.function.Function;
 
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.utils.time.ChronoConversionUtils;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
+import org.daiitech.naftah.utils.time.DayOfWeekUtils;
+import org.daiitech.naftah.utils.time.MonthUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.numberToString;
@@ -39,7 +44,7 @@ public record ArabicDate(
 		Date date,
 		Calendar calendar,
 		Temporal temporal
-) implements ArabicTemporalPoint {
+) implements ArabicTemporalPoint, DateSupport {
 
 	/**
 	 * Obtains the current date using the default chronology
@@ -143,13 +148,14 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance from its individual components.
+	 * Creates a new {@code ArabicDate} instance from its parsed components.
 	 *
-	 * <p>This factory method is used when the parsed date, calendar,
-	 * and the resolved {@link Temporal} are already known.</p>
+	 * <p>This factory method should be used when the {@code Date}, the {@link Calendar},
+	 * and the underlying {@link Temporal} representation are already known.
+	 * No additional parsing or chronology resolution is performed.</p>
 	 *
 	 * @param date     the parsed date component (day, month, year) according to the calendar
-	 * @param calendar the calendar associated with this date (e.g. Gregorian or Hijri)
+	 * @param calendar the calendar associated with this date (e.g., Gregorian or Hijri)
 	 * @param temporal the resolved temporal representation backing this date
 	 * @return a new {@code ArabicDate} instance combining all components
 	 */
@@ -160,11 +166,30 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} from a {@link Temporal} and a calendar.
+	 * Creates a new {@code ArabicDate} instance from its parsed components
+	 * and resolves the underlying {@link Temporal} representation automatically.
 	 *
-	 * <p>This method extracts the {@code day}, {@code month}, and {@code year}
-	 * fields from the given temporal object and constructs an {@code ArabicDate}
-	 * using the provided calendar's chronology.</p>
+	 * <p>This factory method should be used when the {@code Date} and the
+	 * associated {@link Calendar} are already known, but the backing
+	 * {@link Temporal} has not yet been created. The temporal representation
+	 * is derived using the calendar’s chronology.</p>
+	 *
+	 * @param date     the parsed date component (day, month, year) according to the calendar
+	 * @param calendar the calendar associated with this date (e.g., Gregorian or Hijri)
+	 * @return a new {@code ArabicDate} instance combining all components
+	 */
+	public static ArabicDate of(Date date,
+								Calendar calendar) {
+		return new ArabicDate(  date,
+								calendar,
+								TemporalUtils.createDate(date.day, date.monthValue, date.year, calendar.chronology));
+	}
+
+	/**
+	 * Creates a new {@code ArabicDate} instance from a {@link Temporal} object and a calendar.
+	 *
+	 * <p>This method extracts the day, month, and year fields from the given temporal
+	 * object and constructs an {@code ArabicDate} using the provided calendar's chronology.</p>
 	 *
 	 * <p>The temporal must support the following fields:
 	 * <ul>
@@ -187,13 +212,244 @@ public record ArabicDate(
 			);
 		}
 
-		int day = temporal.get(ChronoField.DAY_OF_MONTH);
-		int month = temporal.get(ChronoField.MONTH_OF_YEAR);
-		int year = temporal.get(ChronoField.YEAR);
+		ChronoLocalDate chronoLocalDate = ChronoConversionUtils.toChronoDate(temporal, calendar.chronology);
 
+		int day = chronoLocalDate.get(ChronoField.DAY_OF_MONTH);
+		int month = chronoLocalDate.get(ChronoField.MONTH_OF_YEAR);
+		int year = chronoLocalDate.get(ChronoField.YEAR);
+
+		return of(calendar, day, month, year);
+	}
+
+	/**
+	 * Creates a new {@code ArabicDate} instance using a day, Arabic month name, and year.
+	 *
+	 * <p>This method uses the default chronology defined in {@link ChronologyUtils#DEFAULT_CHRONOLOGY}.</p>
+	 *
+	 * @param day         the day of the month
+	 * @param arabicMonth the Arabic month name (e.g., "رمضان", "يناير")
+	 * @param year        the year value
+	 * @return a new {@code ArabicDate} instance with the specified components
+	 */
+	public static ArabicDate of(int day, String arabicMonth, int year) {
+		var calendar = ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+		return of(calendar, day, arabicMonth, year);
+	}
+
+	/**
+	 * Creates a new {@code ArabicDate} instance using a specific chronology, day, Arabic month name, and year.
+	 *
+	 * <p>The chronology is used to resolve the month name to its numeric value and to determine leap years.</p>
+	 *
+	 * @param chronology  the chronology to use (e.g., ISO or Hijri)
+	 * @param day         the day of the month
+	 * @param arabicMonth the Arabic month name
+	 * @param year        the year value
+	 * @return a new {@code ArabicDate} instance with the specified components
+	 */
+	public static ArabicDate of(Chronology chronology, int day, String arabicMonth, int year) {
+		var calendar = ArabicDate.Calendar.of(chronology);
+		return of(calendar, day, arabicMonth, year);
+	}
+
+	/**
+	 * Creates a new {@code ArabicDate} instance using a calendar, day, Arabic month name, and year.
+	 *
+	 * <p>The Arabic month name is resolved to a numeric month using the provided calendar's chronology.</p>
+	 *
+	 * @param calendar    the calendar to use
+	 * @param day         the day of the month
+	 * @param arabicMonth the Arabic month name
+	 * @param year        the year value
+	 * @return a new {@code ArabicDate} instance with the specified components
+	 */
+	public static ArabicDate of(Calendar calendar, int day, String arabicMonth, int year) {
+		var date = ArabicDate.Date.of(day, arabicMonth, calendar.chronology(), year);
+		var temporal = TemporalUtils.createDate(day, date.monthValue(), year, calendar.chronology());
+		return of(date, calendar, temporal);
+	}
+
+	/**
+	 * Creates a new {@code ArabicDate} instance using numeric day, month, and year values.
+	 *
+	 * <p>This method uses the default chronology defined in {@link ChronologyUtils#DEFAULT_CHRONOLOGY}.</p>
+	 *
+	 * @param day   the day of the month
+	 * @param month the numeric month value (1–12)
+	 * @param year  the year value
+	 * @return a new {@code ArabicDate} instance with the specified components
+	 */
+	public static ArabicDate of(int day, int month, int year) {
+		var calendar = ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+		return of(calendar, day, month, year);
+	}
+
+	/**
+	 * Creates a new {@code ArabicDate} instance using a specific chronology, numeric day, month, and year.
+	 *
+	 * <p>The chronology is used for leap year calculations and month name resolution.</p>
+	 *
+	 * @param chronology the chronology to use (e.g., ISO or Hijri)
+	 * @param day        the day of the month
+	 * @param month      the numeric month value (1–12)
+	 * @param year       the year value
+	 * @return a new {@code ArabicDate} instance with the specified components
+	 */
+	public static ArabicDate of(Chronology chronology, int day, int month, int year) {
+		var calendar = ArabicDate.Calendar.of(chronology);
+		return of(calendar, day, month, year);
+	}
+
+	/**
+	 * Creates a new {@code ArabicDate} instance using a calendar and numeric day, month, and year.
+	 *
+	 * <p>The calendar provides the chronology to resolve leap years and month names.</p>
+	 *
+	 * @param calendar the calendar to use
+	 * @param day      the day of the month
+	 * @param month    the numeric month value (1–12)
+	 * @param year     the year value
+	 * @return a new {@code ArabicDate} instance with the specified components
+	 */
+	public static ArabicDate of(Calendar calendar, int day, int month, int year) {
 		var date = ArabicDate.Date.of(day, month, calendar.chronology(), year);
+		var temporal = TemporalUtils.createDate(day, date.monthValue(), year, calendar.chronology());
+		return of(date, calendar, temporal);
+	}
 
-		return new ArabicDate(date, calendar, temporal);
+	/**
+	 * Returns this date interpreted in its calendar chronology.
+	 *
+	 * <p>The returned {@link ChronoLocalDate} is derived from the underlying
+	 * ISO temporal and the associated {@link Chronology}.</p>
+	 *
+	 * <p>This method must be used whenever calendar-specific fields
+	 * (year, month, day) are required.</p>
+	 *
+	 * @return a {@link ChronoLocalDate} in the calendar's chronology
+	 */
+	public ChronoLocalDate toChronoDate() {
+		return ChronoConversionUtils.toChronoDate(temporal, calendar.chronology);
+	}
+
+	/**
+	 * Converts this {@code ArabicDate} to the number of days since the epoch
+	 * (1970-01-01) in the ISO calendar system.
+	 *
+	 * @return the epoch day count
+	 */
+	@Override
+	public long toEpochDay() {
+		return toChronoDate().toEpochDay();
+	}
+
+	/**
+	 * Returns the year component of this {@code ArabicDate}.
+	 *
+	 * @return the year value
+	 */
+	@Override
+	public int getYear() {
+		return date.year;
+	}
+
+	/**
+	 * Returns the numeric month value (1–12) of this {@code ArabicDate}.
+	 *
+	 * @return the month value
+	 */
+	@Override
+	public int getMonthValue() {
+		return date.monthValue;
+	}
+
+	/**
+	 * Returns the Arabic name of the month for this {@code ArabicDate}.
+	 *
+	 * @return the Arabic month name
+	 */
+	@Override
+	public String getMonth() {
+		return date.arabicMonth;
+	}
+
+	/**
+	 * Returns the day-of-month component of this {@code ArabicDate}.
+	 *
+	 * @return the day of the month
+	 */
+	@Override
+	public int getDayOfMonth() {
+		return date.day;
+	}
+
+	/**
+	 * Returns the day-of-year for this {@code ArabicDate} according to its chronology.
+	 *
+	 * @return the day of the year (1–365 or 1–366 for leap years)
+	 */
+	@Override
+	public int getDayOfYear() {
+		return toChronoDate().get(ChronoField.DAY_OF_YEAR);
+	}
+
+	/**
+	 * Returns the day of the week as an Arabic string for this {@code ArabicDate}.
+	 *
+	 * <p>The calculation is based on the epoch day of the underlying {@link ChronoLocalDate}.</p>
+	 *
+	 * @return the Arabic name of the day of the week
+	 */
+	@Override
+	public String getDayOfWeek() {
+		int dow0 = Math.floorMod(toChronoDate().toEpochDay() + 3, 7);
+		return DayOfWeekUtils.getArabicDayOfWeek(dow0 + 1);
+	}
+
+	/**
+	 * Checks if the year of this {@code ArabicDate} is a leap year in its chronology.
+	 *
+	 * @return {@code true} if the year is a leap year, {@code false} otherwise
+	 */
+	@Override
+	public boolean isLeapYear() {
+		return calendar.chronology.isLeapYear(date.year());
+	}
+
+	/**
+	 * Returns the length of the month in days for this {@code ArabicDate}.
+	 *
+	 * <p>The length is determined according to the chronology of the calendar.</p>
+	 *
+	 * @return the number of days in the month
+	 */
+	@Override
+	public int lengthOfMonth() {
+		return MonthUtils.getMonthLength(date.monthValue, date.year, calendar.chronology);
+	}
+
+	/**
+	 * Returns the length of the year in days for this {@code ArabicDate}.
+	 *
+	 * <p>
+	 * The number of days depends on the chronology of the date:
+	 * <ul>
+	 * <li>For Gregorian years (ISO chronology), leap years return 366 days,
+	 * and non-leap years return 365 days.</li>
+	 * <li>For Hijri years, leap years return 355 days, and non-leap years return 354 days.</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @return the number of days in the year according to its chronology
+	 */
+	@Override
+	public int lengthOfYear() {
+		if (calendar.chronology.equals(ChronologyUtils.DEFAULT_CHRONOLOGY)) {
+			return isLeapYear() ? 355 : 354;
+		}
+		else {
+			return isLeapYear() ? 366 : 365;
+		}
 	}
 
 	/**
@@ -209,6 +465,62 @@ public record ArabicDate(
 	}
 
 	/**
+	 * Returns a new {@code ArabicDate} with the specified number of years added.
+	 *
+	 * @param yearsToAdd the number of years to add, may be negative
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate plusYears(long yearsToAdd) {
+		if (yearsToAdd == 0) {
+			return this;
+		}
+		return of(calendar, temporal.plus(yearsToAdd, ChronoUnit.YEARS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicDate} with the specified number of months added.
+	 *
+	 * @param monthsToAdd the number of months to add, may be negative
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate plusMonths(long monthsToAdd) {
+		if (monthsToAdd == 0) {
+			return this;
+		}
+		return of(calendar, temporal.plus(monthsToAdd, ChronoUnit.MONTHS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicDate} with the specified number of weeks added.
+	 *
+	 * @param weeksToAdd the number of weeks to add, may be negative
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate plusWeeks(long weeksToAdd) {
+		if (weeksToAdd == 0) {
+			return this;
+		}
+		return of(calendar, temporal.plus(weeksToAdd, ChronoUnit.WEEKS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicDate} with the specified number of days added.
+	 *
+	 * @param daysToAdd the number of days to add, may be negative
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate plusDays(long daysToAdd) {
+		if (daysToAdd == 0) {
+			return this;
+		}
+		return of(calendar, temporal.plus(daysToAdd, ChronoUnit.DAYS));
+	}
+
+	/**
 	 * Returns a new {@code ArabicDate} obtained by subtracting the given Arabic temporal
 	 * amount from this date.
 	 *
@@ -218,7 +530,62 @@ public record ArabicDate(
 	@Override
 	public ArabicDate minus(ArabicTemporalAmount arabicTemporalAmount) {
 		return compute(arabicTemporalAmount, this.temporal::minus);
+	}
 
+	/**
+	 * Returns a new {@code ArabicDate} with the specified number of years subtracted.
+	 *
+	 * @param yearsToSubtract the number of years to subtract, may be negative
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate minusYears(long yearsToSubtract) {
+		if (yearsToSubtract == 0) {
+			return this;
+		}
+		return of(calendar, temporal.minus(yearsToSubtract, ChronoUnit.YEARS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicDate} with the specified number of months subtracted.
+	 *
+	 * @param monthsToSubtract the number of months to subtract, may be negative
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate minusMonths(long monthsToSubtract) {
+		if (monthsToSubtract == 0) {
+			return this;
+		}
+		return of(calendar, temporal.minus(monthsToSubtract, ChronoUnit.MONTHS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicDate} with the specified number of weeks subtracted.
+	 *
+	 * @param weeksToSubtract the number of weeks to subtract, may be negative
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate minusWeeks(long weeksToSubtract) {
+		if (weeksToSubtract == 0) {
+			return this;
+		}
+		return of(calendar, temporal.minus(weeksToSubtract, ChronoUnit.WEEKS));
+	}
+
+	/**
+	 * Returns a new {@code ArabicDate} with the specified number of days subtracted.
+	 *
+	 * @param daysToSubtract the number of days to subtract, may be negative
+	 * @return a new {@code ArabicDate} instance
+	 */
+	@Override
+	public ArabicDate minusDays(long daysToSubtract) {
+		if (daysToSubtract == 0) {
+			return this;
+		}
+		return of(calendar, temporal.minus(daysToSubtract, ChronoUnit.DAYS));
 	}
 
 	/**
