@@ -25,6 +25,7 @@ import static org.daiitech.naftah.utils.time.Constants.DHU_AL_HIJJAH;
 import static org.daiitech.naftah.utils.time.Constants.HIJRI_CALENDAR_NAME_1;
 import static org.daiitech.naftah.utils.time.Constants.JANUARY_AR;
 import static org.daiitech.naftah.utils.time.Constants.JULY_AR;
+import static org.daiitech.naftah.utils.time.Constants.JUMADA_AL_AWWAL;
 import static org.daiitech.naftah.utils.time.Constants.JUNE_LATIN;
 import static org.daiitech.naftah.utils.time.Constants.MARCH;
 import static org.daiitech.naftah.utils.time.Constants.OCTOBER;
@@ -523,6 +524,25 @@ public class DateTimeProvider implements ArgumentsProvider {
 								true,
 								null
 							),
+					Arguments
+							.of(true,
+								"""
+								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" + قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام و 2 ساعات و 10 دقائق و 5 ثوان"
+								""",
+								createArabicDateTime(   30,
+														JUMADA_AL_AWWAL,
+														5,
+														ChronologyUtils.HIJRAH_CHRONOLOGY,
+														HIJRI_CALENDAR_NAME_1,
+														1444,
+														true,
+														"+02:00",
+														10,
+														30,
+														50,
+														0,
+														null),
+								null),
 					Arguments
 							.of(true,
 								"""
