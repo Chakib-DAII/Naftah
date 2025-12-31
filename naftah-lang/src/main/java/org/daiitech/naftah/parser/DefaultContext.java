@@ -1313,6 +1313,12 @@ public class DefaultContext {
 		}
 		else {
 			defaultBootstrap();
+			try {
+				Files.createDirectories(MINIMAL_CACHE_PATH.getParent());
+			}
+			catch (IOException e) {
+				throw new NaftahBugError(e);
+			}
 			if (FORCE_BOOT_STRAP || !Files.exists(MINIMAL_CACHE_PATH)) {
 				callLoader(false, MINIMAL_LOADER_TASK, MINIMAL_LOADER_CONSUMER);
 			}
