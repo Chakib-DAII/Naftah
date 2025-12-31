@@ -77,6 +77,79 @@ public final class TemporalUtils {
 	}
 
 	/**
+	 * Creates a {@link LocalTime} and a corresponding {@link Temporal}
+	 * from the total number of nanoseconds since midnight.
+	 * <p>
+	 * The returned tuple contains:
+	 * <ul>
+	 * <li>The computed {@link LocalTime}</li>
+	 * <li>A {@link Temporal} that may be {@link LocalTime},
+	 * {@link OffsetTime}, or {@link ZonedDateTime} depending on the zone</li>
+	 * </ul>
+	 *
+	 * @param nanoOfDay    the nano-of-day (0–86,399,999,999,999)
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return an {@link NTuple} containing the {@link LocalTime} and corresponding {@link Temporal}
+	 */
+	public static NTuple createTimeOfNanoOfDay(long nanoOfDay, ArabicTime.ZoneOrOffset zoneOrOffset) {
+		// Create LocalTime
+		LocalTime time = LocalTime.ofNanoOfDay(nanoOfDay);
+		Temporal temporal = createTime(time, Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null);
+		return NTuple.of(time, temporal);
+	}
+
+
+	/**
+	 * Creates a {@link LocalTime} and a corresponding {@link Temporal}
+	 * from the total number of seconds since midnight.
+	 * <p>
+	 * The returned tuple contains:
+	 * <ul>
+	 * <li>The computed {@link LocalTime}</li>
+	 * <li>A {@link Temporal} that may be {@link LocalTime},
+	 * {@link OffsetTime}, or {@link ZonedDateTime} depending on the zone</li>
+	 * </ul>
+	 *
+	 * @param secondOfDay  the second-of-day (0–86,399)
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return an {@link NTuple} containing the {@link LocalTime} and corresponding {@link Temporal}
+	 */
+	public static NTuple createTimeOfSecondOfDay(long secondOfDay, ArabicTime.ZoneOrOffset zoneOrOffset) {
+		// Create LocalTime
+		LocalTime time = LocalTime.ofSecondOfDay(secondOfDay);
+		Temporal temporal = createTime(time, Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null);
+		return NTuple.of(time, temporal);
+	}
+
+	/**
+	 * Creates a {@link Temporal} representing a time using explicit components
+	 * and an optional time zone or offset.
+	 * <p>
+	 * Any null minute, second, or nanosecond value will default to {@code 0}.
+	 *
+	 * @param hour24       the hour in 24-hour format (0–23)
+	 * @param minute       the minute of the hour, may be null
+	 * @param second       the second of the minute, may be null
+	 * @param nano         the nanosecond part, may be null
+	 * @param zoneOrOffset the optional time zone or offset, may be null
+	 * @return a {@link Temporal} representing the specified time, never null
+	 */
+	public static Temporal createTime(
+										int hour24,
+										Integer minute,
+										Integer second,
+										Integer nano,
+										ArabicTime.ZoneOrOffset zoneOrOffset) {
+		return createTime(
+							hour24,
+							minute,
+							second,
+							nano,
+							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
+		);
+	}
+
+	/**
 	 * Creates a {@link Temporal} representing a time with explicit components.
 	 *
 	 * @param hour24 the hour in 24-hour format
