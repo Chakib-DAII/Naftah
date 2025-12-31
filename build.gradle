@@ -20,13 +20,6 @@ scmVersion {
 //	versionIncrementer 'incrementPatch'
 }
 
-buildscript {
-	repositories {
-		mavenCentral()
-		gradlePluginPortal()
-	}
-}
-
 allprojects {
 	group = 'org.daiitech'
 	version = scmVersion.version
