@@ -787,7 +787,9 @@ public record ArabicDate(
 		 */
 		@Override
 		public String toString() {
-			return CALENDAR_PREFIX_AR + " " + arabicCalendar;
+			return (arabicCalendar.contains(CALENDAR_PREFIX_AR.substring(3)) ?
+					"" :
+					CALENDAR_PREFIX_AR) + " " + arabicCalendar;
 		}
 	}
 }
