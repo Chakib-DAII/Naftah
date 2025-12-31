@@ -7,7 +7,7 @@ in order to complete your installation.
 
 Prerequisites
 -------------
-Naftah Programming Language requires Java JDK v1.8 or above in order to run.
+Naftah Programming Language requires Java JDK v17 or above in order to run.
 
 The Programming Language will use whatever JDK it finds on your path, to check that you have an appropriate
 version you should run:

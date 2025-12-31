@@ -128,7 +128,7 @@ tasks.register('javadocAll', Javadoc) {
 	// Output directory
 	destinationDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
 
-	// Reuse your same options
+	// Reuse same options
 	options {
 		encoding = 'UTF-8'
 		charSet = 'UTF-8'
