@@ -24,10 +24,12 @@ import static org.daiitech.naftah.utils.time.Constants.DEFAULT_CALENDAR_NAME_1;
 import static org.daiitech.naftah.utils.time.Constants.DHU_AL_HIJJAH;
 import static org.daiitech.naftah.utils.time.Constants.HIJRI_CALENDAR_NAME_1;
 import static org.daiitech.naftah.utils.time.Constants.JANUARY_AR;
+import static org.daiitech.naftah.utils.time.Constants.JANUARY_LATIN;
 import static org.daiitech.naftah.utils.time.Constants.JULY_AR;
 import static org.daiitech.naftah.utils.time.Constants.JUMADA_AL_AWWAL;
 import static org.daiitech.naftah.utils.time.Constants.JUNE_LATIN;
 import static org.daiitech.naftah.utils.time.Constants.MARCH;
+import static org.daiitech.naftah.utils.time.Constants.MAY_LATIN;
 import static org.daiitech.naftah.utils.time.Constants.OCTOBER;
 import static org.daiitech.naftah.utils.time.Constants.RAJAB;
 import static org.daiitech.naftah.utils.time.Constants.RAMADAN;
@@ -826,7 +828,1018 @@ public class DateTimeProvider implements ArgumentsProvider {
 								BinaryOperation
 										.newNaftahBugError( BinaryOperation.LESS_THAN_EQUALS,
 															ArabicDateTime.now(),
-															ArabicDuration.ofZero()))
+															ArabicDuration.ofZero())),
+					Arguments
+							.of(true,
+								"""
+								نوع (الوقت_الحالي()) يساوي "'وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (الوقت_الحالي_بتوقيت("دبي")) يساوي "'وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (الوقت_الحالي_بإزاحة("+02:00")) يساوي "'وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت(15 , 03)
+								""",
+								ArabicTime.of(15, 3),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_بتوقيت(10 , 20 , "تونس")
+								""",
+								ArabicTime.of(10, 20, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_بإزاحة(10 , 45 , "+02:00")
+								""",
+								ArabicTime.of(10, 45, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_بتوقيت_مع_ثانية(15 , 03 ؛ 10 , "تونس")
+								""",
+								ArabicTime.of(15, 3, 10, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_بتوقيت_مع_ثانية(10 , 20 ؛ 10 , "تونس")
+								""",
+								ArabicTime.of(10, 20, 10, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_بإزاحة_مع_ثانية(10 , 45 ؛ 10 , "+02:00")
+								""",
+								ArabicTime.of(10, 45, 10, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_مع_نانوثانية(15 , 03 ؛ 10؛ 10)
+								""",
+								ArabicTime.of(15, 3, 10, 10),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_مع_نانوثانية_بتوقيت(10 , 20 ؛ 10 ؛ 10 , "تونس")
+								""",
+								ArabicTime.of(10, 20, 10, 10, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_مع_الإزاحة_ونانوثانية(10 , 45 ؛ 10؛ 10 , "+02:00")
+								""",
+								ArabicTime.of(10, 45, 10, 10, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_من_ثواني_اليوم(24739)
+								""",
+								ArabicTime.ofSecondOfDay(24739),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_من_ثواني_اليوم_بتوقيت(24739 , "تونس")
+								""",
+								ArabicTime.ofSecondOfDay(24739, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_من_ثواني_اليوم_بإزاحة(24739 , "+02:00")
+								""",
+								ArabicTime.ofSecondOfDay(24739, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_من_نانوثواني_اليوم(24712312312339)
+								""",
+								ArabicTime.ofNanoOfDay(24712312312339L),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت(24731231231239 , "تونس")
+								""",
+								ArabicTime.ofNanoOfDay(24731231231239L, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة(2471231339 , "+02:00")
+								""",
+								ArabicTime.ofNanoOfDay(2471231339L, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_الحالي()) يساوي "'تاريخ'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_الحالي_بتقويم("التقويم الهجري")) يساوي "'تاريخ'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_الحالي_بتوقيت("القدس")) يساوي "'تاريخ'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_الحالي_بإزاحة("+04:00")) يساوي "'تاريخ'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_الحالي_بتقويم_وتوقيت("الهجري"؛"غزة")) يساوي "'تاريخ'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_الحالي_بتقويم_وإزاحة("جرجوري"؛"+02:00")) يساوي "'تاريخ'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(14 , "ماي" , 1995)
+								""",
+								ArabicDate.of(14, 5, 1995),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(14 , 05 , 1995)
+								""",
+								ArabicDate.of(14, 5, 1995),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم("التقويم الميلادي" ، 14 , "ماي" , 1995)
+								""",
+								ArabicDate.of(14, 5, 1995),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم("التقويم الميلادي" ، 14 , 05 , 1995)
+								""",
+								ArabicDate.of(14, 5, 1995),
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_والوقت_الحالي()) يساوي "'تاريخ_و_وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_والوقت_الحالي_بتقويم("ميلادي")) يساوي "'تاريخ_و_وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_والوقت_الحالي_بتوقيت("غزة")) يساوي "'تاريخ_و_وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_والوقت_الحالي_بإزاحة("+02:00")) يساوي "'تاريخ_و_وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_والوقت_الحالي_بتقويم_وتوقيت("الهجري", "غزة")) يساوي "'تاريخ_و_وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								نوع (التاريخ_والوقت_الحالي_بتقويم_وإزاحة("الهجري", "+02:00")) يساوي "'تاريخ_و_وقت'"
+								""",
+								true,
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة(1995؛5؛3؛14؛5)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة(1995؛"ماي"؛3؛14؛5)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(1995؛5؛3؛14؛5؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(1995؛"ماي"؛3؛14؛5؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null,
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(1995؛5؛3؛14؛5؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(1995؛"ماي"؛3؛14؛5؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية(1995؛5؛3؛14؛5؛3)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية(1995؛"ماي"؛3؛14؛5؛3)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت(1995؛5؛3؛14؛5؛3؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت(1995؛"ماي"؛3؛14؛5؛3؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة(1995؛5؛3؛14؛5؛3؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة(1995؛"ماي"؛3؛14؛5؛3؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية(1995؛5؛3؛14؛5؛3؛505)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											505),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية(1995؛"ماي"؛3؛14؛5؛3؛505)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											505),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت(1995؛5؛3؛14؛5؛3؛505؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											505,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت(1995؛"ماي"؛3؛14؛5؛3؛505؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											505,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بإزاحة(1995؛5؛3؛14؛5؛3؛505؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											505,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بإزاحة(1995؛"ماي"؛3؛14؛5؛3؛505؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											505,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة("ميلادي"؛1995؛5؛3؛14؛5)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة("ميلادي"؛1995؛"ماي"؛3؛14؛5)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت("ميلادي"؛1995؛5؛3؛14؛5؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت("ميلادي"؛1995؛"ماي"؛3؛14؛5؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة("ميلادي"؛1995؛5؛3؛14؛5؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة("ميلادي"؛1995؛"ماي"؛3؛14؛5؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية("ميلادي"؛1995؛5؛3؛14؛5؛3)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت("ميلادي"؛1995؛5؛3؛14؛5؛3؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة("ميلادي"؛1995؛5؛3؛14؛5؛3؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية("ميلادي"؛1995؛5؛3؛14؛5؛3؛505)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											505),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛505)
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											505),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت("ميلادي"؛1995؛5؛3؛14؛5؛3؛505؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											505,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛505؛"تونس")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											505,
+											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة("ميلادي"؛1995؛5؛3؛14؛5؛3؛505؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											MAY_LATIN,
+											3,
+											14,
+											5,
+											3,
+											505,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛505؛"+02:00")
+								""",
+								ArabicDateTime
+										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
+											1995,
+											5,
+											3,
+											14,
+											5,
+											3,
+											505,
+											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								null),
+					Arguments
+							.of(true,
+								"""
+								تحويل_الى_يوم_منذ_الحقبة(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								20454,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_السنة(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								2026,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_رقم_الشهر(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								1,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_الشهر(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								JANUARY_LATIN,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_اليوم(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								1,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_يوم_السنة(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								1,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_يوم_الأسبوع(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								"الخميس",
+								null),
+					Arguments
+							.of(true,
+								"""
+								هل_السنة_كبيسة(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								false,
+								null),
+					Arguments
+							.of(true,
+								"""
+								عدد_ايام_الشهر(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								31,
+								null),
+					Arguments
+							.of(true,
+								"""
+								عدد_ايام_السنة(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026))""",
+								365,
+								null),
+					Arguments
+							.of(true,
+								"""
+								اضافة_سنوات(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
+								ArabicDate
+										.of(1, 1, 2027
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								اضافة_اشهر(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
+								ArabicDate
+										.of(1, 2, 2026
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								اضافة_اسابيع(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
+								ArabicDate
+										.of(8, 1, 2026
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								اضافة_ايام(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
+								ArabicDate
+										.of(2, 1, 2026
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								طرح_سنوات(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
+								ArabicDate
+										.of(1, 1, 2025
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								طرح_شهور(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
+								ArabicDate
+										.of(1, 12, 2025
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								طرح_اسابيع(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
+								ArabicDate
+										.of(25, 12, 2025
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								طرح_ايام(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
+								ArabicDate
+										.of(31, 12, 2025
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_الساعة(انشاء_الوقت(15 , 03))""",
+								15,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_الدقيقة(انشاء_الوقت(15 , 03))""",
+								3,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_الثانية(انشاء_الوقت(15 , 03))""",
+								0,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_الملي_ثانية(انشاء_الوقت(15 , 03))""",
+								0,
+								null),
+					Arguments
+							.of(true,
+								"""
+								احصل_على_النانو_ثانية(انشاء_الوقت(15 , 03))""",
+								0,
+								null),
+					Arguments
+							.of(true,
+								"""
+								اضافة_ساعات(انشاء_الوقت(15 , 03),1)""",
+								ArabicTime
+										.of(
+											16,
+											3,
+											0,
+											0
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								اضافة_دقائق(انشاء_الوقت(15 , 03),1)""",
+								ArabicTime
+										.of(
+											15,
+											4,
+											0,
+											0
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								اضافة_ثواني(انشاء_الوقت(15 , 03),1)""",
+								ArabicTime
+										.of(
+											15,
+											3,
+											1,
+											0
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								اضافة_نانوثواني(انشاء_الوقت(15 , 03),1)""",
+								ArabicTime
+										.of(
+											15,
+											3,
+											0,
+											1
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								طرح_ساعات(انشاء_الوقت(15 , 03),1)""",
+								ArabicTime
+										.of(
+											14,
+											3,
+											0,
+											0
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								طرح_دقائق(انشاء_الوقت(15 , 03),1)""",
+								ArabicTime
+										.of(
+											15,
+											2,
+											0,
+											0
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								طرح_ثواني(انشاء_الوقت(15 , 03),1)""",
+								ArabicTime
+										.of(
+											15,
+											2,
+											59,
+											0
+										),
+								null),
+					Arguments
+							.of(true,
+								"""
+								طرح_نانوثواني(انشاء_الوقت(15 , 03),1)""",
+								ArabicTime
+										.of(
+											15,
+											2,
+											59,
+											999999999
+										),
+								null)
 				);
 	}
 }
