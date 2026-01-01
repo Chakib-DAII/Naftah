@@ -265,7 +265,7 @@ public record ArabicDateTime(
 									int second,
 									int nanoOfSecond,
 									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		ArabicDate date = ArabicDate.of(year, month, dayOfMonth);
+		ArabicDate date = ArabicDate.of(dayOfMonth, month, year);
 		ArabicTime time = ArabicTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
 		return of(date, time);
 	}
@@ -434,7 +434,7 @@ public record ArabicDateTime(
 									int second,
 									int nanoOfSecond,
 									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		ArabicDate date = ArabicDate.of(chronology, year, month, dayOfMonth);
+		ArabicDate date = ArabicDate.of(chronology, dayOfMonth, month, year);
 		ArabicTime time = ArabicTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
 		return of(date, time);
 	}
@@ -444,19 +444,19 @@ public record ArabicDateTime(
 	 * <p>
 	 * Seconds and nanoseconds default to {@code 0}.
 	 *
-	 * @param day         the day-of-month value (1–31)
-	 * @param arabicMonth the Arabic month name, not null
 	 * @param year        the year value
+	 * @param arabicMonth the Arabic month name, not null
+	 * @param day         the day-of-month value (1–31)
 	 * @param hour        the hour-of-day (0–23)
 	 * @param minute      the minute-of-hour (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int day,
+	public static ArabicDateTime of(int year,
 									String arabicMonth,
-									int year,
+									int day,
 									int hour,
 									int minute) {
-		return of(day, arabicMonth, year, hour, minute, 0, 0);
+		return of(year, arabicMonth, day, hour, minute, 0, 0);
 	}
 
 	/**
@@ -470,21 +470,21 @@ public record ArabicDateTime(
 	 * an {@link java.time.OffsetDateTime} or {@link java.time.ZonedDateTime}.
 	 * If {@code null}, the result is backed by a {@link java.time.LocalDateTime}.</p>
 	 *
-	 * @param day          the day-of-month (1–31)
-	 * @param arabicMonth  the Arabic month name, not null
 	 * @param year         the year value
+	 * @param arabicMonth  the Arabic month name, not null
+	 * @param day          the day-of-month (1–31)
 	 * @param hour         the hour-of-day (0–23)
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int day,
+	public static ArabicDateTime of(int year,
 									String arabicMonth,
-									int year,
+									int day,
 									int hour,
 									int minute,
 									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		return of(day, arabicMonth, year, hour, minute, 0, 0, zoneOrOffset);
+		return of(year, arabicMonth, day, hour, minute, 0, 0, zoneOrOffset);
 	}
 
 
@@ -494,21 +494,22 @@ public record ArabicDateTime(
 	 * <p>
 	 * Nanoseconds default to {@code 0}. The day must be valid for the specified month and year.
 	 *
-	 * @param day         the day-of-month (1–31)
-	 * @param arabicMonth the Arabic month name, not null
 	 * @param year        the year value
+	 * @param arabicMonth the Arabic month name, not null
+	 * @param day         the day-of-month (1–31)
 	 * @param hour        the hour-of-day (0–23)
 	 * @param minute      the minute-of-hour (0–59)
 	 * @param second      the second-of-minute (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int day,
-									String arabicMonth,
+	public static ArabicDateTime of(
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									int second) {
-		return of(day, arabicMonth, year, hour, minute, second, 0);
+		return of(year, arabicMonth, day, hour, minute, second, 0);
 	}
 
 	/**
@@ -522,46 +523,48 @@ public record ArabicDateTime(
 	 * an {@link java.time.OffsetDateTime} or {@link java.time.ZonedDateTime}.
 	 * If {@code null}, the result is backed by a {@link java.time.LocalDateTime}.</p>
 	 *
-	 * @param day          the day-of-month (1–31)
-	 * @param arabicMonth  the Arabic month name, not null
 	 * @param year         the year value
+	 * @param arabicMonth  the Arabic month name, not null
+	 * @param day          the day-of-month (1–31)
 	 * @param hour         the hour-of-day (0–23)
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param second       the second-of-minute (0–59)
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int day,
-									String arabicMonth,
+	public static ArabicDateTime of(
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									int second,
 									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		return of(day, arabicMonth, year, hour, minute, second, 0, zoneOrOffset);
+		return of(year, arabicMonth, day, hour, minute, second, 0, zoneOrOffset);
 	}
 
 	/**
 	 * Obtains an instance of {@code ArabicDateTime} from a day, Arabic month name, year,
 	 * hour, minute, second, and nanosecond.
 	 *
-	 * @param day          the day-of-month (1–31)
-	 * @param arabicMonth  the Arabic month name, not null
 	 * @param year         the year value
+	 * @param arabicMonth  the Arabic month name, not null
+	 * @param day          the day-of-month (1–31)
 	 * @param hour         the hour-of-day (0–23)
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param second       the second-of-minute (0–59)
 	 * @param nanoOfSecond the nano-of-second (0–999,999,999)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int day,
-									String arabicMonth,
+	public static ArabicDateTime of(
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									int second,
 									int nanoOfSecond) {
-		return of(day, arabicMonth, year, hour, minute, second, nanoOfSecond, null);
+		return of(year, arabicMonth, day, hour, minute, second, nanoOfSecond, null);
 	}
 
 	/**
@@ -574,9 +577,9 @@ public record ArabicDateTime(
 	 * an {@link java.time.OffsetDateTime} or {@link java.time.ZonedDateTime}.
 	 * If {@code null}, the result is backed by a {@link java.time.LocalDateTime}.</p>
 	 *
-	 * @param day          the day-of-month (1–31)
-	 * @param arabicMonth  the Arabic month name, not null
 	 * @param year         the year value
+	 * @param arabicMonth  the Arabic month name, not null
+	 * @param day          the day-of-month (1–31)
 	 * @param hour         the hour-of-day (0–23)
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param second       the second-of-minute (0–59)
@@ -584,9 +587,10 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int day,
-									String arabicMonth,
+	public static ArabicDateTime of(
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									int second,
@@ -604,20 +608,20 @@ public record ArabicDateTime(
 	 * Seconds and nanoseconds default to {@code 0}.
 	 *
 	 * @param chronology  the chronology to use, not null
-	 * @param day         the day-of-month (1–31)
-	 * @param arabicMonth the Arabic month name, not null
 	 * @param year        the year value
+	 * @param arabicMonth the Arabic month name, not null
+	 * @param day         the day-of-month (1–31)
 	 * @param hour        the hour-of-day (0–23)
 	 * @param minute      the minute-of-hour (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
 	public static ArabicDateTime of(Chronology chronology,
-									int day,
-									String arabicMonth,
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute) {
-		return of(chronology, day, arabicMonth, year, hour, minute, 0, 0);
+		return of(chronology, year, arabicMonth, day, hour, minute, 0, 0);
 	}
 
 	/**
@@ -631,22 +635,22 @@ public record ArabicDateTime(
 	 * If {@code null}, the result is backed by a {@link java.time.LocalDateTime}.</p>
 	 *
 	 * @param chronology   the chronology to use, not null
-	 * @param day          the day-of-month (1–31)
-	 * @param arabicMonth  the Arabic month name, not null
 	 * @param year         the year value
+	 * @param arabicMonth  the Arabic month name, not null
+	 * @param day          the day-of-month (1–31)
 	 * @param hour         the hour-of-day (0–23)
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
 	public static ArabicDateTime of(Chronology chronology,
-									int day,
-									String arabicMonth,
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		return of(chronology, day, arabicMonth, year, hour, minute, 0, 0, zoneOrOffset);
+		return of(chronology, year, arabicMonth, day, hour, minute, 0, 0, zoneOrOffset);
 	}
 
 
@@ -657,22 +661,22 @@ public record ArabicDateTime(
 	 * Nanoseconds default to {@code 0}.
 	 *
 	 * @param chronology  the chronology to use, not null
-	 * @param day         the day-of-month (1–31)
-	 * @param arabicMonth the Arabic month name, not null
 	 * @param year        the year value
+	 * @param arabicMonth the Arabic month name, not null
+	 * @param day         the day-of-month (1–31)
 	 * @param hour        the hour-of-day (0–23)
 	 * @param minute      the minute-of-hour (0–59)
 	 * @param second      the second-of-minute (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
 	public static ArabicDateTime of(Chronology chronology,
-									int day,
-									String arabicMonth,
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									int second) {
-		return of(chronology, day, arabicMonth, year, hour, minute, second, 0);
+		return of(chronology, year, arabicMonth, day, hour, minute, second, 0);
 	}
 
 	/**
@@ -686,9 +690,9 @@ public record ArabicDateTime(
 	 * If {@code null}, the result is backed by a {@link java.time.LocalDateTime}.</p>
 	 *
 	 * @param chronology   the chronology to use, not null
-	 * @param day          the day-of-month (1–31)
-	 * @param arabicMonth  the Arabic month name, not null
 	 * @param year         the year value
+	 * @param arabicMonth  the Arabic month name, not null
+	 * @param day          the day-of-month (1–31)
 	 * @param hour         the hour-of-day (0–23)
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param second       the second-of-minute (0–59)
@@ -696,14 +700,14 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
 	public static ArabicDateTime of(Chronology chronology,
-									int day,
-									String arabicMonth,
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									int second,
 									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		return of(chronology, day, arabicMonth, year, hour, minute, second, 0, zoneOrOffset);
+		return of(chronology, year, arabicMonth, day, hour, minute, second, 0, zoneOrOffset);
 	}
 
 	/**
@@ -711,9 +715,9 @@ public record ArabicDateTime(
 	 * day, Arabic month name, year, hour, minute, second, and nanosecond.
 	 *
 	 * @param chronology   the chronology to use, not null
-	 * @param day          the day-of-month (1–31)
-	 * @param arabicMonth  the Arabic month name, not null
 	 * @param year         the year value
+	 * @param arabicMonth  the Arabic month name, not null
+	 * @param day          the day-of-month (1–31)
 	 * @param hour         the hour-of-day (0–23)
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param second       the second-of-minute (0–59)
@@ -721,14 +725,14 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
 	public static ArabicDateTime of(Chronology chronology,
-									int day,
-									String arabicMonth,
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									int second,
 									int nanoOfSecond) {
-		return of(chronology, day, arabicMonth, year, hour, minute, second, nanoOfSecond, null);
+		return of(chronology, year, arabicMonth, day, hour, minute, second, nanoOfSecond, null);
 	}
 
 	/**
@@ -742,9 +746,9 @@ public record ArabicDateTime(
 	 * If {@code null}, the result is backed by a {@link java.time.LocalDateTime}.</p>
 	 *
 	 * @param chronology   the chronology to use, not null
-	 * @param day          the day-of-month (1–31)
-	 * @param arabicMonth  the Arabic month name, not null
 	 * @param year         the year value
+	 * @param arabicMonth  the Arabic month name, not null
+	 * @param day          the day-of-month (1–31)
 	 * @param hour         the hour-of-day (0–23)
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param second       the second-of-minute (0–59)
@@ -753,9 +757,9 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
 	public static ArabicDateTime of(Chronology chronology,
-									int day,
-									String arabicMonth,
 									int year,
+									String arabicMonth,
+									int day,
 									int hour,
 									int minute,
 									int second,
