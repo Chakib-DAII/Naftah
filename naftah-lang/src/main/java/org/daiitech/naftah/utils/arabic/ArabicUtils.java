@@ -340,7 +340,6 @@ public final class ArabicUtils {
 			DecimalFormatSymbols symbols = new DecimalFormatSymbols(ARABIC);
 
 			if (Boolean.getBoolean(ARABIC_INDIC_PROPERTY)) {
-//			TODO : not working; check it
 				symbols
 						.setDigitStrings(new String[]{
 														"٠",

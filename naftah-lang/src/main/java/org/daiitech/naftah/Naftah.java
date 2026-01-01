@@ -432,7 +432,6 @@ public final class Naftah {
 
 		try {
 			ParseResult result = parser.parseArgs(args);
-			// TODO: pad output
 			if (printHelpIfRequested(result)) {
 				return;
 			}
@@ -454,7 +453,6 @@ public final class Naftah {
 		}
 		catch (ParameterException ex) { // command line arguments could not be parsed
 			printPaddedErrorMessageToString(ex);
-			// TODO: pad output
 			ex.getCommandLine().usage(System.err);
 		}
 		catch (Exception e) {
@@ -998,8 +996,7 @@ public final class Naftah {
 			private boolean checkManagementCommands(String line) {
 				var matched = false;
 				String command = line.trim().toLowerCase(ARABIC);
-//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic)
-//					TODO: so the flow you transliterate then get all infos
+//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic) so the flow you transliterate then get all infos
 				if (List.of("usage", "مساعدة").contains(command)) {
 
 					matched = true;
