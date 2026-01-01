@@ -1,6 +1,5 @@
 package org.daiitech.naftah.builtin.functions;
 
-import java.time.temporal.ChronoField;
 
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
@@ -12,10 +11,13 @@ import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
 import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
 import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
 import org.daiitech.naftah.builtin.time.ArabicTime;
+import org.daiitech.naftah.builtin.time.DateSupport;
+import org.daiitech.naftah.builtin.time.TimeSupport;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.time.ArabicDateParserHelper;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newIllegalArgumentException;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
@@ -131,7 +133,73 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
 										"التاريخ_والوقت_الحالي_بتوقيت",
 										"التاريخ_والوقت_الحالي_بإزاحة",
 										"التاريخ_والوقت_الحالي_بتقويم_وتوقيت",
-										"التاريخ_والوقت_الحالي_بتقويم_وإزاحة"
+										"التاريخ_والوقت_الحالي_بتقويم_وإزاحة",
+										"انشاء_الوقت",
+										"انشاء_الوقت_بتوقيت",
+										"انشاء_الوقت_بإزاحة",
+										"انشاء_الوقت_مع_ثانية",
+										"انشاء_الوقت_بتوقيت_مع_ثانية",
+										"انشاء_الوقت_بإزاحة_مع_ثانية",
+										"انشاء_الوقت_مع_نانوثانية",
+										"انشاء_الوقت_مع_نانوثانية_بتوقيت",
+										"انشاء_الوقت_مع_الإزاحة_ونانوثانية",
+										"انشاء_الوقت_من_ثواني_اليوم",
+										"انشاء_الوقت_من_ثواني_اليوم_بتوقيت",
+										"انشاء_الوقت_من_ثواني_اليوم_بإزاحة",
+										"انشاء_الوقت_من_نانوثواني_اليوم",
+										"انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت",
+										"انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة",
+										"انشاء_التاريخ_من_اليوم_و_شهر_و_سنة",
+										"انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت",
+										"انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة",
+										"انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة",
+										"انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت",
+										"انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة",
+										"انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية",
+										"انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت",
+										"انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة",
+										"انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية",
+										"انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت",
+										"انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة",
+										"تحويل_الى_يوم_منذ_الحقبة",
+										"احصل_على_السنة",
+										"احصل_على_رقم_الشهر",
+										"احصل_على_الشهر",
+										"احصل_على_اليوم",
+										"احصل_على_يوم_السنة",
+										"احصل_على_يوم_الأسبوع",
+										"هل_السنة_كبيسة",
+										"عدد_ايام_الشهر",
+										"عدد_ايام_السنة",
+										"اضافة_سنوات",
+										"اضافة_اشهر",
+										"اضافة_اسابيع",
+										"اضافة_ايام",
+										"طرح_سنوات",
+										"طرح_شهور",
+										"طرح_اسابيع",
+										"طرح_ايام",
+										"احصل_على_الساعة",
+										"احصل_على_الدقيقة",
+										"احصل_على_الثانية",
+										"احصل_على_الملي_ثانية",
+										"احصل_على_النانو_ثانية",
+										"اضافة_ساعات",
+										"اضافة_دقائق",
+										"اضافة_ثواني",
+										"اضافة_نانوثواني",
+										"طرح_ساعات",
+										"طرح_دقائق",
+										"طرح_ثواني",
+										"طرح_نانوثواني"
 					}
 )
 public final class TemporalBuiltinFunctions {
@@ -190,6 +258,318 @@ public final class TemporalBuiltinFunctions {
 	)
 	public static ArabicTime currentOffsetTime(String offset) {
 		return ArabicTime.now(ArabicTime.ZoneOrOffset.ofOffset(offset));
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from hour and minute.
+	 *
+	 * @param hour   the hour value
+	 * @param minute the minute value
+	 * @return a new {@link ArabicTime} instance
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت",
+				description = "انشاء الوقت من ساعة ودقيقة",
+				usage = "انشاء_الوقت(ساعة, دقيقة)",
+				parameterTypes = {Number.class, Number.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createTime(Number hour, Number minute) {
+		return ArabicTime.of(hour.intValue(), minute.intValue());
+	}
+
+	/**
+	 * Creates a zoned {@link ArabicTime} instance from hour, minute, and time zone.
+	 *
+	 * @param hour   the hour value
+	 * @param minute the minute value
+	 * @param zone   the time zone ID (e.g. "Asia/Riyadh")
+	 * @return a new {@link ArabicTime} instance with the specified zone
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_بتوقيت",
+				description = "انشاء الوقت مع المنطقة الزمنية",
+				usage = "انشاء_الوقت_بتوقيت(ساعة, دقيقة, المنطقة)",
+				parameterTypes = {Number.class, Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createZonedTime(Number hour, Number minute, String zone) {
+		return ArabicTime.of(hour.intValue(), minute.intValue(), ArabicTime.ZoneOrOffset.ofZone(zone));
+	}
+
+	/**
+	 * Creates an offset {@link ArabicTime} instance from hour, minute, and offset.
+	 *
+	 * @param hour   the hour value
+	 * @param minute the minute value
+	 * @param offset the offset string (e.g. "+04:00")
+	 * @return a new {@link ArabicTime} instance with the specified offset
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_بإزاحة",
+				description = "انشاء الوقت مع الإزاحة الزمنية",
+				usage = "انشاء_الوقت_بإزاحة(ساعة, دقيقة, الإزاحة)",
+				parameterTypes = {Number.class, Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createOffsetTime(Number hour, Number minute, String offset) {
+		return ArabicTime.of(hour.intValue(), minute.intValue(), ArabicTime.ZoneOrOffset.ofOffset(offset));
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from hour, minute, and second.
+	 *
+	 * @param hour   the hour value
+	 * @param minute the minute value
+	 * @param second the second value
+	 * @return a new {@link ArabicTime} instance
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_مع_ثانية",
+				description = "انشاء الوقت من ساعة ودقيقة وثانية",
+				usage = "انشاء_الوقت_مع_ثانية(ساعة, دقيقة, ثانية)",
+				parameterTypes = {Number.class, Number.class, Number.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createTime(Number hour, Number minute, Number second) {
+		return ArabicTime.of(hour.intValue(), minute.intValue(), second.intValue());
+	}
+
+	/**
+	 * Creates a zoned {@link ArabicTime} instance from hour, minute, second, and zone.
+	 *
+	 * @param hour   the hour value
+	 * @param minute the minute value
+	 * @param second the second value
+	 * @param zone   the time zone ID
+	 * @return a new {@link ArabicTime} instance with the specified zone
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_بتوقيت_مع_ثانية",
+				description = "انشاء الوقت مع المنطقة الزمنية والثانية",
+				usage = "انشاء_الوقت_بتوقيت_مع_ثانية(ساعة, دقيقة, ثانية, المنطقة)",
+				parameterTypes = {Number.class, Number.class, Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createZonedTime(Number hour, Number minute, Number second, String zone) {
+		return ArabicTime
+				.of(hour.intValue(),
+					minute.intValue(),
+					second.intValue(),
+					ArabicTime.ZoneOrOffset.ofZone(zone));
+	}
+
+	/**
+	 * Creates an offset {@link ArabicTime} instance from hour, minute, second, and offset.
+	 *
+	 * @param hour   the hour value
+	 * @param minute the minute value
+	 * @param second the second value
+	 * @param offset the offset string
+	 * @return a new {@link ArabicTime} instance with the specified offset
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_بإزاحة_مع_ثانية",
+				description = "انشاء الوقت مع الإزاحة الزمنية والثانية",
+				usage = "انشاء_الوقت_بإزاحة_مع_ثانية(ساعة, دقيقة, ثانية, الإزاحة)",
+				parameterTypes = {Number.class, Number.class, Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createOffsetTime(Number hour, Number minute, Number second, String offset) {
+		return ArabicTime
+				.of(hour.intValue(),
+					minute.intValue(),
+					second.intValue(),
+					ArabicTime.ZoneOrOffset.ofOffset(offset));
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from hour, minute, second, and nanosecond.
+	 *
+	 * @param hour         the hour value
+	 * @param minute       the minute value
+	 * @param second       the second value
+	 * @param nanoOfSecond the nanosecond value
+	 * @return a new {@link ArabicTime} instance
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_مع_نانوثانية",
+				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية",
+				usage = "انشاء_الوقت_مع_نانوثانية(ساعة, دقيقة, ثانية, نانوثانية)",
+				parameterTypes = {Number.class, Number.class, Number.class, Number.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createTime(Number hour, Number minute, Number second, Number nanoOfSecond) {
+		return ArabicTime.of(hour.intValue(), minute.intValue(), second.intValue(), nanoOfSecond.intValue());
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from hour, minute, second, and nanosecond with a specific time zone.
+	 *
+	 * @param hour         the hour value
+	 * @param minute       the minute value
+	 * @param second       the second value
+	 * @param nanoOfSecond the nanosecond value
+	 * @param zone         the time zone ID (e.g., "Asia/Riyadh")
+	 * @return a new {@link ArabicTime} instance with the specified zone
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_مع_نانوثانية_بتوقيت",
+				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع منطقة زمنية محددة",
+				usage = "انشاء_الوقت_مع_نانوثانية_بتوقيت(ساعة, دقيقة, ثانية, نانوثانية, منطقة)",
+				parameterTypes = {Number.class, Number.class, Number.class, Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createZonedTime(   Number hour,
+												Number minute,
+												Number second,
+												Number nanoOfSecond,
+												String zone) {
+		return ArabicTime
+				.of(hour.intValue(),
+					minute.intValue(),
+					second.intValue(),
+					nanoOfSecond.intValue(),
+					ArabicTime.ZoneOrOffset.ofZone(zone));
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from hour, minute, second, and nanosecond with a specific offset.
+	 *
+	 * @param hour         the hour value
+	 * @param minute       the minute value
+	 * @param second       the second value
+	 * @param nanoOfSecond the nanosecond value
+	 * @param offset       the offset string (e.g., "+03:00")
+	 * @return a new {@link ArabicTime} instance with the specified offset
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_مع_الإزاحة_ونانوثانية",
+				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع إزاحة زمنية محددة",
+				usage = "انشاء_الوقت_مع_الإزاحة_ونانوثانية(ساعة, دقيقة, ثانية, نانوثانية, إزاحة)",
+				parameterTypes = {Number.class, Number.class, Number.class, Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createOffsetTime(  Number hour,
+												Number minute,
+												Number second,
+												Number nanoOfSecond,
+												String offset) {
+		return ArabicTime
+				.of(hour.intValue(),
+					minute.intValue(),
+					second.intValue(),
+					nanoOfSecond.intValue(),
+					ArabicTime.ZoneOrOffset.ofOffset(offset));
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from the total number of seconds since midnight.
+	 *
+	 * @param secondOfDay the total number of seconds since midnight (0–86,399)
+	 * @return a new {@link ArabicTime} instance
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_من_ثواني_اليوم",
+				description = "انشاء الوقت من العدد الإجمالي للثواني منذ منتصف الليل",
+				usage = "انشاء_الوقت_من_ثواني_اليوم(ثانية_اليوم)",
+				parameterTypes = {Number.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createTimeOfSecondOfDay(Number secondOfDay) {
+		return ArabicTime.ofSecondOfDay(secondOfDay.longValue());
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from the total number of seconds since midnight with a specific time
+	 * * zone.
+	 *
+	 * @param secondOfDay the second-of-day (0–86,399)
+	 * @param zone        the time zone ID (e.g., "Asia/Riyadh")
+	 * @return a new {@link ArabicTime} instance with the specified zone
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_من_ثواني_اليوم_بتوقيت",
+				description = "انشاء الوقت من عدد الثواني منذ منتصف الليل مع منطقة زمنية محددة",
+				usage = "انشاء_الوقت_من_ثواني_اليوم_بتوقيت(ثواني_اليوم, منطقة)",
+				parameterTypes = {Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createZonedTimeOfSecondOfDay(Number secondOfDay, String zone) {
+		return ArabicTime.ofSecondOfDay(secondOfDay.longValue(), ArabicTime.ZoneOrOffset.ofZone(zone));
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from the total number of seconds since midnight with a specific offset.
+	 *
+	 * @param secondOfDay the second-of-day (0–86,399)
+	 * @param offset      the offset (e.g., "+04:00")
+	 * @return a new {@link ArabicTime} instance with the specified offset
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_من_ثواني_اليوم_بإزاحة",
+				description = "انشاء الوقت من عدد الثواني منذ منتصف الليل مع إزاحة زمنية محددة",
+				usage = "انشاء_الوقت_من_ثواني_اليوم_بإزاحة(ثواني_اليوم, إزاحة)",
+				parameterTypes = {Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createOffsetTimeOfSecondOfDay(Number secondOfDay, String offset) {
+		return ArabicTime.ofSecondOfDay(secondOfDay.longValue(), ArabicTime.ZoneOrOffset.ofOffset(offset));
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from the total number of nanoseconds since midnight.
+	 *
+	 * @param nanoOfDay the nano-of-day (0–86,399,999,999,999)
+	 * @return a new {@link ArabicTime} instance
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_من_نانوثواني_اليوم",
+				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل",
+				usage = "انشاء_الوقت_من_نانوثواني_اليوم(نانوثواني_اليوم)",
+				parameterTypes = {Number.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createTimeOfNanoOfDay(Number nanoOfDay) {
+		return ArabicTime.ofNanoOfDay(nanoOfDay.longValue());
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from the total number of nanoseconds since midnight
+	 * with a specific time zone.
+	 *
+	 * @param nanoOfDay the nano-of-day (0–86,399,999,999,999)
+	 * @param zone      the time zone ID (e.g., "Asia/Riyadh")
+	 * @return a new {@link ArabicTime} instance with the specified zone
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت",
+				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل مع منطقة زمنية محددة",
+				usage = "انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت(نانوثواني_اليوم, منطقة)",
+				parameterTypes = {Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createZonedTimeOfNanoOfDay(Number nanoOfDay, String zone) {
+		return ArabicTime.ofNanoOfDay(nanoOfDay.longValue(), ArabicTime.ZoneOrOffset.ofZone(zone));
+	}
+
+	/**
+	 * Creates an {@link ArabicTime} instance from the total number of nanoseconds since midnight
+	 * with a fixed offset.
+	 *
+	 * @param nanoOfDay the nano-of-day (0–86,399,999,999,999)
+	 * @param offset    the offset (e.g., "+04:00")
+	 * @return a new {@link ArabicTime} instance with the specified offset
+	 */
+	@NaftahFn(
+				name = "انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة",
+				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل مع إزاحة زمنية محددة",
+				usage = "انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة(نانوثواني_اليوم, إزاحة)",
+				parameterTypes = {Number.class, String.class},
+				returnType = ArabicTime.class
+	)
+	public static ArabicTime createOffsetTimeOfNanoOfDay(Number nanoOfDay, String offset) {
+		return ArabicTime.ofNanoOfDay(nanoOfDay.longValue(), ArabicTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
@@ -297,6 +677,85 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
+	 * Creates an {@link ArabicDate} instance from day, month, and year.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param day   the day of month (1–31)
+	 * @param month the month value, either an Arabic month name ({@link String}) or a numeric month ({@link Number}),
+	 *              * not null
+	 * @param year  the year value
+	 * @return a new {@link ArabicDate} instance
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة",
+				description = "انشاء التاريخ من اليوم واسم الشهر والسنة",
+				usage = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(يوم, شهر, سنة)",
+				parameterTypes = {Number.class, Object.class, Number.class},
+				returnType = ArabicDate.class
+	)
+	public static ArabicDate createDate(Number day, Object month, Number year) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDate.of(day.intValue(), arabicMonth, year.intValue());
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDate.of(day.intValue(), monthNumber.intValue(), year.intValue());
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+	}
+
+	/**
+	 * Creates an {@link ArabicDate} instance from a specific chronology, day, month, and year.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param day        the day of month (1–31)
+	 * @param month      the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                   ({@link Number}), not null
+	 * @param year       the year value
+	 * @return a new {@link ArabicDate} instance with the specified chronology
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم",
+				description = "انشاء التاريخ من اليوم واسم الشهر والسنة مع تحديد التقويم",
+				usage = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم(تقويم, يوم, شهر, سنة)",
+				parameterTypes = {String.class, Number.class, Object.class, Number.class},
+				returnType = ArabicDate.class
+	)
+	public static ArabicDate createDate(String chronology, Number day, Object month, Number year) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDate
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						day.intValue(),
+						arabicMonth,
+						year.intValue());
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDate
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						day.intValue(),
+						monthNumber.intValue(),
+						year.intValue());
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+	}
+
+	/**
 	 * Obtains the current date-time using the system default settings.
 	 *
 	 * @return the current {@link ArabicDateTime}
@@ -401,6 +860,1792 @@ public final class TemporalBuiltinFunctions {
 		return ArabicDateTime
 				.now(   ChronologyUtils.getChronologyByName(chronology),
 						ArabicTime.ZoneOrOffset.ofOffset(offset));
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 * <p>
+	 * Seconds and nanoseconds default to {@code 0}.
+	 *
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String})
+	 *                   or a numeric month ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @return a new {@link ArabicDateTime} instance
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة(سنة, شهر, يوم, ساعة, دقيقة)",
+				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createDateTime(Number year,
+												Object month,
+												Number dayOfMonth,
+												Number hour,
+												Number minute) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue());
+		}
+		else if (month instanceof Number monthNumber) {
+
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue());
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * using a specific time zone.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 * <p>
+	 * Seconds and nanoseconds default to {@code 0}.
+	 * <p>
+	 * ram year the year value
+	 *
+	 * @param month      the month value, either an Arabic month name ({@link String})
+	 *                   or a numeric month ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param zone       the time zone ID (e.g. {@code "Asia/Riyadh"})
+	 * @return a new {@link ArabicDateTime} instance with the specified time zone
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع منطقة " + "زمنية",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(سنة, شهر, يوم, ساعة, دقيقة, منطقة)",
+				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, String.class},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createZonedDateTime(   Number year,
+														Object month,
+														Number dayOfMonth,
+														Number hour,
+														Number minute,
+														String zone) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * using a fixed time offset.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 * <p>
+	 * Seconds and nanoseconds default to {@code 0}.
+	 *
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String})
+	 *                   or a numeric month ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param offset     the time offset (e.g. {@code "+03:00"})
+	 * @return a new {@link ArabicDateTime} instance with the specified offset
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع إزاحة " + "زمنية",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(سنة, شهر, يوم, ساعة, دقيقة, إزاحة)",
+				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, String.class},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createOffsetDateTime(  Number year,
+														Object month,
+														Number dayOfMonth,
+														Number hour,
+														Number minute,
+														String offset) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else if (month instanceof Number monthNumber) {
+
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 * <p>
+	 * Nanoseconds default to {@code 0}.
+	 *
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String})
+	 *                   or a numeric month ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param second     the second-of-minute (0–59)
+	 * @return a new {@link ArabicDateTime} instance
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية(سنة, شهر, يوم, ساعة, دقيقة, ثانية)",
+				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, Number.class},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createDateTime(Number year,
+												Object month,
+												Number dayOfMonth,
+												Number hour,
+												Number minute,
+												Number second) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue());
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue());
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * using a specific time zone.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 * <p>
+	 * Nanoseconds default to {@code 0}.
+	 *
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String})
+	 *                   or a numeric month ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param second     the second-of-minute (0–59)
+	 * @param zone       the time zone ID (e.g. {@code "Asia/Riyadh"})
+	 * @return a new {@link ArabicDateTime} instance with the specified time zone
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "مع" + " " + "منطقة زمنية",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت(سنة, شهر, يوم, ساعة, دقيقة, " + "ثانية, منطقة)",
+				parameterTypes = {
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createZonedDateTime(   Number year,
+														Object month,
+														Number dayOfMonth,
+														Number hour,
+														Number minute,
+														Number second,
+														String zone) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * using a fixed time offset.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 * <p>
+	 * Nanoseconds default to {@code 0}.
+	 *
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String})
+	 *                   or a numeric month ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param second     the second-of-minute (0–59)
+	 * @param offset     the time offset (e.g. {@code "+04:00"})
+	 * @return a new {@link ArabicDateTime} instance with the specified offset
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "مع" + " " + "إزاحة زمنية",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة(سنة, شهر, يوم, ساعة, دقيقة, " + "ثانية, إزاحة)",
+				parameterTypes = {
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createOffsetDateTime(  Number year,
+														Object month,
+														Number dayOfMonth,
+														Number hour,
+														Number minute,
+														Number second,
+														String offset) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute,
+	 * second, and nanosecond.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param year         the year value
+	 * @param month        the month value, either an Arabic month name ({@link String})
+	 *                     or a numeric month ({@link Number})
+	 * @param dayOfMonth   the day-of-month value (1–31)
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
+	 * @return a new {@link ArabicDateTime} instance
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "والنانوثانية",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية(سنة, شهر, يوم, ساعة, " + "دقيقة," + " " + "ثانية, نانوثانية)",
+				parameterTypes = {
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createDateTime(Number year,
+												Object month,
+												Number dayOfMonth,
+												Number hour,
+												Number minute,
+												Number second,
+												Number nanoOfSecond) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue());
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue());
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute,
+	 * second, and nanosecond using a specific time zone.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param year         the year value
+	 * @param month        the month value, either an Arabic month name ({@link String})
+	 *                     or a numeric month ({@link Number})
+	 * @param dayOfMonth   the day-of-month value (1–31)
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
+	 * @param zone         the time zone ID (e.g. {@code "Asia/Riyadh"})
+	 * @return a new {@link ArabicDateTime} instance with the specified time zone
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "والنانوثانية مع منطقة زمنية",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت(سنة, شهر, يوم, " + "ساعة," + " " + "دقيقة, ثانية, نانوثانية, منطقة)",
+				parameterTypes = {
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createZonedDateTime(   Number year,
+														Object month,
+														Number dayOfMonth,
+														Number hour,
+														Number minute,
+														Number second,
+														Number nanoOfSecond,
+														String zone) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute,
+	 * second, and nanosecond using a fixed offset.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param year         the year value
+	 * @param month        the month value, either an Arabic month name ({@link String})
+	 *                     or a numeric month ({@link Number})
+	 * @param dayOfMonth   the day-of-month value (1–31)
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
+	 * @param offset       the fixed offset (e.g., "+04:00")
+	 * @return a new {@link ArabicDateTime} instance with the specified offset
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بإزاحة",
+				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "والنانوثانية مع إزاحة زمنية محددة",
+				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بإزاحة(سنة, شهر, يوم, " + "ساعة," + " " + "دقيقة, ثانية, نانوثانية, إزاحة)",
+				parameterTypes = {
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createOffsetDateTime(  Number year,
+														Object month,
+														Number dayOfMonth,
+														Number hour,
+														Number minute,
+														Number second,
+														Number nanoOfSecond,
+														String offset) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * using a specific chronology.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                   * ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة(تقويم, سنة, شهر, يوم, ساعة, دقيقة)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createChronologyDateTime(  String chronology,
+															Number year,
+															Object month,
+															Number dayOfMonth,
+															Number hour,
+															Number minute) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue());
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue());
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * using a specific chronology and a time zone.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                   * ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param zone       the time zone ID (e.g., "Asia/Riyadh")
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology and zone
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة مع منطقة زمنية",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, منطقة)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createZonedChronologyDateTime( String chronology,
+																Number year,
+																Object month,
+																Number dayOfMonth,
+																Number hour,
+																Number minute,
+																String zone) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * using a specific chronology and a fixed offset.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                   * ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param offset     the fixed offset (e.g., "+04:00")
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology and offset
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة مع إزاحة زمنية",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, إزاحة)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createOffsetChronologyDateTime(String chronology,
+																Number year,
+																Object month,
+																Number dayOfMonth,
+																Number hour,
+																Number minute,
+																String offset) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * using a specific chronology.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                   * ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param second     the second-of-minute (0–59)
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createChronologyDateTime(  String chronology,
+															Number year,
+															Object month,
+															Number dayOfMonth,
+															Number hour,
+															Number minute,
+															Number second) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue());
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue());
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * using a specific chronology and time zone.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                   * ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param second     the second-of-minute (0–59)
+	 * @param zone       the time zone ID (e.g., "Asia/Riyadh")
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology and time zone
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية مع منطقة زمنية محددة",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, منطقة)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createZonedChronologyDateTime( String chronology,
+																Number year,
+																Object month,
+																Number dayOfMonth,
+																Number hour,
+																Number minute,
+																Number second,
+																String zone) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * using a specific chronology and fixed offset.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year       the year value
+	 * @param month      the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                   * ({@link Number})
+	 * @param dayOfMonth the day-of-month value (1–31)
+	 * @param hour       the hour-of-day (0–23)
+	 * @param minute     the minute-of-hour (0–59)
+	 * @param second     the second-of-minute (0–59)
+	 * @param offset     the fixed offset (e.g., "+04:00")
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology and offset
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية مع إزاحة زمنية محددة",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, إزاحة)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createOffsetChronologyDateTime(String chronology,
+																Number year,
+																Object month,
+																Number dayOfMonth,
+																Number hour,
+																Number minute,
+																Number second,
+																String offset) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, second, and nanosecond
+	 * using a specific chronology.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology   the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year         the year value
+	 * @param month        the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                     * ({@link Number})
+	 * @param dayOfMonth   the day-of-month value (1–31)
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology and nanoseconds
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية والنانوثانية",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, " + "نانوثانية)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createChronologyDateTime(  String chronology,
+															Number year,
+															Object month,
+															Number dayOfMonth,
+															Number hour,
+															Number minute,
+															Number second,
+															Number nanoOfSecond) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue());
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue());
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, second, and nanosecond
+	 * using a specific chronology and time zone.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology   the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year         the year value
+	 * @param month        the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                     * ({@link Number})
+	 * @param dayOfMonth   the day-of-month value (1–31)
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
+	 * @param zone         the time zone ID (e.g., "Asia/Riyadh")
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology and zone
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية والنانوثانية مع منطقة زمنية محددة",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, " + "نانوثانية, منطقة)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createZonedChronologyDateTime( String chronology,
+																Number year,
+																Object month,
+																Number dayOfMonth,
+																Number hour,
+																Number minute,
+																Number second,
+																Number nanoOfSecond,
+																String zone) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue(),
+						ArabicTime.ZoneOrOffset.ofZone(zone));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, second, and nanosecond
+	 * using a specific chronology and fixed offset.
+	 * <p>
+	 * The {@code month} parameter may be either:
+	 * <ul>
+	 * <li>a {@link String} representing an Arabic month name</li>
+	 * <li>a {@link Number} representing a numeric month value (1–12)</li>
+	 * </ul>
+	 *
+	 * @param chronology   the chronology name (e.g., "Hijri", "Gregorian")
+	 * @param year         the year value
+	 * @param month        the month value, either an Arabic month name ({@link String}) or a numeric month
+	 *                     ({@link Number})
+	 * @param dayOfMonth   the day-of-month value (1–31)
+	 * @param hour         the hour-of-day (0–23)
+	 * @param minute       the minute-of-hour (0–59)
+	 * @param second       the second-of-minute (0–59)
+	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
+	 * @param offset       the offset (e.g., "+04:00")
+	 * @return a new {@link ArabicDateTime} instance with the specified chronology and offset
+	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
+	 */
+	@NaftahFn(
+				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة",
+				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية والنانوثانية مع إزاحة زمنية محددة",
+				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, " + "نانوثانية, إزاحة)",
+				parameterTypes = {
+									String.class,
+									Number.class,
+									Object.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									Number.class,
+									String.class
+				},
+				returnType = ArabicDateTime.class
+	)
+	public static ArabicDateTime createOffsetChronologyDateTime(String chronology,
+																Number year,
+																Object month,
+																Number dayOfMonth,
+																Number hour,
+																Number minute,
+																Number second,
+																Number nanoOfSecond,
+																String offset) {
+		if (month instanceof String arabicMonth) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						arabicMonth,
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else if (month instanceof Number monthNumber) {
+			return ArabicDateTime
+					.of(ChronologyUtils.getChronologyByName(chronology),
+						year.intValue(),
+						monthNumber.intValue(),
+						dayOfMonth.intValue(),
+						hour.intValue(),
+						minute.intValue(),
+						second.intValue(),
+						nanoOfSecond.intValue(),
+						ArabicTime.ZoneOrOffset.ofOffset(offset));
+		}
+		else {
+			throw newIllegalArgumentException(month);
+		}
+
+	}
+
+	/**
+	 * Converts the given {@link DateSupport} instance to the epoch day.
+	 * <p>
+	 * The epoch day is the count of days since 1970-01-01 (ISO).
+	 *
+	 * @param dateSupport the date or date-time object to convert
+	 * @return the number of days since the epoch (1970-01-01)
+	 */
+	@NaftahFn(
+				name = "تحويل_الى_يوم_منذ_الحقبة",
+				description = "يحصل على عدد الأيام منذ 1 يناير 1970 من كائن التاريخ المدعوم",
+				usage = "تحويل_الى_يوم_منذ_الحقبة(كائن_التاريخ)",
+				parameterTypes = {DateSupport.class},
+				returnType = long.class
+	)
+	public static long toEpochDay(DateSupport dateSupport) {
+		return dateSupport.toEpochDay();
+	}
+
+	/**
+	 * Retrieves the year from a given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @return the year value
+	 */
+	@NaftahFn(
+				name = "احصل_على_السنة",
+				description = "الحصول على السنة من نقطة زمنية",
+				usage = "احصل_على_السنة(نقطة_زمنية_)",
+				parameterTypes = {DateSupport.class},
+				returnType = int.class
+	)
+	public static int getYear(DateSupport dateSupport) {
+		return dateSupport.getYear();
+	}
+
+	/**
+	 * Gets the month from a temporal point.
+	 *
+	 * @param dateSupport the temporal point
+	 * @return the month (1-12)
+	 */
+	@NaftahFn(
+				name = "احصل_على_رقم_الشهر",
+				description = "الحصول على الشهر من نقطة زمنية",
+				usage = "احصل_على_رقم_الشهر(نقطة_زمنية_)",
+				parameterTypes = {DateSupport.class},
+				returnType = int.class
+	)
+	public static int getMonthValue(DateSupport dateSupport) {
+		return dateSupport.getMonthValue();
+	}
+
+	/**
+	 * Retrieves the month from a given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @return the month as a {@link String}, which could be an Arabic month name
+	 */
+	@NaftahFn(
+				name = "احصل_على_الشهر",
+				description = "الحصول على اسم الشهر من كائن التاريخ أو التاريخ والوقت",
+				usage = "احصل_على_الشهر(كائن_التاريخ)",
+				parameterTypes = {DateSupport.class},
+				returnType = String.class
+	)
+	public static String getMonth(DateSupport dateSupport) {
+		return dateSupport.getMonth();
+	}
+
+	/**
+	 * Gets the day of the month from a temporal point.
+	 *
+	 * @param dateSupport the temporal point
+	 * @return the day of the month
+	 */
+	@NaftahFn(
+				name = "احصل_على_اليوم",
+				description = "الحصول على اليوم من نقطة زمنية",
+				usage = "احصل_على_اليوم(نقطة_زمنية_)",
+				parameterTypes = {DateSupport.class},
+				returnType = int.class
+	)
+	public static int getDayOfMonth(DateSupport dateSupport) {
+		return dateSupport.getDayOfMonth();
+	}
+
+	/**
+	 * Retrieves the day of the year from a given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @return the day of the year (1–365/366)
+	 */
+	@NaftahFn(
+				name = "احصل_على_يوم_السنة",
+				description = "الحصول على رقم اليوم من السنة من كائن التاريخ أو التاريخ والوقت",
+				usage = "احصل_على_يوم_السنة(كائن_التاريخ)",
+				parameterTypes = {DateSupport.class},
+				returnType = int.class
+	)
+	public static int getDayOfYear(DateSupport dateSupport) {
+		return dateSupport.getDayOfYear();
+	}
+
+	/**
+	 * Retrieves the day of the week from a given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @return the day of the week as a {@link String} (e.g., "Monday", "Tuesday")
+	 */
+	@NaftahFn(
+				name = "احصل_على_يوم_الأسبوع",
+				description = "الحصول على اسم يوم الأسبوع من كائن التاريخ أو التاريخ والوقت",
+				usage = "احصل_على_يوم_الأسبوع(كائن_التاريخ)",
+				parameterTypes = {DateSupport.class},
+				returnType = String.class
+	)
+	public static String getDayOfWeek(DateSupport dateSupport) {
+		return dateSupport.getDayOfWeek();
+	}
+
+	/**
+	 * Checks whether the year of the given {@link DateSupport} instance is a leap year.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @return {@code true} if the year is a leap year, {@code false} otherwise
+	 */
+	@NaftahFn(
+				name = "هل_السنة_كبيسة",
+				description = "التحقق مما إذا كانت السنة في كائن التاريخ أو التاريخ والوقت سنة كبيسة",
+				usage = "هل_السنة_كبيسة(كائن_التاريخ)",
+				parameterTypes = {DateSupport.class},
+				returnType = boolean.class
+	)
+	public static boolean isLeapYear(DateSupport dateSupport) {
+		return dateSupport.isLeapYear();
+	}
+
+	/**
+	 * Returns the number of days in the month of the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @return the length of the month in days
+	 */
+	@NaftahFn(
+				name = "عدد_ايام_الشهر",
+				description = "الحصول على عدد الأيام في شهر الكائن الزمني المحدد",
+				usage = "عدد_ايام_الشهر(كائن_التاريخ)",
+				parameterTypes = {DateSupport.class},
+				returnType = int.class
+	)
+	public static int lengthOfMonth(DateSupport dateSupport) {
+		return dateSupport.lengthOfMonth();
+	}
+
+	/**
+	 * Returns the number of days in the year of the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @return the length of the year in days
+	 */
+	@NaftahFn(
+				name = "عدد_ايام_السنة",
+				description = "الحصول على عدد الأيام في سنة الكائن الزمني المحدد",
+				usage = "عدد_ايام_السنة(كائن_التاريخ)",
+				parameterTypes = {DateSupport.class},
+				returnType = int.class
+	)
+	public static int lengthOfYear(DateSupport dateSupport) {
+		return dateSupport.lengthOfYear();
+	}
+
+	/**
+	 * Adds a specified number of years to the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @param yearsToAdd  the number of years to add (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 */
+	@NaftahFn(
+				name = "اضافة_سنوات",
+				description = "اضافة عدد محدد من السنوات إلى كائن التاريخ المحدد",
+				usage = "اضافة_سنوات(كائن_التاريخ, عدد_السنوات)",
+				parameterTypes = {DateSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint plusYears(DateSupport dateSupport, Number yearsToAdd) {
+		return dateSupport.plusYears(yearsToAdd.longValue());
+	}
+
+	/**
+	 * Adds a specified number of months to the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @param monthsToAdd the number of months to add (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 */
+	@NaftahFn(
+				name = "اضافة_اشهر",
+				description = "اضافة عدد محدد من الأشهر إلى كائن التاريخ المحدد",
+				usage = "اضافة_اشهر(كائن_التاريخ, عدد_الأشهر)",
+				parameterTypes = {DateSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint plusMonths(DateSupport dateSupport, Number monthsToAdd) {
+		return dateSupport.plusMonths(monthsToAdd.longValue());
+	}
+
+	/**
+	 * Adds a specified number of weeks to the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @param weeksToAdd  the number of weeks to add (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 */
+	@NaftahFn(
+				name = "اضافة_اسابيع",
+				description = "اضافة عدد محدد من الأسابيع إلى كائن التاريخ المحدد",
+				usage = "اضافة_اسابيع(كائن_التاريخ, عدد_الأسابيع)",
+				parameterTypes = {DateSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint plusWeeks(DateSupport dateSupport, Number weeksToAdd) {
+		return dateSupport.plusWeeks(weeksToAdd.longValue());
+	}
+
+	/**
+	 * Adds a specified number of days to the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport the date or date-time object
+	 * @param daysToAdd   the number of days to add (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 */
+	@NaftahFn(
+				name = "اضافة_ايام",
+				description = "اضافة عدد محدد من الأيام إلى كائن التاريخ المحدد",
+				usage = "اضافة_ايام(كائن_التاريخ, عدد_الأيام)",
+				parameterTypes = {DateSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint plusDays(DateSupport dateSupport, Number daysToAdd) {
+		return dateSupport.plusDays(daysToAdd.longValue());
+	}
+
+	/**
+	 * Subtracts a specified number of years from the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport     the date or date-time object
+	 * @param yearsToSubtract the number of years to subtract (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 */
+	@NaftahFn(
+				name = "طرح_سنوات",
+				description = "طرح عدد محدد من السنوات من كائن التاريخ المحدد",
+				usage = "طرح_سنوات(كائن_التاريخ, عدد_السنوات)",
+				parameterTypes = {DateSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint minusYears(DateSupport dateSupport, Number yearsToSubtract) {
+		return dateSupport.minusYears(yearsToSubtract.longValue());
+	}
+
+	/**
+	 * Subtracts a specified number of months from the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport      the date or date-time object
+	 * @param monthsToSubtract the number of months to subtract (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 */
+	@NaftahFn(
+				name = "طرح_شهور",
+				description = "طرح عدد محدد من الأشهر من كائن التاريخ المحدد",
+				usage = "طرح_شهور(كائن_التاريخ, عدد_الشهور)",
+				parameterTypes = {DateSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint minusMonths(DateSupport dateSupport, Number monthsToSubtract) {
+		return dateSupport.minusMonths(monthsToSubtract.longValue());
+	}
+
+	/**
+	 * Subtracts a specified number of weeks from the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport     the date or date-time object
+	 * @param weeksToSubtract the number of weeks to subtract (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 */
+	@NaftahFn(
+				name = "طرح_اسابيع",
+				description = "طرح عدد محدد من الأسابيع من كائن التاريخ المحدد",
+				usage = "طرح_اسابيع(كائن_التاريخ, عدد_الأسابيع)",
+				parameterTypes = {DateSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint minusWeeks(DateSupport dateSupport, Number weeksToSubtract) {
+		return dateSupport.minusWeeks(weeksToSubtract.longValue());
+	}
+
+	/**
+	 * Subtracts a specified number of days from the given {@link DateSupport} instance.
+	 *
+	 * @param dateSupport    the date or date-time object
+	 * @param daysToSubtract the number of days to subtract (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 */
+	@NaftahFn(
+				name = "طرح_ايام",
+				description = "طرح عدد محدد من الأيام من كائن التاريخ المحدد",
+				usage = "طرح_ايام(كائن_التاريخ, عدد_الأيام)",
+				parameterTypes = {DateSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint minusDays(DateSupport dateSupport, Number daysToSubtract) {
+		return dateSupport.minusDays(daysToSubtract.longValue());
+	}
+
+	/**
+	 * Gets the hour of the day from a temporal point.
+	 *
+	 * @param timeSupport the temporal point
+	 * @return the hour (0-23)
+	 */
+	@NaftahFn(
+				name = "احصل_على_الساعة",
+				description = "الحصول على الساعة من نقطة زمنية",
+				usage = "احصل_على_الساعة(نقطة_زمنية_)",
+				parameterTypes = {TimeSupport.class},
+				returnType = int.class
+	)
+	public static int getHour(TimeSupport timeSupport) {
+		return timeSupport.getHour();
+	}
+
+	/**
+	 * Gets the minute of the hour from a temporal point.
+	 *
+	 * @param timeSupport the temporal point
+	 * @return the minute
+	 */
+	@NaftahFn(
+				name = "احصل_على_الدقيقة",
+				description = "الحصول على الدقيقة من نقطة زمنية",
+				usage = "احصل_على_الدقيقة(نقطة_زمنية_)",
+				parameterTypes = {TimeSupport.class},
+				returnType = int.class
+	)
+	public static int getMinute(TimeSupport timeSupport) {
+		return timeSupport.getMinute();
+	}
+
+	/**
+	 * Gets the second of the minute from a temporal point.
+	 *
+	 * @param timeSupport the temporal point
+	 * @return the second
+	 */
+	@NaftahFn(
+				name = "احصل_على_الثانية",
+				description = "الحصول على الثانية من نقطة زمنية",
+				usage = "احصل_على_الثانية(نقطة_زمنية_)",
+				parameterTypes = {TimeSupport.class},
+				returnType = int.class
+	)
+	public static int getSecond(TimeSupport timeSupport) {
+		return timeSupport.getSecond();
+	}
+
+	/**
+	 * Gets the millisecond of the second from a temporal point.
+	 *
+	 * @param timeSupport the temporal point
+	 * @return the millisecond
+	 */
+	@NaftahFn(
+				name = "احصل_على_الملي_ثانية",
+				description = "الحصول على المللي ثانية من نقطة زمنية",
+				usage = "احصل_على_الملي_ثانية(نقطة_زمنية_)",
+				parameterTypes = {TimeSupport.class},
+				returnType = int.class
+	)
+	public static int getMilli(TimeSupport timeSupport) {
+		return timeSupport.getMilli();
+	}
+
+	/**
+	 * Gets the nanosecond of the second from a temporal point.
+	 *
+	 * @param timeSupport the temporal point
+	 * @return the nanosecond
+	 */
+	@NaftahFn(
+				name = "احصل_على_النانو_ثانية",
+				description = "الحصول على النانو ثانية من نقطة زمنية",
+				usage = "احصل_على_النانو_ثانية(نقطة_زمنية_)",
+				parameterTypes = {TimeSupport.class},
+				returnType = int.class
+	)
+	public static int getNano(TimeSupport timeSupport) {
+		return timeSupport.getNano();
+	}
+
+	/**
+	 * Adds a specified number of hours to the given {@link TimeSupport} instance.
+	 *
+	 * @param timeSupport the time object
+	 * @param hoursToAdd  the number of hours to add (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 */
+	@NaftahFn(
+				name = "اضافة_ساعات",
+				description = "اضافة عدد محدد من الساعات إلى كائن الوقت المحدد",
+				usage = "اضافة_ساعات(كائن_الوقت, عدد_الساعات)",
+				parameterTypes = {TimeSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint plusHours(TimeSupport timeSupport, Number hoursToAdd) {
+		return timeSupport.plusHours(hoursToAdd.longValue());
+	}
+
+	/**
+	 * Adds a specified number of minutes to the given {@link TimeSupport} instance.
+	 *
+	 * @param timeSupport  the time object
+	 * @param minutesToAdd the number of minutes to add (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 */
+	@NaftahFn(
+				name = "اضافة_دقائق",
+				description = "اضافة عدد محدد من الدقائق إلى كائن الوقت المحدد",
+				usage = "اضافة_دقائق(كائن_الوقت, عدد_الدقائق)",
+				parameterTypes = {TimeSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint plusMinutes(TimeSupport timeSupport, Number minutesToAdd) {
+		return timeSupport.plusMinutes(minutesToAdd.longValue());
+	}
+
+	/**
+	 * Adds a specified number of seconds to the given {@link TimeSupport} instance.
+	 *
+	 * @param timeSupport  the time object
+	 * @param secondsToAdd the number of seconds to add (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 */
+	@NaftahFn(
+				name = "اضافة_ثواني",
+				description = "اضافة عدد محدد من الثواني إلى كائن الوقت المحدد",
+				usage = "اضافة_ثواني(كائن_الوقت, عدد_الثواني)",
+				parameterTypes = {TimeSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint plusSeconds(TimeSupport timeSupport, Number secondsToAdd) {
+		return timeSupport.plusSeconds(secondsToAdd.longValue());
+	}
+
+	/**
+	 * Adds a specified number of nanoseconds to the given {@link TimeSupport} instance.
+	 *
+	 * @param timeSupport the time object
+	 * @param nanosToAdd  the number of nanoseconds to add (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 */
+	@NaftahFn(
+				name = "اضافة_نانوثواني",
+				description = "اضافة عدد محدد من النانوثواني إلى كائن الوقت المحدد",
+				usage = "اضافة_نانوثواني(كائن_الوقت, عدد_النانوثواني)",
+				parameterTypes = {TimeSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint plusNanos(TimeSupport timeSupport, Number nanosToAdd) {
+		return timeSupport.plusNanos(nanosToAdd.longValue());
+	}
+
+	/**
+	 * Subtracts a specified number of hours from the given {@link TimeSupport} instance.
+	 *
+	 * @param timeSupport     the time object
+	 * @param hoursToSubtract the number of hours to subtract (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 */
+	@NaftahFn(
+				name = "طرح_ساعات",
+				description = "طرح عدد محدد من الساعات من كائن الوقت المحدد",
+				usage = "طرح_ساعات(كائن_الوقت, عدد_الساعات)",
+				parameterTypes = {TimeSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint minusHours(TimeSupport timeSupport, Number hoursToSubtract) {
+		return timeSupport.minusHours(hoursToSubtract.longValue());
+	}
+
+	/**
+	 * Subtracts a specified number of minutes from the given {@link TimeSupport} instance.
+	 *
+	 * @param timeSupport       the time object
+	 * @param minutesToSubtract the number of minutes to subtract (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 */
+	@NaftahFn(
+				name = "طرح_دقائق",
+				description = "طرح عدد محدد من الدقائق من كائن الوقت المحدد",
+				usage = "طرح_دقائق(كائن_الوقت, عدد_الدقائق)",
+				parameterTypes = {TimeSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint minusMinutes(TimeSupport timeSupport, Number minutesToSubtract) {
+		return timeSupport.minusMinutes(minutesToSubtract.longValue());
+	}
+
+	/**
+	 * Subtracts a specified number of seconds from the given {@link TimeSupport} instance.
+	 *
+	 * @param timeSupport       the time object
+	 * @param secondsToSubtract the number of seconds to subtract (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 */
+	@NaftahFn(
+				name = "طرح_ثواني",
+				description = "طرح عدد محدد من الثواني من كائن الوقت المحدد",
+				usage = "طرح_ثواني(كائن_الوقت, عدد_الثواني)",
+				parameterTypes = {TimeSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint minusSeconds(TimeSupport timeSupport, Number secondsToSubtract) {
+		return timeSupport.minusSeconds(secondsToSubtract.longValue());
+	}
+
+	/**
+	 * Subtracts a specified number of nanoseconds from the given {@link TimeSupport} instance.
+	 *
+	 * @param timeSupport     the time object
+	 * @param nanosToSubtract the number of nanoseconds to subtract (can be negative)
+	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 */
+	@NaftahFn(
+				name = "طرح_نانوثواني",
+				description = "طرح عدد محدد من النانوثواني من كائن الوقت المحدد",
+				usage = "طرح_نانوثواني(كائن_الوقت, عدد_النانوثواني)",
+				parameterTypes = {TimeSupport.class, Number.class},
+				returnType = ArabicTemporalPoint.class
+	)
+	public static ArabicTemporalPoint minusNanos(TimeSupport timeSupport, Number nanosToSubtract) {
+		return timeSupport.minusNanos(nanosToSubtract.longValue());
 	}
 
 	/**
@@ -1418,142 +3663,6 @@ public final class TemporalBuiltinFunctions {
 	)
 	public static ArabicPeriodWithDuration minusNanos(ArabicPeriodWithDuration pd, Number nanos) {
 		return pd.minusNanos(nanos.longValue());
-	}
-
-	/**
-	 * Gets the year from a temporal point.
-	 *
-	 * @param t the temporal point
-	 * @return the year
-	 */
-	@NaftahFn(
-				name = "احصل_على_السنة",
-				description = "الحصول على السنة من نقطة زمنية",
-				usage = "احصل_على_السنة(نقطة_زمنية_)",
-				parameterTypes = {ArabicTemporalPoint.class},
-				returnType = int.class
-	)
-	public static int getYear(ArabicTemporalPoint t) {
-		return t.temporal().get(ChronoField.YEAR);
-	}
-
-	/**
-	 * Gets the month from a temporal point.
-	 *
-	 * @param t the temporal point
-	 * @return the month (1-12)
-	 */
-	@NaftahFn(
-				name = "احصل_على_الشهر",
-				description = "الحصول على الشهر من نقطة زمنية",
-				usage = "احصل_على_الشهر(نقطة_زمنية_)",
-				parameterTypes = {ArabicTemporalPoint.class},
-				returnType = int.class
-	)
-	public static int getMonth(ArabicTemporalPoint t) {
-		return t.temporal().get(ChronoField.MONTH_OF_YEAR);
-	}
-
-	/**
-	 * Gets the day of the month from a temporal point.
-	 *
-	 * @param t the temporal point
-	 * @return the day of the month
-	 */
-	@NaftahFn(
-				name = "احصل_على_اليوم",
-				description = "الحصول على اليوم من نقطة زمنية",
-				usage = "احصل_على_اليوم(نقطة_زمنية_)",
-				parameterTypes = {ArabicTemporalPoint.class},
-				returnType = int.class
-	)
-	public static int getDay(ArabicTemporalPoint t) {
-		return t.temporal().get(ChronoField.DAY_OF_MONTH);
-	}
-
-	/**
-	 * Gets the hour of the day from a temporal point.
-	 *
-	 * @param t the temporal point
-	 * @return the hour (0-23)
-	 */
-	@NaftahFn(
-				name = "احصل_على_الساعة",
-				description = "الحصول على الساعة من نقطة زمنية",
-				usage = "احصل_على_الساعة(نقطة_زمنية_)",
-				parameterTypes = {ArabicTemporalPoint.class},
-				returnType = int.class
-	)
-	public static int getHour(ArabicTemporalPoint t) {
-		return t.temporal().get(ChronoField.HOUR_OF_DAY);
-	}
-
-	/**
-	 * Gets the minute of the hour from a temporal point.
-	 *
-	 * @param t the temporal point
-	 * @return the minute
-	 */
-	@NaftahFn(
-				name = "احصل_على_الدقيقة",
-				description = "الحصول على الدقيقة من نقطة زمنية",
-				usage = "احصل_على_الدقيقة(نقطة_زمنية_)",
-				parameterTypes = {ArabicTemporalPoint.class},
-				returnType = int.class
-	)
-	public static int getMinute(ArabicTemporalPoint t) {
-		return t.temporal().get(ChronoField.MINUTE_OF_HOUR);
-	}
-
-	/**
-	 * Gets the second of the minute from a temporal point.
-	 *
-	 * @param t the temporal point
-	 * @return the second
-	 */
-	@NaftahFn(
-				name = "احصل_على_الثانية",
-				description = "الحصول على الثانية من نقطة زمنية",
-				usage = "احصل_على_الثانية(نقطة_زمنية_)",
-				parameterTypes = {ArabicTemporalPoint.class},
-				returnType = int.class
-	)
-	public static int getSecond(ArabicTemporalPoint t) {
-		return t.temporal().get(ChronoField.SECOND_OF_MINUTE);
-	}
-
-	/**
-	 * Gets the millisecond of the second from a temporal point.
-	 *
-	 * @param t the temporal point
-	 * @return the millisecond
-	 */
-	@NaftahFn(
-				name = "احصل_على_الملي_ثانية",
-				description = "الحصول على المللي ثانية من نقطة زمنية",
-				usage = "احصل_على_الملي_ثانية(نقطة_زمنية_)",
-				parameterTypes = {ArabicTemporalPoint.class},
-				returnType = int.class
-	)
-	public static int getMilli(ArabicTemporalPoint t) {
-		return t.temporal().get(ChronoField.MILLI_OF_SECOND);
-	}
-
-	/**
-	 * Gets the nanosecond of the second from a temporal point.
-	 *
-	 * @param t the temporal point
-	 * @return the nanosecond
-	 */
-	@NaftahFn(
-				name = "احصل_على_النانو_ثانية",
-				description = "الحصول على النانو ثانية من نقطة زمنية",
-				usage = "احصل_على_النانو_ثانية(نقطة_زمنية_)",
-				parameterTypes = {ArabicTemporalPoint.class},
-				returnType = int.class
-	)
-	public static int getNano(ArabicTemporalPoint t) {
-		return t.temporal().get(ChronoField.NANO_OF_SECOND);
 	}
 
 	/**
