@@ -445,10 +445,10 @@ public record ArabicDate(
 	@Override
 	public int lengthOfYear() {
 		if (calendar.chronology.equals(ChronologyUtils.DEFAULT_CHRONOLOGY)) {
-			return isLeapYear() ? 355 : 354;
+			return isLeapYear() ? 366 : 365;
 		}
 		else {
-			return isLeapYear() ? 366 : 365;
+			return isLeapYear() ? 355 : 354;
 		}
 	}
 
