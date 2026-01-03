@@ -1,9 +1,7 @@
 NAFTAH LANG - INSTALLATION
 ==============================
 
-Thank you for downloading the Naftah Programming Language. Please follow these instructions
-in order to complete your installation.
-
+Thank you for downloading the Naftah Programming Language. Please follow these instructions to complete your installation.
 
 Prerequisites
 -------------
@@ -19,9 +17,39 @@ Alternatively, you can set the JAVA_HOME environment variable to point a suitabl
 
 Environment Variables
 ---------------------
-No specific environment variables are required to run the Programming Language, however, you may want to
-set NAFTAH_HOME to point to a specific installation. You should also add NAFTAH_HOME/bin
-to your PATH environment variable.
+
+No specific environment variables are required, but you may want to:
+
+Set NAFTAH_HOME to your Naftah installation directory.
+
+Add NAFTAH_HOME/bin to your PATH so you can run the CLI from anywhere.
+
+Installation Instructions
+
+- Windows:
+
+Extract the Naftah archive to your preferred directory.
+
+Optionally, set NAFTAH_HOME to the installation path.
+
+Add %NAFTAH_HOME%\bin to your PATH.
+
+Test the installation by running:
+
+	naftah --version
+
+- Linux / macOS:
+
+Open a terminal and go to the folder containing install-naftah.sh.
+
+Make the installer executable:
+
+	chmod +x install-naftah.sh
+
+Run the installer with sudo to install system-wide:
+
+	sudo ./install-naftah.sh
+
 
 Checking Your Installation
 --------------------------
@@ -29,4 +57,4 @@ To test if you have successfully installed the CLI you can run the following com
 
 	naftah --version
 
-
+After completing these steps, Naftah is ready to use on your system.
