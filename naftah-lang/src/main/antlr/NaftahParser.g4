@@ -79,7 +79,7 @@ singleAssignment: ID | qualifiedName | qualifiedObjectAccess | collectionAccess;
 multipleAssignments: singleAssignment ((COMMA | SEMI) singleAssignment)+;
 
 // Function declaration: Can have parameters and return values
-functionDeclaration: ASYNC? FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
+functionDeclaration: ASYNC? FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? (block | (statement END?));
 
 // Function declaration parameter list: parameterDeclarations separated by commas or semicolons
 parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclaration)*;
