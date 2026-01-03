@@ -159,6 +159,17 @@ public class ClassScanningResult implements Serializable {
 		this.builtinFunctions = builtinFunctions;
 	}
 
+	/**
+	 * Custom serialization logic for {@link ClassScanningResult}.
+	 * <p>
+	 * Since {@link URLClassLoader} and other {@link ClassLoader} instances are
+	 * not serializable, this method converts each {@link URLClassLoader} in
+	 * {@link #classNames} to a list of its URL strings and writes that map
+	 * to the stream.
+	 *
+	 * @param out the ObjectOutputStream to write the object to
+	 * @throws IOException if an I/O error occurs during serialization
+	 */
 	@Serial
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
@@ -167,18 +178,33 @@ public class ClassScanningResult implements Serializable {
 		if (classNames != null) {
 			for (var entry : classNames.entrySet()) {
 				ClassLoader cl = entry.getValue();
-				List<String> urls = new ArrayList<>();
-				if (cl instanceof URLClassLoader ucl) {
-					for (URL url : ucl.getURLs()) {
-						urls.add(url.toExternalForm());
+				if (cl != null) {
+					List<String> urls = new ArrayList<>();
+					if (cl instanceof URLClassLoader ucl) {
+						for (URL url : ucl.getURLs()) {
+							urls.add(url.toExternalForm());
+						}
 					}
+					urlsMap.put(entry.getKey(), urls);
 				}
-				urlsMap.put(entry.getKey(), urls);
+				else {
+					urlsMap.put(entry.getKey(), null);
+				}
 			}
 		}
 		out.writeObject(urlsMap);
 	}
 
+	/**
+	 * Custom deserialization logic for {@link ClassScanningResult}.
+	 * <p>
+	 * Reads the map of class names to URL strings from the stream and reconstructs
+	 * {@link URLClassLoader} instances for the {@link #classNames} map.
+	 *
+	 * @param in the ObjectInputStream to read the object from
+	 * @throws IOException            if an I/O error occurs during deserialization
+	 * @throws ClassNotFoundException if a class required during deserialization cannot be found
+	 */
 	@Serial
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
@@ -188,15 +214,20 @@ public class ClassScanningResult implements Serializable {
 		classNames = new HashMap<>();
 		for (var entry : urlsMap.entrySet()) {
 			List<String> urls = entry.getValue();
-			URL[] urlArray = urls.stream().map(u -> {
-				try {
-					return new URL(u);
-				}
-				catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}).toArray(URL[]::new);
-			classNames.put(entry.getKey(), new URLClassLoader(urlArray));
+			if (urls != null) {
+				URL[] urlArray = urls.stream().map(u -> {
+					try {
+						return new URL(u);
+					}
+					catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}).toArray(URL[]::new);
+				classNames.put(entry.getKey(), new URLClassLoader(urlArray));
+			}
+			else {
+				classNames.put(entry.getKey(), null);
+			}
 		}
 	}
 }
