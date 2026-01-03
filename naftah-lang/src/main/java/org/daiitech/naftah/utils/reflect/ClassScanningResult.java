@@ -1,7 +1,14 @@
 package org.daiitech.naftah.utils.reflect;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +44,7 @@ public class ClassScanningResult implements Serializable {
 	/**
 	 * Maps class names to their respective ClassLoader instances.
 	 */
-	private Map<String, ClassLoader> classNames;
+	private transient Map<String, ClassLoader> classNames;
 
 	/**
 	 * Set of fully qualified class names discovered.
@@ -150,5 +157,46 @@ public class ClassScanningResult implements Serializable {
 
 	public void setBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
 		this.builtinFunctions = builtinFunctions;
+	}
+
+	@Serial
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+
+		Map<String, List<String>> urlsMap = new HashMap<>();
+		if (classNames != null) {
+			for (var entry : classNames.entrySet()) {
+				ClassLoader cl = entry.getValue();
+				List<String> urls = new ArrayList<>();
+				if (cl instanceof URLClassLoader ucl) {
+					for (URL url : ucl.getURLs()) {
+						urls.add(url.toExternalForm());
+					}
+				}
+				urlsMap.put(entry.getKey(), urls);
+			}
+		}
+		out.writeObject(urlsMap);
+	}
+
+	@Serial
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+
+		//noinspection unchecked
+		Map<String, List<String>> urlsMap = (Map<String, List<String>>) in.readObject();
+		classNames = new HashMap<>();
+		for (var entry : urlsMap.entrySet()) {
+			List<String> urls = entry.getValue();
+			URL[] urlArray = urls.stream().map(u -> {
+				try {
+					return new URL(u);
+				}
+				catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}).toArray(URL[]::new);
+			classNames.put(entry.getKey(), new URLClassLoader(urlArray));
+		}
 	}
 }
