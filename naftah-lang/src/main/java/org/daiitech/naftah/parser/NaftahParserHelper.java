@@ -409,7 +409,7 @@ public final class NaftahParserHelper {
 	 */
 	public static void prepareDeclaredFunction(
 												org.daiitech.naftah.parser.NaftahParserBaseVisitor<?> naftahParserBaseVisitor,
-												DeclaredFunction function) {
+												DeclaredFunction<?> function) {
 		if (function.getParameters() == null && hasChild(function.getParametersContext())) {
 			//noinspection unchecked
 			function
@@ -1987,7 +1987,7 @@ public final class NaftahParserHelper {
 	public static Object invokeDeclaredFunction(
 												int depth,
 												String functionName,
-												DeclaredFunction declaredFunction,
+												DeclaredFunction<?> declaredFunction,
 												DefaultNaftahParserVisitor defaultNaftahParserVisitor,
 												List<Pair<String, Object>> args,
 												DefaultContext currentContext
@@ -2046,7 +2046,7 @@ public final class NaftahParserHelper {
 	 * @return the evaluated result of the function body, or {@link None#get()} if
 	 *         the function has a {@link Void} return type
 	 */
-	public static Object doInvokeDeclaredFunction(  DeclaredFunction declaredFunction,
+	public static Object doInvokeDeclaredFunction(  DeclaredFunction<?> declaredFunction,
 													DefaultNaftahParserVisitor defaultNaftahParserVisitor,
 													List<Pair<String, Object>> args,
 													DefaultContext currentContext
@@ -2087,7 +2087,7 @@ public final class NaftahParserHelper {
 		finally {
 			if (functionInStack) {
 				popCall();
-				Triple<DeclaredFunction, Map<String, Object>, Object> parentCall;
+				Triple<DeclaredFunction<?>, Map<String, Object>, Object> parentCall;
 				if (Objects.nonNull(parentCall = peekCall())) {
 					currentContext.setImplementationName(parentCall.getLeft().getImplementationName());
 				}
@@ -2536,7 +2536,7 @@ public final class NaftahParserHelper {
 
 		if (currentContext.containsFunction(functionName, -1)) {
 			Object function = currentContext.getFunction(functionName, false).getRight();
-			if (function instanceof DeclaredFunction declaredFunction) {
+			if (function instanceof DeclaredFunction<?> declaredFunction) {
 				result = invokeDeclaredFunction(depth,
 												functionName,
 												declaredFunction,
