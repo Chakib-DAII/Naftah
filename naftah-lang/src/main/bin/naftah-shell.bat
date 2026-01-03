@@ -162,7 +162,7 @@ if errorlevel 1 (
     set CMD_LINE_ARGS=%CMD_LINE_ARGS% -d
 )
 
-"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS%
+"%JAVA_EXE%" %JAVA_OPTS% -cp "%CLASSPATH%" -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah %CMD_LINE_ARGS%
 goto end
 
 :executeNoDebug
