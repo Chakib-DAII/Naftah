@@ -2,6 +2,7 @@ package org.daiitech.naftah.builtin.lang;
 
 import java.util.List;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
@@ -23,7 +24,7 @@ import org.daiitech.naftah.utils.reflect.type.JavaType;
  *
  * @author Chakib Daii
  */
-public final class DeclaredFunction extends Declaration {
+public final class DeclaredFunction<T extends ParserRuleContext> extends Declaration {
 
 	/**
 	 * The original ANTLR parse context for the function declaration.
@@ -53,7 +54,7 @@ public final class DeclaredFunction extends Declaration {
 	/**
 	 * The parse context for the function body block.
 	 */
-	private final NaftahParser.BlockContext body;
+	private final T body;
 
 	/**
 	 * The parse context for the return type.
@@ -97,7 +98,10 @@ public final class DeclaredFunction extends Declaration {
 		this.name = originalContext.ID().getText();
 		this.async = NaftahParserHelper.hasChild(originalContext.ASYNC());
 		this.parametersContext = originalContext.parameterDeclarationList();
-		this.body = originalContext.block();
+		//noinspection unchecked
+		this.body = (T) (NaftahParserHelper.hasChild(originalContext.block()) ?
+				originalContext.block() :
+				originalContext.statement());
 		this.returnTypeContext = originalContext.returnType();
 		this.implementationName = implementationName;
 	}
@@ -117,10 +121,10 @@ public final class DeclaredFunction extends Declaration {
 	 *                           compilation or code generation.
 	 * @return A newly created {@code DeclaredFunction} instance.
 	 */
-	public static DeclaredFunction of(  int depth,
-										NaftahParser.FunctionDeclarationContext originalContext,
-										String implementationName) {
-		return new DeclaredFunction(depth, originalContext, implementationName);
+	public static <T extends ParserRuleContext> DeclaredFunction<T> of( int depth,
+																		NaftahParser.FunctionDeclarationContext originalContext,
+																		String implementationName) {
+		return new DeclaredFunction<>(depth, originalContext, implementationName);
 	}
 
 	/**
@@ -199,7 +203,7 @@ public final class DeclaredFunction extends Declaration {
 	 *
 	 * @return the function body context
 	 */
-	public NaftahParser.BlockContext getBody() {
+	public T getBody() {
 		return body;
 	}
 
