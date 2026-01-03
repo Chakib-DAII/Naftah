@@ -22,6 +22,8 @@ import org.daiitech.naftah.utils.reflect.type.JavaType;
  * phases.
  * </p>
  *
+ * @param <T> the concrete type of body context
+ *
  * @author Chakib Daii
  */
 public final class DeclaredFunction<T extends ParserRuleContext> extends Declaration {
