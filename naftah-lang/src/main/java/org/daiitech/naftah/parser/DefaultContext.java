@@ -134,7 +134,7 @@ public class DefaultContext {
 	 * Stack representing the call stack containing pairs of function and argument maps,
 	 * along with the returned value.
 	 */
-	protected static final ThreadLocal<Deque<Triple<DeclaredFunction, Map<String, Object>, Object>>> CALL_STACK = ThreadLocal
+	protected static final ThreadLocal<Deque<Triple<DeclaredFunction<?>, Map<String, Object>, Object>>> CALL_STACK = ThreadLocal
 			.withInitial(ArrayDeque::new);
 	/**
 	 * Stack representing loop labels and their associated parser rule contexts.
@@ -347,7 +347,7 @@ public class DefaultContext {
 	protected final int depth;
 	protected final InheritableThreadLocal<Map<String, DeclaredVariable>> variables = SuppliedInheritableThreadLocal
 			.withInitial(HashMap::new, HashMap::new);
-	protected final InheritableThreadLocal<Map<String, DeclaredFunction>> functions = SuppliedInheritableThreadLocal
+	protected final InheritableThreadLocal<Map<String, DeclaredFunction<?>>> functions = SuppliedInheritableThreadLocal
 			.withInitial(HashMap::new, HashMap::new);
 	protected final InheritableThreadLocal<Map<String, DeclaredImplementation>> implementations = SuppliedInheritableThreadLocal
 			.withInitial(HashMap::new, HashMap::new);
@@ -909,7 +909,7 @@ public class DefaultContext {
 	 * @param function  the {@link DeclaredFunction} being called
 	 * @param arguments the map of argument names to values
 	 */
-	public static void pushCall(DeclaredFunction function, Map<String, Object> arguments) {
+	public static void pushCall(DeclaredFunction<?> function, Map<String, Object> arguments) {
 		CALL_STACK.get().push(ImmutableTriple.of(function, arguments, null));
 	}
 
@@ -919,7 +919,7 @@ public class DefaultContext {
 	 * @return the popped function call frame as a pair containing function, arguments, and return value
 	 * @throws NaftahBugError if the call stack is empty
 	 */
-	public static Triple<DeclaredFunction, Map<String, Object>, Object> popCall() {
+	public static Triple<DeclaredFunction<?>, Map<String, Object>, Object> popCall() {
 		if (CALL_STACK.get().isEmpty()) {
 			throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
 		}
@@ -931,7 +931,7 @@ public class DefaultContext {
 	 *
 	 * @return the top function call frame, or {@code null} if the stack is empty
 	 */
-	public static Triple<DeclaredFunction, Map<String, Object>, Object> peekCall() {
+	public static Triple<DeclaredFunction<?>, Map<String, Object>, Object> peekCall() {
 		return CALL_STACK.get().peek();
 	}
 
@@ -2142,9 +2142,9 @@ public class DefaultContext {
 	 * * true}
 	 * @throws NaftahBugError if the function is not found and {@code safe} is {@code false}
 	 */
-	public DeclaredFunction getDeclaredImplementationFunction(String qualifiedCall, boolean safe) {
+	public DeclaredFunction<?> getDeclaredImplementationFunction(String qualifiedCall, boolean safe) {
 		Map<String, DeclaredImplementation> implementationMap;
-		Map<String, DeclaredFunction> functionsMap;
+		Map<String, DeclaredFunction<?>> functionsMap;
 		String[] parts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
 		String implementationId = parts.length == 2 ? parts[0] : null;
 		if (Objects.nonNull(implementationId) && !implementationId
@@ -2224,7 +2224,7 @@ public class DefaultContext {
 	 * @param name  the function name
 	 * @param value the new DeclaredFunction value
 	 */
-	public void setFunction(String name, DeclaredFunction value) {
+	public void setFunction(String name, DeclaredFunction<?> value) {
 		var functionMap = functions.get();
 		if (functionMap.containsKey(name)) {
 			functionMap.put(name, value);
@@ -2250,7 +2250,7 @@ public class DefaultContext {
 	 * @throws NaftahBugError if a function with the same name already exists
 	 *                        in the current context
 	 */
-	public void defineFunction(String name, DeclaredFunction value) {
+	public void defineFunction(String name, DeclaredFunction<?> value) {
 		if (containsFunction(name, value.getDepth())) {
 			throw newNaftahBugExistentFunctionError(name);
 		}
