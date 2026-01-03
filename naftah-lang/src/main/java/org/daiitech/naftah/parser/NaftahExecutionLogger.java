@@ -1409,6 +1409,7 @@ public final class NaftahExecutionLogger {
 											FunctionDeclarationContext::returnType -> {
 												%s
 											}
+											FunctionDeclarationContext::statement -> %s
 											FunctionDeclarationContext::block -> {
 												%s
 											}
@@ -1429,6 +1430,9 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.COLON()) ? context.COLON().getText() : null,
 													Objects.nonNull(context.returnType()) ?
 															context.returnType().getText() :
+															null,
+													Objects.nonNull(context.statement()) ?
+															context.statement().getText() :
 															null,
 													Objects.nonNull(context.block()) ?
 															context.block().getText() :
