@@ -28,16 +28,19 @@ import java.util.stream.IntStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
 import org.daiitech.naftah.utils.ResourceUtils;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.History;
@@ -75,6 +78,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.classToDetailedString;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.daiitech.naftah.utils.repl.REPLHelper.ESCAPE_CHARS_REGEX;
 import static org.daiitech.naftah.utils.repl.REPLHelper.LAST_PRINTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
@@ -1644,6 +1648,8 @@ public final class Naftah {
 							line = "";
 						}
 
+						line = line.replaceAll(ESCAPE_CHARS_REGEX, "");
+
 						if (!MULTILINE_IS_ACTIVE && line.isBlank()) {
 							continue;
 						}
@@ -1675,7 +1681,18 @@ public final class Naftah {
 
 						var result = doRun(parser, main.args);
 
-						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)) {
+						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)
+						// not a declaration with flag
+								&& !(result instanceof Pair<?, ?> pair && JavaType
+										.of(pair)
+										.getTypeParameters()
+										.get(0)
+										.isOfType(DeclaredVariable.class) && JavaType
+												.of(pair)
+												.getTypeParameters()
+												.get(1)
+												.isOfType(Boolean.class))
+						) {
 							var resultStr = getNaftahValueToString(result);
 							LAST_PRINTED.set(resultStr);
 							printPaddedToString(resultStr);
