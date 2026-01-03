@@ -345,6 +345,8 @@ public final class REPLHelper {
 	 * @param reader the {@link LineReader} to configure with custom key bindings and clipboard widgets
 	 */
 	public static void setupKeyBindingsConfig(LineReader reader) {
+		reader.option(LineReader.Option.DISABLE_EVENT_EXPANSION, true);
+
 		KeyMap<Binding> keyMap = reader.getKeyMaps().get(LineReader.MAIN);
 
 		// Flip Left and Right arrow key bindings
