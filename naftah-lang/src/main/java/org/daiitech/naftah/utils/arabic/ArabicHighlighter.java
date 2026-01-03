@@ -8,7 +8,6 @@ import org.jline.utils.AttributedString;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import static org.daiitech.naftah.utils.repl.REPLHelper.rightAlign;
 
 /**
@@ -53,7 +52,7 @@ public class ArabicHighlighter extends BaseHighlighter {
 
 		AttributedString attributedString = super.highlight(reader, buffer);
 
-		if (shouldReshape() && containsArabic(buffer)) {
+		if (containsArabic(buffer)) {
 			try {
 				String reshaped = shape(buffer); // display only
 				attributedString = rightAlign(new AttributedString(reshaped), terminalWidth);

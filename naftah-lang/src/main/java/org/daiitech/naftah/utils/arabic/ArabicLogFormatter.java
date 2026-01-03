@@ -5,7 +5,6 @@ import java.util.logging.LogRecord;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 
 /**
@@ -40,7 +39,7 @@ public class ArabicLogFormatter extends Formatter {
 	public String format(LogRecord record) {
 		String msg = record.getMessage();
 
-		if (shouldReshape() && containsArabic(msg)) {
+		if (containsArabic(msg)) {
 			try {
 				String visual = shape(msg);
 				return LOG_MSG.formatted(record.getLevel(), visual);

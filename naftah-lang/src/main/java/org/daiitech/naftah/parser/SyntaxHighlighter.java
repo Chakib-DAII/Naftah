@@ -115,13 +115,11 @@ public class SyntaxHighlighter extends BaseHighlighter {
 				// Get style for token type
 				AttributedStyle style = getStyleForTokenType(token.getType());
 				String shapedText = token.getText();
-				if (shouldReshape()) {
-					try {
-						shapedText = shape(shapedText);
-					}
-					catch (Exception e) {
-						// fallback to original
-					}
+				try {
+					shapedText = shape(shapedText);
+				}
+				catch (Exception e) {
+					// fallback to original
 				}
 
 				styledSegments.add(ImmutablePair.of(shapedText, style));

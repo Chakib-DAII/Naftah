@@ -53,6 +53,7 @@ import com.vladsch.flexmark.ast.ThematicBreak;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 
+import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
@@ -133,7 +134,7 @@ public final class REPLHelper {
 	/**
 	 * Public RTL prompt with optional reshaping for display.
 	 */
-	public static final String RTL_PROMPT = shouldReshape() ? shape(RTL_PROMPT_VALUE) : RTL_PROMPT_VALUE;
+	public static final String RTL_PROMPT = shape(RTL_PROMPT_VALUE);
 	/**
 	 * Right-to-left multiline prompt marker value.
 	 */
@@ -141,9 +142,7 @@ public final class REPLHelper {
 	/**
 	 * Public RTL multiline prompt with optional reshaping for display.
 	 */
-	public static final String RTL_MULTILINE_PROMPT = shouldReshape() ?
-			shape(RTL_MULTILINE_PROMPT_VALUE) :
-			RTL_MULTILINE_PROMPT_VALUE;
+	public static final String RTL_MULTILINE_PROMPT = shape(RTL_MULTILINE_PROMPT_VALUE);
 	/**
 	 * The raw prompt message (in Arabic) used during right-to-left (RTL) pagination.
 	 * <p>
@@ -161,9 +160,7 @@ public final class REPLHelper {
 	 * uses a reshaped (visually adjusted) version of {@link #RTL_PAGINATION_PROMPT_VALUE}.
 	 * Otherwise, it falls back to the original raw form.
 	 */
-	public static final String RTL_PAGINATION_PROMPT = shouldReshape() ?
-			shape(RTL_PAGINATION_PROMPT_VALUE) :
-			RTL_PAGINATION_PROMPT_VALUE;
+	public static final String RTL_PAGINATION_PROMPT = shape(RTL_PAGINATION_PROMPT_VALUE);
 	/**
 	 * Command name for copying text to the clipboard.
 	 */
@@ -379,9 +376,11 @@ public final class REPLHelper {
 		reader.getWidgets().put(PASTE_FROM_CLIPBOARD_COMMAND, () -> {
 			TEXT_PASTE_DETECTED = true;
 			String text = pasteFromClipboard();
-			String escapedText = processPastedText(text);
-			if (!escapedText.isBlank()) {
-				reader.getBuffer().write(escapedText);  // inserts at cursor
+			if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+				text = processPastedText(text);
+			}
+			if (!text.isBlank()) {
+				reader.getBuffer().write(text);  // inserts at cursor
 			}
 			return true;
 		});
@@ -514,13 +513,18 @@ public final class REPLHelper {
 	 * @return a right-aligned {@link AttributedString}
 	 */
 	public static AttributedString rightAlign(AttributedString str, int width) {
-		int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
-		int padding = Math.max(0, width - contentWidth);
-		AttributedString spacePad = new AttributedString(" ".repeat(padding));
 		AttributedString prompt = MULTILINE_IS_ACTIVE ?
 				new AttributedString(RTL_MULTILINE_PROMPT) :
 				new AttributedString(RTL_PROMPT);
-		return AttributedString.join(new AttributedString(""), spacePad, str, prompt);
+		AttributedString delimiter = new AttributedString(" ");
+		if (shouldReshape()) {
+			int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
+			int padding = Math.max(0, width - contentWidth);
+			AttributedString spacePad = new AttributedString(" ".repeat(padding));
+
+			return AttributedString.join(delimiter, spacePad, str, prompt);
+		}
+		return AttributedString.join(delimiter, prompt, str);
 	}
 
 	/**

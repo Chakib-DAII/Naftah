@@ -149,9 +149,6 @@ public final class StringInterpolator {
 	 * @return the interpolated string
 	 */
 	public static String interpolate(String template, Function<String, Object> replacementFunction) {
-		// TODO: this is not needed in windows after rechecking.
-		// template = POSSIBLE_SHAPING_FUNCTION.apply(template);
-
 		Matcher matcher = getMatcher(template).reset();
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
