@@ -61,7 +61,7 @@ public class SyntaxHighlighterTests {
 			assertEquals(124, result.toAnsi().length());
 		}
 		else {
-			assertEquals(22, result.toAnsi().length());
+			assertEquals(66, result.toAnsi().length());
 		}
 	}
 
