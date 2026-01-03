@@ -59,7 +59,8 @@ public class SyntaxHighlighterTests {
 		assertNotNull(result);
 		if (ArabicUtils.shouldReshape()) {
 			assertEquals(124, result.toAnsi().length());
-		} else {
+		}
+		else {
 			assertEquals(22, result.toAnsi().length());
 		}
 	}
