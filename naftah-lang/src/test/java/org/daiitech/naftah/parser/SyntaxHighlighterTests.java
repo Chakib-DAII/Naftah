@@ -2,6 +2,7 @@ package org.daiitech.naftah.parser;
 
 import java.io.IOException;
 
+import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.jline.reader.EOFError;
 import org.jline.reader.LineReader;
 import org.jline.reader.impl.LineReaderImpl;
@@ -56,7 +57,11 @@ public class SyntaxHighlighterTests {
 
 		AttributedString result = highlighter.highlight(reader, buffer);
 		assertNotNull(result);
-		assertEquals(result.toAnsi().length(), 124);
+		if (ArabicUtils.shouldReshape()) {
+			assertEquals(124, result.toAnsi().length());
+		} else {
+			assertEquals(22, result.toAnsi().length());
+		}
 	}
 
 	@Test
