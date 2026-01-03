@@ -114,7 +114,7 @@ public final class StringUtils {
 	/**
 	 * Minimum string length for vectorized execution.
 	 */
-	public static final int VECTOR_THRESHOLD = 128; // TODO: tune the threshold
+	public static final int VECTOR_THRESHOLD = 128;
 
 	// Bitwise vector operations
 	/**

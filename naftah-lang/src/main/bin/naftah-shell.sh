@@ -168,6 +168,10 @@ JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector \
 IFS=" " read -r -a javaOpts <<< "$JAVA_OPTS"
 
 if [[ "${DEBUG}" == "true" ]]; then
+  # Detect LAN IP dynamically
+  LAN_IP=$(hostname -I | awk '{print $1}')
+  export JAVA_TOOL_OPTIONS="-Djava.rmi.server.hostname=$LAN_IP"
+
   # Check if "-d" is already present in the arguments
   has_d=false
   for arg in "$@"; do
@@ -178,10 +182,21 @@ if [[ "${DEBUG}" == "true" ]]; then
   done
 
   if [[ "$has_d" == "true" ]]; then
-    exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" -cp "$CLASSPATH" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah "$@"
+    exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" \
+         -cp "$CLASSPATH" \
+         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 \
+         -Dfile.encoding=UTF-8 \
+         org.daiitech.naftah.Naftah "$@"
   else
-    exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" -cp "$CLASSPATH" -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah "$@" -d
+    exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" \
+         -cp "$CLASSPATH" \
+         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006 \
+         -Dfile.encoding=UTF-8 \
+         org.daiitech.naftah.Naftah "$@" -d
   fi
 else
-  exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" -cp "$CLASSPATH" -Dfile.encoding=UTF-8 org.daiitech.naftah.Naftah "$@"
+  exec "${JAVA_HOME}/bin/java" "${javaOpts[@]}" \
+       -cp "$CLASSPATH" \
+       -Dfile.encoding=UTF-8 \
+       org.daiitech.naftah.Naftah "$@"
 fi

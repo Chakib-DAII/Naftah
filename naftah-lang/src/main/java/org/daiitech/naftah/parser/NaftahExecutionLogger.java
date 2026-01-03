@@ -1409,6 +1409,7 @@ public final class NaftahExecutionLogger {
 											FunctionDeclarationContext::returnType -> {
 												%s
 											}
+											FunctionDeclarationContext::statement -> %s
 											FunctionDeclarationContext::block -> {
 												%s
 											}
@@ -1429,6 +1430,9 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.COLON()) ? context.COLON().getText() : null,
 													Objects.nonNull(context.returnType()) ?
 															context.returnType().getText() :
+															null,
+													Objects.nonNull(context.statement()) ?
+															context.statement().getText() :
 															null,
 													Objects.nonNull(context.block()) ?
 															context.block().getText() :
@@ -1832,14 +1836,21 @@ public final class NaftahExecutionLogger {
 											StringValueContext::RAW -> %s
 											StringValueContext::BYTE_ARRAY -> %s
 											StringValueContext::STRING -> %s
+											StringValueContext::TEMPORAL_POINT -> %s
+											StringValueContext::TEMPORAL_AMOUNT -> %s
 											"""
 										.formatted( Objects.nonNull(context.RAW()) ? context.RAW().getText() : null,
 													Objects.nonNull(context.BYTE_ARRAY()) ?
 															context.BYTE_ARRAY().getText() :
 															null,
-
 													Objects.nonNull(context.STRING()) ?
 															context.STRING().getText() :
+															null,
+													Objects.nonNull(context.TEMPORAL_POINT()) ?
+															context.TEMPORAL_POINT().getText() :
+															null,
+													Objects.nonNull(context.TEMPORAL_AMOUNT()) ?
+															context.TEMPORAL_AMOUNT().getText() :
 															null
 										));
 

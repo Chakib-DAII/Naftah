@@ -3,6 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="org.daiitech.naftah.utils.arabic.TransliterationGenerator" />
     <module name="naftah.naftah-lang.main" />
     <option name="PROGRAM_PARAMETERS" value="http://localhost:5000/translate en ar" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/naftah-lang" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.daiitech.naftah.utils.arabic.*" />

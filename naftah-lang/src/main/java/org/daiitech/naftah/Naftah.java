@@ -28,18 +28,22 @@ import java.util.stream.IntStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
 import org.daiitech.naftah.utils.ResourceUtils;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
+import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.MaskingCallback;
 import org.jline.reader.UserInterruptException;
@@ -74,10 +78,12 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.classToDetailedString;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.daiitech.naftah.utils.repl.REPLHelper.ESCAPE_CHARS_REGEX;
 import static org.daiitech.naftah.utils.repl.REPLHelper.LAST_PRINTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_MULTILINE_PROMPT;
 import static org.daiitech.naftah.utils.repl.REPLHelper.RTL_PROMPT;
+import static org.daiitech.naftah.utils.repl.REPLHelper.TEXT_PASTE_DETECTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.clearScreen;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getLineReader;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getMarkdownAsString;
@@ -430,7 +436,6 @@ public final class Naftah {
 
 		try {
 			ParseResult result = parser.parseArgs(args);
-			// TODO: pad output
 			if (printHelpIfRequested(result)) {
 				return;
 			}
@@ -452,7 +457,6 @@ public final class Naftah {
 		}
 		catch (ParameterException ex) { // command line arguments could not be parsed
 			printPaddedErrorMessageToString(ex);
-			// TODO: pad output
 			ex.getCommandLine().usage(System.err);
 		}
 		catch (Exception e) {
@@ -654,7 +658,9 @@ public final class Naftah {
 		protected void run(Naftah main, boolean bootstrapAsync) throws Exception {
 			System.setProperty(SCAN_JDK_PROPERTY, Boolean.toString(true));
 			System.setProperty(CACHE_SCANNING_RESULTS_PROPERTY, Boolean.toString(true));
-			System.setProperty(WORD_CHUNK_PROPERTY, Boolean.toString(true));
+			if (Objects.isNull(System.getProperty(WORD_CHUNK_PROPERTY))) {
+				System.setProperty(WORD_CHUNK_PROPERTY, Boolean.toString(true));
+			}
 			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 				Thread.sleep(5000);
 			}
@@ -994,8 +1000,7 @@ public final class Naftah {
 			private boolean checkManagementCommands(String line) {
 				var matched = false;
 				String command = line.trim().toLowerCase(ARABIC);
-//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic)
-//					TODO: so the flow you transliterate then get all infos
+//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic) so the flow you transliterate then get all infos
 				if (List.of("usage", "مساعدة").contains(command)) {
 
 					matched = true;
@@ -1628,13 +1633,22 @@ public final class Naftah {
 						استمتع بالتجربة وتعلم بسرعة!
 						""", true);
 
-				StringBuilder fullLine = new StringBuilder();
+				History history = reader.getHistory();
 
+				StringBuilder fullLine = new StringBuilder();
+				String line;
 				while (true) {
 					try {
-						String line = MULTILINE_IS_ACTIVE ?
-								reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null) :
-								reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
+						try {
+							line = MULTILINE_IS_ACTIVE ?
+									reader.readLine(null, RTL_MULTILINE_PROMPT, (MaskingCallback) null, null) :
+									reader.readLine(null, RTL_PROMPT, (MaskingCallback) null, null);
+						}
+						catch (IndexOutOfBoundsException ignored) {
+							line = "";
+						}
+
+						line = line.replaceAll(ESCAPE_CHARS_REGEX, "");
 
 						if (!MULTILINE_IS_ACTIVE && line.isBlank()) {
 							continue;
@@ -1649,8 +1663,16 @@ public final class Naftah {
 						var input = getCharStream(false, fullLine.toString());
 
 						if (MULTILINE_IS_ACTIVE) {
-							reader.getHistory().add(fullLine.toString());
+							String historyLine = fullLine
+									.toString()
+									.replace("\r\n", " ")
+									.replace("\n", " ")
+									.trim();
+
+							history.add(historyLine);
+
 							MULTILINE_IS_ACTIVE = false;
+							TEXT_PASTE_DETECTED = false;
 						}
 
 						fullLine.delete(0, fullLine.length());
@@ -1659,7 +1681,18 @@ public final class Naftah {
 
 						var result = doRun(parser, main.args);
 
-						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)) {
+						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)
+						// not a declaration with flag
+								&& !(result instanceof Pair<?, ?> pair && JavaType
+										.of(pair)
+										.getTypeParameters()
+										.get(0)
+										.isOfType(DeclaredVariable.class) && JavaType
+												.of(pair)
+												.getTypeParameters()
+												.get(1)
+												.isOfType(Boolean.class))
+						) {
 							var resultStr = getNaftahValueToString(result);
 							LAST_PRINTED.set(resultStr);
 							printPaddedToString(resultStr);
@@ -1685,7 +1718,7 @@ public final class Naftah {
 					}
 					finally {
 						// Save history explicitly (though it's usually done automatically)
-						reader.getHistory().save();
+						history.save();
 					}
 				}
 			}

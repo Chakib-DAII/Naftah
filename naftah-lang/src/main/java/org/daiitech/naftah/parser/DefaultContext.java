@@ -121,6 +121,10 @@ public class DefaultContext {
 	 * The path used for caching runtime data.
 	 */
 	public static final Path CACHE_PATH = Paths.get(".naftah/.naftah_cache");
+	/**
+	 * The path used for caching minimal runtime data.
+	 */
+	public static final Path MINIMAL_CACHE_PATH = Paths.get(".naftah/.naftah_minimal_cache");
 
 	/**
 	 * Global map holding contexts indexed by their depth.
@@ -130,7 +134,7 @@ public class DefaultContext {
 	 * Stack representing the call stack containing pairs of function and argument maps,
 	 * along with the returned value.
 	 */
-	protected static final ThreadLocal<Deque<Triple<DeclaredFunction, Map<String, Object>, Object>>> CALL_STACK = ThreadLocal
+	protected static final ThreadLocal<Deque<Triple<DeclaredFunction<?>, Map<String, Object>, Object>>> CALL_STACK = ThreadLocal
 			.withInitial(ArrayDeque::new);
 	/**
 	 * Stack representing loop labels and their associated parser rule contexts.
@@ -309,7 +313,7 @@ public class DefaultContext {
 		else {
 			setContextFromClassScanningResult(result);
 			if (Boolean.getBoolean(CACHE_SCANNING_RESULTS_PROPERTY)) {
-				serializeClassScanningResult(result);
+				serializeClassScanningResult(result, CACHE_PATH);
 			}
 		}
 	};
@@ -330,6 +334,9 @@ public class DefaultContext {
 		}
 		else {
 			setContextFromClassScanningResult(result);
+			if (Boolean.getBoolean(CACHE_SCANNING_RESULTS_PROPERTY)) {
+				serializeClassScanningResult(result, MINIMAL_CACHE_PATH);
+			}
 		}
 	};
 
@@ -340,7 +347,7 @@ public class DefaultContext {
 	protected final int depth;
 	protected final InheritableThreadLocal<Map<String, DeclaredVariable>> variables = SuppliedInheritableThreadLocal
 			.withInitial(HashMap::new, HashMap::new);
-	protected final InheritableThreadLocal<Map<String, DeclaredFunction>> functions = SuppliedInheritableThreadLocal
+	protected final InheritableThreadLocal<Map<String, DeclaredFunction<?>>> functions = SuppliedInheritableThreadLocal
 			.withInitial(HashMap::new, HashMap::new);
 	protected final InheritableThreadLocal<Map<String, DeclaredImplementation>> implementations = SuppliedInheritableThreadLocal
 			.withInitial(HashMap::new, HashMap::new);
@@ -902,7 +909,7 @@ public class DefaultContext {
 	 * @param function  the {@link DeclaredFunction} being called
 	 * @param arguments the map of argument names to values
 	 */
-	public static void pushCall(DeclaredFunction function, Map<String, Object> arguments) {
+	public static void pushCall(DeclaredFunction<?> function, Map<String, Object> arguments) {
 		CALL_STACK.get().push(ImmutableTriple.of(function, arguments, null));
 	}
 
@@ -912,7 +919,7 @@ public class DefaultContext {
 	 * @return the popped function call frame as a pair containing function, arguments, and return value
 	 * @throws NaftahBugError if the call stack is empty
 	 */
-	public static Triple<DeclaredFunction, Map<String, Object>, Object> popCall() {
+	public static Triple<DeclaredFunction<?>, Map<String, Object>, Object> popCall() {
 		if (CALL_STACK.get().isEmpty()) {
 			throw new NaftahBugError("حالة غير قانونية: لا يمكن إزالة عنصر من مكدس استدعاءات الدوال الفارغ.");
 		}
@@ -924,7 +931,7 @@ public class DefaultContext {
 	 *
 	 * @return the top function call frame, or {@code null} if the stack is empty
 	 */
-	public static Triple<DeclaredFunction, Map<String, Object>, Object> peekCall() {
+	public static Triple<DeclaredFunction<?>, Map<String, Object>, Object> peekCall() {
 		return CALL_STACK.get().peek();
 	}
 
@@ -1218,12 +1225,13 @@ public class DefaultContext {
 	/**
 	 * Serializes the class scanning result to a cache file.
 	 *
-	 * @param result the class scanning result to serialize
+	 * @param result    the class scanning result to serialize
+	 * @param cachePath the file path where the Base64 string should be saved
 	 * @throws NaftahBugError if serialization fails
 	 */
-	protected static void serializeClassScanningResult(ClassScanningResult result) {
+	protected static void serializeClassScanningResult(ClassScanningResult result, Path cachePath) {
 		try {
-			var path = Base64SerializationUtils.serialize(result, CACHE_PATH);
+			var path = Base64SerializationUtils.serialize(result, cachePath);
 			if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY)) {
 				padText("تم حفظ البيانات في: " + path, true);
 			}
@@ -1236,10 +1244,12 @@ public class DefaultContext {
 	/**
 	 * Attempts to deserialize a previously cached class scanning result.
 	 * If deserialization fails, triggers class loading asynchronously if configured.
+	 *
+	 * @param cachePath the file path where the Base64 string should be saved
 	 */
-	protected static void deserializeClassScanningResult() {
+	protected static void deserializeClassScanningResult(Path cachePath) {
 		try {
-			var result = (ClassScanningResult) Base64SerializationUtils.deserialize(CACHE_PATH);
+			var result = (ClassScanningResult) Base64SerializationUtils.deserialize(cachePath);
 			setContextFromClassScanningResult(result);
 		}
 		catch (Exception e) {
@@ -1285,6 +1295,7 @@ public class DefaultContext {
 		SHOULD_BOOT_STRAP = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
 		ASYNC_BOOT_STRAP = async;
 		long start = System.nanoTime();
+		FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
 		if (SHOULD_BOOT_STRAP) {
 			try {
 				Files.createDirectories(CACHE_PATH.getParent());
@@ -1293,18 +1304,27 @@ public class DefaultContext {
 				throw new NaftahBugError(e);
 			}
 
-			FORCE_BOOT_STRAP = Boolean.getBoolean(FORCE_CLASSPATH_PROPERTY);
-
 			if (FORCE_BOOT_STRAP || !Files.exists(CACHE_PATH)) {
 				callLoader(ASYNC_BOOT_STRAP, LOADER_TASK, LOADER_CONSUMER);
 			}
 			else {
-				deserializeClassScanningResult();
+				deserializeClassScanningResult(CACHE_PATH);
 			}
 		}
 		else {
 			defaultBootstrap();
-			callLoader(false, MINIMAL_LOADER_TASK, MINIMAL_LOADER_CONSUMER);
+			try {
+				Files.createDirectories(MINIMAL_CACHE_PATH.getParent());
+			}
+			catch (IOException e) {
+				throw new NaftahBugError(e);
+			}
+			if (FORCE_BOOT_STRAP || !Files.exists(MINIMAL_CACHE_PATH)) {
+				callLoader(false, MINIMAL_LOADER_TASK, MINIMAL_LOADER_CONSUMER);
+			}
+			else {
+				deserializeClassScanningResult(MINIMAL_CACHE_PATH);
+			}
 		}
 		if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 			long end = System.nanoTime();
@@ -2122,9 +2142,9 @@ public class DefaultContext {
 	 * * true}
 	 * @throws NaftahBugError if the function is not found and {@code safe} is {@code false}
 	 */
-	public DeclaredFunction getDeclaredImplementationFunction(String qualifiedCall, boolean safe) {
+	public DeclaredFunction<?> getDeclaredImplementationFunction(String qualifiedCall, boolean safe) {
 		Map<String, DeclaredImplementation> implementationMap;
-		Map<String, DeclaredFunction> functionsMap;
+		Map<String, DeclaredFunction<?>> functionsMap;
 		String[] parts = qualifiedCall.split(QUALIFIED_CALL_SEPARATOR);
 		String implementationId = parts.length == 2 ? parts[0] : null;
 		if (Objects.nonNull(implementationId) && !implementationId
@@ -2204,7 +2224,7 @@ public class DefaultContext {
 	 * @param name  the function name
 	 * @param value the new DeclaredFunction value
 	 */
-	public void setFunction(String name, DeclaredFunction value) {
+	public void setFunction(String name, DeclaredFunction<?> value) {
 		var functionMap = functions.get();
 		if (functionMap.containsKey(name)) {
 			functionMap.put(name, value);
@@ -2230,7 +2250,7 @@ public class DefaultContext {
 	 * @throws NaftahBugError if a function with the same name already exists
 	 *                        in the current context
 	 */
-	public void defineFunction(String name, DeclaredFunction value) {
+	public void defineFunction(String name, DeclaredFunction<?> value) {
 		if (containsFunction(name, value.getDepth())) {
 			throw newNaftahBugExistentFunctionError(name);
 		}

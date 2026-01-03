@@ -338,6 +338,7 @@ non-numeric strings or invalid values.
 * [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
 * [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
 * [⚡ التعامل مع التزامن في نفطه – Concurrency](./10_concurrency.md)
+* [⏱️ الزمن والنقاط الزمنية في نفطه – Temporal](./11_temporal.md)
 
 ---
 </div>

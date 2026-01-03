@@ -1,23 +1,40 @@
+import groovy.xml.XmlSlurper
+
 plugins {
 	id 'java'
 	id 'idea'
 	id 'checkstyle'
 	id 'com.diffplug.spotless' version '6.21.0'
+	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
+	id 'org.jetbrains.changelog' version '2.5.0'
+	id 'pl.allegro.tech.build.axion-release' version '1.15.0'
+}
+
+scmVersion {
+	tag {
+		prefix = ''
+	}
+	versionIncrementer 'incrementMinor'
+//	versionIncrementer 'incrementPatch'
 }
 
 allprojects {
 	group = 'org.daiitech'
-	version = '0.0.1-SNAPSHOT'
+	version = scmVersion.version
+	repositories {
+		mavenCentral()
+		gradlePluginPortal()
+	}
 }
+
+description = "Naftah Programming Language – Write programs in Arabic naturally, like living in Naftah"
 
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
-}
-
-repositories {
-	mavenCentral()
 }
 
 ext.sharedJvmArgs = [
@@ -111,7 +128,7 @@ tasks.register('javadocAll', Javadoc) {
 	// Output directory
 	destinationDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
 
-	// Reuse your same options
+	// Reuse same options
 	options {
 		encoding = 'UTF-8'
 		charSet = 'UTF-8'
@@ -140,16 +157,31 @@ tasks.register('copyJavadocAll', Copy) {
 	into "$rootDir/docs-site/javadoc"
 }
 
+changelog {
+	version = project.version
+	path = 'CHANGELOG.md'
+	header = '# Changelog'
+	unreleasedTerm = 'Unreleased'
+	keepUnreleasedSection = true
+	repositoryUrl = 'https://github.com/Chakib-DAII/Naftah'
+}
+
 subprojects {
 	apply plugin: 'java'
 	apply plugin: 'idea'
 	apply plugin: 'checkstyle'
 	apply plugin: 'com.diffplug.spotless'
+	apply plugin: 'java-library'
+	apply plugin: 'maven-publish'
+	apply plugin: 'signing'
 
 	java {
 		toolchain {
 			languageVersion = JavaLanguageVersion.of(17)
 		}
+
+		withSourcesJar()
+		withJavadocJar()
 	}
 
 	tasks.withType(JavaCompile).configureEach {
@@ -186,10 +218,6 @@ subprojects {
 			// Show deprecated members in docs
 			addBooleanOption('Xdoclint:none', true)  // disables strict lint checks
 		}
-	}
-
-	repositories {
-		mavenCentral()
 	}
 
 	dependencies {
@@ -231,5 +259,90 @@ subprojects {
 			trimTrailingWhitespace()
 			endWithNewline()
 		}
+	}
+
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				from components.java
+
+				groupId = project.group
+				artifactId = project.name
+				version = project.version
+
+				pom {
+					name = project.name
+					description = "Naftah Programming Language module: ${project.name}"
+					url = "https://github.com/Chakib-DAII/Naftah"
+
+					licenses {
+						license {
+							name = "The Apache License, Version 2.0"
+							url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+						}
+					}
+
+					developers {
+						developer {
+							id = "chakib-daii"
+							name = "Chakib Daii"
+							email = "chakiibdaii@gmail.com"
+						}
+					}
+
+					scm {
+						connection = "scm:git:https://github.com/Chakib-DAII/Naftah.git"
+						developerConnection = "scm:git:ssh://git@github.com:Chakib-DAII/Naftah.git"
+						url = "https://github.com/Chakib-DAII/Naftah"
+					}
+				}
+			}
+		}
+
+		repositories {
+			def m2SettingsFile = new File(System.getProperty("user.home"), ".m2/settings.xml")
+
+			def ossrhServer = null
+			def githubServer = null
+			if (m2SettingsFile.exists()) {
+				def xml = new XmlSlurper().parse(m2SettingsFile)
+				ossrhServer = xml.servers.server.find { it.id.text() == 'ossrh' }
+				githubServer = xml.servers.server.find { it.id.text() == 'github' }
+			}
+
+			// OSSRH / Maven Central
+			maven {
+				name = "ossrh"
+				url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+
+				credentials {
+					username = findProperty("ossrhUsername")
+							?: System.getenv("OSSRH_USERNAME")
+							?: (ossrhServer?.username?.text() ?: "")
+					password = findProperty("ossrhPassword")
+							?: System.getenv("OSSRH_PASSWORD")
+							?: (ossrhServer?.password?.text() ?: "")
+				}
+			}
+
+			// GitHub Packages
+			maven {
+				name = "github"
+				url = uri("https://maven.pkg.github.com/Chakib-DAII/Naftah")
+				credentials {
+					username = findProperty("gprUsername")
+							?: System.getenv("GITHUB_USERNAME")
+							?: (githubServer?.username?.text() ?: "")
+					password = findProperty("gprToken")
+							?: System.getenv("GITHUB_TOKEN")
+							?: (githubServer?.password?.text() ?: "")
+				}
+			}
+		}
+	}
+
+	signing {
+		useGpgCmd()
+		sign publishing.publications.mavenJava
 	}
 }

@@ -13,6 +13,7 @@ import org.daiitech.naftah.parser.provider.script.CaseStatementProvider;
 import org.daiitech.naftah.parser.provider.script.CollectionAccessProvider;
 import org.daiitech.naftah.parser.provider.script.CollectionExpressionProvider;
 import org.daiitech.naftah.parser.provider.script.ConcurrencyProvider;
+import org.daiitech.naftah.parser.provider.script.DateTimeProvider;
 import org.daiitech.naftah.parser.provider.script.DeclarationProvider;
 import org.daiitech.naftah.parser.provider.script.ForStatementProvider;
 import org.daiitech.naftah.parser.provider.script.FunctionCallProvider;
@@ -22,6 +23,7 @@ import org.daiitech.naftah.parser.provider.script.IfStatementProvider;
 import org.daiitech.naftah.parser.provider.script.ImplementationProvider;
 import org.daiitech.naftah.parser.provider.script.ImportStatementProvider;
 import org.daiitech.naftah.parser.provider.script.LogicalExpressionsProvider;
+import org.daiitech.naftah.parser.provider.script.PeriodDurationProvider;
 import org.daiitech.naftah.parser.provider.script.QualifiedNameProvider;
 import org.daiitech.naftah.parser.provider.script.QualifiedObjectAccessProvider;
 import org.daiitech.naftah.parser.provider.script.RepeatStatementProvider;
@@ -294,6 +296,24 @@ public class DefaultNaftahParserVisitorTests {
 							String script,
 							Object expectedValue,
 							NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(DateTimeProvider.class)
+	void dateTimeTests( boolean validScript,
+						String script,
+						Object expectedValue,
+						NaftahBugError expectedNaftahBugError) throws Exception {
+		runTest(validScript, script, expectedValue, expectedNaftahBugError);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(PeriodDurationProvider.class)
+	void periodAndDurationTests(boolean validScript,
+								String script,
+								Object expectedValue,
+								NaftahBugError expectedNaftahBugError) throws Exception {
 		runTest(validScript, script, expectedValue, expectedNaftahBugError);
 	}
 

@@ -79,7 +79,7 @@ nav {
     li {
       a {
         font-weight: 500;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         color: $link-color !important;
         padding: 0.15rem 0.3rem;
         border-radius: 3px;
@@ -283,5 +283,27 @@ footer.site-footer {
   pre {
     font-size: 0.75rem;
   }
+}
+
+.code-block {
+  position: relative;
+  margin: 1em 0;
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+  padding: 0.3em 0.6em;
+  font-size: 0.8em;
+  cursor: pointer;
+  border: none;
+  background: $bg-color;
+  color: $text-color;
+  border-radius: 3px;
+}
+
+.copy-button:hover {
+  background: $footer-bg;
 }
 

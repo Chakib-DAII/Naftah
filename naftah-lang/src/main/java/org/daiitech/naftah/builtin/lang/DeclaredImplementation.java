@@ -42,7 +42,7 @@ public final class DeclaredImplementation extends Declaration {
 	 * Map of functions declared within this implementation.
 	 * Keyed by function name.
 	 */
-	private final Map<String, DeclaredFunction> implementationFunctions;
+	private final Map<String, DeclaredFunction<?>> implementationFunctions;
 
 
 	/**
@@ -56,7 +56,7 @@ public final class DeclaredImplementation extends Declaration {
 	private DeclaredImplementation( int depth,
 									NaftahParser.ImplementationDeclarationContext originalContext,
 									Map<String, DeclaredVariable> objectFields,
-									Map<String, DeclaredFunction> implementationFunctions) {
+									Map<String, DeclaredFunction<?>> implementationFunctions) {
 		super(depth);
 		this.originalContext = originalContext;
 		this.name = originalContext.ID().getText();
@@ -76,7 +76,7 @@ public final class DeclaredImplementation extends Declaration {
 	public static DeclaredImplementation of(int depth,
 											NaftahParser.ImplementationDeclarationContext originalContext,
 											Map<String, DeclaredVariable> objectFields,
-											Map<String, DeclaredFunction> implementationFunctions) {
+											Map<String, DeclaredFunction<?>> implementationFunctions) {
 		return new DeclaredImplementation(depth, originalContext, objectFields, implementationFunctions);
 	}
 
@@ -113,7 +113,7 @@ public final class DeclaredImplementation extends Declaration {
 	 *
 	 * @return the implementation functions map
 	 */
-	public Map<String, DeclaredFunction> getImplementationFunctions() {
+	public Map<String, DeclaredFunction<?>> getImplementationFunctions() {
 		return implementationFunctions;
 	}
 

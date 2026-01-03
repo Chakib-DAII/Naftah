@@ -20,6 +20,8 @@
   url: /language/java-interop
 - title: التزامن
   url: /language/concurrency
+- title: الزمن والتاريخ
+  url: /language/temporal
 - title: تشغيل نفطه
   url: /running-naftah
 - title: التوثيق (جاڤا)

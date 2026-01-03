@@ -1,8 +1,1 @@
-plugins {
-	id 'java-library'
-}
-
-java {
-	withJavadocJar()
-	withSourcesJar()
-}
+description = "Naftah builtin core extensions"

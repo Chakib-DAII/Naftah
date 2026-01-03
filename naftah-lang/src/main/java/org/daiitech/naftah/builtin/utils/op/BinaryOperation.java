@@ -5,6 +5,8 @@ import java.util.Objects;
 import org.daiitech.naftah.builtin.lang.DynamicNumber;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.StringUtils;
@@ -202,6 +204,22 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
+		protected Object apply(ArabicTemporalPoint left, ArabicTemporalAmount right) {
+			return left.plus(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+			return left.plus(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		protected Object handleFalsy(Object left, Object right) {
 			if (left instanceof String || right instanceof String) {
 				return String.valueOf(left) + right;
@@ -249,6 +267,22 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected String apply(String left, String right) {
 			return StringUtils.subtract(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalPoint left, ArabicTemporalAmount right) {
+			return left.minus(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+			return left.minus(right);
 		}
 
 		/**
@@ -547,6 +581,22 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
+		protected Object apply(ArabicTemporalPoint left, ArabicTemporalPoint right) {
+			return left.greaterThan(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+			return left.greaterThan(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		protected Object handleFalsy(Object left, Object right) {
 			return isTruthy(left);
 		}
@@ -592,6 +642,22 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected Boolean apply(String left, String right) {
 			return StringUtils.compare(left, right) >= 0;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalPoint left, ArabicTemporalPoint right) {
+			return left.greaterThanEquals(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+			return left.greaterThanEquals(right);
 		}
 
 		/**
@@ -649,6 +715,22 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
+		protected Object apply(ArabicTemporalPoint left, ArabicTemporalPoint right) {
+			return left.lessThan(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+			return left.lessThan(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		protected Object handleFalsy(Object left, Object right) {
 			return isTruthy(right);
 		}
@@ -700,6 +782,22 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
+		protected Object apply(ArabicTemporalPoint left, ArabicTemporalPoint right) {
+			return left.lessThanEquals(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+			return left.lessThanEquals(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		protected Object handleFalsy(Object left, Object right) {
 			return isTruthy(right);
 		}
@@ -711,6 +809,19 @@ public enum BinaryOperation implements Operation {
 	 * Supports numeric, boolean, character, and string comparisons with necessary conversions.
 	 */
 	EQUALS("EQ") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Boolean apply(Object left, Object right) {
+			try {
+				return (Boolean) super.apply(left, right);
+			}
+			catch (Throwable ignored) {
+				return left.equals(right);
+			}
+		}
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -750,6 +861,22 @@ public enum BinaryOperation implements Operation {
 		 * {@inheritDoc}
 		 */
 		@Override
+		protected Object apply(ArabicTemporalPoint left, ArabicTemporalPoint right) {
+			return left.isEquals(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+			return left.isEquals(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
 		protected Object handleFalsy(Object left, Object right) {
 			if (NaN.isNaN(left) || NaN.isNaN(right)) {
 				return false;
@@ -770,6 +897,19 @@ public enum BinaryOperation implements Operation {
 	 * Supports numeric, boolean, character, and string comparisons with necessary conversions.
 	 */
 	NOT_EQUALS("NEQ") {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Boolean apply(Object left, Object right) {
+			try {
+				return (Boolean) super.apply(left, right);
+			}
+			catch (Throwable ignored) {
+				return !left.equals(right);
+			}
+		}
+
 		/**
 		 * {@inheritDoc}
 		 */
@@ -803,6 +943,22 @@ public enum BinaryOperation implements Operation {
 		@Override
 		protected Boolean apply(String left, String right) {
 			return !StringUtils.equals(left, right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalPoint left, ArabicTemporalPoint right) {
+			return left.notEquals(right);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+			return left.notEquals(right);
 		}
 
 		/**
@@ -1627,6 +1783,22 @@ public enum BinaryOperation implements Operation {
 			return apply(String.valueOf(character), s);
 		}
 
+		// ArabicTemporalPoint vs ArabicTemporalAmount
+		if (left instanceof ArabicTemporalPoint arabicTemporalPoint && right instanceof ArabicTemporalAmount arabicTemporalAmount) {
+			return apply(arabicTemporalPoint, arabicTemporalAmount);
+		}
+
+		// ArabicTemporalPoint vs ArabicTemporalPoint
+		if (left instanceof ArabicTemporalPoint arabicTemporalPoint && right instanceof ArabicTemporalPoint arabicTemporalPoint1) {
+			return apply(arabicTemporalPoint, arabicTemporalPoint1);
+		}
+
+		// ArabicTemporalAmount vs ArabicTemporalAmount
+		if (left instanceof ArabicTemporalAmount arabicTemporalAmount && right instanceof ArabicTemporalAmount arabicTemporalAmount1) {
+			return apply(arabicTemporalAmount, arabicTemporalAmount1);
+		}
+
+
 		throw BinaryOperation.newNaftahBugError(this, left, right);
 	}
 
@@ -1806,6 +1978,43 @@ public enum BinaryOperation implements Operation {
 	 * @return the result of the operation
 	 */
 	protected abstract Object apply(String left, String right);
+
+	/**
+	 * Applies the operation to an {@link ArabicTemporalPoint} and an
+	 * {@link ArabicTemporalAmount}.
+	 *
+	 * @param left  the left ArabicTemporalPoint operand
+	 * @param right the right ArabicTemporalAmount operand
+	 * @return the result of the operation
+	 * @throws NaftahBugError if this operation is not supported
+	 */
+	protected Object apply(ArabicTemporalPoint left, ArabicTemporalAmount right) {
+		throw BinaryOperation.newNaftahBugError(this, left, right);
+	}
+
+	/**
+	 * Applies the operation to two {@link ArabicTemporalPoint} operands.
+	 *
+	 * @param left  the left ArabicTemporalPoint operand
+	 * @param right the right ArabicTemporalPoint operand
+	 * @return the result of the operation
+	 * @throws NaftahBugError if this operation is not supported
+	 */
+	protected Object apply(ArabicTemporalPoint left, ArabicTemporalPoint right) {
+		throw BinaryOperation.newNaftahBugError(this, left, right);
+	}
+
+	/**
+	 * Applies the operation to two {@link ArabicTemporalAmount} operands.
+	 *
+	 * @param left  the left ArabicTemporalAmount operand
+	 * @param right the right ArabicTemporalAmount operand
+	 * @return the result of the operation
+	 * @throws NaftahBugError if this operation is not supported
+	 */
+	protected Object apply(ArabicTemporalAmount left, ArabicTemporalAmount right) {
+		throw BinaryOperation.newNaftahBugError(this, left, right);
+	}
 
 	/**
 	 * Applies a logical operation where the left operand is a {@link Number}.

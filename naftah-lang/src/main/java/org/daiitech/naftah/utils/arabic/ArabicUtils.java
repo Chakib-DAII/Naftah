@@ -340,7 +340,6 @@ public final class ArabicUtils {
 			DecimalFormatSymbols symbols = new DecimalFormatSymbols(ARABIC);
 
 			if (Boolean.getBoolean(ARABIC_INDIC_PROPERTY)) {
-//			TODO : not working; check it
 				symbols
 						.setDigitStrings(new String[]{
 														"٠",
@@ -550,7 +549,10 @@ public final class ArabicUtils {
 	 * @return the shaped and reordered text suitable for visual rendering in terminals
 	 */
 	public static String shape(String input) {
-		return applyFunction(input, ArabicUtils::doShape);
+		if (shouldReshape()) {
+			return applyFunction(input, ArabicUtils::doShape);
+		}
+		return input;
 	}
 
 	/**
@@ -560,7 +562,7 @@ public final class ArabicUtils {
 	 * @return the shaped and reordered text
 	 * @throws ArabicShapingException if an error occurs during shaping
 	 */
-	public static String doShape(String input) throws ArabicShapingException {
+	private static String doShape(String input) throws ArabicShapingException {
 		ArabicShaping shaper = new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.TEXT_DIRECTION_VISUAL_RTL);
 		String shaped = shaper.shape(input);
 		Bidi bidi = new Bidi(shaped, Bidi.DIRECTION_RIGHT_TO_LEFT);
@@ -588,7 +590,7 @@ public final class ArabicUtils {
 	 * @param print if true, prints the padded lines; else returns them as a single string
 	 * @return the padded text if {@code print} is false; otherwise null
 	 */
-	public static String doPadText(String input, boolean print) {
+	private static String doPadText(String input, boolean print) {
 		int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
 		int padding = terminalWidth - input.length();
 		if (padding < 0) {
@@ -597,13 +599,13 @@ public final class ArabicUtils {
 			return print ? null : result;
 		}
 		// add padding to align text
-		String result = addPadding(input, padding);
+		input = addPadding(input, padding);
 		if (print) {
-			System.out.println(result);
+			System.out.println(input);
 			return null;
 		}
 		else {
-			return result;
+			return input;
 		}
 	}
 
@@ -645,7 +647,7 @@ public final class ArabicUtils {
 	 * @param print         if true, prints padded lines; otherwise returns them as a single string
 	 * @return the padded text as a string if {@code print} is false; otherwise null
 	 */
-	public static String doPadText(String input, int terminalWidth, boolean print) {
+	private static String doPadText(String input, int terminalWidth, boolean print) {
 		String[] words = input.split("\\s+");
 		StringBuilder currentLine = new StringBuilder();
 		List<String> lines = print ? null : new ArrayList<>();
@@ -695,7 +697,7 @@ public final class ArabicUtils {
 	 * @return a {@link String} with added padding spaces to align the text,
 	 *         or the original text if padding cannot be applied
 	 */
-	public static String addPadding(StringBuilder inputSb, int terminalWidth) {
+	private static String addPadding(StringBuilder inputSb, int terminalWidth) {
 		try {
 			int padding = terminalWidth - inputSb.length();
 			// add padding to align text
@@ -716,13 +718,8 @@ public final class ArabicUtils {
 	 * @param padding the number of spaces to add
 	 * @return the padded string
 	 */
-	public static String addPadding(String input, int padding) {
-		// TODO: this is not needed in windows after rechecking.
-		// return " ".repeat(padding) + input;
-		// TODO: it works like this in windows (maybe Posix systems still need extra
-		// fixes, like
-		// above)
-		return containsArabic(input) ? input + " ".repeat(padding) : " ".repeat(padding) + input;
+	private static String addPadding(String input, int padding) {
+		return (shouldReshape() && containsArabic(input)) ? input + " ".repeat(padding) : " ".repeat(padding) + input;
 	}
 
 	/**
@@ -743,7 +740,7 @@ public final class ArabicUtils {
 	 * @return a list containing the resulting substrings, in order
 	 * @throws IllegalArgumentException if {@code size} is less than 1
 	 */
-	public static List<String> chunk(String input, int size) {
+	private static List<String> chunk(String input, int size) {
 		List<String> chunks = new ArrayList<>();
 
 		for (int i = 0; i < input.length(); i += size) {
