@@ -1490,7 +1490,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 															currentContext.depth)) {
 									throw newNaftahBugExistentFunctionError(functionName);
 								}
-								DeclaredFunction declaredFunction = DeclaredFunction
+								DeclaredFunction<?> declaredFunction = DeclaredFunction
 										.of(currentContext.depth,
 											functionDeclarationContext,
 											implementationName);
@@ -3551,7 +3551,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.of(depth,
 											implementationDeclarationContext,
 											objectFields,
-											(Map<String, DeclaredFunction>) defaultNaftahParserVisitor
+											(Map<String, DeclaredFunction<?>>) defaultNaftahParserVisitor
 													.visit(implementationDeclarationContext.implementationFunctions())
 										);
 
@@ -3582,7 +3582,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																		.ID()
 																		.getText();
 
-																var result = new LinkedHashMap<String, DeclaredFunction>();
+																var result = new LinkedHashMap<String, DeclaredFunction<?>>();
 
 																for (   int i = 0;
 																		i < implementationFunctionsContext
@@ -3597,7 +3597,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																	if (result.containsKey(functionName)) {
 																		throw newNaftahBugExistentFunctionError(implementationName + QUALIFIED_CALL_SEPARATOR + functionName);
 																	}
-																	var function = (DeclaredFunction) defaultNaftahParserVisitor
+																	var function = (DeclaredFunction<?>) defaultNaftahParserVisitor
 																			.visit(functionDeclarationContext);
 																	result.put(functionName, function);
 																}
@@ -4974,7 +4974,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									if (currentContext.containsFunction(functionName, -1)) {
 										Object function = currentContext.getFunction(functionName, false).getRight();
-										if (function instanceof DeclaredFunction declaredFunction && declaredFunction
+										if (function instanceof DeclaredFunction<?> declaredFunction && declaredFunction
 												.isAsync()) {
 											throw new NaftahBugError(
 																		"""
