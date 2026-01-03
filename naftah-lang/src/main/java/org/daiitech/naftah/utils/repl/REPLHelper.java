@@ -516,7 +516,7 @@ public final class REPLHelper {
 		AttributedString prompt = MULTILINE_IS_ACTIVE ?
 				new AttributedString(RTL_MULTILINE_PROMPT) :
 				new AttributedString(RTL_PROMPT);
-		AttributedString delimiter = new AttributedString(" ");
+		AttributedString delimiter = new AttributedString("");
 		if (shouldReshape()) {
 			int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
 			int padding = Math.max(0, width - contentWidth);
