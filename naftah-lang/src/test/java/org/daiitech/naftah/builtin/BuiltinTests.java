@@ -29,7 +29,6 @@ import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 class BuiltinTests {
 
@@ -92,7 +91,7 @@ class BuiltinTests {
 	void printTest(Object input, Object expectedOutput) {
 		Builtin.print(input);
 		String output = out.toString(StandardCharsets.UTF_8).trim();
-		if (shouldReshape() && containsArabic(output)) {
+		if (containsArabic(output)) {
 			output = NaftahParserHelper.NORMALIZER.normalize(shape(output));
 		}
 		assertEquals(output, expectedOutput);

@@ -49,6 +49,7 @@ public abstract class TypeReference<T> {
 	 * @return a {@code TypeReference} representing the parameterized type
 	 */
 	public static TypeReference<?> dynamicParameterizedType(Class<?> rawType, JavaType... params) {
+		//noinspection NullableProblems
 		ParameterizedType pt = new ParameterizedType() {
 			@Override
 			public Type[] getActualTypeArguments() {

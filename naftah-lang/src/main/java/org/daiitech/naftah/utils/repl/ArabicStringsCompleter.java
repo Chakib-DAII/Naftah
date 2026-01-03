@@ -7,7 +7,6 @@ import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.utils.AttributedString;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 /**
  * A custom {@link StringsCompleter} implementation that supports shaping Arabic text
@@ -38,13 +37,11 @@ public class ArabicStringsCompleter extends StringsCompleter {
 		this.candidates = new ArrayList<>();
 		for (String string : strings) {
 			String display = string;
-			if (shouldReshape()) {
-				try {
-					display = shape(display);
-				}
-				catch (Exception e) {
-					// do nothing
-				}
+			try {
+				display = shape(display);
+			}
+			catch (Exception e) {
+				// do nothing
 			}
 			candidates
 					.add(new Candidate(

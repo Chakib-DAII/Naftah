@@ -3,7 +3,8 @@
     <option name="MAIN_CLASS_NAME" value="org.daiitech.naftah.Naftah" />
     <module name="naftah.naftah-lang.main" />
     <option name="PROGRAM_PARAMETERS" value="-h" />
-    <option name="VM_PARAMETERS" value="-Dfile.encoding=UTF-8 " />
+    <option name="VM_PARAMETERS" value="-Dfile.encoding=UTF-8 -Dnaftah.word.chunk.active=false" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/naftah-lang" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.daiitech.naftah.*" />

@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
 import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 
 /**
  * An {@link OutputStream} wrapper that transforms Arabic text for proper visual display
@@ -73,7 +72,7 @@ public class ArabicOutputTransformer extends OutputStream {
 	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
 		String raw = new String(b, off, len, StandardCharsets.UTF_8);
-		if (shouldReshape() && containsArabic(raw)) {
+		if (containsArabic(raw)) {
 			try {
 				String display = shape(raw);
 

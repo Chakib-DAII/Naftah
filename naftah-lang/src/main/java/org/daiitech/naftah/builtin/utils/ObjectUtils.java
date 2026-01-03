@@ -26,6 +26,15 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
+import org.daiitech.naftah.builtin.time.ArabicDate;
+import org.daiitech.naftah.builtin.time.ArabicDateTime;
+import org.daiitech.naftah.builtin.time.ArabicDuration;
+import org.daiitech.naftah.builtin.time.ArabicPeriod;
+import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
+import org.daiitech.naftah.builtin.time.ArabicTemporal;
+import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
+import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
 import org.daiitech.naftah.builtin.utils.concurrent.Channel;
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
@@ -461,6 +470,24 @@ public final class ObjectUtils {
 		if (hasChild(builtInContext.STRING_TYPE())) {
 			return JavaType.of(String.class);
 		}
+		if (hasChild(builtInContext.DURATION())) {
+			return JavaType.of(ArabicDuration.class);
+		}
+		if (hasChild(builtInContext.PERIOD())) {
+			return JavaType.of(ArabicPeriod.class);
+		}
+		if (hasChild(builtInContext.PERIOD_DURATION())) {
+			return JavaType.of(ArabicPeriodWithDuration.class);
+		}
+		if (hasChild(builtInContext.DATE())) {
+			return JavaType.of(ArabicDate.class);
+		}
+		if (hasChild(builtInContext.TIME())) {
+			return JavaType.of(ArabicTime.class);
+		}
+		if (hasChild(builtInContext.DATE_TIME())) {
+			return JavaType.of(ArabicDateTime.class);
+		}
 		return JavaType.ofObject();
 	}
 
@@ -651,6 +678,36 @@ public final class ObjectUtils {
 												org.daiitech.naftah.parser.NaftahLexer.ACTOR,
 												false);
 			}
+			if (javaType.isOfType(ArabicDuration.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.DURATION,
+												false);
+			}
+			if (javaType.isOfType(ArabicPeriod.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.PERIOD,
+												false);
+			}
+			if (javaType.isOfType(ArabicPeriodWithDuration.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.PERIOD_DURATION,
+												false);
+			}
+			if (javaType.isOfType(ArabicDate.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.DATE,
+												false);
+			}
+			if (javaType.isOfType(ArabicTime.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.TIME,
+												false);
+			}
+			if (javaType.isOfType(ArabicDateTime.class)) {
+				return getFormattedTokenSymbols(vocabulary,
+												org.daiitech.naftah.parser.NaftahLexer.DATE_TIME,
+												false);
+			}
 			if (javaType.isMap()) {
 				List<JavaType> params = javaType.getTypeParameters();
 				var keyType = params.get(0);
@@ -745,7 +802,7 @@ public final class ObjectUtils {
 		}
 		Class<?> cls = obj.getClass();
 		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class || cls == Task.class || cls == Channel.class || Actor.class
-				.isAssignableFrom(cls);
+				.isAssignableFrom(cls) || ArabicTemporal.class.isAssignableFrom(cls);
 	}
 
 	/**
@@ -896,9 +953,7 @@ public final class ObjectUtils {
 			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(pair.get(0))) {
 				return false;
 			}
-			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(pair.get(1))) {
-				return false;
-			}
+			return isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(pair.get(1));
 		}
 
 
@@ -909,9 +964,7 @@ public final class ObjectUtils {
 			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(1))) {
 				return false;
 			}
-			if (!isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(2))) {
-				return false;
-			}
+			return isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(triple.get(2));
 		}
 
 		// Map with simple keys and values
@@ -963,7 +1016,7 @@ public final class ObjectUtils {
 
 		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
 		if ((NaN.isNaN(left) || NaN.isNaN(right)) || (None.isNone(left) || None
-				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String)) {
+				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String) || (left instanceof ArabicTemporalPoint && right instanceof ArabicTemporalAmount) || (left instanceof ArabicTemporalPoint && right instanceof ArabicTemporalPoint) || (left instanceof ArabicTemporalAmount && right instanceof ArabicTemporalAmount)) {
 			return operation.apply(left, right);
 		}
 
@@ -1324,6 +1377,27 @@ public final class ObjectUtils {
 		else {
 			return latinNumberToArabicString(number);
 		}
+	}
+
+	/**
+	 * Pads the given string with leading zeros to ensure it reaches the specified length.
+	 *
+	 * <p>If the input string is shorter than the desired length, zeros are added at the beginning.
+	 * If the string is already equal to or longer than the specified length, it is returned unchanged.
+	 *
+	 * <p>Example:
+	 * <pre>
+	 * padZero("5", 2) // returns "05"
+	 * padZero("123", 5) // returns "00123"
+	 * padZero("42", 1) // returns "42"
+	 * </pre>
+	 *
+	 * @param str    the input string to pad
+	 * @param length the desired minimum length of the resulting string
+	 * @return the input string left-padded with zeros to the specified length
+	 */
+	public static String padZero(String str, int length) {
+		return "0".repeat(Math.max(0, length - str.length())) + str;
 	}
 
 	/**

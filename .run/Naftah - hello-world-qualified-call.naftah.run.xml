@@ -3,7 +3,8 @@
     <option name="MAIN_CLASS_NAME" value="org.daiitech.naftah.Naftah" />
     <module name="naftah.naftah-lang.main" />
     <option name="PROGRAM_PARAMETERS" value=".\learn-by-example\hello-world-qualified-call.naftah" />
-    <option name="VM_PARAMETERS" value="-Dfile.encoding=UTF-8 -Djava.util.logging.config.file=logging.properties -DscanClassPath=true" />
+    <option name="VM_PARAMETERS" value="-Dfile.encoding=UTF-8 -Dnaftah.word.chunk.active=false -Djava.util.logging.config.file=logging.properties -DscanClassPath=true" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/naftah-lang" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.daiitech.naftah.*" />

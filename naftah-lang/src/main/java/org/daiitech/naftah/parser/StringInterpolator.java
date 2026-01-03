@@ -149,9 +149,6 @@ public final class StringInterpolator {
 	 * @return the interpolated string
 	 */
 	public static String interpolate(String template, Function<String, Object> replacementFunction) {
-		// TODO: this is not needed in windows after rechecking.
-		// template = POSSIBLE_SHAPING_FUNCTION.apply(template);
-
 		Matcher matcher = getMatcher(template).reset();
 		AtomicReference<StringBuffer> result = new AtomicReference<>(new StringBuffer());
 
@@ -216,7 +213,7 @@ public final class StringInterpolator {
 	 */
 	public static String cleanInput(String input) {
 		// Replace all string delimiter characters from original parsed
-		return input.replaceAll("['\"«»]", "");
+		return input.replaceAll("[\"«»]", "");
 	}
 
 	/**

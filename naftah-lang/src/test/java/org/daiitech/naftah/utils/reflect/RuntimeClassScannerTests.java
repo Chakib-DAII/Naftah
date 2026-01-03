@@ -58,7 +58,7 @@ public class RuntimeClassScannerTests {
 				.scanPackageCLasses(
 									"org.daiitech.naftah.builtin.functions");
 		assertNotNull(classNames);
-		assertEquals(4, classNames.size());
+		assertEquals(5, classNames.size());
 
 	}
 

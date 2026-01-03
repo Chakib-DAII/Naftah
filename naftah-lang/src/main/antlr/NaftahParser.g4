@@ -79,7 +79,7 @@ singleAssignment: ID | qualifiedName | qualifiedObjectAccess | collectionAccess;
 multipleAssignments: singleAssignment ((COMMA | SEMI) singleAssignment)+;
 
 // Function declaration: Can have parameters and return values
-functionDeclaration: ASYNC? FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? block;
+functionDeclaration: ASYNC? FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? (block | (statement END?));
 
 // Function declaration parameter list: parameterDeclarations separated by commas or semicolons
 parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclaration)*;
@@ -307,7 +307,7 @@ value: NUMBER #numberValue
      | FALSE #falseValue
      | NULL #nullValue
      | CHARACTER #characterValue
-     | (RAW | BYTE_ARRAY)? STRING #stringValue
+     | (RAW | TEMPORAL_POINT | TEMPORAL_AMOUNT | BYTE_ARRAY)? STRING #stringValue
      | NAN #nanValue
      | ID #idValue
      ;
@@ -345,6 +345,12 @@ builtIn: BOOLEAN
     |   BIG_DECIMAL
     |   VAR_NUMBER
     |   STRING_TYPE
+    |   DURATION
+    |   PERIOD
+    |   PERIOD_DURATION
+    |   DATE
+    |   TIME
+    |   DATE_TIME
     ;
 
 // QualifiedName: ID separated by COLONs

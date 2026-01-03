@@ -8,6 +8,8 @@ plugins {
 	id 'signing'
 }
 
+description = "Naftah programming language core implementation"
+
 tasks.withType(JavaCompile).configureEach {
 	options.compilerArgs += [
 			'--enable-preview',
@@ -36,6 +38,10 @@ generateGrammarSource {
 }
 
 compileJava.dependsOn generateGrammarSource
+
+tasks.named('sourcesJar', Jar) {
+	dependsOn(tasks.named('generateGrammarSource'))
+}
 
 sourceSets {
 	generated {
@@ -662,63 +668,3 @@ tasks.register('exportNaftahFunctions') {
         ''')
 	}
 }
-
-//TODO: create maven central account
-// https://central.sonatype.org/register/central-portal/
-// https://central.sonatype.com/
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-
-			// Optional: add metadata
-			pom {
-				name = 'Naftah'
-				description = 'Naftah Programming Language : Let\'s write programs in Arabic, like living in Naftah'
-				url = 'https://github.com/Chakib-DAII/Naftah'
-				licenses {
-					license {
-						name = 'The Apache License, Version 2.0'
-						url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-					}
-				}
-				developers {
-					developer {
-						id = 'yourid'
-						name = 'Your Name'
-						email = 'you@example.com'
-					}
-				}
-				scm {
-					connection = 'scm:git:git://github.com/yourusername/yourlang.git'
-					developerConnection = 'scm:git:ssh://github.com/yourusername/yourlang.git'
-					url = 'https://github.com/yourusername/yourlang'
-				}
-			}
-		}
-	}
-	repositories {
-		maven {
-			name = 'MavenCentral'  // or your repo
-			url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'  // For Maven Central
-			credentials {
-				username = project.findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
-				password = project.findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
-			}
-		}
-	}
-}
-
-//TODO: add signing
-//export GPG_PRIVATE_KEY=$(gpg --armor --export-secret-keys YOUR_KEY_ID)
-//export GPG_PASSPHRASE=yourPassphrase
-
-//signing {
-//	// Tell Gradle to sign the Maven publication
-
-//	useInMemoryPgpKeys(
-//		System.getenv("GPG_PRIVATE_KEY"),
-//		System.getenv("GPG_PASSPHRASE")
-//	)
-//	sign publishing.publications.mavenJava
-//}

@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -51,6 +53,7 @@ import com.vladsch.flexmark.ast.ThematicBreak;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 
+import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
@@ -97,22 +100,29 @@ public final class REPLHelper {
 	 */
 	public static final String REGEX_COMMAND = "[:]?[\\p{L}]+[\\p{L}0-9_-]*";
 	/**
+	 * Default character that can be used to escape other characters.
+	 */
+	public static final char DEFAULT_ESCAPE_CHAR = '\\';
+	/**
 	 * Characters that can be used to escape other characters.
 	 */
-	public static final char[] ESCAPE_CHARS = new char[]{'N', '\\'};
+	public static final char[] ESCAPE_CHARS = new char[]{'N', DEFAULT_ESCAPE_CHAR};
 	/**
 	 * Set form of the escape characters for faster lookup.
 	 */
-	public static final Set<Character> ESCAPE_CHAR_SET = Set.of('N', '\\');
+	public static final Set<Character> ESCAPE_CHAR_SET = Set.of('N', DEFAULT_ESCAPE_CHAR);
 	/**
 	 * Regex pattern for matching escape characters or escape + newline.
 	 */
-	public static final String ESCAPE_CHARS_REGEX = String
-			.join(  "|",
-					ESCAPE_CHAR_SET
-							.stream()
-							.flatMap(character -> Stream.of(String.valueOf(character), character + "\n"))
-							.toArray(String[]::new));
+	public static final String ESCAPE_CHARS_REGEX = ESCAPE_CHAR_SET
+			.stream()
+			.flatMap(c -> Stream
+					.of(
+						Pattern.quote(String.valueOf(c)),
+						Pattern.quote(c + "\n")
+					))
+			.collect(Collectors.joining("|"));
+
 	/**
 	 * Quotation characters allowed in the REPL.
 	 */
@@ -124,7 +134,7 @@ public final class REPLHelper {
 	/**
 	 * Public RTL prompt with optional reshaping for display.
 	 */
-	public static final String RTL_PROMPT = shouldReshape() ? shape(RTL_PROMPT_VALUE) : RTL_PROMPT_VALUE;
+	public static final String RTL_PROMPT = shape(RTL_PROMPT_VALUE);
 	/**
 	 * Right-to-left multiline prompt marker value.
 	 */
@@ -132,9 +142,7 @@ public final class REPLHelper {
 	/**
 	 * Public RTL multiline prompt with optional reshaping for display.
 	 */
-	public static final String RTL_MULTILINE_PROMPT = shouldReshape() ?
-			shape(RTL_MULTILINE_PROMPT_VALUE) :
-			RTL_MULTILINE_PROMPT_VALUE;
+	public static final String RTL_MULTILINE_PROMPT = shape(RTL_MULTILINE_PROMPT_VALUE);
 	/**
 	 * The raw prompt message (in Arabic) used during right-to-left (RTL) pagination.
 	 * <p>
@@ -152,9 +160,7 @@ public final class REPLHelper {
 	 * uses a reshaped (visually adjusted) version of {@link #RTL_PAGINATION_PROMPT_VALUE}.
 	 * Otherwise, it falls back to the original raw form.
 	 */
-	public static final String RTL_PAGINATION_PROMPT = shouldReshape() ?
-			shape(RTL_PAGINATION_PROMPT_VALUE) :
-			RTL_PAGINATION_PROMPT_VALUE;
+	public static final String RTL_PAGINATION_PROMPT = shape(RTL_PAGINATION_PROMPT_VALUE);
 	/**
 	 * Command name for copying text to the clipboard.
 	 */
@@ -176,6 +182,10 @@ public final class REPLHelper {
 	 * Indicates if multiline mode is active in the REPL.
 	 */
 	public static boolean MULTILINE_IS_ACTIVE = false;
+	/**
+	 * Indicates if a text was just pasted to the REPL.
+	 */
+	public static boolean TEXT_PASTE_DETECTED = false;
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -332,6 +342,8 @@ public final class REPLHelper {
 	 * @param reader the {@link LineReader} to configure with custom key bindings and clipboard widgets
 	 */
 	public static void setupKeyBindingsConfig(LineReader reader) {
+		reader.option(LineReader.Option.DISABLE_EVENT_EXPANSION, true);
+
 		KeyMap<Binding> keyMap = reader.getKeyMaps().get(LineReader.MAIN);
 
 		// Flip Left and Right arrow key bindings
@@ -362,8 +374,14 @@ public final class REPLHelper {
 
 		// Paste from clipboard into buffer widget
 		reader.getWidgets().put(PASTE_FROM_CLIPBOARD_COMMAND, () -> {
+			TEXT_PASTE_DETECTED = true;
 			String text = pasteFromClipboard();
-			reader.getBuffer().write(text);  // inserts at cursor
+			if (Boolean.getBoolean(INSIDE_REPL_PROPERTY)) {
+				text = processPastedText(text);
+			}
+			if (!text.isBlank()) {
+				reader.getBuffer().write(text);  // inserts at cursor
+			}
 			return true;
 		});
 
@@ -382,6 +400,44 @@ public final class REPLHelper {
 		keyMap.bind(new Reference(LineReader.COPY_REGION_AS_KILL), KeyMap.alt('k'));
 		// Alt+y = paste (yank)
 		keyMap.bind(new Reference(LineReader.YANK), KeyMap.alt('y'));
+	}
+
+	/**
+	 * Cleans and escapes the input string for proper handling in the REPL or syntax highlighting.
+	 * <p>
+	 * The method performs the following steps:
+	 * <ul>
+	 * <li>Removes block comments enclosed in <code>---* ... *---</code>.</li>
+	 * <li>Removes single-line comments starting with <code>---</code>.</li>
+	 * <li>Removes empty or whitespace-only lines.</li>
+	 * <li>Prepends each remaining line with a space followed by the default escape character
+	 * and appends a newline character.</li>
+	 * </ul>
+	 * This is useful to sanitize user input while preserving line separation and escaping for
+	 * further processing, such as syntax highlighting or multi-line pasting.
+	 *
+	 * @param input the raw input string that may contain comments, empty lines, and unescaped characters
+	 * @return a cleaned and escaped string where all comments and empty lines are removed,
+	 *         and remaining lines are prepended with the escape character and terminated with a newline
+	 */
+	public static String processPastedText(String input) {
+		// Remove block comments (---* ... *---)
+		String withoutBlockComments = input.replaceAll("(?s)---\\*.*?\\*---", "");
+
+		// Remove line comments (--- ...)
+		String withoutLineComments = withoutBlockComments.replaceAll("---.*", "");
+
+		// Split into lines to remove empty or whitespace-only lines
+		StringBuilder cleaned = new StringBuilder();
+		for (String line : withoutLineComments.split("\\r?\\n")) {
+			if (line.trim().isEmpty()) {
+				continue;  // skip empty lines
+			}
+			cleaned.append(" " + DEFAULT_ESCAPE_CHAR).append(line).append("\n");
+		}
+
+		// Return final cleaned, escaped string
+		return cleaned.toString();
 	}
 
 	/**
@@ -457,13 +513,18 @@ public final class REPLHelper {
 	 * @return a right-aligned {@link AttributedString}
 	 */
 	public static AttributedString rightAlign(AttributedString str, int width) {
-		int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
-		int padding = Math.max(0, width - contentWidth);
-		AttributedString spacePad = new AttributedString(" ".repeat(padding));
 		AttributedString prompt = MULTILINE_IS_ACTIVE ?
 				new AttributedString(RTL_MULTILINE_PROMPT) :
 				new AttributedString(RTL_PROMPT);
-		return AttributedString.join(new AttributedString(""), spacePad, str, prompt);
+		AttributedString delimiter = new AttributedString("");
+		if (shouldReshape()) {
+			int contentWidth = str.columnLength() + (MULTILINE_IS_ACTIVE ? 12 : 8); // text - prompt length
+			int padding = Math.max(0, width - contentWidth);
+			AttributedString spacePad = new AttributedString(" ".repeat(padding));
+
+			return AttributedString.join(delimiter, spacePad, str, prompt);
+		}
+		return AttributedString.join(delimiter, prompt, str);
 	}
 
 	/**

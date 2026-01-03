@@ -33,6 +33,8 @@ import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.lang.Result;
+import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
@@ -47,6 +49,7 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.parser.time.ArabicDateParserHelper;
 import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.daiitech.naftah.utils.reflect.type.TypeReference;
@@ -1487,7 +1490,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 															currentContext.depth)) {
 									throw newNaftahBugExistentFunctionError(functionName);
 								}
-								DeclaredFunction declaredFunction = DeclaredFunction
+								DeclaredFunction<?> declaredFunction = DeclaredFunction
 										.of(currentContext.depth,
 											functionDeclarationContext,
 											implementationName);
@@ -3548,7 +3551,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.of(depth,
 											implementationDeclarationContext,
 											objectFields,
-											(Map<String, DeclaredFunction>) defaultNaftahParserVisitor
+											(Map<String, DeclaredFunction<?>>) defaultNaftahParserVisitor
 													.visit(implementationDeclarationContext.implementationFunctions())
 										);
 
@@ -3579,7 +3582,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																		.ID()
 																		.getText();
 
-																var result = new LinkedHashMap<String, DeclaredFunction>();
+																var result = new LinkedHashMap<String, DeclaredFunction<?>>();
 
 																for (   int i = 0;
 																		i < implementationFunctionsContext
@@ -3594,7 +3597,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 																	if (result.containsKey(functionName)) {
 																		throw newNaftahBugExistentFunctionError(implementationName + QUALIFIED_CALL_SEPARATOR + functionName);
 																	}
-																	var function = (DeclaredFunction) defaultNaftahParserVisitor
+																	var function = (DeclaredFunction<?>) defaultNaftahParserVisitor
 																			.visit(functionDeclarationContext);
 																	result.put(functionName, function);
 																}
@@ -4297,17 +4300,58 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, stringValueContext) -> {
 								String value = stringValueContext.STRING().getText();
 								Object result;
-								if (Objects.isNull(stringValueContext.RAW()) && Objects
-										.isNull(stringValueContext.BYTE_ARRAY())) {
-									result = StringInterpolator.process(value, currentContext);
+								if (Objects.nonNull(stringValueContext.RAW())) {
+									result = StringInterpolator.cleanInput(value);
 								}
 								else {
-									value = StringInterpolator.cleanInput(value);
-									if (Objects.nonNull(stringValueContext.BYTE_ARRAY())) {
-										result = value.getBytes(StandardCharsets.UTF_8);
+									result = value = StringInterpolator.process(value, currentContext);
+									if (Objects.nonNull(stringValueContext.TEMPORAL_POINT())) {
+										try {
+											result = ArabicDateParserHelper.run(value, ArabicTemporalPoint.class);
+										}
+										catch (Throwable throwable) {
+											throw new NaftahBugError(   """
+																		فشل تحليل النقطة الزمنية: '%s'
+																		الرجاء استخدام صيغة مشابهة للأمثلة التالية:
+																		٣٠ أكتوبر ٢٠٢٢ بالتقويم الميلادي ٢٢:١٥ بتوقيت تونس
+																		صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ بتوقيت بيروت
+																		"""
+																				.formatted(value),
+																		throwable,
+																		stringValueContext.getStart().getLine(),
+																		stringValueContext
+																				.getStart()
+																				.getCharPositionInLine());
+										}
 									}
-									else {
-										result = value;
+									else if (Objects.nonNull(stringValueContext.TEMPORAL_AMOUNT())) {
+										try {
+											result = ArabicDateParserHelper.run(value, ArabicTemporalAmount.class);
+										}
+										catch (Throwable throwable) {
+											throw new NaftahBugError(   """
+																		فشل تحليل القيمة الزمنية: '%s'
+																		الرجاء استخدام صيغة مشابهة للأمثلة التالية:
+																		مقدار_زمني "مدة 3 ساعات"
+																		قيمة_زمنية "مدة 1 ساعة و15 دقيقة"
+																		قيمة_زمنية "مدة 2 ساعات و10 دقائق و5 ثوانٍ"
+																		مقدار_زمني "مدة 1 ثانية و 500 نانوثانية"
+																		قيمة_زمنية "مدة 1 ساعة و 30.75 ثانية"
+																		مقدار_زمني "فترة 1 سنة"
+																		مقدار_زمني "فترة 5 سنوات"
+																		قيمة_زمنية "فترة 1 شهر و 10 أيام"
+																		قيمة_زمنية "فترة 14 يوم"
+																		"""
+																				.formatted(value),
+																		throwable,
+																		stringValueContext.getStart().getLine(),
+																		stringValueContext
+																				.getStart()
+																				.getCharPositionInLine());
+										}
+									}
+									else if (Objects.nonNull(stringValueContext.BYTE_ARRAY())) {
+										result = value.getBytes(StandardCharsets.UTF_8);
 									}
 								}
 
@@ -4930,7 +4974,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									if (currentContext.containsFunction(functionName, -1)) {
 										Object function = currentContext.getFunction(functionName, false).getRight();
-										if (function instanceof DeclaredFunction declaredFunction && declaredFunction
+										if (function instanceof DeclaredFunction<?> declaredFunction && declaredFunction
 												.isAsync()) {
 											throw new NaftahBugError(
 																		"""
