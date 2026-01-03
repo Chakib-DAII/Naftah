@@ -13,6 +13,8 @@
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+	
+	<script src="/assets/js/main.js"></script>
 
 	  <!-- used by jekyll-seo-tag plugin -->
 </head>
@@ -50,6 +52,8 @@
 		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
 		
 		<li><a href="/language/concurrency">التزامن</a></li>
+		
+		<li><a href="/language/temporal">الزمن والتاريخ</a></li>
 		
 		<li><a href="/running-naftah">تشغيل نفطه</a></li>
 		
@@ -454,7 +458,7 @@ define a simple object or explicitly specify its type.</p>
   دالة وصف() {
       "اسم المدينة: " + هذا:الاسم
     + "\nعدد السكان: " + هذا:السكان
-    + "\nالعنوان:\n" + هذا:العنوان::وصف()
+    + "\nالعنوان:\n" + هذا:العنوان
   }
 
   دالة إطبع() {
@@ -518,7 +522,7 @@ define a simple object or explicitly specify its type.</p>
   دالة وصف() {
       "اسم البلدة: " + هذا:الاسم
     + "\nعدد الأحياء: " + هذا:عدد_الأحياء
-    + "\nالمدينة:\n" + هذا:المدينة::وصف()
+    + "\nالمدينة:\n" + هذا:المدينة
   }
 
   دالة إطبع() {
@@ -560,6 +564,7 @@ define a simple object or explicitly specify its type.</p>
 * [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
 * [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
 * [⚡ التعامل مع التزامن في نفطه – Concurrency](./10_concurrency.md)
+* [⏱️ الزمن والنقاط الزمنية في نفطه – Temporal](./11_temporal.md)
 
 ---
 </div>
@@ -571,7 +576,7 @@ define a simple object or explicitly specify its type.</p>
 </main>
 
 <footer class="site-footer">
-	&copy; 2025 Naftah Lang - لغة برمجة نفطه
+	&copy; 2026 Naftah Lang - لغة برمجة نفطه
 </footer>
 </body>
 </html>

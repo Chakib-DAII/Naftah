@@ -13,6 +13,8 @@
 	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+	
+	<script src="/assets/js/main.js"></script>
 
 	  <!-- used by jekyll-seo-tag plugin -->
 </head>
@@ -50,6 +52,8 @@
 		<li><a href="/language/java-interop">التكامل مع جافا</a></li>
 		
 		<li><a href="/language/concurrency">التزامن</a></li>
+		
+		<li><a href="/language/temporal">الزمن والتاريخ</a></li>
 		
 		<li><a href="/running-naftah">تشغيل نفطه</a></li>
 		
@@ -146,6 +150,52 @@ It provides practical examples of using various <strong>primitive types</strong>
       <td><code class="language-plaintext highlighter-rouge">أي_نمط</code></td>
       <td><code class="language-plaintext highlighter-rouge">Any</code> أو <code class="language-plaintext highlighter-rouge">Untyped</code></td>
       <td>يستخدم عندما لا يُحدد نوع معين</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="️-أنواع-التاريخ-والزمن-date--temporal-types">🗓️ أنواع التاريخ والزمن (Date &amp; Temporal Types)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>الاسم في نفطه</th>
+      <th>النوع المقابل (بالإنجليزية)</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">مدة</code></td>
+      <td><code class="language-plaintext highlighter-rouge">DURATION</code></td>
+      <td>تمثيل مقدار زمني محدد، مثل 5 دقائق أو 2 ساعة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">فترة</code></td>
+      <td><code class="language-plaintext highlighter-rouge">PERIOD</code></td>
+      <td>تمثيل فترة زمنية بين تاريخين أو نقطتين</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">فترة_و_مدة</code></td>
+      <td><code class="language-plaintext highlighter-rouge">PERIOD_DURATION</code></td>
+      <td>تمثيل مزيج من فترة زمنية ومقدار زمني</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">تاريخ</code></td>
+      <td><code class="language-plaintext highlighter-rouge">DATE</code></td>
+      <td>تمثيل تاريخ معين</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">وقت</code></td>
+      <td><code class="language-plaintext highlighter-rouge">TIME</code></td>
+      <td>تمثيل وقت معين</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">تاريخ_و_وقت</code></td>
+      <td><code class="language-plaintext highlighter-rouge">DATE_TIME</code></td>
+      <td>تمثيل تاريخ ووقت معًا</td>
     </tr>
   </tbody>
 </table>
@@ -553,6 +603,7 @@ It provides practical examples of using various <strong>primitive types</strong>
 * [⚙️ الدوال في لغة نفطه - Functions](./08_functions.md)
 * [⚙️ التوافق مع Java (Java Interop) في لغة نفطه - Java Interop](./09_java_interop.md)
 * [⚡ التعامل مع التزامن في نفطه – Concurrency](./10_concurrency.md)
+* [⏱️ الزمن والنقاط الزمنية في نفطه – Temporal](./11_temporal.md)
 
 ---
 </div>
@@ -565,7 +616,7 @@ It provides practical examples of using various <strong>primitive types</strong>
 </main>
 
 <footer class="site-footer">
-	&copy; 2025 Naftah Lang - لغة برمجة نفطه
+	&copy; 2026 Naftah Lang - لغة برمجة نفطه
 </footer>
 </body>
 </html>
