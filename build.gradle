@@ -21,7 +21,7 @@ scmVersion {
 }
 
 allprojects {
-	group = 'org.daiitech'
+	group = 'org.daiitech.naftah'
 	version = scmVersion.version
 	repositories {
 		mavenCentral()
