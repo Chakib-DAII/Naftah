@@ -422,14 +422,14 @@ public final class REPLHelper {
 	 */
 	public static String processPastedText(String input) {
 		// Remove block comments (---* ... *---)
-		String withoutBlockComments = input.replaceAll("(?s)---\\*.*?\\*---", "");
+		input = input.replaceAll("(?s)---\\*.*?\\*---", "");
 
 		// Remove line comments (--- ...)
-		String withoutLineComments = withoutBlockComments.replaceAll("---.*", "");
+		input = input.replaceAll("---.*", "");
 
 		// Split into lines to remove empty or whitespace-only lines
 		StringBuilder cleaned = new StringBuilder();
-		for (String line : withoutLineComments.split("\\r?\\n")) {
+		for (String line : input.split("\\r?\\n")) {
 			if (line.trim().isEmpty()) {
 				continue;  // skip empty lines
 			}
