@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ClassUtilsTests {
+class ClassUtilsTests {
 
 	@Test
 	void constantsTest() {
@@ -130,7 +130,7 @@ public class ClassUtilsTests {
 	@Test
 	void isAccessibleInstantiableStaticInvocableTest() throws Exception {
 		assertTrue(ClassUtils.isAccessibleClass(Optional.class)); // static factory
-		assertTrue(ClassUtils.isInstantiableClass(String.class)); // public no-arg
+		assertTrue(ClassUtils.isInstantiableClass(String.class)); //  no-arg
 		Method m = String.class.getMethod("valueOf", Object.class);
 		assertTrue(ClassUtils.isStatic(m));
 		assertTrue(ClassUtils.isInvocable(m));

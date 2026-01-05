@@ -57,7 +57,7 @@ import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.JAVA_HOME_PROPERTY;
 
-public class DefaultNaftahParserVisitorTests {
+class DefaultNaftahParserVisitorTests {
 
 	@BeforeAll
 	static void setupAll() throws IOException {

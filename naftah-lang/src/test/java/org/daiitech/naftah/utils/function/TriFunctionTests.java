@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TriFunctionTests {
+class TriFunctionTests {
 	private static Stream<Arguments> arithmeticOperandsProvider() {
 		return Stream
 				.of(

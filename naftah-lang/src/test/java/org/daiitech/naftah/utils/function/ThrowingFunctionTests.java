@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ThrowingFunctionTests {
+class ThrowingFunctionTests {
 
 	static final BiFunction<String, Exception, RuntimeException> WRAPPER = (msg, ex) -> new IllegalStateException(
 																													"Wrapped: " + msg,

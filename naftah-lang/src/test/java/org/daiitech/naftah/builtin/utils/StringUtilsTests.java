@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.TestUtils.doAssertBugEquals;
 
-public class StringUtilsTests {
+class StringUtilsTests {
 
 	static Stream<Arguments> divideProvider() {
 		return Stream

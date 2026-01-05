@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AliasHashMapTests {
+class AliasHashMapTests {
 
 	@Test
-	public void putAndGetWithAliasesTest() {
+	void putAndGetWithAliasesTest() {
 		AliasHashMap<String, String> map = new AliasHashMap<>();
 		map.put("mainKey", "value1", "alias1", "alias2");
 
@@ -26,7 +26,7 @@ public class AliasHashMapTests {
 	}
 
 	@Test
-	public void containsKeyTest() {
+	void containsKeyTest() {
 		AliasHashMap<String, String> map = new AliasHashMap<>();
 		map.put("primary", "val", "a1", "a2");
 
@@ -37,7 +37,7 @@ public class AliasHashMapTests {
 	}
 
 	@Test
-	public void overwriteCanonicalValueTest() {
+	void overwriteCanonicalValueTest() {
 		AliasHashMap<String, String> map = new AliasHashMap<>();
 		map.put("k", "v1", "a1");
 		map.put("k", "v2", "a2");
@@ -48,7 +48,7 @@ public class AliasHashMapTests {
 	}
 
 	@Test
-	public void toAliasGroupedByNameCollectorTest() throws NoSuchMethodException {
+	void toAliasGroupedByNameCollectorTest() throws NoSuchMethodException {
 		NaftahFunctionProvider naftahFunctionProvider = NaftahFunctionProvider
 				.of("java",
 					false,

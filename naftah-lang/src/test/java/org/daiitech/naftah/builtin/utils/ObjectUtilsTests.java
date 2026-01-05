@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.daiitech.naftah.TestUtils.assertEquals;
 
-public class ObjectUtilsTests {
+class ObjectUtilsTests {
 	static Stream<Arguments> isTruthyProvider() {
 		return Stream
 				.of(

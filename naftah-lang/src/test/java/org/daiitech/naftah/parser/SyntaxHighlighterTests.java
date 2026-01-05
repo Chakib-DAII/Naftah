@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SyntaxHighlighterTests {
+class SyntaxHighlighterTests {
 
 	private Terminal terminal;
 	private LineReader reader;
