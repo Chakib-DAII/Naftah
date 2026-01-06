@@ -1,4 +1,4 @@
-package org.daiitech.naftah.utils.arabic;
+package org.daiitech.naftah.utils.script;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,11 +18,11 @@ import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.CUSTOM_RULES_BUNDLE;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.isArabic;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.splitIdentifier;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.CLASS_SEPARATORS_REGEX;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanClasses;
+import static org.daiitech.naftah.utils.script.ScriptUtils.CUSTOM_RULES_BUNDLE;
+import static org.daiitech.naftah.utils.script.ScriptUtils.isArabicText;
+import static org.daiitech.naftah.utils.script.ScriptUtils.splitIdentifier;
 
 /**
  * A utility class that scans Java class names, splits them into component words,
@@ -137,7 +137,7 @@ public final class TransliterationGenerator {
 		for (String word : words) {
 			String translated = translateWord(client, word);
 			if (!translated.isBlank() && !(translated.length() < 2) && !word.equals(translated) && !existingRules
-					.contains(word) && isArabic(translated)) {
+					.contains(word) && isArabicText(translated)) {
 				translated = translated.replaceAll(" ", UNDERSCORE);
 				properties.setProperty(word, translated);
 			}

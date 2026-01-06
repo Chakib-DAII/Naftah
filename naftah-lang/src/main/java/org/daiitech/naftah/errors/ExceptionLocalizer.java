@@ -4,7 +4,7 @@ import java.util.ResourceBundle;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.getMostSpecificCause;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
+import static org.daiitech.naftah.utils.script.ScriptUtils.ARABIC_LOCALE;
 
 /**
  * Utility class for localizing exception messages using a resource bundle.
@@ -21,7 +21,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
  */
 public final class ExceptionLocalizer {
 
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("exceptions", ARABIC);
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("exceptions", ARABIC_LOCALE);
 
 	/**
 	 * Private constructor to prevent instantiation.

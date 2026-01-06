@@ -1,20 +1,20 @@
 /**
  *
- * The ArabicDateLexer grammar defines lexical rules for parsing Arabic date
+ * The NaftahDateLexer grammar defines lexical rules for parsing Naftah date
  * and time expressions. It supports multiple calendar systems and regional
  * variations, including:
  *
- * - Gregorian months (standard Arabic and Tunisian variants)
+ * - Gregorian months (standard Naftah and Tunisian variants)
  * - Hijri (Islamic) months
- * - Arabic AM/PM indicators
+ * - Naftah AM/PM indicators
  * - Time zone and calendar prefixes
- * - Arabic numerals (Eastern and Western)
+ * - Naftah numerals (Eastern and Western)
  *
  * This grammar is designed to be flexible and culturally aware, making it
- * suitable for natural-language date parsing in Arabic contexts.
+ * suitable for natural-language date parsing in Naftah contexts.
  *
  *
- * قواعد ArabicDateLexer تهدف إلى تعريف القواعد المعجمية لتحليل تعبيرات
+ * قواعد NaftahDateLexer تهدف إلى تعريف القواعد المعجمية لتحليل تعبيرات
  * التاريخ والوقت باللغة العربية. تدعم القواعد:
  *
  * - أشهر التقويم الميلادي (العربي والتونسي)
@@ -30,7 +30,7 @@
  *
  */
 
-lexer grammar ArabicDateLexer;
+lexer grammar NaftahDateLexer;
 
 MONTH_NAME
     // Gregorian + Tunisian

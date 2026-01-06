@@ -33,8 +33,8 @@ import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.lang.Result;
-import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
-import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
+import org.daiitech.naftah.builtin.time.NaftahTemporalAmount;
+import org.daiitech.naftah.builtin.time.NaftahTemporalPoint;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
@@ -49,10 +49,10 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.parser.time.ArabicDateParserHelper;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.parser.time.NaftahDateParserHelper;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.daiitech.naftah.utils.reflect.type.TypeReference;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
@@ -4253,18 +4253,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, radixNumberValueContext) -> {
 								String originalValue = radixNumberValueContext.BASE_DIGITS().getText();
-								String arabicValue = originalValue
+								String arabicIndicValue = originalValue
 										.substring( 0,
 													originalValue.length() - 2);
-								String value = ArabicUtils
-										.convertArabicToLatinLetterByLetter(arabicValue);
+								String value = ScriptUtils
+										.convertArabicToLatinLetterByLetter(arabicIndicValue);
 								String originalRadix = radixNumberValueContext.BASE_RADIX().getText();
 								int radix = Integer
 										.parseInt(originalRadix
 												.substring( 0,
 															originalRadix.length() - 1));
 
-								return NumberUtils.parseDynamicNumber(value, radix, arabicValue);
+								return NumberUtils.parseDynamicNumber(value, radix, arabicIndicValue);
 							}
 		);
 	}
@@ -4307,7 +4307,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									result = value = StringInterpolator.process(value, currentContext);
 									if (Objects.nonNull(stringValueContext.TEMPORAL_POINT())) {
 										try {
-											result = ArabicDateParserHelper.run(value, ArabicTemporalPoint.class);
+											result = NaftahDateParserHelper.run(value, NaftahTemporalPoint.class);
 										}
 										catch (Throwable throwable) {
 											throw new NaftahBugError(   """
@@ -4326,7 +4326,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 									else if (Objects.nonNull(stringValueContext.TEMPORAL_AMOUNT())) {
 										try {
-											result = ArabicDateParserHelper.run(value, ArabicTemporalAmount.class);
+											result = NaftahDateParserHelper.run(value, NaftahTemporalAmount.class);
 										}
 										catch (Throwable throwable) {
 											throw new NaftahBugError(   """

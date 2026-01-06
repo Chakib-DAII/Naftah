@@ -5,11 +5,11 @@ import java.time.chrono.Chronology;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.daiitech.naftah.builtin.time.ArabicDate;
-import org.daiitech.naftah.builtin.time.ArabicDateTime;
-import org.daiitech.naftah.builtin.time.ArabicDuration;
-import org.daiitech.naftah.builtin.time.ArabicPeriod;
-import org.daiitech.naftah.builtin.time.ArabicTime;
+import org.daiitech.naftah.builtin.time.NaftahDate;
+import org.daiitech.naftah.builtin.time.NaftahDateTime;
+import org.daiitech.naftah.builtin.time.NaftahDuration;
+import org.daiitech.naftah.builtin.time.NaftahPeriod;
+import org.daiitech.naftah.builtin.time.NaftahTime;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
@@ -39,7 +39,7 @@ import static org.daiitech.naftah.utils.time.Constants.SHAWAL;
 import static org.daiitech.naftah.utils.time.ZoneUtils.parseZoneOffset;
 
 public class DateTimeProvider implements ArgumentsProvider {
-	private ArabicDateTime createArabicDateTime(int day,
+	private NaftahDateTime createArabicDateTime(int day,
 												String arabicMonth,
 												int monthValue,
 												Chronology chronology,
@@ -60,29 +60,29 @@ public class DateTimeProvider implements ArgumentsProvider {
 				zoneId = parseZoneOffset(arabicZoneOrOffset);
 			}
 			else {
-				zoneId = ZoneId.of(ZoneUtils.arabicZoneNameToJava(arabicZoneOrOffset));
+				zoneId = ZoneId.of(ZoneUtils.zoneNameToJavaZoneId(arabicZoneOrOffset));
 			}
 		}
 
-		ArabicTime.ZoneOrOffset zoneOrOffset;
+		NaftahTime.ZoneOrOffset zoneOrOffset;
 		if (Boolean.TRUE.equals(offset)) {
-			zoneOrOffset = ArabicTime.ZoneOrOffset.ofOffset(arabicZoneOrOffset);
+			zoneOrOffset = NaftahTime.ZoneOrOffset.ofOffset(arabicZoneOrOffset);
 		}
 		else {
-			zoneOrOffset = ArabicTime.ZoneOrOffset.ofZone(arabicZoneOrOffset);
+			zoneOrOffset = NaftahTime.ZoneOrOffset.ofZone(arabicZoneOrOffset);
 		}
 
-		return ArabicDateTime
+		return NaftahDateTime
 				.of(
-					ArabicDate
+					NaftahDate
 							.of(
-								ArabicDate.Date.of(day, arabicMonth, chronology, year),
-								ArabicDate.Calendar.of(chronologyName, chronology),
+								NaftahDate.Date.of(day, arabicMonth, chronology, year),
+								NaftahDate.Calendar.of(chronologyName, chronology),
 								TemporalUtils.createDate(day, monthValue, year, chronology)
 							),
-					ArabicTime
+					NaftahTime
 							.of(
-								ArabicTime.Time.of(hour, minute, second, nano, isPM),
+								NaftahTime.Time.of(hour, minute, second, nano, isPM),
 								zoneOrOffset,
 								TemporalUtils
 										.createTime(
@@ -807,8 +807,8 @@ public class DateTimeProvider implements ArgumentsProvider {
 								null,
 								BinaryOperation
 										.newNaftahBugError( BinaryOperation.LESS_THAN,
-															ArabicDateTime.now(),
-															ArabicPeriod.ofZero())),
+															NaftahDateTime.now(),
+															NaftahPeriod.ofZero())),
 					Arguments
 							.of(false,
 								"""
@@ -817,8 +817,8 @@ public class DateTimeProvider implements ArgumentsProvider {
 								null,
 								BinaryOperation
 										.newNaftahBugError( BinaryOperation.GREATER_THAN,
-															ArabicDateTime.now(),
-															ArabicPeriod.ofZero())),
+															NaftahDateTime.now(),
+															NaftahPeriod.ofZero())),
 					Arguments
 							.of(false,
 								"""
@@ -827,8 +827,8 @@ public class DateTimeProvider implements ArgumentsProvider {
 								null,
 								BinaryOperation
 										.newNaftahBugError( BinaryOperation.LESS_THAN_EQUALS,
-															ArabicDateTime.now(),
-															ArabicDuration.ofZero())),
+															NaftahDateTime.now(),
+															NaftahDuration.ofZero())),
 					Arguments
 							.of(true,
 								"""
@@ -855,105 +855,105 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_الوقت(15 , 03)
 								""",
-								ArabicTime.of(15, 3),
+								NaftahTime.of(15, 3),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_بتوقيت(10 , 20 , "تونس")
 								""",
-								ArabicTime.of(10, 20, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								NaftahTime.of(10, 20, NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_بإزاحة(10 , 45 , "+02:00")
 								""",
-								ArabicTime.of(10, 45, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								NaftahTime.of(10, 45, NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_بتوقيت_مع_ثانية(15 , 03 ؛ 10 , "تونس")
 								""",
-								ArabicTime.of(15, 3, 10, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								NaftahTime.of(15, 3, 10, NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_بتوقيت_مع_ثانية(10 , 20 ؛ 10 , "تونس")
 								""",
-								ArabicTime.of(10, 20, 10, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								NaftahTime.of(10, 20, 10, NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_بإزاحة_مع_ثانية(10 , 45 ؛ 10 , "+02:00")
 								""",
-								ArabicTime.of(10, 45, 10, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								NaftahTime.of(10, 45, 10, NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_مع_نانوثانية(15 , 03 ؛ 10؛ 10)
 								""",
-								ArabicTime.of(15, 3, 10, 10),
+								NaftahTime.of(15, 3, 10, 10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_مع_نانوثانية_بتوقيت(10 , 20 ؛ 10 ؛ 10 , "تونس")
 								""",
-								ArabicTime.of(10, 20, 10, 10, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								NaftahTime.of(10, 20, 10, 10, NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_مع_الإزاحة_ونانوثانية(10 , 45 ؛ 10؛ 10 , "+02:00")
 								""",
-								ArabicTime.of(10, 45, 10, 10, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								NaftahTime.of(10, 45, 10, 10, NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_من_ثواني_اليوم(24739)
 								""",
-								ArabicTime.ofSecondOfDay(24739),
+								NaftahTime.ofSecondOfDay(24739),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_من_ثواني_اليوم_بتوقيت(24739 , "تونس")
 								""",
-								ArabicTime.ofSecondOfDay(24739, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								NaftahTime.ofSecondOfDay(24739, NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_من_ثواني_اليوم_بإزاحة(24739 , "+02:00")
 								""",
-								ArabicTime.ofSecondOfDay(24739, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								NaftahTime.ofSecondOfDay(24739, NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_من_نانوثواني_اليوم(24712312312339)
 								""",
-								ArabicTime.ofNanoOfDay(24712312312339L),
+								NaftahTime.ofNanoOfDay(24712312312339L),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت(24731231231239 , "تونس")
 								""",
-								ArabicTime.ofNanoOfDay(24731231231239L, ArabicTime.ZoneOrOffset.ofZone("تونس")),
+								NaftahTime.ofNanoOfDay(24731231231239L, NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة(2471231339 , "+02:00")
 								""",
-								ArabicTime.ofNanoOfDay(2471231339L, ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+								NaftahTime.ofNanoOfDay(2471231339L, NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
@@ -1002,28 +1002,28 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(14 , "ماي" , 1995)
 								""",
-								ArabicDate.of(14, 5, 1995),
+								NaftahDate.of(14, 5, 1995),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(14 , 05 , 1995)
 								""",
-								ArabicDate.of(14, 5, 1995),
+								NaftahDate.of(14, 5, 1995),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم("التقويم الميلادي" ، 14 , "ماي" , 1995)
 								""",
-								ArabicDate.of(14, 5, 1995),
+								NaftahDate.of(14, 5, 1995),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم("التقويم الميلادي" ، 14 , 05 , 1995)
 								""",
-								ArabicDate.of(14, 5, 1995),
+								NaftahDate.of(14, 5, 1995),
 								null),
 					Arguments
 							.of(true,
@@ -1072,7 +1072,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة(1995؛5؛3؛14؛5)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1085,7 +1085,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة(1995؛"ماي"؛3؛14؛5)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1098,28 +1098,28 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(1995؛5؛3؛14؛5؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
 											3,
 											14,
 											5,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(1995؛"ماي"؛3؛14؛5؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
 											3,
 											14,
 											5,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null,
 								null),
 					Arguments
@@ -1127,33 +1127,33 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(1995؛5؛3؛14؛5؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(1995,
 											MAY_LATIN,
 											3,
 											14,
 											5,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(1995؛"ماي"؛3؛14؛5؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(1995,
 											MAY_LATIN,
 											3,
 											14,
 											5,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية(1995؛5؛3؛14؛5؛3)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1167,7 +1167,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية(1995؛"ماي"؛3؛14؛5؛3)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1181,7 +1181,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت(1995؛5؛3؛14؛5؛3؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1189,14 +1189,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											14,
 											5,
 											3,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت(1995؛"ماي"؛3؛14؛5؛3؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1204,42 +1204,42 @@ public class DateTimeProvider implements ArgumentsProvider {
 											14,
 											5,
 											3,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة(1995؛5؛3؛14؛5؛3؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(1995,
 											MAY_LATIN,
 											3,
 											14,
 											5,
 											3,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة(1995؛"ماي"؛3؛14؛5؛3؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(1995,
 											MAY_LATIN,
 											3,
 											14,
 											5,
 											3,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية(1995؛5؛3؛14؛5؛3؛505)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1254,7 +1254,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية(1995؛"ماي"؛3؛14؛5؛3؛505)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1269,7 +1269,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت(1995؛5؛3؛14؛5؛3؛505؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1278,14 +1278,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											5,
 											3,
 											505,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت(1995؛"ماي"؛3؛14؛5؛3؛505؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1294,14 +1294,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											5,
 											3,
 											505,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بإزاحة(1995؛5؛3؛14؛5؛3؛505؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(1995,
 											MAY_LATIN,
 											3,
@@ -1309,14 +1309,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											5,
 											3,
 											505,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بإزاحة(1995؛"ماي"؛3؛14؛5؛3؛505؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(1995,
 											MAY_LATIN,
 											3,
@@ -1324,14 +1324,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											5,
 											3,
 											505,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة("ميلادي"؛1995؛5؛3؛14؛5)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1344,7 +1344,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة("ميلادي"؛1995؛"ماي"؛3؛14؛5)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1357,63 +1357,63 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت("ميلادي"؛1995؛5؛3؛14؛5؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
 											3,
 											14,
 											5,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت("ميلادي"؛1995؛"ماي"؛3؛14؛5؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
 											3,
 											14,
 											5,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة("ميلادي"؛1995؛5؛3؛14؛5؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											MAY_LATIN,
 											3,
 											14,
 											5,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة("ميلادي"؛1995؛"ماي"؛3؛14؛5؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											MAY_LATIN,
 											3,
 											14,
 											5,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية("ميلادي"؛1995؛5؛3؛14؛5؛3)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1427,7 +1427,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1441,7 +1441,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت("ميلادي"؛1995؛5؛3؛14؛5؛3؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1449,14 +1449,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											14,
 											5,
 											3,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1464,14 +1464,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											14,
 											5,
 											3,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة("ميلادي"؛1995؛5؛3؛14؛5؛3؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											MAY_LATIN,
@@ -1479,14 +1479,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											14,
 											5,
 											3,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											MAY_LATIN,
@@ -1494,14 +1494,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											14,
 											5,
 											3,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية("ميلادي"؛1995؛5؛3؛14؛5؛3؛505)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											MAY_LATIN,
@@ -1516,7 +1516,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛505)
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											MAY_LATIN,
@@ -1531,7 +1531,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت("ميلادي"؛1995؛5؛3؛14؛5؛3؛505؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1540,14 +1540,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											5,
 											3,
 											505,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛505؛"تونس")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											MAY_LATIN,
@@ -1556,14 +1556,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											5,
 											3,
 											505,
-											ArabicTime.ZoneOrOffset.ofZone("تونس")),
+											NaftahTime.ZoneOrOffset.ofZone("تونس")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة("ميلادي"؛1995؛5؛3؛14؛5؛3؛505؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											MAY_LATIN,
@@ -1572,14 +1572,14 @@ public class DateTimeProvider implements ArgumentsProvider {
 											5,
 											3,
 											505,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
 								"""
 								انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة("ميلادي"؛1995؛"ماي"؛3؛14؛5؛3؛505؛"+02:00")
 								""",
-								ArabicDateTime
+								NaftahDateTime
 										.of(ChronologyUtils.DEFAULT_CHRONOLOGY,
 											1995,
 											5,
@@ -1588,7 +1588,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 											5,
 											3,
 											505,
-											ArabicTime.ZoneOrOffset.ofOffset("+02:00")),
+											NaftahTime.ZoneOrOffset.ofOffset("+02:00")),
 								null),
 					Arguments
 							.of(true,
@@ -1654,7 +1654,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								اضافة_سنوات(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
-								ArabicDate
+								NaftahDate
 										.of(1, 1, 2027
 										),
 								null),
@@ -1662,7 +1662,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								اضافة_اشهر(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
-								ArabicDate
+								NaftahDate
 										.of(1, 2, 2026
 										),
 								null),
@@ -1670,7 +1670,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								اضافة_اسابيع(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
-								ArabicDate
+								NaftahDate
 										.of(8, 1, 2026
 										),
 								null),
@@ -1678,7 +1678,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								اضافة_ايام(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
-								ArabicDate
+								NaftahDate
 										.of(2, 1, 2026
 										),
 								null),
@@ -1686,7 +1686,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								طرح_سنوات(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
-								ArabicDate
+								NaftahDate
 										.of(1, 1, 2025
 										),
 								null),
@@ -1694,7 +1694,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								طرح_شهور(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
-								ArabicDate
+								NaftahDate
 										.of(1, 12, 2025
 										),
 								null),
@@ -1702,7 +1702,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								طرح_اسابيع(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
-								ArabicDate
+								NaftahDate
 										.of(25, 12, 2025
 										),
 								null),
@@ -1710,7 +1710,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								طرح_ايام(انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(1 , 1 , 2026), 1)""",
-								ArabicDate
+								NaftahDate
 										.of(31, 12, 2025
 										),
 								null),
@@ -1748,7 +1748,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								اضافة_ساعات(انشاء_الوقت(15 , 03),1)""",
-								ArabicTime
+								NaftahTime
 										.of(
 											16,
 											3,
@@ -1760,7 +1760,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								اضافة_دقائق(انشاء_الوقت(15 , 03),1)""",
-								ArabicTime
+								NaftahTime
 										.of(
 											15,
 											4,
@@ -1772,7 +1772,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								اضافة_ثواني(انشاء_الوقت(15 , 03),1)""",
-								ArabicTime
+								NaftahTime
 										.of(
 											15,
 											3,
@@ -1784,7 +1784,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								اضافة_نانوثواني(انشاء_الوقت(15 , 03),1)""",
-								ArabicTime
+								NaftahTime
 										.of(
 											15,
 											3,
@@ -1796,7 +1796,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								طرح_ساعات(انشاء_الوقت(15 , 03),1)""",
-								ArabicTime
+								NaftahTime
 										.of(
 											14,
 											3,
@@ -1808,7 +1808,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								طرح_دقائق(انشاء_الوقت(15 , 03),1)""",
-								ArabicTime
+								NaftahTime
 										.of(
 											15,
 											2,
@@ -1820,7 +1820,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								طرح_ثواني(انشاء_الوقت(15 , 03),1)""",
-								ArabicTime
+								NaftahTime
 										.of(
 											15,
 											2,
@@ -1832,7 +1832,7 @@ public class DateTimeProvider implements ArgumentsProvider {
 							.of(true,
 								"""
 								طرح_نانوثواني(انشاء_الوقت(15 , 03),1)""",
-								ArabicTime
+								NaftahTime
 										.of(
 											15,
 											2,

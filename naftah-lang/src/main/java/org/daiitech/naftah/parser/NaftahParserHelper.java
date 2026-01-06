@@ -97,12 +97,12 @@ import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.convertArgument;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.findBestExecutable;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.invokeJvmConstructor;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.invokeJvmExecutable;
+import static org.daiitech.naftah.utils.script.ScriptUtils.getRawHexBytes;
 
 /**
  * Helper class for various parsing-related utilities used in the Naftah language parser.

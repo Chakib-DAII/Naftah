@@ -38,9 +38,9 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
 import org.daiitech.naftah.utils.ResourceUtils;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.History;
@@ -72,9 +72,6 @@ import static org.daiitech.naftah.utils.JulLoggerConfig.initialize;
 import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.classToDetailedString;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
@@ -93,6 +90,9 @@ import static org.daiitech.naftah.utils.repl.REPLHelper.setupHistoryConfig;
 import static org.daiitech.naftah.utils.repl.REPLHelper.setupKeyBindingsConfig;
 import static org.daiitech.naftah.utils.repl.REPLHelper.setupTerminalCapabilities;
 import static org.daiitech.naftah.utils.repl.REPLHelper.shouldQuit;
+import static org.daiitech.naftah.utils.script.ScriptUtils.ARABIC_LOCALE;
+import static org.daiitech.naftah.utils.script.ScriptUtils.containsArabicLetters;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.IVersionProvider;
@@ -185,13 +185,13 @@ public final class Naftah {
 	 */
 	public static final String VECTOR_API_PROPERTY = "naftah.vector.api.active";
 	/**
-	 * Property to enable Arabic formatter in Naftah.
+	 * Property to enable number formatter in Naftah.
 	 */
-	public static final String ARABIC_NUMBER_FORMATTER_PROPERTY = "naftah.arabic.formatter.active";
+	public static final String NUMBER_FORMATTER_PROPERTY = "naftah.number.formatter.active";
 	/**
 	 * Property to enable Arabic-Indic digit formatting in Naftah.
 	 */
-	public static final String ARABIC_INDIC_PROPERTY = "naftah.arabic.indic.active";
+	public static final String ARABIC_INDIC_PROPERTY = "naftah.number.arabicIndic.active";
 	/**
 	 * Property to enable caching of multiline text processing in Naftah.
 	 */
@@ -477,7 +477,7 @@ public final class Naftah {
 	 * Prints the error message of the given throwable with padding applied.
 	 * If the throwable is not an instance of {@link NaftahBugError},
 	 * it will be wrapped inside a {@code NaftahBugError}.
-	 * The error message is formatted in Arabic as "تم التقاط الخطأ: 'message'".
+	 * The error message is formatted in Arabic script as "تم التقاط الخطأ: 'message'".
 	 *
 	 * @param t the throwable whose error message will be printed with padding
 	 */
@@ -598,7 +598,7 @@ public final class Naftah {
 		@Option(names = {"-scp", "--scan-classpath"},
 				paramLabel = "<charset>",
 				description = { "Specify if the classpath classes should be reused as nafta types",
-								"حدد ما إذا كان يجب إعادة استخدام فئات المسار (classpath) كأنواع في نفطح."})
+								"حدد ما إذا كان يجب إعادة استخدام فئات المسار (classpath) كأنواع في نفطه."})
 		private boolean scanClasspath;
 
 		@Option(names = {"-f", "--force-scan-classpath"},
@@ -627,12 +627,14 @@ public final class Naftah {
 								"تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"})
 		private boolean useVectorApi;
 
-		@Option(names = {"-ar_f", "--arabic_formatting"},
+		@Option(names = {"-nr_f", "--number_formatting"},
 				description = {
-								"Use Arabic numerals and formatting symbols (e.g., decimal separator, digit shapes).",
-								"استخدام الأرقام العربية ورموز التنسيق (مثل الفاصلة العشرية وأشكال الأرقام)."
+								"""
+								Use numerals and formatting symbols (e.g., arabic decimal separator, Ascii digit shapes).
+								""",
+								"استخدام الأرقام ورموز التنسيق (مثل الفاصلة العشرية العربية وأشكال الأرقام المستخدمة من قبل التونسيين (أسكي))."
 				})
-		private boolean useArabicFormatter;
+		private boolean useNumberFormatter;
 
 		@Option(names = {"-ar_ind", "--arabic_indic"},
 				description = {
@@ -643,8 +645,8 @@ public final class Naftah {
 
 		@Option(names = {"-load_clf", "--load_classes_and_functions"},
 				description = {
-								"",
-								""
+								"Load additional classes and functions at startup for manual",
+								"تحميل فئات ودوال إضافية عند تشغيل البرنامج"
 				})
 		private boolean loadClassesAndFunctions;
 
@@ -727,8 +729,8 @@ public final class Naftah {
 				System.setProperty(VECTOR_API_PROPERTY, Boolean.toString(true));
 			}
 
-			if (matchedCommand.useArabicFormatter) {
-				System.setProperty(ARABIC_NUMBER_FORMATTER_PROPERTY, Boolean.toString(true));
+			if (matchedCommand.useNumberFormatter) {
+				System.setProperty(NUMBER_FORMATTER_PROPERTY, Boolean.toString(true));
 			}
 
 			if (matchedCommand.useArabicIndic) {
@@ -760,7 +762,7 @@ public final class Naftah {
 					customSynopsis = "naftah run [options] [filename] [args]",
 					description = {
 									"The Naftah run command. it starts the language interpreter (interpretes a naftah script).",
-									"أمر تشغيل نفطه. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطح)."},
+									"أمر تشغيل نفطه. يقوم بتشغيل مفسر اللغة (يُفسر سكربت بلغة نفطه)."},
 					sortOptions = false)
 		private static final class RunCommand extends NaftahCommand {
 			private static final String NAME = "run";
@@ -905,18 +907,18 @@ public final class Naftah {
 								showManualTopic(line);
 							}
 							else {
-								String arabicQualifiedNameOrBuiltinFunction = null;
+								String qualifiedNameOrBuiltinFunction = null;
 								String[] lineParts;
-								if (!containsArabic(line) && line.contains(".")) {
+								if (!containsArabicLetters(line) && line.contains(".")) {
 									if ((lineParts = line.split(QUALIFIED_CALL_SEPARATOR)).length == 2) {
-										arabicQualifiedNameOrBuiltinFunction = ClassUtils
+										qualifiedNameOrBuiltinFunction = ClassUtils
 												.getQualifiedCall(ClassUtils
 														.getQualifiedName(
 																			lineParts[0]), lineParts[1]);
 
 									}
 									else if (lineParts.length == 1) {
-										arabicQualifiedNameOrBuiltinFunction = ClassUtils.getQualifiedName(line);
+										qualifiedNameOrBuiltinFunction = ClassUtils.getQualifiedName(line);
 									}
 								}
 								else {
@@ -928,12 +930,12 @@ public final class Naftah {
 									if (builtinFunctionOpt.isPresent()) {
 										var builtinFunctions = builtinFunctionOpt.get();
 										if (builtinFunctions.size() == 1) {
-											arabicQualifiedNameOrBuiltinFunction = builtinFunctions
+											qualifiedNameOrBuiltinFunction = builtinFunctions
 													.get(0)
 													.toDetailedString();
 										}
 										else {
-											arabicQualifiedNameOrBuiltinFunction = IntStream
+											qualifiedNameOrBuiltinFunction = IntStream
 													.range( 0,
 															builtinFunctions.size())
 													.mapToObj(index -> """
@@ -951,9 +953,9 @@ public final class Naftah {
 									}
 								}
 
-								if (arabicQualifiedNameOrBuiltinFunction != null) {
-									LAST_PRINTED.set(arabicQualifiedNameOrBuiltinFunction);
-									padText(arabicQualifiedNameOrBuiltinFunction, true);
+								if (qualifiedNameOrBuiltinFunction != null) {
+									LAST_PRINTED.set(qualifiedNameOrBuiltinFunction);
+									padText(qualifiedNameOrBuiltinFunction, true);
 									padText("""
 											\n
 											[استخدم Alt+L لنسخ آخر نص مطبوع إلى الحافظة، واستخدم Alt+V للصقه مرة أخرى في محرر الإدخال لإعادة استخدامه.]
@@ -999,8 +1001,8 @@ public final class Naftah {
 			 */
 			private boolean checkManagementCommands(String line) {
 				var matched = false;
-				String command = line.trim().toLowerCase(ARABIC);
-//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic) so the flow you transliterate then get all infos
+				String command = line.trim().toLowerCase(ARABIC_LOCALE);
+//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic script) so the flow you transliterate then get all infos
 				if (List.of("usage", "مساعدة").contains(command)) {
 
 					matched = true;
@@ -1024,7 +1026,7 @@ public final class Naftah {
 					padText("المواضيع المتوفرة:", true);
 					topics
 							.keySet()
-							.forEach(topic -> padText("\t- " + ArabicUtils
+							.forEach(topic -> padText("\t- " + ScriptUtils
 									.transliterateToArabicScriptDefault(topic)[0] + " - " + topic, true));
 				}
 				else if (List.of("classes", "الأصناف").contains(command)) {
@@ -1518,7 +1520,7 @@ public final class Naftah {
 				// Output to terminal
 				padText("📖 الدليل: %s - %s"
 						.formatted(
-									ArabicUtils
+									ScriptUtils
 											.transliterateToArabicScriptDefault(topic)[0],
 									topic), true);
 				padText("────────────────────────────────────────────", true);
@@ -1594,7 +1596,7 @@ public final class Naftah {
 					description = { """
 									The Naftah shell command. it starts a REPL (Read-Eval-Print Loop), an interactive programming environment where you can enter single lines of naftah code.""",
 									"""
-									يبدأ أمر نفطه شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطح وتنفيذها فورًا."""
+									يبدأ أمر نفطه شال. يبدأ بيئة تفاعلية للبرمجة (REPL - قراءة-تقييم-طباعة)، حيث يمكنك إدخال أسطر مفردة من كود نفطه وتنفيذها فورًا."""
 					},
 					sortOptions = false)
 		private static final class ShellCommand extends NaftahCommand {

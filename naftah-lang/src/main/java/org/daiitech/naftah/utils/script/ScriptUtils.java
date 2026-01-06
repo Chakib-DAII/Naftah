@@ -1,4 +1,4 @@
-package org.daiitech.naftah.utils.arabic;
+package org.daiitech.naftah.utils.script;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +30,8 @@ import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.Transliterator;
 
 import static org.daiitech.naftah.Naftah.ARABIC_INDIC_PROPERTY;
-import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.Naftah.MULTILINE_CACHE_PROPERTY;
+import static org.daiitech.naftah.Naftah.NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.Naftah.WORD_CHUNK_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
@@ -53,7 +53,7 @@ import static org.daiitech.naftah.utils.HashUtils.hashString;
  *
  * @author Chakib Daii
  */
-public final class ArabicUtils {
+public final class ScriptUtils {
 
 	/**
 	 * Escape code to set Right-To-Left (RTL) text direction in compatible terminals.
@@ -89,11 +89,11 @@ public final class ArabicUtils {
 	/**
 	 * Locale instance representing Arabic language.
 	 */
-	public static final Locale ARABIC = new Locale(ARABIC_LANGUAGE);
+	public static final Locale ARABIC_LOCALE = new Locale(ARABIC_LANGUAGE);
 	/**
 	 * ResourceBundle loaded with custom transliteration rules for Arabic.
 	 */
-	public static final ResourceBundle CUSTOM_RULES_BUNDLE = ResourceBundle.getBundle("transliteration", ARABIC);
+	public static final ResourceBundle CUSTOM_RULES_BUNDLE = ResourceBundle.getBundle("transliteration", ARABIC_LOCALE);
 	/**
 	 * Pattern to detect lines in multiline text, capturing line content and newline characters.
 	 */
@@ -126,7 +126,7 @@ public final class ArabicUtils {
 	 * <p>
 	 * The characters are mapped positionally (index by index) to uppercase Latin letters.
 	 * This list includes 26 Arabic letters starting from 'ا' to 'ه', and is intended to be used
-	 * for character-by-character mapping to Latin base encoding (e.g., base 11 to base 36 systems).
+	 * for character-by-character mapping to Ascii base encoding (e.g., base 11 to base 36 systems).
 	 *
 	 * <p>Examples of mapping:
 	 * <ul>
@@ -269,7 +269,7 @@ public final class ArabicUtils {
 	 * @see Locale#forLanguageTag(String)
 	 * @see NumberFormat#getNumberInstance(Locale)
 	 */
-	public static volatile ThreadLocal<NumberFormat> ARABIC_NUMBER_FORMAT;
+	public static volatile ThreadLocal<NumberFormat> NUMBER_FORMAT;
 	/**
 	 * Custom transliteration rules defined as a multi-line string.
 	 * Each rule maps Latin script sequences to their corresponding Arabic script sequences.
@@ -328,7 +328,7 @@ public final class ArabicUtils {
 			if (value.matches(regex)) { // underscore or space or whitespace
 				value = "'" + value + "'";
 			}
-			key = key.toLowerCase(ARABIC);
+			key = key.toLowerCase(ARABIC_LOCALE);
 			stringBuilder.append("""
 									%s > %s;
 									""".formatted(key, value));
@@ -336,8 +336,8 @@ public final class ArabicUtils {
 		}
 		CUSTOM_RULES = stringBuilder.toString();
 
-		if (Boolean.getBoolean(ARABIC_NUMBER_FORMATTER_PROPERTY)) {
-			DecimalFormatSymbols symbols = new DecimalFormatSymbols(ARABIC);
+		if (Boolean.getBoolean(NUMBER_FORMATTER_PROPERTY)) {
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(ARABIC_LOCALE);
 
 			if (Boolean.getBoolean(ARABIC_INDIC_PROPERTY)) {
 				symbols
@@ -355,12 +355,12 @@ public final class ArabicUtils {
 						}); // Arabic-Indic zero
 			}
 			else {
-				symbols.setZeroDigit('0'); // Latin digits
+				symbols.setZeroDigit('0'); // Ascii digits
 			}
 
-			symbols.setDecimalSeparator('٫'); // Arabic decimal separator
-			symbols.setGroupingSeparator('_'); // Arabic grouping separator  (in use if the pattern is "#,##0.###")
-			ARABIC_NUMBER_FORMAT = ThreadLocal.withInitial(() -> new DecimalFormat("###0.###", symbols));
+			symbols.setDecimalSeparator('٫'); // decimal separator
+			symbols.setGroupingSeparator('_'); // grouping separator  (in use if the pattern is "#,##0.###")
+			NUMBER_FORMAT = ThreadLocal.withInitial(() -> new DecimalFormat("###0.###", symbols));
 		}
 	}
 
@@ -368,7 +368,7 @@ public final class ArabicUtils {
 	 * Private constructor to prevent instantiation.
 	 * Always throws a {@link NaftahBugError} when called.
 	 */
-	private ArabicUtils() {
+	private ScriptUtils() {
 		throw newNaftahBugInvalidUsageError();
 	}
 
@@ -550,7 +550,7 @@ public final class ArabicUtils {
 	 */
 	public static String shape(String input) {
 		if (shouldReshape()) {
-			return applyFunction(input, ArabicUtils::doShape);
+			return applyFunction(input, ScriptUtils::doShape);
 		}
 		return input;
 	}
@@ -580,7 +580,7 @@ public final class ArabicUtils {
 	 * @return the padded text if {@code print} is false; otherwise null
 	 */
 	public static String padText(String input, boolean print) {
-		return applyBiFunction(input, print, ArabicUtils::doPadText);
+		return applyBiFunction(input, print, ScriptUtils::doPadText);
 	}
 
 	/**
@@ -719,7 +719,9 @@ public final class ArabicUtils {
 	 * @return the padded string
 	 */
 	private static String addPadding(String input, int padding) {
-		return (shouldReshape() && containsArabic(input)) ? input + " ".repeat(padding) : " ".repeat(padding) + input;
+		return (shouldReshape() && containsArabicLetters(input)) ?
+				input + " ".repeat(padding) :
+				" ".repeat(padding) + input;
 	}
 
 	/**
@@ -827,18 +829,18 @@ public final class ArabicUtils {
 												boolean removeDiacritics,
 												String word) {
 		// Apply transliteration
-		if (CUSTOM_RULES_KEYS.contains(word.toLowerCase(ARABIC))) {
-			word = transliterator.transliterate(word.toLowerCase(ARABIC));
+		if (CUSTOM_RULES_KEYS.contains(word.toLowerCase(ARABIC_LOCALE))) {
+			word = transliterator.transliterate(word.toLowerCase(ARABIC_LOCALE));
 		}
 		else {
 			var parts = splitIdentifier(word);
 			if (parts.size() == 1) {
-				word = transliterator.transliterate(word.toLowerCase(ARABIC));
+				word = transliterator.transliterate(word.toLowerCase(ARABIC_LOCALE));
 			}
 			else {
 				for (int i = 0; i < parts.size(); i++) {
 					var currentPart = parts.get(i);
-					currentPart = transliterator.transliterate(currentPart.toLowerCase(ARABIC));
+					currentPart = transliterator.transliterate(currentPart.toLowerCase(ARABIC_LOCALE));
 					parts.set(i, currentPart);
 				}
 				word = String.join(UNDERSCORE, parts);
@@ -1015,8 +1017,8 @@ public final class ArabicUtils {
 	 * @param text the text to check; may be {@code null} (treated as empty)
 	 * @return {@code true} if the text contains one or more Arabic characters, {@code false} otherwise
 	 */
-	public static boolean containsArabic(String text) {
-		return text.codePoints().anyMatch(ArabicUtils::isArabicChar);
+	public static boolean containsArabicLetters(String text) {
+		return text.codePoints().anyMatch(ScriptUtils::isArabicChar);
 	}
 
 	/**
@@ -1028,8 +1030,8 @@ public final class ArabicUtils {
 	 * @param text the text to check; may be {@code null} (treated as empty)
 	 * @return {@code true} if all characters in the text are Arabic, {@code false} otherwise
 	 */
-	public static boolean isArabic(String text) {
-		return text.codePoints().allMatch(ArabicUtils::isArabicChar);
+	public static boolean isArabicText(String text) {
+		return text.codePoints().allMatch(ScriptUtils::isArabicChar);
 	}
 
 	/**
@@ -1112,26 +1114,26 @@ public final class ArabicUtils {
 	}
 
 	/**
-	 * Converts an input string from Arabic characters and digits to their Latin equivalents.
+	 * Converts an input string from Arabic characters and digits to their Latin and Ascii equivalents.
 	 * <p>
 	 * This method supports:
 	 * <ul>
 	 * <li>Arabic letters mapped one-to-one to Latin uppercase letters (A-Z).</li>
-	 * <li>Arabic-Indic digits (٠-٩) mapped to Latin digits (0-9).</li>
-	 * <li>Latin letters (A-Z, a-z) and digits (0-9) passed through unchanged.</li>
+	 * <li>Arabic-Indic digits (٠-٩) mapped to Ascii digits (0-9).</li>
+	 * <li>Latin letters (A-Z, a-z) and Ascii digits (0-9) passed through unchanged.</li>
 	 * </ul>
 	 * <p>
 	 * Any unsupported character will cause a {@code NaftahBugError} to be thrown.
 	 *
-	 * @param arabicText the input string containing Arabic characters and/or digits
+	 * @param text the input string containing Arabic characters and/or digits
 	 * @return the Latin-equivalent string after transliteration
 	 * @throws NaftahBugError if the input contains unsupported characters
 	 */
-	public static String convertArabicToLatinLetterByLetter(String arabicText) {
+	public static String convertArabicToLatinLetterByLetter(String text) {
 		StringBuilder latinText = new StringBuilder();
 
-		for (int i = 0; i < arabicText.length(); i++) {
-			char maybeArabicChar = arabicText.charAt(i);
+		for (int i = 0; i < text.length(); i++) {
+			char maybeArabicChar = text.charAt(i);
 
 			int index = -1;
 			for (int j = 0; j < ARABIC_LETTERS.length; j++) {
@@ -1144,12 +1146,12 @@ public final class ArabicUtils {
 			if (index != -1) {
 				latinText.append(LATIN_LETTERS[index]);
 			}
-			else if (isArabicDigit(maybeArabicChar)) {
-				// Arabic digit (٠ to ٩) maps to Latin digits (0 to 9)
-				char latinDigit = (char) ('0' + (maybeArabicChar - '٠'));
-				latinText.append(latinDigit);
+			else if (isArabicIndicDigit(maybeArabicChar)) {
+				// Arabic indic digit (٠ to ٩) maps to Ascii digits (0 to 9)
+				char asciiDigit = (char) ('0' + (maybeArabicChar - '٠'));
+				latinText.append(asciiDigit);
 			}
-			else if (isLatinDigit(maybeArabicChar) || isLatinLetter(maybeArabicChar)) {
+			else if (isAsciiDigit(maybeArabicChar) || isLatinLetter(maybeArabicChar)) {
 				latinText.append(maybeArabicChar);
 			}
 			else {
@@ -1157,7 +1159,7 @@ public final class ArabicUtils {
 						.format("""
 								الحرف '%c' في النص '%s' غير مدعوم. يرجى التأكد من أن جميع الأحرف المدخلة مدعومة.""",
 								maybeArabicChar,
-								arabicText));
+								text));
 			}
 		}
 
@@ -1175,12 +1177,12 @@ public final class ArabicUtils {
 	}
 
 	/**
-	 * Checks whether a character is a Latin digit (0-9).
+	 * Checks whether a character is a Ascii digit (0-9).
 	 *
 	 * @param ch the character to check
-	 * @return {@code true} if the character is a Latin digit; {@code false} otherwise
+	 * @return {@code true} if the character is an Ascii digit; {@code false} otherwise
 	 */
-	public static boolean isLatinDigit(int ch) {
+	public static boolean isAsciiDigit(int ch) {
 		return (ch >= '0' && ch <= '9');
 	}
 
@@ -1190,33 +1192,33 @@ public final class ArabicUtils {
 	 * @param ch the character to check
 	 * @return {@code true} if the character is an Arabic digit; {@code false} otherwise
 	 */
-	public static boolean isArabicDigit(char ch) {
+	public static boolean isArabicIndicDigit(char ch) {
 		return (ch >= '٠' && ch <= '٩');
 	}
 
 	/**
-	 * Converts a {@link Number} into a string using Arabic formatting rules, replacing the
-	 * standard Latin decimal separator with an Arabic comma (U+066C), and optionally converting
-	 * Latin digits (0–9) to Arabic-Indic digits (٠–٩).
+	 * Converts a {@link Number} into a string using formatting rules, replacing the
+	 * standard Ascii decimal separator with a comma (U+066C), and optionally converting
+	 * Ascii digits (0–9) to Arabic-Indic digits (٠–٩).
 	 * <p>
-	 * If the system property {@code arabic.indic.digits} is set to {@code true}, this method
-	 * will convert each Latin digit to its Arabic-Indic equivalent. Otherwise, digits remain unchanged.
+	 * If the system property {@code naftah.number.arabicIndic.active} is set to {@code true}, this method
+	 * will convert each Ascii digit to its Arabic-Indic equivalent. Otherwise, digits remain unchanged.
 	 * <p>
 	 * This method does not use locale-aware formatting; it operates directly on the string representation
 	 * of the number returned by {@link Number#toString()}.
 	 *
 	 * @param number the number to convert; must not be {@code null}
-	 * @return a string representing the number with an Arabic decimal separator, and optionally Arabic-Indic digits
+	 * @return a string representing the number with a decimal separator, and optionally Arabic-Indic digits
 	 * @throws NullPointerException if {@code number} is {@code null}
-	 * @see org.daiitech.naftah.utils.arabic.ArabicUtils#isLatinDigit(int)
+	 * @see ScriptUtils#isAsciiDigit(int)
 	 */
-	public static String latinNumberToArabicString(Number number) {
+	public static String numberToString(Number number) {
 		String result = number.toString().replace(".", "٬");
 		if (Boolean.getBoolean(ARABIC_INDIC_PROPERTY)) {
 			result = result
 					.chars()
 					.mapToObj(c -> {
-						if (ArabicUtils.isLatinDigit(c)) {
+						if (ScriptUtils.isAsciiDigit(c)) {
 							return String.valueOf((char) ('٠' + (c - '0')));
 						}
 						else {

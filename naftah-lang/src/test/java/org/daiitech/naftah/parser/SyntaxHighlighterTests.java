@@ -2,7 +2,7 @@ package org.daiitech.naftah.parser;
 
 import java.io.IOException;
 
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 import org.jline.reader.EOFError;
 import org.jline.reader.LineReader;
 import org.jline.reader.impl.LineReaderImpl;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_HEIGHT_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
-import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
+import static org.daiitech.naftah.utils.script.NaftahOutputTransformer.getPrintStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,7 +57,7 @@ class SyntaxHighlighterTests {
 
 		AttributedString result = highlighter.highlight(reader, buffer);
 		assertNotNull(result);
-		if (ArabicUtils.shouldReshape()) {
+		if (ScriptUtils.shouldReshape()) {
 			assertEquals(124, result.toAnsi().length());
 		}
 		else {

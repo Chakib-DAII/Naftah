@@ -13,8 +13,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 /**
  * Represents a Java class {@link Constructor} that can be invoked dynamically.
@@ -251,7 +251,7 @@ public final class JvmClassInitializer implements Serializable, JvmExecutable {
 
 			var modifiers = Modifier.toString(constructor.getModifiers());
 			var modifiersArray = modifiers.split("\\s");
-			var modifiersArabicArray = ArabicUtils
+			var modifiersArabicArray = ScriptUtils
 					.transliterateToArabicScriptDefault(
 														modifiersArray.clone());
 			detailedString

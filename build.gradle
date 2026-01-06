@@ -29,7 +29,7 @@ allprojects {
 	}
 }
 
-description = "Naftah Programming Language – Write programs in Arabic naturally, like living in Naftah"
+description = "Naftah Programming Language – Write programs in Tunisian/Arabic naturally, like living in Naftah"
 
 java {
 	toolchain {

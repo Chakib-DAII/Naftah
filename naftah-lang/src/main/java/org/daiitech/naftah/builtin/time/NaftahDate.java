@@ -18,33 +18,33 @@ import org.daiitech.naftah.utils.time.TemporalUtils;
 
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.numberToString;
 import static org.daiitech.naftah.utils.time.Constants.CALENDAR_PREFIX_AR;
-import static org.daiitech.naftah.utils.time.MonthUtils.arabicMonthToInt;
-import static org.daiitech.naftah.utils.time.MonthUtils.monthNumberToArabicName;
+import static org.daiitech.naftah.utils.time.MonthUtils.monthNameToNumber;
+import static org.daiitech.naftah.utils.time.MonthUtils.monthNumberToName;
 
 /**
- * Represents an immutable Arabic date composed of:
+ * Represents an immutable Naftah date composed of:
  * <ul>
  * <li>A {@link Date} component (day, month, year)</li>
  * <li>An optional {@link Calendar} component</li>
  * <li>A resolved {@link Temporal} representation</li>
  * </ul>
  * <p>
- * This record is typically produced after parsing Arabic date expressions
+ * This record is typically produced after parsing Naftah date expressions
  * and resolving them against a specific {@link Chronology}.
  *
  * <p>It supports both Gregorian and non-Gregorian calendars (e.g. Hijri)
- * and preserves the original Arabic month and calendar names.</p>
+ * and preserves the original Naftah month and calendar names.</p>
  *
  * @param date     the parsed date component
  * @param calendar the optional calendar specification
  * @param temporal the resolved temporal
  * @author Chakib Daii
  */
-public record ArabicDate(
+public record NaftahDate(
 		Date date,
 		Calendar calendar,
 		Temporal temporal
-) implements ArabicTemporalPoint, DateSupport {
+) implements NaftahTemporalPoint, DateSupport {
 
 	/**
 	 * Obtains the current date using the default chronology
@@ -55,9 +55,9 @@ public record ArabicDate(
 	 * {@code now(ChronologyUtils.DEFAULT_CHRONOLOGY, null)}.
 	 * </p>
 	 *
-	 * @return the current {@code ArabicDate}
+	 * @return the current {@code NaftahDate}
 	 */
-	public static ArabicDate now() {
+	public static NaftahDate now() {
 		return now(ChronologyUtils.DEFAULT_CHRONOLOGY);
 	}
 
@@ -71,11 +71,11 @@ public record ArabicDate(
 	 * </p>
 	 *
 	 * @param chronology the chronology to use (not {@code null})
-	 * @return the current {@code ArabicDate}
+	 * @return the current {@code NaftahDate}
 	 * @throws NullPointerException if {@code chronology} is {@code null}
 	 */
-	public static ArabicDate now(Chronology chronology) {
-		var calendar = ArabicDate.Calendar.of(chronology);
+	public static NaftahDate now(Chronology chronology) {
+		var calendar = NaftahDate.Calendar.of(chronology);
 		return now(calendar);
 	}
 
@@ -84,10 +84,10 @@ public record ArabicDate(
 	 * and the system default time zone.
 	 *
 	 * @param calendar the calendar to use (not {@code null})
-	 * @return the current {@code ArabicDate}
+	 * @return the current {@code NaftahDate}
 	 * @throws NullPointerException if {@code calendar} is {@code null}
 	 */
-	public static ArabicDate now(Calendar calendar) {
+	public static NaftahDate now(Calendar calendar) {
 		return now(calendar, null);
 	}
 
@@ -102,10 +102,10 @@ public record ArabicDate(
 	 *
 	 * @param zoneOrOffset the zone or offset to use, or {@code null}
 	 *                     to use the system default
-	 * @return the current {@code ArabicDate}
+	 * @return the current {@code NaftahDate}
 	 */
-	public static ArabicDate now(ArabicTime.ZoneOrOffset zoneOrOffset) {
-		var calendar = ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+	public static NaftahDate now(NaftahTime.ZoneOrOffset zoneOrOffset) {
+		var calendar = NaftahDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
 		return now(calendar, zoneOrOffset);
 	}
 
@@ -116,11 +116,11 @@ public record ArabicDate(
 	 * @param chronology   the chronology to use (not {@code null})
 	 * @param zoneOrOffset the zone or offset to use, or {@code null}
 	 *                     to use the system default
-	 * @return the current {@code ArabicDate}
+	 * @return the current {@code NaftahDate}
 	 * @throws NullPointerException if {@code chronology} is {@code null}
 	 */
-	public static ArabicDate now(Chronology chronology, ArabicTime.ZoneOrOffset zoneOrOffset) {
-		var calendar = ArabicDate.Calendar.of(chronology);
+	public static NaftahDate now(Chronology chronology, NaftahTime.ZoneOrOffset zoneOrOffset) {
+		var calendar = NaftahDate.Calendar.of(chronology);
 		return now(calendar, zoneOrOffset);
 	}
 
@@ -129,7 +129,7 @@ public record ArabicDate(
 	 * and zone or offset.
 	 *
 	 * <p>
-	 * The returned {@code ArabicDate} represents the current
+	 * The returned {@code NaftahDate} represents the current
 	 * calendar date as resolved by the provided calendar and
 	 * zone or offset.
 	 * </p>
@@ -137,18 +137,18 @@ public record ArabicDate(
 	 * @param calendar     the calendar to use (not {@code null})
 	 * @param zoneOrOffset the zone or offset to use, or {@code null}
 	 *                     to use the system default
-	 * @return the current {@code ArabicDate}
+	 * @return the current {@code NaftahDate}
 	 * @throws NullPointerException if {@code calendar} is {@code null}
 	 */
-	public static ArabicDate now(Calendar calendar, ArabicTime.ZoneOrOffset zoneOrOffset) {
-		return ArabicDate
+	public static NaftahDate now(Calendar calendar, NaftahTime.ZoneOrOffset zoneOrOffset) {
+		return NaftahDate
 				.of(calendar,
 					TemporalUtils.currentDate(calendar, zoneOrOffset)
 				);
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance from its parsed components.
+	 * Creates a new {@code NaftahDate} instance from its parsed components.
 	 *
 	 * <p>This factory method should be used when the {@code Date}, the {@link Calendar},
 	 * and the underlying {@link Temporal} representation are already known.
@@ -157,16 +157,16 @@ public record ArabicDate(
 	 * @param date     the parsed date component (day, month, year) according to the calendar
 	 * @param calendar the calendar associated with this date (e.g., Gregorian or Hijri)
 	 * @param temporal the resolved temporal representation backing this date
-	 * @return a new {@code ArabicDate} instance combining all components
+	 * @return a new {@code NaftahDate} instance combining all components
 	 */
-	public static ArabicDate of(Date date,
+	public static NaftahDate of(Date date,
 								Calendar calendar,
 								Temporal temporal) {
-		return new ArabicDate(date, calendar, temporal);
+		return new NaftahDate(date, calendar, temporal);
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance from its parsed components
+	 * Creates a new {@code NaftahDate} instance from its parsed components
 	 * and resolves the underlying {@link Temporal} representation automatically.
 	 *
 	 * <p>This factory method should be used when the {@code Date} and the
@@ -176,20 +176,20 @@ public record ArabicDate(
 	 *
 	 * @param date     the parsed date component (day, month, year) according to the calendar
 	 * @param calendar the calendar associated with this date (e.g., Gregorian or Hijri)
-	 * @return a new {@code ArabicDate} instance combining all components
+	 * @return a new {@code NaftahDate} instance combining all components
 	 */
-	public static ArabicDate of(Date date,
+	public static NaftahDate of(Date date,
 								Calendar calendar) {
-		return new ArabicDate(  date,
+		return new NaftahDate(  date,
 								calendar,
 								TemporalUtils.createDate(date.day, date.monthValue, date.year, calendar.chronology));
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance from a {@link Temporal} object and a calendar.
+	 * Creates a new {@code NaftahDate} instance from a {@link Temporal} object and a calendar.
 	 *
 	 * <p>This method extracts the day, month, and year fields from the given temporal
-	 * object and constructs an {@code ArabicDate} using the provided calendar's chronology.</p>
+	 * object and constructs an {@code NaftahDate} using the provided calendar's chronology.</p>
 	 *
 	 * <p>The temporal must support the following fields:
 	 * <ul>
@@ -201,10 +201,10 @@ public record ArabicDate(
 	 *
 	 * @param calendar the calendar that determines the chronology of the date
 	 * @param temporal the temporal object containing date information
-	 * @return a new {@code ArabicDate} instance derived from the temporal
+	 * @return a new {@code NaftahDate} instance derived from the temporal
 	 * @throws IllegalArgumentException if the temporal does not support day, month, or year fields
 	 */
-	public static ArabicDate of(Calendar calendar, Temporal temporal) {
+	public static NaftahDate of(Calendar calendar, Temporal temporal) {
 		if (!temporal.isSupported(ChronoField.DAY_OF_MONTH) || !temporal
 				.isSupported(ChronoField.MONTH_OF_YEAR) || !temporal.isSupported(ChronoField.YEAR)) {
 			throw new IllegalArgumentException(
@@ -222,70 +222,70 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance using a day, Arabic month name, and year.
+	 * Creates a new {@code NaftahDate} instance using a day, Naftah month name, and year.
 	 *
 	 * <p>This method uses the default chronology defined in {@link ChronologyUtils#DEFAULT_CHRONOLOGY}.</p>
 	 *
-	 * @param day         the day of the month
-	 * @param arabicMonth the Arabic month name (e.g., "رمضان", "يناير")
-	 * @param year        the year value
-	 * @return a new {@code ArabicDate} instance with the specified components
+	 * @param day   the day of the month
+	 * @param month the month name (e.g., "رمضان", "يناير")
+	 * @param year  the year value
+	 * @return a new {@code NaftahDate} instance with the specified components
 	 */
-	public static ArabicDate of(int day, String arabicMonth, int year) {
-		var calendar = ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
-		return of(calendar, day, arabicMonth, year);
+	public static NaftahDate of(int day, String month, int year) {
+		var calendar = NaftahDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+		return of(calendar, day, month, year);
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance using a specific chronology, day, Arabic month name, and year.
+	 * Creates a new {@code NaftahDate} instance using a specific chronology, day, month name, and year.
 	 *
 	 * <p>The chronology is used to resolve the month name to its numeric value and to determine leap years.</p>
 	 *
-	 * @param chronology  the chronology to use (e.g., ISO or Hijri)
-	 * @param day         the day of the month
-	 * @param arabicMonth the Arabic month name
-	 * @param year        the year value
-	 * @return a new {@code ArabicDate} instance with the specified components
+	 * @param chronology the chronology to use (e.g., ISO or Hijri)
+	 * @param day        the day of the month
+	 * @param month      the month name
+	 * @param year       the year value
+	 * @return a new {@code NaftahDate} instance with the specified components
 	 */
-	public static ArabicDate of(Chronology chronology, int day, String arabicMonth, int year) {
-		var calendar = ArabicDate.Calendar.of(chronology);
-		return of(calendar, day, arabicMonth, year);
+	public static NaftahDate of(Chronology chronology, int day, String month, int year) {
+		var calendar = NaftahDate.Calendar.of(chronology);
+		return of(calendar, day, month, year);
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance using a calendar, day, Arabic month name, and year.
+	 * Creates a new {@code NaftahDate} instance using a calendar, day, month name, and year.
 	 *
-	 * <p>The Arabic month name is resolved to a numeric month using the provided calendar's chronology.</p>
+	 * <p>The month name is resolved to a numeric month using the provided calendar's chronology.</p>
 	 *
-	 * @param calendar    the calendar to use
-	 * @param day         the day of the month
-	 * @param arabicMonth the Arabic month name
-	 * @param year        the year value
-	 * @return a new {@code ArabicDate} instance with the specified components
+	 * @param calendar the calendar to use
+	 * @param day      the day of the month
+	 * @param month    the month name
+	 * @param year     the year value
+	 * @return a new {@code NaftahDate} instance with the specified components
 	 */
-	public static ArabicDate of(Calendar calendar, int day, String arabicMonth, int year) {
-		var date = ArabicDate.Date.of(day, arabicMonth, calendar.chronology(), year);
+	public static NaftahDate of(Calendar calendar, int day, String month, int year) {
+		var date = NaftahDate.Date.of(day, month, calendar.chronology(), year);
 		var temporal = TemporalUtils.createDate(day, date.monthValue(), year, calendar.chronology());
 		return of(date, calendar, temporal);
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance using numeric day, month, and year values.
+	 * Creates a new {@code NaftahDate} instance using numeric day, month, and year values.
 	 *
 	 * <p>This method uses the default chronology defined in {@link ChronologyUtils#DEFAULT_CHRONOLOGY}.</p>
 	 *
 	 * @param day   the day of the month
 	 * @param month the numeric month value (1–12)
 	 * @param year  the year value
-	 * @return a new {@code ArabicDate} instance with the specified components
+	 * @return a new {@code NaftahDate} instance with the specified components
 	 */
-	public static ArabicDate of(int day, int month, int year) {
-		var calendar = ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+	public static NaftahDate of(int day, int month, int year) {
+		var calendar = NaftahDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
 		return of(calendar, day, month, year);
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance using a specific chronology, numeric day, month, and year.
+	 * Creates a new {@code NaftahDate} instance using a specific chronology, numeric day, month, and year.
 	 *
 	 * <p>The chronology is used for leap year calculations and month name resolution.</p>
 	 *
@@ -293,15 +293,15 @@ public record ArabicDate(
 	 * @param day        the day of the month
 	 * @param month      the numeric month value (1–12)
 	 * @param year       the year value
-	 * @return a new {@code ArabicDate} instance with the specified components
+	 * @return a new {@code NaftahDate} instance with the specified components
 	 */
-	public static ArabicDate of(Chronology chronology, int day, int month, int year) {
-		var calendar = ArabicDate.Calendar.of(chronology);
+	public static NaftahDate of(Chronology chronology, int day, int month, int year) {
+		var calendar = NaftahDate.Calendar.of(chronology);
 		return of(calendar, day, month, year);
 	}
 
 	/**
-	 * Creates a new {@code ArabicDate} instance using a calendar and numeric day, month, and year.
+	 * Creates a new {@code NaftahDate} instance using a calendar and numeric day, month, and year.
 	 *
 	 * <p>The calendar provides the chronology to resolve leap years and month names.</p>
 	 *
@@ -309,10 +309,10 @@ public record ArabicDate(
 	 * @param day      the day of the month
 	 * @param month    the numeric month value (1–12)
 	 * @param year     the year value
-	 * @return a new {@code ArabicDate} instance with the specified components
+	 * @return a new {@code NaftahDate} instance with the specified components
 	 */
-	public static ArabicDate of(Calendar calendar, int day, int month, int year) {
-		var date = ArabicDate.Date.of(day, month, calendar.chronology(), year);
+	public static NaftahDate of(Calendar calendar, int day, int month, int year) {
+		var date = NaftahDate.Date.of(day, month, calendar.chronology(), year);
 		var temporal = TemporalUtils.createDate(day, date.monthValue(), year, calendar.chronology());
 		return of(date, calendar, temporal);
 	}
@@ -333,7 +333,7 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Converts this {@code ArabicDate} to the number of days since the epoch
+	 * Converts this {@code NaftahDate} to the number of days since the epoch
 	 * (1970-01-01) in the ISO calendar system.
 	 *
 	 * @return the epoch day count
@@ -344,7 +344,7 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns the year component of this {@code ArabicDate}.
+	 * Returns the year component of this {@code NaftahDate}.
 	 *
 	 * @return the year value
 	 */
@@ -354,7 +354,7 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns the numeric month value (1–12) of this {@code ArabicDate}.
+	 * Returns the numeric month value (1–12) of this {@code NaftahDate}.
 	 *
 	 * @return the month value
 	 */
@@ -364,17 +364,17 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns the Arabic name of the month for this {@code ArabicDate}.
+	 * Returns the name of the month for this {@code NaftahDate}.
 	 *
-	 * @return the Arabic month name
+	 * @return the month name
 	 */
 	@Override
 	public String getMonth() {
-		return date.arabicMonth;
+		return date.month;
 	}
 
 	/**
-	 * Returns the day-of-month component of this {@code ArabicDate}.
+	 * Returns the day-of-month component of this {@code NaftahDate}.
 	 *
 	 * @return the day of the month
 	 */
@@ -384,7 +384,7 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns the day-of-year for this {@code ArabicDate} according to its chronology.
+	 * Returns the day-of-year for this {@code NaftahDate} according to its chronology.
 	 *
 	 * @return the day of the year (1–365 or 1–366 for leap years)
 	 */
@@ -394,20 +394,20 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns the day of the week as an Arabic string for this {@code ArabicDate}.
+	 * Returns the day of the week as a string for this {@code NaftahDate}.
 	 *
 	 * <p>The calculation is based on the epoch day of the underlying {@link ChronoLocalDate}.</p>
 	 *
-	 * @return the Arabic name of the day of the week
+	 * @return the name of the day of the week
 	 */
 	@Override
 	public String getDayOfWeek() {
 		int dow0 = Math.floorMod(toChronoDate().toEpochDay() + 3, 7);
-		return DayOfWeekUtils.getArabicDayOfWeek(dow0 + 1);
+		return DayOfWeekUtils.getDayOfWeek(dow0 + 1);
 	}
 
 	/**
-	 * Checks if the year of this {@code ArabicDate} is a leap year in its chronology.
+	 * Checks if the year of this {@code NaftahDate} is a leap year in its chronology.
 	 *
 	 * @return {@code true} if the year is a leap year, {@code false} otherwise
 	 */
@@ -417,7 +417,7 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns the length of the month in days for this {@code ArabicDate}.
+	 * Returns the length of the month in days for this {@code NaftahDate}.
 	 *
 	 * <p>The length is determined according to the chronology of the calendar.</p>
 	 *
@@ -429,7 +429,7 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns the length of the year in days for this {@code ArabicDate}.
+	 * Returns the length of the year in days for this {@code NaftahDate}.
 	 *
 	 * <p>
 	 * The number of days depends on the chronology of the date:
@@ -453,25 +453,25 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} obtained by adding the given Arabic temporal
+	 * Returns a new {@code NaftahDate} obtained by adding the given Naftah temporal
 	 * amount to this date.
 	 *
-	 * @param arabicTemporalAmount the temporal amount to add
-	 * @return a new {@code ArabicDate} instance
+	 * @param naftahTemporalAmount the temporal amount to add
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate plus(ArabicTemporalAmount arabicTemporalAmount) {
-		return compute(arabicTemporalAmount, this.temporal::plus);
+	public NaftahDate plus(NaftahTemporalAmount naftahTemporalAmount) {
+		return compute(naftahTemporalAmount, this.temporal::plus);
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} with the specified number of years added.
+	 * Returns a new {@code NaftahDate} with the specified number of years added.
 	 *
 	 * @param yearsToAdd the number of years to add, may be negative
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate plusYears(long yearsToAdd) {
+	public NaftahDate plusYears(long yearsToAdd) {
 		if (yearsToAdd == 0) {
 			return this;
 		}
@@ -479,13 +479,13 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} with the specified number of months added.
+	 * Returns a new {@code NaftahDate} with the specified number of months added.
 	 *
 	 * @param monthsToAdd the number of months to add, may be negative
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate plusMonths(long monthsToAdd) {
+	public NaftahDate plusMonths(long monthsToAdd) {
 		if (monthsToAdd == 0) {
 			return this;
 		}
@@ -493,13 +493,13 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} with the specified number of weeks added.
+	 * Returns a new {@code NaftahDate} with the specified number of weeks added.
 	 *
 	 * @param weeksToAdd the number of weeks to add, may be negative
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate plusWeeks(long weeksToAdd) {
+	public NaftahDate plusWeeks(long weeksToAdd) {
 		if (weeksToAdd == 0) {
 			return this;
 		}
@@ -507,13 +507,13 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} with the specified number of days added.
+	 * Returns a new {@code NaftahDate} with the specified number of days added.
 	 *
 	 * @param daysToAdd the number of days to add, may be negative
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate plusDays(long daysToAdd) {
+	public NaftahDate plusDays(long daysToAdd) {
 		if (daysToAdd == 0) {
 			return this;
 		}
@@ -521,25 +521,25 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} obtained by subtracting the given Arabic temporal
+	 * Returns a new {@code NaftahDate} obtained by subtracting the given Naftah temporal
 	 * amount from this date.
 	 *
-	 * @param arabicTemporalAmount the temporal amount to subtract
-	 * @return a new {@code ArabicDate} instance
+	 * @param naftahTemporalAmount the temporal amount to subtract
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate minus(ArabicTemporalAmount arabicTemporalAmount) {
-		return compute(arabicTemporalAmount, this.temporal::minus);
+	public NaftahDate minus(NaftahTemporalAmount naftahTemporalAmount) {
+		return compute(naftahTemporalAmount, this.temporal::minus);
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} with the specified number of years subtracted.
+	 * Returns a new {@code NaftahDate} with the specified number of years subtracted.
 	 *
 	 * @param yearsToSubtract the number of years to subtract, may be negative
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate minusYears(long yearsToSubtract) {
+	public NaftahDate minusYears(long yearsToSubtract) {
 		if (yearsToSubtract == 0) {
 			return this;
 		}
@@ -547,13 +547,13 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} with the specified number of months subtracted.
+	 * Returns a new {@code NaftahDate} with the specified number of months subtracted.
 	 *
 	 * @param monthsToSubtract the number of months to subtract, may be negative
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate minusMonths(long monthsToSubtract) {
+	public NaftahDate minusMonths(long monthsToSubtract) {
 		if (monthsToSubtract == 0) {
 			return this;
 		}
@@ -561,13 +561,13 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} with the specified number of weeks subtracted.
+	 * Returns a new {@code NaftahDate} with the specified number of weeks subtracted.
 	 *
 	 * @param weeksToSubtract the number of weeks to subtract, may be negative
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate minusWeeks(long weeksToSubtract) {
+	public NaftahDate minusWeeks(long weeksToSubtract) {
 		if (weeksToSubtract == 0) {
 			return this;
 		}
@@ -575,13 +575,13 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a new {@code ArabicDate} with the specified number of days subtracted.
+	 * Returns a new {@code NaftahDate} with the specified number of days subtracted.
 	 *
 	 * @param daysToSubtract the number of days to subtract, may be negative
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 */
 	@Override
-	public ArabicDate minusDays(long daysToSubtract) {
+	public NaftahDate minusDays(long daysToSubtract) {
 		if (daysToSubtract == 0) {
 			return this;
 		}
@@ -589,14 +589,14 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Computes a new {@code ArabicDate} by applying the given temporal computation.
+	 * Computes a new {@code NaftahDate} by applying the given temporal computation.
 	 *
 	 * <p>
 	 * Date-based arithmetic supports:
 	 * <ul>
-	 * <li>{@link ArabicPeriod}</li>
-	 * <li>{@link ArabicDuration} of at least 24 hours</li>
-	 * <li>{@link ArabicPeriodWithDuration}</li>
+	 * <li>{@link NaftahPeriod}</li>
+	 * <li>{@link NaftahDuration} of at least 24 hours</li>
+	 * <li>{@link NaftahPeriodWithDuration}</li>
 	 * </ul>
 	 * </p>
 	 *
@@ -606,12 +606,12 @@ public record ArabicDate(
 	 *
 	 * @param arabicTemporalAmount the temporal amount to apply
 	 * @param computeFunction      the temporal computation function
-	 * @return a new {@code ArabicDate} instance
+	 * @return a new {@code NaftahDate} instance
 	 * @throws IllegalArgumentException if the operation is not supported
 	 */
-	ArabicDate compute( ArabicTemporalAmount arabicTemporalAmount,
+	NaftahDate compute( NaftahTemporalAmount arabicTemporalAmount,
 						Function<TemporalAmount, Temporal> computeFunction) {
-		if (arabicTemporalAmount instanceof ArabicDuration duration) {
+		if (arabicTemporalAmount instanceof NaftahDuration duration) {
 			long hours = duration.temporalAmount().toHours();
 
 			if (hours < 24) {
@@ -622,8 +622,8 @@ public record ArabicDate(
 
 			return of(calendar, computeFunction.apply(duration.temporalAmount()));
 		}
-		else if (arabicTemporalAmount instanceof ArabicPeriodWithDuration arabicPeriodWithDuration) {
-			return of(calendar, computeFunction.apply(arabicPeriodWithDuration.arabicPeriod().temporalAmount()));
+		else if (arabicTemporalAmount instanceof NaftahPeriodWithDuration naftahPeriodWithDuration) {
+			return of(calendar, computeFunction.apply(naftahPeriodWithDuration.naftahPeriod().temporalAmount()));
 		}
 		else {
 			return of(calendar, computeFunction.apply(arabicTemporalAmount.temporalAmount()));
@@ -631,13 +631,13 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Returns a string representation of this {@link ArabicDate} in the format:
+	 * Returns a string representation of this {@link NaftahDate} in the format:
 	 * "date calendar".
 	 *
 	 * <p>If a {@link Calendar} component is present, it is appended after the date.
 	 * Otherwise, only the date is returned.</p>
 	 *
-	 * @return a formatted string representing the Arabic date and optional calendar
+	 * @return a formatted string representing the Naftah date and optional calendar
 	 */
 	@Override
 	public String toString() {
@@ -652,19 +652,19 @@ public record ArabicDate(
 	}
 
 	/**
-	 * Represents the date part of an Arabic date expression.
+	 * Represents the date part of a Naftah date expression.
 	 *
-	 * <p>Stores both the original Arabic month name and its numeric value
+	 * <p>Stores both the original Naftah month name and its numeric value
 	 * as resolved using a specific {@link Chronology}.</p>
 	 *
 	 * <p>Validation ensures the day, month, and month name are logically correct.</p>
 	 *
-	 * @param day         the day of month (starting from 1)
-	 * @param arabicMonth the Arabic name of the month
-	 * @param monthValue  the numeric month value (1–12)
-	 * @param year        the year value
+	 * @param day        the day of month (starting from 1)
+	 * @param month      the name of the month
+	 * @param monthValue the numeric month value (1–12)
+	 * @param year       the year value
 	 */
-	public record Date(int day, String arabicMonth, int monthValue, int year) {
+	public record Date(int day, String month, int monthValue, int year) {
 		public Date {
 			if (day < 1) {
 				throw new IllegalArgumentException("اليوم غير صحيح");
@@ -672,46 +672,46 @@ public record ArabicDate(
 			if (monthValue < 1 || monthValue > 12) {
 				throw new IllegalArgumentException("رقم الشهر غير صحيح");
 			}
-			if (ObjectUtils.isEmpty(arabicMonth)) {
+			if (ObjectUtils.isEmpty(month)) {
 				throw new IllegalArgumentException("اسم الشهر لا يمكن أن يكون فارغًا");
 			}
 		}
 
 		/**
-		 * Creates a {@code Date} instance by resolving an Arabic month name
+		 * Creates a {@code Date} instance by resolving a month name
 		 * into its numeric value using the provided chronology.
 		 *
 		 * <p>The month name is interpreted according to the given chronology:
 		 * Hijri chronologies resolve Hijri month names, while non-Hijri
 		 * chronologies resolve Gregorian month names.</p>
 		 *
-		 * @param day         the day of the month
-		 * @param arabicMonth the Arabic month name (e.g. "رمضان", "يناير")
-		 * @param chronology  the chronology used to resolve the month value
-		 * @param year        the year value
+		 * @param day        the day of the month
+		 * @param month      the month name (e.g. "رمضان", "يناير")
+		 * @param chronology the chronology used to resolve the month value
+		 * @param year       the year value
 		 * @return a new {@code Date} instance
 		 * @throws IllegalArgumentException if the month name cannot be resolved for the given chronology
 		 */
-		public static Date of(int day, String arabicMonth, Chronology chronology, int year) {
-			return new Date(day, arabicMonth, arabicMonthToInt(arabicMonth, chronology), year);
+		public static Date of(int day, String month, Chronology chronology, int year) {
+			return new Date(day, month, monthNameToNumber(month, chronology), year);
 		}
 
 		/**
 		 * Creates a {@code Date} instance using a numeric month value.
 		 *
-		 * <p>The numeric month is converted back to its Arabic name according
-		 * to the provided chronology. This ensures that the Arabic month name
+		 * <p>The numeric month is converted back to its name according
+		 * to the provided chronology. This ensures that the month name
 		 * remains consistent with the calendar system.</p>
 		 *
 		 * @param day        the day of the month
 		 * @param monthValue the numeric month value (1–12)
-		 * @param chronology the chronology used to resolve the Arabic month name
+		 * @param chronology the chronology used to resolve the month name
 		 * @param year       the year value
 		 * @return a new {@code Date} instance
 		 * @throws IllegalArgumentException if the month value cannot be resolved for the given chronology
 		 */
 		public static Date of(int day, int monthValue, Chronology chronology, int year) {
-			return new Date(day, monthNumberToArabicName(monthValue, chronology), monthValue, year);
+			return new Date(day, monthNumberToName(monthValue, chronology), monthValue, year);
 		}
 
 		/**
@@ -719,55 +719,55 @@ public record ArabicDate(
 		 *
 		 * <p>The format is:</p>
 		 * <pre>
-		 * day arabicMonth year
+		 * day month year
 		 * </pre>
 		 *
 		 * <p>Numeric values are rendered using the configured number formatter,
-		 * and the Arabic month name is preserved exactly as stored.</p>
+		 * and the month name is preserved exactly as stored.</p>
 		 *
 		 * @return a formatted string representing this date
 		 */
 		@Override
 		public String toString() {
-			return numberToString(day) + " " + arabicMonth + " " + numberToString(year);
+			return numberToString(day) + " " + month + " " + numberToString(year);
 		}
 	}
 
 	/**
-	 * Represents an Arabic calendar specification.
+	 * Represents an Naftah calendar specification.
 	 *
 	 * <p>If no chronology or calendar name is provided, default values
 	 * are applied automatically.</p>
 	 *
 	 * <p>This component is optional and may be omitted in date expressions.</p>
 	 *
-	 * @param arabicCalendar the Arabic name of the calendar
-	 * @param chronology     the associated {@link Chronology}
+	 * @param calendar   the name of the calendar
+	 * @param chronology the associated {@link Chronology}
 	 */
-	public record Calendar(String arabicCalendar, Chronology chronology) {
+	public record Calendar(String calendar, Chronology chronology) {
 
 		public Calendar {
 			chronology = Objects.nonNull(chronology) ? chronology : ChronologyUtils.DEFAULT_CHRONOLOGY;
-			arabicCalendar = Objects.nonNull(arabicCalendar) ?
-					arabicCalendar :
+			calendar = Objects.nonNull(calendar) ?
+					calendar :
 					ChronologyUtils.getChronologyName(chronology);
 		}
 
 		/**
-		 * Creates a {@code Calendar} instance using the given Arabic name
+		 * Creates a {@code Calendar} instance using the given name
 		 * and chronology.
 		 *
-		 * @param arabicCalendar the Arabic calendar name
-		 * @param chronology     the associated chronology
+		 * @param calendar   the calendar name
+		 * @param chronology the associated chronology
 		 * @return a new {@code Calendar} instance
 		 */
-		public static Calendar of(String arabicCalendar, Chronology chronology) {
-			return new Calendar(arabicCalendar, chronology);
+		public static Calendar of(String calendar, Chronology chronology) {
+			return new Calendar(calendar, chronology);
 		}
 
 		/**
 		 * Creates a {@code Calendar} instance using only a chronology.
-		 * The Arabic calendar name will default automatically.
+		 * The calendar name will default automatically.
 		 *
 		 * @param chronology the associated chronology
 		 * @return a new {@code Calendar} instance
@@ -778,18 +778,18 @@ public record ArabicDate(
 
 		/**
 		 * Returns a string representation of this {@link Calendar} in the format:
-		 * "Calendar: arabicCalendar".
+		 * "Calendar: calendar".
 		 *
-		 * <p>Displays the Arabic name of the calendar. If no name was provided,
+		 * <p>Displays the name of the calendar. If no name was provided,
 		 * the default calendar name is used.</p>
 		 *
 		 * @return a formatted string representing the calendar
 		 */
 		@Override
 		public String toString() {
-			return (arabicCalendar.contains(CALENDAR_PREFIX_AR.substring(3)) ?
+			return (calendar.contains(CALENDAR_PREFIX_AR.substring(3)) ?
 					"" :
-					CALENDAR_PREFIX_AR) + " " + arabicCalendar;
+					CALENDAR_PREFIX_AR) + " " + calendar;
 		}
 	}
 }

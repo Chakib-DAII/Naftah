@@ -7,43 +7,43 @@ import java.time.temporal.TemporalAmount;
 /**
  * Represents a combined period and duration expressed in Arabic text.
  * <p>
- * This class wraps an {@link ArabicPeriod} and an {@link ArabicDuration}, allowing
+ * This class wraps an {@link NaftahPeriod} and an {@link NaftahDuration}, allowing
  * you to work with both periods (years, months, days) and durations (hours, minutes, seconds)
  * together in Arabic formatting.
  * </p>
  *
- * @param arabicPeriod   the period part in Arabic
- * @param arabicDuration the duration part in Arabic
+ * @param naftahPeriod   the period part in Arabic
+ * @param naftahDuration the duration part in Arabic
  * @author Chakib Daii
  */
-public record ArabicPeriodWithDuration(
-		ArabicPeriod arabicPeriod,
-		ArabicDuration arabicDuration
-) implements ArabicTemporalAmount {
+public record NaftahPeriodWithDuration(
+		NaftahPeriod naftahPeriod,
+		NaftahDuration naftahDuration
+) implements NaftahTemporalAmount {
 
 	/**
 	 * Creates a new {@code ArabicPeriodWithDuration} instance.
 	 *
-	 * @param arabicPeriod   the period part in Arabic
-	 * @param arabicDuration the duration part in Arabic
+	 * @param naftahPeriod   the period part in Arabic
+	 * @param naftahDuration the duration part in Arabic
 	 * @return a new {@code ArabicPeriodWithDuration} instance
 	 */
-	public static ArabicPeriodWithDuration of(
-												ArabicPeriod arabicPeriod,
-												ArabicDuration arabicDuration) {
-		return adjustDurationIntoPeriod(arabicPeriod, arabicDuration);
+	public static NaftahPeriodWithDuration of(
+												NaftahPeriod naftahPeriod,
+												NaftahDuration naftahDuration) {
+		return adjustDurationIntoPeriod(naftahPeriod, naftahDuration);
 	}
 
 	/**
-	 * Returns an {@link ArabicPeriodWithDuration} representing a zero period and zero duration.
+	 * Returns an {@link NaftahPeriodWithDuration} representing a zero period and zero duration.
 	 *
 	 * <p>The returned object has all components of both the period (years, months, days)
 	 * and the duration (hours, minutes, seconds, milliseconds, nanoseconds) set to zero.</p>
 	 *
-	 * @return an {@link ArabicPeriodWithDuration} with zero period and zero duration
+	 * @return an {@link NaftahPeriodWithDuration} with zero period and zero duration
 	 */
-	public static ArabicPeriodWithDuration ofZero() {
-		return of(ArabicPeriod.ofZero(), ArabicDuration.ofZero());
+	public static NaftahPeriodWithDuration ofZero() {
+		return of(NaftahPeriod.ofZero(), NaftahDuration.ofZero());
 	}
 
 	/**
@@ -55,8 +55,8 @@ public record ArabicPeriodWithDuration(
 	 * @param years the number of years, positive or negative
 	 * @return the period of years, not null
 	 */
-	public static ArabicPeriodWithDuration ofYears(int years) {
-		return of(ArabicPeriod.ofYears(years), ArabicDuration.ofZero());
+	public static NaftahPeriodWithDuration ofYears(int years) {
+		return of(NaftahPeriod.ofYears(years), NaftahDuration.ofZero());
 	}
 
 	/**
@@ -68,8 +68,8 @@ public record ArabicPeriodWithDuration(
 	 * @param months the number of months, positive or negative
 	 * @return the period of months, not null
 	 */
-	public static ArabicPeriodWithDuration ofMonths(int months) {
-		return of(ArabicPeriod.ofMonths(months), ArabicDuration.ofZero());
+	public static NaftahPeriodWithDuration ofMonths(int months) {
+		return of(NaftahPeriod.ofMonths(months), NaftahDuration.ofZero());
 	}
 
 	/**
@@ -82,8 +82,8 @@ public record ArabicPeriodWithDuration(
 	 * @param weeks the number of weeks, positive or negative
 	 * @return the period, with the input weeks converted to days, not null
 	 */
-	public static ArabicPeriodWithDuration ofWeeks(int weeks) {
-		return of(ArabicPeriod.ofWeeks(weeks), ArabicDuration.ofZero());
+	public static NaftahPeriodWithDuration ofWeeks(int weeks) {
+		return of(NaftahPeriod.ofWeeks(weeks), NaftahDuration.ofZero());
 	}
 
 	/**
@@ -95,8 +95,8 @@ public record ArabicPeriodWithDuration(
 	 * @param days the number of days, positive or negative
 	 * @return the period of days, not null
 	 */
-	public static ArabicPeriodWithDuration ofDays(int days) {
-		return of(ArabicPeriod.ofDays(days), ArabicDuration.ofZero());
+	public static NaftahPeriodWithDuration ofDays(int days) {
+		return of(NaftahPeriod.ofDays(days), NaftahDuration.ofZero());
 	}
 
 	/**
@@ -110,8 +110,8 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration}, not null
 	 * @throws ArithmeticException if the input hours exceeds the capacity of {@code Duration}
 	 */
-	public static ArabicPeriodWithDuration ofHours(long hours) {
-		return of(ArabicPeriod.ofZero(), ArabicDuration.ofHours(hours));
+	public static NaftahPeriodWithDuration ofHours(long hours) {
+		return of(NaftahPeriod.ofZero(), NaftahDuration.ofHours(hours));
 	}
 
 	/**
@@ -125,8 +125,8 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration}, not null
 	 * @throws ArithmeticException if the input minutes exceeds the capacity of {@code Duration}
 	 */
-	public static ArabicPeriodWithDuration ofMinutes(long minutes) {
-		return of(ArabicPeriod.ofZero(), ArabicDuration.ofMinutes(minutes));
+	public static NaftahPeriodWithDuration ofMinutes(long minutes) {
+		return of(NaftahPeriod.ofZero(), NaftahDuration.ofMinutes(minutes));
 	}
 
 	/**
@@ -137,8 +137,8 @@ public record ArabicPeriodWithDuration(
 	 * @param seconds the number of seconds, positive or negative
 	 * @return a {@code ArabicPeriodWithDuration}, not null
 	 */
-	public static ArabicPeriodWithDuration ofSeconds(long seconds) {
-		return of(ArabicPeriod.ofZero(), ArabicDuration.ofSeconds(seconds));
+	public static NaftahPeriodWithDuration ofSeconds(long seconds) {
+		return of(NaftahPeriod.ofZero(), NaftahDuration.ofSeconds(seconds));
 	}
 
 	/**
@@ -160,8 +160,8 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration}, not null
 	 * @throws ArithmeticException if the adjustment causes the seconds to exceed the capacity of {@code Duration}
 	 */
-	public static ArabicPeriodWithDuration ofSeconds(long seconds, long nanoAdjustment) {
-		return of(ArabicPeriod.ofZero(), ArabicDuration.ofSeconds(seconds, nanoAdjustment));
+	public static NaftahPeriodWithDuration ofSeconds(long seconds, long nanoAdjustment) {
+		return of(NaftahPeriod.ofZero(), NaftahDuration.ofSeconds(seconds, nanoAdjustment));
 	}
 
 	/**
@@ -172,8 +172,8 @@ public record ArabicPeriodWithDuration(
 	 * @param millis the number of milliseconds, positive or negative
 	 * @return a {@code ArabicPeriodWithDuration}, not null
 	 */
-	public static ArabicPeriodWithDuration ofMillis(long millis) {
-		return of(ArabicPeriod.ofZero(), ArabicDuration.ofMillis(millis));
+	public static NaftahPeriodWithDuration ofMillis(long millis) {
+		return of(NaftahPeriod.ofZero(), NaftahDuration.ofMillis(millis));
 	}
 
 	/**
@@ -184,8 +184,8 @@ public record ArabicPeriodWithDuration(
 	 * @param nanos the number of nanoseconds, positive or negative
 	 * @return a {@code ArabicPeriodWithDuration}, not null
 	 */
-	public static ArabicPeriodWithDuration ofNanos(long nanos) {
-		return of(ArabicPeriod.ofZero(), ArabicDuration.ofNanos(nanos));
+	public static NaftahPeriodWithDuration ofNanos(long nanos) {
+		return of(NaftahPeriod.ofZero(), NaftahDuration.ofNanos(nanos));
 	}
 
 	/**
@@ -195,9 +195,9 @@ public record ArabicPeriodWithDuration(
 	 * @param duration the original ArabicDuration
 	 * @return a new {@code ArabicPeriodWithDuration} with normalized duration and adjusted period
 	 */
-	private static ArabicPeriodWithDuration adjustDurationIntoPeriod(
-																		ArabicPeriod period,
-																		ArabicDuration duration) {
+	private static NaftahPeriodWithDuration adjustDurationIntoPeriod(
+																		NaftahPeriod period,
+																		NaftahDuration duration) {
 
 		long totalHours = duration.temporalAmount().toHours();
 
@@ -211,10 +211,10 @@ public record ArabicPeriodWithDuration(
 			// Adjust duration to less than 24 hours
 			Duration newDuration = duration.temporalAmount().minusHours(extraDays * 24);
 
-			ArabicPeriod.PeriodDefinition oldPeriodDefinition = period.periodDefinition();
-			ArabicPeriod adjustedPeriod = ArabicPeriod
+			NaftahPeriod.PeriodDefinition oldPeriodDefinition = period.periodDefinition();
+			NaftahPeriod adjustedPeriod = NaftahPeriod
 					.of(
-						ArabicPeriod.PeriodDefinition
+						NaftahPeriod.PeriodDefinition
 								.of(
 									newPeriod.getYears(),
 									oldPeriodDefinition.yearText(),
@@ -226,10 +226,10 @@ public record ArabicPeriodWithDuration(
 						newPeriod
 					);
 
-			ArabicDuration.DurationDefinition oldDurationDefinition = duration.durationDefinition();
-			ArabicDuration adjustedDuration = ArabicDuration
+			NaftahDuration.DurationDefinition oldDurationDefinition = duration.durationDefinition();
+			NaftahDuration adjustedDuration = NaftahDuration
 					.of(
-						ArabicDuration.DurationDefinition
+						NaftahDuration.DurationDefinition
 								.of(
 									(int) remainingHours,
 									oldDurationDefinition.hourText(),
@@ -243,10 +243,10 @@ public record ArabicPeriodWithDuration(
 								),
 						newDuration
 					);
-			return new ArabicPeriodWithDuration(adjustedPeriod, adjustedDuration);
+			return new NaftahPeriodWithDuration(adjustedPeriod, adjustedDuration);
 		}
 
-		return new ArabicPeriodWithDuration(period, duration);
+		return new NaftahPeriodWithDuration(period, duration);
 	}
 
 	/**
@@ -259,9 +259,9 @@ public record ArabicPeriodWithDuration(
 	 */
 	@Override
 	public TemporalAmount temporalAmount() {
-		return arabicPeriod
+		return naftahPeriod
 				.temporalAmount()
-				.plus(arabicDuration.temporalAmount());
+				.plus(naftahDuration.temporalAmount());
 	}
 
 	/**
@@ -270,7 +270,7 @@ public record ArabicPeriodWithDuration(
 	 * @return the years component of the period
 	 */
 	public int getYears() {
-		return arabicPeriod.getYears();
+		return naftahPeriod.getYears();
 	}
 
 	/**
@@ -279,7 +279,7 @@ public record ArabicPeriodWithDuration(
 	 * @return the months component of the period
 	 */
 	public int getMonths() {
-		return arabicPeriod.getMonths();
+		return naftahPeriod.getMonths();
 	}
 
 	/**
@@ -288,7 +288,7 @@ public record ArabicPeriodWithDuration(
 	 * @return the days component of the period
 	 */
 	public int getDays() {
-		return arabicPeriod.getDays();
+		return naftahPeriod.getDays();
 	}
 
 	/**
@@ -297,7 +297,7 @@ public record ArabicPeriodWithDuration(
 	 * @return the total hours
 	 */
 	public long getHours() {
-		return arabicDuration.getHours();
+		return naftahDuration.getHours();
 	}
 
 	/**
@@ -310,7 +310,7 @@ public record ArabicPeriodWithDuration(
 	 * @return the minutes within the current hour (0-59)
 	 */
 	public long getMinutes() {
-		return arabicDuration.getMinutes();
+		return naftahDuration.getMinutes();
 	}
 
 	/**
@@ -323,7 +323,7 @@ public record ArabicPeriodWithDuration(
 	 * @return the seconds within the current minute (0-59)
 	 */
 	public long getSeconds() {
-		return arabicDuration.getSeconds();
+		return naftahDuration.getSeconds();
 	}
 
 	/**
@@ -336,7 +336,7 @@ public record ArabicPeriodWithDuration(
 	 * @return the milliseconds within the current second (0-999)
 	 */
 	public long getMillis() {
-		return arabicDuration.getMillis();
+		return naftahDuration.getMillis();
 	}
 
 	/**
@@ -345,7 +345,7 @@ public record ArabicPeriodWithDuration(
 	 * @return the nanoseconds within the current second (0-999,999,999)
 	 */
 	public int getNano() {
-		return arabicDuration.getNano();
+		return naftahDuration.getNano();
 	}
 
 	/**
@@ -354,9 +354,9 @@ public record ArabicPeriodWithDuration(
 	 * <p>
 	 * Supported combinations:
 	 * <ul>
-	 * <li>{@link ArabicDuration}</li>
-	 * <li>{@link ArabicPeriodWithDuration}</li>
-	 * <li>Any {@link ArabicTemporalAmount} convertible to a {@link Period}</li>
+	 * <li>{@link NaftahDuration}</li>
+	 * <li>{@link NaftahPeriodWithDuration}</li>
+	 * <li>Any {@link NaftahTemporalAmount} convertible to a {@link Period}</li>
 	 * </ul>
 	 * </p>
 	 *
@@ -364,24 +364,24 @@ public record ArabicPeriodWithDuration(
 	 * @return a new normalized {@code ArabicPeriodWithDuration}
 	 */
 	@Override
-	public ArabicPeriodWithDuration plus(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
-			Duration result = this.arabicDuration.temporalAmount().plus(otherDur.temporalAmount());
-			return ArabicPeriodWithDuration.of(arabicPeriod, ArabicDuration.of(result));
+	public NaftahPeriodWithDuration plus(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
+			Duration result = this.naftahDuration.temporalAmount().plus(otherDur.temporalAmount());
+			return NaftahPeriodWithDuration.of(naftahPeriod, NaftahDuration.of(result));
 		}
-		else if (other instanceof ArabicPeriodWithDuration otherPeriodWithDuration) {
-			Period period = this.arabicPeriod
+		else if (other instanceof NaftahPeriodWithDuration otherPeriodWithDuration) {
+			Period period = this.naftahPeriod
 					.temporalAmount()
-					.plus(otherPeriodWithDuration.arabicPeriod.temporalAmount());
-			Duration duration = this.arabicDuration
+					.plus(otherPeriodWithDuration.naftahPeriod.temporalAmount());
+			Duration duration = this.naftahDuration
 					.temporalAmount()
-					.plus(otherPeriodWithDuration.arabicDuration.temporalAmount());
+					.plus(otherPeriodWithDuration.naftahDuration.temporalAmount());
 
-			return ArabicPeriodWithDuration.of(ArabicPeriod.of(period), ArabicDuration.of(duration));
+			return NaftahPeriodWithDuration.of(NaftahPeriod.of(period), NaftahDuration.of(duration));
 		}
 		else {
-			Period result = this.arabicPeriod.temporalAmount().plus(other.temporalAmount());
-			return ArabicPeriodWithDuration.of(ArabicPeriod.of(result), arabicDuration);
+			Period result = this.naftahPeriod.temporalAmount().plus(other.temporalAmount());
+			return NaftahPeriodWithDuration.of(NaftahPeriod.of(result), naftahDuration);
 		}
 	}
 
@@ -398,11 +398,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this period with the specified years added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration plusYears(long yearsToAdd) {
+	public NaftahPeriodWithDuration plusYears(long yearsToAdd) {
 		if (yearsToAdd == 0) {
 			return this;
 		}
-		return of(arabicPeriod.plusYears(yearsToAdd), arabicDuration);
+		return of(naftahPeriod.plusYears(yearsToAdd), naftahDuration);
 	}
 
 	/**
@@ -418,11 +418,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this period with the specified months added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration plusMonths(long monthsToAdd) {
+	public NaftahPeriodWithDuration plusMonths(long monthsToAdd) {
 		if (monthsToAdd == 0) {
 			return this;
 		}
-		return of(arabicPeriod.plusMonths(monthsToAdd), arabicDuration);
+		return of(naftahPeriod.plusMonths(monthsToAdd), naftahDuration);
 	}
 
 	/**
@@ -438,11 +438,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this period with the specified days added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration plusDays(long daysToAdd) {
+	public NaftahPeriodWithDuration plusDays(long daysToAdd) {
 		if (daysToAdd == 0) {
 			return this;
 		}
-		return of(arabicPeriod.plusDays(daysToAdd), arabicDuration);
+		return of(naftahPeriod.plusDays(daysToAdd), naftahDuration);
 	}
 
 
@@ -455,11 +455,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this duration with the specified hours added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration plusHours(long hoursToAdd) {
+	public NaftahPeriodWithDuration plusHours(long hoursToAdd) {
 		if (hoursToAdd == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.plusHours(hoursToAdd));
+		return of(naftahPeriod, naftahDuration.plusHours(hoursToAdd));
 	}
 
 	/**
@@ -471,11 +471,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this duration with the specified minutes added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration plusMinutes(long minutesToAdd) {
+	public NaftahPeriodWithDuration plusMinutes(long minutesToAdd) {
 		if (minutesToAdd == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.plusMinutes(minutesToAdd));
+		return of(naftahPeriod, naftahDuration.plusMinutes(minutesToAdd));
 	}
 
 	/**
@@ -487,11 +487,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this duration with the specified seconds added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration plusSeconds(long secondsToAdd) {
+	public NaftahPeriodWithDuration plusSeconds(long secondsToAdd) {
 		if (secondsToAdd == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.plusSeconds(secondsToAdd));
+		return of(naftahPeriod, naftahDuration.plusSeconds(secondsToAdd));
 	}
 
 	/**
@@ -504,11 +504,11 @@ public record ArabicPeriodWithDuration(
 	 *         * null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration plusMillis(long millisToAdd) {
+	public NaftahPeriodWithDuration plusMillis(long millisToAdd) {
 		if (millisToAdd == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.plusMillis(millisToAdd));
+		return of(naftahPeriod, naftahDuration.plusMillis(millisToAdd));
 	}
 
 	/**
@@ -520,42 +520,42 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this duration with the specified nanoseconds added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration plusNanos(long nanosToAdd) {
+	public NaftahPeriodWithDuration plusNanos(long nanosToAdd) {
 		if (nanosToAdd == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.plusNanos(nanosToAdd));
+		return of(naftahPeriod, naftahDuration.plusNanos(nanosToAdd));
 	}
 
 	/**
 	 * Subtracts the given Arabic temporal amount from this instance.
 	 *
 	 * <p>
-	 * Supported combinations mirror those of {@link #plus(ArabicTemporalAmount)}.
+	 * Supported combinations mirror those of {@link #plus(NaftahTemporalAmount)}.
 	 * </p>
 	 *
 	 * @param other the temporal amount to subtract
 	 * @return a new normalized {@code ArabicPeriodWithDuration}
 	 */
 	@Override
-	public ArabicPeriodWithDuration minus(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
-			Duration result = this.arabicDuration.temporalAmount().minus(otherDur.temporalAmount());
-			return ArabicPeriodWithDuration.of(arabicPeriod, ArabicDuration.of(result));
+	public NaftahPeriodWithDuration minus(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
+			Duration result = this.naftahDuration.temporalAmount().minus(otherDur.temporalAmount());
+			return NaftahPeriodWithDuration.of(naftahPeriod, NaftahDuration.of(result));
 		}
-		else if (other instanceof ArabicPeriodWithDuration otherPeriodWithDuration) {
-			Period period = this.arabicPeriod
+		else if (other instanceof NaftahPeriodWithDuration otherPeriodWithDuration) {
+			Period period = this.naftahPeriod
 					.temporalAmount()
-					.minus(otherPeriodWithDuration.arabicPeriod.temporalAmount());
-			Duration duration = this.arabicDuration
+					.minus(otherPeriodWithDuration.naftahPeriod.temporalAmount());
+			Duration duration = this.naftahDuration
 					.temporalAmount()
-					.minus(otherPeriodWithDuration.arabicDuration.temporalAmount());
+					.minus(otherPeriodWithDuration.naftahDuration.temporalAmount());
 
-			return ArabicPeriodWithDuration.of(ArabicPeriod.of(period), ArabicDuration.of(duration));
+			return NaftahPeriodWithDuration.of(NaftahPeriod.of(period), NaftahDuration.of(duration));
 		}
 		else {
-			Period result = this.arabicPeriod.temporalAmount().minus(other.temporalAmount());
-			return ArabicPeriodWithDuration.of(ArabicPeriod.of(result), arabicDuration);
+			Period result = this.naftahPeriod.temporalAmount().minus(other.temporalAmount());
+			return NaftahPeriodWithDuration.of(NaftahPeriod.of(result), naftahDuration);
 		}
 	}
 
@@ -572,11 +572,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this period with the specified years subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration minusYears(long yearsToSubtract) {
+	public NaftahPeriodWithDuration minusYears(long yearsToSubtract) {
 		if (yearsToSubtract == 0) {
 			return this;
 		}
-		return of(arabicPeriod.minusYears(yearsToSubtract), arabicDuration);
+		return of(naftahPeriod.minusYears(yearsToSubtract), naftahDuration);
 	}
 
 	/**
@@ -592,11 +592,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this period with the specified months subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration minusMonths(long monthsToSubtract) {
+	public NaftahPeriodWithDuration minusMonths(long monthsToSubtract) {
 		if (monthsToSubtract == 0) {
 			return this;
 		}
-		return of(arabicPeriod.minusMonths(monthsToSubtract), arabicDuration);
+		return of(naftahPeriod.minusMonths(monthsToSubtract), naftahDuration);
 	}
 
 	/**
@@ -612,11 +612,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this period with the specified days subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration minusDays(long daysToSubtract) {
+	public NaftahPeriodWithDuration minusDays(long daysToSubtract) {
 		if (daysToSubtract == 0) {
 			return this;
 		}
-		return of(arabicPeriod.minusDays(daysToSubtract), arabicDuration);
+		return of(naftahPeriod.minusDays(daysToSubtract), naftahDuration);
 	}
 
 	/**
@@ -630,11 +630,11 @@ public record ArabicPeriodWithDuration(
 	 * @return a {@code ArabicPeriodWithDuration} based on this duration with the specified hours subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration minusHours(long hoursToSubtract) {
+	public NaftahPeriodWithDuration minusHours(long hoursToSubtract) {
 		if (hoursToSubtract == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.minusHours(hoursToSubtract));
+		return of(naftahPeriod, naftahDuration.minusHours(hoursToSubtract));
 	}
 
 	/**
@@ -649,11 +649,11 @@ public record ArabicPeriodWithDuration(
 	 *         * null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration minusMinutes(long minutesToSubtract) {
+	public NaftahPeriodWithDuration minusMinutes(long minutesToSubtract) {
 		if (minutesToSubtract == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.minusMinutes(minutesToSubtract));
+		return of(naftahPeriod, naftahDuration.minusMinutes(minutesToSubtract));
 	}
 
 	/**
@@ -666,11 +666,11 @@ public record ArabicPeriodWithDuration(
 	 *         * null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration minusSeconds(long secondsToSubtract) {
+	public NaftahPeriodWithDuration minusSeconds(long secondsToSubtract) {
 		if (secondsToSubtract == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.minusSeconds(secondsToSubtract));
+		return of(naftahPeriod, naftahDuration.minusSeconds(secondsToSubtract));
 	}
 
 	/**
@@ -683,11 +683,11 @@ public record ArabicPeriodWithDuration(
 	 *         * not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration minusMillis(long millisToSubtract) {
+	public NaftahPeriodWithDuration minusMillis(long millisToSubtract) {
 		if (millisToSubtract == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.minusMillis(millisToSubtract));
+		return of(naftahPeriod, naftahDuration.minusMillis(millisToSubtract));
 	}
 
 	/**
@@ -700,11 +700,11 @@ public record ArabicPeriodWithDuration(
 	 *         * not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriodWithDuration minusNanos(long nanosToSubtract) {
+	public NaftahPeriodWithDuration minusNanos(long nanosToSubtract) {
 		if (nanosToSubtract == 0) {
 			return this;
 		}
-		return of(arabicPeriod, arabicDuration.minusNanos(nanosToSubtract));
+		return of(naftahPeriod, naftahDuration.minusNanos(nanosToSubtract));
 	}
 
 	/**
@@ -719,11 +719,11 @@ public record ArabicPeriodWithDuration(
 	 * @return {@code true} if both components are equal
 	 */
 	@Override
-	public boolean isEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriodWithDuration otherPeriodWithDuration) {
-			return this.arabicPeriod
-					.isEquals(otherPeriodWithDuration.arabicPeriod) && this.arabicDuration
-							.isEquals(otherPeriodWithDuration.arabicDuration);
+	public boolean isEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriodWithDuration otherPeriodWithDuration) {
+			return this.naftahPeriod
+					.isEquals(otherPeriodWithDuration.naftahPeriod) && this.naftahDuration
+							.isEquals(otherPeriodWithDuration.naftahDuration);
 		}
 		return false;
 	}
@@ -735,7 +735,7 @@ public record ArabicPeriodWithDuration(
 	 * @return {@code true} if the amounts are not equal
 	 */
 	@Override
-	public boolean notEquals(ArabicTemporalAmount other) {
+	public boolean notEquals(NaftahTemporalAmount other) {
 		return !isEquals(other);
 	}
 
@@ -751,13 +751,13 @@ public record ArabicPeriodWithDuration(
 	 * @return {@code true} if both components are greater
 	 */
 	@Override
-	public boolean greaterThan(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriodWithDuration otherPeriodWithDuration) {
-			return this.arabicPeriod
-					.greaterThan(otherPeriodWithDuration.arabicPeriod) && this.arabicDuration
-							.greaterThan(otherPeriodWithDuration.arabicDuration);
+	public boolean greaterThan(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriodWithDuration otherPeriodWithDuration) {
+			return this.naftahPeriod
+					.greaterThan(otherPeriodWithDuration.naftahPeriod) && this.naftahDuration
+							.greaterThan(otherPeriodWithDuration.naftahDuration);
 		}
-		return ArabicTemporalAmount.super.greaterThan(other);
+		return NaftahTemporalAmount.super.greaterThan(other);
 	}
 
 	/**
@@ -768,13 +768,13 @@ public record ArabicPeriodWithDuration(
 	 * @return {@code true} if both components are greater than or equal
 	 */
 	@Override
-	public boolean greaterThanEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriodWithDuration otherPeriodWithDuration) {
-			return this.arabicPeriod
-					.greaterThanEquals(otherPeriodWithDuration.arabicPeriod) && this.arabicDuration
-							.greaterThanEquals(otherPeriodWithDuration.arabicDuration);
+	public boolean greaterThanEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriodWithDuration otherPeriodWithDuration) {
+			return this.naftahPeriod
+					.greaterThanEquals(otherPeriodWithDuration.naftahPeriod) && this.naftahDuration
+							.greaterThanEquals(otherPeriodWithDuration.naftahDuration);
 		}
-		return ArabicTemporalAmount.super.greaterThanEquals(other);
+		return NaftahTemporalAmount.super.greaterThanEquals(other);
 	}
 
 	/**
@@ -784,13 +784,13 @@ public record ArabicPeriodWithDuration(
 	 * @return {@code true} if both components are less
 	 */
 	@Override
-	public boolean lessThan(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriodWithDuration otherPeriodWithDuration) {
-			return this.arabicPeriod
-					.lessThan(otherPeriodWithDuration.arabicPeriod) && this.arabicDuration
-							.lessThan(otherPeriodWithDuration.arabicDuration);
+	public boolean lessThan(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriodWithDuration otherPeriodWithDuration) {
+			return this.naftahPeriod
+					.lessThan(otherPeriodWithDuration.naftahPeriod) && this.naftahDuration
+							.lessThan(otherPeriodWithDuration.naftahDuration);
 		}
-		return ArabicTemporalAmount.super.lessThan(other);
+		return NaftahTemporalAmount.super.lessThan(other);
 	}
 
 	/**
@@ -801,13 +801,13 @@ public record ArabicPeriodWithDuration(
 	 * @return {@code true} if both components are less than or equal
 	 */
 	@Override
-	public boolean lessThanEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriodWithDuration otherPeriodWithDuration) {
-			return this.arabicPeriod
-					.lessThanEquals(otherPeriodWithDuration.arabicPeriod) && this.arabicDuration
-							.lessThanEquals(otherPeriodWithDuration.arabicDuration);
+	public boolean lessThanEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriodWithDuration otherPeriodWithDuration) {
+			return this.naftahPeriod
+					.lessThanEquals(otherPeriodWithDuration.naftahPeriod) && this.naftahDuration
+							.lessThanEquals(otherPeriodWithDuration.naftahDuration);
 		}
-		return ArabicTemporalAmount.super.lessThanEquals(other);
+		return NaftahTemporalAmount.super.lessThanEquals(other);
 	}
 
 	/**
@@ -821,6 +821,6 @@ public record ArabicPeriodWithDuration(
 	 */
 	@Override
 	public String toString() {
-		return arabicPeriod.toString() + " و " + arabicDuration.toString();
+		return naftahPeriod.toString() + " و " + naftahDuration.toString();
 	}
 }

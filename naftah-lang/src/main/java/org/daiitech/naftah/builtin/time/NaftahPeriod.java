@@ -22,39 +22,39 @@ import static org.daiitech.naftah.utils.time.TemporalUtils.compare;
  * @param temporalAmount   the actual period value
  * @author Chakib Daii
  */
-public record ArabicPeriod(
+public record NaftahPeriod(
 		PeriodDefinition periodDefinition,
 		Period temporalAmount
-) implements ArabicTemporalAmount {
+) implements NaftahTemporalAmount {
 
 	/**
-	 * Creates a new {@link ArabicPeriod} instance using the provided
+	 * Creates a new {@link NaftahPeriod} instance using the provided
 	 * Arabic period definition and the underlying {@link Period}.
 	 *
 	 * @param periodDefinition the Arabic textual definition describing the period
 	 *                         (years, months, and days)
 	 * @param temporalAmount   the underlying {@link Period} representing the actual
 	 *                         date-based amount
-	 * @return a new {@link ArabicPeriod} instance
+	 * @return a new {@link NaftahPeriod} instance
 	 */
-	public static ArabicPeriod of(
+	public static NaftahPeriod of(
 									PeriodDefinition periodDefinition,
 									Period temporalAmount) {
-		return new ArabicPeriod(periodDefinition, temporalAmount);
+		return new NaftahPeriod(periodDefinition, temporalAmount);
 	}
 
 	/**
-	 * Creates a new {@link ArabicPeriod} instance from a {@link Period}.
+	 * Creates a new {@link NaftahPeriod} instance from a {@link Period}.
 	 * <p>
 	 * The period is decomposed into its date-based components
 	 * (years, months, and days) to build the corresponding
 	 * Arabic textual representation.
 	 * </p>
 	 *
-	 * @param period the {@link Period} to convert into an {@link ArabicPeriod}
-	 * @return a new {@link ArabicPeriod} instance representing the given period
+	 * @param period the {@link Period} to convert into an {@link NaftahPeriod}
+	 * @return a new {@link NaftahPeriod} instance representing the given period
 	 */
-	public static ArabicPeriod of(Period period) {
+	public static NaftahPeriod of(Period period) {
 		return of(PeriodDefinition
 				.of(
 					period.getYears(),
@@ -64,13 +64,13 @@ public record ArabicPeriod(
 	}
 
 	/**
-	 * Returns an {@link ArabicPeriod} representing a zero period.
+	 * Returns an {@link NaftahPeriod} representing a zero period.
 	 *
 	 * <p>The returned period has all components set to zero: years, months, and days.</p>
 	 *
-	 * @return an {@link ArabicPeriod} representing a period of zero
+	 * @return an {@link NaftahPeriod} representing a period of zero
 	 */
-	public static ArabicPeriod ofZero() {
+	public static NaftahPeriod ofZero() {
 		return of(PeriodDefinition
 				.of(
 					0,
@@ -88,7 +88,7 @@ public record ArabicPeriod(
 	 * @param years the number of years, positive or negative
 	 * @return the period of years, not null
 	 */
-	public static ArabicPeriod ofYears(int years) {
+	public static NaftahPeriod ofYears(int years) {
 		return of(PeriodDefinition
 				.of(
 					years,
@@ -106,7 +106,7 @@ public record ArabicPeriod(
 	 * @param months the number of months, positive or negative
 	 * @return the period of months, not null
 	 */
-	public static ArabicPeriod ofMonths(int months) {
+	public static NaftahPeriod ofMonths(int months) {
 		return of(PeriodDefinition
 				.of(
 					0,
@@ -125,7 +125,7 @@ public record ArabicPeriod(
 	 * @param weeks the number of weeks, positive or negative
 	 * @return the period, with the input weeks converted to days, not null
 	 */
-	public static ArabicPeriod ofWeeks(int weeks) {
+	public static NaftahPeriod ofWeeks(int weeks) {
 		return of(PeriodDefinition
 				.of(
 					0,
@@ -143,7 +143,7 @@ public record ArabicPeriod(
 	 * @param days the number of days, positive or negative
 	 * @return the period of days, not null
 	 */
-	public static ArabicPeriod ofDays(int days) {
+	public static NaftahPeriod ofDays(int days) {
 		return of(PeriodDefinition
 				.of(
 					0,
@@ -193,12 +193,12 @@ public record ArabicPeriod(
 	 * @return a new {@code ArabicPeriod} instance
 	 */
 	@Override
-	public ArabicPeriod plus(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriod otherPeriod) {
+	public NaftahPeriod plus(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriod otherPeriod) {
 			Period result = temporalAmount.plus(otherPeriod.temporalAmount);
-			return ArabicPeriod.of(result);
+			return NaftahPeriod.of(result);
 		}
-		return (ArabicPeriod) ArabicTemporalAmount.super.plus(other);
+		return (NaftahPeriod) NaftahTemporalAmount.super.plus(other);
 	}
 
 	/**
@@ -214,7 +214,7 @@ public record ArabicPeriod(
 	 * @return a {@code ArabicPeriod} based on this period with the specified years added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriod plusYears(long yearsToAdd) {
+	public NaftahPeriod plusYears(long yearsToAdd) {
 		if (yearsToAdd == 0) {
 			return this;
 		}
@@ -234,7 +234,7 @@ public record ArabicPeriod(
 	 * @return a {@code ArabicPeriod} based on this period with the specified months added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriod plusMonths(long monthsToAdd) {
+	public NaftahPeriod plusMonths(long monthsToAdd) {
 		if (monthsToAdd == 0) {
 			return this;
 		}
@@ -254,7 +254,7 @@ public record ArabicPeriod(
 	 * @return a {@code ArabicPeriod} based on this period with the specified days added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriod plusDays(long daysToAdd) {
+	public NaftahPeriod plusDays(long daysToAdd) {
 		if (daysToAdd == 0) {
 			return this;
 		}
@@ -274,12 +274,12 @@ public record ArabicPeriod(
 	 * @return a new {@code ArabicPeriod} instance
 	 */
 	@Override
-	public ArabicPeriod minus(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriod otherPeriod) {
+	public NaftahPeriod minus(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriod otherPeriod) {
 			Period result = temporalAmount.minus(otherPeriod.temporalAmount);
-			return ArabicPeriod.of(result);
+			return NaftahPeriod.of(result);
 		}
-		return (ArabicPeriod) ArabicTemporalAmount.super.minus(other);
+		return (NaftahPeriod) NaftahTemporalAmount.super.minus(other);
 	}
 
 	/**
@@ -295,7 +295,7 @@ public record ArabicPeriod(
 	 * @return a {@code ArabicPeriod} based on this period with the specified years subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriod minusYears(long yearsToSubtract) {
+	public NaftahPeriod minusYears(long yearsToSubtract) {
 		if (yearsToSubtract == 0) {
 			return this;
 		}
@@ -315,7 +315,7 @@ public record ArabicPeriod(
 	 * @return a {@code ArabicPeriod} based on this period with the specified months subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriod minusMonths(long monthsToSubtract) {
+	public NaftahPeriod minusMonths(long monthsToSubtract) {
 		if (monthsToSubtract == 0) {
 			return this;
 		}
@@ -335,7 +335,7 @@ public record ArabicPeriod(
 	 * @return a {@code ArabicPeriod} based on this period with the specified days subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicPeriod minusDays(long daysToSubtract) {
+	public NaftahPeriod minusDays(long daysToSubtract) {
 		if (daysToSubtract == 0) {
 			return this;
 		}
@@ -349,8 +349,8 @@ public record ArabicPeriod(
 	 * @return {@code true} if the periods are equal; {@code false} otherwise
 	 */
 	@Override
-	public boolean isEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriod otherPeriod) {
+	public boolean isEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriod otherPeriod) {
 			return temporalAmount.equals(otherPeriod.temporalAmount);
 		}
 		return false;
@@ -363,7 +363,7 @@ public record ArabicPeriod(
 	 * @return {@code true} if the periods are not equal; {@code false} otherwise
 	 */
 	@Override
-	public boolean notEquals(ArabicTemporalAmount other) {
+	public boolean notEquals(NaftahTemporalAmount other) {
 		return !isEquals(other);
 	}
 
@@ -379,11 +379,11 @@ public record ArabicPeriod(
 	 * @return {@code true} if this period is greater
 	 */
 	@Override
-	public boolean greaterThan(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriod otherPeriod) {
+	public boolean greaterThan(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriod otherPeriod) {
 			return compare(temporalAmount, otherPeriod.temporalAmount) > 0;
 		}
-		return ArabicTemporalAmount.super.greaterThan(other);
+		return NaftahTemporalAmount.super.greaterThan(other);
 	}
 
 	/**
@@ -394,11 +394,11 @@ public record ArabicPeriod(
 	 * @return {@code true} if this period is greater than or equal
 	 */
 	@Override
-	public boolean greaterThanEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriod otherPeriod) {
+	public boolean greaterThanEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriod otherPeriod) {
 			return compare(temporalAmount, otherPeriod.temporalAmount) >= 0;
 		}
-		return ArabicTemporalAmount.super.greaterThanEquals(other);
+		return NaftahTemporalAmount.super.greaterThanEquals(other);
 	}
 
 	/**
@@ -408,11 +408,11 @@ public record ArabicPeriod(
 	 * @return {@code true} if this period is less
 	 */
 	@Override
-	public boolean lessThan(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriod otherPeriod) {
+	public boolean lessThan(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriod otherPeriod) {
 			return compare(temporalAmount, otherPeriod.temporalAmount) < 0;
 		}
-		return ArabicTemporalAmount.super.lessThan(other);
+		return NaftahTemporalAmount.super.lessThan(other);
 	}
 
 	/**
@@ -423,11 +423,11 @@ public record ArabicPeriod(
 	 * @return {@code true} if this period is less than or equal
 	 */
 	@Override
-	public boolean lessThanEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicPeriod otherPeriod) {
+	public boolean lessThanEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahPeriod otherPeriod) {
 			return compare(temporalAmount, otherPeriod.temporalAmount) <= 0;
 		}
-		return ArabicTemporalAmount.super.lessThanEquals(other);
+		return NaftahTemporalAmount.super.lessThanEquals(other);
 	}
 
 	/**

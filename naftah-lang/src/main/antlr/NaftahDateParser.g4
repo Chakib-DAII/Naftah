@@ -1,7 +1,7 @@
 /**
  *
- * The ArabicDateParser grammar defines the syntactic structure for parsing
- * Arabic date and time expressions using tokens provided by ArabicDateLexer.
+ * The NaftahDateParser grammar defines the syntactic structure for parsing
+ * Naftah date and time expressions using tokens provided by NaftahDateLexer.
  *
  * It supports:
  * - Date-only expressions (day, month, year)
@@ -14,11 +14,11 @@
  * - Combined period-duration expressions
  *
  * This parser focuses on composing meaningful date/time structures from
- * previously tokenized Arabic text.
+ * previously tokenized Naftah text.
  *
  *
- * قواعد ArabicDateParser تحدد البنية النحوية لتحليل تعبيرات التاريخ والوقت
- * باللغة العربية، اعتماداً على الرموز المعرفة في ArabicDateLexer.
+ * قواعد NaftahDateParser تحدد البنية النحوية لتحليل تعبيرات التاريخ والوقت
+ * باللغة العربية، اعتماداً على الرموز المعرفة في NaftahDateLexer.
  *
  * تدعم القواعد:
  * - التواريخ فقط (اليوم، الشهر، السنة)
@@ -34,9 +34,9 @@
  *
  */
 
-parser grammar ArabicDateParser;
+parser grammar NaftahDateParser;
 
-options { tokenVocab = ArabicDateLexer; }
+options { tokenVocab = NaftahDateLexer; }
 
 root: nowSpecifier 									#now
     | dateTimeSpecifier								#dateTime

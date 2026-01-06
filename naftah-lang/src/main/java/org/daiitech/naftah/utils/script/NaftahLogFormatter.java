@@ -1,23 +1,23 @@
-package org.daiitech.naftah.utils.arabic;
+package org.daiitech.naftah.utils.script;
 
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
+import static org.daiitech.naftah.utils.script.ScriptUtils.containsArabicLetters;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shape;
 
 
 /**
- * A custom log formatter that supports reshaping Arabic text for proper visual display
- * in logging output. If Arabic text is detected and reshaping is enabled, the formatter
+ * A custom log formatter that supports reshaping text for proper visual display
+ * in logging output. If text is detected and reshaping is enabled, the formatter
  * will reshape the text before logging it. Otherwise, the original message is logged.
  *
- * <p>Note: Actual implementations of {@code shape()}, {@code containsArabic(String)},
+ * <p>Note: Actual implementations of {@code shape()}, {@code containsArabicLetters(String)},
  * and {@code shouldReshape()} are assumed to exist elsewhere in the codebase.
  *
  * @author Chakib Daii
  */
-public class ArabicLogFormatter extends Formatter {
+public class NaftahLogFormatter extends Formatter {
 
 	/**
 	 * Template for the formatted log message.
@@ -28,7 +28,7 @@ public class ArabicLogFormatter extends Formatter {
 											""";
 
 	/**
-	 * Formats a given {@link LogRecord} by checking if the message contains Arabic text.
+	 * Formats a given {@link LogRecord} by checking if the message contains text.
 	 * If so, and reshaping is enabled, the message will be reshaped for visual rendering.
 	 * If reshaping fails or is not required, the original message is logged.
 	 *
@@ -39,7 +39,7 @@ public class ArabicLogFormatter extends Formatter {
 	public String format(LogRecord record) {
 		String msg = record.getMessage();
 
-		if (containsArabic(msg)) {
+		if (containsArabicLetters(msg)) {
 			try {
 				String visual = shape(msg);
 				return LOG_MSG.formatted(record.getLevel(), visual);

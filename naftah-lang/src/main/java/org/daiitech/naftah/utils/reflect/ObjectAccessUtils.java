@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
@@ -212,7 +212,7 @@ public final class ObjectAccessUtils {
 			try {
 				return Arrays
 						.stream(current.getDeclaredFields())
-						.filter(f -> !Modifier.isStatic(f.getModifiers()) && (ArabicUtils
+						.filter(f -> !Modifier.isStatic(f.getModifiers()) && (ScriptUtils
 								.transliterateToArabicScriptDefault(f.getName())[0]
 								.equals(name) || f.getName().equals(name)))
 						.findFirst()
@@ -240,7 +240,7 @@ public final class ObjectAccessUtils {
 		if (str == null || str.isEmpty()) {
 			return str;
 		}
-		return ArabicUtils.isArabic(str) ? str : Character.toUpperCase(str.charAt(0)) + str.substring(1);
+		return ScriptUtils.isArabicText(str) ? str : Character.toUpperCase(str.charAt(0)) + str.substring(1);
 	}
 
 	/**

@@ -13,8 +13,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 
@@ -230,7 +230,7 @@ public final class JvmFunction implements Serializable, JvmExecutable {
 	 * The output is structured in a human-readable Arabic format and includes
 	 * phonetic transliterations (into Arabic script) for class names, return types,
 	 * modifiers, and annotations using {@link ClassUtils#getQualifiedName(String)} or
-	 * {@link ArabicUtils#transliterateToArabicScriptDefault(String...)}.
+	 * {@link ScriptUtils#transliterateToArabicScriptDefault(String...)}.
 	 * <p>
 	 * The following information is included:
 	 * <ul>
@@ -296,7 +296,7 @@ public final class JvmFunction implements Serializable, JvmExecutable {
 
 			var modifiers = Modifier.toString(method.getModifiers());
 			var modifiersArray = modifiers.split("\\s");
-			var modifiersArabicArray = ArabicUtils
+			var arabicModifiersArray = ScriptUtils
 					.transliterateToArabicScriptDefault(
 														modifiersArray.clone());
 			detailedString
@@ -304,7 +304,7 @@ public final class JvmFunction implements Serializable, JvmExecutable {
 					.append(IntStream
 							.range(0, modifiersArray.length)
 							.mapToObj(index -> "%s (%s)"
-									.formatted( modifiersArabicArray[index],
+									.formatted( arabicModifiersArray[index],
 												modifiersArray[index]))
 							.collect(Collectors.joining(" ")))
 					.append("\n");

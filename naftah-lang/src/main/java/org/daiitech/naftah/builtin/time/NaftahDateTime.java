@@ -13,8 +13,8 @@ import org.daiitech.naftah.utils.time.TemporalUtils;
 /**
  * Represents a complete Arabic date-time, consisting of:
  * <ul>
- * <li>An {@link ArabicDate} component</li>
- * <li>An {@link ArabicTime} component</li>
+ * <li>An {@link NaftahDate} component</li>
+ * <li>An {@link NaftahTime} component</li>
  * <li>A resolved {@link Temporal} representation</li>
  * </ul>
  *
@@ -23,23 +23,23 @@ import org.daiitech.naftah.utils.time.TemporalUtils;
  *
  * <p>The {@link Temporal} allows integration with Java's time API.</p>
  *
- * @param arabicDate the date component
- * @param arabicTime the time component
+ * @param naftahDate the date component
+ * @param naftahTime the time component
  * @param temporal   the resolved temporal
  * @author Chakib Daii
  */
-public record ArabicDateTime(
-		ArabicDate arabicDate,
-		ArabicTime arabicTime,
+public record NaftahDateTime(
+		NaftahDate naftahDate,
+		NaftahTime naftahTime,
 		Temporal temporal
-) implements ArabicTemporalPoint, DateSupport, TimeSupport {
+) implements NaftahTemporalPoint, DateSupport, TimeSupport {
 	/**
 	 * Obtains the current date-time using the default chronology
 	 * and the system default time zone.
 	 *
 	 * @return the current {@code ArabicDateTime}
 	 */
-	public static ArabicDateTime now() {
+	public static NaftahDateTime now() {
 		return now(ChronologyUtils.DEFAULT_CHRONOLOGY);
 	}
 
@@ -51,8 +51,8 @@ public record ArabicDateTime(
 	 * @return the current {@code ArabicDateTime}
 	 * @throws NullPointerException if {@code chronology} is {@code null}
 	 */
-	public static ArabicDateTime now(Chronology chronology) {
-		var calendar = ArabicDate.Calendar.of(chronology);
+	public static NaftahDateTime now(Chronology chronology) {
+		var calendar = NaftahDate.Calendar.of(chronology);
 		return now(calendar);
 	}
 
@@ -64,7 +64,7 @@ public record ArabicDateTime(
 	 * @return the current {@code ArabicDateTime}
 	 * @throws NullPointerException if {@code calendar} is {@code null}
 	 */
-	public static ArabicDateTime now(ArabicDate.Calendar calendar) {
+	public static NaftahDateTime now(NaftahDate.Calendar calendar) {
 		return now(calendar, null);
 	}
 
@@ -76,8 +76,8 @@ public record ArabicDateTime(
 	 *                     to use the system default
 	 * @return the current {@code ArabicDateTime}
 	 */
-	public static ArabicDateTime now(ArabicTime.ZoneOrOffset zoneOrOffset) {
-		var calendar = ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+	public static NaftahDateTime now(NaftahTime.ZoneOrOffset zoneOrOffset) {
+		var calendar = NaftahDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
 		return now(calendar, zoneOrOffset);
 	}
 
@@ -91,8 +91,8 @@ public record ArabicDateTime(
 	 * @return the current {@code ArabicDateTime}
 	 * @throws NullPointerException if {@code chronology} is {@code null}
 	 */
-	public static ArabicDateTime now(Chronology chronology, ArabicTime.ZoneOrOffset zoneOrOffset) {
-		var calendar = ArabicDate.Calendar.of(chronology);
+	public static NaftahDateTime now(Chronology chronology, NaftahTime.ZoneOrOffset zoneOrOffset) {
+		var calendar = NaftahDate.Calendar.of(chronology);
 		return now(calendar, zoneOrOffset);
 	}
 
@@ -112,10 +112,10 @@ public record ArabicDateTime(
 	 * @return the current {@code ArabicDateTime}
 	 * @throws NullPointerException if {@code calendar} is {@code null}
 	 */
-	public static ArabicDateTime now(ArabicDate.Calendar calendar, ArabicTime.ZoneOrOffset zoneOrOffset) {
-		ArabicDate date = ArabicDate.now(calendar, zoneOrOffset);
-		ArabicTime time = ArabicTime.now(zoneOrOffset);
-		return ArabicDateTime
+	public static NaftahDateTime now(NaftahDate.Calendar calendar, NaftahTime.ZoneOrOffset zoneOrOffset) {
+		NaftahDate date = NaftahDate.now(calendar, zoneOrOffset);
+		NaftahTime time = NaftahTime.now(zoneOrOffset);
+		return NaftahDateTime
 				.of(date, time);
 	}
 
@@ -132,7 +132,7 @@ public record ArabicDateTime(
 	 * @param minute     the minute-of-hour (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int year, int month, int dayOfMonth, int hour, int minute) {
+	public static NaftahDateTime of(int year, int month, int dayOfMonth, int hour, int minute) {
 		return of(year, month, dayOfMonth, hour, minute, 0, 0);
 	}
 
@@ -155,12 +155,12 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int year,
+	public static NaftahDateTime of(int year,
 									int month,
 									int dayOfMonth,
 									int hour,
 									int minute,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(year, month, dayOfMonth, hour, minute, 0, 0, zoneOrOffset);
 	}
 
@@ -178,7 +178,7 @@ public record ArabicDateTime(
 	 * @param second     the second-of-minute (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int year, int month, int dayOfMonth, int hour, int minute, int second) {
+	public static NaftahDateTime of(int year, int month, int dayOfMonth, int hour, int minute, int second) {
 		return of(year, month, dayOfMonth, hour, minute, second, 0);
 	}
 
@@ -202,13 +202,13 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int year,
+	public static NaftahDateTime of(int year,
 									int month,
 									int dayOfMonth,
 									int hour,
 									int minute,
 									int second,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(year, month, dayOfMonth, hour, minute, second, 0, zoneOrOffset);
 	}
 
@@ -227,7 +227,7 @@ public record ArabicDateTime(
 	 * @param nanoOfSecond the nano-of-second (0–999,999,999)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int year,
+	public static NaftahDateTime of(int year,
 									int month,
 									int dayOfMonth,
 									int hour,
@@ -257,16 +257,16 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int year,
+	public static NaftahDateTime of(int year,
 									int month,
 									int dayOfMonth,
 									int hour,
 									int minute,
 									int second,
 									int nanoOfSecond,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		ArabicDate date = ArabicDate.of(dayOfMonth, month, year);
-		ArabicTime time = ArabicTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
+		NaftahDate date = NaftahDate.of(dayOfMonth, month, year);
+		NaftahTime time = NaftahTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
 		return of(date, time);
 	}
 
@@ -284,7 +284,7 @@ public record ArabicDateTime(
 	 * @param minute     the minute-of-hour (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology, int year, int month, int dayOfMonth, int hour, int minute) {
+	public static NaftahDateTime of(Chronology chronology, int year, int month, int dayOfMonth, int hour, int minute) {
 		return of(chronology, year, month, dayOfMonth, hour, minute, 0, 0);
 	}
 
@@ -309,13 +309,13 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									int month,
 									int dayOfMonth,
 									int hour,
 									int minute,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(chronology, year, month, dayOfMonth, hour, minute, 0, 0, zoneOrOffset);
 	}
 
@@ -334,7 +334,7 @@ public record ArabicDateTime(
 	 * @param second     the second-of-minute (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									int month,
 									int dayOfMonth,
@@ -366,14 +366,14 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									int month,
 									int dayOfMonth,
 									int hour,
 									int minute,
 									int second,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(chronology, year, month, dayOfMonth, hour, minute, second, 0, zoneOrOffset);
 	}
 
@@ -391,7 +391,7 @@ public record ArabicDateTime(
 	 * @param nanoOfSecond the nano-of-second (0–999,999,999)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									int month,
 									int dayOfMonth,
@@ -425,7 +425,7 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									int month,
 									int dayOfMonth,
@@ -433,9 +433,9 @@ public record ArabicDateTime(
 									int minute,
 									int second,
 									int nanoOfSecond,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		ArabicDate date = ArabicDate.of(chronology, dayOfMonth, month, year);
-		ArabicTime time = ArabicTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
+		NaftahDate date = NaftahDate.of(chronology, dayOfMonth, month, year);
+		NaftahTime time = NaftahTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
 		return of(date, time);
 	}
 
@@ -451,7 +451,7 @@ public record ArabicDateTime(
 	 * @param minute      the minute-of-hour (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int year,
+	public static NaftahDateTime of(int year,
 									String arabicMonth,
 									int day,
 									int hour,
@@ -478,12 +478,12 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(int year,
+	public static NaftahDateTime of(int year,
 									String arabicMonth,
 									int day,
 									int hour,
 									int minute,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(year, arabicMonth, day, hour, minute, 0, 0, zoneOrOffset);
 	}
 
@@ -502,7 +502,7 @@ public record ArabicDateTime(
 	 * @param second      the second-of-minute (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(
+	public static NaftahDateTime of(
 									int year,
 									String arabicMonth,
 									int day,
@@ -532,14 +532,14 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(
+	public static NaftahDateTime of(
 									int year,
 									String arabicMonth,
 									int day,
 									int hour,
 									int minute,
 									int second,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(year, arabicMonth, day, hour, minute, second, 0, zoneOrOffset);
 	}
 
@@ -556,7 +556,7 @@ public record ArabicDateTime(
 	 * @param nanoOfSecond the nano-of-second (0–999,999,999)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(
+	public static NaftahDateTime of(
 									int year,
 									String arabicMonth,
 									int day,
@@ -587,7 +587,7 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(
+	public static NaftahDateTime of(
 									int year,
 									String arabicMonth,
 									int day,
@@ -595,9 +595,9 @@ public record ArabicDateTime(
 									int minute,
 									int second,
 									int nanoOfSecond,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		ArabicDate date = ArabicDate.of(day, arabicMonth, year);
-		ArabicTime time = ArabicTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
+		NaftahDate date = NaftahDate.of(day, arabicMonth, year);
+		NaftahTime time = NaftahTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
 		return of(date, time);
 	}
 
@@ -615,7 +615,7 @@ public record ArabicDateTime(
 	 * @param minute      the minute-of-hour (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									String arabicMonth,
 									int day,
@@ -643,13 +643,13 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									String arabicMonth,
 									int day,
 									int hour,
 									int minute,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(chronology, year, arabicMonth, day, hour, minute, 0, 0, zoneOrOffset);
 	}
 
@@ -669,7 +669,7 @@ public record ArabicDateTime(
 	 * @param second      the second-of-minute (0–59)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									String arabicMonth,
 									int day,
@@ -699,14 +699,14 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									String arabicMonth,
 									int day,
 									int hour,
 									int minute,
 									int second,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(chronology, year, arabicMonth, day, hour, minute, second, 0, zoneOrOffset);
 	}
 
@@ -724,7 +724,7 @@ public record ArabicDateTime(
 	 * @param nanoOfSecond the nano-of-second (0–999,999,999)
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									String arabicMonth,
 									int day,
@@ -756,7 +756,7 @@ public record ArabicDateTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be {@code null}
 	 * @return a new {@code ArabicDateTime} instance, not null
 	 */
-	public static ArabicDateTime of(Chronology chronology,
+	public static NaftahDateTime of(Chronology chronology,
 									int year,
 									String arabicMonth,
 									int day,
@@ -764,27 +764,27 @@ public record ArabicDateTime(
 									int minute,
 									int second,
 									int nanoOfSecond,
-									ArabicTime.ZoneOrOffset zoneOrOffset) {
-		ArabicDate date = ArabicDate.of(chronology, day, arabicMonth, year);
-		ArabicTime time = ArabicTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
+									NaftahTime.ZoneOrOffset zoneOrOffset) {
+		NaftahDate date = NaftahDate.of(chronology, day, arabicMonth, year);
+		NaftahTime time = NaftahTime.of(hour, minute, second, nanoOfSecond, zoneOrOffset);
 		return of(date, time);
 	}
 
 	/**
 	 * Creates a new {@code ArabicDateTime} instance.
 	 *
-	 * @param arabicDate the date component
+	 * @param naftahDate the date component
 	 * @param arabicTime the time component
 	 * @return a new {@code ArabicDateTime} instance
 	 */
-	public static ArabicDateTime of(
-									ArabicDate arabicDate,
-									ArabicTime arabicTime) {
-		return new ArabicDateTime(  arabicDate,
+	public static NaftahDateTime of(
+									NaftahDate naftahDate,
+									NaftahTime arabicTime) {
+		return new NaftahDateTime(  naftahDate,
 									arabicTime,
 									TemporalUtils
-											.createDateTime(arabicDate.date(),
-															arabicDate.calendar(),
+											.createDateTime(naftahDate.date(),
+															naftahDate.calendar(),
 															arabicTime.time(),
 															arabicTime.zoneOrOffset())
 		);
@@ -793,16 +793,16 @@ public record ArabicDateTime(
 	/**
 	 * Creates a new {@code ArabicDateTime} instance.
 	 *
-	 * @param arabicDate the date component
+	 * @param naftahDate the date component
 	 * @param arabicTime the time component
 	 * @param temporal   the resolved temporal
 	 * @return a new {@code ArabicDateTime} instance
 	 */
-	public static ArabicDateTime of(
-									ArabicDate arabicDate,
-									ArabicTime arabicTime,
+	public static NaftahDateTime of(
+									NaftahDate naftahDate,
+									NaftahTime arabicTime,
 									Temporal temporal) {
-		return new ArabicDateTime(arabicDate, arabicTime, temporal);
+		return new NaftahDateTime(naftahDate, arabicTime, temporal);
 	}
 
 	/**
@@ -813,7 +813,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public long toEpochDay() {
-		return arabicDate.toEpochDay();
+		return naftahDate.toEpochDay();
 	}
 
 	/**
@@ -823,7 +823,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int getYear() {
-		return arabicDate.getYear();
+		return naftahDate.getYear();
 	}
 
 	/**
@@ -833,7 +833,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int getMonthValue() {
-		return arabicDate.getMonthValue();
+		return naftahDate.getMonthValue();
 	}
 
 	/**
@@ -843,7 +843,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public String getMonth() {
-		return arabicDate.getMonth();
+		return naftahDate.getMonth();
 	}
 
 	/**
@@ -853,7 +853,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int getDayOfMonth() {
-		return arabicDate.getDayOfMonth();
+		return naftahDate.getDayOfMonth();
 	}
 
 	/**
@@ -864,7 +864,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int getDayOfYear() {
-		return arabicDate.getDayOfYear();
+		return naftahDate.getDayOfYear();
 	}
 
 	/**
@@ -875,7 +875,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public String getDayOfWeek() {
-		return arabicDate.getDayOfWeek();
+		return naftahDate.getDayOfWeek();
 	}
 
 	/**
@@ -886,7 +886,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public boolean isLeapYear() {
-		return arabicDate.isLeapYear();
+		return naftahDate.isLeapYear();
 	}
 
 	/**
@@ -896,7 +896,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int lengthOfMonth() {
-		return arabicDate.lengthOfMonth();
+		return naftahDate.lengthOfMonth();
 	}
 
 	/**
@@ -908,7 +908,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int getHour() {
-		return arabicTime.getHour();
+		return naftahTime.getHour();
 	}
 
 	/**
@@ -918,7 +918,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int getMinute() {
-		return arabicTime.getMinute();
+		return naftahTime.getMinute();
 	}
 
 	/**
@@ -928,7 +928,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int getSecond() {
-		return arabicTime.getSecond();
+		return naftahTime.getSecond();
 	}
 
 	/**
@@ -938,7 +938,7 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int getNano() {
-		return arabicTime.getNano();
+		return naftahTime.getNano();
 	}
 
 	/**
@@ -954,19 +954,19 @@ public record ArabicDateTime(
 	 */
 	@Override
 	public int lengthOfYear() {
-		return arabicDate.lengthOfYear();
+		return naftahDate.lengthOfYear();
 	}
 
 	/**
 	 * Returns a new {@code ArabicDateTime} obtained by adding the given
 	 * Arabic temporal amount to this date-time.
 	 *
-	 * @param arabicTemporalAmount the temporal amount to add
+	 * @param naftahTemporalAmount the temporal amount to add
 	 * @return a new {@code ArabicDateTime} instance
 	 */
 	@Override
-	public ArabicDateTime plus(ArabicTemporalAmount arabicTemporalAmount) {
-		return compute(arabicTemporalAmount, true);
+	public NaftahDateTime plus(NaftahTemporalAmount naftahTemporalAmount) {
+		return compute(naftahTemporalAmount, true);
 	}
 
 	/**
@@ -976,13 +976,13 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the years added
 	 */
 	@Override
-	public ArabicDateTime plusYears(long yearsToAdd) {
+	public NaftahDateTime plusYears(long yearsToAdd) {
 		if (yearsToAdd == 0) {
 			return this;
 		}
 		return of(
-					arabicDate.plusYears(yearsToAdd),
-					arabicTime,
+					naftahDate.plusYears(yearsToAdd),
+					naftahTime,
 					temporal.plus(yearsToAdd, ChronoUnit.YEARS)
 		);
 	}
@@ -994,13 +994,13 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the months added
 	 */
 	@Override
-	public ArabicDateTime plusMonths(long monthsToAdd) {
+	public NaftahDateTime plusMonths(long monthsToAdd) {
 		if (monthsToAdd == 0) {
 			return this;
 		}
 		return of(
-					arabicDate.plusMonths(monthsToAdd),
-					arabicTime,
+					naftahDate.plusMonths(monthsToAdd),
+					naftahTime,
 					temporal.plus(monthsToAdd, ChronoUnit.MONTHS)
 		);
 	}
@@ -1012,13 +1012,13 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the weeks added
 	 */
 	@Override
-	public ArabicDateTime plusWeeks(long weeksToAdd) {
+	public NaftahDateTime plusWeeks(long weeksToAdd) {
 		if (weeksToAdd == 0) {
 			return this;
 		}
 		return of(
-					arabicDate.plusWeeks(weeksToAdd),
-					arabicTime,
+					naftahDate.plusWeeks(weeksToAdd),
+					naftahTime,
 					temporal.plus(weeksToAdd, ChronoUnit.WEEKS)
 		);
 	}
@@ -1030,13 +1030,13 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the days added
 	 */
 	@Override
-	public ArabicDateTime plusDays(long daysToAdd) {
+	public NaftahDateTime plusDays(long daysToAdd) {
 		if (daysToAdd == 0) {
 			return this;
 		}
 		return of(
-					arabicDate.plusDays(daysToAdd),
-					arabicTime,
+					naftahDate.plusDays(daysToAdd),
+					naftahTime,
 					temporal.plus(daysToAdd, ChronoUnit.DAYS)
 		);
 	}
@@ -1048,11 +1048,11 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the hours added
 	 */
 	@Override
-	public ArabicDateTime plusHours(long hoursToAdd) {
+	public NaftahDateTime plusHours(long hoursToAdd) {
 		if (hoursToAdd == 0) {
 			return this;
 		}
-		return of(arabicDate, arabicTime.plusHours(hoursToAdd), temporal.plus(hoursToAdd, ChronoUnit.HOURS));
+		return of(naftahDate, naftahTime.plusHours(hoursToAdd), temporal.plus(hoursToAdd, ChronoUnit.HOURS));
 	}
 
 	/**
@@ -1062,11 +1062,11 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the minutes added
 	 */
 	@Override
-	public ArabicDateTime plusMinutes(long minutesToAdd) {
+	public NaftahDateTime plusMinutes(long minutesToAdd) {
 		if (minutesToAdd == 0) {
 			return this;
 		}
-		return of(arabicDate, arabicTime.plusMinutes(minutesToAdd), temporal.plus(minutesToAdd, ChronoUnit.MINUTES));
+		return of(naftahDate, naftahTime.plusMinutes(minutesToAdd), temporal.plus(minutesToAdd, ChronoUnit.MINUTES));
 	}
 
 	/**
@@ -1076,11 +1076,11 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the seconds added
 	 */
 	@Override
-	public ArabicDateTime plusSeconds(long secondsToAdd) {
+	public NaftahDateTime plusSeconds(long secondsToAdd) {
 		if (secondsToAdd == 0) {
 			return this;
 		}
-		return of(arabicDate, arabicTime.plusSeconds(secondsToAdd), temporal.plus(secondsToAdd, ChronoUnit.SECONDS));
+		return of(naftahDate, naftahTime.plusSeconds(secondsToAdd), temporal.plus(secondsToAdd, ChronoUnit.SECONDS));
 	}
 
 	/**
@@ -1090,23 +1090,23 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the nanoseconds added
 	 */
 	@Override
-	public ArabicDateTime plusNanos(long nanosToAdd) {
+	public NaftahDateTime plusNanos(long nanosToAdd) {
 		if (nanosToAdd == 0) {
 			return this;
 		}
-		return of(arabicDate, arabicTime.plusNanos(nanosToAdd), temporal.plus(nanosToAdd, ChronoUnit.NANOS));
+		return of(naftahDate, naftahTime.plusNanos(nanosToAdd), temporal.plus(nanosToAdd, ChronoUnit.NANOS));
 	}
 
 	/**
 	 * Returns a new {@code ArabicDateTime} obtained by subtracting the given
 	 * Arabic temporal amount from this date-time.
 	 *
-	 * @param arabicTemporalAmount the temporal amount to subtract
+	 * @param naftahTemporalAmount the temporal amount to subtract
 	 * @return a new {@code ArabicDateTime} instance
 	 */
 	@Override
-	public ArabicDateTime minus(ArabicTemporalAmount arabicTemporalAmount) {
-		return compute(arabicTemporalAmount, false);
+	public NaftahDateTime minus(NaftahTemporalAmount naftahTemporalAmount) {
+		return compute(naftahTemporalAmount, false);
 
 	}
 
@@ -1117,13 +1117,13 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the years subtracted
 	 */
 	@Override
-	public ArabicDateTime minusYears(long yearsToSubtract) {
+	public NaftahDateTime minusYears(long yearsToSubtract) {
 		if (yearsToSubtract == 0) {
 			return this;
 		}
 		return of(
-					arabicDate.minusYears(yearsToSubtract),
-					arabicTime,
+					naftahDate.minusYears(yearsToSubtract),
+					naftahTime,
 					temporal.minus(yearsToSubtract, ChronoUnit.YEARS)
 		);
 	}
@@ -1135,13 +1135,13 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the months subtracted
 	 */
 	@Override
-	public ArabicDateTime minusMonths(long monthsToSubtract) {
+	public NaftahDateTime minusMonths(long monthsToSubtract) {
 		if (monthsToSubtract == 0) {
 			return this;
 		}
 		return of(
-					arabicDate.minusMonths(monthsToSubtract),
-					arabicTime,
+					naftahDate.minusMonths(monthsToSubtract),
+					naftahTime,
 					temporal.minus(monthsToSubtract, ChronoUnit.MONTHS)
 		);
 	}
@@ -1153,13 +1153,13 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the weeks subtracted
 	 */
 	@Override
-	public ArabicDateTime minusWeeks(long weeksToSubtract) {
+	public NaftahDateTime minusWeeks(long weeksToSubtract) {
 		if (weeksToSubtract == 0) {
 			return this;
 		}
 		return of(
-					arabicDate.minusWeeks(weeksToSubtract),
-					arabicTime,
+					naftahDate.minusWeeks(weeksToSubtract),
+					naftahTime,
 					temporal.minus(weeksToSubtract, ChronoUnit.WEEKS)
 		);
 	}
@@ -1171,13 +1171,13 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the days subtracted
 	 */
 	@Override
-	public ArabicDateTime minusDays(long daysToSubtract) {
+	public NaftahDateTime minusDays(long daysToSubtract) {
 		if (daysToSubtract == 0) {
 			return this;
 		}
 		return of(
-					arabicDate.minusDays(daysToSubtract),
-					arabicTime,
+					naftahDate.minusDays(daysToSubtract),
+					naftahTime,
 					temporal.minus(daysToSubtract, ChronoUnit.DAYS)
 		);
 	}
@@ -1190,12 +1190,12 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the hours subtracted
 	 */
 	@Override
-	public ArabicDateTime minusHours(long hoursToSubtract) {
+	public NaftahDateTime minusHours(long hoursToSubtract) {
 		if (hoursToSubtract == 0) {
 			return this;
 		}
-		return of(  arabicDate,
-					arabicTime.minusHours(hoursToSubtract),
+		return of(  naftahDate,
+					naftahTime.minusHours(hoursToSubtract),
 					temporal.minus(hoursToSubtract, ChronoUnit.HOURS));
 	}
 
@@ -1206,12 +1206,12 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the minutes subtracted
 	 */
 	@Override
-	public ArabicDateTime minusMinutes(long minutesToSubtract) {
+	public NaftahDateTime minusMinutes(long minutesToSubtract) {
 		if (minutesToSubtract == 0) {
 			return this;
 		}
-		return of(  arabicDate,
-					arabicTime.minusMinutes(minutesToSubtract),
+		return of(  naftahDate,
+					naftahTime.minusMinutes(minutesToSubtract),
 					temporal.minus(minutesToSubtract, ChronoUnit.MINUTES));
 	}
 
@@ -1222,12 +1222,12 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the seconds subtracted
 	 */
 	@Override
-	public ArabicDateTime minusSeconds(long secondsToSubtract) {
+	public NaftahDateTime minusSeconds(long secondsToSubtract) {
 		if (secondsToSubtract == 0) {
 			return this;
 		}
-		return of(  arabicDate,
-					arabicTime.minusSeconds(secondsToSubtract),
+		return of(  naftahDate,
+					naftahTime.minusSeconds(secondsToSubtract),
 					temporal.minus(secondsToSubtract, ChronoUnit.SECONDS));
 	}
 
@@ -1238,12 +1238,12 @@ public record ArabicDateTime(
 	 * @return a new {@code ArabicDateTime} with the nanoseconds subtracted
 	 */
 	@Override
-	public ArabicDateTime minusNanos(long nanosToSubtract) {
+	public NaftahDateTime minusNanos(long nanosToSubtract) {
 		if (nanosToSubtract == 0) {
 			return this;
 		}
-		return of(  arabicDate,
-					arabicTime.minusNanos(nanosToSubtract),
+		return of(  naftahDate,
+					naftahTime.minusNanos(nanosToSubtract),
 					temporal.minus(nanosToSubtract, ChronoUnit.NANOS));
 	}
 
@@ -1254,9 +1254,9 @@ public record ArabicDateTime(
 	 * <p>
 	 * Supported temporal amounts:
 	 * <ul>
-	 * <li>{@link ArabicDuration}</li>
-	 * <li>{@link ArabicPeriod}</li>
-	 * <li>{@link ArabicPeriodWithDuration}</li>
+	 * <li>{@link NaftahDuration}</li>
+	 * <li>{@link NaftahPeriod}</li>
+	 * <li>{@link NaftahPeriodWithDuration}</li>
 	 * </ul>
 	 * </p>
 	 *
@@ -1278,15 +1278,15 @@ public record ArabicDateTime(
 	 * @param plus                 {@code true} to add, {@code false} to subtract
 	 * @return a new {@code ArabicDateTime} instance
 	 */
-	private ArabicDateTime compute(ArabicTemporalAmount arabicTemporalAmount, boolean plus) {
-		if (arabicTemporalAmount instanceof ArabicDuration arabicDuration) {
-			var duration = arabicDuration.temporalAmount();
+	private NaftahDateTime compute(NaftahTemporalAmount arabicTemporalAmount, boolean plus) {
+		if (arabicTemporalAmount instanceof NaftahDuration naftahDuration) {
+			var duration = naftahDuration.temporalAmount();
 			long hours = duration.toHours();
 			if (hours < 24) {
-				return of(  arabicDate,
-							arabicTime
+				return of(  naftahDate,
+							naftahTime
 									.compute(   arabicTemporalAmount,
-												plus ? arabicTime.temporal()::plus : arabicTime.temporal()::minus),
+												plus ? naftahTime.temporal()::plus : naftahTime.temporal()::minus),
 							plus ? this.temporal.plus(duration) : this.temporal.minus(duration)
 				);
 			}
@@ -1313,42 +1313,42 @@ public record ArabicDateTime(
 						.plusNanos(remainingNanos);
 
 
-				return of(  ArabicDate
-									.of(arabicDate.calendar(),
+				return of(  NaftahDate
+									.of(naftahDate.calendar(),
 										plus ?
-												arabicDate.temporal().plus(period) :
-												arabicDate.temporal().minus(period)),
-							ArabicTime
-									.of(arabicTime.zoneOrOffset(),
+												naftahDate.temporal().plus(period) :
+												naftahDate.temporal().minus(period)),
+							NaftahTime
+									.of(naftahTime.zoneOrOffset(),
 										plus ?
-												arabicTime.temporal().plus(newDuration) :
-												arabicTime.temporal().minus(newDuration)),
+												naftahTime.temporal().plus(newDuration) :
+												naftahTime.temporal().minus(newDuration)),
 							plus ? this.temporal.plus(duration) : this.temporal.minus(duration)
 				);
 			}
 		}
-		else if (arabicTemporalAmount instanceof ArabicPeriodWithDuration arabicPeriodWithDuration) {
-			Period period = arabicPeriodWithDuration.arabicPeriod().temporalAmount();
-			Duration duration = arabicPeriodWithDuration.arabicDuration().temporalAmount();
+		else if (arabicTemporalAmount instanceof NaftahPeriodWithDuration naftahPeriodWithDuration) {
+			Period period = naftahPeriodWithDuration.naftahPeriod().temporalAmount();
+			Duration duration = naftahPeriodWithDuration.naftahDuration().temporalAmount();
 
-			return of(  ArabicDate
-								.of(arabicDate.calendar(),
-									plus ? arabicDate.temporal().plus(period) : arabicDate.temporal().minus(period)),
-						ArabicTime
-								.of(arabicTime.zoneOrOffset(),
+			return of(  NaftahDate
+								.of(naftahDate.calendar(),
+									plus ? naftahDate.temporal().plus(period) : naftahDate.temporal().minus(period)),
+						NaftahTime
+								.of(naftahTime.zoneOrOffset(),
 									plus ?
-											arabicTime.temporal().plus(duration) :
-											arabicTime.temporal().minus(duration)),
+											naftahTime.temporal().plus(duration) :
+											naftahTime.temporal().minus(duration)),
 						plus ? this.temporal.plus(period).plus(duration) : this.temporal.minus(period).minus(duration)
 			);
 		}
 		else {
 			var period = arabicTemporalAmount.temporalAmount();
 
-			return of(  ArabicDate
-								.of(arabicDate.calendar(),
-									plus ? arabicDate.temporal().plus(period) : arabicDate.temporal().minus(period)),
-						arabicTime,
+			return of(  NaftahDate
+								.of(naftahDate.calendar(),
+									plus ? naftahDate.temporal().plus(period) : naftahDate.temporal().minus(period)),
+						naftahTime,
 						plus ? this.temporal.plus(period) : this.temporal.minus(period)
 			);
 		}
@@ -1358,14 +1358,14 @@ public record ArabicDateTime(
 	 * Returns a string representation of this {@code ArabicDateTime} in the format:
 	 * "date time".
 	 *
-	 * <p>Both {@link ArabicDate} and {@link ArabicTime} components are included.</p>
+	 * <p>Both {@link NaftahDate} and {@link NaftahTime} components are included.</p>
 	 *
 	 * @return a formatted string representing the Arabic date-time
 	 */
 	@Override
 	public String toString() {
 
-		String sb = arabicDate + " " + arabicTime;
+		String sb = naftahDate + " " + naftahTime;
 
 		return sb.trim();
 	}

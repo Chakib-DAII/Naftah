@@ -53,10 +53,10 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.Naftah.BUILTIN_CLASSES_PROPERTY;
 import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
@@ -76,7 +76,6 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_NAME_REGEX
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasAnyParentOfType;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
 import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.filterClasses;
@@ -89,6 +88,7 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedCall;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.loadClasses;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanClasses;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 /**
  * Represents the default execution context used to manage variables, functions, loops,
@@ -1682,7 +1682,7 @@ public class DefaultContext {
 						.getClassMethods(   arabicQualifiedCallParts[0],
 											clazz,
 											method -> arabicQualifiedCallParts[1]
-													.equals(ArabicUtils
+													.equals(ScriptUtils
 															.transliterateToArabicScriptDefault(
 																								method.getName())[0]));
 				setCurrentLookupJvmFunctions(jvmFunctions);

@@ -9,10 +9,10 @@ import java.time.temporal.TemporalAmount;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.daiitech.naftah.builtin.time.ArabicDuration;
-import org.daiitech.naftah.builtin.time.ArabicPeriod;
-import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
-import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
+import org.daiitech.naftah.builtin.time.NaftahDuration;
+import org.daiitech.naftah.builtin.time.NaftahPeriod;
+import org.daiitech.naftah.builtin.time.NaftahPeriodWithDuration;
+import org.daiitech.naftah.builtin.time.NaftahTemporalAmount;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
@@ -31,23 +31,23 @@ import static org.daiitech.naftah.utils.time.Constants.YEAR;
 import static org.daiitech.naftah.utils.time.ZoneUtils.parseZoneOffset;
 
 public class PeriodDurationProvider implements ArgumentsProvider {
-	private ArabicTemporalAmount createArabicPeriodWithDuration(Temporal start, Temporal end) {
+	private NaftahTemporalAmount createArabicPeriodWithDuration(Temporal start, Temporal end) {
 		var durationPeriodTuple = TemporalUtils.between(start, end);
 
 		if (durationPeriodTuple.arity() == 1) {
 			TemporalAmount temporalAmount = (TemporalAmount) durationPeriodTuple.get(0);
 			if (temporalAmount instanceof Duration duration) {
-				return ArabicDuration.of(duration);
+				return NaftahDuration.of(duration);
 			}
 			else {
-				return ArabicPeriod.of((Period) temporalAmount);
+				return NaftahPeriod.of((Period) temporalAmount);
 			}
 		}
 		else {
-			return ArabicPeriodWithDuration
+			return NaftahPeriodWithDuration
 					.of(
-						ArabicPeriod.of((Period) durationPeriodTuple.get(0)),
-						ArabicDuration.of((Duration) durationPeriodTuple.get(1))
+						NaftahPeriod.of((Period) durationPeriodTuple.get(0)),
+						NaftahDuration.of((Duration) durationPeriodTuple.get(1))
 					);
 		}
 	}
@@ -71,7 +71,7 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 				zoneId = parseZoneOffset(arabicZoneOrOffset);
 			}
 			else {
-				zoneId = ZoneId.of(ZoneUtils.arabicZoneNameToJava(arabicZoneOrOffset));
+				zoneId = ZoneId.of(ZoneUtils.zoneNameToJavaZoneId(arabicZoneOrOffset));
 			}
 		}
 
@@ -98,8 +98,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "مدة 3 ساعات"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(3,
 													"ساعات",
 													0,
@@ -118,8 +118,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "مدة 2 ساعات و 30 دقيقة"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(2,
 													"ساعات",
 													30,
@@ -139,8 +139,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "مدة 1 ساعة و15 دقيقة"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(1,
 													HOUR,
 													15,
@@ -160,8 +160,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(2,
 													"ساعات",
 													10,
@@ -182,8 +182,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "مدة 2.5 ثانية"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(0,
 													HOUR,
 													0,
@@ -201,8 +201,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "مدة 10.250 ثانية"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(0,
 													HOUR,
 													0,
@@ -222,8 +222,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "مدة 1 دقيقة و 10 نانوثوان"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(0,
 													HOUR,
 													1,
@@ -243,8 +243,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "مدة 1 ثانية و 500 نانوثانية"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(0,
 													HOUR,
 													0,
@@ -264,8 +264,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "مدة 1 ساعة و 30.75 ثانية"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(1,
 													HOUR,
 													0,
@@ -286,8 +286,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 1 سنة"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(1,
 													YEAR,
 													0,
@@ -302,8 +302,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 5 سنوات"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(5,
 													"سنوات",
 													0,
@@ -318,8 +318,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 1 سنة و 6 أشهر"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(1,
 													YEAR,
 													6,
@@ -334,8 +334,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 2 سنة و 3 أشهر"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(2,
 													YEAR,
 													3,
@@ -350,8 +350,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(1,
 													YEAR,
 													3,
@@ -366,8 +366,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 6 أشهر"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(0,
 													YEAR,
 													6,
@@ -382,8 +382,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 1 شهر و 10 أيام"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(0,
 													YEAR,
 													1,
@@ -398,8 +398,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 14 يوم"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(0,
 													YEAR,
 													0,
@@ -414,10 +414,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 1 سنة و 1 دقيقة و 10 نانوثوان"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(1,
 																YEAR,
 																0,
@@ -426,8 +426,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																DAY
 															),
 														Period.ofYears(1)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(0,
 																HOUR,
 																1,
@@ -447,10 +447,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 5 سنوات و 122 ساعات و 10 دقائق و 5 ثوان"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(5,
 																"سنوات",
 																0,
@@ -459,8 +459,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																DAY
 															),
 														Period.ofYears(5).plusDays(5)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(2,
 																"ساعات",
 																10,
@@ -481,10 +481,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 1 سنة و 6 أشهر و 2 ساعات و 10 دقائق"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(1,
 																YEAR,
 																6,
@@ -493,8 +493,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																DAY
 															),
 														Period.ofYears(1).plusMonths(6)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(2,
 																"ساعات",
 																10,
@@ -514,10 +514,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام و 25 ساعات و 10 دقائق"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(1,
 																YEAR,
 																3,
@@ -526,8 +526,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																"أيام"
 															),
 														Period.of(1, 3, 11)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(1,
 																"ساعات",
 																10,
@@ -547,10 +547,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 6 أشهر و 1 ساعة و15 دقيقة"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(0,
 																YEAR,
 																6,
@@ -559,8 +559,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																DAY
 															),
 														Period.ofMonths(6)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(1,
 																HOUR,
 																15,
@@ -580,10 +580,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 1 شهر و 10 أيام و 2 ساعات و 30 دقيقة"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(0,
 																YEAR,
 																1,
@@ -592,8 +592,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																"أيام"
 															),
 														Period.ofMonths(1).plusDays(10)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(2,
 																"ساعات",
 																30,
@@ -613,10 +613,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 14 يوم و 3 ساعات"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(0,
 																YEAR,
 																0,
@@ -625,8 +625,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																DAY
 															),
 														Period.ofDays(14)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(3,
 																"ساعات",
 																0,
@@ -645,11 +645,11 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								قيمة_زمنية "فترة 14 يوم و 28 ساعات"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
 
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(0,
 																YEAR,
 																0,
@@ -658,8 +658,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																DAY
 															),
 														Period.ofDays(15)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(4,
 																"ساعات",
 																0,
@@ -973,8 +973,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "مدة 3 ساعات" + قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(5,
 													HOUR,
 													10,
@@ -995,8 +995,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "مدة 3 ساعات" - قيمة_زمنية "مدة 2 ساعات و 10 دقائق و 5 ثوان"
 								""",
-								ArabicDuration
-										.of(ArabicDuration.DurationDefinition
+								NaftahDuration
+										.of(NaftahDuration.DurationDefinition
 												.of(0,
 													HOUR,
 													49,
@@ -1100,8 +1100,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 5 سنوات" + قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(6,
 													YEAR,
 													3,
@@ -1116,8 +1116,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 5 سنوات" - قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
-								ArabicPeriod
-										.of(ArabicPeriod.PeriodDefinition
+								NaftahPeriod
+										.of(NaftahPeriod.PeriodDefinition
 												.of(4,
 													YEAR,
 													-3,
@@ -1174,10 +1174,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 5 سنوات و 3 ساعات" + قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(6,
 																YEAR,
 																3,
@@ -1186,8 +1186,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																DAY
 															),
 														Period.of(6, 3, 10)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(3,
 																"ساعات",
 																0,
@@ -1206,10 +1206,10 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								مقدار_زمني "فترة 5 سنوات و 3 ساعات" - قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
-								ArabicPeriodWithDuration
+								NaftahPeriodWithDuration
 										.of(
-											ArabicPeriod
-													.of(ArabicPeriod.PeriodDefinition
+											NaftahPeriod
+													.of(NaftahPeriod.PeriodDefinition
 															.of(4,
 																YEAR,
 																-3,
@@ -1218,8 +1218,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 																DAY
 															),
 														Period.of(4, -3, -10)),
-											ArabicDuration
-													.of(ArabicDuration.DurationDefinition
+											NaftahDuration
+													.of(NaftahDuration.DurationDefinition
 															.of(3,
 																"ساعات",
 																0,
@@ -1255,8 +1255,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								null,
 								BinaryOperation
 										.newNaftahBugError( BinaryOperation.LESS_THAN,
-															ArabicPeriodWithDuration.ofZero(),
-															ArabicPeriod.ofZero())),
+															NaftahPeriodWithDuration.ofZero(),
+															NaftahPeriod.ofZero())),
 					Arguments
 							.of(false,
 								"""
@@ -1265,8 +1265,8 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								null,
 								BinaryOperation
 										.newNaftahBugError( BinaryOperation.GREATER_THAN,
-															ArabicDuration.ofZero(),
-															ArabicPeriod.ofZero())),
+															NaftahDuration.ofZero(),
+															NaftahPeriod.ofZero())),
 					Arguments
 							.of(false,
 								"""
@@ -1275,352 +1275,352 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								null,
 								BinaryOperation
 										.newNaftahBugError( BinaryOperation.LESS_THAN_EQUALS,
-															ArabicPeriodWithDuration.ofZero(),
-															ArabicDuration.ofZero())),
+															NaftahPeriodWithDuration.ofZero(),
+															NaftahDuration.ofZero())),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_صفرية()""",
-								ArabicDuration.ofZero(),
+								NaftahDuration.ofZero(),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_من_أيام(10)""",
-								ArabicDuration.ofDays(10),
+								NaftahDuration.ofDays(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_من_ساعات(25)""",
-								ArabicDuration.ofHours(25),
+								NaftahDuration.ofHours(25),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_من_دقائق(30)""",
-								ArabicDuration.ofMinutes(30),
+								NaftahDuration.ofMinutes(30),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_من_ثواني(45)""",
-								ArabicDuration.ofSeconds(45),
+								NaftahDuration.ofSeconds(45),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_من_ثواني_مع_نانو(40, 15)""",
-								ArabicDuration.ofSeconds(40, 15),
+								NaftahDuration.ofSeconds(40, 15),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_من_مللي(455555)""",
-								ArabicDuration.ofMillis(455555),
+								NaftahDuration.ofMillis(455555),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_من_نانو(100000000000000000)""",
-								ArabicDuration.ofNanos(100_000_000_000_000_000L),
+								NaftahDuration.ofNanos(100_000_000_000_000_000L),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_صفرية()""",
-								ArabicPeriod.ofZero(),
+								NaftahPeriod.ofZero(),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_من_سنوات(10)""",
-								ArabicPeriod.ofYears(10),
+								NaftahPeriod.ofYears(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_من_شهور(120)""",
-								ArabicPeriod.ofMonths(120),
+								NaftahPeriod.ofMonths(120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_من_أسابيع(840)""",
-								ArabicPeriod.ofWeeks(840),
+								NaftahPeriod.ofWeeks(840),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_من_أيام(5880)""",
-								ArabicPeriod.ofDays(5880),
+								NaftahPeriod.ofDays(5880),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_صفرية()""",
-								ArabicPeriodWithDuration.ofZero(),
+								NaftahPeriodWithDuration.ofZero(),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_سنوات(10)""",
-								ArabicPeriodWithDuration.ofYears(10),
+								NaftahPeriodWithDuration.ofYears(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_شهور(120)""",
-								ArabicPeriodWithDuration.ofMonths(120),
+								NaftahPeriodWithDuration.ofMonths(120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_أسابيع(840)""",
-								ArabicPeriodWithDuration.ofWeeks(840),
+								NaftahPeriodWithDuration.ofWeeks(840),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_أيام(5880)""",
-								ArabicPeriodWithDuration.ofDays(5880),
+								NaftahPeriodWithDuration.ofDays(5880),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_ساعات(141120)""",
-								ArabicPeriodWithDuration.ofHours(141120),
+								NaftahPeriodWithDuration.ofHours(141120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_دقائق(8467200)""",
-								ArabicPeriodWithDuration.ofMinutes(8467200),
+								NaftahPeriodWithDuration.ofMinutes(8467200),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_ثواني(508032000)""",
-								ArabicPeriodWithDuration.ofSeconds(508032000),
+								NaftahPeriodWithDuration.ofSeconds(508032000),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_ثواني_مع_نانو(508032000, 1000000000000000)""",
-								ArabicPeriodWithDuration.ofSeconds(508032000, 1000_000_000_000_000L),
+								NaftahPeriodWithDuration.ofSeconds(508032000, 1000_000_000_000_000L),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_مللي(508032000000)""",
-								ArabicPeriodWithDuration.ofMillis(508_032_000_000L),
+								NaftahPeriodWithDuration.ofMillis(508_032_000_000L),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_فترة_و_مدة_من_نانو(508032000000000)""",
-								ArabicPeriodWithDuration.ofNanos(508_032_000_000_000L),
+								NaftahPeriodWithDuration.ofNanos(508_032_000_000_000L),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_سنوات_لفترة(أنشئ_فترة_صفرية(), 2)
 								""",
-								ArabicPeriod.ofYears(2),
+								NaftahPeriod.ofYears(2),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_أشهر_لفترة(أنشئ_فترة_صفرية(), 24)""",
-								ArabicPeriod.ofMonths(24),
+								NaftahPeriod.ofMonths(24),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_أيام_لفترة(أنشئ_فترة_صفرية(), 10)""",
-								ArabicPeriod.ofDays(10),
+								NaftahPeriod.ofDays(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_سنوات_من_الفترة(أنشئ_فترة_صفرية(), 2)
 								""",
-								ArabicPeriod.ofYears(-2),
+								NaftahPeriod.ofYears(-2),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_أشهر_من_الفترة(أنشئ_فترة_صفرية(), 24)""",
-								ArabicPeriod.ofMonths(-24),
+								NaftahPeriod.ofMonths(-24),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_أيام_للمدة(أنشئ_مدة_صفرية(), 10)""",
-								ArabicDuration.ofHours(240),
+								NaftahDuration.ofHours(240),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_ساعات_للمدة(أنشئ_مدة_صفرية(), 10)""",
-								ArabicDuration.ofHours(10),
+								NaftahDuration.ofHours(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_دقائق_للمدة(أنشئ_مدة_صفرية(), 600)""",
-								ArabicDuration.ofHours(10),
+								NaftahDuration.ofHours(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_ثواني_للمدة(أنشئ_مدة_صفرية(), 36000)""",
-								ArabicDuration.ofHours(10),
+								NaftahDuration.ofHours(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_مللي_للمدة(أنشئ_مدة_صفرية(), 36000000)""",
-								ArabicDuration.ofHours(10),
+								NaftahDuration.ofHours(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_نانو_للمدة(أنشئ_مدة_صفرية(), 36000000000000)""",
-								ArabicDuration.ofHours(10),
+								NaftahDuration.ofHours(10),
 								null),
 
 					Arguments
 							.of(true,
 								"""
 								اطرح_أيام_من_المدة(أنشئ_مدة_صفرية(), 10)""",
-								ArabicDuration.ofHours(-240),
+								NaftahDuration.ofHours(-240),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_ساعات_من_المدة(أنشئ_مدة_صفرية(), 10)""",
-								ArabicDuration.ofHours(-10),
+								NaftahDuration.ofHours(-10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_دقائق_من_المدة(أنشئ_مدة_صفرية(), 600)""",
-								ArabicDuration.ofHours(-10),
+								NaftahDuration.ofHours(-10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_ثواني_من_المدة(أنشئ_مدة_صفرية(), 36000)""",
-								ArabicDuration.ofHours(-10),
+								NaftahDuration.ofHours(-10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_مللي_من_المدة(أنشئ_مدة_صفرية(), 36000000)""",
-								ArabicDuration.ofHours(-10),
+								NaftahDuration.ofHours(-10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_نانو_من_المدة(أنشئ_مدة_صفرية(), 36000000000000)""",
-								ArabicDuration.ofHours(-10),
+								NaftahDuration.ofHours(-10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_سنوات_لفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 1)""",
-								ArabicPeriodWithDuration.ofYears(1),
+								NaftahPeriodWithDuration.ofYears(1),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_أشهر_لفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 12)""",
-								ArabicPeriodWithDuration.ofMonths(12),
+								NaftahPeriodWithDuration.ofMonths(12),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_أيام_لفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 120)""",
-								ArabicPeriodWithDuration.ofDays(120),
+								NaftahPeriodWithDuration.ofDays(120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_ساعات_لفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 120)""",
-								ArabicPeriodWithDuration.ofDays(5),
+								NaftahPeriodWithDuration.ofDays(5),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_دقائق_لفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 7200)""",
-								ArabicPeriodWithDuration.ofDays(5),
+								NaftahPeriodWithDuration.ofDays(5),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_ثواني_لفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 432000)""",
-								ArabicPeriodWithDuration.ofDays(5),
+								NaftahPeriodWithDuration.ofDays(5),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_مللي_لفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 432000000)""",
-								ArabicPeriodWithDuration.ofDays(5),
+								NaftahPeriodWithDuration.ofDays(5),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أضف_نانو_لفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 432000000000000)""",
-								ArabicPeriodWithDuration.ofDays(5),
+								NaftahPeriodWithDuration.ofDays(5),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_سنوات_من_الفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 1)""",
-								ArabicPeriodWithDuration.ofYears(-1),
+								NaftahPeriodWithDuration.ofYears(-1),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_أشهر_من_الفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 12)""",
-								ArabicPeriodWithDuration.ofMonths(-12),
+								NaftahPeriodWithDuration.ofMonths(-12),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_أيام_من_الفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 120)""",
-								ArabicPeriodWithDuration.ofDays(-120),
+								NaftahPeriodWithDuration.ofDays(-120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_ساعات_من_الفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 120)""",
-								ArabicPeriodWithDuration.ofHours(-120),
+								NaftahPeriodWithDuration.ofHours(-120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_دقائق_من_الفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 7200)""",
-								ArabicPeriodWithDuration.ofHours(-120),
+								NaftahPeriodWithDuration.ofHours(-120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_ثواني_من_الفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 432000)""",
-								ArabicPeriodWithDuration.ofHours(-120),
+								NaftahPeriodWithDuration.ofHours(-120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_مللي_من_الفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 432000000)""",
-								ArabicPeriodWithDuration.ofHours(-120),
+								NaftahPeriodWithDuration.ofHours(-120),
 								null),
 					Arguments
 							.of(true,
 								"""
 								اطرح_نانو_من_الفترة_مع_مدة(أنشئ_فترة_و_مدة_صفرية(), 432000000000000)""",
-								ArabicPeriodWithDuration.ofHours(-120),
+								NaftahPeriodWithDuration.ofHours(-120),
 								null),
 					Arguments
 							.of(true,
@@ -1723,19 +1723,19 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								"""
 								أنشئ_مدة_بين_نقطتين(زمن "30 أكتوبر ٢٠٢٢ بالتقويم الميلادي ١٢:٠٠ بتوقيت تونس",زمن "30 أكتوبر ٢٠٢٢ بالتقويم الميلادي ٢٢:٠٠ بتوقيت تونس")
 								""",
-								ArabicDuration.ofHours(10),
+								NaftahDuration.ofHours(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_بين_نقطتين(زمن "1 شوال ١٤٤٥ بالتقويم الهجري ٠٠:٠٠ بتوقيت الدوحة",زمن "11 شوال ١٤٤٥ بالتقويم الهجري ٠٠:٠٠ بتوقيت الدوحة")""",
-								ArabicPeriod.ofDays(10),
+								NaftahPeriod.ofDays(10),
 								null),
 					Arguments
 							.of(true,
 								"""
 								أنشئ_مدة_بين_نقطتين(زمن "25 يوليو ٢٠٢١ بالتقويم الميلادي ٠٨:٣٠ بتوقيت الكويت",زمن "4 أغسطس ٢٠٢١ بالتقويم الميلادي ١٨:٣٠ بتوقيت الكويت")""",
-								ArabicPeriodWithDuration.ofDays(10).plusHours(10),
+								NaftahPeriodWithDuration.ofDays(10).plusHours(10),
 								null)
 				);
 	}

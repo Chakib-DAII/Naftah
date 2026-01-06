@@ -20,13 +20,13 @@ import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import static org.daiitech.naftah.utils.repl.REPLHelper.ESCAPE_CHARS_REGEX;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.TEXT_PASTE_DETECTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.println;
 import static org.daiitech.naftah.utils.repl.REPLHelper.rightAlign;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shape;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shouldReshape;
 
 /**
  * A syntax highlighter class specifically tailored for highlighting

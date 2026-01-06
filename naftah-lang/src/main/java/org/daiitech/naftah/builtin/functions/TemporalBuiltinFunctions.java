@@ -3,18 +3,18 @@ package org.daiitech.naftah.builtin.functions;
 
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
-import org.daiitech.naftah.builtin.time.ArabicDate;
-import org.daiitech.naftah.builtin.time.ArabicDateTime;
-import org.daiitech.naftah.builtin.time.ArabicDuration;
-import org.daiitech.naftah.builtin.time.ArabicPeriod;
-import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
-import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
-import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
-import org.daiitech.naftah.builtin.time.ArabicTime;
 import org.daiitech.naftah.builtin.time.DateSupport;
+import org.daiitech.naftah.builtin.time.NaftahDate;
+import org.daiitech.naftah.builtin.time.NaftahDateTime;
+import org.daiitech.naftah.builtin.time.NaftahDuration;
+import org.daiitech.naftah.builtin.time.NaftahPeriod;
+import org.daiitech.naftah.builtin.time.NaftahPeriodWithDuration;
+import org.daiitech.naftah.builtin.time.NaftahTemporalAmount;
+import org.daiitech.naftah.builtin.time.NaftahTemporalPoint;
+import org.daiitech.naftah.builtin.time.NaftahTime;
 import org.daiitech.naftah.builtin.time.TimeSupport;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.parser.time.ArabicDateParserHelper;
+import org.daiitech.naftah.parser.time.NaftahDateParserHelper;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newIllegalArgumentException;
@@ -214,428 +214,428 @@ public final class TemporalBuiltinFunctions {
 	/**
 	 * Obtains the current time using the system default time zone.
 	 *
-	 * @return the current {@link ArabicTime}
+	 * @return the current {@link NaftahTime}
 	 */
 	@NaftahFn(
 				name = "الوقت_الحالي",
 				description = "الحصول على الوقت الحالي",
 				usage = "الوقت_الحالي()",
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime currentTime() {
-		return ArabicTime.now();
+	public static NaftahTime currentTime() {
+		return NaftahTime.now();
 	}
 
 	/**
 	 * Obtains the current time using the specified time zone.
 	 *
 	 * @param zone the zone ID (e.g. Asia/Dubai)
-	 * @return the current {@link ArabicTime}
+	 * @return the current {@link NaftahTime}
 	 */
 	@NaftahFn(
 				name = "الوقت_الحالي_بتوقيت",
 				description = "الحصول على الوقت الحالي بتوقيت محدد",
 				usage = "الوقت_الحالي_بتوقيت(منطقة)",
 				parameterTypes = {String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime currentZonedTime(String zone) {
-		return ArabicTime.now(ArabicTime.ZoneOrOffset.ofZone(zone));
+	public static NaftahTime currentZonedTime(String zone) {
+		return NaftahTime.now(NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
 	 * Obtains the current time using a fixed offset.
 	 *
 	 * @param offset the offset (e.g. +04:00)
-	 * @return the current {@link ArabicTime}
+	 * @return the current {@link NaftahTime}
 	 */
 	@NaftahFn(
 				name = "الوقت_الحالي_بإزاحة",
 				description = "الحصول على الوقت الحالي بإزاحة زمنية",
 				usage = "الوقت_الحالي_بإزاحة(إزاحة)",
 				parameterTypes = {String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime currentOffsetTime(String offset) {
-		return ArabicTime.now(ArabicTime.ZoneOrOffset.ofOffset(offset));
+	public static NaftahTime currentOffsetTime(String offset) {
+		return NaftahTime.now(NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from hour and minute.
+	 * Creates an {@link NaftahTime} instance from hour and minute.
 	 *
 	 * @param hour   the hour value
 	 * @param minute the minute value
-	 * @return a new {@link ArabicTime} instance
+	 * @return a new {@link NaftahTime} instance
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت",
 				description = "انشاء الوقت من ساعة ودقيقة",
 				usage = "انشاء_الوقت(ساعة, دقيقة)",
 				parameterTypes = {Number.class, Number.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createTime(Number hour, Number minute) {
-		return ArabicTime.of(hour.intValue(), minute.intValue());
+	public static NaftahTime createTime(Number hour, Number minute) {
+		return NaftahTime.of(hour.intValue(), minute.intValue());
 	}
 
 	/**
-	 * Creates a zoned {@link ArabicTime} instance from hour, minute, and time zone.
+	 * Creates a zoned {@link NaftahTime} instance from hour, minute, and time zone.
 	 *
 	 * @param hour   the hour value
 	 * @param minute the minute value
 	 * @param zone   the time zone ID (e.g. "Asia/Riyadh")
-	 * @return a new {@link ArabicTime} instance with the specified zone
+	 * @return a new {@link NaftahTime} instance with the specified zone
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_بتوقيت",
 				description = "انشاء الوقت مع المنطقة الزمنية",
 				usage = "انشاء_الوقت_بتوقيت(ساعة, دقيقة, المنطقة)",
 				parameterTypes = {Number.class, Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createZonedTime(Number hour, Number minute, String zone) {
-		return ArabicTime.of(hour.intValue(), minute.intValue(), ArabicTime.ZoneOrOffset.ofZone(zone));
+	public static NaftahTime createZonedTime(Number hour, Number minute, String zone) {
+		return NaftahTime.of(hour.intValue(), minute.intValue(), NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
-	 * Creates an offset {@link ArabicTime} instance from hour, minute, and offset.
+	 * Creates an offset {@link NaftahTime} instance from hour, minute, and offset.
 	 *
 	 * @param hour   the hour value
 	 * @param minute the minute value
 	 * @param offset the offset string (e.g. "+04:00")
-	 * @return a new {@link ArabicTime} instance with the specified offset
+	 * @return a new {@link NaftahTime} instance with the specified offset
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_بإزاحة",
 				description = "انشاء الوقت مع الإزاحة الزمنية",
 				usage = "انشاء_الوقت_بإزاحة(ساعة, دقيقة, الإزاحة)",
 				parameterTypes = {Number.class, Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createOffsetTime(Number hour, Number minute, String offset) {
-		return ArabicTime.of(hour.intValue(), minute.intValue(), ArabicTime.ZoneOrOffset.ofOffset(offset));
+	public static NaftahTime createOffsetTime(Number hour, Number minute, String offset) {
+		return NaftahTime.of(hour.intValue(), minute.intValue(), NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from hour, minute, and second.
+	 * Creates an {@link NaftahTime} instance from hour, minute, and second.
 	 *
 	 * @param hour   the hour value
 	 * @param minute the minute value
 	 * @param second the second value
-	 * @return a new {@link ArabicTime} instance
+	 * @return a new {@link NaftahTime} instance
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_مع_ثانية",
 				description = "انشاء الوقت من ساعة ودقيقة وثانية",
 				usage = "انشاء_الوقت_مع_ثانية(ساعة, دقيقة, ثانية)",
 				parameterTypes = {Number.class, Number.class, Number.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createTime(Number hour, Number minute, Number second) {
-		return ArabicTime.of(hour.intValue(), minute.intValue(), second.intValue());
+	public static NaftahTime createTime(Number hour, Number minute, Number second) {
+		return NaftahTime.of(hour.intValue(), minute.intValue(), second.intValue());
 	}
 
 	/**
-	 * Creates a zoned {@link ArabicTime} instance from hour, minute, second, and zone.
+	 * Creates a zoned {@link NaftahTime} instance from hour, minute, second, and zone.
 	 *
 	 * @param hour   the hour value
 	 * @param minute the minute value
 	 * @param second the second value
 	 * @param zone   the time zone ID
-	 * @return a new {@link ArabicTime} instance with the specified zone
+	 * @return a new {@link NaftahTime} instance with the specified zone
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_بتوقيت_مع_ثانية",
 				description = "انشاء الوقت مع المنطقة الزمنية والثانية",
 				usage = "انشاء_الوقت_بتوقيت_مع_ثانية(ساعة, دقيقة, ثانية, المنطقة)",
 				parameterTypes = {Number.class, Number.class, Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createZonedTime(Number hour, Number minute, Number second, String zone) {
-		return ArabicTime
+	public static NaftahTime createZonedTime(Number hour, Number minute, Number second, String zone) {
+		return NaftahTime
 				.of(hour.intValue(),
 					minute.intValue(),
 					second.intValue(),
-					ArabicTime.ZoneOrOffset.ofZone(zone));
+					NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
-	 * Creates an offset {@link ArabicTime} instance from hour, minute, second, and offset.
+	 * Creates an offset {@link NaftahTime} instance from hour, minute, second, and offset.
 	 *
 	 * @param hour   the hour value
 	 * @param minute the minute value
 	 * @param second the second value
 	 * @param offset the offset string
-	 * @return a new {@link ArabicTime} instance with the specified offset
+	 * @return a new {@link NaftahTime} instance with the specified offset
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_بإزاحة_مع_ثانية",
 				description = "انشاء الوقت مع الإزاحة الزمنية والثانية",
 				usage = "انشاء_الوقت_بإزاحة_مع_ثانية(ساعة, دقيقة, ثانية, الإزاحة)",
 				parameterTypes = {Number.class, Number.class, Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createOffsetTime(Number hour, Number minute, Number second, String offset) {
-		return ArabicTime
+	public static NaftahTime createOffsetTime(Number hour, Number minute, Number second, String offset) {
+		return NaftahTime
 				.of(hour.intValue(),
 					minute.intValue(),
 					second.intValue(),
-					ArabicTime.ZoneOrOffset.ofOffset(offset));
+					NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from hour, minute, second, and nanosecond.
+	 * Creates an {@link NaftahTime} instance from hour, minute, second, and nanosecond.
 	 *
 	 * @param hour         the hour value
 	 * @param minute       the minute value
 	 * @param second       the second value
 	 * @param nanoOfSecond the nanosecond value
-	 * @return a new {@link ArabicTime} instance
+	 * @return a new {@link NaftahTime} instance
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_مع_نانوثانية",
 				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية",
 				usage = "انشاء_الوقت_مع_نانوثانية(ساعة, دقيقة, ثانية, نانوثانية)",
 				parameterTypes = {Number.class, Number.class, Number.class, Number.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createTime(Number hour, Number minute, Number second, Number nanoOfSecond) {
-		return ArabicTime.of(hour.intValue(), minute.intValue(), second.intValue(), nanoOfSecond.intValue());
+	public static NaftahTime createTime(Number hour, Number minute, Number second, Number nanoOfSecond) {
+		return NaftahTime.of(hour.intValue(), minute.intValue(), second.intValue(), nanoOfSecond.intValue());
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from hour, minute, second, and nanosecond with a specific time zone.
+	 * Creates an {@link NaftahTime} instance from hour, minute, second, and nanosecond with a specific time zone.
 	 *
 	 * @param hour         the hour value
 	 * @param minute       the minute value
 	 * @param second       the second value
 	 * @param nanoOfSecond the nanosecond value
 	 * @param zone         the time zone ID (e.g., "Asia/Riyadh")
-	 * @return a new {@link ArabicTime} instance with the specified zone
+	 * @return a new {@link NaftahTime} instance with the specified zone
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_مع_نانوثانية_بتوقيت",
 				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع منطقة زمنية محددة",
 				usage = "انشاء_الوقت_مع_نانوثانية_بتوقيت(ساعة, دقيقة, ثانية, نانوثانية, منطقة)",
 				parameterTypes = {Number.class, Number.class, Number.class, Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createZonedTime(   Number hour,
+	public static NaftahTime createZonedTime(   Number hour,
 												Number minute,
 												Number second,
 												Number nanoOfSecond,
 												String zone) {
-		return ArabicTime
+		return NaftahTime
 				.of(hour.intValue(),
 					minute.intValue(),
 					second.intValue(),
 					nanoOfSecond.intValue(),
-					ArabicTime.ZoneOrOffset.ofZone(zone));
+					NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from hour, minute, second, and nanosecond with a specific offset.
+	 * Creates an {@link NaftahTime} instance from hour, minute, second, and nanosecond with a specific offset.
 	 *
 	 * @param hour         the hour value
 	 * @param minute       the minute value
 	 * @param second       the second value
 	 * @param nanoOfSecond the nanosecond value
 	 * @param offset       the offset string (e.g., "+03:00")
-	 * @return a new {@link ArabicTime} instance with the specified offset
+	 * @return a new {@link NaftahTime} instance with the specified offset
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_مع_الإزاحة_ونانوثانية",
 				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع إزاحة زمنية محددة",
 				usage = "انشاء_الوقت_مع_الإزاحة_ونانوثانية(ساعة, دقيقة, ثانية, نانوثانية, إزاحة)",
 				parameterTypes = {Number.class, Number.class, Number.class, Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createOffsetTime(  Number hour,
+	public static NaftahTime createOffsetTime(  Number hour,
 												Number minute,
 												Number second,
 												Number nanoOfSecond,
 												String offset) {
-		return ArabicTime
+		return NaftahTime
 				.of(hour.intValue(),
 					minute.intValue(),
 					second.intValue(),
 					nanoOfSecond.intValue(),
-					ArabicTime.ZoneOrOffset.ofOffset(offset));
+					NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from the total number of seconds since midnight.
+	 * Creates an {@link NaftahTime} instance from the total number of seconds since midnight.
 	 *
 	 * @param secondOfDay the total number of seconds since midnight (0–86,399)
-	 * @return a new {@link ArabicTime} instance
+	 * @return a new {@link NaftahTime} instance
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_ثواني_اليوم",
 				description = "انشاء الوقت من العدد الإجمالي للثواني منذ منتصف الليل",
 				usage = "انشاء_الوقت_من_ثواني_اليوم(ثانية_اليوم)",
 				parameterTypes = {Number.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createTimeOfSecondOfDay(Number secondOfDay) {
-		return ArabicTime.ofSecondOfDay(secondOfDay.longValue());
+	public static NaftahTime createTimeOfSecondOfDay(Number secondOfDay) {
+		return NaftahTime.ofSecondOfDay(secondOfDay.longValue());
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from the total number of seconds since midnight with a specific time
+	 * Creates an {@link NaftahTime} instance from the total number of seconds since midnight with a specific time
 	 * * zone.
 	 *
 	 * @param secondOfDay the second-of-day (0–86,399)
 	 * @param zone        the time zone ID (e.g., "Asia/Riyadh")
-	 * @return a new {@link ArabicTime} instance with the specified zone
+	 * @return a new {@link NaftahTime} instance with the specified zone
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_ثواني_اليوم_بتوقيت",
 				description = "انشاء الوقت من عدد الثواني منذ منتصف الليل مع منطقة زمنية محددة",
 				usage = "انشاء_الوقت_من_ثواني_اليوم_بتوقيت(ثواني_اليوم, منطقة)",
 				parameterTypes = {Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createZonedTimeOfSecondOfDay(Number secondOfDay, String zone) {
-		return ArabicTime.ofSecondOfDay(secondOfDay.longValue(), ArabicTime.ZoneOrOffset.ofZone(zone));
+	public static NaftahTime createZonedTimeOfSecondOfDay(Number secondOfDay, String zone) {
+		return NaftahTime.ofSecondOfDay(secondOfDay.longValue(), NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from the total number of seconds since midnight with a specific offset.
+	 * Creates an {@link NaftahTime} instance from the total number of seconds since midnight with a specific offset.
 	 *
 	 * @param secondOfDay the second-of-day (0–86,399)
 	 * @param offset      the offset (e.g., "+04:00")
-	 * @return a new {@link ArabicTime} instance with the specified offset
+	 * @return a new {@link NaftahTime} instance with the specified offset
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_ثواني_اليوم_بإزاحة",
 				description = "انشاء الوقت من عدد الثواني منذ منتصف الليل مع إزاحة زمنية محددة",
 				usage = "انشاء_الوقت_من_ثواني_اليوم_بإزاحة(ثواني_اليوم, إزاحة)",
 				parameterTypes = {Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createOffsetTimeOfSecondOfDay(Number secondOfDay, String offset) {
-		return ArabicTime.ofSecondOfDay(secondOfDay.longValue(), ArabicTime.ZoneOrOffset.ofOffset(offset));
+	public static NaftahTime createOffsetTimeOfSecondOfDay(Number secondOfDay, String offset) {
+		return NaftahTime.ofSecondOfDay(secondOfDay.longValue(), NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from the total number of nanoseconds since midnight.
+	 * Creates an {@link NaftahTime} instance from the total number of nanoseconds since midnight.
 	 *
 	 * @param nanoOfDay the nano-of-day (0–86,399,999,999,999)
-	 * @return a new {@link ArabicTime} instance
+	 * @return a new {@link NaftahTime} instance
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_نانوثواني_اليوم",
 				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل",
 				usage = "انشاء_الوقت_من_نانوثواني_اليوم(نانوثواني_اليوم)",
 				parameterTypes = {Number.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createTimeOfNanoOfDay(Number nanoOfDay) {
-		return ArabicTime.ofNanoOfDay(nanoOfDay.longValue());
+	public static NaftahTime createTimeOfNanoOfDay(Number nanoOfDay) {
+		return NaftahTime.ofNanoOfDay(nanoOfDay.longValue());
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from the total number of nanoseconds since midnight
+	 * Creates an {@link NaftahTime} instance from the total number of nanoseconds since midnight
 	 * with a specific time zone.
 	 *
 	 * @param nanoOfDay the nano-of-day (0–86,399,999,999,999)
 	 * @param zone      the time zone ID (e.g., "Asia/Riyadh")
-	 * @return a new {@link ArabicTime} instance with the specified zone
+	 * @return a new {@link NaftahTime} instance with the specified zone
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت",
 				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل مع منطقة زمنية محددة",
 				usage = "انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت(نانوثواني_اليوم, منطقة)",
 				parameterTypes = {Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createZonedTimeOfNanoOfDay(Number nanoOfDay, String zone) {
-		return ArabicTime.ofNanoOfDay(nanoOfDay.longValue(), ArabicTime.ZoneOrOffset.ofZone(zone));
+	public static NaftahTime createZonedTimeOfNanoOfDay(Number nanoOfDay, String zone) {
+		return NaftahTime.ofNanoOfDay(nanoOfDay.longValue(), NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
-	 * Creates an {@link ArabicTime} instance from the total number of nanoseconds since midnight
+	 * Creates an {@link NaftahTime} instance from the total number of nanoseconds since midnight
 	 * with a fixed offset.
 	 *
 	 * @param nanoOfDay the nano-of-day (0–86,399,999,999,999)
 	 * @param offset    the offset (e.g., "+04:00")
-	 * @return a new {@link ArabicTime} instance with the specified offset
+	 * @return a new {@link NaftahTime} instance with the specified offset
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة",
 				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل مع إزاحة زمنية محددة",
 				usage = "انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة(نانوثواني_اليوم, إزاحة)",
 				parameterTypes = {Number.class, String.class},
-				returnType = ArabicTime.class
+				returnType = NaftahTime.class
 	)
-	public static ArabicTime createOffsetTimeOfNanoOfDay(Number nanoOfDay, String offset) {
-		return ArabicTime.ofNanoOfDay(nanoOfDay.longValue(), ArabicTime.ZoneOrOffset.ofOffset(offset));
+	public static NaftahTime createOffsetTimeOfNanoOfDay(Number nanoOfDay, String offset) {
+		return NaftahTime.ofNanoOfDay(nanoOfDay.longValue(), NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
 	 * Obtains the current date using the default chronology.
 	 *
-	 * @return the current {@link ArabicDate}
+	 * @return the current {@link NaftahDate}
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي",
 				description = "الحصول على التاريخ الحالي",
 				usage = "التاريخ_الحالي()",
-				returnType = ArabicDate.class
+				returnType = NaftahDate.class
 	)
-	public static ArabicDate currentDate() {
-		return ArabicDate.now();
+	public static NaftahDate currentDate() {
+		return NaftahDate.now();
 	}
 
 	/**
 	 * Obtains the current date using the specified chronology.
 	 *
 	 * @param chronology the chronology name
-	 * @return the current {@link ArabicDate}
+	 * @return the current {@link NaftahDate}
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بتقويم",
 				description = "الحصول على التاريخ الحالي بتقويم محدد",
 				usage = "التاريخ_الحالي_بتقويم(تقويم)",
 				parameterTypes = {String.class},
-				returnType = ArabicDate.class
+				returnType = NaftahDate.class
 	)
-	public static ArabicDate currentChronologyDate(String chronology) {
-		return ArabicDate.now(ChronologyUtils.getChronologyByName(chronology));
+	public static NaftahDate currentChronologyDate(String chronology) {
+		return NaftahDate.now(ChronologyUtils.getChronologyByName(chronology));
 	}
 
 	/**
 	 * Obtains the current date using the specified time zone.
 	 *
 	 * @param zone the zone ID (e.g. Asia/Dubai)
-	 * @return the current {@link ArabicDate}
+	 * @return the current {@link NaftahDate}
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بتوقيت",
 				description = "الحصول على التاريخ الحالي بتوقيت محدد",
 				usage = "التاريخ_الحالي_بتوقيت(منطقة)",
 				parameterTypes = {String.class},
-				returnType = ArabicDate.class
+				returnType = NaftahDate.class
 	)
-	public static ArabicDate currentZonedDate(String zone) {
-		return ArabicDate.now(ArabicTime.ZoneOrOffset.ofZone(zone));
+	public static NaftahDate currentZonedDate(String zone) {
+		return NaftahDate.now(NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
 	 * Obtains the current date using a fixed offset.
 	 *
 	 * @param offset the offset (e.g. +04:00)
-	 * @return the current {@link ArabicDate}
+	 * @return the current {@link NaftahDate}
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بإزاحة",
 				description = "الحصول على التاريخ الحالي بإزاحة زمنية",
 				usage = "التاريخ_الحالي_بإزاحة(إزاحة)",
 				parameterTypes = {String.class},
-				returnType = ArabicDate.class
+				returnType = NaftahDate.class
 	)
-	public static ArabicDate currentOffsetDate(String offset) {
-		return ArabicDate.now(ArabicTime.ZoneOrOffset.ofOffset(offset));
+	public static NaftahDate currentOffsetDate(String offset) {
+		return NaftahDate.now(NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
@@ -643,17 +643,17 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param chronology the chronology name
 	 * @param zone       the zone ID
-	 * @return the current {@link ArabicDate}
+	 * @return the current {@link NaftahDate}
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بتقويم_وتوقيت",
 				description = "الحصول على التاريخ الحالي بتقويم وتوقيت محددين",
 				usage = "التاريخ_الحالي_بتقويم_وتوقيت(تقويم, منطقة)",
 				parameterTypes = {String.class, String.class},
-				returnType = ArabicDate.class
+				returnType = NaftahDate.class
 	)
-	public static ArabicDate currentZonedChronologyDate(String chronology, String zone) {
-		return ArabicDate.now(ChronologyUtils.getChronologyByName(chronology), ArabicTime.ZoneOrOffset.ofZone(zone));
+	public static NaftahDate currentZonedChronologyDate(String chronology, String zone) {
+		return NaftahDate.now(ChronologyUtils.getChronologyByName(chronology), NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
@@ -661,23 +661,23 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param chronology the chronology name
 	 * @param offset     the offset (e.g. +04:00)
-	 * @return the current {@link ArabicDate}
+	 * @return the current {@link NaftahDate}
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بتقويم_وإزاحة",
 				description = "الحصول على التاريخ الحالي بتقويم وإزاحة زمنية",
 				usage = "التاريخ_الحالي_بتقويم_وإزاحة(تقويم, إزاحة)",
 				parameterTypes = {String.class, String.class},
-				returnType = ArabicDate.class
+				returnType = NaftahDate.class
 	)
-	public static ArabicDate currentOffsetChronologyDate(String chronology, String offset) {
-		return ArabicDate
+	public static NaftahDate currentOffsetChronologyDate(String chronology, String offset) {
+		return NaftahDate
 				.now(   ChronologyUtils.getChronologyByName(chronology),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
-	 * Creates an {@link ArabicDate} instance from day, month, and year.
+	 * Creates an {@link NaftahDate} instance from day, month, and year.
 	 * <p>
 	 * The {@code month} parameter may be either:
 	 * <ul>
@@ -689,7 +689,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param month the month value, either an Arabic month name ({@link String}) or a numeric month ({@link Number}),
 	 *              * not null
 	 * @param year  the year value
-	 * @return a new {@link ArabicDate} instance
+	 * @return a new {@link NaftahDate} instance
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -697,14 +697,14 @@ public final class TemporalBuiltinFunctions {
 				description = "انشاء التاريخ من اليوم واسم الشهر والسنة",
 				usage = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(يوم, شهر, سنة)",
 				parameterTypes = {Number.class, Object.class, Number.class},
-				returnType = ArabicDate.class
+				returnType = NaftahDate.class
 	)
-	public static ArabicDate createDate(Number day, Object month, Number year) {
+	public static NaftahDate createDate(Number day, Object month, Number year) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDate.of(day.intValue(), arabicMonth, year.intValue());
+			return NaftahDate.of(day.intValue(), arabicMonth, year.intValue());
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDate.of(day.intValue(), monthNumber.intValue(), year.intValue());
+			return NaftahDate.of(day.intValue(), monthNumber.intValue(), year.intValue());
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -712,7 +712,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDate} instance from a specific chronology, day, month, and year.
+	 * Creates an {@link NaftahDate} instance from a specific chronology, day, month, and year.
 	 * <p>
 	 * The {@code month} parameter may be either:
 	 * <ul>
@@ -725,7 +725,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param month      the month value, either an Arabic month name ({@link String}) or a numeric month
 	 *                   ({@link Number}), not null
 	 * @param year       the year value
-	 * @return a new {@link ArabicDate} instance with the specified chronology
+	 * @return a new {@link NaftahDate} instance with the specified chronology
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -733,18 +733,18 @@ public final class TemporalBuiltinFunctions {
 				description = "انشاء التاريخ من اليوم واسم الشهر والسنة مع تحديد التقويم",
 				usage = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم(تقويم, يوم, شهر, سنة)",
 				parameterTypes = {String.class, Number.class, Object.class, Number.class},
-				returnType = ArabicDate.class
+				returnType = NaftahDate.class
 	)
-	public static ArabicDate createDate(String chronology, Number day, Object month, Number year) {
+	public static NaftahDate createDate(String chronology, Number day, Object month, Number year) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDate
+			return NaftahDate
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						day.intValue(),
 						arabicMonth,
 						year.intValue());
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDate
+			return NaftahDate
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						day.intValue(),
 						monthNumber.intValue(),
@@ -758,16 +758,16 @@ public final class TemporalBuiltinFunctions {
 	/**
 	 * Obtains the current date-time using the system default settings.
 	 *
-	 * @return the current {@link ArabicDateTime}
+	 * @return the current {@link NaftahDateTime}
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي",
 				description = "الحصول على التاريخ والوقت الحاليين",
 				usage = "التاريخ_والوقت_الحالي()",
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime currentDateTime() {
-		return ArabicDateTime.now();
+	public static NaftahDateTime currentDateTime() {
+		return NaftahDateTime.now();
 	}
 
 
@@ -775,51 +775,51 @@ public final class TemporalBuiltinFunctions {
 	 * Obtains the current date-time using a specific chronology.
 	 *
 	 * @param chronology the chronology name
-	 * @return the current {@link ArabicDateTime}
+	 * @return the current {@link NaftahDateTime}
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بتقويم",
 				description = "الحصول على التاريخ والوقت الحاليين بتقويم محدد",
 				usage = "التاريخ_والوقت_الحالي_بتقويم(تقويم)",
 				parameterTypes = {String.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime currentChronologyDateTime(String chronology) {
-		return ArabicDateTime.now(ChronologyUtils.getChronologyByName(chronology));
+	public static NaftahDateTime currentChronologyDateTime(String chronology) {
+		return NaftahDateTime.now(ChronologyUtils.getChronologyByName(chronology));
 	}
 
 	/**
 	 * Obtains the current date-time using the specified time zone.
 	 *
 	 * @param zone the zone ID
-	 * @return the current {@link ArabicDateTime}
+	 * @return the current {@link NaftahDateTime}
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بتوقيت",
 				description = "الحصول على التاريخ والوقت الحاليين بتوقيت محدد",
 				usage = "التاريخ_والوقت_الحالي_بتوقيت(منطقة)",
 				parameterTypes = {String.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime currentZonedDateTime(String zone) {
-		return ArabicDateTime.now(ArabicTime.ZoneOrOffset.ofZone(zone));
+	public static NaftahDateTime currentZonedDateTime(String zone) {
+		return NaftahDateTime.now(NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
 	 * Obtains the current date-time using a fixed offset.
 	 *
 	 * @param offset the offset (e.g. +04:00)
-	 * @return the current {@link ArabicDateTime}
+	 * @return the current {@link NaftahDateTime}
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بإزاحة",
 				description = "الحصول على التاريخ والوقت الحاليين بإزاحة زمنية",
 				usage = "التاريخ_والوقت_الحالي_بإزاحة(إزاحة)",
 				parameterTypes = {String.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime currentOffsetDateTime(String offset) {
-		return ArabicDateTime.now(ArabicTime.ZoneOrOffset.ofOffset(offset));
+	public static NaftahDateTime currentOffsetDateTime(String offset) {
+		return NaftahDateTime.now(NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
@@ -827,19 +827,19 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param chronology the chronology name
 	 * @param zone       the zone ID
-	 * @return the current {@link ArabicDateTime}
+	 * @return the current {@link NaftahDateTime}
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بتقويم_وتوقيت",
 				description = "الحصول على التاريخ والوقت الحاليين بتقويم وتوقيت محددين",
 				usage = "التاريخ_والوقت_الحالي_بتقويم_وتوقيت(تقويم, منطقة)",
 				parameterTypes = {String.class, String.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime currentZonedChronologyDateTime(String chronology, String zone) {
-		return ArabicDateTime
+	public static NaftahDateTime currentZonedChronologyDateTime(String chronology, String zone) {
+		return NaftahDateTime
 				.now(   ChronologyUtils.getChronologyByName(chronology),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 	}
 
 	/**
@@ -847,23 +847,23 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param chronology the chronology name
 	 * @param offset     the offset (e.g. +04:00)
-	 * @return the current {@link ArabicDateTime}
+	 * @return the current {@link NaftahDateTime}
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بتقويم_وإزاحة",
 				description = "الحصول على التاريخ والوقت الحاليين بتقويم وإزاحة زمنية",
 				usage = "التاريخ_والوقت_الحالي_بتقويم_وإزاحة(تقويم, إزاحة)",
 				parameterTypes = {String.class, String.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime currentOffsetChronologyDateTime(String chronology, String offset) {
-		return ArabicDateTime
+	public static NaftahDateTime currentOffsetChronologyDateTime(String chronology, String offset) {
+		return NaftahDateTime
 				.now(   ChronologyUtils.getChronologyByName(chronology),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute.
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, and minute.
 	 * <p>
 	 * The {@code month} parameter may be either:
 	 * <ul>
@@ -879,7 +879,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param dayOfMonth the day-of-month value (1–31)
 	 * @param hour       the hour-of-day (0–23)
 	 * @param minute     the minute-of-hour (0–59)
-	 * @return a new {@link ArabicDateTime} instance
+	 * @return a new {@link NaftahDateTime} instance
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -887,15 +887,15 @@ public final class TemporalBuiltinFunctions {
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة(سنة, شهر, يوم, ساعة, دقيقة)",
 				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createDateTime(Number year,
+	public static NaftahDateTime createDateTime(Number year,
 												Object month,
 												Number dayOfMonth,
 												Number hour,
 												Number minute) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
@@ -904,7 +904,7 @@ public final class TemporalBuiltinFunctions {
 		}
 		else if (month instanceof Number monthNumber) {
 
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
@@ -917,7 +917,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, and minute
 	 * using a specific time zone.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -936,7 +936,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param hour       the hour-of-day (0–23)
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param zone       the time zone ID (e.g. {@code "Asia/Riyadh"})
-	 * @return a new {@link ArabicDateTime} instance with the specified time zone
+	 * @return a new {@link NaftahDateTime} instance with the specified time zone
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -944,31 +944,31 @@ public final class TemporalBuiltinFunctions {
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع منطقة " + "زمنية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(سنة, شهر, يوم, ساعة, دقيقة, منطقة)",
 				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, String.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createZonedDateTime(   Number year,
+	public static NaftahDateTime createZonedDateTime(   Number year,
 														Object month,
 														Number dayOfMonth,
 														Number hour,
 														Number minute,
 														String zone) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -977,7 +977,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, and minute
 	 * using a fixed time offset.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -995,7 +995,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param hour       the hour-of-day (0–23)
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param offset     the time offset (e.g. {@code "+03:00"})
-	 * @return a new {@link ArabicDateTime} instance with the specified offset
+	 * @return a new {@link NaftahDateTime} instance with the specified offset
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1003,32 +1003,32 @@ public final class TemporalBuiltinFunctions {
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع إزاحة " + "زمنية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(سنة, شهر, يوم, ساعة, دقيقة, إزاحة)",
 				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, String.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createOffsetDateTime(  Number year,
+	public static NaftahDateTime createOffsetDateTime(  Number year,
 														Object month,
 														Number dayOfMonth,
 														Number hour,
 														Number minute,
 														String offset) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else if (month instanceof Number monthNumber) {
 
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1036,7 +1036,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second.
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, and second.
 	 * <p>
 	 * The {@code month} parameter may be either:
 	 * <ul>
@@ -1053,7 +1053,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param hour       the hour-of-day (0–23)
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param second     the second-of-minute (0–59)
-	 * @return a new {@link ArabicDateTime} instance
+	 * @return a new {@link NaftahDateTime} instance
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1061,16 +1061,16 @@ public final class TemporalBuiltinFunctions {
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية(سنة, شهر, يوم, ساعة, دقيقة, ثانية)",
 				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, Number.class},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createDateTime(Number year,
+	public static NaftahDateTime createDateTime(Number year,
 												Object month,
 												Number dayOfMonth,
 												Number hour,
 												Number minute,
 												Number second) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
@@ -1079,7 +1079,7 @@ public final class TemporalBuiltinFunctions {
 						second.intValue());
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
@@ -1094,7 +1094,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, and second
 	 * using a specific time zone.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1113,7 +1113,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param second     the second-of-minute (0–59)
 	 * @param zone       the time zone ID (e.g. {@code "Asia/Riyadh"})
-	 * @return a new {@link ArabicDateTime} instance with the specified time zone
+	 * @return a new {@link NaftahDateTime} instance with the specified time zone
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1129,9 +1129,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createZonedDateTime(   Number year,
+	public static NaftahDateTime createZonedDateTime(   Number year,
 														Object month,
 														Number dayOfMonth,
 														Number hour,
@@ -1139,24 +1139,24 @@ public final class TemporalBuiltinFunctions {
 														Number second,
 														String zone) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
 						second.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
 						second.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1165,7 +1165,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, and second
 	 * using a fixed time offset.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1184,7 +1184,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param second     the second-of-minute (0–59)
 	 * @param offset     the time offset (e.g. {@code "+04:00"})
-	 * @return a new {@link ArabicDateTime} instance with the specified offset
+	 * @return a new {@link NaftahDateTime} instance with the specified offset
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1200,9 +1200,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createOffsetDateTime(  Number year,
+	public static NaftahDateTime createOffsetDateTime(  Number year,
 														Object month,
 														Number dayOfMonth,
 														Number hour,
@@ -1210,24 +1210,24 @@ public final class TemporalBuiltinFunctions {
 														Number second,
 														String offset) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
 						second.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
 						second.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1236,7 +1236,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute,
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute,
 	 * second, and nanosecond.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1253,7 +1253,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param second       the second-of-minute (0–59)
 	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
-	 * @return a new {@link ArabicDateTime} instance
+	 * @return a new {@link NaftahDateTime} instance
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1269,9 +1269,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									Number.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createDateTime(Number year,
+	public static NaftahDateTime createDateTime(Number year,
 												Object month,
 												Number dayOfMonth,
 												Number hour,
@@ -1279,7 +1279,7 @@ public final class TemporalBuiltinFunctions {
 												Number second,
 												Number nanoOfSecond) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
@@ -1289,7 +1289,7 @@ public final class TemporalBuiltinFunctions {
 						nanoOfSecond.intValue());
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
@@ -1305,7 +1305,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute,
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute,
 	 * second, and nanosecond using a specific time zone.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1323,7 +1323,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param second       the second-of-minute (0–59)
 	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
 	 * @param zone         the time zone ID (e.g. {@code "Asia/Riyadh"})
-	 * @return a new {@link ArabicDateTime} instance with the specified time zone
+	 * @return a new {@link NaftahDateTime} instance with the specified time zone
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1340,9 +1340,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createZonedDateTime(   Number year,
+	public static NaftahDateTime createZonedDateTime(   Number year,
 														Object month,
 														Number dayOfMonth,
 														Number hour,
@@ -1351,7 +1351,7 @@ public final class TemporalBuiltinFunctions {
 														Number nanoOfSecond,
 														String zone) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
@@ -1359,10 +1359,10 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue(),
 						second.intValue(),
 						nanoOfSecond.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
@@ -1370,7 +1370,7 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue(),
 						second.intValue(),
 						nanoOfSecond.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1379,7 +1379,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute,
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute,
 	 * second, and nanosecond using a fixed offset.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1397,7 +1397,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param second       the second-of-minute (0–59)
 	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
 	 * @param offset       the fixed offset (e.g., "+04:00")
-	 * @return a new {@link ArabicDateTime} instance with the specified offset
+	 * @return a new {@link NaftahDateTime} instance with the specified offset
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1414,9 +1414,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createOffsetDateTime(  Number year,
+	public static NaftahDateTime createOffsetDateTime(  Number year,
 														Object month,
 														Number dayOfMonth,
 														Number hour,
@@ -1425,7 +1425,7 @@ public final class TemporalBuiltinFunctions {
 														Number nanoOfSecond,
 														String offset) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
@@ -1433,10 +1433,10 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue(),
 						second.intValue(),
 						nanoOfSecond.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
@@ -1444,7 +1444,7 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue(),
 						second.intValue(),
 						nanoOfSecond.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1453,7 +1453,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, and minute
 	 * using a specific chronology.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1469,7 +1469,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param dayOfMonth the day-of-month value (1–31)
 	 * @param hour       the hour-of-day (0–23)
 	 * @param minute     the minute-of-hour (0–59)
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1484,16 +1484,16 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									Number.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createChronologyDateTime(  String chronology,
+	public static NaftahDateTime createChronologyDateTime(  String chronology,
 															Number year,
 															Object month,
 															Number dayOfMonth,
 															Number hour,
 															Number minute) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
@@ -1502,7 +1502,7 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue());
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
@@ -1517,7 +1517,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, and minute
 	 * using a specific chronology and a time zone.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1534,7 +1534,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param hour       the hour-of-day (0–23)
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param zone       the time zone ID (e.g., "Asia/Riyadh")
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology and zone
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology and zone
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1550,9 +1550,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createZonedChronologyDateTime( String chronology,
+	public static NaftahDateTime createZonedChronologyDateTime( String chronology,
 																Number year,
 																Object month,
 																Number dayOfMonth,
@@ -1560,24 +1560,24 @@ public final class TemporalBuiltinFunctions {
 																Number minute,
 																String zone) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1586,7 +1586,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, and minute
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, and minute
 	 * using a specific chronology and a fixed offset.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1603,7 +1603,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param hour       the hour-of-day (0–23)
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param offset     the fixed offset (e.g., "+04:00")
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology and offset
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology and offset
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1619,9 +1619,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createOffsetChronologyDateTime(String chronology,
+	public static NaftahDateTime createOffsetChronologyDateTime(String chronology,
 																Number year,
 																Object month,
 																Number dayOfMonth,
@@ -1629,24 +1629,24 @@ public final class TemporalBuiltinFunctions {
 																Number minute,
 																String offset) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
 						dayOfMonth.intValue(),
 						hour.intValue(),
 						minute.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1655,7 +1655,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, and second
 	 * using a specific chronology.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1672,7 +1672,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param hour       the hour-of-day (0–23)
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param second     the second-of-minute (0–59)
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1688,9 +1688,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									Number.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createChronologyDateTime(  String chronology,
+	public static NaftahDateTime createChronologyDateTime(  String chronology,
 															Number year,
 															Object month,
 															Number dayOfMonth,
@@ -1698,7 +1698,7 @@ public final class TemporalBuiltinFunctions {
 															Number minute,
 															Number second) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
@@ -1708,7 +1708,7 @@ public final class TemporalBuiltinFunctions {
 						second.intValue());
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
@@ -1724,7 +1724,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, and second
 	 * using a specific chronology and time zone.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1742,7 +1742,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param second     the second-of-minute (0–59)
 	 * @param zone       the time zone ID (e.g., "Asia/Riyadh")
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology and time zone
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology and time zone
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1759,9 +1759,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createZonedChronologyDateTime( String chronology,
+	public static NaftahDateTime createZonedChronologyDateTime( String chronology,
 																Number year,
 																Object month,
 																Number dayOfMonth,
@@ -1770,7 +1770,7 @@ public final class TemporalBuiltinFunctions {
 																Number second,
 																String zone) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
@@ -1778,10 +1778,10 @@ public final class TemporalBuiltinFunctions {
 						hour.intValue(),
 						minute.intValue(),
 						second.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
@@ -1789,7 +1789,7 @@ public final class TemporalBuiltinFunctions {
 						hour.intValue(),
 						minute.intValue(),
 						second.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1798,7 +1798,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, and second
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, and second
 	 * using a specific chronology and fixed offset.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1816,7 +1816,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param minute     the minute-of-hour (0–59)
 	 * @param second     the second-of-minute (0–59)
 	 * @param offset     the fixed offset (e.g., "+04:00")
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology and offset
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology and offset
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1833,9 +1833,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createOffsetChronologyDateTime(String chronology,
+	public static NaftahDateTime createOffsetChronologyDateTime(String chronology,
 																Number year,
 																Object month,
 																Number dayOfMonth,
@@ -1844,7 +1844,7 @@ public final class TemporalBuiltinFunctions {
 																Number second,
 																String offset) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
@@ -1852,10 +1852,10 @@ public final class TemporalBuiltinFunctions {
 						hour.intValue(),
 						minute.intValue(),
 						second.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
@@ -1863,7 +1863,7 @@ public final class TemporalBuiltinFunctions {
 						hour.intValue(),
 						minute.intValue(),
 						second.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -1872,7 +1872,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, second, and nanosecond
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, second, and nanosecond
 	 * using a specific chronology.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1890,7 +1890,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param minute       the minute-of-hour (0–59)
 	 * @param second       the second-of-minute (0–59)
 	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology and nanoseconds
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology and nanoseconds
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1907,9 +1907,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									Number.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createChronologyDateTime(  String chronology,
+	public static NaftahDateTime createChronologyDateTime(  String chronology,
 															Number year,
 															Object month,
 															Number dayOfMonth,
@@ -1918,7 +1918,7 @@ public final class TemporalBuiltinFunctions {
 															Number second,
 															Number nanoOfSecond) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
@@ -1929,7 +1929,7 @@ public final class TemporalBuiltinFunctions {
 						nanoOfSecond.intValue());
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
@@ -1946,7 +1946,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, second, and nanosecond
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, second, and nanosecond
 	 * using a specific chronology and time zone.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -1965,7 +1965,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param second       the second-of-minute (0–59)
 	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
 	 * @param zone         the time zone ID (e.g., "Asia/Riyadh")
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology and zone
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology and zone
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -1983,9 +1983,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createZonedChronologyDateTime( String chronology,
+	public static NaftahDateTime createZonedChronologyDateTime( String chronology,
 																Number year,
 																Object month,
 																Number dayOfMonth,
@@ -1995,7 +1995,7 @@ public final class TemporalBuiltinFunctions {
 																Number nanoOfSecond,
 																String zone) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
@@ -2004,10 +2004,10 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue(),
 						second.intValue(),
 						nanoOfSecond.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
@@ -2016,7 +2016,7 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue(),
 						second.intValue(),
 						nanoOfSecond.intValue(),
-						ArabicTime.ZoneOrOffset.ofZone(zone));
+						NaftahTime.ZoneOrOffset.ofZone(zone));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -2025,7 +2025,7 @@ public final class TemporalBuiltinFunctions {
 	}
 
 	/**
-	 * Creates an {@link ArabicDateTime} instance from year, month, day, hour, minute, second, and nanosecond
+	 * Creates an {@link NaftahDateTime} instance from year, month, day, hour, minute, second, and nanosecond
 	 * using a specific chronology and fixed offset.
 	 * <p>
 	 * The {@code month} parameter may be either:
@@ -2044,7 +2044,7 @@ public final class TemporalBuiltinFunctions {
 	 * @param second       the second-of-minute (0–59)
 	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
 	 * @param offset       the offset (e.g., "+04:00")
-	 * @return a new {@link ArabicDateTime} instance with the specified chronology and offset
+	 * @return a new {@link NaftahDateTime} instance with the specified chronology and offset
 	 * @throws IllegalArgumentException if {@code month} is neither a {@link String} nor a {@link Number}
 	 */
 	@NaftahFn(
@@ -2062,9 +2062,9 @@ public final class TemporalBuiltinFunctions {
 									Number.class,
 									String.class
 				},
-				returnType = ArabicDateTime.class
+				returnType = NaftahDateTime.class
 	)
-	public static ArabicDateTime createOffsetChronologyDateTime(String chronology,
+	public static NaftahDateTime createOffsetChronologyDateTime(String chronology,
 																Number year,
 																Object month,
 																Number dayOfMonth,
@@ -2074,7 +2074,7 @@ public final class TemporalBuiltinFunctions {
 																Number nanoOfSecond,
 																String offset) {
 		if (month instanceof String arabicMonth) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						arabicMonth,
@@ -2083,10 +2083,10 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue(),
 						second.intValue(),
 						nanoOfSecond.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else if (month instanceof Number monthNumber) {
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(ChronologyUtils.getChronologyByName(chronology),
 						year.intValue(),
 						monthNumber.intValue(),
@@ -2095,7 +2095,7 @@ public final class TemporalBuiltinFunctions {
 						minute.intValue(),
 						second.intValue(),
 						nanoOfSecond.intValue(),
-						ArabicTime.ZoneOrOffset.ofOffset(offset));
+						NaftahTime.ZoneOrOffset.ofOffset(offset));
 		}
 		else {
 			throw newIllegalArgumentException(month);
@@ -2280,16 +2280,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param dateSupport the date or date-time object
 	 * @param yearsToAdd  the number of years to add (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting date-time
 	 */
 	@NaftahFn(
 				name = "اضافة_سنوات",
 				description = "اضافة عدد محدد من السنوات إلى كائن التاريخ المحدد",
 				usage = "اضافة_سنوات(كائن_التاريخ, عدد_السنوات)",
 				parameterTypes = {DateSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint plusYears(DateSupport dateSupport, Number yearsToAdd) {
+	public static NaftahTemporalPoint plusYears(DateSupport dateSupport, Number yearsToAdd) {
 		return dateSupport.plusYears(yearsToAdd.longValue());
 	}
 
@@ -2298,16 +2298,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param dateSupport the date or date-time object
 	 * @param monthsToAdd the number of months to add (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting date-time
 	 */
 	@NaftahFn(
 				name = "اضافة_اشهر",
 				description = "اضافة عدد محدد من الأشهر إلى كائن التاريخ المحدد",
 				usage = "اضافة_اشهر(كائن_التاريخ, عدد_الأشهر)",
 				parameterTypes = {DateSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint plusMonths(DateSupport dateSupport, Number monthsToAdd) {
+	public static NaftahTemporalPoint plusMonths(DateSupport dateSupport, Number monthsToAdd) {
 		return dateSupport.plusMonths(monthsToAdd.longValue());
 	}
 
@@ -2316,16 +2316,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param dateSupport the date or date-time object
 	 * @param weeksToAdd  the number of weeks to add (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting date-time
 	 */
 	@NaftahFn(
 				name = "اضافة_اسابيع",
 				description = "اضافة عدد محدد من الأسابيع إلى كائن التاريخ المحدد",
 				usage = "اضافة_اسابيع(كائن_التاريخ, عدد_الأسابيع)",
 				parameterTypes = {DateSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint plusWeeks(DateSupport dateSupport, Number weeksToAdd) {
+	public static NaftahTemporalPoint plusWeeks(DateSupport dateSupport, Number weeksToAdd) {
 		return dateSupport.plusWeeks(weeksToAdd.longValue());
 	}
 
@@ -2334,16 +2334,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param dateSupport the date or date-time object
 	 * @param daysToAdd   the number of days to add (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting date-time
 	 */
 	@NaftahFn(
 				name = "اضافة_ايام",
 				description = "اضافة عدد محدد من الأيام إلى كائن التاريخ المحدد",
 				usage = "اضافة_ايام(كائن_التاريخ, عدد_الأيام)",
 				parameterTypes = {DateSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint plusDays(DateSupport dateSupport, Number daysToAdd) {
+	public static NaftahTemporalPoint plusDays(DateSupport dateSupport, Number daysToAdd) {
 		return dateSupport.plusDays(daysToAdd.longValue());
 	}
 
@@ -2352,16 +2352,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param dateSupport     the date or date-time object
 	 * @param yearsToSubtract the number of years to subtract (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting date-time
 	 */
 	@NaftahFn(
 				name = "طرح_سنوات",
 				description = "طرح عدد محدد من السنوات من كائن التاريخ المحدد",
 				usage = "طرح_سنوات(كائن_التاريخ, عدد_السنوات)",
 				parameterTypes = {DateSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint minusYears(DateSupport dateSupport, Number yearsToSubtract) {
+	public static NaftahTemporalPoint minusYears(DateSupport dateSupport, Number yearsToSubtract) {
 		return dateSupport.minusYears(yearsToSubtract.longValue());
 	}
 
@@ -2370,16 +2370,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param dateSupport      the date or date-time object
 	 * @param monthsToSubtract the number of months to subtract (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting date-time
 	 */
 	@NaftahFn(
 				name = "طرح_شهور",
 				description = "طرح عدد محدد من الأشهر من كائن التاريخ المحدد",
 				usage = "طرح_شهور(كائن_التاريخ, عدد_الشهور)",
 				parameterTypes = {DateSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint minusMonths(DateSupport dateSupport, Number monthsToSubtract) {
+	public static NaftahTemporalPoint minusMonths(DateSupport dateSupport, Number monthsToSubtract) {
 		return dateSupport.minusMonths(monthsToSubtract.longValue());
 	}
 
@@ -2388,16 +2388,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param dateSupport     the date or date-time object
 	 * @param weeksToSubtract the number of weeks to subtract (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting date-time
 	 */
 	@NaftahFn(
 				name = "طرح_اسابيع",
 				description = "طرح عدد محدد من الأسابيع من كائن التاريخ المحدد",
 				usage = "طرح_اسابيع(كائن_التاريخ, عدد_الأسابيع)",
 				parameterTypes = {DateSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint minusWeeks(DateSupport dateSupport, Number weeksToSubtract) {
+	public static NaftahTemporalPoint minusWeeks(DateSupport dateSupport, Number weeksToSubtract) {
 		return dateSupport.minusWeeks(weeksToSubtract.longValue());
 	}
 
@@ -2406,16 +2406,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param dateSupport    the date or date-time object
 	 * @param daysToSubtract the number of days to subtract (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting date-time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting date-time
 	 */
 	@NaftahFn(
 				name = "طرح_ايام",
 				description = "طرح عدد محدد من الأيام من كائن التاريخ المحدد",
 				usage = "طرح_ايام(كائن_التاريخ, عدد_الأيام)",
 				parameterTypes = {DateSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint minusDays(DateSupport dateSupport, Number daysToSubtract) {
+	public static NaftahTemporalPoint minusDays(DateSupport dateSupport, Number daysToSubtract) {
 		return dateSupport.minusDays(daysToSubtract.longValue());
 	}
 
@@ -2509,16 +2509,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param timeSupport the time object
 	 * @param hoursToAdd  the number of hours to add (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting time
 	 */
 	@NaftahFn(
 				name = "اضافة_ساعات",
 				description = "اضافة عدد محدد من الساعات إلى كائن الوقت المحدد",
 				usage = "اضافة_ساعات(كائن_الوقت, عدد_الساعات)",
 				parameterTypes = {TimeSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint plusHours(TimeSupport timeSupport, Number hoursToAdd) {
+	public static NaftahTemporalPoint plusHours(TimeSupport timeSupport, Number hoursToAdd) {
 		return timeSupport.plusHours(hoursToAdd.longValue());
 	}
 
@@ -2527,16 +2527,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param timeSupport  the time object
 	 * @param minutesToAdd the number of minutes to add (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting time
 	 */
 	@NaftahFn(
 				name = "اضافة_دقائق",
 				description = "اضافة عدد محدد من الدقائق إلى كائن الوقت المحدد",
 				usage = "اضافة_دقائق(كائن_الوقت, عدد_الدقائق)",
 				parameterTypes = {TimeSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint plusMinutes(TimeSupport timeSupport, Number minutesToAdd) {
+	public static NaftahTemporalPoint plusMinutes(TimeSupport timeSupport, Number minutesToAdd) {
 		return timeSupport.plusMinutes(minutesToAdd.longValue());
 	}
 
@@ -2545,16 +2545,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param timeSupport  the time object
 	 * @param secondsToAdd the number of seconds to add (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting time
 	 */
 	@NaftahFn(
 				name = "اضافة_ثواني",
 				description = "اضافة عدد محدد من الثواني إلى كائن الوقت المحدد",
 				usage = "اضافة_ثواني(كائن_الوقت, عدد_الثواني)",
 				parameterTypes = {TimeSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint plusSeconds(TimeSupport timeSupport, Number secondsToAdd) {
+	public static NaftahTemporalPoint plusSeconds(TimeSupport timeSupport, Number secondsToAdd) {
 		return timeSupport.plusSeconds(secondsToAdd.longValue());
 	}
 
@@ -2563,16 +2563,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param timeSupport the time object
 	 * @param nanosToAdd  the number of nanoseconds to add (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting time
 	 */
 	@NaftahFn(
 				name = "اضافة_نانوثواني",
 				description = "اضافة عدد محدد من النانوثواني إلى كائن الوقت المحدد",
 				usage = "اضافة_نانوثواني(كائن_الوقت, عدد_النانوثواني)",
 				parameterTypes = {TimeSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint plusNanos(TimeSupport timeSupport, Number nanosToAdd) {
+	public static NaftahTemporalPoint plusNanos(TimeSupport timeSupport, Number nanosToAdd) {
 		return timeSupport.plusNanos(nanosToAdd.longValue());
 	}
 
@@ -2581,16 +2581,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param timeSupport     the time object
 	 * @param hoursToSubtract the number of hours to subtract (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting time
 	 */
 	@NaftahFn(
 				name = "طرح_ساعات",
 				description = "طرح عدد محدد من الساعات من كائن الوقت المحدد",
 				usage = "طرح_ساعات(كائن_الوقت, عدد_الساعات)",
 				parameterTypes = {TimeSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint minusHours(TimeSupport timeSupport, Number hoursToSubtract) {
+	public static NaftahTemporalPoint minusHours(TimeSupport timeSupport, Number hoursToSubtract) {
 		return timeSupport.minusHours(hoursToSubtract.longValue());
 	}
 
@@ -2599,16 +2599,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param timeSupport       the time object
 	 * @param minutesToSubtract the number of minutes to subtract (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting time
 	 */
 	@NaftahFn(
 				name = "طرح_دقائق",
 				description = "طرح عدد محدد من الدقائق من كائن الوقت المحدد",
 				usage = "طرح_دقائق(كائن_الوقت, عدد_الدقائق)",
 				parameterTypes = {TimeSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint minusMinutes(TimeSupport timeSupport, Number minutesToSubtract) {
+	public static NaftahTemporalPoint minusMinutes(TimeSupport timeSupport, Number minutesToSubtract) {
 		return timeSupport.minusMinutes(minutesToSubtract.longValue());
 	}
 
@@ -2617,16 +2617,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param timeSupport       the time object
 	 * @param secondsToSubtract the number of seconds to subtract (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting time
 	 */
 	@NaftahFn(
 				name = "طرح_ثواني",
 				description = "طرح عدد محدد من الثواني من كائن الوقت المحدد",
 				usage = "طرح_ثواني(كائن_الوقت, عدد_الثواني)",
 				parameterTypes = {TimeSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint minusSeconds(TimeSupport timeSupport, Number secondsToSubtract) {
+	public static NaftahTemporalPoint minusSeconds(TimeSupport timeSupport, Number secondsToSubtract) {
 		return timeSupport.minusSeconds(secondsToSubtract.longValue());
 	}
 
@@ -2635,100 +2635,100 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param timeSupport     the time object
 	 * @param nanosToSubtract the number of nanoseconds to subtract (can be negative)
-	 * @return a new {@link ArabicTemporalPoint} representing the resulting time
+	 * @return a new {@link NaftahTemporalPoint} representing the resulting time
 	 */
 	@NaftahFn(
 				name = "طرح_نانوثواني",
 				description = "طرح عدد محدد من النانوثواني من كائن الوقت المحدد",
 				usage = "طرح_نانوثواني(كائن_الوقت, عدد_النانوثواني)",
 				parameterTypes = {TimeSupport.class, Number.class},
-				returnType = ArabicTemporalPoint.class
+				returnType = NaftahTemporalPoint.class
 	)
-	public static ArabicTemporalPoint minusNanos(TimeSupport timeSupport, Number nanosToSubtract) {
+	public static NaftahTemporalPoint minusNanos(TimeSupport timeSupport, Number nanosToSubtract) {
 		return timeSupport.minusNanos(nanosToSubtract.longValue());
 	}
 
 	/**
 	 * Creates a zero duration.
 	 *
-	 * @return a {@link ArabicDuration} representing zero duration
+	 * @return a {@link NaftahDuration} representing zero duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_صفرية",
 				description = "إنشاء مدة صفرية",
 				usage = "أنشئ_مدة_صفرية()",
-				returnType = ArabicDuration.class
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration createZeroDuration() {
-		return ArabicDuration.ofZero();
+	public static NaftahDuration createZeroDuration() {
+		return NaftahDuration.ofZero();
 	}
 
 	/**
 	 * Creates a duration from the specified number of days.
 	 *
 	 * @param days the number of days
-	 * @return a {@link ArabicDuration} representing the specified days
+	 * @return a {@link NaftahDuration} representing the specified days
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_أيام",
 				description = "إنشاء مدة من عدد أيام",
 				usage = "أنشئ_مدة_من_أيام(أيام)",
 				parameterTypes = {Number.class},
-				returnType = ArabicDuration.class
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration createDurationFromDays(Number days) {
-		return ArabicDuration.ofDays(days.longValue());
+	public static NaftahDuration createDurationFromDays(Number days) {
+		return NaftahDuration.ofDays(days.longValue());
 	}
 
 	/**
 	 * Creates a duration from the specified number of hours.
 	 *
 	 * @param hours the number of hours
-	 * @return a {@link ArabicDuration} representing the specified hours
+	 * @return a {@link NaftahDuration} representing the specified hours
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_ساعات",
 				description = "إنشاء مدة من عدد ساعات",
 				usage = "أنشئ_مدة_من_ساعات(ساعات)",
 				parameterTypes = {Number.class},
-				returnType = ArabicDuration.class
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration createDurationFromHours(Number hours) {
-		return ArabicDuration.ofHours(hours.longValue());
+	public static NaftahDuration createDurationFromHours(Number hours) {
+		return NaftahDuration.ofHours(hours.longValue());
 	}
 
 	/**
 	 * Creates a duration from the specified number of minutes.
 	 *
 	 * @param minutes the number of minutes
-	 * @return a {@link ArabicDuration} representing the specified minutes
+	 * @return a {@link NaftahDuration} representing the specified minutes
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_دقائق",
 				description = "إنشاء مدة من عدد دقائق",
 				usage = "أنشئ_مدة_من_دقائق(دقائق)",
 				parameterTypes = {Number.class},
-				returnType = ArabicDuration.class
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration createDurationFromMinutes(Number minutes) {
-		return ArabicDuration.ofMinutes(minutes.longValue());
+	public static NaftahDuration createDurationFromMinutes(Number minutes) {
+		return NaftahDuration.ofMinutes(minutes.longValue());
 	}
 
 	/**
 	 * Creates a duration from the specified number of seconds.
 	 *
 	 * @param seconds the number of seconds
-	 * @return a {@link ArabicDuration} representing the specified seconds
+	 * @return a {@link NaftahDuration} representing the specified seconds
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_ثواني",
 				description = "إنشاء مدة من عدد ثواني",
 				usage = "أنشئ_مدة_من_ثواني(ثواني)",
 				parameterTypes = {Number.class},
-				returnType = ArabicDuration.class
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration createDurationFromSeconds(Number seconds) {
-		return ArabicDuration.ofSeconds(seconds.longValue());
+	public static NaftahDuration createDurationFromSeconds(Number seconds) {
+		return NaftahDuration.ofSeconds(seconds.longValue());
 	}
 
 	/**
@@ -2736,268 +2736,268 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param seconds        the number of seconds
 	 * @param nanoAdjustment the nanosecond adjustment
-	 * @return a {@link ArabicDuration} representing the specified seconds and nano adjustment
+	 * @return a {@link NaftahDuration} representing the specified seconds and nano adjustment
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_ثواني_مع_نانو",
 				description = "إنشاء مدة من ثواني مع تعديل النانوثانية",
 				usage = "أنشئ_مدة_من_ثواني_مع_نانو(ثواني, نانو)",
 				parameterTypes = {Number.class, Number.class},
-				returnType = ArabicDuration.class
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration createDurationFromSecondsAndNano(Number seconds, Number nanoAdjustment) {
-		return ArabicDuration.ofSeconds(seconds.longValue(), nanoAdjustment.longValue());
+	public static NaftahDuration createDurationFromSecondsAndNano(Number seconds, Number nanoAdjustment) {
+		return NaftahDuration.ofSeconds(seconds.longValue(), nanoAdjustment.longValue());
 	}
 
 	/**
 	 * Creates a duration from the specified number of milliseconds.
 	 *
 	 * @param millis the number of milliseconds
-	 * @return a {@link ArabicDuration} representing the specified milliseconds
+	 * @return a {@link NaftahDuration} representing the specified milliseconds
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_مللي",
 				description = "إنشاء مدة من عدد مللي ثانية",
 				usage = "أنشئ_مدة_من_مللي(مللي)",
 				parameterTypes = {Number.class},
-				returnType = ArabicDuration.class
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration createDurationFromMillis(Number millis) {
-		return ArabicDuration.ofMillis(millis.longValue());
+	public static NaftahDuration createDurationFromMillis(Number millis) {
+		return NaftahDuration.ofMillis(millis.longValue());
 	}
 
 	/**
 	 * Creates a duration from the specified number of nanoseconds.
 	 *
 	 * @param nanos the number of nanoseconds
-	 * @return a {@link ArabicDuration} representing the specified nanoseconds
+	 * @return a {@link NaftahDuration} representing the specified nanoseconds
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_نانو",
 				description = "إنشاء مدة من عدد نانو ثانية",
 				usage = "أنشئ_مدة_من_نانو(نانو)",
 				parameterTypes = {Number.class},
-				returnType = ArabicDuration.class
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration createDurationFromNanos(Number nanos) {
-		return ArabicDuration.ofNanos(nanos.longValue());
+	public static NaftahDuration createDurationFromNanos(Number nanos) {
+		return NaftahDuration.ofNanos(nanos.longValue());
 	}
 
 	/**
 	 * Creates a zero period.
 	 *
-	 * @return a {@link ArabicPeriod} representing zero period
+	 * @return a {@link NaftahPeriod} representing zero period
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_صفرية",
 				description = "إنشاء فترة صفرية",
 				usage = "أنشئ_فترة_صفرية()",
-				returnType = ArabicPeriod.class
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod createZeroPeriod() {
-		return ArabicPeriod.ofZero();
+	public static NaftahPeriod createZeroPeriod() {
+		return NaftahPeriod.ofZero();
 	}
 
 	/**
 	 * Creates a period from the specified number of years.
 	 *
 	 * @param years the number of years
-	 * @return a {@link ArabicPeriod} representing the specified years
+	 * @return a {@link NaftahPeriod} representing the specified years
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_من_سنوات",
 				description = "إنشاء فترة من عدد سنوات",
 				usage = "أنشئ_فترة_من_سنوات(سنوات)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriod.class
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod createPeriodFromYears(Number years) {
-		return ArabicPeriod.ofYears(years.intValue());
+	public static NaftahPeriod createPeriodFromYears(Number years) {
+		return NaftahPeriod.ofYears(years.intValue());
 	}
 
 	/**
 	 * Creates a period from the specified number of months.
 	 *
 	 * @param months the number of months
-	 * @return a {@link ArabicPeriod} representing the specified months
+	 * @return a {@link NaftahPeriod} representing the specified months
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_من_شهور",
 				description = "إنشاء فترة من عدد أشهر",
 				usage = "أنشئ_فترة_من_شهور(شهور)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriod.class
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod createPeriodFromMonths(Number months) {
-		return ArabicPeriod.ofMonths(months.intValue());
+	public static NaftahPeriod createPeriodFromMonths(Number months) {
+		return NaftahPeriod.ofMonths(months.intValue());
 	}
 
 	/**
 	 * Creates a period from the specified number of weeks.
 	 *
 	 * @param weeks the number of weeks
-	 * @return a {@link ArabicPeriod} representing the specified weeks
+	 * @return a {@link NaftahPeriod} representing the specified weeks
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_من_أسابيع",
 				description = "إنشاء فترة من عدد أسابيع",
 				usage = "أنشئ_فترة_من_أسابيع(أسابيع)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriod.class
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod createPeriodFromWeeks(Number weeks) {
-		return ArabicPeriod.ofWeeks(weeks.intValue());
+	public static NaftahPeriod createPeriodFromWeeks(Number weeks) {
+		return NaftahPeriod.ofWeeks(weeks.intValue());
 	}
 
 	/**
 	 * Creates a period from the specified number of days.
 	 *
 	 * @param days the number of days
-	 * @return a {@link ArabicPeriod} representing the specified days
+	 * @return a {@link NaftahPeriod} representing the specified days
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_من_أيام",
 				description = "إنشاء فترة من عدد أيام",
 				usage = "أنشئ_فترة_من_أيام(أيام)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriod.class
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod createPeriodFromDays(Number days) {
-		return ArabicPeriod.ofDays(days.intValue());
+	public static NaftahPeriod createPeriodFromDays(Number days) {
+		return NaftahPeriod.ofDays(days.intValue());
 	}
 
 	/**
 	 * Creates a period with duration of zero (both period and duration are zero).
 	 *
-	 * @return a {@link ArabicPeriodWithDuration} representing zero period and zero duration
+	 * @return a {@link NaftahPeriodWithDuration} representing zero period and zero duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_صفرية",
 				description = "إنشاء فترة و مدة صفرية",
 				usage = "أنشئ_فترة_و_مدة_صفرية()",
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createZeroPeriodWithDuration() {
-		return ArabicPeriodWithDuration.ofZero();
+	public static NaftahPeriodWithDuration createZeroPeriodWithDuration() {
+		return NaftahPeriodWithDuration.ofZero();
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of years.
 	 *
 	 * @param years the number of years
-	 * @return a {@link ArabicPeriodWithDuration} with specified years and zero duration
+	 * @return a {@link NaftahPeriodWithDuration} with specified years and zero duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_سنوات",
 				description = "إنشاء فترة و مدة من عدد سنوات",
 				usage = "أنشئ_فترة_و_مدة_من_سنوات(سنوات)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromYears(Number years) {
-		return ArabicPeriodWithDuration.ofYears(years.intValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromYears(Number years) {
+		return NaftahPeriodWithDuration.ofYears(years.intValue());
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of months.
 	 *
 	 * @param months the number of months
-	 * @return a {@link ArabicPeriodWithDuration} with specified months and zero duration
+	 * @return a {@link NaftahPeriodWithDuration} with specified months and zero duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_شهور",
 				description = "إنشاء فترة و مدة من عدد أشهر",
 				usage = "أنشئ_فترة_و_مدة_من_شهور(شهور)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromMonths(Number months) {
-		return ArabicPeriodWithDuration.ofMonths(months.intValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromMonths(Number months) {
+		return NaftahPeriodWithDuration.ofMonths(months.intValue());
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of weeks.
 	 *
 	 * @param weeks the number of weeks
-	 * @return a {@link ArabicPeriodWithDuration} with specified weeks and zero duration
+	 * @return a {@link NaftahPeriodWithDuration} with specified weeks and zero duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_أسابيع",
 				description = "إنشاء فترة و مدة من عدد أسابيع",
 				usage = "أنشئ_فترة_و_مدة_من_أسابيع(أسابيع)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromWeeks(Number weeks) {
-		return ArabicPeriodWithDuration.ofWeeks(weeks.intValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromWeeks(Number weeks) {
+		return NaftahPeriodWithDuration.ofWeeks(weeks.intValue());
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of days.
 	 *
 	 * @param days the number of days
-	 * @return a {@link ArabicPeriodWithDuration} with specified days and zero duration
+	 * @return a {@link NaftahPeriodWithDuration} with specified days and zero duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_أيام",
 				description = "إنشاء فترة و مدة من عدد أيام",
 				usage = "أنشئ_فترة_و_مدة_من_أيام(أيام)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromDays(Number days) {
-		return ArabicPeriodWithDuration.ofDays(days.intValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromDays(Number days) {
+		return NaftahPeriodWithDuration.ofDays(days.intValue());
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of hours.
 	 *
 	 * @param hours the number of hours
-	 * @return a {@link ArabicPeriodWithDuration} with zero period and specified hours as duration
+	 * @return a {@link NaftahPeriodWithDuration} with zero period and specified hours as duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_ساعات",
 				description = "إنشاء فترة و مدة من عدد ساعات",
 				usage = "أنشئ_فترة_و_مدة_من_ساعات(ساعات)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromHours(Number hours) {
-		return ArabicPeriodWithDuration.ofHours(hours.longValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromHours(Number hours) {
+		return NaftahPeriodWithDuration.ofHours(hours.longValue());
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of minutes.
 	 *
 	 * @param minutes the number of minutes
-	 * @return a {@link ArabicPeriodWithDuration} with zero period and specified minutes as duration
+	 * @return a {@link NaftahPeriodWithDuration} with zero period and specified minutes as duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_دقائق",
 				description = "إنشاء فترة و مدة من عدد دقائق",
 				usage = "أنشئ_فترة_و_مدة_من_دقائق(دقائق)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromMinutes(Number minutes) {
-		return ArabicPeriodWithDuration.ofMinutes(minutes.longValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromMinutes(Number minutes) {
+		return NaftahPeriodWithDuration.ofMinutes(minutes.longValue());
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of seconds.
 	 *
 	 * @param seconds the number of seconds
-	 * @return a {@link ArabicPeriodWithDuration} with zero period and specified seconds as duration
+	 * @return a {@link NaftahPeriodWithDuration} with zero period and specified seconds as duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_ثواني",
 				description = "إنشاء فترة و مدة من عدد ثواني",
 				usage = "أنشئ_فترة_و_مدة_من_ثواني(ثواني)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromSeconds(Number seconds) {
-		return ArabicPeriodWithDuration.ofSeconds(seconds.longValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromSeconds(Number seconds) {
+		return NaftahPeriodWithDuration.ofSeconds(seconds.longValue());
 	}
 
 	/**
@@ -3005,52 +3005,52 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param seconds        the number of seconds
 	 * @param nanoAdjustment the nanosecond adjustment
-	 * @return a {@link ArabicPeriodWithDuration} with zero period and adjusted duration
+	 * @return a {@link NaftahPeriodWithDuration} with zero period and adjusted duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_ثواني_مع_نانو",
 				description = "إنشاء فترة و مدة من ثواني مع تعديل النانوثانية",
 				usage = "أنشئ_فترة_و_مدة_من_ثواني_مع_نانو(ثواني, نانو)",
 				parameterTypes = {Number.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromSecondsAndNano(  Number seconds,
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromSecondsAndNano(  Number seconds,
 																						Number nanoAdjustment) {
-		return ArabicPeriodWithDuration.ofSeconds(seconds.longValue(), nanoAdjustment.longValue());
+		return NaftahPeriodWithDuration.ofSeconds(seconds.longValue(), nanoAdjustment.longValue());
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of milliseconds.
 	 *
 	 * @param millis the number of milliseconds
-	 * @return a {@link ArabicPeriodWithDuration} with zero period and specified milliseconds as duration
+	 * @return a {@link NaftahPeriodWithDuration} with zero period and specified milliseconds as duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_مللي",
 				description = "إنشاء فترة و مدة من عدد مللي ثانية",
 				usage = "أنشئ_فترة_و_مدة_من_مللي(مللي)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromMillis(Number millis) {
-		return ArabicPeriodWithDuration.ofMillis(millis.longValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromMillis(Number millis) {
+		return NaftahPeriodWithDuration.ofMillis(millis.longValue());
 	}
 
 	/**
 	 * Creates a period with duration from the specified number of nanoseconds.
 	 *
 	 * @param nanos the number of nanoseconds
-	 * @return a {@link ArabicPeriodWithDuration} with zero period and specified nanoseconds as duration
+	 * @return a {@link NaftahPeriodWithDuration} with zero period and specified nanoseconds as duration
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_نانو",
 				description = "إنشاء فترة و مدة من عدد نانو ثانية",
 				usage = "أنشئ_فترة_و_مدة_من_نانو(نانو)",
 				parameterTypes = {Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration createPeriodWithDurationFromNanos(Number nanos) {
-		return ArabicPeriodWithDuration.ofNanos(nanos.longValue());
+	public static NaftahPeriodWithDuration createPeriodWithDurationFromNanos(Number nanos) {
+		return NaftahPeriodWithDuration.ofNanos(nanos.longValue());
 	}
 
 	/**
@@ -3058,16 +3058,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param p     the original period
 	 * @param years the number of years to add
-	 * @return a {@link ArabicPeriod} with years added
+	 * @return a {@link NaftahPeriod} with years added
 	 */
 	@NaftahFn(
 				name = "أضف_سنوات_لفترة",
 				description = "إضافة عدد من السنوات إلى فترة",
 				usage = "أضف_سنوات_لفترة(فترة_, سنوات)",
-				parameterTypes = {ArabicPeriod.class, Number.class},
-				returnType = ArabicPeriod.class
+				parameterTypes = {NaftahPeriod.class, Number.class},
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod plusYears(ArabicPeriod p, Number years) {
+	public static NaftahPeriod plusYears(NaftahPeriod p, Number years) {
 		return p.plusYears(years.longValue());
 	}
 
@@ -3076,16 +3076,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param p      the original period
 	 * @param months the number of months to add
-	 * @return a {@link ArabicPeriod} with months added
+	 * @return a {@link NaftahPeriod} with months added
 	 */
 	@NaftahFn(
 				name = "أضف_أشهر_لفترة",
 				description = "إضافة عدد من الأشهر إلى فترة",
 				usage = "أضف_أشهر_لفترة(فترة_, أشهر)",
-				parameterTypes = {ArabicPeriod.class, Number.class},
-				returnType = ArabicPeriod.class
+				parameterTypes = {NaftahPeriod.class, Number.class},
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod plusMonths(ArabicPeriod p, Number months) {
+	public static NaftahPeriod plusMonths(NaftahPeriod p, Number months) {
 		return p.plusMonths(months.longValue());
 	}
 
@@ -3094,16 +3094,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param p    the original period
 	 * @param days the number of days to add
-	 * @return a {@link ArabicPeriod} with days added
+	 * @return a {@link NaftahPeriod} with days added
 	 */
 	@NaftahFn(
 				name = "أضف_أيام_لفترة",
 				description = "إضافة عدد من الأيام إلى فترة",
 				usage = "أضف_أيام_لفترة(فترة_, أيام)",
-				parameterTypes = {ArabicPeriod.class, Number.class},
-				returnType = ArabicPeriod.class
+				parameterTypes = {NaftahPeriod.class, Number.class},
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod plusDays(ArabicPeriod p, Number days) {
+	public static NaftahPeriod plusDays(NaftahPeriod p, Number days) {
 		return p.plusDays(days.longValue());
 	}
 
@@ -3112,16 +3112,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param p     the original period
 	 * @param years the number of years to subtract
-	 * @return a {@link ArabicPeriod} with years subtracted
+	 * @return a {@link NaftahPeriod} with years subtracted
 	 */
 	@NaftahFn(
 				name = "اطرح_سنوات_من_الفترة",
 				description = "طرح عدد من السنوات من فترة",
 				usage = "اطرح_سنوات_من_الفترة(فترة_, سنوات)",
-				parameterTypes = {ArabicPeriod.class, Number.class},
-				returnType = ArabicPeriod.class
+				parameterTypes = {NaftahPeriod.class, Number.class},
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod minusYears(ArabicPeriod p, Number years) {
+	public static NaftahPeriod minusYears(NaftahPeriod p, Number years) {
 		return p.minusYears(years.longValue());
 	}
 
@@ -3130,16 +3130,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param p      the original period
 	 * @param months the number of months to subtract
-	 * @return a {@link ArabicPeriod} with months subtracted
+	 * @return a {@link NaftahPeriod} with months subtracted
 	 */
 	@NaftahFn(
 				name = "اطرح_أشهر_من_الفترة",
 				description = "طرح عدد من الأشهر من فترة",
 				usage = "اطرح_أشهر_من_الفترة(فترة_, أشهر)",
-				parameterTypes = {ArabicPeriod.class, Number.class},
-				returnType = ArabicPeriod.class
+				parameterTypes = {NaftahPeriod.class, Number.class},
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod minusMonths(ArabicPeriod p, Number months) {
+	public static NaftahPeriod minusMonths(NaftahPeriod p, Number months) {
 		return p.minusMonths(months.longValue());
 	}
 
@@ -3148,16 +3148,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param p    the original period
 	 * @param days the number of days to subtract
-	 * @return a {@link ArabicPeriod} with days subtracted
+	 * @return a {@link NaftahPeriod} with days subtracted
 	 */
 	@NaftahFn(
 				name = "اطرح_أيام_من_الفترة",
 				description = "طرح عدد من الأيام من فترة",
 				usage = "اطرح_أيام_من_الفترة(فترة_, أيام)",
-				parameterTypes = {ArabicPeriod.class, Number.class},
-				returnType = ArabicPeriod.class
+				parameterTypes = {NaftahPeriod.class, Number.class},
+				returnType = NaftahPeriod.class
 	)
-	public static ArabicPeriod minusDays(ArabicPeriod p, Number days) {
+	public static NaftahPeriod minusDays(NaftahPeriod p, Number days) {
 		return p.minusDays(days.longValue());
 	}
 
@@ -3166,16 +3166,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param d    the original duration
 	 * @param days the number of days to add
-	 * @return a {@link ArabicDuration} with days added
+	 * @return a {@link NaftahDuration} with days added
 	 */
 	@NaftahFn(
 				name = "أضف_أيام_للمدة",
 				description = "إضافة أيام إلى مدة",
 				usage = "أضف_أيام_للمدة(مدة_, أيام)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration plusDays(ArabicDuration d, Number days) {
+	public static NaftahDuration plusDays(NaftahDuration d, Number days) {
 		return d.plusDays(days.longValue());
 	}
 
@@ -3184,16 +3184,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param d     the original duration
 	 * @param hours the number of hours to add
-	 * @return a {@link ArabicDuration} with hours added
+	 * @return a {@link NaftahDuration} with hours added
 	 */
 	@NaftahFn(
 				name = "أضف_ساعات_للمدة",
 				description = "إضافة ساعات إلى مدة",
 				usage = "أضف_ساعات_للمدة(مدة_, ساعات)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration plusHours(ArabicDuration d, Number hours) {
+	public static NaftahDuration plusHours(NaftahDuration d, Number hours) {
 		return d.plusHours(hours.longValue());
 	}
 
@@ -3202,16 +3202,16 @@ public final class TemporalBuiltinFunctions {
 	 *
 	 * @param d       the original duration
 	 * @param minutes the number of minutes to add
-	 * @return a {@link ArabicDuration} with minutes added
+	 * @return a {@link NaftahDuration} with minutes added
 	 */
 	@NaftahFn(
 				name = "أضف_دقائق_للمدة",
 				description = "إضافة دقائق إلى مدة",
 				usage = "أضف_دقائق_للمدة(مدة_, دقائق)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration plusMinutes(ArabicDuration d, Number minutes) {
+	public static NaftahDuration plusMinutes(NaftahDuration d, Number minutes) {
 		return d.plusMinutes(minutes.longValue());
 	}
 
@@ -3226,10 +3226,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_ثواني_للمدة",
 				description = "إضافة ثواني إلى مدة",
 				usage = "أضف_ثواني_للمدة(مدة_, ثواني)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration plusSeconds(ArabicDuration d, Number seconds) {
+	public static NaftahDuration plusSeconds(NaftahDuration d, Number seconds) {
 		return d.plusSeconds(seconds.longValue());
 	}
 
@@ -3244,10 +3244,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_مللي_للمدة",
 				description = "إضافة مللي ثانية إلى مدة",
 				usage = "أضف_مللي_للمدة(مدة_, مللي)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration plusMillis(ArabicDuration d, Number millis) {
+	public static NaftahDuration plusMillis(NaftahDuration d, Number millis) {
 		return d.plusMillis(millis.longValue());
 	}
 
@@ -3262,10 +3262,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_نانو_للمدة",
 				description = "إضافة نانو ثانية إلى مدة",
 				usage = "أضف_نانو_للمدة(مدة_, نانو)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration plusNanos(ArabicDuration d, Number nanos) {
+	public static NaftahDuration plusNanos(NaftahDuration d, Number nanos) {
 		return d.plusNanos(nanos.longValue());
 	}
 
@@ -3280,10 +3280,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_أيام_من_المدة",
 				description = "طرح أيام من مدة",
 				usage = "اطرح_أيام_من_المدة(مدة_, أيام)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration minusDays(ArabicDuration d, Number days) {
+	public static NaftahDuration minusDays(NaftahDuration d, Number days) {
 		return d.minusDays(days.longValue());
 	}
 
@@ -3298,10 +3298,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_ساعات_من_المدة",
 				description = "طرح ساعات من مدة",
 				usage = "اطرح_ساعات_من_المدة(مدة_, ساعات)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration minusHours(ArabicDuration d, Number hours) {
+	public static NaftahDuration minusHours(NaftahDuration d, Number hours) {
 		return d.minusHours(hours.longValue());
 	}
 
@@ -3316,10 +3316,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_دقائق_من_المدة",
 				description = "طرح دقائق من مدة",
 				usage = "اطرح_دقائق_من_المدة(مدة_, دقائق)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration minusMinutes(ArabicDuration d, Number minutes) {
+	public static NaftahDuration minusMinutes(NaftahDuration d, Number minutes) {
 		return d.minusMinutes(minutes.longValue());
 	}
 
@@ -3334,10 +3334,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_ثواني_من_المدة",
 				description = "طرح ثواني من مدة",
 				usage = "اطرح_ثواني_من_المدة(مدة_, ثواني)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration minusSeconds(ArabicDuration d, Number seconds) {
+	public static NaftahDuration minusSeconds(NaftahDuration d, Number seconds) {
 		return d.minusSeconds(seconds.longValue());
 	}
 
@@ -3352,10 +3352,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_مللي_من_المدة",
 				description = "طرح مللي ثانية من مدة",
 				usage = "اطرح_مللي_من_المدة(مدة_, مللي)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration minusMillis(ArabicDuration d, Number millis) {
+	public static NaftahDuration minusMillis(NaftahDuration d, Number millis) {
 		return d.minusMillis(millis.longValue());
 	}
 
@@ -3370,10 +3370,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_نانو_من_المدة",
 				description = "طرح نانو ثانية من مدة",
 				usage = "اطرح_نانو_من_المدة(مدة_, نانو)",
-				parameterTypes = {ArabicDuration.class, Number.class},
-				returnType = ArabicDuration.class
+				parameterTypes = {NaftahDuration.class, Number.class},
+				returnType = NaftahDuration.class
 	)
-	public static ArabicDuration minusNanos(ArabicDuration d, Number nanos) {
+	public static NaftahDuration minusNanos(NaftahDuration d, Number nanos) {
 		return d.minusNanos(nanos.longValue());
 	}
 
@@ -3388,10 +3388,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_سنوات_لفترة_مع_مدة",
 				description = "إضافة عدد من السنوات إلى فترة تحتوي على مدة",
 				usage = "أضف_سنوات_لفترة_مع_مدة(فترة_, سنوات)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration plusYears(ArabicPeriodWithDuration pd, Number years) {
+	public static NaftahPeriodWithDuration plusYears(NaftahPeriodWithDuration pd, Number years) {
 		return pd.plusYears(years.longValue());
 	}
 
@@ -3406,10 +3406,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_أشهر_لفترة_مع_مدة",
 				description = "إضافة عدد من الأشهر إلى فترة تحتوي على مدة",
 				usage = "أضف_أشهر_لفترة_مع_مدة(فترة_, أشهر)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration plusMonths(ArabicPeriodWithDuration pd, Number months) {
+	public static NaftahPeriodWithDuration plusMonths(NaftahPeriodWithDuration pd, Number months) {
 		return pd.plusMonths(months.longValue());
 	}
 
@@ -3424,10 +3424,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_أيام_لفترة_مع_مدة",
 				description = "إضافة عدد من الأيام إلى فترة تحتوي على مدة",
 				usage = "أضف_أيام_لفترة_مع_مدة(فترة_, أيام)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration plusDays(ArabicPeriodWithDuration pd, Number days) {
+	public static NaftahPeriodWithDuration plusDays(NaftahPeriodWithDuration pd, Number days) {
 		return pd.plusDays(days.longValue());
 	}
 
@@ -3442,10 +3442,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_ساعات_لفترة_مع_مدة",
 				description = "إضافة عدد من الساعات إلى فترة تحتوي على مدة",
 				usage = "أضف_ساعات_لفترة_مع_مدة(فترة_, ساعات)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration plusHours(ArabicPeriodWithDuration pd, Number hours) {
+	public static NaftahPeriodWithDuration plusHours(NaftahPeriodWithDuration pd, Number hours) {
 		return pd.plusHours(hours.longValue());
 	}
 
@@ -3460,10 +3460,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_دقائق_لفترة_مع_مدة",
 				description = "إضافة عدد من الدقائق إلى فترة تحتوي على مدة",
 				usage = "أضف_دقائق_لفترة_مع_مدة(فترة_, دقائق)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration plusMinutes(ArabicPeriodWithDuration pd, Number minutes) {
+	public static NaftahPeriodWithDuration plusMinutes(NaftahPeriodWithDuration pd, Number minutes) {
 		return pd.plusMinutes(minutes.longValue());
 	}
 
@@ -3478,10 +3478,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_ثواني_لفترة_مع_مدة",
 				description = "إضافة عدد من الثواني إلى فترة تحتوي على مدة",
 				usage = "أضف_ثواني_لفترة_مع_مدة(فترة_, ثواني)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration plusSeconds(ArabicPeriodWithDuration pd, Number seconds) {
+	public static NaftahPeriodWithDuration plusSeconds(NaftahPeriodWithDuration pd, Number seconds) {
 		return pd.plusSeconds(seconds.longValue());
 	}
 
@@ -3496,10 +3496,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_مللي_لفترة_مع_مدة",
 				description = "إضافة عدد من المللي ثانية إلى فترة تحتوي على مدة",
 				usage = "أضف_مللي_لفترة_مع_مدة(فترة_, مللي)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration plusMillis(ArabicPeriodWithDuration pd, Number millis) {
+	public static NaftahPeriodWithDuration plusMillis(NaftahPeriodWithDuration pd, Number millis) {
 		return pd.plusMillis(millis.longValue());
 	}
 
@@ -3514,10 +3514,10 @@ public final class TemporalBuiltinFunctions {
 				name = "أضف_نانو_لفترة_مع_مدة",
 				description = "إضافة عدد من النانو ثانية إلى فترة تحتوي على مدة",
 				usage = "أضف_نانو_لفترة_مع_مدة(فترة_, نانو)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration plusNanos(ArabicPeriodWithDuration pd, Number nanos) {
+	public static NaftahPeriodWithDuration plusNanos(NaftahPeriodWithDuration pd, Number nanos) {
 		return pd.plusNanos(nanos.longValue());
 	}
 
@@ -3532,10 +3532,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_سنوات_من_الفترة_مع_مدة",
 				description = "طرح عدد من السنوات من فترة تحتوي على مدة",
 				usage = "اطرح_سنوات_من_الفترة_مع_مدة(فترة_, سنوات)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration minusYears(ArabicPeriodWithDuration pd, Number years) {
+	public static NaftahPeriodWithDuration minusYears(NaftahPeriodWithDuration pd, Number years) {
 		return pd.minusYears(years.longValue());
 	}
 
@@ -3550,10 +3550,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_أشهر_من_الفترة_مع_مدة",
 				description = "طرح عدد من الأشهر من فترة تحتوي على مدة",
 				usage = "اطرح_أشهر_من_الفترة_مع_مدة(فترة_, أشهر)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration minusMonths(ArabicPeriodWithDuration pd, Number months) {
+	public static NaftahPeriodWithDuration minusMonths(NaftahPeriodWithDuration pd, Number months) {
 		return pd.minusMonths(months.longValue());
 	}
 
@@ -3568,10 +3568,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_أيام_من_الفترة_مع_مدة",
 				description = "طرح عدد من الأيام من فترة تحتوي على مدة",
 				usage = "اطرح_أيام_من_الفترة_مع_مدة(فترة_, أيام)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration minusDays(ArabicPeriodWithDuration pd, Number days) {
+	public static NaftahPeriodWithDuration minusDays(NaftahPeriodWithDuration pd, Number days) {
 		return pd.minusDays(days.longValue());
 	}
 
@@ -3586,10 +3586,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_ساعات_من_الفترة_مع_مدة",
 				description = "طرح عدد من الساعات من فترة تحتوي على مدة",
 				usage = "اطرح_ساعات_من_الفترة_مع_مدة(فترة_, ساعات)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration minusHours(ArabicPeriodWithDuration pd, Number hours) {
+	public static NaftahPeriodWithDuration minusHours(NaftahPeriodWithDuration pd, Number hours) {
 		return pd.minusHours(hours.longValue());
 	}
 
@@ -3604,10 +3604,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_دقائق_من_الفترة_مع_مدة",
 				description = "طرح عدد من الدقائق من فترة تحتوي على مدة",
 				usage = "اطرح_دقائق_من_الفترة_مع_مدة(فترة_, دقائق)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration minusMinutes(ArabicPeriodWithDuration pd, Number minutes) {
+	public static NaftahPeriodWithDuration minusMinutes(NaftahPeriodWithDuration pd, Number minutes) {
 		return pd.minusMinutes(minutes.longValue());
 	}
 
@@ -3622,10 +3622,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_ثواني_من_الفترة_مع_مدة",
 				description = "طرح عدد من الثواني من فترة تحتوي على مدة",
 				usage = "اطرح_ثواني_من_الفترة_مع_مدة(فترة_, ثواني)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration minusSeconds(ArabicPeriodWithDuration pd, Number seconds) {
+	public static NaftahPeriodWithDuration minusSeconds(NaftahPeriodWithDuration pd, Number seconds) {
 		return pd.minusSeconds(seconds.longValue());
 	}
 
@@ -3640,10 +3640,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_مللي_من_الفترة_مع_مدة",
 				description = "طرح عدد من المللي ثانية من فترة تحتوي على مدة",
 				usage = "اطرح_مللي_من_الفترة_مع_مدة(فترة_, مللي)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration minusMillis(ArabicPeriodWithDuration pd, Number millis) {
+	public static NaftahPeriodWithDuration minusMillis(NaftahPeriodWithDuration pd, Number millis) {
 		return pd.minusMillis(millis.longValue());
 	}
 
@@ -3658,10 +3658,10 @@ public final class TemporalBuiltinFunctions {
 				name = "اطرح_نانو_من_الفترة_مع_مدة",
 				description = "طرح عدد من النانو ثانية من فترة تحتوي على مدة",
 				usage = "اطرح_نانو_من_الفترة_مع_مدة(فترة_, نانو)",
-				parameterTypes = {ArabicPeriodWithDuration.class, Number.class},
-				returnType = ArabicPeriodWithDuration.class
+				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
+				returnType = NaftahPeriodWithDuration.class
 	)
-	public static ArabicPeriodWithDuration minusNanos(ArabicPeriodWithDuration pd, Number nanos) {
+	public static NaftahPeriodWithDuration minusNanos(NaftahPeriodWithDuration pd, Number nanos) {
 		return pd.minusNanos(nanos.longValue());
 	}
 
@@ -3675,10 +3675,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_سنوات_الفترة",
 				description = "الحصول على عدد السنوات من فترة",
 				usage = "احصل_على_سنوات_الفترة(فترة_)",
-				parameterTypes = {ArabicPeriod.class},
+				parameterTypes = {NaftahPeriod.class},
 				returnType = int.class
 	)
-	public static int getYears(ArabicPeriod p) {
+	public static int getYears(NaftahPeriod p) {
 		return p.getYears();
 	}
 
@@ -3692,10 +3692,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_أشهر_الفترة",
 				description = "الحصول على عدد الأشهر من فترة",
 				usage = "احصل_على_أشهر_الفترة(فترة_)",
-				parameterTypes = {ArabicPeriod.class},
+				parameterTypes = {NaftahPeriod.class},
 				returnType = int.class
 	)
-	public static int getMonths(ArabicPeriod p) {
+	public static int getMonths(NaftahPeriod p) {
 		return p.getMonths();
 	}
 
@@ -3709,10 +3709,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_أيام_الفترة",
 				description = "الحصول على عدد الأيام من فترة",
 				usage = "احصل_على_أيام_الفترة(فترة_)",
-				parameterTypes = {ArabicPeriod.class},
+				parameterTypes = {NaftahPeriod.class},
 				returnType = int.class
 	)
-	public static int getDays(ArabicPeriod p) {
+	public static int getDays(NaftahPeriod p) {
 		return p.getDays();
 	}
 
@@ -3726,10 +3726,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_ساعات_المدة",
 				description = "الحصول على عدد الساعات من مدة",
 				usage = "احصل_على_ساعات_المدة(مدة_)",
-				parameterTypes = {ArabicDuration.class},
+				parameterTypes = {NaftahDuration.class},
 				returnType = long.class
 	)
-	public static long getHours(ArabicDuration d) {
+	public static long getHours(NaftahDuration d) {
 		return d.getHours();
 	}
 
@@ -3743,10 +3743,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_دقائق_المدة",
 				description = "الحصول على عدد الدقائق من مدة",
 				usage = "احصل_على_دقائق_المدة(مدة_)",
-				parameterTypes = {ArabicDuration.class},
+				parameterTypes = {NaftahDuration.class},
 				returnType = long.class
 	)
-	public static long getMinutes(ArabicDuration d) {
+	public static long getMinutes(NaftahDuration d) {
 		return d.getMinutes();
 	}
 
@@ -3760,10 +3760,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_ثواني_المدة",
 				description = "الحصول على عدد الثواني من مدة",
 				usage = "احصل_على_ثواني_المدة(مدة_)",
-				parameterTypes = {ArabicDuration.class},
+				parameterTypes = {NaftahDuration.class},
 				returnType = long.class
 	)
-	public static long getSeconds(ArabicDuration d) {
+	public static long getSeconds(NaftahDuration d) {
 		return d.getSeconds();
 	}
 
@@ -3777,10 +3777,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_مللي_المدة",
 				description = "الحصول على عدد المللي ثانية من مدة",
 				usage = "احصل_على_مللي_المدة(مدة_)",
-				parameterTypes = {ArabicDuration.class},
+				parameterTypes = {NaftahDuration.class},
 				returnType = long.class
 	)
-	public static long getMillis(ArabicDuration d) {
+	public static long getMillis(NaftahDuration d) {
 		return d.getMillis();
 	}
 
@@ -3794,10 +3794,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_نانو_المدة",
 				description = "الحصول على عدد النانو ثانية من مدة",
 				usage = "احصل_على_نانو_المدة(مدة_)",
-				parameterTypes = {ArabicDuration.class},
+				parameterTypes = {NaftahDuration.class},
 				returnType = int.class
 	)
-	public static int getNano(ArabicDuration d) {
+	public static int getNano(NaftahDuration d) {
 		return d.getNano();
 	}
 
@@ -3811,10 +3811,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_سنوات_الفترة_مع_مدة",
 				description = "الحصول على عدد السنوات من فترة تحتوي على مدة",
 				usage = "احصل_على_سنوات_الفترة_مع_مدة(فترة_)",
-				parameterTypes = {ArabicPeriodWithDuration.class},
+				parameterTypes = {NaftahPeriodWithDuration.class},
 				returnType = int.class
 	)
-	public static int getYears(ArabicPeriodWithDuration p) {
+	public static int getYears(NaftahPeriodWithDuration p) {
 		return p.getYears();
 	}
 
@@ -3828,10 +3828,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_أشهر_الفترة_مع_مدة",
 				description = "الحصول على عدد الأشهر من فترة تحتوي على مدة",
 				usage = "احصل_على_أشهر_الفترة_مع_مدة(فترة_)",
-				parameterTypes = {ArabicPeriodWithDuration.class},
+				parameterTypes = {NaftahPeriodWithDuration.class},
 				returnType = int.class
 	)
-	public static int getMonths(ArabicPeriodWithDuration p) {
+	public static int getMonths(NaftahPeriodWithDuration p) {
 		return p.getMonths();
 	}
 
@@ -3845,10 +3845,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_أيام_الفترة_مع_مدة",
 				description = "الحصول على عدد الأيام من فترة تحتوي على مدة",
 				usage = "احصل_على_أيام_الفترة_مع_مدة(فترة_)",
-				parameterTypes = {ArabicPeriodWithDuration.class},
+				parameterTypes = {NaftahPeriodWithDuration.class},
 				returnType = int.class
 	)
-	public static int getDays(ArabicPeriodWithDuration p) {
+	public static int getDays(NaftahPeriodWithDuration p) {
 		return p.getDays();
 	}
 
@@ -3862,10 +3862,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_ساعات_الفترة_مع_مدة",
 				description = "الحصول على عدد الساعات من فترة تحتوي على مدة",
 				usage = "احصل_على_ساعات_الفترة_مع_مدة(فترة_)",
-				parameterTypes = {ArabicPeriodWithDuration.class},
+				parameterTypes = {NaftahPeriodWithDuration.class},
 				returnType = long.class
 	)
-	public static long getHours(ArabicPeriodWithDuration d) {
+	public static long getHours(NaftahPeriodWithDuration d) {
 		return d.getHours();
 	}
 
@@ -3879,10 +3879,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_دقائق_الفترة_مع_مدة",
 				description = "الحصول على عدد الدقائق من فترة تحتوي على مدة",
 				usage = "احصل_على_دقائق_الفترة_مع_مدة(فترة_)",
-				parameterTypes = {ArabicPeriodWithDuration.class},
+				parameterTypes = {NaftahPeriodWithDuration.class},
 				returnType = long.class
 	)
-	public static long getMinutes(ArabicPeriodWithDuration d) {
+	public static long getMinutes(NaftahPeriodWithDuration d) {
 		return d.getMinutes();
 	}
 
@@ -3896,10 +3896,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_ثواني_الفترة_مع_مدة",
 				description = "الحصول على عدد الثواني من فترة تحتوي على مدة",
 				usage = "احصل_على_ثواني_الفترة_مع_مدة(فترة_)",
-				parameterTypes = {ArabicPeriodWithDuration.class},
+				parameterTypes = {NaftahPeriodWithDuration.class},
 				returnType = long.class
 	)
-	public static long getSeconds(ArabicPeriodWithDuration d) {
+	public static long getSeconds(NaftahPeriodWithDuration d) {
 		return d.getSeconds();
 	}
 
@@ -3913,10 +3913,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_مللي_الفترة_مع_مدة",
 				description = "الحصول على عدد المللي ثانية من فترة تحتوي على مدة",
 				usage = "احصل_على_مللي_الفترة_مع_مدة(فترة_)",
-				parameterTypes = {ArabicPeriodWithDuration.class},
+				parameterTypes = {NaftahPeriodWithDuration.class},
 				returnType = long.class
 	)
-	public static long getMillis(ArabicPeriodWithDuration d) {
+	public static long getMillis(NaftahPeriodWithDuration d) {
 		return d.getMillis();
 	}
 
@@ -3930,10 +3930,10 @@ public final class TemporalBuiltinFunctions {
 				name = "احصل_على_نانو_الفترة_مع_مدة",
 				description = "الحصول على عدد النانو ثانية من فترة تحتوي على مدة",
 				usage = "احصل_على_نانو_الفترة_مع_مدة(فترة_)",
-				parameterTypes = {ArabicPeriodWithDuration.class},
+				parameterTypes = {NaftahPeriodWithDuration.class},
 				returnType = int.class
 	)
-	public static int getNano(ArabicPeriodWithDuration d) {
+	public static int getNano(NaftahPeriodWithDuration d) {
 		return d.getNano();
 	}
 
@@ -3948,11 +3948,11 @@ public final class TemporalBuiltinFunctions {
 				name = "أنشئ_مدة_بين_نقطتين",
 				description = "إنشاء مدة زمنية بين نقطتين زمنيتين",
 				usage = "أنشئ_مدة_بين_نقطتين(نقطة_زمنية_أولى, نقطة_زمنية_ثانية)",
-				parameterTypes = {ArabicTemporalPoint.class, ArabicTemporalPoint.class},
-				returnType = ArabicTemporalAmount.class
+				parameterTypes = {NaftahTemporalPoint.class, NaftahTemporalPoint.class},
+				returnType = NaftahTemporalAmount.class
 	)
-	public static ArabicTemporalAmount createTemporalAmountBetween( ArabicTemporalPoint left,
-																	ArabicTemporalPoint right) {
-		return ArabicDateParserHelper.getArabicTemporalAmountBetween(left, right);
+	public static NaftahTemporalAmount createTemporalAmountBetween( NaftahTemporalPoint left,
+																	NaftahTemporalPoint right) {
+		return NaftahDateParserHelper.getArabicTemporalAmountBetween(left, right);
 	}
 }

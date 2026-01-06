@@ -1,18 +1,18 @@
-package org.daiitech.naftah.utils.arabic;
+package org.daiitech.naftah.utils.script;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
+import static org.daiitech.naftah.utils.script.ScriptUtils.containsArabicLetters;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shape;
 
 /**
- * An {@link OutputStream} wrapper that transforms Arabic text for proper visual display
+ * An {@link OutputStream} wrapper that transforms text for proper visual display
  * when printed to an output stream (e.g., console or file).
  * <p>
- * If Arabic text is detected and reshaping is enabled, the text will be reshaped before
+ * If text is detected and reshaping is enabled, the text will be reshaped before
  * being written. Otherwise, the original content is passed through.
  *
  * <p>Note: The methods {@code shouldReshape()}, {@code containsArabic(String)},
@@ -20,7 +20,7 @@ import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
  *
  * @author Chakib Daii
  */
-public class ArabicOutputTransformer extends OutputStream {
+public class NaftahOutputTransformer extends OutputStream {
 
 	/**
 	 * The original output stream to which the transformed or raw output will be written.
@@ -28,22 +28,22 @@ public class ArabicOutputTransformer extends OutputStream {
 	private final OutputStream original;
 
 	/**
-	 * Constructs a new {@code ArabicOutputTransformer} wrapping the specified output stream.
+	 * Constructs a new {@code NaftahOutputTransformer} wrapping the specified output stream.
 	 *
 	 * @param original the original output stream
 	 */
-	public ArabicOutputTransformer(OutputStream original) {
+	public NaftahOutputTransformer(OutputStream original) {
 		this.original = original;
 	}
 
 	/**
-	 * Returns a {@link PrintStream} that wraps the provided output stream and applies Arabic text transformation.
+	 * Returns a {@link PrintStream} that wraps the provided output stream and applies text transformation.
 	 *
 	 * @param original the original output stream to wrap
-	 * @return a {@code PrintStream} using {@code ArabicOutputTransformer}
+	 * @return a {@code PrintStream} using {@code NaftahOutputTransformer}
 	 */
 	public static PrintStream getPrintStream(OutputStream original) {
-		OutputStream out = new ArabicOutputTransformer(original);
+		OutputStream out = new NaftahOutputTransformer(original);
 		return new PrintStream(out, true, StandardCharsets.UTF_8);
 	}
 
@@ -61,7 +61,7 @@ public class ArabicOutputTransformer extends OutputStream {
 
 	/**
 	 * Writes a portion of a byte array to the output stream.
-	 * If the content contains Arabic text and reshaping is enabled, it reshapes the text before writing.
+	 * If the content contains text and reshaping is enabled, it reshapes the text before writing.
 	 * Otherwise, writes the original byte sequence.
 	 *
 	 * @param b   the byte array containing the data
@@ -72,7 +72,7 @@ public class ArabicOutputTransformer extends OutputStream {
 	@Override
 	public void write(byte[] b, int off, int len) throws IOException {
 		String raw = new String(b, off, len, StandardCharsets.UTF_8);
-		if (containsArabic(raw)) {
+		if (containsArabicLetters(raw)) {
 			try {
 				String display = shape(raw);
 

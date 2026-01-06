@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 /**
  * Custom error listener for Naftah language parsing errors.

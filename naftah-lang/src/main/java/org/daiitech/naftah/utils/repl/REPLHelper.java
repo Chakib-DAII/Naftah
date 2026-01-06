@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
-import org.daiitech.naftah.utils.arabic.ArabicHighlighter;
+import org.daiitech.naftah.utils.script.NaftahHighlighter;
 import org.jline.keymap.KeyMap;
 import org.jline.reader.Binding;
 import org.jline.reader.Completer;
@@ -57,10 +57,10 @@ import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
+import static org.daiitech.naftah.utils.script.ScriptUtils.ARABIC_LOCALE;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shape;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shouldReshape;
 
 /**
  * A utility class providing helper methods and constants used by the REPL (Read-Eval-Print Loop)
@@ -252,7 +252,7 @@ public final class REPLHelper {
 		// Load static and runtime completions for autocompletion
 		var runtimeCompletions = getCompletions();
 		runtimeCompletions.addAll(LEXER_LITERALS);
-		Completer stringsCompleter = new ArabicStringsCompleter(runtimeCompletions);
+		Completer stringsCompleter = new NaftahStringsCompleter(runtimeCompletions);
 		lineReaderBuilder.completer(stringsCompleter);
 
 		return lineReaderBuilder.build();
@@ -280,7 +280,7 @@ public final class REPLHelper {
 				.builder()
 				.terminal(terminal)
 				.completer(completer)
-				.highlighter(new ArabicHighlighter(originalHighlighter))
+				.highlighter(new NaftahHighlighter(originalHighlighter))
 				.build();
 	}
 
@@ -541,7 +541,7 @@ public final class REPLHelper {
 							RTL_PAGINATION_PROMPT,
 							(MaskingCallback) null,
 							null);
-		return List.of("q", "quit", "خروج").contains(input.trim().toLowerCase(ARABIC));
+		return List.of("q", "quit", "خروج").contains(input.trim().toLowerCase(ARABIC_LOCALE));
 	}
 
 	/**
