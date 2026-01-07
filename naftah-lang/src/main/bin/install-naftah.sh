@@ -12,10 +12,10 @@ BIN_DIR="/usr/local/bin"
 # Scripts to install
 SCRIPTS=(naftah-shell.sh naftah-repl.sh naftah-man.sh naftah-init.sh naftah.sh)
 
-echo "Installing Naftah scripts..."
+echo "جاري تثبيت سكريبتات نفطه..."
 
 # Fix CRLFs and make originals executable
-echo "Processing original scripts in $SRC_DIR ..."
+echo "معالجة السكريبتات الأصلية في $SRC_DIR ..."
 for script in "${SCRIPTS[@]}"; do
     original="$SRC_DIR/$script"
 
@@ -35,12 +35,12 @@ for script in "${SCRIPTS[@]}"; do
 done
 
 # Install wrappers in /usr/local/bin
-echo "Creating wrappers in $BIN_DIR ..."
+echo "جاري إنشاء الملفات المُلّفَّفة في $BIN_DIR ..."
 for script in "${SCRIPTS[@]}"; do
     base_name="${script%.sh}"  # wrapper without .sh
     wrapper="$BIN_DIR/$base_name"
 
-    echo "Installing wrapper $base_name ..."
+    echo "تثبيت الملف المُلّفَّف $base_name ..."
     sudo tee "$wrapper" > /dev/null <<EOF
 #!/usr/bin/env bash
 export NAFTAH_HOME="$NAFTAH_HOME"
@@ -51,5 +51,5 @@ EOF
 done
 
 echo
-echo "Installation complete!"
-echo "You can now run: ${SCRIPTS[*]/.sh/} from anywhere."
+echo "تم اكتمال التثبيت!"
+echo "يمكنك الآن تشغيل: ${SCRIPTS[*]/.sh/} من أي مكان."

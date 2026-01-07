@@ -43,13 +43,13 @@ if [ -z "${JAVA_HOME}" ]; then
 	else
 		javaExecutable="$(command -v javac)"
 		if [[ -z "$javaExecutable" || "$(expr "${javaExecutable}" : '\([^ ]*\)')" = "no" ]]; then
-			echo "JAVA_HOME not set and cannot find javac to deduce location, please set JAVA_HOME."
+			echo "لم يتم تعيين JAVA_HOME ولا يمكن العثور على javac لتحديد موقعه، يرجى تعيين JAVA_HOME."
 			exit 1
 		fi
 		# readlink(1) is not available as standard on Solaris 10.
 		readLink="$(command -v readlink)"
 		[ "$(expr "${readLink}" : '\([^ ]*\)')" = "no" ] && {
-			echo "JAVA_HOME not set and readlink not available, please set JAVA_HOME."
+			echo "لم يتم تعيين JAVA_HOME وأداة readlink غير متاحة، يرجى تعيين JAVA_HOME."
 			exit 1
 		}
 		javaExecutable="$(readlink -f "${javaExecutable}")"
@@ -65,12 +65,12 @@ if [ ! -f "${JAVA_HOME}/bin/java" ]; then
 	cat <<-JAVA_HOME_NOT_SET_TXT
 
 	======================================================================================================
-	 Please ensure that your JAVA_HOME points to a valid Java SDK.
-	 You are currently pointing to:
+	 يرجى التأكد من أن JAVA_HOME يشير إلى نسخة Java SDK صحيحة.
+	 أنت حالياً تشير إلى:
 
 	  ${JAVA_HOME}
 
-	 This does not seem to be valid. Please rectify and restart.
+	 هذا لا يبدو صحيحًا. يرجى تصحيحه وإعادة التشغيل.
 	======================================================================================================
 
 	JAVA_HOME_NOT_SET_TXT
@@ -99,8 +99,8 @@ if [ -z "${NAFTAH_HOME}" ]; then
 fi
 
 if [ ! -d "${NAFTAH_HOME}" ]; then
-	echo "Not a directory: NAFTAH_HOME=${NAFTAH_HOME}"
-	echo "Please rectify and restart."
+	echo "المسار ليس مجلدًا: NAFTAH_HOME=${NAFTAH_HOME}"
+	echo "يرجى تصحيح ذلك وإعادة التشغيل."
 	exit 2
 fi
 
