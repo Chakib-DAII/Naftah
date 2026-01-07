@@ -1,6 +1,9 @@
 package org.daiitech.naftah.utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -46,6 +49,21 @@ public final class OS {
 	 * System property key for the operating system version.
 	 */
 	public static final String OS_VERSION_PROPERTY = "os.version";
+
+	/**
+	 * WSL environment variable containing the current Linux distribution name.
+	 */
+	public static final String WSL_DISTRO_NAME_ENV = "WSL_DISTRO_NAME";
+
+	/**
+	 * WSL environment variable used for Windows–Linux process interop.
+	 */
+	public static final String WSL_INTEROP_ENV = "WSL_INTEROP";
+
+	/**
+	 * WSL-specific environment variable controlling Windows–Linux env propagation.
+	 */
+	public static final String WSL_ENV = "WSLENV";
 
 	/**
 	 * Identifier for OS/400 family.
@@ -101,6 +119,10 @@ public final class OS {
 	 * Identifier for Windows family.
 	 */
 	private static final String FAMILY_WINDOWS = "windows";
+	/**
+	 * Whether the current OS is running under Windows Subsystem for Linux (WSL).
+	 */
+	private static final boolean IS_WSL;
 
 	/**
 	 * The OS name in lowercase, retrieved from system properties.
@@ -127,6 +149,7 @@ public final class OS {
 		OS_ARCH = System.getProperty(OS_ARCH_PROPERTY).toLowerCase(Locale.US);
 		OS_VERSION = System.getProperty(OS_VERSION_PROPERTY).toLowerCase(Locale.US);
 		PATH_SEP = File.pathSeparator;
+		IS_WSL = checkIfInsideWSL();
 	}
 
 	/**
@@ -136,6 +159,33 @@ public final class OS {
 	private OS() {
 		throw newNaftahBugInvalidUsageError();
 	}
+
+	/**
+	 * Detects whether the JVM is running inside Windows Subsystem for Linux (WSL).
+	 */
+	private static boolean checkIfInsideWSL() {
+		// WSL is always Linux
+		if (!isFamilyUnix()) {
+			return false;
+		}
+
+		// Fast path: environment variables
+		if (System.getenv().containsKey(WSL_DISTRO_NAME_ENV) || System.getenv().containsKey(WSL_INTEROP_ENV) || System
+				.getenv()
+				.containsKey(WSL_ENV)) {
+			return true;
+		}
+
+		// Fallback: kernel version
+		try {
+			String version = Files.readString(Path.of("/proc/version")).toLowerCase(Locale.US);
+			return version.contains("microsoft");
+		}
+		catch (IOException ignored) {
+			return false;
+		}
+	}
+
 
 	/**
 	 * Checks if the current OS matches the specified family.
@@ -208,6 +258,15 @@ public final class OS {
 	 */
 	public static boolean isFamilyWindows() {
 		return isFamily(FAMILY_WINDOWS);
+	}
+
+	/**
+	 * Checks whether the current OS is running under Windows Subsystem for Linux (WSL).
+	 *
+	 * @return {@code true} if running in WSL, {@code false} otherwise
+	 */
+	public static boolean isWSL() {
+		return IS_WSL;
 	}
 
 	/**
