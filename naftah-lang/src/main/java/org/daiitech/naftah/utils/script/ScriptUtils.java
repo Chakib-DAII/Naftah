@@ -1005,7 +1005,7 @@ public final class ScriptUtils {
 	 * @return true if the OS is Windows (where reshaping is needed), false otherwise
 	 */
 	public static boolean shouldReshape() {
-		return OS.isFamilyWindows();
+		return OS.isFamilyWindows() || OS.isWSL();
 	}
 
 	/**
