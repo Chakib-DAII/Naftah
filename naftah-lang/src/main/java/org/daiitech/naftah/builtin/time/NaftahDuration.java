@@ -242,7 +242,7 @@ public record NaftahDuration(
 	 * @return the milliseconds within the current second (0-999)
 	 */
 	public long getMillis() {
-		return temporalAmount.toMillis() % 1000;
+		return temporalAmount.toMillisPart();
 	}
 
 	/**
