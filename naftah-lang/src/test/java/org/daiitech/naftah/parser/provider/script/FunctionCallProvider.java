@@ -2152,6 +2152,27 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								true,
 								null),
 					Arguments
+							.of(true,
+								"""
+								دوال:الخيوط::نم(1000)
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(true,
+								"""
+								دوال:الخيوط::نم_ثواني_و_نانو(1000؛1000)
+								""",
+								None.get(),
+								null),
+					Arguments
+							.of(true,
+								"""
+								دوال:الخيوط::نم_مدة(قيمة_زمنية "مدة 1 ثوان")
+								""",
+								None.get(),
+								null),
+					Arguments
 							.of(false,
 								"""
 								جافا:لغة:كائن_::ابكديفجهجكلمنوبكرستيفوكسز()
