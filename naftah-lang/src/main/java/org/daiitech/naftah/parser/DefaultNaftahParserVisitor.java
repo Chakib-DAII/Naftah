@@ -2297,13 +2297,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
-										.isNone(result) ?
-												Optional
-														.ofNullable((LoopSignal.LoopSignalDetails) result)
-														.map(LoopSignal.LoopSignalDetails::result)
-														.orElse(null) :
-												result;
+								if (loopSignal) {
+									if ((LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None.isNone(result)) {
+										return Optional
+												.ofNullable((LoopSignal.LoopSignalDetails) result)
+												.map(LoopSignal.LoopSignalDetails::result)
+												.orElse(None.get());
+									}
+									return result;
+								}
+								else {
+									return None.get();
+								}
 							}
 		);
 	}
@@ -2404,7 +2409,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 										setForeachVariables(currentContext, foreachTargetClass, target, targetValues);
 
-										defaultNaftahParserVisitor.visit(loopBlock);
+										result = defaultNaftahParserVisitor.visit(loopBlock);
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -2455,13 +2460,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
-										.isNone(result) ?
-												Optional
-														.ofNullable((LoopSignal.LoopSignalDetails) result)
-														.map(LoopSignal.LoopSignalDetails::result)
-														.orElse(null) :
-												result;
+								if (loopSignal) {
+									if ((LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None.isNone(result)) {
+										return Optional
+												.ofNullable((LoopSignal.LoopSignalDetails) result)
+												.map(LoopSignal.LoopSignalDetails::result)
+												.orElse(None.get());
+									}
+									return result;
+								}
+								else {
+									return None.get();
+								}
 							}
 		);
 	}
@@ -2593,7 +2603,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									while (isTruthy(defaultNaftahParserVisitor
 											.visit(whileStatementContext.expression()))) {
-										defaultNaftahParserVisitor.visit(whileStatementContext.block());
+										result = defaultNaftahParserVisitor.visit(whileStatementContext.block());
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -2638,14 +2648,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
-										.isNone(result) ?
-												Optional
-														.ofNullable((LoopSignal.LoopSignalDetails) result)
-														.map(LoopSignal.LoopSignalDetails::result)
-														.orElse(null) :
-												result;
-
+								if (loopSignal) {
+									if ((LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None.isNone(result)) {
+										return Optional
+												.ofNullable((LoopSignal.LoopSignalDetails) result)
+												.map(LoopSignal.LoopSignalDetails::result)
+												.orElse(None.get());
+									}
+									return result;
+								}
+								else {
+									return None.get();
+								}
 							}
 		);
 	}
@@ -2681,7 +2695,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									loopInStack = true;
 
 									do {
-										defaultNaftahParserVisitor.visit(repeatStatementContext.block());
+										result = defaultNaftahParserVisitor.visit(repeatStatementContext.block());
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -2728,14 +2742,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
-										.isNone(result) ?
-												Optional
-														.ofNullable((LoopSignal.LoopSignalDetails) result)
-														.map(LoopSignal.LoopSignalDetails::result)
-														.orElse(null) :
-												result;
-
+								if (loopSignal) {
+									if ((LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None.isNone(result)) {
+										return Optional
+												.ofNullable((LoopSignal.LoopSignalDetails) result)
+												.map(LoopSignal.LoopSignalDetails::result)
+												.orElse(None.get());
+									}
+									return result;
+								}
+								else {
+									return None.get();
+								}
 							}
 		);
 	}
@@ -4254,7 +4272,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(defaultNaftahParserVisitor, currentContext, radixNumberValueContext) -> {
 								String originalValue = radixNumberValueContext.BASE_DIGITS().getText();
 								String arabicIndicValue = originalValue
-										.substring( 0,
+										.substring( 1,
 													originalValue.length() - 2);
 								String value = ScriptUtils
 										.convertArabicToLatinLetterByLetter(arabicIndicValue);
