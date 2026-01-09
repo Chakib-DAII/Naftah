@@ -72,7 +72,12 @@ class SyntaxHighlighterTests {
 		AttributedString result = highlighter.highlight(reader, buffer);
 
 		assertNotNull(result);
-		assertTrue(result.toString().contains("invalidشسيشسيشسي"));
+		if (ScriptUtils.shouldReshape()) {
+			assertTrue(result.toString().contains("ﻲﺴﺸﻴﺴﺸﻴﺴﺷinvalid"));
+		}
+		else {
+			assertTrue(result.toString().contains("invalidشسيشسيشسي"));
+		}
 	}
 
 	@Test
