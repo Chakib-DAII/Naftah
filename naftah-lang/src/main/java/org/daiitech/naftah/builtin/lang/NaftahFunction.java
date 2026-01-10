@@ -106,7 +106,7 @@ public record NaftahFunction(
 					\t\t\t- أنواع الاستثناءات: %s"""
 				.formatted(
 							name,
-							String.join(", ", aliases),
+							aliases.length == 0 ? "لا شيء" : String.join(", ", aliases),
 							description,
 							usage,
 							Objects.isNull(PARSER_VOCABULARY) ?
