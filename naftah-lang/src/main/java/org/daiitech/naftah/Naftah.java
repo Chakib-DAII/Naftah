@@ -828,7 +828,12 @@ public final class Naftah {
 					},
 					sortOptions = false)
 		private static final class ManualCommand extends NaftahCommand {
+			private enum Target {
+				CLASSES, ACCESSIBLE_CLASSES, INSTANTIABLE_CLASSES, BUILTIN_FUNCTIONS, JVM_FUNCTIONS,
+			}
+
 			private static final String NAME = "man";
+			private static final String SKIP = "SKIP";
 			private static final int PAGE_SIZE = 5;
 			private final Path manualDir = Paths.get(getJarDirectory().getParent() + "/manual");
 			private final List<String> classes = new CopyOnWriteArrayList<>();
@@ -836,6 +841,7 @@ public final class Naftah {
 			private final List<String> instantiableClasses = new CopyOnWriteArrayList<>();
 			private final List<String> builtinFunctions = new CopyOnWriteArrayList<>();
 			private final List<String> jvmFunctions = new CopyOnWriteArrayList<>();
+			private final List<String> filteredClassesOrFunctions = new CopyOnWriteArrayList<>();
 
 			private LineReader reader;
 			private Map<String, Path> topics;
@@ -986,23 +992,72 @@ public final class Naftah {
 			}
 
 			/**
-			 * Checks if the given input line matches any predefined management commands.
+			 * Extracts and normalizes the search text from a tokenized command line.
 			 * <p>
-			 * Recognized commands include help, listing topics, displaying Java classes,
-			 * accessible classes, instantiable classes, builtin functions, JVM functions,
-			 * and exiting the program. Commands can be provided in either English or Arabic.
+			 * This method skips the first element of {@code commandParts} (the command keyword)
+			 * and concatenates the remaining parts <strong>without any separator</strong>,
+			 * then trims leading and trailing whitespace from the resulting string.
 			 * </p>
 			 *
-			 * @param line the input command line to check
-			 * @return {@code true} if the input matches a known command and the corresponding
-			 *         action has been executed; {@code false} otherwise
-			 * @throws UserInterruptException if the input command is an exit command ("exit" or "خروج"),
-			 *                                which interrupts the user session and exits the program
+			 * <p>
+			 * For example:
+			 * <pre>
+			 * ["classes", "java", "util"] → "javautil"
+			 * ["الأصناف", "نص", "بحث"] → "نصبحث"
+			 * </pre>
+			 * </p>
+			 *
+			 * @param commandParts the command line split into parts, where the first element
+			 *                     represents the command keyword
+			 * @return the concatenated search text derived from the remaining command parts,
+			 *         or an empty string if no search text is provided
+			 */
+			private String getSearchTextFromCommand(String[] commandParts) {
+				return Arrays
+						.stream(commandParts)
+						.skip(1)
+						.collect(Collectors.joining())
+						.trim();
+			}
+
+			/**
+			 * Processes and executes management (meta) commands entered by the user.
+			 * <p>
+			 * This method parses the given input line and checks whether it corresponds
+			 * to a supported management command. Supported commands allow the user to:
+			 * <ul>
+			 * <li>Display usage/help instructions</li>
+			 * <li>List available topics</li>
+			 * <li>List Java classes, accessible classes, or instantiable classes</li>
+			 * <li>List builtin (Naftah) functions or JVM functions</li>
+			 * <li>Filter any of the above lists by a search text</li>
+			 * <li>Exit the program</li>
+			 * </ul>
+			 * </p>
+			 *
+			 * <p>
+			 * Commands may be written in either English or Arabic. Some commands optionally
+			 * accept a search text argument, in which case only entries matching the given
+			 * search text are displayed.
+			 * </p>
+			 *
+			 * <p>
+			 * When a recognized command is matched, this method performs the corresponding
+			 * action (such as printing paginated results) and returns {@code true}.
+			 * If the input does not match any known management command, no action is taken
+			 * and {@code false} is returned.
+			 * </p>
+			 *
+			 * @param line the raw input command line provided by the user
+			 * @return {@code true} if the input matches a known management command and an
+			 *         action was executed; {@code false} otherwise
+			 * @throws UserInterruptException if the input corresponds to an exit command
+			 *                                (for example {@code "exit"} or {@code "خروج"}), indicating that the
+			 *                                user session should be terminated
 			 */
 			private boolean checkManagementCommands(String line) {
 				var matched = false;
 				String command = line.trim().toLowerCase(ARABIC_LOCALE);
-//					TODO: add support for filter by class name; الأصناف-المتاحة:x:y:z (in arabic script) so the flow you transliterate then get all infos
 				if (List.of("usage", "مساعدة").contains(command)) {
 
 					matched = true;
@@ -1011,10 +1066,15 @@ public final class Naftah {
 							\t- المواضيع أو list -> المواضيع المتوفرة.
 							\t- <اسم الموضوع> -> فتح دليل الموضوع.
 							\t- الأصناف أو classes -> الأصناف المتوفرة في Java مع أسمائها المؤهلة بالعربية.
+							\t- الأصناف <نص البحث> أو classes <search text> -> الأصناف المتوفرة في Java المطابقة لنص البحث مع أسمائها المؤهلة بالعربية.
 							\t- الأصناف-المتاحة أو accessible-classes -> الأصناف المتاحة في Java مع أسمائها المؤهلة بالعربية.
+							\t- الأصناف-المتاحة <نص البحث> أو accessible-classes <search text> -> الأصناف المتاحة في Java المطابقة لنص البحث مع أسمائها المؤهلة بالعربية.
 							\t- الأصناف-القابلة-للتهيئة أو الأصناف-القابلة-للصنع أو instantiable-classes -> الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية.
+							\t- الأصناف-القابلة-للتهيئة <نص البحث> أو الأصناف-القابلة-للصنع <نص البحث> أو instantiable-classes <search text> -> الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية.
 							\t- الدوال-المدمجة أو builtin-functions -> الدوال المدمجة في نظام نفطه.
+							\t- الدوال-المدمجة <نص البحث> أو builtin-functions <search text> -> الدوال المدمجة في نظام نفطه المطابقة لنص البحث.
 							\t- دوال-جافا أو jvm-functions -> دوال JVM المتوفرة مع استدعاءاتها المؤهلة بالعربية.
+							\t- دوال-جافا <نص البحث> أو jvm-functions <search text> -> دوال JVM المتوفرة المطابقة لنص البحث مع استدعاءاتها المؤهلة بالعربية.
 							\t- <الاسم المؤهل لصنف Java> -> تحويل الاسم إلى الصيغة العربية (نفطه).
 							\t- مساعدة أو usage -> عرض هذه التعليمات.
 							\t- خروج أو exit -> إنهاء البرنامج.
@@ -1029,35 +1089,90 @@ public final class Naftah {
 							.forEach(topic -> padText("\t- " + ScriptUtils
 									.transliterateToArabicScriptDefault(topic)[0] + " - " + topic, true));
 				}
-				else if (List.of("classes", "الأصناف").contains(command)) {
-					matched = true;
-					padText("الأصناف المتوفرة في Java مع أسمائها المؤهلة بالعربية:", true);
-					printPaginated(classes);
-				}
-				else if (List.of("accessible-classes", "الأصناف-المتاحة").contains(command)) {
-					matched = true;
-					padText("الأصناف المتاحة في Java مع أسمائها المؤهلة بالعربية:", true);
-					printPaginated(accessibleClasses);
-				}
-				else if (List
-						.of("instantiable-classes", "الأصناف-القابلة-للصنع", "الأصناف-القابلة-للتهيئة")
-						.contains(command)) {
-							matched = true;
-							padText("الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية:", true);
-							printPaginated(instantiableClasses);
-						}
-				else if (List.of("builtin-functions", "الدوال-المدمجة").contains(command)) {
-					matched = true;
-					padText("الدوال المدمجة في نظام نفطه:", true);
-					printPaginated(builtinFunctions);
-				}
-				else if (List.of("jvm-functions", "دوال-جافا").contains(command)) {
-					matched = true;
-					padText("دوال JVM المتوفرة مع استدعاءاتها المؤهلة بالعربية:", true);
-					printPaginated(jvmFunctions);
-				}
 				else if (List.of("exit", "خروج").contains(command)) {
 					throw new UserInterruptException(line);
+				}
+				else {
+					String searchFormatter = "المطابقة لنص البحث %s";
+					var commandParts = command.split("\\s");
+					command = commandParts[0].trim();
+					if (List.of("classes", "الأصناف").contains(command)) {
+						matched = true;
+						var target = Target.CLASSES;
+						String baseMsg = "الأصناف المتوفرة في Java مع أسمائها المؤهلة بالعربية";
+						if (commandParts.length > 1) {
+							String searchText = getSearchTextFromCommand(commandParts);
+							padText(baseMsg + searchFormatter.formatted(searchText) + ":", true);
+							filteredClassesOrFunctions.clear();
+							printPaginated(target, filteredClassesOrFunctions, searchText);
+						}
+						else {
+							padText(baseMsg + ":", true);
+							printPaginated(target, classes);
+						}
+					}
+					else if (List.of("accessible-classes", "الأصناف-المتاحة").contains(command)) {
+						matched = true;
+						var target = Target.ACCESSIBLE_CLASSES;
+						String baseMsg = "الأصناف المتاحة في Java مع أسمائها المؤهلة بالعربية";
+						if (commandParts.length > 1) {
+							String searchText = getSearchTextFromCommand(commandParts);
+							padText(baseMsg + searchFormatter.formatted(searchText) + ":", true);
+							filteredClassesOrFunctions.clear();
+							printPaginated(target, filteredClassesOrFunctions, searchText);
+						}
+						else {
+							padText(baseMsg + ":", true);
+							printPaginated(target, accessibleClasses);
+						}
+					}
+					else if (List
+							.of("instantiable-classes", "الأصناف-القابلة-للصنع", "الأصناف-القابلة-للتهيئة")
+							.contains(command)) {
+								matched = true;
+								var target = Target.INSTANTIABLE_CLASSES;
+								String baseMsg = "الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية";
+								if (commandParts.length > 1) {
+									String searchText = getSearchTextFromCommand(commandParts);
+									padText(baseMsg + searchFormatter.formatted(searchText) + ":", true);
+									filteredClassesOrFunctions.clear();
+									printPaginated(target, filteredClassesOrFunctions, searchText);
+								}
+								else {
+									padText(baseMsg + ":", true);
+									printPaginated(target, instantiableClasses);
+								}
+							}
+					else if (List.of("builtin-functions", "الدوال-المدمجة").contains(command)) {
+						matched = true;
+						var target = Target.BUILTIN_FUNCTIONS;
+						String baseMsg = "الدوال المدمجة في نظام نفطه";
+						if (commandParts.length > 1) {
+							String searchText = getSearchTextFromCommand(commandParts);
+							padText(baseMsg + searchFormatter.formatted(searchText) + ":", true);
+							filteredClassesOrFunctions.clear();
+							printPaginated(target, filteredClassesOrFunctions, searchText);
+						}
+						else {
+							padText(baseMsg + ":", true);
+							printPaginated(target, builtinFunctions);
+						}
+					}
+					else if (List.of("jvm-functions", "دوال-جافا").contains(command)) {
+						matched = true;
+						var target = Target.JVM_FUNCTIONS;
+						String baseMsg = "دوال JVM المتوفرة مع استدعاءاتها المؤهلة بالعربية";
+						if (commandParts.length > 1) {
+							String searchText = getSearchTextFromCommand(commandParts);
+							padText(baseMsg + searchFormatter.formatted(searchText) + ":", true);
+							filteredClassesOrFunctions.clear();
+							printPaginated(target, filteredClassesOrFunctions, searchText);
+						}
+						else {
+							padText(baseMsg + ":", true);
+							printPaginated(target, jvmFunctions);
+						}
+					}
 				}
 
 				return matched;
@@ -1224,47 +1339,57 @@ public final class Naftah {
 			}
 
 			/**
-			 * Determines the total number of elements in a target list, ensuring the count
-			 * is at least as large as the corresponding collection from {@link DefaultContext}.
+			 * Computes the effective total number of elements for a given {@link Target}
+			 * by comparing the provided total with the size of the corresponding
+			 * collection in {@link DefaultContext}.
 			 * <p>
-			 * This helps synchronize manual or temporary lists with the runtime context
-			 * to avoid index mismatches when accessing elements.
+			 * The returned value is always the maximum of:
+			 * <ul>
+			 * <li>the supplied {@code total} value (typically derived from a cached or
+			 * partially populated list), and</li>
+			 * <li>the size of the runtime collection associated with the specified
+			 * {@code target}.</li>
+			 * </ul>
+			 * This ensures pagination and indexed access remain consistent even when
+			 * the target list has not yet been fully populated.
 			 * </p>
 			 *
-			 * @param target the list whose size should be compared to its related collection
-			 * @return the maximum of the target's size and the associated context collection size
+			 * @param target the target type whose backing context collection should be used
+			 *               for comparison
+			 * @param total  the current known total (for example, the size of a cached list)
+			 * @return the maximum of {@code total} and the size of the corresponding
+			 *         {@link DefaultContext} collection for the given target
 			 */
-			private int getTotal(List<String> target) {
-				int total = target.size();
-				if (classes.equals(target)) {
+			private int getTotal(Target target, int total) {
+				if (Target.CLASSES.equals(target)) {
 					total = Math
 							.max(   total,
 									DefaultContext
 											.getClasses()
 											.size());
 				}
-				else if (accessibleClasses.equals(target)) {
+				else if (Target.ACCESSIBLE_CLASSES.equals(target)) {
 					total = Math
 							.max(   total,
 									DefaultContext
 											.getAccessibleClasses()
 											.size());
 				}
-				else if (instantiableClasses.equals(target)) {
+				else if (Target.INSTANTIABLE_CLASSES.equals(target)) {
 					total = Math
 							.max(   total,
 									DefaultContext
 											.getInstantiableClasses()
 											.size());
 				}
-				else if (builtinFunctions.equals(target)) {
+				else if (Target.BUILTIN_FUNCTIONS.equals(target)) {
 					total = Math
 							.max(   total,
 									DefaultContext
 											.getBuiltinFunctions()
 											.size());
 				}
-				else if (jvmFunctions.equals(target)) {
+				else if (Target.JVM_FUNCTIONS.equals(target)) {
 					total = Math
 							.max(   total,
 									DefaultContext
@@ -1276,32 +1401,61 @@ public final class Naftah {
 
 
 			/**
-			 * Retrieves and formats the detailed information for a class or function
-			 * at a given index from the specified target list or its related context collection.
+			 * Resolves, loads, and formats the detailed representation of a class or function
+			 * at the specified index for the given target category.
 			 * <p>
-			 * If the requested index exceeds the target list’s current size, this method
-			 * attempts to fetch the corresponding element from the appropriate collection
-			 * in {@link DefaultContext}. Depending on the target, it delegates to one of:
+			 * This method first attempts to return a previously loaded (cached) entry from
+			 * {@code targetList}. If the requested index is not yet available in that list,
+			 * it performs a lazy lookup against the corresponding collection in
+			 * {@link DefaultContext}, based on the provided {@link Target}.
+			 * </p>
+			 *
+			 * <p>
+			 * Depending on the target type, the lookup is delegated to one of the following
+			 * detail loaders:
 			 * <ul>
-			 * <li>{@code loadDetailedClass(Map.Entry)}</li>
-			 * <li>{@code loadBuiltinFunction(Map.Entry)}</li>
-			 * <li>{@code loadJvmFunction(Map.Entry)}</li>
+			 * <li>{@code loadDetailedClass(Map.Entry)} for class-based targets</li>
+			 * <li>{@code loadBuiltinFunction(Map.Entry)} for builtin functions</li>
+			 * <li>{@code loadJvmFunction(Map.Entry)} for JVM functions</li>
 			 * </ul>
 			 * </p>
 			 *
-			 * @param index  the index of the element to retrieve (0-based)
-			 * @param target the list corresponding to one of the tracked element types
-			 * @return a formatted string representing the detailed view of the element
-			 * @throws NaftahBugError if no valid element can be resolved for the given index
+			 * <p>
+			 * If a {@code classOrFunctionFilter} is provided, the resolved element must match
+			 * the filter (by name or related metadata, depending on the target). If the
+			 * element at the given index does not satisfy the filter, the lookup is considered
+			 * invalid and {@code null} is returned.
+			 * </p>
+			 *
+			 * <p>
+			 * Successfully resolved elements are formatted, appended to {@code targetList}
+			 * for caching purposes, and then returned.
+			 * </p>
+			 *
+			 * @param index                 the zero-based index of the element to resolve
+			 * @param target                the target category indicating which context
+			 *                              collection should be queried
+			 * @param targetList            the cache of already loaded and formatted entries
+			 *                              for the given target
+			 * @param classOrFunctionFilter an optional search filter used to restrict results;
+			 *                              may be {@code null} or blank
+			 * @return the formatted detailed representation of the resolved element,
+			 *         or {@code null} if the index exists but does not satisfy the filter
+			 * @throws NaftahBugError if the index is valid but the element cannot be resolved
+			 *                        or formatted due to an unexpected internal error
 			 */
-			private String loadClassOrFunction(int index, List<String> target) {
-				if (target.size() > index) {
-					return target.get(index);
+			private String loadClassOrFunction( int index,
+												Target target,
+												List<String> targetList,
+												String classOrFunctionFilter) {
+				if (targetList.size() > index) {
+					return targetList.get(index);
 				}
 				else {
 					String result = null;
 					boolean validIndex = true;
-					if (classes.equals(target) && (validIndex = DefaultContext
+					boolean skip = false;
+					if (Target.CLASSES.equals(target) && (validIndex = DefaultContext
 							.getClasses()
 							.size() > index)) {
 						var element = CollectionUtils
@@ -1312,10 +1466,21 @@ public final class Naftah {
 												index);
 						if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
 							//noinspection unchecked
-							result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+							var stringClassEntry = (Map.Entry<String, Class<?>>) entry;
+							if ((classOrFunctionFilter == null || classOrFunctionFilter.isBlank()) || (stringClassEntry
+									.getKey()
+									.contains(classOrFunctionFilter) || stringClassEntry
+											.getValue()
+											.getName()
+											.contains(classOrFunctionFilter))) {
+								result = loadDetailedClass(stringClassEntry);
+							}
+							else {
+								skip = true;
+							}
 						}
 					}
-					else if (accessibleClasses.equals(target) && (validIndex = DefaultContext
+					else if (Target.ACCESSIBLE_CLASSES.equals(target) && (validIndex = DefaultContext
 							.getAccessibleClasses()
 							.size() > index)) {
 								var element = CollectionUtils
@@ -1326,10 +1491,22 @@ public final class Naftah {
 														index);
 								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
 									//noinspection unchecked
-									result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+									var stringClassEntry = (Map.Entry<String, Class<?>>) entry;
+									if ((classOrFunctionFilter == null || classOrFunctionFilter
+											.isBlank()) || (stringClassEntry
+													.getKey()
+													.contains(classOrFunctionFilter) || stringClassEntry
+															.getValue()
+															.getName()
+															.contains(classOrFunctionFilter))) {
+										result = loadDetailedClass(stringClassEntry);
+									}
+									else {
+										skip = true;
+									}
 								}
 							}
-					else if (instantiableClasses.equals(target) && (validIndex = DefaultContext
+					else if (Target.INSTANTIABLE_CLASSES.equals(target) && (validIndex = DefaultContext
 							.getInstantiableClasses()
 							.size() > index)) {
 								var element = CollectionUtils
@@ -1340,10 +1517,22 @@ public final class Naftah {
 														index);
 								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
 									//noinspection unchecked
-									result = loadDetailedClass((Map.Entry<String, Class<?>>) entry);
+									var stringClassEntry = (Map.Entry<String, Class<?>>) entry;
+									if ((classOrFunctionFilter == null || classOrFunctionFilter
+											.isBlank()) || (stringClassEntry
+													.getKey()
+													.contains(classOrFunctionFilter) || stringClassEntry
+															.getValue()
+															.getName()
+															.contains(classOrFunctionFilter))) {
+										result = loadDetailedClass(stringClassEntry);
+									}
+									else {
+										skip = true;
+									}
 								}
 							}
-					else if (builtinFunctions.equals(target) && (validIndex = DefaultContext
+					else if (Target.BUILTIN_FUNCTIONS.equals(target) && (validIndex = DefaultContext
 							.getBuiltinFunctions()
 							.size() > index)) {
 								var element = CollectionUtils
@@ -1354,10 +1543,17 @@ public final class Naftah {
 														index);
 								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
 									//noinspection unchecked
-									result = loadBuiltinFunction((Map.Entry<String, List<BuiltinFunction>>) entry);
+									var stringListEntry = (Map.Entry<String, List<BuiltinFunction>>) entry;
+									if ((classOrFunctionFilter == null || classOrFunctionFilter
+											.isBlank()) || stringListEntry.getKey().contains(classOrFunctionFilter)) {
+										result = loadBuiltinFunction(stringListEntry);
+									}
+									else {
+										skip = true;
+									}
 								}
 							}
-					else if (jvmFunctions.equals(target) && (validIndex = DefaultContext
+					else if (Target.JVM_FUNCTIONS.equals(target) && (validIndex = DefaultContext
 							.getJvmFunctions()
 							.size() > index)) {
 								var element = CollectionUtils
@@ -1368,7 +1564,25 @@ public final class Naftah {
 														index);
 								if (!None.isNone(element) && element instanceof Map.Entry<?, ?> entry) {
 									//noinspection unchecked
-									result = loadJvmFunction((Map.Entry<String, List<JvmFunction>>) entry);
+									var stringListEntry = (Map.Entry<String, List<JvmFunction>>) entry;
+									if ((classOrFunctionFilter == null || classOrFunctionFilter
+											.isBlank()) || (stringListEntry
+													.getKey()
+													.contains(classOrFunctionFilter) || stringListEntry
+															.getValue()
+															.stream()
+															.anyMatch(jvmFunction -> jvmFunction
+																	.getClazz()
+																	.getName()
+																	.contains(classOrFunctionFilter) || jvmFunction
+																			.getMethod()
+																			.getName()
+																			.contains(classOrFunctionFilter)))) {
+										result = loadJvmFunction(stringListEntry);
+									}
+									else {
+										skip = true;
+									}
 								}
 							}
 
@@ -1376,6 +1590,9 @@ public final class Naftah {
 						return null;
 					}
 					else {
+						if (skip) {
+							return SKIP;
+						}
 						if (result == null) {
 							throw new NaftahBugError(
 														"""
@@ -1383,42 +1600,71 @@ public final class Naftah {
 														""");
 						}
 
-						target.add(result);
+						targetList.add(result);
 						return result;
 					}
 				}
 			}
 
 			/**
-			 * Prints a list of lines to the terminal in a paginated format, displaying
-			 * a fixed number of lines per page and prompting the user to continue after each page.
+			 * Prints elements of the specified target to the terminal in a paginated manner.
 			 * <p>
-			 * The method reads user input between pages and supports quitting early. After displaying
-			 * each page of {@code PAGE_SIZE} lines, it prompts the user with:
-			 * <pre>
-			 * [اضغط Enter للمتابعة، أو أدخل 'q' أو 'quit' أو 'خروج' لإنهاء التصفح والعودة إلى البرنامج الرئيسي]
-			 * </pre>
-			 * If the user enters any of the following commands (case-insensitive):
-			 * <ul>
-			 * <li>{@code q}</li>
-			 * <li>{@code quit}</li>
-			 * <li>{@code خروج} (Arabic for "exit")</li>
-			 * </ul>
-			 * the pagination is stopped, and the method exits early.
+			 * This is a convenience overload that delegates to
+			 * {@link #printPaginated(Target, List, String)} without applying any search filter.
+			 * </p>
 			 *
-			 * @param lines the list of lines to display, paginated
+			 * @param target the target category whose elements are being displayed
+			 * @param lines  the cache of already loaded and formatted elements; additional
+			 *               elements may be lazily loaded during pagination
 			 */
-			private void printPaginated(List<String> lines) {
-				int total = getTotal(lines);
+			private void printPaginated(Target target, List<String> lines) {
+				printPaginated(target, lines, null);
+			}
+
+			/**
+			 * Prints elements of the specified target to the terminal in a paginated manner,
+			 * with optional filtering applied during lazy loading.
+			 * <p>
+			 * Elements are resolved on demand using {@link #loadClassOrFunction(int, Target, List, String)}.
+			 * Already loaded entries are reused from {@code lines}, while missing entries
+			 * are fetched, formatted, and appended as needed.
+			 * </p>
+			 *
+			 * <p>
+			 * Output is constrained by both a logical page size ({@code PAGE_SIZE}) and the
+			 * effective terminal height. Multi-line entries are split as necessary to avoid
+			 * overflowing the terminal viewport.
+			 * </p>
+			 *
+			 * <p>
+			 * Between pages, and whenever the terminal height limit is reached, the user is
+			 * prompted to continue browsing. Pagination can be terminated early if the user
+			 * enters any quit command recognized by
+			 * {@link org.daiitech.naftah.utils.repl.REPLHelper#shouldQuit(LineReader)}.
+			 * </p>
+			 *
+			 * @param target                the target category indicating which context
+			 *                              collection is being paginated
+			 * @param lines                 the cache of already loaded and formatted elements;
+			 *                              this list may be mutated during execution
+			 * @param classOrFunctionFilter an optional search filter applied during element
+			 *                              resolution; may be {@code null} or blank
+			 */
+			private void printPaginated(Target target, List<String> lines, String classOrFunctionFilter) {
+				int total = getTotal(target, lines.size());
 				int printedLines = 0;
 				int currentIndex = 0;
 
 				outerLoop:
 				while (currentIndex < total) {
 					for (int i = 0; i < PAGE_SIZE && currentIndex < total; i++, currentIndex++) {
-						var current = loadClassOrFunction(currentIndex, lines);
+						var current = loadClassOrFunction(currentIndex, target, lines, classOrFunctionFilter);
 						if (Objects.isNull(current)) {
 							break outerLoop;
+						}
+						if (SKIP.equals(current)) {
+							i--;
+							continue;
 						}
 						var currentLines = current.lines().toList();
 						var currentLinesCount = currentLines.size();
