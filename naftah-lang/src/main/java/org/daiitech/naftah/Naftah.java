@@ -6,14 +6,17 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,9 +40,11 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
+import org.daiitech.naftah.parser.REPLContext;
 import org.daiitech.naftah.utils.ResourceUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
+import org.daiitech.naftah.utils.repl.REPLHelper;
 import org.daiitech.naftah.utils.script.ScriptUtils;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
@@ -816,7 +821,30 @@ public final class Naftah {
 
 
 		/**
-		 * The 'man' subcommand that loads and displays documentation topics related to Naftah usage.
+		 * The {@code 'man'} subcommand for Naftah.
+		 *
+		 * <p>This command loads and displays documentation topics related to Naftah usage.
+		 * It provides help pages for classes, accessible classes, instantiable classes,
+		 * built-in functions, JVM functions, and other runtime information.</p>
+		 *
+		 * <p>The command supports both English and Arabic aliases for flexibility in multi-language environments.</p>
+		 *
+		 * <p><strong>Usage:</strong></p>
+		 * <pre>{@code
+		 * naftah man [options] [filename] [args]
+		 * }</pre>
+		 *
+		 * <p>The {@code ManualCommand} maintains lists of:</p>
+		 * <ul>
+		 * <li>{@link #classes} – all available classes</li>
+		 * <li>{@link #accessibleClasses} – classes accessible from the current context</li>
+		 * <li>{@link #instantiableClasses} – classes that can be instantiated</li>
+		 * <li>{@link #builtinFunctions} – built-in Naftah functions</li>
+		 * <li>{@link #jvmFunctions} – Java/JVM functions available for use</li>
+		 * </ul>
+		 *
+		 * <p>It also keeps track of filtered results in {@link #filteredClassesOrFunctions}
+		 * and uses a {@link LineReader} for interactive input, if needed.</p>
 		 */
 		@Command(   name = ManualCommand.NAME,
 					customSynopsis = "naftah man [options] [filename] [args]",
@@ -828,22 +856,126 @@ public final class Naftah {
 					},
 					sortOptions = false)
 		private static final class ManualCommand extends NaftahCommand {
+			/**
+			 * Represents different targets for the manual command.
+			 */
 			private enum Target {
 				CLASSES, ACCESSIBLE_CLASSES, INSTANTIABLE_CLASSES, BUILTIN_FUNCTIONS, JVM_FUNCTIONS,
 			}
 
+			/**
+			 * Enum representing all manual subcommands supported in Naftah.
+			 *
+			 * <p>Each subcommand may have multiple aliases, supporting both English and Arabic inputs.
+			 * The subcommands can be matched against user input using {@link #matches(String)}.</p>
+			 *
+			 * <p>Common manual subcommands include:</p>
+			 * <ul>
+			 * <li>{@link #USAGE} – display general usage/help instructions</li>
+			 * <li>{@link #LIST_TOPICS} – list all available documentation topics</li>
+			 * <li>{@link #CLASSES} – list all Java classes</li>
+			 * <li>{@link #ACCESSIBLE_CLASSES} – list accessible Java classes</li>
+			 * <li>{@link #INSTANTIABLE_CLASSES} – list Java classes that can be instantiated</li>
+			 * <li>{@link #BUILTIN_FUNCTIONS} – list built-in Naftah functions</li>
+			 * <li>{@link #JVM_FUNCTIONS} – list Java (JVM) functions</li>
+			 * <li>{@link #EXIT} – exit the manual or REPL session</li>
+			 * <li>{@link #HISTORY}, {@link #CURRENT_SESSION_HISTORY}, {@link #SANITIZE_HISTORY}, {@link #PURGE_HISTORY}
+			 * – manage command history (view, sanitize, or purge)</li>
+			 * </ul>
+			 *
+			 * <p>Usage example:</p>
+			 * <pre>
+			 * if (ManCommand.USAGE.matches(input)) {
+			 * // display help instructions
+			 * }
+			 * </pre>
+			 */
+			private enum ManCommand {
+				USAGE(Set.of("usage", "مساعدة")),
+				LIST_TOPICS(Set.of("list", "المواضيع")),
+				CLASSES(Set.of("classes", "الأصناف")),
+				ACCESSIBLE_CLASSES(Set.of("accessible-classes", "الأصناف-المتاحة")),
+				INSTANTIABLE_CLASSES(Set
+						.of("instantiable-classes", "الأصناف-القابلة-للصنع", "الأصناف-القابلة-للتهيئة")),
+				BUILTIN_FUNCTIONS(Set.of("builtin-functions", "الدوال-المدمجة")),
+				JVM_FUNCTIONS(Set.of("jvm-functions", "دوال-جافا")),
+				EXIT(Set.of("exit", "خروج")),
+				HISTORY(Set.of("history", "الأوامر-المحفوظة")),
+				CURRENT_SESSION_HISTORY(Set.of("current-session-history", "الأوامر-المحفوظة-الحالية")),
+				SANITIZE_HISTORY(Set.of("sanitize-history", "تنظيف-الأوامر-المحفوظة")),
+				PURGE_HISTORY(Set.of("purge-history", "مسح-الأوامر-المحفوظة"));
+
+				private final Set<String> aliases;
+
+				/**
+				 * Constructs a manual command with the given set of aliases.
+				 *
+				 * @param aliases the set of aliases for this command (English and Arabic)
+				 */
+				ManCommand(Set<String> aliases) {
+					this.aliases = aliases;
+				}
+
+				/**
+				 * Checks if the input string matches any alias of this manual command.
+				 *
+				 * @param input the input string to check
+				 * @return {@code true} if the input matches any alias, {@code false} otherwise
+				 */
+				boolean matches(String input) {
+					String command = input.trim().toLowerCase(ARABIC_LOCALE);
+					return aliases.contains(command);
+				}
+
+				/**
+				 * Returns the set of aliases for this manual command.
+				 *
+				 * @return the set of aliases
+				 */
+				Set<String> getAliases() {
+					return aliases;
+				}
+
+				/**
+				 * Returns a set of all aliases for all manual commands.
+				 *
+				 * @return a {@link Set} containing all aliases
+				 */
+				static Set<String> getAllAliases() {
+					Set<String> all = new HashSet<>();
+					for (ManCommand cmd : ManCommand.values()) {
+						all.addAll(cmd.getAliases());
+					}
+					return all;
+				}
+			}
+
+			/** The name of this command. */
 			private static final String NAME = "man";
+			/** The start time when the command was initialized. */
+			private static final Instant START_TIME = Instant.now();
+			/** Marker value to skip processing certain entries. */
 			private static final String SKIP = "SKIP";
+			/** Number of items to display per page in paginated output. */
 			private static final int PAGE_SIZE = 5;
+			/** Path to the manual directory relative to the JAR. */
 			private final Path manualDir = Paths.get(getJarDirectory().getParent() + "/manual");
+			/** List of all classes known to the manual. */
 			private final List<String> classes = new CopyOnWriteArrayList<>();
+			/** List of classes accessible in the current context. */
 			private final List<String> accessibleClasses = new CopyOnWriteArrayList<>();
+			/** List of classes that can be instantiated. */
 			private final List<String> instantiableClasses = new CopyOnWriteArrayList<>();
+			/** List of all built-in functions available. */
 			private final List<String> builtinFunctions = new CopyOnWriteArrayList<>();
+			/** List of JVM/Java functions available. */
 			private final List<String> jvmFunctions = new CopyOnWriteArrayList<>();
+			/** Filtered results for classes or functions after applying user input. */
 			private final List<String> filteredClassesOrFunctions = new CopyOnWriteArrayList<>();
 
+			/** Interactive line reader for user input. */
 			private LineReader reader;
+			/** Mapping of topic names to their corresponding documentation paths. */
 			private Map<String, Path> topics;
 
 			/**
@@ -873,6 +1005,8 @@ public final class Naftah {
 				setupKeyBindingsConfig(reader);
 
 				clearScreen();
+
+				History history = reader.getHistory();
 
 				String line = null;
 
@@ -906,7 +1040,7 @@ public final class Naftah {
 							continue;
 						}
 
-						var matchedManagementCommand = checkManagementCommands(line);
+						var matchedManagementCommand = checkManagementCommands(line, history);
 
 						if (!matchedManagementCommand) {
 							if (topics.containsKey(line)) {
@@ -986,7 +1120,7 @@ public final class Naftah {
 					}
 					finally {
 						// Save history explicitly (though it's usually done automatically)
-						reader.getHistory().save();
+						history.save();
 					}
 				}
 			}
@@ -1021,82 +1155,140 @@ public final class Naftah {
 			}
 
 			/**
-			 * Processes and executes management (meta) commands entered by the user.
-			 * <p>
-			 * This method parses the given input line and checks whether it corresponds
-			 * to a supported management command. Supported commands allow the user to:
+			 * Processes and executes management (meta) commands entered by the user in the interactive Naftah manual.
+			 *
+			 * <p>This method parses the given input line and determines if it corresponds to a supported
+			 * management command. Supported commands allow the user to:</p>
 			 * <ul>
 			 * <li>Display usage/help instructions</li>
 			 * <li>List available topics</li>
 			 * <li>List Java classes, accessible classes, or instantiable classes</li>
 			 * <li>List builtin (Naftah) functions or JVM functions</li>
 			 * <li>Filter any of the above lists by a search text</li>
+			 * <li>View or manage command history</li>
 			 * <li>Exit the program</li>
 			 * </ul>
-			 * </p>
 			 *
-			 * <p>
-			 * Commands may be written in either English or Arabic. Some commands optionally
-			 * accept a search text argument, in which case only entries matching the given
-			 * search text are displayed.
-			 * </p>
+			 * <p>Commands may be entered in either English or Arabic. Some commands optionally accept
+			 * a search text argument, in which case only entries matching the search text are displayed.</p>
 			 *
-			 * <p>
-			 * When a recognized command is matched, this method performs the corresponding
-			 * action (such as printing paginated results) and returns {@code true}.
-			 * If the input does not match any known management command, no action is taken
-			 * and {@code false} is returned.
-			 * </p>
+			 * <p>When a recognized command is matched, this method executes the corresponding action
+			 * (e.g., printing paginated results, filtering lists, or updating the command history)
+			 * and returns {@code true}. If the input does not match any known management command,
+			 * no action is taken and {@code false} is returned.</p>
 			 *
-			 * @param line the raw input command line provided by the user
-			 * @return {@code true} if the input matches a known management command and an
-			 *         action was executed; {@code false} otherwise
+			 * <p><strong>Examples of supported commands:</strong></p>
+			 * <ul>
+			 * <li>{@code usage / مساعدة} – Display detailed instructions for the interactive manual</li>
+			 * <li>{@code list / المواضيع} – List all available documentation topics</li>
+			 * <li>{@code classes <search> / الأصناف <نص البحث>} – Show Java classes optionally filtered by a search
+			 * term</li>
+			 * <li>{@code accessible-classes / الأصناف-المتاحة} – Show accessible classes</li>
+			 * <li>{@code instantiable-classes / الأصناف-القابلة-للتهيئة} – Show classes that can be instantiated</li>
+			 * <li>{@code builtin-functions / الدوال-المدمجة} – List Naftah builtin functions</li>
+			 * <li>{@code jvm-functions / دوال-جافا} – List available JVM/Java functions</li>
+			 * <li>{@code history / الأوامر-المحفوظة} – Display all saved REPL commands</li>
+			 * <li>{@code exit / خروج} – Exit the interactive session</li>
+			 * </ul>
+			 *
+			 * <p>Commands that accept search text (e.g., classes or functions) will filter results
+			 * and display them in a paginated format. The filtering uses the {@link #filteredClassesOrFunctions}
+			 * list, and paginated output is handled by {@link #printPaginated(Target, List)}.</p>
+			 *
+			 * @param line    the raw input command line provided by the user
+			 * @param history the REPL command history used for displaying, sanitizing, or purging entries
+			 * @return {@code true} if the input matched a known management command and an action was executed;
+			 *         {@code false} if the input did not match any known command
 			 * @throws UserInterruptException if the input corresponds to an exit command
-			 *                                (for example {@code "exit"} or {@code "خروج"}), indicating that the
-			 *                                user session should be terminated
+			 *                                (for example {@code "exit"} or {@code "خروج"}), signaling that
+			 *                                the interactive session should be terminated
+			 * @throws IOException            if an I/O error occurs during reading, filtering, or paginated output
+			 * @see #printPaginated(Target, List)
+			 * @see #filteredClassesOrFunctions
+			 * @see ManualCommand.ManCommand
+			 * @see ManualCommand.Target
 			 */
-			private boolean checkManagementCommands(String line) {
+			private boolean checkManagementCommands(String line, History history) throws IOException {
 				var matched = false;
 				String command = line.trim().toLowerCase(ARABIC_LOCALE);
-				if (List.of("usage", "مساعدة").contains(command)) {
-
+				if (ManCommand.USAGE.matches(command)) {
 					matched = true;
 					padText(
 							"""
-							\t- المواضيع أو list -> المواضيع المتوفرة.
-							\t- <اسم الموضوع> -> فتح دليل الموضوع.
-							\t- الأصناف أو classes -> الأصناف المتوفرة في Java مع أسمائها المؤهلة بالعربية.
-							\t- الأصناف <نص البحث> أو classes <search text> -> الأصناف المتوفرة في Java المطابقة لنص البحث مع أسمائها المؤهلة بالعربية.
-							\t- الأصناف-المتاحة أو accessible-classes -> الأصناف المتاحة في Java مع أسمائها المؤهلة بالعربية.
-							\t- الأصناف-المتاحة <نص البحث> أو accessible-classes <search text> -> الأصناف المتاحة في Java المطابقة لنص البحث مع أسمائها المؤهلة بالعربية.
-							\t- الأصناف-القابلة-للتهيئة أو الأصناف-القابلة-للصنع أو instantiable-classes -> الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية.
-							\t- الأصناف-القابلة-للتهيئة <نص البحث> أو الأصناف-القابلة-للصنع <نص البحث> أو instantiable-classes <search text> -> الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية.
-							\t- الدوال-المدمجة أو builtin-functions -> الدوال المدمجة في نظام نفطه.
-							\t- الدوال-المدمجة <نص البحث> أو builtin-functions <search text> -> الدوال المدمجة في نظام نفطه المطابقة لنص البحث.
-							\t- دوال-جافا أو jvm-functions -> دوال JVM المتوفرة مع استدعاءاتها المؤهلة بالعربية.
-							\t- دوال-جافا <نص البحث> أو jvm-functions <search text> -> دوال JVM المتوفرة المطابقة لنص البحث مع استدعاءاتها المؤهلة بالعربية.
-							\t- <الاسم المؤهل لصنف Java> -> تحويل الاسم إلى الصيغة العربية (نفطه).
-							\t- مساعدة أو usage -> عرض هذه التعليمات.
-							\t- خروج أو exit -> إنهاء البرنامج.
+							أوامر الواجهة التفاعلية للكتيبات التقنية لنفطه:
+
+							- المواضيع أو list -> المواضيع المتوفرة.
+
+							- <اسم الموضوع> -> فتح دليل الموضوع.
+
+							- الأصناف أو classes -> الأصناف المتوفرة في Java مع أسمائها المؤهلة بالعربية.
+
+							- الأصناف <نص البحث> أو classes <search text> -> الأصناف المتوفرة في Java المطابقة لنص البحث مع أسمائها المؤهلة بالعربية.
+
+							- الأصناف-المتاحة أو accessible-classes -> الأصناف المتاحة في Java مع أسمائها المؤهلة بالعربية.
+
+							- الأصناف-المتاحة <نص البحث> أو accessible-classes <search text> -> الأصناف المتاحة في Java المطابقة لنص البحث مع أسمائها المؤهلة بالعربية.
+
+							- الأصناف-القابلة-للتهيئة أو الأصناف-القابلة-للصنع أو instantiable-classes -> الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية.
+
+							- الأصناف-القابلة-للتهيئة <نص البحث> أو الأصناف-القابلة-للصنع <نص البحث> أو instantiable-classes <search text> -> الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية.
+
+							- الدوال-المدمجة أو builtin-functions -> الدوال المدمجة في نظام نفطه.
+
+							- الدوال-المدمجة <نص البحث> أو builtin-functions <search text> -> الدوال المدمجة في نظام نفطه المطابقة لنص البحث.
+
+							- دوال-جافا أو jvm-functions -> دوال JVM المتوفرة مع استدعاءاتها المؤهلة بالعربية.
+
+							- دوال-جافا <نص البحث> أو jvm-functions <search text> -> دوال JVM المتوفرة المطابقة لنص البحث مع استدعاءاتها المؤهلة بالعربية.
+
+							- <الاسم المؤهل لصنف Java> -> تحويل الاسم إلى الصيغة العربية (نفطه).
+
+							- history أو الأوامر-المحفوظة -> عرض كامل الأوامر المحفوظة في سجل المفسّر.
+
+							- current-session-history أو الأوامر-المحفوظة-الحالية -> عرض أوامر الجلسة الحالية فقط.
+
+							- sanitize-history أو تنظيف-الأوامر-المحفوظة -> تنظيف تاريخ الأوامر المحفوظة وحذف الإدخالات غير الصالحة.
+
+							- purge-history أو مسح-السجل -> حذف جميع الأوامر من السجل وتنظيف الإدخالات غير الصالحة.
+
+							- مساعدة أو usage -> عرض هذه التعليمات.
+
+							- خروج أو exit -> إنهاء البرنامج.
 							""",
 							true);
 				}
-				else if (List.of("list", "المواضيع").contains(command)) {
+				else if (ManCommand.LIST_TOPICS.matches(command)) {
 					matched = true;
 					padText("المواضيع المتوفرة:", true);
 					topics
 							.keySet()
-							.forEach(topic -> padText("\t- " + ScriptUtils
+							.forEach(topic -> padText("\t\t- " + ScriptUtils
 									.transliterateToArabicScriptDefault(topic)[0] + " - " + topic, true));
 				}
-				else if (List.of("exit", "خروج").contains(command)) {
+				else if (ManCommand.EXIT.matches(command)) {
 					throw new UserInterruptException(line);
+				}
+				else if (ManCommand.HISTORY.matches(command)) {
+					matched = true;
+					REPLHelper.printFullHistory(history, ManCommand.getAllAliases());
+				}
+				else if (ManCommand.CURRENT_SESSION_HISTORY.matches(command)) {
+					matched = true;
+					REPLHelper.printHistory(history, ManCommand.getAllAliases(), START_TIME);
+				}
+				else if (ManCommand.SANITIZE_HISTORY.matches(command)) {
+					matched = true;
+					REPLHelper.sanitizeHistory(history, ManCommand.getAllAliases());
+				}
+				else if (ManCommand.PURGE_HISTORY.matches(command)) {
+					matched = true;
+					history.purge();
 				}
 				else {
 					String searchFormatter = "المطابقة لنص البحث %s";
 					var commandParts = command.split("\\s");
 					command = commandParts[0].trim();
-					if (List.of("classes", "الأصناف").contains(command)) {
+					if (ManCommand.CLASSES.matches(command)) {
 						matched = true;
 						var target = Target.CLASSES;
 						String baseMsg = "الأصناف المتوفرة في Java مع أسمائها المؤهلة بالعربية";
@@ -1111,7 +1303,7 @@ public final class Naftah {
 							printPaginated(target, classes);
 						}
 					}
-					else if (List.of("accessible-classes", "الأصناف-المتاحة").contains(command)) {
+					else if (ManCommand.ACCESSIBLE_CLASSES.matches(command)) {
 						matched = true;
 						var target = Target.ACCESSIBLE_CLASSES;
 						String baseMsg = "الأصناف المتاحة في Java مع أسمائها المؤهلة بالعربية";
@@ -1126,24 +1318,22 @@ public final class Naftah {
 							printPaginated(target, accessibleClasses);
 						}
 					}
-					else if (List
-							.of("instantiable-classes", "الأصناف-القابلة-للصنع", "الأصناف-القابلة-للتهيئة")
-							.contains(command)) {
-								matched = true;
-								var target = Target.INSTANTIABLE_CLASSES;
-								String baseMsg = "الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية";
-								if (commandParts.length > 1) {
-									String searchText = getSearchTextFromCommand(commandParts);
-									padText(baseMsg + searchFormatter.formatted(searchText) + ":", true);
-									filteredClassesOrFunctions.clear();
-									printPaginated(target, filteredClassesOrFunctions, searchText);
-								}
-								else {
-									padText(baseMsg + ":", true);
-									printPaginated(target, instantiableClasses);
-								}
-							}
-					else if (List.of("builtin-functions", "الدوال-المدمجة").contains(command)) {
+					else if (ManCommand.INSTANTIABLE_CLASSES.matches(command)) {
+						matched = true;
+						var target = Target.INSTANTIABLE_CLASSES;
+						String baseMsg = "الأصناف القابلة للتهيئة في Java مع أسمائها المؤهلة بالعربية";
+						if (commandParts.length > 1) {
+							String searchText = getSearchTextFromCommand(commandParts);
+							padText(baseMsg + searchFormatter.formatted(searchText) + ":", true);
+							filteredClassesOrFunctions.clear();
+							printPaginated(target, filteredClassesOrFunctions, searchText);
+						}
+						else {
+							padText(baseMsg + ":", true);
+							printPaginated(target, instantiableClasses);
+						}
+					}
+					else if (ManCommand.BUILTIN_FUNCTIONS.matches(command)) {
 						matched = true;
 						var target = Target.BUILTIN_FUNCTIONS;
 						String baseMsg = "الدوال المدمجة في نظام نفطه";
@@ -1158,7 +1348,7 @@ public final class Naftah {
 							printPaginated(target, builtinFunctions);
 						}
 					}
-					else if (List.of("jvm-functions", "دوال-جافا").contains(command)) {
+					else if (ManCommand.JVM_FUNCTIONS.matches(command)) {
 						matched = true;
 						var target = Target.JVM_FUNCTIONS;
 						String baseMsg = "دوال JVM المتوفرة مع استدعاءاتها المؤهلة بالعربية";
@@ -1835,7 +2025,33 @@ public final class Naftah {
 
 
 		/**
-		 * The 'shell' subcommand that starts the interactive Naftah REPL.
+		 * The 'shell' subcommand that starts the interactive Naftah REPL (Read-Eval-Print Loop).
+		 *
+		 * <p>This command launches an interactive programming environment where users can enter
+		 * single lines of Naftah code, evaluate them immediately, and see the results. It provides
+		 * a REPL interface for rapid experimentation, learning, and testing of Naftah scripts.</p>
+		 *
+		 * <p>The REPL supports both English and Arabic commands, allowing users to:</p>
+		 * <ul>
+		 * <li>Exit the session</li>
+		 * <li>Display help instructions</li>
+		 * <li>Reset the session</li>
+		 * <li>List variables, functions, and implementations</li>
+		 * <li>Inspect imports</li>
+		 * <li>Save session state</li>
+		 * <li>View, sanitize, or purge command history</li>
+		 * </ul>
+		 *
+		 * <p>Example usage:</p>
+		 * <pre>{@code
+		 * naftah shell
+		 * :help                 // display available REPL commands
+		 * :vars                 // list defined variables
+		 * :functions            // list defined functions
+		 * :exit                 // terminate the REPL session
+		 * }</pre>
+		 *
+		 * @see ShellCommand.ReplCommand
 		 */
 		@Command(   name = ShellCommand.NAME,
 					customSynopsis = "naftah shell [options] [filename] [args]",
@@ -1846,7 +2062,91 @@ public final class Naftah {
 					},
 					sortOptions = false)
 		private static final class ShellCommand extends NaftahCommand {
+			/**
+			 * Enum representing the REPL-specific commands supported in the Naftah interactive shell.
+			 *
+			 * <p>Each command may have multiple aliases, supporting both English and Arabic inputs.
+			 * Commands can be matched against user input using {@link #matches(String)}.</p>
+			 *
+			 * <p>Common REPL commands include:</p>
+			 * <ul>
+			 * <li>{@link #EXIT} – terminate the REPL session</li>
+			 * <li>{@link #HELP} – display help information</li>
+			 * <li>{@link #RESET} – reset the REPL session</li>
+			 * <li>{@link #VARS} – list variables</li>
+			 * <li>{@link #FUNCTIONS} – list functions</li>
+			 * <li>{@link #IMPLEMENTATIONS} – list implementations</li>
+			 * <li>{@link #IMPORTS} – show imported modules</li>
+			 * <li>{@link #SAVE} – save the current session state</li>
+			 * <li>{@link #HISTORY}, {@link #CURRENT_SESSION_HISTORY}, {@link #SANITIZE_HISTORY}, {@link #PURGE_HISTORY}
+			 * – manage command history</li>
+			 * <li>{@link #DROP} – drop variables or definitions</li>
+			 * </ul>
+			 */
+			private enum ReplCommand {
+				EXIT(Set.of(":exit", ":خروج")),
+				HELP(Set.of(":help", ":مساعدة")),
+				RESET(Set.of(":reset", ":إعادة_ضبط")),
+				VARS(Set.of(":vars", ":المتغيرات")),
+				FUNCTIONS(Set.of(":functions", ":الدوال")),
+				IMPLEMENTATIONS(Set.of(":implementations", ":السلوكيات")),
+				IMPORTS(Set.of(":imports", ":الواردات")),
+				SAVE(Set.of(":save", ":حفظ")),
+				HISTORY(Set.of(":history", ":الأوامر_المحفوظة")),
+				CURRENT_SESSION_HISTORY(Set.of(":current_session_history", ":الأوامر_المحفوظة_الحالية")),
+				SANITIZE_HISTORY(Set.of(":sanitize_history", ":تنظيف_الأوامر_المحفوظة")),
+				PURGE_HISTORY(Set.of(":purge_history", ":مسح_الأوامر_المحفوظة")),
+				DROP(Set.of(":drop", ":حذف"));
+
+				private final Set<String> aliases;
+
+				/**
+				 * Constructs a repl command with the given set of aliases.
+				 *
+				 * @param aliases the set of aliases for this command (English and Arabic)
+				 */
+				ReplCommand(Set<String> aliases) {
+					this.aliases = aliases;
+				}
+
+				/**
+				 * Checks if the input string matches any alias of this REPL command.
+				 *
+				 * @param input the user input to check
+				 * @return {@code true} if the input matches one of the command aliases, {@code false} otherwise
+				 */
+				boolean matches(String input) {
+					String command = input.trim().toLowerCase(ARABIC_LOCALE);
+					return aliases.contains(command);
+				}
+
+				/**
+				 * Returns all aliases for this REPL command.
+				 *
+				 * @return a set of aliases for this command
+				 */
+				Set<String> getAliases() {
+					return aliases;
+				}
+
+				/**
+				 * Returns a set of all aliases for all REPL commands.
+				 *
+				 * @return a set of all REPL command aliases
+				 */
+				static Set<String> getAllAliases() {
+					Set<String> all = new HashSet<>();
+					for (ReplCommand cmd : ReplCommand.values()) {
+						all.addAll(cmd.getAliases());
+					}
+					return all;
+				}
+			}
+
+			/** The name of the 'shell' subcommand and the REPL session start timestamp. */
 			private static final String NAME = "shell";
+			/** The timestamp marking when the REPL session was started. */
+			private static final Instant START_TIME = Instant.now();
 
 			/**
 			 * {@inheritDoc}
@@ -1872,7 +2172,7 @@ public final class Naftah {
 
 
 				padText("""
-						مرحبًا بك في الواجهة التفاعلية للكتيبات التقنية لنفطه.
+						مرحبًا بك في واجهة حلقة القراءة والتقييم والتنفيذ التفاعلي (REPL) لنفطه:
 
 						يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
 						Alt+L → نسخ آخر نص مطبوع إلى الحافظة
@@ -1902,7 +2202,11 @@ public final class Naftah {
 							continue;
 						}
 
-						checkManagementCommands(line);
+						var matchedManagementCommand = checkManagementCommands(line, history);
+
+						if (matchedManagementCommand) {
+							continue;
+						}
 
 						if (!line.isBlank()) {
 							fullLine.append(line);
@@ -1972,21 +2276,184 @@ public final class Naftah {
 			}
 
 			/**
-			 * Checks for management commands like ':exit' or 'خروج:' and handles them accordingly.
+			 * Checks and executes REPL management commands entered by the user.
 			 *
-			 * @param line the input line to check
+			 * <p>
+			 * This method parses the provided input line and determines if it matches any
+			 * recognized REPL management command. Supported commands allow the user to:
+			 * </p>
+			 *
+			 * <ul>
+			 * <li>Exit the REPL session (:exit or :خروج)</li>
+			 * <li>Display the help menu (:help or :مساعدة)</li>
+			 * <li>Reset the REPL session (:reset or :إعادة_ضبط)</li>
+			 * <li>List defined variables (:vars or :المتغيرات)</li>
+			 * <li>List defined functions (:functions or :الدوال)</li>
+			 * <li>List defined implementations and their functions (:implementations or :السلوكيات)</li>
+			 * <li>List imported elements (:imports or :الواردات)</li>
+			 * <li>Save the current session to a snippet file (:save or :حفظ)</li>
+			 * <li>View the full command history (:history or :الأوامر_المحفوظة)</li>
+			 * <li>View current session command history (:current_session_history or :الأوامر_المحفوظة_الحالية)</li>
+			 * <li>Sanitize command history (:sanitize_history or :تنظيف_الأوامر_المحفوظة)</li>
+			 * <li>Purge the command history (:purge_history or :مسح_الأوامر_المحفوظة)</li>
+			 * <li>Drop specific variables, functions, implementations, or imports (:drop)</li>
+			 * </ul>
+			 *
+			 * <p>
+			 * Commands may be entered in either English or Arabic. Some commands, like
+			 * <code>:drop</code>, accept additional arguments to specify which elements
+			 * to remove. When a recognized command is executed, this method performs the
+			 * corresponding action (e.g., clearing variables, displaying lists, paginating output)
+			 * and returns {@code true}. If the input does not match any known management command,
+			 * {@code false} is returned.
+			 * </p>
+			 *
+			 * @param line    the input line to check for management commands
+			 * @param history the REPL session history used for history-related commands
+			 * @return {@code true} if the input matches and executes a known REPL management command;
+			 *         {@code false} otherwise
+			 * @throws IOException            if an I/O error occurs while processing the command
+			 * @throws UserInterruptException if the input corresponds to an exit command
+			 *                                (for example ":exit" or ":خروج"), indicating
+			 *                                that the user session should be terminated
 			 */
-			private void checkManagementCommands(String line) {
-				/*
-				 * TODO: add support for :reset : reset repl :list : list all valid code
-				 * snippets :drop : drops a variable :vars : list variables :functions : list
-				 * created functions :save : save the valid codes snippets into a file :history
-				 * : shows full history :help : shows help of commands
-				 */
+			private boolean checkManagementCommands(String line, History history) throws IOException {
+				var matched = false;
+				String command = line.trim().toLowerCase(ARABIC_LOCALE);
 
-				if (List.of(":exit", ":خروج").contains(line.trim())) {
+				if (ReplCommand.EXIT.matches(command)) {
 					throw new UserInterruptException(line);
 				}
+				else if (ReplCommand.HELP.matches(command)) {
+					matched = true;
+					padText(
+							"""
+							أوامر واجهة حلقة القراءة والتقييم والتنفيذ التفاعلي (REPL) لنفطه:
+
+							- :vars أو :المتغيرات -> عرض جميع المتغيرات المعرّفة في الجلسة الحالية.
+
+							- :functions أو :الدوال -> عرض جميع الدوال المعرّفة في الجلسة الحالية.
+
+							- :implementations أو :السلوكيات -> عرض السلوكيات المعرّفة ودوال كل سلوك.
+
+							- :imports أو :الواردات -> عرض جميع الواردات (imports) المستخدمة في الجلسة.
+
+							- :drop أو :حذف -> حذف المتغيرات، الدوال، السلوكيات، أو الواردات المحددة.
+
+							\t\t\t\t- :drop :vars أو :حذف :المتغيرات -> حذف المتغيرات المحددة (مثال: :drop :vars أ,ب,ت)
+
+							\t\t\t\t- :drop :functions أو :حذف :الدوال -> حذف الدوال المحددة (مثال: :drop :functions د1,د2)
+
+							\t\t\t\t- :drop :implementations أو :حذف :السلوكيات -> حذف السلوكيات المحددة (مثال: :drop :implementations س1,س2)
+
+							\t\t\t\t- :drop :imports أو :حذف :الواردات -> حذف الواردات المحددة (مثال: :drop :imports وارد)
+
+							- :reset أو :إعادة_ضبط -> إعادة ضبط الجلسة الحالية (مسح المتغيرات، الدوال، السلوكيات، والواردات).
+
+							- :history أو :الأوامر_المحفوظة -> عرض كامل الأوامر المحفوظة في سجل المفسّر.
+
+							- :current_session_history أو :الأوامر_المحفوظة_الحالية -> عرض أوامر الجلسة الحالية فقط.
+
+							- :sanitize_history أو :تنظيف_الأوامر_المحفوظة -> تنظيف تاريخ الأوامر المحفوظة وحذف الإدخالات غير الصالحة.
+
+							- :purge_history أو :مسح_السجل -> حذف جميع الأوامر من السجل وتنظيف الإدخالات غير الصالحة.
+
+							- :save أو :حفظ -> حفظ أوامر الجلسة الحالية في ملف مقتطف (snippet).
+
+							- :help أو :مساعدة -> عرض هذه القائمة.
+
+							- :exit أو :خروج -> إنهاء جلسة نفطه والخروج .
+							""",
+							true
+					);
+				}
+				else if (ReplCommand.RESET.matches(command)) {
+					matched = true;
+					REPLContext.clear();
+				}
+				else if (ReplCommand.VARS.matches(command)) {
+					matched = true;
+					REPLContext
+							.getVariables()
+							.forEach(declaredVariable -> padText("   - " + declaredVariable.toString() + "\n", true));
+				}
+				else if (ReplCommand.FUNCTIONS.matches(command)) {
+					matched = true;
+					REPLContext
+							.getFunctions()
+							.forEach(declaredFunction -> padText("   - " + declaredFunction.toString() + "\n", true));
+				}
+				else if (ReplCommand.IMPLEMENTATIONS.matches(command)) {
+					matched = true;
+					REPLContext
+							.getImplementations()
+							.forEach(declaredImplementation -> {
+								padText("   - " + declaredImplementation.toString() + "\n", true);
+								declaredImplementation
+										.getImplementationFunctions()
+										.values()
+										.forEach(declaredFunction -> padText("	   - " + declaredFunction
+												.toString() + "\n", true));
+							});
+				}
+				else if (ReplCommand.IMPORTS.matches(command)) {
+					matched = true;
+					REPLContext
+							.getImports()
+							.forEach(importElement -> padText("   - " + importElement + "\n", true));
+				}
+				else if (ReplCommand.SAVE.matches(command)) {
+					matched = true;
+					REPLHelper.saveHistorySnippet(history, ReplCommand.getAllAliases(), START_TIME);
+				}
+				else if (ReplCommand.HISTORY.matches(command)) {
+					matched = true;
+					REPLHelper.printFullHistory(history, ReplCommand.getAllAliases());
+				}
+				else if (ReplCommand.CURRENT_SESSION_HISTORY.matches(command)) {
+					matched = true;
+					REPLHelper.printHistory(history, ReplCommand.getAllAliases(), START_TIME);
+				}
+				else if (ReplCommand.SANITIZE_HISTORY.matches(command)) {
+					matched = true;
+					REPLHelper.sanitizeHistory(history, ReplCommand.getAllAliases());
+				}
+				else if (ReplCommand.PURGE_HISTORY.matches(command)) {
+					matched = true;
+					history.purge();
+				}
+				else {
+					var commandParts = command.replaceAll("\\s*,\\s*", ",").split("\\s");
+					command = commandParts[0].trim();
+
+					if (ReplCommand.DROP.matches(command)) {
+						if (commandParts.length == 3) {
+							command = commandParts[1].trim();
+							if (ReplCommand.VARS.matches(command)) {
+								matched = true;
+								String[] ids = commandParts[2].split(",");
+								REPLContext.dropVariables(ids);
+							}
+							else if (ReplCommand.FUNCTIONS.matches(command)) {
+								matched = true;
+								String[] ids = commandParts[2].split(",");
+								REPLContext.dropFunctions(ids);
+							}
+							else if (ReplCommand.IMPLEMENTATIONS.matches(command)) {
+								matched = true;
+								String[] ids = commandParts[2].split(",");
+								REPLContext.dropImplementations(ids);
+							}
+							else if (ReplCommand.IMPORTS.matches(command)) {
+								matched = true;
+								String[] ids = commandParts[2].split(",");
+								REPLContext.dropImports(ids);
+							}
+						}
+					}
+				}
+
+				return matched;
 			}
 		}
 	}
