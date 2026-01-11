@@ -5,23 +5,35 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
+import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
 import org.daiitech.naftah.utils.script.NaftahHighlighter;
 import org.jline.keymap.KeyMap;
 import org.jline.reader.Binding;
 import org.jline.reader.Completer;
 import org.jline.reader.Highlighter;
+import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.MaskingCallback;
@@ -29,6 +41,7 @@ import org.jline.reader.Reference;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedString;
@@ -716,4 +729,161 @@ public final class REPLHelper {
 		Node document = MARKDOWN_PARSER.parse(topicContent);
 		return getMarkdownNodeAsString(document, 0);
 	}
+
+	/**
+	 * Saves a snippet of the REPL history to a timestamped file using the default code validation.
+	 *
+	 * @param history        the REPL history to save
+	 * @param extraValidText additional lines that should always be considered valid
+	 * @param startingFrom   only include entries after this timestamp, or all if null
+	 * @throws IOException if an error occurs while writing the snippet file
+	 */
+	public static void saveHistorySnippet(History history, Set<String> extraValidText, Instant startingFrom)
+			throws IOException {
+		saveHistorySnippet(history, extraValidText, startingFrom, NaftahParserHelper::validateCode);
+	}
+
+	/**
+	 * Saves a snippet of the REPL history to a timestamped file using a custom code validation predicate.
+	 *
+	 * @param history                 the REPL history to save
+	 * @param extraValidText          additional lines that should always be considered valid
+	 * @param startingFrom            only include entries after this timestamp, or all if null
+	 * @param codeValidationPredicate a predicate to determine if a line of code is valid and should be saved
+	 * @throws IOException if an error occurs while writing the snippet file
+	 */
+	public static void saveHistorySnippet(  History history,
+											Set<String> extraValidText,
+											Instant startingFrom,
+											Predicate<String> codeValidationPredicate)
+
+			throws IOException {
+		if (history.isEmpty()) {
+			padText("لا يوجد سجل لحفظه.", true);
+		}
+
+		// Collect snippet
+		String snippet = getHistoryContent(history, extraValidText, startingFrom, codeValidationPredicate);
+
+		// Create a timestamp safe for filenames
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+		String timestamp = LocalDateTime.now().format(formatter);
+
+		// Generate the file path
+		Path filePath = Path.of("naftah-snippet-" + timestamp + ".naftah");
+
+		// Write to file
+		Files
+				.writeString(   filePath,
+								snippet,
+								StandardOpenOption.CREATE,
+								StandardOpenOption.TRUNCATE_EXISTING);
+
+		padText("تم حفظ مقتطف السجل في الملف: " + filePath, true);
+	}
+
+	/**
+	 * Prints the full REPL history to the console using the default code validation.
+	 *
+	 * @param history        the REPL history to print
+	 * @param extraValidText additional lines that should always be considered valid
+	 */
+	public static void printFullHistory(History history, Set<String> extraValidText) {
+		printHistory(history, extraValidText, null);
+	}
+
+	/**
+	 * Prints the REPL history to the console, optionally filtering entries starting from a specific timestamp.
+	 *
+	 * @param history        the REPL history to print
+	 * @param extraValidText additional lines that should always be considered valid
+	 * @param startingFrom   only include entries after this timestamp, or all if null
+	 */
+	public static void printHistory(History history, Set<String> extraValidText, Instant startingFrom) {
+		String snippet = getHistoryContent(history, extraValidText, startingFrom, NaftahParserHelper::validateCode);
+		padText(snippet, true);
+	}
+
+	/**
+	 * Retrieves the content of the REPL history as a string, filtered by timestamp and a validation predicate.
+	 *
+	 * @param history                 the REPL history
+	 * @param extraValidText          additional lines that should always be considered valid
+	 * @param startingFrom            only include entries after this timestamp, or all if null
+	 * @param codeValidationPredicate a predicate to determine if a line of code is valid and should be included
+	 * @return a string containing all valid history lines separated by line breaks
+	 */
+	public static String getHistoryContent( History history,
+											Set<String> extraValidText,
+											Instant startingFrom,
+											Predicate<String> codeValidationPredicate) {
+		// Collect snippet
+		StringBuilder snippet = new StringBuilder();
+		for (History.Entry entry : history) {
+			if (Objects.nonNull(startingFrom) && entry.time().isBefore(startingFrom)) {
+				continue;
+			}
+
+			String line = entry.line();
+			if (extraValidText.contains(line) || codeValidationPredicate.test(line)) {
+				snippet.append(line).append(System.lineSeparator());
+			}
+		}
+
+		return snippet.toString();
+	}
+
+	/**
+	 * Sanitizes the REPL history by removing invalid entries using the default code validation.
+	 * <p>
+	 * Only entries that pass validation or are contained in {@code extraValidText} are preserved.
+	 * The sanitized history replaces the original in memory and on disk.
+	 * </p>
+	 *
+	 * @param history        the REPL history to sanitize
+	 * @param extraValidText additional lines that should always be considered valid
+	 * @throws IOException if an error occurs while saving the sanitized history
+	 */
+	public static void sanitizeHistory(History history, Set<String> extraValidText) throws IOException {
+		sanitizeHistory(history, extraValidText, NaftahParserHelper::validateCode);
+	}
+
+	/**
+	 * Sanitizes the REPL history by removing invalid entries using a custom code validation predicate.
+	 * <p>
+	 * Only entries that pass {@code codeValidationPredicate} or are contained in {@code extraValidText} are preserved.
+	 * The sanitized history replaces the original in memory and on disk.
+	 * </p>
+	 *
+	 * @param history                 the REPL history to sanitize
+	 * @param extraValidText          additional lines that should always be considered valid
+	 * @param codeValidationPredicate a predicate to determine if a line of code is valid and should be preserved
+	 * @throws IOException if an error occurs while saving the sanitized history
+	 */
+	public static void sanitizeHistory( History history,
+										Set<String> extraValidText,
+										Predicate<String> codeValidationPredicate) throws IOException {
+		// Iterate safely using a ListIterator so we can remove entries
+		List<Pair<Instant, String>> sanitizedEntries = new ArrayList<>();
+
+		for (DefaultHistory.Entry entry : history) {
+			String line = entry.line();
+
+			if (extraValidText.contains(line) || codeValidationPredicate.test(line)) {
+				sanitizedEntries.add(ImmutablePair.of(entry.time(), line));
+			}
+		}
+
+		// Clear original history in memory
+		history.purge();
+
+		// Add sanitized entries back with original timestamps
+		for (var entry : sanitizedEntries) {
+			history.add(entry.getLeft(), entry.getRight());
+		}
+
+		// Save sanitized history back to the original file
+		history.save();
+	}
+
 }
