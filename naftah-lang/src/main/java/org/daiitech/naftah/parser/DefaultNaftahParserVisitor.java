@@ -118,6 +118,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasChildOrSubChildOf
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.invokeJvmClassInitializer;
 import static org.daiitech.naftah.parser.NaftahParserHelper.matchImplementationName;
+import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunction;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
@@ -1494,6 +1495,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.of(currentContext.depth,
 											functionDeclarationContext,
 											implementationName);
+
+								prepareDeclaredFunction(defaultNaftahParserVisitor, declaredFunction);
+
 								if (!creatingImplementationFunction) {
 									currentContext.defineFunction(functionName, declaredFunction);
 								}
