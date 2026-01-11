@@ -51,8 +51,6 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
 										"تغيير_اسم_الخيط_الحالي",
 										"تغيير_اسم_الخيط",
 										"نم",
-										"نم_ثواني_و_نانو",
-										"نم_مدة",
 										"تنفيس",
 										"هل_مقاطع",
 										"هل_الخيط_الحالي_مقاطع",
@@ -210,9 +208,9 @@ public final class ConcurrencyBuiltinFunctions {
 	 * @throws IllegalStateException if the sleep is interrupted
 	 */
 	@NaftahFn(
-				name = "نم_ثواني_و_نانو",
+				name = "نم",
 				description = "يوقِف تنفيذ الخيط الحالي لعدد من الملّي ثواني مع ضبط بالنانو ثانية.",
-				usage = "دوال:الخيوط::نم_ثواني_و_نانو(1000 , 500000)",
+				usage = "دوال:الخيوط::نم(1000 , 500000)",
 				parameterTypes = {Number.class, Number.class},
 				returnType = void.class
 	)
@@ -233,9 +231,9 @@ public final class ConcurrencyBuiltinFunctions {
 	 * @throws IllegalStateException if the sleep is interrupted
 	 */
 	@NaftahFn(
-				name = "نم_مدة",
+				name = "نم",
 				description = "يوقِف تنفيذ الخيط الحالي لمدة زمنية محددة.",
-				usage = "دوال:الخيوط::نم_مدة(مدة_)",
+				usage = "دوال:الخيوط::نم(مدة_)",
 				parameterTypes = NaftahDuration.class,
 				returnType = void.class
 	)

@@ -2161,14 +2161,14 @@ public class FunctionCallProvider implements ArgumentsProvider {
 					Arguments
 							.of(true,
 								"""
-								دوال:الخيوط::نم_ثواني_و_نانو(1000؛1000)
+								دوال:الخيوط::نم(1000؛1000)
 								""",
 								None.get(),
 								null),
 					Arguments
 							.of(true,
 								"""
-								دوال:الخيوط::نم_مدة(قيمة_زمنية "مدة 1 ثوان")
+								دوال:الخيوط::نم(قيمة_زمنية "مدة 1 ثوان")
 								""",
 								None.get(),
 								null),
