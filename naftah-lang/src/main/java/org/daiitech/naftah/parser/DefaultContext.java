@@ -3227,4 +3227,16 @@ public class DefaultContext {
 		}
 		return null;
 	}
+
+	/**
+	 * Clears all stored contexts from the global {@link #CONTEXTS} map.
+	 * <p>
+	 * This removes every {@link DefaultContext} instance, effectively resetting
+	 * the entire context tracking system. After calling this method, any
+	 * previously stored contexts are lost.
+	 * </p>
+	 */
+	public static void clear() {
+		CONTEXTS.clear();
+	}
 }
