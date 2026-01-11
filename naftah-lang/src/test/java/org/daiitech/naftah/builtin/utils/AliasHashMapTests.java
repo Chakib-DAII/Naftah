@@ -19,9 +19,9 @@ class AliasHashMapTests {
 		AliasHashMap<String, String> map = new AliasHashMap<>();
 		map.put("mainKey", "value1", "alias1", "alias2");
 
-		assertEquals("value1", map.get("mainKey"));
-		assertEquals("value1", map.get("alias1"));
-		assertEquals("value1", map.get("alias2"));
+		assertEquals("value1", map.get("mainKey").get(0));
+		assertEquals("value1", map.get("alias1").get(0));
+		assertEquals("value1", map.get("alias2").get(0));
 		assertNull(map.get("unknown"));
 	}
 
@@ -37,14 +37,14 @@ class AliasHashMapTests {
 	}
 
 	@Test
-	void overwriteCanonicalValueTest() {
+	void addAnotherCanonicalValueTest() {
 		AliasHashMap<String, String> map = new AliasHashMap<>();
 		map.put("k", "v1", "a1");
 		map.put("k", "v2", "a2");
 
-		assertEquals("v2", map.get("k"));
-		assertEquals("v2", map.get("a2"));
-		assertEquals("v2", map.get("a1"));
+		assertEquals(List.of("v1", "v2"), map.get("k"));
+		assertEquals(List.of("v1", "v2"), map.get("a2"));
+		assertEquals(List.of("v1", "v2"), map.get("a1"));
 	}
 
 	@Test
@@ -98,7 +98,7 @@ class AliasHashMapTests {
 											new Class[]{}))
 				);
 
-		AliasHashMap<String, List<BuiltinFunction>> map = functions
+		AliasHashMap<String, BuiltinFunction> map = functions
 				.stream()
 				.collect(AliasHashMap.toAliasGroupedByName());
 
