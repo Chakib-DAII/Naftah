@@ -2569,8 +2569,10 @@ public final class NaftahParserHelper {
 					if (Objects.nonNull(functionIndex)) {
 						var selectedFunction = getFunction(jvmExecutables, functionIndex);
 
-						Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
-								.isStatic() ? null : args.remove(0).getRight();
+						Object possibleInstance = null;
+						if (selectedFunction instanceof JvmFunction jvmFunction && !jvmFunction.isStatic()) {
+							possibleInstance = args.remove(0).getRight();
+						}
 
 						result = invokeFunction(functionName,
 												forceInvocation,
