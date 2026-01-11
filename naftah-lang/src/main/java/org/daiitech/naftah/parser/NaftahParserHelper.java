@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -67,6 +68,7 @@ import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.errors.ExceptionUtils.INVALID_INSTANCE_METHOD_CALL_MSG;
 import static org.daiitech.naftah.errors.ExceptionUtils.NOTE;
@@ -417,11 +419,14 @@ public final class NaftahParserHelper {
 									(List<DeclaredParameter>) visit(naftahParserBaseVisitor,
 																	function.getParametersContext()));
 		}
-		if (function.getReturnType() == null && hasChild(function.getReturnTypeContext())) {
-			function.setReturnType((JavaType) visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
-		}
-		else {
-			function.setReturnType(JavaType.ofObject());
+
+		if (function.getReturnType() == null) {
+			if (hasChild(function.getReturnTypeContext())) {
+				function.setReturnType((JavaType) visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
+			}
+			else {
+				function.setReturnType(JavaType.ofObject());
+			}
 		}
 	}
 
@@ -927,16 +932,21 @@ public final class NaftahParserHelper {
 	 *
 	 * @param constant True if the variable is constant, false if mutable.
 	 * @param name     The name of the variable.
+	 * @param type     the variable type, default {@code JavaType::ofObject}.
 	 * @param value    The value of the variable.
 	 * @return A formatted string representing the declared variable or constant.
 	 */
-	public static String declaredValueToString(boolean constant, String name, Object value) {
-		return "<%s %s = %s>".formatted(constant ? "ثابت" : "متغير", name, Optional.ofNullable(value).map(o -> {
-			if (o instanceof Boolean aBoolean) {
-				return ObjectUtils.booleanToString(aBoolean);
-			}
-			return o;
-		}).orElse(NaftahParserHelper.NULL));
+	public static String declaredValueToString(boolean constant, String name, JavaType type, Object value) {
+		return "<%s %s : %s = %s>"
+				.formatted( constant ? "ثابت" : "متغير",
+							name,
+							getNaftahType(PARSER_VOCABULARY, type),
+							Optional.ofNullable(value).map(o -> {
+								if (o instanceof Boolean aBoolean) {
+									return ObjectUtils.booleanToString(aBoolean);
+								}
+								return o;
+							}).orElse(NaftahParserHelper.NULL));
 	}
 
 	/**
@@ -1838,8 +1848,11 @@ public final class NaftahParserHelper {
 		var bestMatch = findBestExecutable(jvmFunctions, new ArrayList<>(naftahArgs), true);
 
 		var selectedFunction = bestMatch.getLeft();
-		Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
-				.isStatic() ? null : naftahArgs.remove(0).getRight();
+
+		Object possibleInstance = null;
+		if (selectedFunction instanceof JvmFunction jvmFunction && !jvmFunction.isStatic()) {
+			possibleInstance = naftahArgs.remove(0).getRight();
+		}
 
 		return invokeFunction(  functionName,
 								forceInvocation,
@@ -3003,5 +3016,52 @@ public final class NaftahParserHelper {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Validates a snippet of Naftah code without executing it.
+	 *
+	 * <p>
+	 * This method parses the provided script to check for syntax errors or
+	 * other issues that would prevent the code from running successfully.
+	 * The validation is done in a “dry-run” mode—no code is executed, only parsed.
+	 * </p>
+	 *
+	 * <p>
+	 * If the system property defined by {@code DEBUG_PROPERTY} is enabled,
+	 * it is temporarily disabled during validation to avoid debug-related side effects,
+	 * and restored afterward.
+	 * </p>
+	 *
+	 * @param script the Naftah code to validate
+	 * @return {@code true} if the script is syntactically valid; {@code false} if any parsing
+	 *         errors or exceptions are encountered
+	 */
+	public static boolean validateCode(String script) {
+		boolean isDebug = Boolean.getBoolean(DEBUG_PROPERTY);
+
+		if (isDebug) {
+			System.setProperty(DEBUG_PROPERTY, Boolean.toString(false));
+		}
+
+		try {
+
+			var input = getCharStream(false, script);
+
+
+			var parser = prepareRun(input, new BaseErrorListener());
+
+			parser.program();
+
+			return true;
+		}
+		catch (Throwable ignored) {
+			return false;
+		}
+		finally {
+			if (isDebug) {
+				System.setProperty(DEBUG_PROPERTY, String.valueOf(true));
+			}
+		}
 	}
 }
