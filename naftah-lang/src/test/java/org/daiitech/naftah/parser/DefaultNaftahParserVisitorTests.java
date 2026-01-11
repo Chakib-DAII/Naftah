@@ -49,7 +49,6 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.TestUtils.assertBugEquals;
 import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.TestUtils.runScript;
-import static org.daiitech.naftah.parser.DefaultContext.CONTEXTS;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.DefaultContext.cleanClassThreadLocals;
 import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
@@ -98,7 +97,7 @@ class DefaultNaftahParserVisitorTests {
 
 	@BeforeEach
 	void setup() {
-		CONTEXTS.clear();
+		DefaultContext.clear();
 		cleanClassThreadLocals();
 	}
 
