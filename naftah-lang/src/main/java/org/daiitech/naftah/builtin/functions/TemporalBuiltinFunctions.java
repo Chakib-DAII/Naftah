@@ -234,6 +234,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "الوقت_الحالي_بتوقيت",
+				aliases = {"الوقت_الحالي"},
 				description = "الحصول على الوقت الحالي بتوقيت محدد",
 				usage = "الوقت_الحالي_بتوقيت(منطقة)",
 				parameterTypes = {String.class},
@@ -251,6 +252,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "الوقت_الحالي_بإزاحة",
+				aliases = {"الوقت_الحالي"},
 				description = "الحصول على الوقت الحالي بإزاحة زمنية",
 				usage = "الوقت_الحالي_بإزاحة(إزاحة)",
 				parameterTypes = {String.class},
@@ -288,6 +290,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_بتوقيت",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت مع المنطقة الزمنية",
 				usage = "انشاء_الوقت_بتوقيت(ساعة, دقيقة, المنطقة)",
 				parameterTypes = {Number.class, Number.class, String.class},
@@ -307,6 +310,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_بإزاحة",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت مع الإزاحة الزمنية",
 				usage = "انشاء_الوقت_بإزاحة(ساعة, دقيقة, الإزاحة)",
 				parameterTypes = {Number.class, Number.class, String.class},
@@ -326,6 +330,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_مع_ثانية",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من ساعة ودقيقة وثانية",
 				usage = "انشاء_الوقت_مع_ثانية(ساعة, دقيقة, ثانية)",
 				parameterTypes = {Number.class, Number.class, Number.class},
@@ -346,6 +351,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_بتوقيت_مع_ثانية",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت مع المنطقة الزمنية والثانية",
 				usage = "انشاء_الوقت_بتوقيت_مع_ثانية(ساعة, دقيقة, ثانية, المنطقة)",
 				parameterTypes = {Number.class, Number.class, Number.class, String.class},
@@ -370,6 +376,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_بإزاحة_مع_ثانية",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت مع الإزاحة الزمنية والثانية",
 				usage = "انشاء_الوقت_بإزاحة_مع_ثانية(ساعة, دقيقة, ثانية, الإزاحة)",
 				parameterTypes = {Number.class, Number.class, Number.class, String.class},
@@ -394,6 +401,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_مع_نانوثانية",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية",
 				usage = "انشاء_الوقت_مع_نانوثانية(ساعة, دقيقة, ثانية, نانوثانية)",
 				parameterTypes = {Number.class, Number.class, Number.class, Number.class},
@@ -415,6 +423,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_مع_نانوثانية_بتوقيت",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع منطقة زمنية محددة",
 				usage = "انشاء_الوقت_مع_نانوثانية_بتوقيت(ساعة, دقيقة, ثانية, نانوثانية, منطقة)",
 				parameterTypes = {Number.class, Number.class, Number.class, Number.class, String.class},
@@ -445,6 +454,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_مع_الإزاحة_ونانوثانية",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع إزاحة زمنية محددة",
 				usage = "انشاء_الوقت_مع_الإزاحة_ونانوثانية(ساعة, دقيقة, ثانية, نانوثانية, إزاحة)",
 				parameterTypes = {Number.class, Number.class, Number.class, Number.class, String.class},
@@ -471,6 +481,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_ثواني_اليوم",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من العدد الإجمالي للثواني منذ منتصف الليل",
 				usage = "انشاء_الوقت_من_ثواني_اليوم(ثانية_اليوم)",
 				parameterTypes = {Number.class},
@@ -490,6 +501,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_ثواني_اليوم_بتوقيت",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من عدد الثواني منذ منتصف الليل مع منطقة زمنية محددة",
 				usage = "انشاء_الوقت_من_ثواني_اليوم_بتوقيت(ثواني_اليوم, منطقة)",
 				parameterTypes = {Number.class, String.class},
@@ -508,6 +520,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_ثواني_اليوم_بإزاحة",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من عدد الثواني منذ منتصف الليل مع إزاحة زمنية محددة",
 				usage = "انشاء_الوقت_من_ثواني_اليوم_بإزاحة(ثواني_اليوم, إزاحة)",
 				parameterTypes = {Number.class, String.class},
@@ -525,6 +538,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_نانوثواني_اليوم",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل",
 				usage = "انشاء_الوقت_من_نانوثواني_اليوم(نانوثواني_اليوم)",
 				parameterTypes = {Number.class},
@@ -544,6 +558,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل مع منطقة زمنية محددة",
 				usage = "انشاء_الوقت_من_نانوثواني_اليوم_بتوقيت(نانوثواني_اليوم, منطقة)",
 				parameterTypes = {Number.class, String.class},
@@ -563,6 +578,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة",
+				aliases = {"انشاء_الوقت"},
 				description = "انشاء الوقت من عدد النانوثانية منذ منتصف الليل مع إزاحة زمنية محددة",
 				usage = "انشاء_الوقت_من_نانوثواني_اليوم_بإزاحة(نانوثواني_اليوم, إزاحة)",
 				parameterTypes = {Number.class, String.class},
@@ -595,6 +611,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بتقويم",
+				aliases = {"التاريخ_الحالي"},
 				description = "الحصول على التاريخ الحالي بتقويم محدد",
 				usage = "التاريخ_الحالي_بتقويم(تقويم)",
 				parameterTypes = {String.class},
@@ -612,6 +629,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بتوقيت",
+				aliases = {"التاريخ_الحالي"},
 				description = "الحصول على التاريخ الحالي بتوقيت محدد",
 				usage = "التاريخ_الحالي_بتوقيت(منطقة)",
 				parameterTypes = {String.class},
@@ -629,6 +647,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بإزاحة",
+				aliases = {"التاريخ_الحالي"},
 				description = "الحصول على التاريخ الحالي بإزاحة زمنية",
 				usage = "التاريخ_الحالي_بإزاحة(إزاحة)",
 				parameterTypes = {String.class},
@@ -647,6 +666,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بتقويم_وتوقيت",
+				aliases = {"التاريخ_الحالي"},
 				description = "الحصول على التاريخ الحالي بتقويم وتوقيت محددين",
 				usage = "التاريخ_الحالي_بتقويم_وتوقيت(تقويم, منطقة)",
 				parameterTypes = {String.class, String.class},
@@ -665,6 +685,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_الحالي_بتقويم_وإزاحة",
+				aliases = {"التاريخ_الحالي"},
 				description = "الحصول على التاريخ الحالي بتقويم وإزاحة زمنية",
 				usage = "التاريخ_الحالي_بتقويم_وإزاحة(تقويم, إزاحة)",
 				parameterTypes = {String.class, String.class},
@@ -694,6 +715,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة",
+				aliases = {"انشاء_التاريخ"},
 				description = "انشاء التاريخ من اليوم واسم الشهر والسنة",
 				usage = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(يوم, شهر, سنة)",
 				parameterTypes = {Number.class, Object.class, Number.class},
@@ -730,6 +752,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم",
+				aliases = {"انشاء_التاريخ"},
 				description = "انشاء التاريخ من اليوم واسم الشهر والسنة مع تحديد التقويم",
 				usage = "انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم(تقويم, يوم, شهر, سنة)",
 				parameterTypes = {String.class, Number.class, Object.class, Number.class},
@@ -779,6 +802,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بتقويم",
+				aliases = {"التاريخ_والوقت_الحالي"},
 				description = "الحصول على التاريخ والوقت الحاليين بتقويم محدد",
 				usage = "التاريخ_والوقت_الحالي_بتقويم(تقويم)",
 				parameterTypes = {String.class},
@@ -796,6 +820,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بتوقيت",
+				aliases = {"التاريخ_والوقت_الحالي"},
 				description = "الحصول على التاريخ والوقت الحاليين بتوقيت محدد",
 				usage = "التاريخ_والوقت_الحالي_بتوقيت(منطقة)",
 				parameterTypes = {String.class},
@@ -813,6 +838,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بإزاحة",
+				aliases = {"التاريخ_والوقت_الحالي"},
 				description = "الحصول على التاريخ والوقت الحاليين بإزاحة زمنية",
 				usage = "التاريخ_والوقت_الحالي_بإزاحة(إزاحة)",
 				parameterTypes = {String.class},
@@ -831,6 +857,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بتقويم_وتوقيت",
+				aliases = {"التاريخ_والوقت_الحالي"},
 				description = "الحصول على التاريخ والوقت الحاليين بتقويم وتوقيت محددين",
 				usage = "التاريخ_والوقت_الحالي_بتقويم_وتوقيت(تقويم, منطقة)",
 				parameterTypes = {String.class, String.class},
@@ -851,6 +878,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "التاريخ_والوقت_الحالي_بتقويم_وإزاحة",
+				aliases = {"التاريخ_والوقت_الحالي"},
 				description = "الحصول على التاريخ والوقت الحاليين بتقويم وإزاحة زمنية",
 				usage = "التاريخ_والوقت_الحالي_بتقويم_وإزاحة(تقويم, إزاحة)",
 				parameterTypes = {String.class, String.class},
@@ -884,6 +912,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة(سنة, شهر, يوم, ساعة, دقيقة)",
 				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class},
@@ -941,6 +970,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع منطقة " + "زمنية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(سنة, شهر, يوم, ساعة, دقيقة, منطقة)",
 				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, String.class},
@@ -1000,6 +1030,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع إزاحة " + "زمنية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(سنة, شهر, يوم, ساعة, دقيقة, إزاحة)",
 				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, String.class},
@@ -1058,6 +1089,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية(سنة, شهر, يوم, ساعة, دقيقة, ثانية)",
 				parameterTypes = {Number.class, Object.class, Number.class, Number.class, Number.class, Number.class},
@@ -1118,6 +1150,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "مع" + " " + "منطقة زمنية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بتوقيت(سنة, شهر, يوم, ساعة, دقيقة, " + "ثانية, منطقة)",
 				parameterTypes = {
@@ -1189,6 +1222,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "مع" + " " + "إزاحة زمنية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_بإزاحة(سنة, شهر, يوم, ساعة, دقيقة, " + "ثانية, إزاحة)",
 				parameterTypes = {
@@ -1258,6 +1292,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "والنانوثانية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية(سنة, شهر, يوم, ساعة, " + "دقيقة," + " " + "ثانية, نانوثانية)",
 				parameterTypes = {
@@ -1328,6 +1363,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "والنانوثانية مع منطقة زمنية",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت(سنة, شهر, يوم, " + "ساعة," + " " + "دقيقة, ثانية, نانوثانية, منطقة)",
 				parameterTypes = {
@@ -1402,6 +1438,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بإزاحة",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية " + "والنانوثانية مع إزاحة زمنية محددة",
 				usage = "انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بإزاحة(سنة, شهر, يوم, " + "ساعة," + " " + "دقيقة, ثانية, نانوثانية, إزاحة)",
 				parameterTypes = {
@@ -1474,6 +1511,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة(تقويم, سنة, شهر, يوم, ساعة, دقيقة)",
 				parameterTypes = {
@@ -1539,6 +1577,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة مع منطقة زمنية",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, منطقة)",
 				parameterTypes = {
@@ -1608,6 +1647,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة مع إزاحة زمنية",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, إزاحة)",
 				parameterTypes = {
@@ -1677,6 +1717,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية)",
 				parameterTypes = {
@@ -1747,6 +1788,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية مع منطقة زمنية محددة",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, منطقة)",
 				parameterTypes = {
@@ -1821,6 +1863,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية مع إزاحة زمنية محددة",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, إزاحة)",
 				parameterTypes = {
@@ -1895,6 +1938,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية والنانوثانية",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, " + "نانوثانية)",
 				parameterTypes = {
@@ -1970,6 +2014,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية والنانوثانية مع منطقة زمنية محددة",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, " + "نانوثانية, منطقة)",
 				parameterTypes = {
@@ -2049,6 +2094,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة",
+				aliases = {"انشاء_التاريخ_والوقت"},
 				description = "انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة" + " " + "والدقيقة والثانية والنانوثانية مع إزاحة زمنية محددة",
 				usage = "انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, " + "نانوثانية, إزاحة)",
 				parameterTypes = {
@@ -2113,6 +2159,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "تحويل_الى_يوم_منذ_الحقبة",
+				aliases = {"منذ_الحقبة", "يوم_منذ_الحقبة"},
 				description = "يحصل على عدد الأيام منذ 1 يناير 1970 من كائن التاريخ المدعوم",
 				usage = "تحويل_الى_يوم_منذ_الحقبة(كائن_التاريخ)",
 				parameterTypes = {DateSupport.class},
@@ -2130,6 +2177,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_السنة",
+				aliases = {"السنة", "سنة"},
 				description = "الحصول على السنة من نقطة زمنية",
 				usage = "احصل_على_السنة(نقطة_زمنية_)",
 				parameterTypes = {DateSupport.class},
@@ -2147,6 +2195,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_رقم_الشهر",
+				aliases = {"رقم_الشهر", "الشهر", "شهر"},
 				description = "الحصول على الشهر من نقطة زمنية",
 				usage = "احصل_على_رقم_الشهر(نقطة_زمنية_)",
 				parameterTypes = {DateSupport.class},
@@ -2164,6 +2213,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_الشهر",
+				aliases = {"الشهر", "شهر"},
 				description = "الحصول على اسم الشهر من كائن التاريخ أو التاريخ والوقت",
 				usage = "احصل_على_الشهر(كائن_التاريخ)",
 				parameterTypes = {DateSupport.class},
@@ -2181,6 +2231,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_اليوم",
+				aliases = {"اليوم", "يوم", "يوم_الشهر"},
 				description = "الحصول على اليوم من نقطة زمنية",
 				usage = "احصل_على_اليوم(نقطة_زمنية_)",
 				parameterTypes = {DateSupport.class},
@@ -2198,6 +2249,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_يوم_السنة",
+				aliases = {"اليوم", "يوم", "يوم_السنة"},
 				description = "الحصول على رقم اليوم من السنة من كائن التاريخ أو التاريخ والوقت",
 				usage = "احصل_على_يوم_السنة(كائن_التاريخ)",
 				parameterTypes = {DateSupport.class},
@@ -2215,6 +2267,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_يوم_الأسبوع",
+				aliases = {"اليوم", "يوم", "يوم_الأسبوع"},
 				description = "الحصول على اسم يوم الأسبوع من كائن التاريخ أو التاريخ والوقت",
 				usage = "احصل_على_يوم_الأسبوع(كائن_التاريخ)",
 				parameterTypes = {DateSupport.class},
@@ -2232,6 +2285,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "هل_السنة_كبيسة",
+				aliases = {"كبيسة", "سنة_كبيسة"},
 				description = "التحقق مما إذا كانت السنة في كائن التاريخ أو التاريخ والوقت سنة كبيسة",
 				usage = "هل_السنة_كبيسة(كائن_التاريخ)",
 				parameterTypes = {DateSupport.class},
@@ -2249,6 +2303,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "عدد_ايام_الشهر",
+				aliases = {"ايام_الشهر"},
 				description = "الحصول على عدد الأيام في شهر الكائن الزمني المحدد",
 				usage = "عدد_ايام_الشهر(كائن_التاريخ)",
 				parameterTypes = {DateSupport.class},
@@ -2266,6 +2321,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "عدد_ايام_السنة",
+				aliases = {"ايام_السنة"},
 				description = "الحصول على عدد الأيام في سنة الكائن الزمني المحدد",
 				usage = "عدد_ايام_السنة(كائن_التاريخ)",
 				parameterTypes = {DateSupport.class},
@@ -2284,6 +2340,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اضافة_سنوات",
+				aliases = {"اضافة_س", "اضافة"},
 				description = "اضافة عدد محدد من السنوات إلى كائن التاريخ المحدد",
 				usage = "اضافة_سنوات(كائن_التاريخ, عدد_السنوات)",
 				parameterTypes = {DateSupport.class, Number.class},
@@ -2302,6 +2359,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اضافة_اشهر",
+				aliases = {"اضافة_ش", "اضافة"},
 				description = "اضافة عدد محدد من الأشهر إلى كائن التاريخ المحدد",
 				usage = "اضافة_اشهر(كائن_التاريخ, عدد_الأشهر)",
 				parameterTypes = {DateSupport.class, Number.class},
@@ -2320,6 +2378,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اضافة_اسابيع",
+				aliases = {"اضافة_ا", "اضافة"},
 				description = "اضافة عدد محدد من الأسابيع إلى كائن التاريخ المحدد",
 				usage = "اضافة_اسابيع(كائن_التاريخ, عدد_الأسابيع)",
 				parameterTypes = {DateSupport.class, Number.class},
@@ -2338,6 +2397,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اضافة_ايام",
+				aliases = {"اضافة_ي", "اضافة"},
 				description = "اضافة عدد محدد من الأيام إلى كائن التاريخ المحدد",
 				usage = "اضافة_ايام(كائن_التاريخ, عدد_الأيام)",
 				parameterTypes = {DateSupport.class, Number.class},
@@ -2356,6 +2416,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "طرح_سنوات",
+				aliases = {"طرح_س", "طرح"},
 				description = "طرح عدد محدد من السنوات من كائن التاريخ المحدد",
 				usage = "طرح_سنوات(كائن_التاريخ, عدد_السنوات)",
 				parameterTypes = {DateSupport.class, Number.class},
@@ -2374,6 +2435,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "طرح_شهور",
+				aliases = {"طرح_أشهر", "طرح_ش", "طرح"},
 				description = "طرح عدد محدد من الأشهر من كائن التاريخ المحدد",
 				usage = "طرح_شهور(كائن_التاريخ, عدد_الشهور)",
 				parameterTypes = {DateSupport.class, Number.class},
@@ -2392,6 +2454,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "طرح_اسابيع",
+				aliases = {"طرح_ا", "طرح"},
 				description = "طرح عدد محدد من الأسابيع من كائن التاريخ المحدد",
 				usage = "طرح_اسابيع(كائن_التاريخ, عدد_الأسابيع)",
 				parameterTypes = {DateSupport.class, Number.class},
@@ -2410,6 +2473,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "طرح_ايام",
+				aliases = {"طرح_ي", "طرح"},
 				description = "طرح عدد محدد من الأيام من كائن التاريخ المحدد",
 				usage = "طرح_ايام(كائن_التاريخ, عدد_الأيام)",
 				parameterTypes = {DateSupport.class, Number.class},
@@ -2427,6 +2491,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_الساعة",
+				aliases = {"ساعة"},
 				description = "الحصول على الساعة من نقطة زمنية",
 				usage = "احصل_على_الساعة(نقطة_زمنية_)",
 				parameterTypes = {TimeSupport.class},
@@ -2444,6 +2509,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_الدقيقة",
+				aliases = {"دقيقة"},
 				description = "الحصول على الدقيقة من نقطة زمنية",
 				usage = "احصل_على_الدقيقة(نقطة_زمنية_)",
 				parameterTypes = {TimeSupport.class},
@@ -2461,6 +2527,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_الثانية",
+				aliases = {"ثانية"},
 				description = "الحصول على الثانية من نقطة زمنية",
 				usage = "احصل_على_الثانية(نقطة_زمنية_)",
 				parameterTypes = {TimeSupport.class},
@@ -2478,6 +2545,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_الملي_ثانية",
+				aliases = {"احصل_على_الملي", "احصل_على_المللي_ثانية", "ملي", "احصل_على_المللي", "مللي"},
 				description = "الحصول على المللي ثانية من نقطة زمنية",
 				usage = "احصل_على_الملي_ثانية(نقطة_زمنية_)",
 				parameterTypes = {TimeSupport.class},
@@ -2495,6 +2563,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_النانو_ثانية",
+				aliases = {"احصل_على_نانو", "نانو"},
 				description = "الحصول على النانو ثانية من نقطة زمنية",
 				usage = "احصل_على_النانو_ثانية(نقطة_زمنية_)",
 				parameterTypes = {TimeSupport.class},
@@ -2513,6 +2582,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اضافة_ساعات",
+				aliases = {"اضافة_س", "اضافة"},
 				description = "اضافة عدد محدد من الساعات إلى كائن الوقت المحدد",
 				usage = "اضافة_ساعات(كائن_الوقت, عدد_الساعات)",
 				parameterTypes = {TimeSupport.class, Number.class},
@@ -2531,6 +2601,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اضافة_دقائق",
+				aliases = {"اضافة_د", "اضافة"},
 				description = "اضافة عدد محدد من الدقائق إلى كائن الوقت المحدد",
 				usage = "اضافة_دقائق(كائن_الوقت, عدد_الدقائق)",
 				parameterTypes = {TimeSupport.class, Number.class},
@@ -2549,6 +2620,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اضافة_ثواني",
+				aliases = {"اضافة_ث", "اضافة"},
 				description = "اضافة عدد محدد من الثواني إلى كائن الوقت المحدد",
 				usage = "اضافة_ثواني(كائن_الوقت, عدد_الثواني)",
 				parameterTypes = {TimeSupport.class, Number.class},
@@ -2567,6 +2639,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اضافة_نانوثواني",
+				aliases = {"أضف_نانو", "اضافة_ن", "اضافة"},
 				description = "اضافة عدد محدد من النانوثواني إلى كائن الوقت المحدد",
 				usage = "اضافة_نانوثواني(كائن_الوقت, عدد_النانوثواني)",
 				parameterTypes = {TimeSupport.class, Number.class},
@@ -2585,6 +2658,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "طرح_ساعات",
+				aliases = {"طرح_س", "طرح"},
 				description = "طرح عدد محدد من الساعات من كائن الوقت المحدد",
 				usage = "طرح_ساعات(كائن_الوقت, عدد_الساعات)",
 				parameterTypes = {TimeSupport.class, Number.class},
@@ -2603,6 +2677,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "طرح_دقائق",
+				aliases = {"طرح_د", "طرح"},
 				description = "طرح عدد محدد من الدقائق من كائن الوقت المحدد",
 				usage = "طرح_دقائق(كائن_الوقت, عدد_الدقائق)",
 				parameterTypes = {TimeSupport.class, Number.class},
@@ -2621,6 +2696,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "طرح_ثواني",
+				aliases = {"طرح_ث", "طرح"},
 				description = "طرح عدد محدد من الثواني من كائن الوقت المحدد",
 				usage = "طرح_ثواني(كائن_الوقت, عدد_الثواني)",
 				parameterTypes = {TimeSupport.class, Number.class},
@@ -2639,6 +2715,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "طرح_نانوثواني",
+				aliases = {"طرح_نانو", "طرح_ن", "طرح"},
 				description = "طرح عدد محدد من النانوثواني من كائن الوقت المحدد",
 				usage = "طرح_نانوثواني(كائن_الوقت, عدد_النانوثواني)",
 				parameterTypes = {TimeSupport.class, Number.class},
@@ -2655,6 +2732,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_صفرية",
+				aliases = {"أنشئ_مدة"},
 				description = "إنشاء مدة صفرية",
 				usage = "أنشئ_مدة_صفرية()",
 				returnType = NaftahDuration.class
@@ -2671,6 +2749,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_أيام",
+				aliases = {"أنشئ_مدة"},
 				description = "إنشاء مدة من عدد أيام",
 				usage = "أنشئ_مدة_من_أيام(أيام)",
 				parameterTypes = {Number.class},
@@ -2688,6 +2767,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_ساعات",
+				aliases = {"أنشئ_مدة"},
 				description = "إنشاء مدة من عدد ساعات",
 				usage = "أنشئ_مدة_من_ساعات(ساعات)",
 				parameterTypes = {Number.class},
@@ -2705,6 +2785,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_دقائق",
+				aliases = {"أنشئ_مدة"},
 				description = "إنشاء مدة من عدد دقائق",
 				usage = "أنشئ_مدة_من_دقائق(دقائق)",
 				parameterTypes = {Number.class},
@@ -2722,6 +2803,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_ثواني",
+				aliases = {"أنشئ_مدة"},
 				description = "إنشاء مدة من عدد ثواني",
 				usage = "أنشئ_مدة_من_ثواني(ثواني)",
 				parameterTypes = {Number.class},
@@ -2740,6 +2822,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_ثواني_مع_نانو",
+				aliases = {"أنشئ_مدة"},
 				description = "إنشاء مدة من ثواني مع تعديل النانوثانية",
 				usage = "أنشئ_مدة_من_ثواني_مع_نانو(ثواني, نانو)",
 				parameterTypes = {Number.class, Number.class},
@@ -2757,6 +2840,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_مللي",
+				aliases = {"أنشئ_مدة"},
 				description = "إنشاء مدة من عدد مللي ثانية",
 				usage = "أنشئ_مدة_من_مللي(مللي)",
 				parameterTypes = {Number.class},
@@ -2774,6 +2858,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_من_نانو",
+				aliases = {"أنشئ_مدة"},
 				description = "إنشاء مدة من عدد نانو ثانية",
 				usage = "أنشئ_مدة_من_نانو(نانو)",
 				parameterTypes = {Number.class},
@@ -2790,6 +2875,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_صفرية",
+				aliases = {"أنشئ_فترة"},
 				description = "إنشاء فترة صفرية",
 				usage = "أنشئ_فترة_صفرية()",
 				returnType = NaftahPeriod.class
@@ -2806,6 +2892,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_من_سنوات",
+				aliases = {"أنشئ_فترة"},
 				description = "إنشاء فترة من عدد سنوات",
 				usage = "أنشئ_فترة_من_سنوات(سنوات)",
 				parameterTypes = {Number.class},
@@ -2823,6 +2910,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_من_شهور",
+				aliases = {"أنشئ_فترة"},
 				description = "إنشاء فترة من عدد أشهر",
 				usage = "أنشئ_فترة_من_شهور(شهور)",
 				parameterTypes = {Number.class},
@@ -2840,6 +2928,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_من_أسابيع",
+				aliases = {"أنشئ_فترة"},
 				description = "إنشاء فترة من عدد أسابيع",
 				usage = "أنشئ_فترة_من_أسابيع(أسابيع)",
 				parameterTypes = {Number.class},
@@ -2857,6 +2946,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_من_أيام",
+				aliases = {"أنشئ_فترة"},
 				description = "إنشاء فترة من عدد أيام",
 				usage = "أنشئ_فترة_من_أيام(أيام)",
 				parameterTypes = {Number.class},
@@ -2873,6 +2963,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_صفرية",
+				aliases = {"أنشئ_فترة"},
 				description = "إنشاء فترة و مدة صفرية",
 				usage = "أنشئ_فترة_و_مدة_صفرية()",
 				returnType = NaftahPeriodWithDuration.class
@@ -2889,6 +2980,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_سنوات",
+				aliases = {"أنشئ_فترة"},
 				description = "إنشاء فترة و مدة من عدد سنوات",
 				usage = "أنشئ_فترة_و_مدة_من_سنوات(سنوات)",
 				parameterTypes = {Number.class},
@@ -2906,6 +2998,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_شهور",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من عدد أشهر",
 				usage = "أنشئ_فترة_و_مدة_من_شهور(شهور)",
 				parameterTypes = {Number.class},
@@ -2923,6 +3016,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_أسابيع",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من عدد أسابيع",
 				usage = "أنشئ_فترة_و_مدة_من_أسابيع(أسابيع)",
 				parameterTypes = {Number.class},
@@ -2940,6 +3034,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_أيام",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من عدد أيام",
 				usage = "أنشئ_فترة_و_مدة_من_أيام(أيام)",
 				parameterTypes = {Number.class},
@@ -2957,6 +3052,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_ساعات",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من عدد ساعات",
 				usage = "أنشئ_فترة_و_مدة_من_ساعات(ساعات)",
 				parameterTypes = {Number.class},
@@ -2974,6 +3070,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_دقائق",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من عدد دقائق",
 				usage = "أنشئ_فترة_و_مدة_من_دقائق(دقائق)",
 				parameterTypes = {Number.class},
@@ -2991,6 +3088,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_ثواني",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من عدد ثواني",
 				usage = "أنشئ_فترة_و_مدة_من_ثواني(ثواني)",
 				parameterTypes = {Number.class},
@@ -3009,6 +3107,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_ثواني_مع_نانو",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من ثواني مع تعديل النانوثانية",
 				usage = "أنشئ_فترة_و_مدة_من_ثواني_مع_نانو(ثواني, نانو)",
 				parameterTypes = {Number.class, Number.class},
@@ -3027,6 +3126,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_مللي",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من عدد مللي ثانية",
 				usage = "أنشئ_فترة_و_مدة_من_مللي(مللي)",
 				parameterTypes = {Number.class},
@@ -3044,6 +3144,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_فترة_و_مدة_من_نانو",
+				aliases = {"أنشئ_فترة_و_مدة"},
 				description = "إنشاء فترة و مدة من عدد نانو ثانية",
 				usage = "أنشئ_فترة_و_مدة_من_نانو(نانو)",
 				parameterTypes = {Number.class},
@@ -3062,6 +3163,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_سنوات_لفترة",
+				aliases = {"أضف_سنوات", "اضافة_س", "اضافة"},
 				description = "إضافة عدد من السنوات إلى فترة",
 				usage = "أضف_سنوات_لفترة(فترة_, سنوات)",
 				parameterTypes = {NaftahPeriod.class, Number.class},
@@ -3080,6 +3182,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_أشهر_لفترة",
+				aliases = {"أضف_أشهر", "اضافة_ش", "اضافة"},
 				description = "إضافة عدد من الأشهر إلى فترة",
 				usage = "أضف_أشهر_لفترة(فترة_, أشهر)",
 				parameterTypes = {NaftahPeriod.class, Number.class},
@@ -3098,6 +3201,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_أيام_لفترة",
+				aliases = {"أضف_أيام", "اضافة_ي", "اضافة"},
 				description = "إضافة عدد من الأيام إلى فترة",
 				usage = "أضف_أيام_لفترة(فترة_, أيام)",
 				parameterTypes = {NaftahPeriod.class, Number.class},
@@ -3116,6 +3220,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_سنوات_من_الفترة",
+				aliases = {"طرح_سنوات", "طرح_س", "طرح"},
 				description = "طرح عدد من السنوات من فترة",
 				usage = "اطرح_سنوات_من_الفترة(فترة_, سنوات)",
 				parameterTypes = {NaftahPeriod.class, Number.class},
@@ -3134,6 +3239,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_أشهر_من_الفترة",
+				aliases = {"طرح_أشهر", "طرح_شهور", "طرح_ش", "طرح"},
 				description = "طرح عدد من الأشهر من فترة",
 				usage = "اطرح_أشهر_من_الفترة(فترة_, أشهر)",
 				parameterTypes = {NaftahPeriod.class, Number.class},
@@ -3152,6 +3258,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_أيام_من_الفترة",
+				aliases = {"اطرح_أيام", "طرح_ي", "طرح"},
 				description = "طرح عدد من الأيام من فترة",
 				usage = "اطرح_أيام_من_الفترة(فترة_, أيام)",
 				parameterTypes = {NaftahPeriod.class, Number.class},
@@ -3170,6 +3277,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_أيام_للمدة",
+				aliases = {"أضف_أيام", "اضافة_ي", "اضافة"},
 				description = "إضافة أيام إلى مدة",
 				usage = "أضف_أيام_للمدة(مدة_, أيام)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3188,6 +3296,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_ساعات_للمدة",
+				aliases = {"أضف_ساعات", "اضافة_س", "اضافة"},
 				description = "إضافة ساعات إلى مدة",
 				usage = "أضف_ساعات_للمدة(مدة_, ساعات)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3206,6 +3315,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_دقائق_للمدة",
+				aliases = {"أضف_دقائق", "اضافة_د", "اضافة"},
 				description = "إضافة دقائق إلى مدة",
 				usage = "أضف_دقائق_للمدة(مدة_, دقائق)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3224,6 +3334,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_ثواني_للمدة",
+				aliases = {"أضف_ثواني", "اضافة_ث", "اضافة"},
 				description = "إضافة ثواني إلى مدة",
 				usage = "أضف_ثواني_للمدة(مدة_, ثواني)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3242,6 +3353,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_مللي_للمدة",
+				aliases = {"أضف_مللي", "اضافة_م", "اضافة"},
 				description = "إضافة مللي ثانية إلى مدة",
 				usage = "أضف_مللي_للمدة(مدة_, مللي)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3260,6 +3372,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_نانو_للمدة",
+				aliases = {"أضف_نانو", "اضافة_ن", "اضافة"},
 				description = "إضافة نانو ثانية إلى مدة",
 				usage = "أضف_نانو_للمدة(مدة_, نانو)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3278,6 +3391,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_أيام_من_المدة",
+				aliases = {"اطرح_أيام", "طرح_ي", "طرح"},
 				description = "طرح أيام من مدة",
 				usage = "اطرح_أيام_من_المدة(مدة_, أيام)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3296,6 +3410,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_ساعات_من_المدة",
+				aliases = {"طرح_ساعات", "طرح_س", "طرح"},
 				description = "طرح ساعات من مدة",
 				usage = "اطرح_ساعات_من_المدة(مدة_, ساعات)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3314,6 +3429,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_دقائق_من_المدة",
+				aliases = {"طرح_دقائق", "طرح_د", "طرح"},
 				description = "طرح دقائق من مدة",
 				usage = "اطرح_دقائق_من_المدة(مدة_, دقائق)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3332,6 +3448,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_ثواني_من_المدة",
+				aliases = {"طرح_ثواني", "طرح_ث", "طرح"},
 				description = "طرح ثواني من مدة",
 				usage = "اطرح_ثواني_من_المدة(مدة_, ثواني)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3350,6 +3467,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_مللي_من_المدة",
+				aliases = {"طرح_مللي", "طرح_ملي", "طرح_م", "طرح"},
 				description = "طرح مللي ثانية من مدة",
 				usage = "اطرح_مللي_من_المدة(مدة_, مللي)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3368,6 +3486,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_نانو_من_المدة",
+				aliases = {"طرح_نانوثواني", "طرح_نانو", "طرح_ن", "طرح"},
 				description = "طرح نانو ثانية من مدة",
 				usage = "اطرح_نانو_من_المدة(مدة_, نانو)",
 				parameterTypes = {NaftahDuration.class, Number.class},
@@ -3386,6 +3505,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_سنوات_لفترة_مع_مدة",
+				aliases = {"أضف_سنوات", "اضافة_س", "اضافة"},
 				description = "إضافة عدد من السنوات إلى فترة تحتوي على مدة",
 				usage = "أضف_سنوات_لفترة_مع_مدة(فترة_, سنوات)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3404,6 +3524,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_أشهر_لفترة_مع_مدة",
+				aliases = {"أضف_أشهر", "اضافة_ش", "اضافة"},
 				description = "إضافة عدد من الأشهر إلى فترة تحتوي على مدة",
 				usage = "أضف_أشهر_لفترة_مع_مدة(فترة_, أشهر)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3422,6 +3543,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_أيام_لفترة_مع_مدة",
+				aliases = {"أضف_أيام", "اضافة_ي", "اضافة"},
 				description = "إضافة عدد من الأيام إلى فترة تحتوي على مدة",
 				usage = "أضف_أيام_لفترة_مع_مدة(فترة_, أيام)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3440,6 +3562,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_ساعات_لفترة_مع_مدة",
+				aliases = {"أضف_ساعات", "اضافة_س", "اضافة"},
 				description = "إضافة عدد من الساعات إلى فترة تحتوي على مدة",
 				usage = "أضف_ساعات_لفترة_مع_مدة(فترة_, ساعات)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3458,6 +3581,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_دقائق_لفترة_مع_مدة",
+				aliases = {"أضف_دقائق", "اضافة_د", "اضافة"},
 				description = "إضافة عدد من الدقائق إلى فترة تحتوي على مدة",
 				usage = "أضف_دقائق_لفترة_مع_مدة(فترة_, دقائق)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3476,6 +3600,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_ثواني_لفترة_مع_مدة",
+				aliases = {"أضف_ثواني", "اضافة_ث", "اضافة"},
 				description = "إضافة عدد من الثواني إلى فترة تحتوي على مدة",
 				usage = "أضف_ثواني_لفترة_مع_مدة(فترة_, ثواني)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3494,6 +3619,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_مللي_لفترة_مع_مدة",
+				aliases = {"أضف_مللي", "اضافة_م", "اضافة"},
 				description = "إضافة عدد من المللي ثانية إلى فترة تحتوي على مدة",
 				usage = "أضف_مللي_لفترة_مع_مدة(فترة_, مللي)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3512,6 +3638,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أضف_نانو_لفترة_مع_مدة",
+				aliases = {"أضف_نانو", "اضافة_ن", "اضافة"},
 				description = "إضافة عدد من النانو ثانية إلى فترة تحتوي على مدة",
 				usage = "أضف_نانو_لفترة_مع_مدة(فترة_, نانو)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3530,6 +3657,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_سنوات_من_الفترة_مع_مدة",
+				aliases = {"طرح_سنوات", "طرح_س", "طرح"},
 				description = "طرح عدد من السنوات من فترة تحتوي على مدة",
 				usage = "اطرح_سنوات_من_الفترة_مع_مدة(فترة_, سنوات)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3548,6 +3676,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_أشهر_من_الفترة_مع_مدة",
+				aliases = {"طرح_أشهر", "طرح_شهور", "طرح_ش", "طرح"},
 				description = "طرح عدد من الأشهر من فترة تحتوي على مدة",
 				usage = "اطرح_أشهر_من_الفترة_مع_مدة(فترة_, أشهر)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3566,6 +3695,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_أيام_من_الفترة_مع_مدة",
+				aliases = {"اطرح_أيام", "طرح_ي", "طرح"},
 				description = "طرح عدد من الأيام من فترة تحتوي على مدة",
 				usage = "اطرح_أيام_من_الفترة_مع_مدة(فترة_, أيام)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3584,6 +3714,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_ساعات_من_الفترة_مع_مدة",
+				aliases = {"طرح_ساعات", "طرح_س", "طرح"},
 				description = "طرح عدد من الساعات من فترة تحتوي على مدة",
 				usage = "اطرح_ساعات_من_الفترة_مع_مدة(فترة_, ساعات)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3602,6 +3733,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_دقائق_من_الفترة_مع_مدة",
+				aliases = {"طرح_دقائق", "طرح_د", "طرح"},
 				description = "طرح عدد من الدقائق من فترة تحتوي على مدة",
 				usage = "اطرح_دقائق_من_الفترة_مع_مدة(فترة_, دقائق)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3620,6 +3752,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_ثواني_من_الفترة_مع_مدة",
+				aliases = {"طرح_ثواني", "طرح_ث", "طرح"},
 				description = "طرح عدد من الثواني من فترة تحتوي على مدة",
 				usage = "اطرح_ثواني_من_الفترة_مع_مدة(فترة_, ثواني)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3638,6 +3771,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_مللي_من_الفترة_مع_مدة",
+				aliases = {"طرح_مللي", "طرح_ملي", "طرح_م", "طرح"},
 				description = "طرح عدد من المللي ثانية من فترة تحتوي على مدة",
 				usage = "اطرح_مللي_من_الفترة_مع_مدة(فترة_, مللي)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3656,6 +3790,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "اطرح_نانو_من_الفترة_مع_مدة",
+				aliases = {"طرح_نانوثواني", "طرح_نانو", "طرح_ن", "طرح"},
 				description = "طرح عدد من النانو ثانية من فترة تحتوي على مدة",
 				usage = "اطرح_نانو_من_الفترة_مع_مدة(فترة_, نانو)",
 				parameterTypes = {NaftahPeriodWithDuration.class, Number.class},
@@ -3673,6 +3808,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_سنوات_الفترة",
+				aliases = {"احصل_على_السنوات", "السنوات", "سنوات"},
 				description = "الحصول على عدد السنوات من فترة",
 				usage = "احصل_على_سنوات_الفترة(فترة_)",
 				parameterTypes = {NaftahPeriod.class},
@@ -3690,6 +3826,14 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_أشهر_الفترة",
+				aliases = { "احصل_على_الأشهر",
+							"احصل_على_أشهر",
+							"الأشهر",
+							"أشهر",
+							"احصل_على_الشهور",
+							"احصل_على_شهور",
+							"الشهور",
+							"شهور"},
 				description = "الحصول على عدد الأشهر من فترة",
 				usage = "احصل_على_أشهر_الفترة(فترة_)",
 				parameterTypes = {NaftahPeriod.class},
@@ -3707,6 +3851,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_أيام_الفترة",
+				aliases = {"احصل_على_الأيام", "احصل_على_أيام", "الأيام", "أيام"},
 				description = "الحصول على عدد الأيام من فترة",
 				usage = "احصل_على_أيام_الفترة(فترة_)",
 				parameterTypes = {NaftahPeriod.class},
@@ -3724,6 +3869,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_ساعات_المدة",
+				aliases = {"احصل_على_الساعات", "احصل_على_ساعات", "الساعات", "ساعات"},
 				description = "الحصول على عدد الساعات من مدة",
 				usage = "احصل_على_ساعات_المدة(مدة_)",
 				parameterTypes = {NaftahDuration.class},
@@ -3741,6 +3887,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_دقائق_المدة",
+				aliases = {"احصل_على_الدقائق", "احصل_على_دقائق", "الدقائق", "دقائق"},
 				description = "الحصول على عدد الدقائق من مدة",
 				usage = "احصل_على_دقائق_المدة(مدة_)",
 				parameterTypes = {NaftahDuration.class},
@@ -3758,6 +3905,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_ثواني_المدة",
+				aliases = {"احصل_على_ثواني", "ثواني"},
 				description = "الحصول على عدد الثواني من مدة",
 				usage = "احصل_على_ثواني_المدة(مدة_)",
 				parameterTypes = {NaftahDuration.class},
@@ -3775,6 +3923,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_مللي_المدة",
+				aliases = {"احصل_على_الملي", "ملي", "احصل_على_المللي", "مللي"},
 				description = "الحصول على عدد المللي ثانية من مدة",
 				usage = "احصل_على_مللي_المدة(مدة_)",
 				parameterTypes = {NaftahDuration.class},
@@ -3792,6 +3941,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_نانو_المدة",
+				aliases = {"احصل_على_نانو", "نانو"},
 				description = "الحصول على عدد النانو ثانية من مدة",
 				usage = "احصل_على_نانو_المدة(مدة_)",
 				parameterTypes = {NaftahDuration.class},
@@ -3809,6 +3959,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_سنوات_الفترة_مع_مدة",
+				aliases = {"احصل_على_السنوات", "السنوات", "سنوات"},
 				description = "الحصول على عدد السنوات من فترة تحتوي على مدة",
 				usage = "احصل_على_سنوات_الفترة_مع_مدة(فترة_)",
 				parameterTypes = {NaftahPeriodWithDuration.class},
@@ -3826,6 +3977,14 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_أشهر_الفترة_مع_مدة",
+				aliases = { "احصل_على_الأشهر",
+							"احصل_على_أشهر",
+							"الأشهر",
+							"أشهر",
+							"احصل_على_الشهور",
+							"احصل_على_شهور",
+							"الشهور",
+							"شهور"},
 				description = "الحصول على عدد الأشهر من فترة تحتوي على مدة",
 				usage = "احصل_على_أشهر_الفترة_مع_مدة(فترة_)",
 				parameterTypes = {NaftahPeriodWithDuration.class},
@@ -3843,6 +4002,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_أيام_الفترة_مع_مدة",
+				aliases = {"احصل_على_الأيام", "احصل_على_أيام", "الأيام", "أيام"},
 				description = "الحصول على عدد الأيام من فترة تحتوي على مدة",
 				usage = "احصل_على_أيام_الفترة_مع_مدة(فترة_)",
 				parameterTypes = {NaftahPeriodWithDuration.class},
@@ -3860,6 +4020,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_ساعات_الفترة_مع_مدة",
+				aliases = {"احصل_على_الساعات", "احصل_على_ساعات", "الساعات", "ساعات"},
 				description = "الحصول على عدد الساعات من فترة تحتوي على مدة",
 				usage = "احصل_على_ساعات_الفترة_مع_مدة(فترة_)",
 				parameterTypes = {NaftahPeriodWithDuration.class},
@@ -3877,6 +4038,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_دقائق_الفترة_مع_مدة",
+				aliases = {"احصل_على_الدقائق", "احصل_على_دقائق", "الدقائق", "دقائق"},
 				description = "الحصول على عدد الدقائق من فترة تحتوي على مدة",
 				usage = "احصل_على_دقائق_الفترة_مع_مدة(فترة_)",
 				parameterTypes = {NaftahPeriodWithDuration.class},
@@ -3894,6 +4056,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_ثواني_الفترة_مع_مدة",
+				aliases = {"احصل_على_ثواني", "ثواني"},
 				description = "الحصول على عدد الثواني من فترة تحتوي على مدة",
 				usage = "احصل_على_ثواني_الفترة_مع_مدة(فترة_)",
 				parameterTypes = {NaftahPeriodWithDuration.class},
@@ -3911,6 +4074,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_مللي_الفترة_مع_مدة",
+				aliases = {"احصل_على_الملي", "ملي", "احصل_على_المللي", "مللي"},
 				description = "الحصول على عدد المللي ثانية من فترة تحتوي على مدة",
 				usage = "احصل_على_مللي_الفترة_مع_مدة(فترة_)",
 				parameterTypes = {NaftahPeriodWithDuration.class},
@@ -3928,6 +4092,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "احصل_على_نانو_الفترة_مع_مدة",
+				aliases = {"احصل_على_نانو", "نانو"},
 				description = "الحصول على عدد النانو ثانية من فترة تحتوي على مدة",
 				usage = "احصل_على_نانو_الفترة_مع_مدة(فترة_)",
 				parameterTypes = {NaftahPeriodWithDuration.class},
@@ -3946,6 +4111,7 @@ public final class TemporalBuiltinFunctions {
 	 */
 	@NaftahFn(
 				name = "أنشئ_مدة_بين_نقطتين",
+				aliases = {"إنشاء_مدة", "أنشئ_مدة"},
 				description = "إنشاء مدة زمنية بين نقطتين زمنيتين",
 				usage = "أنشئ_مدة_بين_نقطتين(نقطة_زمنية_أولى, نقطة_زمنية_ثانية)",
 				parameterTypes = {NaftahTemporalPoint.class, NaftahTemporalPoint.class},
