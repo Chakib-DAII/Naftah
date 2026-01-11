@@ -32,7 +32,7 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinFunctionNam
  *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
- * @author Chakib
+ * @author Chakib Daii
  */
 public class AliasHashMap<K, V> extends HashMap<K, List<V>> {
 
