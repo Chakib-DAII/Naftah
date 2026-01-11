@@ -2,9 +2,11 @@ package org.daiitech.naftah.builtin.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collector;
 
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
@@ -13,32 +15,31 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinFunctionName;
 
 /**
- * A specialized HashMap that supports aliasing of keys.
+ * A specialized {@link HashMap} that supports aliasing of keys.
  *
- * <p>This map allows you to associate multiple alias keys with a single
- * canonical key, so that any of the aliases can be used to retrieve the value
- * of the canonical key.</p>
+ * <p>This map allows associating multiple alias keys with a single canonical key,
+ * enabling any alias to retrieve the value associated with the canonical key.</p>
  *
- * <p>Example:</p>
+ * <p>Example usage:</p>
  * <pre>{@code
  * AliasHashMap<String, String> map = new AliasHashMap<>();
  * map.put("NA", "Naftah", "NFTH", "Naftah");
  *
- * map.get("NA");      // "Naftah"
- * map.get("NFTH");     // "Naftah"
- * map.get("Naftah"); // "Naftah"
+ * map.get("NA");      // returns "Naftah"
+ * map.get("NFTH");    // returns "Naftah"
+ * map.get("Naftah");  // returns "Naftah"
  * }</pre>
  *
- * @param <K> The type of keys maintained by this map.
- * @param <V> The type of mapped values.
- * @author Chakib Daii
+ * @param <K> the type of keys maintained by this map
+ * @param <V> the type of mapped values
+ * @author Chakib
  */
-public class AliasHashMap<K, V> extends HashMap<K, V> {
+public class AliasHashMap<K, V> extends HashMap<K, List<V>> {
 
 	/**
-	 * Internal map storing alias → canonical key mappings.
+	 * Internal map storing alias → canonical key relationships.
 	 */
-	private final Map<K, K> aliasToKeyMap = new HashMap<>();
+	private final Map<K, Set<K>> aliasToKeysMap = new HashMap<>();
 
 	/**
 	 * Returns a {@link Collector} that groups {@link BuiltinFunction} instances by their canonical function name,
@@ -69,8 +70,7 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 	 * @see org.daiitech.naftah.builtin.lang.NaftahFunction#aliases()
 	 * @see AliasHashMap
 	 */
-
-	public static Collector<BuiltinFunction, AliasHashMap<String, List<BuiltinFunction>>, AliasHashMap<String, List<BuiltinFunction>>> toAliasGroupedByName() {
+	public static Collector<BuiltinFunction, AliasHashMap<String, BuiltinFunction>, AliasHashMap<String, BuiltinFunction>> toAliasGroupedByName() {
 		return Collector
 				.of(
 					AliasHashMap::new,
@@ -116,7 +116,7 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 						}
 
 						// Merge alias maps
-						left.aliasToKeyMap.putAll(right.aliasToKeyMap);
+						left.aliasToKeysMap.putAll(right.aliasToKeysMap);
 
 						return left;
 					},
@@ -139,47 +139,13 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 	 *
 	 * @param <K>          the type of keys (aliases and canonical keys)
 	 * @param <V>          the type of mapped values
-	 * @param map          the {@link AliasHashMap} to be updated
+	 * @param map          the {@link AliasHashMap} to update
 	 * @param alias        the alias key to register
-	 * @param canonicalKey the canonical key to which the alias refers
-	 * @param fn           the {@link BuiltinFunction} context used for error reporting
-	 * @throws NaftahBugError if the alias is already defined in the map
+	 * @param canonicalKey the canonical key associated with the alias
+	 * @param fn           the {@link BuiltinFunction} used for error reporting
 	 */
 	public static <K, V> void fillAliasToKeyMap(AliasHashMap<K, V> map, K alias, K canonicalKey, BuiltinFunction fn) {
-		if (map.aliasToKeyMap.containsKey(alias)) {
-			throw newNaftahAliasOverrideError(fn);
-		}
-		else {
-			map.aliasToKeyMap.put(alias, canonicalKey);
-		}
-	}
-
-	/**
-	 * Creates a new {@link NaftahBugError} to indicate that an attempt was made
-	 * to override a predefined function alias.
-	 * <p>
-	 * The error message explains that builtin function aliases are statically defined and
-	 * cannot be overridden by other providers. It suggests using
-	 * {@code useQualifiedAliases} or unique alias names for builtin extensions.
-	 * </p>
-	 *
-	 * <p><strong>Arabic message:</strong></p>
-	 * <blockquote>
-	 * أسماء الدوال المستعارة (Function Aliases) معرفة بشكل ثابت، ولا يمكن لمزوّدين آخرين تعديلها أو تجاوزها.
-	 * إذا كنت بصدد إنشاء امتداد مضمّن (builtin extension)، يُرجى تمييزه باستخدام useQualifiedAliases أو التأكد من
-	 * استخدام أسماء مستعارة (aliases) فريدة من نوعها.
-	 * </blockquote>
-	 *
-	 * @param fn the {@link BuiltinFunction} that triggered the alias conflict, may be {@code null}
-	 * @return a {@link NaftahBugError} with a detailed error message
-	 */
-	public static NaftahBugError newNaftahAliasOverrideError(BuiltinFunction fn) {
-		return new NaftahBugError("""
-									أسماء الدوال المستعارة (Function Aliases) معرفة بشكل ثابت، ولا يمكن لمزوّدين آخرين تعديلها أو تجاوزها.
-									إذا كنت بصدد إنشاء امتداد مضمّن (builtin extension)، يُرجى تمييزه باستخدام useQualifiedAliases أو التأكد من استخدام أسماء مستعارة (aliases) فريدة من نوعها.
-									%s
-									"""
-				.formatted(Objects.nonNull(fn) ? fn.toDetailedString() : ""));
+		map.aliasToKeysMap.computeIfAbsent(alias, k -> new HashSet<>()).add(canonicalKey);
 	}
 
 	/**
@@ -195,9 +161,9 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 	 */
 	@SafeVarargs
 	public final void put(K canonicalKey, V value, K... aliases) {
-		super.put(canonicalKey, value);
+		super.computeIfAbsent(canonicalKey, k -> new ArrayList<>()).add(value);
 		for (K alias : aliases) {
-			aliasToKeyMap.put(alias, canonicalKey);
+			aliasToKeysMap.computeIfAbsent(alias, k -> new HashSet<>()).add(canonicalKey);
 		}
 	}
 
@@ -218,11 +184,18 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 	 * @throws NaftahBugError if an alias conflict occurs during merging.
 	 * @see #fillAliasToKeyMap(AliasHashMap, Object, Object, BuiltinFunction)
 	 */
-	public void putAll(Map<? extends K, ? extends V> map) {
+	@Override
+	public void putAll(Map<? extends K, ? extends List<V>> map) {
 		super.putAll(map);
-		if (map instanceof AliasHashMap<? extends K, ? extends V> aliasHashMap) {
-			for (Map.Entry<? extends K, ? extends K> e : aliasHashMap.aliasToKeyMap.entrySet()) {
-				fillAliasToKeyMap(this, e.getKey(), e.getValue(), null);
+		if (map instanceof AliasHashMap<?, ?> aliasHashMap) {
+			for (Map.Entry<?, ?> e : aliasHashMap.aliasToKeysMap.entrySet()) {
+				//noinspection unchecked
+				K key = (K) e.getKey();
+				//noinspection unchecked
+				Set<K> canonicalKeys = (Set<K>) e.getValue();
+				for (K ck : canonicalKeys) {
+					fillAliasToKeyMap(this, key, ck, null);
+				}
 			}
 		}
 	}
@@ -234,20 +207,30 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 	 * <p>Checks canonical keys first, then aliases.</p>
 	 *
 	 * @param key The key (or alias) whose associated value is to be returned.
-	 * @return The value associated with the key or alias, or {@code null} if none exists.
+	 * @return a list of associated values, or {@code null} if none exists.
 	 */
 	@Override
-	public V get(Object key) {
-		if (super.containsKey(key)) {
-			return super.get(key);
+	public List<V> get(Object key) {
+		//noinspection SuspiciousMethodCalls
+		if (aliasToKeysMap.containsKey(key)) {
+			Set<K> canonicalKeys = aliasToKeysMap.get(key);
+
+			if (canonicalKeys == null || canonicalKeys.isEmpty()) {
+				return super.getOrDefault(key, null);
+			}
+			//noinspection unchecked
+			canonicalKeys.add((K) key);
+
+			return canonicalKeys
+					.stream()
+					.map(super::get)          // Map<K, Set<V>> → Set<V>
+					.filter(Objects::nonNull) // skip missing keys
+					.flatMap(List::stream)     // flatten Set<Set<V>> → V
+					.toList();
 		}
-		else //noinspection SuspiciousMethodCalls
-			if (aliasToKeyMap.containsKey(key)) {
-				return super.get(aliasToKeyMap.get(key));
-			}
-			else {
-				return null;
-			}
+		else {
+			return super.getOrDefault(key, null);
+		}
 	}
 
 	/**
@@ -258,6 +241,6 @@ public class AliasHashMap<K, V> extends HashMap<K, V> {
 	 */
 	@Override
 	public boolean containsKey(Object key) {
-		return aliasToKeyMap.containsKey(key) || super.containsKey(key);
+		return aliasToKeysMap.containsKey(key) || super.containsKey(key);
 	}
 }
