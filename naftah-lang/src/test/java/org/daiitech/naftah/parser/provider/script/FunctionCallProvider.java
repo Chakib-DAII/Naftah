@@ -1904,6 +1904,15 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								دوال:الحزم::حذف_عنصر(ت, 1)
 								ت
 								""",
+								List.of(1),
+								null),
+					Arguments
+							.of(true,
+								"""
+								ثابت ت تعيين [1 , 2]
+								دوال:الحزم::حذف_عنصر:1(ت, 1)
+								ت
+								""",
 								List.of(2),
 								null),
 					Arguments
