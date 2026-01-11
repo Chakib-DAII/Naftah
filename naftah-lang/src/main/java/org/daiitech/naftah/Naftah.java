@@ -2423,7 +2423,7 @@ public final class Naftah {
 					history.purge();
 				}
 				else {
-					var commandParts = command.replaceAll("\\s*,\\s*", ",").split("\\s");
+					var commandParts = command.replaceAll("\\s*[,٬؛،٫]\\s*", ",").split("\\s");
 					command = commandParts[0].trim();
 
 					if (ReplCommand.DROP.matches(command)) {
