@@ -252,6 +252,6 @@ public final class DeclaredVariable extends Declaration {
 	 */
 	@Override
 	public String toString() {
-		return NaftahParserHelper.declaredValueToString(constant, name, getValue());
+		return NaftahParserHelper.declaredValueToString(constant, name, type, getValue());
 	}
 }

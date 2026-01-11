@@ -137,7 +137,7 @@ public final class DeclaredParameter extends Declaration {
 	 *
 	 * @return the parameter type
 	 */
-	public Object getType() {
+	public JavaType getType() {
 		return type;
 	}
 
@@ -189,6 +189,6 @@ public final class DeclaredParameter extends Declaration {
 	 */
 	@Override
 	public String toString() {
-		return NaftahParserHelper.declaredValueToString(constant, name, getValue());
+		return NaftahParserHelper.declaredValueToString(constant, name, type, getValue());
 	}
 }
