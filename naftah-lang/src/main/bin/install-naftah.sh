@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+echo 'export LANG=en_US.UTF-8' >> ~/.bashrc
+echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
+source ~/.bashrc
+
+
 # Directory where original scripts live (bin/)
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
