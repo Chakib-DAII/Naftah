@@ -607,6 +607,7 @@ public final class REPLHelper {
 	 * @param reader the JLine {@link LineReader} used to read input and detect Ctrl+C
 	 */
 	public static void waitForUserInterruption(LineReader reader) {
+		System.out.println();
 		padText("اضغط Ctrl+C لإغلاق النافذة...", true);
 		try {
 			while (true) {
