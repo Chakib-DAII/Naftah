@@ -1,8 +1,11 @@
 package org.daiitech.naftah.builtin.functions;
 
+import java.util.Map;
+
 import org.daiitech.naftah.NaftahSystem;
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
+import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -130,6 +133,28 @@ public final class SystemBuiltinFunctions {
 		return System.getenv(variableName);
 	}
 
+	/**
+	 * Retrieves all environment variables as a map.
+	 * <p>
+	 * This corresponds to {@link System#getenv()} and returns an unmodifiable map
+	 * containing all environment variables available to the JVM.
+	 * </p>
+	 *
+	 * @return a map of environment variable names to their values
+	 */
+	@NaftahFn(
+				name = "اقرأ_جميع_متغيرات_البيئة",
+				aliases = {"جميع_البيئة", "بيئة", "كل_متغيرات_البيئة"},
+				description = """
+								تُستخدم للحصول على جميع متغيرات البيئة (Environment Variables)
+								على شكل خريطة من أسماء المتغيرات إلى قيمها.
+								""",
+				usage = "اقرأ_جميع_متغيرات_البيئة()",
+				returnType = Map.class
+	)
+	public static NaftahObject getEnv() {
+		return NaftahObject.of(System.getenv());
+	}
 
 	/**
 	 * Retrieves a system property by its key.
@@ -157,6 +182,29 @@ public final class SystemBuiltinFunctions {
 	)
 	public static String getProperty(String key) {
 		return System.getProperty(key);
+	}
+
+	/**
+	 * Retrieves all system properties as a map.
+	 * <p>
+	 * This corresponds to {@link System#getProperties()} and returns a {@link java.util.Properties} object
+	 * containing all system properties available to the JVM.
+	 * </p>
+	 *
+	 * @return a map of system property keys to their values
+	 */
+	@NaftahFn(
+				name = "اقرأ_جميع_الخصائص",
+				aliases = {"جميع_الخصائص", "خصائص_النظام", "كل_خصائص_النظام"},
+				description = """
+								تُستخدم للحصول على جميع خصائص النظام (System Properties)
+								على شكل خريطة من المفاتيح إلى القيم.
+								""",
+				usage = "اقرأ_جميع_الخصائص()",
+				returnType = Map.class
+	)
+	public static NaftahObject getProperties() {
+		return NaftahObject.of(System.getProperties());
 	}
 
 	/**
