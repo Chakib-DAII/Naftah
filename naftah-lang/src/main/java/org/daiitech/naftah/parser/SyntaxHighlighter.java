@@ -174,7 +174,10 @@ public class SyntaxHighlighter extends BaseHighlighter {
 		}
 
 		// Join lines with newline separator
-		Collections.reverse(lines);
+		if (shouldReshape()) {
+			Collections.reverse(lines);
+		}
+
 		return AttributedString.join(AttributedString.NEWLINE, lines);
 	}
 

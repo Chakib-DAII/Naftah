@@ -29,6 +29,7 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.daiitech.naftah.parser.SyntaxHighlighter;
+import org.daiitech.naftah.utils.OS;
 import org.daiitech.naftah.utils.script.NaftahHighlighter;
 import org.jline.keymap.KeyMap;
 import org.jline.reader.Binding;
@@ -357,6 +358,7 @@ public final class REPLHelper {
 	 */
 	public static void setupKeyBindingsConfig(LineReader reader) {
 		reader.option(LineReader.Option.DISABLE_EVENT_EXPANSION, true);
+		reader.option(LineReader.Option.MOUSE, true);
 
 		KeyMap<Binding> keyMap = reader.getKeyMaps().get(LineReader.MAIN);
 
@@ -400,20 +402,38 @@ public final class REPLHelper {
 		});
 
 		// key bindings
-		// Alt+c = copy current buffer to clipboard
-		keyMap.bind(new Reference(COPY_TO_CLIPBOARD_COMMAND), KeyMap.alt('c'));
-		// Alt+l = copy last printed line to clipboard
-		keyMap.bind(new Reference(COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND), KeyMap.alt('l'));
-		// Alt+v = paste from clipboard into buffer widget
-		keyMap.bind(new Reference(PASTE_FROM_CLIPBOARD_COMMAND), KeyMap.alt('v'));
-		// Alt+m = mark start
-		keyMap.bind(new Reference(LineReader.SET_MARK_COMMAND), KeyMap.alt('m'));
-		// Alt+x = cut selected region
-		keyMap.bind(new Reference(LineReader.KILL_REGION), KeyMap.alt('x'));
-		// Alt+k = copy selected region
-		keyMap.bind(new Reference(LineReader.COPY_REGION_AS_KILL), KeyMap.alt('k'));
-		// Alt+y = paste (yank)
-		keyMap.bind(new Reference(LineReader.YANK), KeyMap.alt('y'));
+		if (OS.isRealXTerm()) {
+			// Alt+c = copy current buffer to clipboard
+			keyMap.bind(new Reference(COPY_TO_CLIPBOARD_COMMAND), "\033c");
+			// Alt+l = copy last printed line to clipboard
+			keyMap.bind(new Reference(COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND), "\033l");
+			// Alt+v = paste from clipboard into buffer widget
+			keyMap.bind(new Reference(PASTE_FROM_CLIPBOARD_COMMAND), "\033v");
+			// Alt+m = mark start
+			keyMap.bind(new Reference(LineReader.SET_MARK_COMMAND), "\033m");
+			// Alt+x = cut selected region
+			keyMap.bind(new Reference(LineReader.KILL_REGION), "\033x");
+			// Alt+k = copy selected region
+			keyMap.bind(new Reference(LineReader.COPY_REGION_AS_KILL), "\033k");
+			// Alt+y = paste (yank)
+			keyMap.bind(new Reference(LineReader.YANK), "\033y");
+		}
+		else {
+			// Alt+c = copy current buffer to clipboard
+			keyMap.bind(new Reference(COPY_TO_CLIPBOARD_COMMAND), KeyMap.alt('c'));
+			// Alt+l = copy last printed line to clipboard
+			keyMap.bind(new Reference(COPY_LAST_PRINTED_TO_CLIPBOARD_COMMAND), KeyMap.alt('l'));
+			// Alt+v = paste from clipboard into buffer widget
+			keyMap.bind(new Reference(PASTE_FROM_CLIPBOARD_COMMAND), KeyMap.alt('v'));
+			// Alt+m = mark start
+			keyMap.bind(new Reference(LineReader.SET_MARK_COMMAND), KeyMap.alt('m'));
+			// Alt+x = cut selected region
+			keyMap.bind(new Reference(LineReader.KILL_REGION), KeyMap.alt('x'));
+			// Alt+k = copy selected region
+			keyMap.bind(new Reference(LineReader.COPY_REGION_AS_KILL), KeyMap.alt('k'));
+			// Alt+y = paste (yank)
+			keyMap.bind(new Reference(LineReader.YANK), KeyMap.alt('y'));
+		}
 	}
 
 	/**
@@ -442,16 +462,27 @@ public final class REPLHelper {
 		input = input.replaceAll("---.*", "");
 
 		// Split into lines to remove empty or whitespace-only lines
-		StringBuilder cleaned = new StringBuilder();
-		for (String line : input.split("\\r?\\n")) {
-			if (line.trim().isEmpty()) {
+		String[] lines = input.split("\\r?\\n");
+		List<String> cleanedLines = new ArrayList<>();
+
+		for (int i = 0; i < lines.length - 1; i++) {
+			String line = lines[i].trim();
+			if (line.isEmpty()) {
 				continue;  // skip empty lines
 			}
-			cleaned.append(" " + DEFAULT_ESCAPE_CHAR).append(line).append("\n");
+
+			if (shouldReshape()) {
+				cleanedLines.add(" " + DEFAULT_ESCAPE_CHAR + line);
+			}
+			else {
+				cleanedLines.add(line + " " + DEFAULT_ESCAPE_CHAR);
+			}
 		}
 
-		// Return final cleaned, escaped string
-		return cleaned.toString();
+		// last line, no escape
+		cleanedLines.add(lines[lines.length - 1].trim());
+
+		return String.join("\n", cleanedLines);
 	}
 
 	/**
