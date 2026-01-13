@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
+# Set UTF-8 for proper Arabic support
 echo 'export LANG=en_US.UTF-8' >> ~/.bashrc
 echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
 source ~/.bashrc
-
 
 # Directory where original scripts live (bin/)
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,9 +15,18 @@ NAFTAH_HOME="$(dirname "$SRC_DIR")"
 BIN_DIR="/usr/local/bin"
 
 # Scripts to install
-SCRIPTS=(naftah-shell.sh naftah-repl.sh naftah-man.sh naftah-init.sh naftah.sh)
+SCRIPTS=(naftah-shell.sh naftah-shell-wrapper.sh naftah-repl.sh naftah-man.sh naftah-init.sh naftah.sh)
 
 echo "جاري تثبيت سكريبتات نفطه..."
+
+# Ensure xterm is installed
+if ! command -v xterm &> /dev/null; then
+    echo "xterm غير مثبت. جاري التثبيت..."
+    sudo apt update
+    sudo apt install -y xterm
+else
+    echo "xterm مثبت بالفعل."
+fi
 
 # Fix CRLFs and make originals executable
 echo "معالجة السكريبتات الأصلية في $SRC_DIR ..."
@@ -36,7 +45,6 @@ for script in "${SCRIPTS[@]}"; do
 				# Insert after shebang (line 1)
 				sed -i "1a export NAFTAH_HOME=\"$NAFTAH_HOME\"" "$original"
 		fi
-
 done
 
 # Install wrappers in /usr/local/bin
