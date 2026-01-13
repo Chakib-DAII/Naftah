@@ -40,6 +40,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.MaskingCallback;
 import org.jline.reader.Reference;
+import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.reader.impl.completer.StringsCompleter;
@@ -201,6 +202,11 @@ public final class REPLHelper {
 	 * Indicates if a text was just pasted to the REPL.
 	 */
 	public static boolean TEXT_PASTE_DETECTED = false;
+
+	/**
+	 * Message displayed when the application is closed.
+	 */
+	public static final String CLOSING_MSG = "تم الخروج من التطبيق.";
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -588,6 +594,31 @@ public final class REPLHelper {
 							null);
 		return List.of("q", "quit", "خروج").contains(input.trim().toLowerCase(ARABIC_LOCALE));
 	}
+
+	/**
+	 * Blocks execution until the user interrupts with Ctrl+C, displaying a friendly message in Arabic.
+	 *
+	 * <p>This is useful at the end of scripts or sessions to prevent the terminal from closing
+	 * immediately. The user sees the message and can exit gracefully using Ctrl+C.</p>
+	 *
+	 * <p>The method uses a {@link LineReader} from JLine to handle input and detect the interruption.
+	 * All other key presses are ignored.</p>
+	 *
+	 * @param reader the JLine {@link LineReader} used to read input and detect Ctrl+C
+	 */
+	public static void waitForUserInterruption(LineReader reader) {
+		padText("اضغط Ctrl+C لإغلاق النافذة...", true);
+		try {
+			while (true) {
+				// Blocking read, ignoring all input
+				reader.readLine();
+			}
+		}
+		catch (UserInterruptException e) {
+			padText(CLOSING_MSG, true);
+		}
+	}
+
 
 	/**
 	 * Clears the console screen using ANSI escape codes.
