@@ -296,6 +296,11 @@ public final class ScriptUtils {
 	 */
 	private static Map<String, Matcher> TEXT_MATCHER_CACHE;
 
+	/**
+	 * Cached flag indicating whether Arabic text reshaping should be applied for the current environment.
+	 **/
+	private static Boolean SHOULD_RESHAPE;
+
 	static {
 		if (Boolean.getBoolean(MULTILINE_CACHE_PROPERTY)) {
 			TEXT_MATCHER_CACHE = new ConcurrentHashMap<>();
@@ -1000,12 +1005,27 @@ public final class ScriptUtils {
 	}
 
 	/**
-	 * Indicates whether Arabic text shaping should be applied for the current OS.
+	 * Determines whether Arabic text reshaping should be applied for the current runtime environment.
 	 *
-	 * @return true if the OS is Windows (where reshaping is needed) or linux and inside xTerm, false otherwise
+	 * <p>
+	 * Arabic reshaping is required on platforms or terminal environments that do not perform
+	 * proper contextual shaping and bidirectional rendering (such as Windows consoles,
+	 * WSL environments, or real xterm-based terminals on Unix systems).
+	 * </p>
+	 *
+	 * <p>
+	 * The result is computed once and cached in {@link #SHOULD_RESHAPE} to avoid repeated
+	 * OS and terminal capability checks.
+	 * </p>
+	 *
+	 * @return {@code true} if Arabic reshaping should be applied (Windows, WSL, or Unix running
+	 *         inside a real xterm); {@code false} otherwise
 	 */
 	public static boolean shouldReshape() {
-		return OS.isFamilyWindows() || OS.isWSL() || (OS.isFamilyUnix() && OS.isRealXTerm());
+		if (Objects.isNull(SHOULD_RESHAPE)) {
+			SHOULD_RESHAPE = OS.isFamilyWindows() || OS.isWSL() || (OS.isFamilyUnix() && OS.isRealXTerm());
+		}
+		return SHOULD_RESHAPE;
 	}
 
 	/**
