@@ -894,6 +894,8 @@ public class FunctionCallProvider implements ArgumentsProvider {
 								null),
 					Arguments.of(true, "اقرأ_متغير_بيئة(\"JAVA_HOME\")", System.getenv("JAVA_HOME"), null),
 					Arguments.of(true, "اقرأ_خاصية(\"os.name\")", System.getProperty("os.name"), null),
+					Arguments.of(true, "اقرأ_جميع_متغيرات_البيئة() لا_يساوي فارغ", true, null),
+					Arguments.of(true, "اقرأ_جميع_الخصائص() لا_يساوي فارغ", true, null),
 					Arguments.of(true, "اكتب_خاصية(\"my.prop\", \"value\")", None.get(), null),
 					Arguments.of(true, "نسخة_جافا()", System.getProperty("java.version"), null),
 					Arguments.of(true, "إصدار_نفطه()", NaftahSystem.getVersion(), null),
