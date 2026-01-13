@@ -239,8 +239,6 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.LT, org.daiitech.naftah.parser.NaftahLexer.GT,
 					org.daiitech.naftah.parser.NaftahLexer.LE, org.daiitech.naftah.parser.NaftahLexer.GE,
 					org.daiitech.naftah.parser.NaftahLexer.EQ, org.daiitech.naftah.parser.NaftahLexer.NEQ,
-					org.daiitech.naftah.parser.NaftahLexer.GT_TYPE_SIGN,
-					org.daiitech.naftah.parser.NaftahLexer.LT_TYPE_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.POW,
 					org.daiitech.naftah.parser.NaftahLexer.BITWISE_NOT,
 					org.daiitech.naftah.parser.NaftahLexer.BITWISE_AND,
@@ -280,7 +278,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.DOLLAR_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.STAR_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.LT_SIGN,
-					org.daiitech.naftah.parser.NaftahLexer.GT_SIGN ->
+					org.daiitech.naftah.parser.NaftahLexer.GT_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.GT_TYPE_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.LT_TYPE_SIGN ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.CYAN);
 			case org.daiitech.naftah.parser.NaftahLexer.ID -> AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW);
 			default -> AttributedStyle.BOLD.foreground(AttributedStyle.WHITE);
