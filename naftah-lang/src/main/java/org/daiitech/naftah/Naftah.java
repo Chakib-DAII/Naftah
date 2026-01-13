@@ -543,7 +543,7 @@ public final class Naftah {
 			return true;
 		}
 		catch (ParseCancellationException e) {
-			System.exit(1); // stop program
+			return false;
 		}
 		catch (Throwable t) {
 			printPaddedErrorMessageToString(t);
