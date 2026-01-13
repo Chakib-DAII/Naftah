@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -733,14 +734,13 @@ public final class REPLHelper {
 	/**
 	 * Saves a snippet of the REPL history to a timestamped file using the default code validation.
 	 *
-	 * @param history        the REPL history to save
-	 * @param extraValidText additional lines that should always be considered valid
-	 * @param startingFrom   only include entries after this timestamp, or all if null
+	 * @param history      the REPL history to save
+	 * @param startingFrom only include entries after this timestamp, or all if null
 	 * @throws IOException if an error occurs while writing the snippet file
 	 */
-	public static void saveHistorySnippet(History history, Set<String> extraValidText, Instant startingFrom)
+	public static void saveHistorySnippet(History history, Instant startingFrom)
 			throws IOException {
-		saveHistorySnippet(history, extraValidText, startingFrom, NaftahParserHelper::validateCode);
+		saveHistorySnippet(history, Collections.emptySet(), startingFrom, NaftahParserHelper::validateCode);
 	}
 
 	/**
