@@ -1027,8 +1027,10 @@ public final class Naftah {
 										مساعدة أو usage
 
 										يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
-										Alt+L → نسخ آخر نص مطبوع إلى الحافظة
-										Alt+V → لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
+										Alt+L
+										نسخ آخر نص مطبوع إلى الحافظة
+										Alt+V
+										لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
 
 										استمتع بالتجربة وتعلم بسرعة!
 										""", true);
@@ -2175,8 +2177,10 @@ public final class Naftah {
 						مرحبًا بك في واجهة حلقة القراءة والتقييم والتنفيذ التفاعلي (REPL) لنفطه:
 
 						يمكنك استخدام اختصارات النسخ واللصق في هذه الواجهة:
-						Alt+L → نسخ آخر نص مطبوع إلى الحافظة
-						Alt+V → لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
+						Alt+L
+						نسخ آخر نص مطبوع إلى الحافظة
+						Alt+V
+						لصق محتوى الحافظة في محرر الإدخال لإعادة استخدامه
 
 						استمتع بالتجربة وتعلم بسرعة!
 						""", true);
@@ -2340,13 +2344,13 @@ public final class Naftah {
 
 							- :drop أو :حذف -> حذف المتغيرات، الدوال، السلوكيات، أو الواردات المحددة.
 
-							\t\t\t\t- :drop :vars أو :حذف :المتغيرات -> حذف المتغيرات المحددة (مثال: :drop :vars أ,ب,ت)
+							\t\t\t\t- :drop :vars أو :حذف :المتغيرات -> حذف المتغيرات المحددة (مثال: :حذف :المتغيرات أ,ب,ت)
 
-							\t\t\t\t- :drop :functions أو :حذف :الدوال -> حذف الدوال المحددة (مثال: :drop :functions د1,د2)
+							\t\t\t\t- :drop :functions أو :حذف :الدوال -> حذف الدوال المحددة (مثال: :حذف :الدوال د1,د2)
 
-							\t\t\t\t- :drop :implementations أو :حذف :السلوكيات -> حذف السلوكيات المحددة (مثال: :drop :implementations س1,س2)
+							\t\t\t\t- :drop :implementations أو :حذف :السلوكيات -> حذف السلوكيات المحددة (مثال: :حذف :السلوكيات س1,س2)
 
-							\t\t\t\t- :drop :imports أو :حذف :الواردات -> حذف الواردات المحددة (مثال: :drop :imports وارد)
+							\t\t\t\t- :drop :imports أو :حذف :الواردات -> حذف الواردات المحددة (مثال: :حذف :الواردات وارد)
 
 							- :reset أو :إعادة_ضبط -> إعادة ضبط الجلسة الحالية (مسح المتغيرات، الدوال، السلوكيات، والواردات).
 
@@ -2404,7 +2408,7 @@ public final class Naftah {
 				}
 				else if (ReplCommand.SAVE.matches(command)) {
 					matched = true;
-					REPLHelper.saveHistorySnippet(history, ReplCommand.getAllAliases(), START_TIME);
+					REPLHelper.saveHistorySnippet(history, START_TIME);
 				}
 				else if (ReplCommand.HISTORY.matches(command)) {
 					matched = true;
