@@ -1002,10 +1002,10 @@ public final class ScriptUtils {
 	/**
 	 * Indicates whether Arabic text shaping should be applied for the current OS.
 	 *
-	 * @return true if the OS is Windows (where reshaping is needed), false otherwise
+	 * @return true if the OS is Windows (where reshaping is needed) or linux and inside xTerm, false otherwise
 	 */
 	public static boolean shouldReshape() {
-		return OS.isFamilyWindows() || OS.isWSL();
+		return OS.isFamilyWindows() || OS.isWSL() || (OS.isFamilyUnix() && OS.isRealXTerm());
 	}
 
 	/**
