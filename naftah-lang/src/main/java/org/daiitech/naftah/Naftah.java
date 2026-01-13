@@ -41,6 +41,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
 import org.daiitech.naftah.parser.REPLContext;
+import org.daiitech.naftah.utils.OS;
 import org.daiitech.naftah.utils.ResourceUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
@@ -80,6 +81,7 @@ import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.classToDetailedString;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
+import static org.daiitech.naftah.utils.repl.REPLHelper.CLOSING_MSG;
 import static org.daiitech.naftah.utils.repl.REPLHelper.ESCAPE_CHARS_REGEX;
 import static org.daiitech.naftah.utils.repl.REPLHelper.LAST_PRINTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
@@ -417,6 +419,24 @@ public final class Naftah {
 	}
 
 	/**
+	 * Blocks until the user presses Ctrl+C, using the REPL terminal and line reader.
+	 *
+	 * <p>This is a convenient wrapper around {@link REPLHelper#waitForUserInterruption(LineReader)},
+	 * automatically obtaining the terminal and reader.</p>
+	 *
+	 * <p>All other input is ignored; the user sees a friendly Arabic message and can exit gracefully.</p>
+	 */
+	private static void waitForUserInterruption() {
+		try {
+			Terminal terminal = REPLHelper.getTerminal();
+			LineReader reader = getLineReader(terminal);
+			REPLHelper.waitForUserInterruption(reader);
+		}
+		catch (Throwable ignored) {
+		}
+	}
+
+	/**
 	 * Processes the command line arguments and dispatches the appropriate command.
 	 *
 	 * @param args the raw command line arguments
@@ -439,8 +459,15 @@ public final class Naftah {
 				.setUnmatchedArgumentsAllowed(true)
 				.setStopAtUnmatched(true);
 
+		boolean shouldWaitForUserInterruption = OS.isRealXTerm();
+
 		try {
+			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
+				Thread.sleep(5000);
+			}
+
 			ParseResult result = parser.parseArgs(args);
+
 			if (printHelpIfRequested(result)) {
 				return;
 			}
@@ -450,15 +477,17 @@ public final class Naftah {
 			}
 
 			var matchedSubCommandResult = result.subcommands().get(result.subcommands().size() - 1);
+			var matchedCommand = (NaftahCommand) matchedSubCommandResult.commandSpec().userObject();
 
-			if (!naftahCommand.process(matchedSubCommandResult)) {
-				// If we fail, then exit with an error so scripting frameworks can catch it.
+			shouldWaitForUserInterruption = shouldWaitForUserInterruption && (matchedCommand instanceof NaftahCommand.InitCommand || matchedCommand instanceof NaftahCommand.RunCommand);
+
+			// If we fail, then exit with an error so scripting frameworks can catch it.
+			if (!naftahCommand.process(matchedSubCommandResult, matchedCommand)) {
+				if (shouldWaitForUserInterruption) {
+					waitForUserInterruption();
+				}
 				System.exit(1);
 			}
-			else {
-				System.exit(0);
-			}
-
 		}
 		catch (ParameterException ex) { // command line arguments could not be parsed
 			printPaddedErrorMessageToString(ex);
@@ -466,6 +495,11 @@ public final class Naftah {
 		}
 		catch (Exception e) {
 			printPaddedErrorMessageToString(e);
+		}
+		finally {
+			if (shouldWaitForUserInterruption) {
+				waitForUserInterruption();
+			}
 		}
 	}
 
@@ -503,10 +537,9 @@ public final class Naftah {
 	 * @return true if successful, false otherwise
 	 */
 	private boolean run(NaftahCommand naftahCommand) {
+		boolean bootstrapAsync = !(naftahCommand instanceof NaftahCommand.InitCommand || naftahCommand instanceof NaftahCommand.ManualCommand);
 		try {
-			naftahCommand
-					.run(   this,
-							!(naftahCommand instanceof NaftahCommand.InitCommand || naftahCommand instanceof NaftahCommand.ManualCommand));
+			naftahCommand.run(this, bootstrapAsync);
 			return true;
 		}
 		catch (ParseCancellationException e) {
@@ -668,9 +701,6 @@ public final class Naftah {
 			if (Objects.isNull(System.getProperty(WORD_CHUNK_PROPERTY))) {
 				System.setProperty(WORD_CHUNK_PROPERTY, Boolean.toString(true));
 			}
-			if (Boolean.getBoolean(DEBUG_PROPERTY)) {
-				Thread.sleep(5000);
-			}
 			initConfig();
 			bootstrap(bootstrapAsync);
 		}
@@ -678,12 +708,12 @@ public final class Naftah {
 		/**
 		 * Processes the parsed command line arguments and configures the environment.
 		 *
-		 * @param parseResult the parsed command line result
+		 * @param parseResult    the parsed command line result
+		 * @param matchedCommand the matched command
 		 * @return true if processing succeeded; false otherwise
 		 * @throws ParameterException if the command line is invalid
 		 */
-		private boolean process(ParseResult parseResult) throws ParameterException {
-			var matchedCommand = (NaftahCommand) parseResult.commandSpec().userObject();
+		private boolean process(ParseResult parseResult, NaftahCommand matchedCommand) throws ParameterException {
 			// append to classpath
 			if (Objects.nonNull(matchedCommand.classpath)) {
 				final String actualClasspath = System.getProperty(CLASS_PATH_PROPERTY);
@@ -1113,8 +1143,7 @@ public final class Naftah {
 						System.out.println();
 					}
 					catch (UserInterruptException | EndOfFileException e) {
-						String closingMsg = "تم الخروج من التطبيق.";
-						padText(closingMsg, true);
+						padText(CLOSING_MSG, true);
 						break;
 					}
 					catch (Throwable t) {
@@ -2257,8 +2286,7 @@ public final class Naftah {
 
 					}
 					catch (UserInterruptException | EndOfFileException e) {
-						String closingMsg = "تم الخروج من التطبيق.";
-						padText(closingMsg, true);
+						padText(CLOSING_MSG, true);
 						break;
 					}
 					catch (EOFError ignored) {
