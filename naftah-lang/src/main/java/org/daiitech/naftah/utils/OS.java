@@ -66,6 +66,16 @@ public final class OS {
 	public static final String WSL_ENV = "WSLENV";
 
 	/**
+	 * Terminal type identifier provided via terminfo (often misleading).
+	 */
+	public static final String TERM_ENV = "TERM";
+
+	/**
+	 * Set only by real xterm to expose its version and identify the emulator.
+	 */
+	public static final String XTERM_VERSION_ENV = "XTERM_VERSION";
+
+	/**
 	 * Identifier for OS/400 family.
 	 */
 	private static final String FAMILY_OS_400 = "os/400";
@@ -125,6 +135,11 @@ public final class OS {
 	private static final boolean IS_WSL;
 
 	/**
+	 * Whether the current terminal is a real XTerm instance.
+	 */
+	private static final boolean IS_XTERM;
+
+	/**
 	 * The OS name in lowercase, retrieved from system properties.
 	 */
 	private static final String OS_NAME;
@@ -150,6 +165,7 @@ public final class OS {
 		OS_VERSION = System.getProperty(OS_VERSION_PROPERTY).toLowerCase(Locale.US);
 		PATH_SEP = File.pathSeparator;
 		IS_WSL = checkIfInsideWSL();
+		IS_XTERM = checkIfInsideRealXTerm();
 	}
 
 	/**
@@ -162,6 +178,11 @@ public final class OS {
 
 	/**
 	 * Detects whether the JVM is running inside Windows Subsystem for Linux (WSL).
+	 * <p>
+	 * Checks environment variables first, then falls back to inspecting
+	 * the kernel version in /proc/version for "Microsoft".
+	 *
+	 * @return true if running inside WSL, false otherwise
 	 */
 	private static boolean checkIfInsideWSL() {
 		// WSL is always Linux
@@ -186,6 +207,26 @@ public final class OS {
 		}
 	}
 
+	/**
+	 * Detects whether the JVM is running inside a real XTerm terminal.
+	 * <p>
+	 * Relies on TERM and XTERM_VERSION environment variables to distinguish
+	 * XTerm from other terminal emulators (like GNOME Terminal or Kitty).
+	 *
+	 * @return true if running inside XTerm, false otherwise
+	 */
+	private static boolean checkIfInsideRealXTerm() {
+		// XTERM is always Linux
+		if (!isFamilyUnix()) {
+			return false;
+		}
+		String term = System.getenv(TERM_ENV);
+		if (term != null && term.contains("xterm")) {
+			String xtermVersion = System.getenv(XTERM_VERSION_ENV);
+			return xtermVersion != null && xtermVersion.startsWith("XTerm");
+		}
+		return false;
+	}
 
 	/**
 	 * Checks if the current OS matches the specified family.
@@ -267,6 +308,15 @@ public final class OS {
 	 */
 	public static boolean isWSL() {
 		return IS_WSL;
+	}
+
+	/**
+	 * Checks whether the current terminal is a real XTerm instance.
+	 *
+	 * @return {@code true} if running inside XTerm, {@code false} otherwise
+	 */
+	public static boolean isRealXTerm() {
+		return IS_XTERM;
 	}
 
 	/**
