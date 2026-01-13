@@ -31,6 +31,12 @@ XTERM_OPTS=(
   -fs "$XTERM_FONTSIZE"
   -tn xterm-256color
   -T "Naftah Lang"
+  -maximized
+  -sp
+  -sf
+  -xrm "XTerm*metaSendsEscape: true"
+  -xrm "XTerm*selectToClipboard: true"
+  -xrm "XTerm*allowMouseOps: true"
 )
 
 # Run either directly or inside xterm
