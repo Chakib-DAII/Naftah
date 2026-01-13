@@ -156,7 +156,7 @@ class ClassUtilsTests {
 							ConcurrencyBuiltinFunctions.class
 						));
 		assertNotNull(builtinFunctions);
-		assertEquals(95, builtinFunctions.size());
+		assertEquals(97, builtinFunctions.size());
 	}
 
 	@Test
@@ -172,7 +172,7 @@ class ClassUtilsTests {
 							"org.daiitech.naftah.builtin.functions.ConcurrencyBuiltinFunctions",
 							ConcurrencyBuiltinFunctions.class));
 		assertNotNull(builtinFunctions);
-		assertEquals(93, builtinFunctions.size());
+		assertEquals(95, builtinFunctions.size());
 	}
 
 	@Test
