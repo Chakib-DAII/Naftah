@@ -4,4 +4,4 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Call the main script from the same folder, no matter where we are
-"$SCRIPT_DIR/naftah-shell.sh" run "$@"
+"$SCRIPT_DIR/naftah-shell-wrapper.sh" run "$@"
