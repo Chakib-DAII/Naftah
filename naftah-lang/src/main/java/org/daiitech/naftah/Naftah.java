@@ -501,6 +501,7 @@ public final class Naftah {
 				waitForUserInterruption();
 			}
 		}
+		System.exit(0);
 	}
 
 	/**
