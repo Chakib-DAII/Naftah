@@ -32,6 +32,7 @@ XTERM_OPTS=(
   -tn xterm-256color
   -T "Naftah Lang"
   -maximized
+  -hold
   -sp
   -sf
   -xrm "XTerm*metaSendsEscape: true"
