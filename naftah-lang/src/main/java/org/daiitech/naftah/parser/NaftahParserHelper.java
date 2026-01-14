@@ -468,7 +468,11 @@ public final class NaftahParserHelper {
 				var argument = arguments.get(i);
 				var param = i >= requiredParams.size() ? parameters.get(i) : requiredParams.get(i);
 				return Map.entry(param.getName(), argument.getRight());
-			}).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			})
+					.collect(Collectors
+							.toMap( Map.Entry::getKey,
+									Map.Entry::getValue,
+									(o, o2) -> o2));
 		}
 		else {
 			Set<String> usedNames = new HashSet<>();
@@ -3065,5 +3069,37 @@ public final class NaftahParserHelper {
 				System.setProperty(DEBUG_PROPERTY, String.valueOf(true));
 			}
 		}
+	}
+
+	/**
+	 * Checks whether the given object represents a declared variable paired with a boolean flag.
+	 * <p>
+	 * The method verifies that:
+	 * <ul>
+	 * <li>The object is an instance of {@link Pair}</li>
+	 * <li>The first type parameter of the pair is {@link DeclaredVariable}</li>
+	 * <li>The second type parameter of the pair is {@link Boolean}</li>
+	 * </ul>
+	 *
+	 * This is typically used to detect structures of the form:
+	 * <pre>
+	 * Pair&lt;DeclaredVariable, Boolean&gt;
+	 * </pre>
+	 * where the boolean value represents an associated flag.
+	 *
+	 * @param object the object to check
+	 * @return {@code true} if the object is a {@code Pair<DeclaredVariable, Boolean>},
+	 *         {@code false} otherwise
+	 */
+	public static boolean isDeclaredVariableWithFlag(Object object) {
+		return object instanceof Pair<?, ?> pair && JavaType
+				.of(pair)
+				.getTypeParameters()
+				.get(0)
+				.isOfType(DeclaredVariable.class) && JavaType
+						.of(pair)
+						.getTypeParameters()
+						.get(1)
+						.isOfType(Boolean.class);
 	}
 }
