@@ -31,12 +31,10 @@ import java.util.stream.IntStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
-import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
-import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
@@ -44,7 +42,6 @@ import org.daiitech.naftah.parser.REPLContext;
 import org.daiitech.naftah.utils.OS;
 import org.daiitech.naftah.utils.ResourceUtils;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
-import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.daiitech.naftah.utils.repl.REPLHelper;
 import org.daiitech.naftah.utils.script.ScriptUtils;
 import org.jline.reader.EOFError;
@@ -71,6 +68,7 @@ import static org.daiitech.naftah.builtin.utils.ObjectUtils.replaceAllNulls;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.NaftahParserHelper.doRun;
 import static org.daiitech.naftah.parser.NaftahParserHelper.getCharStream;
+import static org.daiitech.naftah.parser.NaftahParserHelper.isDeclaredVariableWithFlag;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareRun;
 import static org.daiitech.naftah.utils.JulLoggerConfig.JAVA_LOGGING_FILE_PROPERTY;
 import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
@@ -2269,15 +2267,7 @@ public final class Naftah {
 
 						if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)
 						// not a declaration with flag
-								&& !(result instanceof Pair<?, ?> pair && JavaType
-										.of(pair)
-										.getTypeParameters()
-										.get(0)
-										.isOfType(DeclaredVariable.class) && JavaType
-												.of(pair)
-												.getTypeParameters()
-												.get(1)
-												.isOfType(Boolean.class))
+								&& !isDeclaredVariableWithFlag(result)
 						) {
 							var resultStr = getNaftahValueToString(result);
 							LAST_PRINTED.set(resultStr);
