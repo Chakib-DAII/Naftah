@@ -173,8 +173,8 @@ caseStatement:
 // A list of labels for a 'case' option (e.g., 1, 2, 3)
 caseLabelList: expression ((COMMA | SEMI) expression)*;                // One or more comma or semicolon separated expressions
 
-tryStatement: TRY LPAREN expression RPAREN LBRACE tryCases RBRACE #tryStatementWithTryCases
-  | TRY LPAREN expression RPAREN LBRACE optionCases RBRACE #tryStatementWithOptionCases
+tryStatement: TRY LPAREN statement RPAREN LBRACE tryCases RBRACE #tryStatementWithTryCases
+  | TRY LPAREN statement RPAREN LBRACE optionCases RBRACE #tryStatementWithOptionCases
   ;
 
 tryCases

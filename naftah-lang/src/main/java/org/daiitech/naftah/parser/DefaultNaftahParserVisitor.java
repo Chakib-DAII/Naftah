@@ -117,6 +117,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChildOrSubChildOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.invokeJvmClassInitializer;
+import static org.daiitech.naftah.parser.NaftahParserHelper.isDeclaredVariableWithFlag;
 import static org.daiitech.naftah.parser.NaftahParserHelper.matchImplementationName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunction;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
@@ -2832,7 +2833,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(   defaultNaftahParserVisitor,
 								currentContext,
 								tryStatementWithTryCasesContext) -> {
-								Result<Object, NaftahBugError> result = null;
+								Result<Object, NaftahBugError> result;
 								String okVariableName = null;
 								String errorVariableName = null;
 								DeclaredVariable previousOkVariable = null;
@@ -2840,10 +2841,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								var tryCases = tryStatementWithTryCasesContext.tryCases();
 								try {
-									Object expressionResult;
+									Object statementResult;
 									try {
-										expressionResult = defaultNaftahParserVisitor
-												.visit(tryStatementWithTryCasesContext.expression());
+										statementResult = defaultNaftahParserVisitor
+												.visit(tryStatementWithTryCasesContext.statement());
+
+										if (isDeclaredVariableWithFlag(statementResult)) {
+											//noinspection unchecked
+											statementResult = ((Pair<DeclaredVariable, Boolean>) statementResult)
+													.getLeft()
+													.getValue();
+										}
 									}
 									catch (Throwable th) {
 										var errorCase = tryCases.errorCase();
@@ -2888,10 +2896,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									var okCase = tryCases.okCase();
 
-									if (Objects.nonNull(okCase) && Objects.nonNull(expressionResult)) {
+									if (Objects.nonNull(okCase) && Objects.nonNull(statementResult)) {
 										okVariableName = okCase.ID().getText();
 
-										result = Result.Ok.of(expressionResult);
+										result = Result.Ok.of(statementResult);
 
 										var declaredVariable = DeclaredVariable
 												.of(currentContext.depth,
@@ -2938,7 +2946,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										}
 									}
 								}
-								return Objects.nonNull(result) ? result : None.get();
+								return None.get();
 							}
 		);
 	}
@@ -2957,7 +2965,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext,
 								tryStatementWithOptionCasesContext) -> {
 								var result = defaultNaftahParserVisitor
-										.visit(tryStatementWithOptionCasesContext.expression());
+										.visit(tryStatementWithOptionCasesContext.statement());
+
+								if (isDeclaredVariableWithFlag(result)) {
+									//noinspection unchecked
+									result = ((Pair<DeclaredVariable, Boolean>) result)
+											.getLeft()
+											.getValue();
+								}
 
 								String someVariableName = null;
 								DeclaredVariable previousSomeVariable = null;
