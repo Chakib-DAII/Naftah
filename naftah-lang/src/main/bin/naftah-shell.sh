@@ -119,8 +119,37 @@ if $cygwin; then
 	CLASSPATH=$(cygpath --path --mixed "$CLASSPATH")
 fi
 
+# Load all .vmoptions files in NAFTAH_HOME
+VM_OPTS=""
+
+if [ -d "$NAFTAH_HOME" ]; then
+  for file in "$NAFTAH_HOME"/*.vmoptions; do
+    [ -e "$file" ] || continue
+
+    while IFS= read -r line || [ -n "$line" ]; do
+      # Trim leading/trailing whitespace
+      line="${line#"${line%%[![:space:]]*}"}"
+      line="${line%"${line##*[![:space:]]}"}"
+
+      # Skip empty lines and full-line comments
+      [[ -z "$line" || "$line" == \#* ]] && continue
+
+      # Strip inline comments
+      line="${line%%#*}"
+
+      # Trim again after stripping comments
+      line="${line#"${line%%[![:space:]]*}"}"
+      line="${line%"${line##*[![:space:]]}"}"
+
+      # Append if not empty
+      [[ -n "$line" ]] && VM_OPTS="$VM_OPTS $line"
+    done < "$file"
+  done
+fi
+
 # Append JVM options to JAVA_OPTS
-JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector \
+JAVA_OPTS="$JAVA_OPTS $VM_OPTS \
+--add-modules=jdk.incubator.vector \
 --add-opens=java.base/java.lang=ALL-UNNAMED \
 --add-opens=java.base/java.lang.invoke=ALL-UNNAMED \
 --add-opens=java.base/java.lang.reflect=ALL-UNNAMED \
