@@ -34,6 +34,9 @@ XTERM_OPTS=(
   -maximized
   -sp
   -sf
+  -bg "#1e1e1e"
+  -fg "#d4d4d4"
+  -cr "#ffffff"
   -xrm "XTerm*metaSendsEscape: true"
   -xrm "XTerm*selectToClipboard: true"
   -xrm "XTerm*allowMouseOps: true"
