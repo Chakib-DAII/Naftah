@@ -432,6 +432,12 @@ tasks.register('baseDistZip', Zip) {
 		into "${zipBaseFolder}/lib"
 	}
 
+	from('../.vmoptions') {
+		include 'default.vmoptions'
+		into zipBaseFolder
+		rename 'default.vmoptions', 'naftah.vmoptions'
+	}
+
 	// Avoid execution by itself
 	enabled = false
 }
