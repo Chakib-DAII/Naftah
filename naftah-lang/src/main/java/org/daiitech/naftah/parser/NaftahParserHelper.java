@@ -1452,134 +1452,147 @@ public final class NaftahParserHelper {
 														DefaultContext currentContext,
 														int line,
 														int column) {
-		Object result = None.get();
-		var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
-		boolean[] optional = new boolean[accessArray.length - 1];
+		try {
+			Object result = None.get();
+			var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
+			boolean[] optional = new boolean[accessArray.length - 1];
 
-		if (accessArray[0].endsWith("؟")) {
-			optional[0] = true;
-			accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
-		}
+			if (accessArray[0].endsWith("؟")) {
+				optional[0] = true;
+				accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
+			}
 
-		boolean found = false;
-		boolean safeChaining = false;
-		if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
-				.get() instanceof NaftahObject naftahObject) {
-			int i = 1;
+			boolean found = false;
+			boolean safeChaining = false;
+			if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
+					.get() instanceof NaftahObject naftahObject) {
+				int i = 1;
 
-			if (naftahObject.fromJava()) {
-				var javaObject = naftahObject.get(true);
-				for (; i < accessArray.length; i++) {
-					if (i < accessArray.length - 1) {
+				if (naftahObject.fromJava()) {
+					var javaObject = naftahObject.get(true);
+					for (; i < accessArray.length; i++) {
+						if (i < accessArray.length - 1) {
 
-						if (accessArray[i].endsWith("؟")) {
-							optional[i] = true;
-							accessArray[i] = accessArray[i]
-									.substring(0, accessArray[i].length() - 1);
+							if (accessArray[i].endsWith("؟")) {
+								optional[i] = true;
+								accessArray[i] = accessArray[i]
+										.substring(0, accessArray[i].length() - 1);
+							}
+
+							Object objectField = getObjectField(currentContext,
+																javaObject,
+																accessArray[i],
+																line,
+																column);
+							if (Objects.isNull(objectField)) {
+								safeChaining = IntStream
+										.range(0, optional.length)
+										.mapToObj(index -> optional[index])
+										.allMatch(Boolean.TRUE::equals);
+								found = false;
+								break;
+							}
+							else {
+								found = true;
+								javaObject = objectField;
+							}
 						}
-
-						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
-						if (Objects.isNull(objectField)) {
+						else if (Objects.nonNull(javaObject)) {
+							Object objectField = getObjectField(currentContext,
+																javaObject,
+																accessArray[i],
+																line,
+																column);
+							if (Objects.nonNull(objectField)) {
+								found = true;
+								result = objectField;
+							}
+							else {
+								found = false;
+							}
+						}
+						else {
 							safeChaining = IntStream
 									.range(0, optional.length)
 									.mapToObj(index -> optional[index])
 									.allMatch(Boolean.TRUE::equals);
-							found = false;
-							break;
-						}
-						else {
-							found = true;
-							javaObject = objectField;
 						}
 					}
-					else if (Objects.nonNull(javaObject)) {
-						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
-						if (Objects.nonNull(objectField)) {
-							found = true;
-							result = objectField;
+				}
+				else {
+					//noinspection unchecked
+					var object = (Map<String, DeclaredVariable>) naftahObject.get();
+					for (; i < accessArray.length; i++) {
+						if (i < accessArray.length - 1) {
+
+							if (accessArray[i].endsWith("؟")) {
+								optional[i] = true;
+								accessArray[i] = accessArray[i]
+										.substring(0, accessArray[i].length() - 1);
+							}
+
+							DeclaredVariable declaredVariable = object.get(accessArray[i]);
+							if (Objects.isNull(declaredVariable)) {
+								safeChaining = IntStream
+										.range(0, optional.length)
+										.mapToObj(index -> optional[index])
+										.allMatch(Boolean.TRUE::equals);
+								found = false;
+								break;
+							}
+							else {
+								found = true;
+								//noinspection unchecked
+								object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
+										.getValue()).get();
+							}
+						}
+						else if (Objects.nonNull(object)) {
+							DeclaredVariable declaredVariable = object.get(accessArray[i]);
+							if (Objects.nonNull(declaredVariable)) {
+								found = true;
+								result = declaredVariable;
+							}
+							else {
+								found = false;
+							}
 						}
 						else {
-							found = false;
+							safeChaining = IntStream
+									.range(0, optional.length)
+									.mapToObj(index -> optional[index])
+									.allMatch(Boolean.TRUE::equals);
 						}
+					}
+				}
+
+				if (!found) {
+					if (safeChaining) {
+						result = None.get();
 					}
 					else {
-						safeChaining = IntStream
-								.range(0, optional.length)
-								.mapToObj(index -> optional[index])
-								.allMatch(Boolean.TRUE::equals);
+						int finalI = i;
+						String traversedQualifiedName = IntStream
+								.range(0, accessArray.length)
+								.filter(index -> index <= finalI)
+								.mapToObj(index -> accessArray[index] + (index < optional.length ?
+										(optional[index] ?
+												"؟" :
+												"") :
+										""))
+								.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
+						throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
 					}
 				}
 			}
 			else {
-				//noinspection unchecked
-				var object = (Map<String, DeclaredVariable>) naftahObject.get();
-				for (; i < accessArray.length; i++) {
-					if (i < accessArray.length - 1) {
-
-						if (accessArray[i].endsWith("؟")) {
-							optional[i] = true;
-							accessArray[i] = accessArray[i]
-									.substring(0, accessArray[i].length() - 1);
-						}
-
-						DeclaredVariable declaredVariable = object.get(accessArray[i]);
-						if (Objects.isNull(declaredVariable)) {
-							safeChaining = IntStream
-									.range(0, optional.length)
-									.mapToObj(index -> optional[index])
-									.allMatch(Boolean.TRUE::equals);
-							found = false;
-							break;
-						}
-						else {
-							found = true;
-							//noinspection unchecked
-							object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
-									.getValue()).get();
-						}
-					}
-					else if (Objects.nonNull(object)) {
-						DeclaredVariable declaredVariable = object.get(accessArray[i]);
-						if (Objects.nonNull(declaredVariable)) {
-							found = true;
-							result = declaredVariable;
-						}
-						else {
-							found = false;
-						}
-					}
-					else {
-						safeChaining = IntStream
-								.range(0, optional.length)
-								.mapToObj(index -> optional[index])
-								.allMatch(Boolean.TRUE::equals);
-					}
-				}
+				result = getVariable(accessArray[0], currentContext).get();
 			}
-
-			if (!found) {
-				if (safeChaining) {
-					result = None.get();
-				}
-				else {
-					int finalI = i;
-					String traversedQualifiedName = IntStream
-							.range(0, accessArray.length)
-							.filter(index -> index <= finalI)
-							.mapToObj(index -> accessArray[index] + (index < optional.length ?
-									(optional[index] ?
-											"؟" :
-											"") :
-									""))
-							.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
-					throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
-				}
-			}
+			return result instanceof DeclaredVariable declaredVariable ? declaredVariable.getValue() : result;
 		}
-		else {
-			result = getVariable(accessArray[0], currentContext).get();
+		catch (Exception e) {
+			throw newNaftahBugVariableNotFoundError(qualifiedName, line, column);
 		}
-		return result instanceof DeclaredVariable declaredVariable ? declaredVariable.getValue() : result;
 	}
 
 	/**
@@ -1615,144 +1628,156 @@ public final class NaftahParserHelper {
 														Object newValue,
 														int line,
 														int column) {
-		var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
-		boolean[] optional = new boolean[accessArray.length - 1];
+		try {
+			var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
+			boolean[] optional = new boolean[accessArray.length - 1];
 
-		if (accessArray[0].endsWith("؟")) {
-			optional[0] = true;
-			accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
-		}
+			if (accessArray[0].endsWith("؟")) {
+				optional[0] = true;
+				accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
+			}
 
-		boolean found = false;
-		boolean safeChaining = false;
+			boolean found = false;
+			boolean safeChaining = false;
 
-		DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).getRight();
+			DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).getRight();
 
-		if (accessArray.length > 1 && objectVariable.getValue() instanceof NaftahObject naftahObject) {
-			int i = 1;
+			if (accessArray.length > 1 && objectVariable.getValue() instanceof NaftahObject naftahObject) {
+				int i = 1;
 
-			if (naftahObject.fromJava()) {
-				var javaObject = naftahObject.get(true);
-				for (; i < accessArray.length; i++) {
-					if (i < accessArray.length - 1) {
+				if (naftahObject.fromJava()) {
+					var javaObject = naftahObject.get(true);
+					for (; i < accessArray.length; i++) {
+						if (i < accessArray.length - 1) {
 
-						if (accessArray[i].endsWith("؟")) {
-							optional[i] = true;
-							accessArray[i] = accessArray[i]
-									.substring(0, accessArray[i].length() - 1);
+							if (accessArray[i].endsWith("؟")) {
+								optional[i] = true;
+								accessArray[i] = accessArray[i]
+										.substring(0, accessArray[i].length() - 1);
+							}
+
+							Object objectField = getObjectField(currentContext,
+																javaObject,
+																accessArray[i],
+																line,
+																column);
+							if (Objects.isNull(objectField)) {
+								safeChaining = IntStream
+										.range(0, optional.length)
+										.mapToObj(index -> optional[index])
+										.allMatch(Boolean.TRUE::equals);
+								found = false;
+								break;
+							}
+							else {
+								found = true;
+								javaObject = objectField;
+							}
 						}
+						else if (Objects.nonNull(javaObject)) {
+							var field = ObjectAccessUtils.findField(javaObject.getClass(), accessArray[i], true);
+							if (Objects.nonNull(field)) {
+								found = true;
+								var fieldValue = convertArgument(   newValue,
+																	field.getType(),
+																	field.getGenericType(),
+																	false);
+								setObjectField(currentContext, javaObject, accessArray[i], fieldValue, line, column);
 
-						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
-						if (Objects.isNull(objectField)) {
+								var afterUpdateFieldValue = accessObjectUsingQualifiedName( qualifiedName,
+																							currentContext,
+																							line,
+																							column);
+
+								if (!ObjectUtils.equals(fieldValue, afterUpdateFieldValue, true)) {
+									throw ExceptionUtils
+											.newNaftahSettingConstantError( qualifiedName,
+																			newIllegalFieldAccessException(field
+																					.getName()));
+								}
+
+							}
+							else {
+								found = false;
+							}
+						}
+						else {
 							safeChaining = IntStream
 									.range(0, optional.length)
 									.mapToObj(index -> optional[index])
 									.allMatch(Boolean.TRUE::equals);
-							found = false;
-							break;
-						}
-						else {
-							found = true;
-							javaObject = objectField;
 						}
 					}
-					else if (Objects.nonNull(javaObject)) {
-						var field = ObjectAccessUtils.findField(javaObject.getClass(), accessArray[i], true);
-						if (Objects.nonNull(field)) {
-							found = true;
-							var fieldValue = convertArgument(newValue, field.getType(), field.getGenericType(), false);
-							setObjectField(currentContext, javaObject, accessArray[i], fieldValue, line, column);
+				}
+				else {
+					//noinspection unchecked
+					var object = (Map<String, DeclaredVariable>) naftahObject.get();
+					for (; i < accessArray.length; i++) {
+						if (i < accessArray.length - 1) {
 
-							var afterUpdateFieldValue = accessObjectUsingQualifiedName( qualifiedName,
-																						currentContext,
-																						line,
-																						column);
-
-							if (!ObjectUtils.equals(fieldValue, afterUpdateFieldValue, true)) {
-								throw ExceptionUtils
-										.newNaftahSettingConstantError( qualifiedName,
-																		newIllegalFieldAccessException(field
-																				.getName()));
+							if (accessArray[i].endsWith("؟")) {
+								optional[i] = true;
+								accessArray[i] = accessArray[i]
+										.substring(0, accessArray[i].length() - 1);
 							}
 
+							DeclaredVariable declaredVariable = object.get(accessArray[i]);
+							if (Objects.isNull(declaredVariable)) {
+								safeChaining = IntStream
+										.range(0, optional.length)
+										.mapToObj(index -> optional[index])
+										.allMatch(Boolean.TRUE::equals);
+								found = false;
+								break;
+							}
+							else {
+								found = true;
+								//noinspection unchecked
+								object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
+										.getValue()).get();
+							}
+						}
+						else if (Objects.nonNull(object)) {
+							DeclaredVariable declaredVariable = object.get(accessArray[i]);
+							if (Objects.nonNull(declaredVariable)) {
+								found = true;
+								declaredVariable.setValue(newValue);
+							}
+							else {
+								found = false;
+							}
 						}
 						else {
-							found = false;
+							safeChaining = IntStream
+									.range(0, optional.length)
+									.mapToObj(index -> optional[index])
+									.allMatch(Boolean.TRUE::equals);
 						}
 					}
-					else {
-						safeChaining = IntStream
-								.range(0, optional.length)
-								.mapToObj(index -> optional[index])
-								.allMatch(Boolean.TRUE::equals);
-					}
+				}
+
+				if (!found && !safeChaining) {
+					int finalI = i;
+					String traversedQualifiedName = IntStream
+							.range(0, accessArray.length)
+							.filter(index -> index <= finalI)
+							.mapToObj(index -> accessArray[index] + (index < optional.length ?
+									(optional[index] ?
+											"؟" :
+											"") :
+									""))
+							.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
+					throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
 				}
 			}
 			else {
-				//noinspection unchecked
-				var object = (Map<String, DeclaredVariable>) naftahObject.get();
-				for (; i < accessArray.length; i++) {
-					if (i < accessArray.length - 1) {
-
-						if (accessArray[i].endsWith("؟")) {
-							optional[i] = true;
-							accessArray[i] = accessArray[i]
-									.substring(0, accessArray[i].length() - 1);
-						}
-
-						DeclaredVariable declaredVariable = object.get(accessArray[i]);
-						if (Objects.isNull(declaredVariable)) {
-							safeChaining = IntStream
-									.range(0, optional.length)
-									.mapToObj(index -> optional[index])
-									.allMatch(Boolean.TRUE::equals);
-							found = false;
-							break;
-						}
-						else {
-							found = true;
-							//noinspection unchecked
-							object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
-									.getValue()).get();
-						}
-					}
-					else if (Objects.nonNull(object)) {
-						DeclaredVariable declaredVariable = object.get(accessArray[i]);
-						if (Objects.nonNull(declaredVariable)) {
-							found = true;
-							declaredVariable.setValue(newValue);
-						}
-						else {
-							found = false;
-						}
-					}
-					else {
-						safeChaining = IntStream
-								.range(0, optional.length)
-								.mapToObj(index -> optional[index])
-								.allMatch(Boolean.TRUE::equals);
-					}
-				}
+				objectVariable.setValue(newValue);
 			}
-
-			if (!found && !safeChaining) {
-				int finalI = i;
-				String traversedQualifiedName = IntStream
-						.range(0, accessArray.length)
-						.filter(index -> index <= finalI)
-						.mapToObj(index -> accessArray[index] + (index < optional.length ?
-								(optional[index] ?
-										"؟" :
-										"") :
-								""))
-						.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
-				throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
-			}
+			return objectVariable;
 		}
-		else {
-			objectVariable.setValue(newValue);
+		catch (Exception e) {
+			throw newNaftahBugVariableNotFoundError(qualifiedName, line, column);
 		}
-		return objectVariable;
 	}
 
 	/**
