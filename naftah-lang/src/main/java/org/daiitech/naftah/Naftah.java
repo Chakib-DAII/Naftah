@@ -816,7 +816,9 @@ public final class Naftah {
 				var parser = prepareRun(input, NaftahErrorListener.INSTANCE);
 				var result = doRun(parser, main.args);
 
-				if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)) {
+				if (isSimpleOrBuiltinOrCollectionOrMapOfSimpleType(result) && !None.isNone(result)
+				// not a declaration with flag
+						&& !isDeclaredVariableWithFlag(result)) {
 					printPaddedToString(result);
 				}
 
