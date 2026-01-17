@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.None;
@@ -540,9 +539,6 @@ public final class Naftah {
 		try {
 			naftahCommand.run(this, bootstrapAsync);
 			return true;
-		}
-		catch (ParseCancellationException e) {
-			return false;
 		}
 		catch (Throwable t) {
 			printPaddedErrorMessageToString(t);
