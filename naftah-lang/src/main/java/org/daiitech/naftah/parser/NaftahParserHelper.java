@@ -1247,11 +1247,27 @@ public final class NaftahParserHelper {
 																	T ctx,
 																	TriFunction<DefaultNaftahParserVisitor, DefaultContext, T, Object> visitFunction,
 																	Class<R> returnType) {
-		debugCurrentContextVisit(methodName, ctx);
-		logExecution(ctx);
-		var result = visitFunction.apply(defaultNaftahParserVisitor, currentContext, ctx);
-		currentContext.markExecuted(ctx); // Mark as executed
-		return returnType.cast(result);
+		try {
+			debugCurrentContextVisit(methodName, ctx);
+			logExecution(ctx);
+			var result = visitFunction.apply(defaultNaftahParserVisitor, currentContext, ctx);
+			currentContext.markExecuted(ctx); // Mark as executed
+			return returnType.cast(result);
+		}
+		catch (NaftahBugError naftahBugError) {
+			if (!naftahBugError.hasCodePosition()) {
+				naftahBugError.setLine(ctx.getStart().getLine());
+				naftahBugError.setColumn(ctx.getStart().getCharPositionInLine());
+			}
+			throw naftahBugError;
+		}
+		catch (Throwable throwable) {
+			throw new NaftahBugError(   throwable.getMessage(),
+										throwable,
+										ctx.getStart().getLine(),
+										ctx.getStart().getCharPositionInLine()
+			);
+		}
 	}
 
 	/**

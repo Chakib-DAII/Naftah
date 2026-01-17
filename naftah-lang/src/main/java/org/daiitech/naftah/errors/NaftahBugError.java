@@ -51,12 +51,12 @@ public class NaftahBugError extends AssertionError {
 	/**
 	 * The line number on which the 1st character of this token was matched, line=1..n.
 	 */
-	private final int line;
+	private int line;
 
 	/**
 	 * The index of the first character of this token relative to the beginning of the line at which it occurs, 0..n-1.
 	 */
-	private final int column;
+	private int column;
 
 	/**
 	 * The descriptive message text for the bug error.
@@ -204,5 +204,52 @@ public class NaftahBugError extends AssertionError {
 	 */
 	public void setBugText(String msg) {
 		this.message = msg;
+	}
+
+	/**
+	 * Checks whether the bug error has an associated line and column position.
+	 * <p>
+	 * This method returns {@code true} if both the line and column numbers are
+	 * set to valid values (i.e., not equal to {@code -1}), indicating the presence
+	 * of a code position in the error. Otherwise, it returns {@code false}.
+	 *
+	 * @return {@code true} if the error has a valid line and column; {@code false} otherwise.
+	 */
+	public boolean hasCodePosition() {
+		return line != -1 && column != -1;
+	}
+
+	/**
+	 * Sets the line number where the bug was detected.
+	 * <p>
+	 * This method allows the line number to be specified for the bug error.
+	 * The line number should be greater than {@code 0}, and it must be different
+	 * from the column number for a valid update. If the provided line is {@code -1},
+	 * no update will occur.
+	 *
+	 * @param line The line number where the bug occurred (1-based index).
+	 * @throws IllegalArgumentException If the line number is {@code -1}.
+	 */
+	public void setLine(int line) {
+		if (line != -1 && this.line != column) {
+			this.line = line;
+		}
+	}
+
+	/**
+	 * Sets the column number where the bug was detected.
+	 * <p>
+	 * This method allows the column number to be specified for the bug error.
+	 * The column number should be greater than or equal to {@code 0}, and it
+	 * must be different from the line number for a valid update. If the provided
+	 * column is {@code -1}, no update will occur.
+	 *
+	 * @param column The column index (0-based) where the bug occurred.
+	 * @throws IllegalArgumentException If the column number is {@code -1}.
+	 */
+	public void setColumn(int column) {
+		if (column != -1 && this.column != column) {
+			this.column = column;
+		}
 	}
 }
