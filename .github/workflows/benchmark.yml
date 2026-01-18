@@ -49,12 +49,6 @@ jobs:
           mkdir -p docs-site
           python convert-jmh-to-md.py > docs-site/benchmarks.md
 
-      #TODO: Enable GitHub Pages
-      #Go to your repo on GitHub
-      #Settings → Pages
-      #Select source: Deploy from a branch
-      #Branch: gh-pages (create this if it doesn’t exist yet)
-      #Folder: / (root)
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

@@ -451,9 +451,7 @@ Looking to learn the Naftah programming language?
 
 > 🚀 Visit the full **Language Reference Guide** for syntax, types, control flow, functions, and more:
 
-[//]: # (TODO: github page)
-
-👉 **[docs]()**
+👉 **[docs](https://naftah.daiitech.org)**
 
 Or explore by topic:
 

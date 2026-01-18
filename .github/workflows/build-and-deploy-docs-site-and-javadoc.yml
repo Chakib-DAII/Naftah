@@ -66,12 +66,6 @@ jobs:
       - name: Copy Javadoc into built site
         run: cp -r build/docs/javadoc site-output/javadoc
 
-      #TODO: Enable GitHub Pages
-      #Go to your repo on GitHub
-      #Settings → Pages
-      #Select source: Deploy from a branch
-      #Branch: gh-pages (create this if it doesn’t exist yet)
-      #Folder: / (root)
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
