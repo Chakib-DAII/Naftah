@@ -1,7 +1,6 @@
+@echo off
 REM SPDX-License-Identifier: Apache-2.0
 REM Copyright © The Naftah Project Authors
-
-@echo off
 
 @if /I not "%DEBUG%" == "true" goto setUtf8
 @echo on
