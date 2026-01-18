@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+# Copyright © The Naftah Project Authors
+
 # OS specific support (must be 'true' or 'false').
 cygwin=false
 darwin=false

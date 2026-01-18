@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 /**
  *
  * The Naftah grammar is based on multiple programming languages tokens and syntaxes

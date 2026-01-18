@@ -1,3 +1,6 @@
+--- SPDX-License-Identifier: Apache-2.0
+--- Copyright © The Naftah Project Authors
+
 --- تعريف ثابت ت بقيمة 2
 ثابت ت تعيين 2
 

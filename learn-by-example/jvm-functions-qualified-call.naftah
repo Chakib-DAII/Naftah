@@ -1,3 +1,6 @@
+--- SPDX-License-Identifier: Apache-2.0
+--- Copyright © The Naftah Project Authors
+
 ---*
 
 هذا المثال يوضح كيفية استخدام "النداء المؤهّل" (Qualified Call) في لغة نفطه.

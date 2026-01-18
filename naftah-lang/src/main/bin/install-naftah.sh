@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+# Copyright © The Naftah Project Authors
+
 # ------------------------------------------------------------
 # install_xterm
 #
