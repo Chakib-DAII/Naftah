@@ -22,6 +22,15 @@ scmVersion {
 	}
 	versionIncrementer 'incrementMinor'
 //	versionIncrementer 'incrementPatch'
+	nextVersion { version ->
+		return version
+	}
+}
+
+tasks.register('printVersion') {
+	doLast {
+		println "Current version: ${scmVersion.version}"
+	}
 }
 
 allprojects {
@@ -168,6 +177,10 @@ changelog {
 	unreleasedTerm = 'Unreleased'
 	keepUnreleasedSection = true
 	repositoryUrl = 'https://github.com/Chakib-DAII/Naftah'
+}
+
+tasks.named('jreleaserPrepare') {
+	dependsOn tasks.named('changelog')
 }
 
 subprojects { subproj ->
