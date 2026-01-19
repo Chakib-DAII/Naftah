@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+# Copyright © The Naftah Project Authors
+
 # OS specific support (must be 'true' or 'false').
 cygwin=false
 darwin=false
@@ -43,13 +46,13 @@ if [ -z "${JAVA_HOME}" ]; then
 	else
 		javaExecutable="$(command -v javac)"
 		if [[ -z "$javaExecutable" || "$(expr "${javaExecutable}" : '\([^ ]*\)')" = "no" ]]; then
-			echo "JAVA_HOME not set and cannot find javac to deduce location, please set JAVA_HOME."
+			echo "لم يتم تعيين JAVA_HOME ولا يمكن العثور على javac لتحديد موقعه، يرجى تعيين JAVA_HOME."
 			exit 1
 		fi
 		# readlink(1) is not available as standard on Solaris 10.
 		readLink="$(command -v readlink)"
 		[ "$(expr "${readLink}" : '\([^ ]*\)')" = "no" ] && {
-			echo "JAVA_HOME not set and readlink not available, please set JAVA_HOME."
+			echo "لم يتم تعيين JAVA_HOME وأداة readlink غير متاحة، يرجى تعيين JAVA_HOME."
 			exit 1
 		}
 		javaExecutable="$(readlink -f "${javaExecutable}")"
@@ -65,12 +68,12 @@ if [ ! -f "${JAVA_HOME}/bin/java" ]; then
 	cat <<-JAVA_HOME_NOT_SET_TXT
 
 	======================================================================================================
-	 Please ensure that your JAVA_HOME points to a valid Java SDK.
-	 You are currently pointing to:
+	 يرجى التأكد من أن JAVA_HOME يشير إلى نسخة Java SDK صحيحة.
+	 أنت حالياً تشير إلى:
 
 	  ${JAVA_HOME}
 
-	 This does not seem to be valid. Please rectify and restart.
+	 هذا لا يبدو صحيحًا. يرجى تصحيحه وإعادة التشغيل.
 	======================================================================================================
 
 	JAVA_HOME_NOT_SET_TXT
@@ -99,8 +102,8 @@ if [ -z "${NAFTAH_HOME}" ]; then
 fi
 
 if [ ! -d "${NAFTAH_HOME}" ]; then
-	echo "Not a directory: NAFTAH_HOME=${NAFTAH_HOME}"
-	echo "Please rectify and restart."
+	echo "المسار ليس مجلدًا: NAFTAH_HOME=${NAFTAH_HOME}"
+	echo "يرجى تصحيح ذلك وإعادة التشغيل."
 	exit 2
 fi
 
@@ -119,8 +122,37 @@ if $cygwin; then
 	CLASSPATH=$(cygpath --path --mixed "$CLASSPATH")
 fi
 
+# Load all .vmoptions files in NAFTAH_HOME
+VM_OPTS=""
+
+if [ -d "$NAFTAH_HOME" ]; then
+  for file in "$NAFTAH_HOME"/*.vmoptions; do
+    [ -e "$file" ] || continue
+
+    while IFS= read -r line || [ -n "$line" ]; do
+      # Trim leading/trailing whitespace
+      line="${line#"${line%%[![:space:]]*}"}"
+      line="${line%"${line##*[![:space:]]}"}"
+
+      # Skip empty lines and full-line comments
+      [[ -z "$line" || "$line" == \#* ]] && continue
+
+      # Strip inline comments
+      line="${line%%#*}"
+
+      # Trim again after stripping comments
+      line="${line#"${line%%[![:space:]]*}"}"
+      line="${line%"${line##*[![:space:]]}"}"
+
+      # Append if not empty
+      [[ -n "$line" ]] && VM_OPTS="$VM_OPTS $line"
+    done < "$file"
+  done
+fi
+
 # Append JVM options to JAVA_OPTS
-JAVA_OPTS="$JAVA_OPTS --add-modules=jdk.incubator.vector \
+JAVA_OPTS="$JAVA_OPTS $VM_OPTS \
+--add-modules=jdk.incubator.vector \
 --add-opens=java.base/java.lang=ALL-UNNAMED \
 --add-opens=java.base/java.lang.invoke=ALL-UNNAMED \
 --add-opens=java.base/java.lang.reflect=ALL-UNNAMED \

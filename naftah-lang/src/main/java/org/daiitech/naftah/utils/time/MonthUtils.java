@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils.time;
 
 import java.time.Month;
@@ -45,16 +48,16 @@ import static org.daiitech.naftah.utils.time.Constants.SHAWAL;
 
 
 /**
- * Utility class for converting Arabic month names to numeric month values.
+ * Utility class for converting month names to numeric month values.
  *
  * <p>This class supports both Gregorian and Hijri calendars.</p>
  *
  * <p>Methods include:
  * <ul>
- * <li>{@link #getGregorianMonth(String)} – maps Arabic or Latinized Gregorian month names to
+ * <li>{@link #getGregorianMonth(String)} – maps Gregorian month names to
  * * {@link java.time.Month}.</li>
- * <li>{@link #getHijriMonth(String)} – maps Arabic Hijri month names to integer month values (1–12).</li>
- * <li>{@link #arabicMonthToInt(String, java.time.chrono.Chronology)} – converts a month name to its numeric
+ * <li>{@link #getHijriMonth(String)} – maps Hijri month names to integer month values (1–12).</li>
+ * <li>{@link #monthNameToNumber(String, java.time.chrono.Chronology)} – converts a month name to its numeric
  * * value based on the given chronology.</li>
  * </ul>
  * </p>
@@ -73,9 +76,9 @@ public final class MonthUtils {
 	}
 
 	/**
-	 * Converts a Gregorian month name (Arabic or Latinized) to a {@link java.time.Month} enum.
+	 * Converts a Gregorian month name to a {@link java.time.Month} enum.
 	 *
-	 * @param monthName the month name in Arabic or Latinized form
+	 * @param monthName the month name
 	 * @return the corresponding {@link java.time.Month} enum
 	 * @throws IllegalArgumentException if the month name is not recognized
 	 */
@@ -98,13 +101,13 @@ public final class MonthUtils {
 	}
 
 	/**
-	 * Returns the Latinized Arabic name of a Gregorian month given its numeric value.
+	 * Returns the name of a Gregorian month given its numeric value.
 	 *
-	 * <p>The returned name corresponds to the commonly used Arabic/Latin variant
+	 * <p>The returned name corresponds to the commonly used variant
 	 * (e.g., "جانفي", "فيفري", "أفريل").</p>
 	 *
 	 * @param month the Gregorian month number (1–12)
-	 * @return the Latinized Arabic month name
+	 * @return the month name
 	 * @throws IllegalArgumentException if the month number is not in the range 1–12
 	 */
 	public static String getGregorianMonthName(int month) {
@@ -126,9 +129,9 @@ public final class MonthUtils {
 	}
 
 	/**
-	 * Converts an Arabic Hijri month name to its corresponding numeric value (1–12).
+	 * Converts an Hijri month name to its corresponding numeric value (1–12).
 	 *
-	 * @param monthName the Arabic Hijri month name
+	 * @param monthName the Hijri month name
 	 * @return the month number (1 for Muharram, 12 for Dhu al-Hijjah)
 	 * @throws IllegalArgumentException if the month name is not recognized
 	 */
@@ -151,13 +154,13 @@ public final class MonthUtils {
 	}
 
 	/**
-	 * Returns the Arabic Hijri month name corresponding to the given numeric value.
+	 * Returns the Hijri month name corresponding to the given numeric value.
 	 *
 	 * <p>The mapping follows the standard Hijri calendar ordering
 	 * (1 = Muharram, 12 = Dhu al-Hijjah).</p>
 	 *
 	 * @param month the Hijri month number (1–12)
-	 * @return the Arabic Hijri month name
+	 * @return the Hijri month name
 	 * @throws IllegalArgumentException if the month number is not in the range 1–12
 	 */
 	public static String getHijriMonthName(int month) {
@@ -179,43 +182,43 @@ public final class MonthUtils {
 	}
 
 	/**
-	 * Converts an Arabic month name to its numeric value according to the given chronology.
+	 * Converts a month name to its numeric value according to the given chronology.
 	 *
 	 * <p>If the chronology is {@link java.time.chrono.HijrahChronology}, uses Hijri months;
 	 * otherwise uses Gregorian months.</p>
 	 *
-	 * @param monthArabic the Arabic month name
-	 * @param chronology  the chronology to determine the calendar type
+	 * @param monthName  the month name
+	 * @param chronology the chronology to determine the calendar type
 	 * @return the numeric month value
 	 * @throws IllegalArgumentException if the month name is not recognized
 	 */
-	public static int arabicMonthToInt(String monthArabic, Chronology chronology) {
+	public static int monthNameToNumber(String monthName, Chronology chronology) {
 		try {
 			if (chronology.equals(HijrahChronology.INSTANCE)) {
-				return getHijriMonth(monthArabic);
+				return getHijriMonth(monthName);
 			}
 			else {
-				Month month = getGregorianMonth(monthArabic);
+				Month month = getGregorianMonth(monthName);
 				return month.getValue();
 			}
 		}
 		catch (Exception ex) {
-			throw new IllegalArgumentException("اسم الشهر غير معروف: " + monthArabic, ex);
+			throw new IllegalArgumentException("اسم الشهر غير معروف: " + monthName, ex);
 		}
 	}
 
 	/**
-	 * Converts a numeric month value to its Arabic month name according to the given chronology.
+	 * Converts a numeric month value to its month name according to the given chronology.
 	 *
 	 * <p>If the chronology is {@link java.time.chrono.HijrahChronology}, the returned
 	 * name is a Hijri month name. Otherwise, a Gregorian month name is returned.</p>
 	 *
 	 * @param month      the month number (1–12)
 	 * @param chronology the chronology used to determine the calendar system
-	 * @return the Arabic month name corresponding to the given month number
+	 * @return the month name corresponding to the given month number
 	 * @throws IllegalArgumentException if the month number is invalid or unsupported
 	 */
-	public static String monthNumberToArabicName(int month, Chronology chronology) {
+	public static String monthNumberToName(int month, Chronology chronology) {
 		try {
 			if (chronology.equals(HijrahChronology.INSTANCE)) {
 				return getHijriMonthName(month);

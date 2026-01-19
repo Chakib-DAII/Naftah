@@ -1,8 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.functions;
 
 import org.daiitech.naftah.builtin.NaftahFn;
 import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
+import org.daiitech.naftah.builtin.time.NaftahDuration;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
 import org.daiitech.naftah.builtin.utils.concurrent.Channel;
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
@@ -49,7 +53,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
 										"اسم_الخيط_الحالي",
 										"تغيير_اسم_الخيط_الحالي",
 										"تغيير_اسم_الخيط",
-										"نَم",
+										"نم",
 										"تنفيس",
 										"هل_مقاطع",
 										"هل_الخيط_الحالي_مقاطع",
@@ -182,9 +186,9 @@ public final class ConcurrencyBuiltinFunctions {
 	 * @throws IllegalStateException if the sleep is interrupted
 	 */
 	@NaftahFn(
-				name = "نَم",
+				name = "نم",
 				description = "يوقِف تنفيذ الخيط الحالي لعدد معين من الملّي ثواني.",
-				usage = "دوال:الخيوط::نَم(1000)",
+				usage = "دوال:الخيوط::نم(1000)",
 				parameterTypes = Number.class,
 				returnType = void.class
 	)
@@ -197,6 +201,57 @@ public final class ConcurrencyBuiltinFunctions {
 			throw new IllegalStateException("تمت مقاطعة الخيط أثناء النوم", e);
 		}
 	}
+
+	/**
+	 * Causes the currently executing thread to sleep for the specified number of
+	 * milliseconds plus an additional nanoseconds adjustment.
+	 *
+	 * @param millis the length of time to sleep in milliseconds
+	 * @param nanos  additional nanoseconds to sleep (0–999999)
+	 * @throws IllegalStateException if the sleep is interrupted
+	 */
+	@NaftahFn(
+				name = "نم",
+				description = "يوقِف تنفيذ الخيط الحالي لعدد من الملّي ثواني مع ضبط بالنانو ثانية.",
+				usage = "دوال:الخيوط::نم(1000 , 500000)",
+				parameterTypes = {Number.class, Number.class},
+				returnType = void.class
+	)
+	public static void sleep(Number millis, Number nanos) {
+		try {
+			Thread.sleep(millis.longValue(), nanos.intValue());
+		}
+		catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IllegalStateException("تمت مقاطعة الخيط أثناء النوم", e);
+		}
+	}
+
+	/**
+	 * Causes the currently executing thread to sleep for the specified duration.
+	 *
+	 * @param duration the duration to sleep
+	 * @throws IllegalStateException if the sleep is interrupted
+	 */
+	@NaftahFn(
+				name = "نم",
+				description = "يوقِف تنفيذ الخيط الحالي لمدة زمنية محددة.",
+				usage = "دوال:الخيوط::نم(مدة_)",
+				parameterTypes = NaftahDuration.class,
+				returnType = void.class
+	)
+	public static void sleep(NaftahDuration duration) {
+		try {
+			long millis = duration.temporalAmount().toMillis();
+			int nanos = duration.getNano() % 1_000_000;
+			Thread.sleep(millis, nanos);
+		}
+		catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new IllegalStateException("تمت مقاطعة الخيط أثناء النوم", e);
+		}
+	}
+
 
 	/**
 	 * Causes the currently executing thread to yield execution to other threads.

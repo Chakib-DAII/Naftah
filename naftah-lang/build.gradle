@@ -432,6 +432,12 @@ tasks.register('baseDistZip', Zip) {
 		into "${zipBaseFolder}/lib"
 	}
 
+	from('../.vmoptions') {
+		include 'default.vmoptions'
+		into zipBaseFolder
+		rename 'default.vmoptions', 'naftah.vmoptions'
+	}
+
 	// Avoid execution by itself
 	enabled = false
 }
@@ -666,5 +672,40 @@ tasks.register('exportNaftahFunctions') {
             println "Exported ${functions.size()} JVM functions to ${dataDir}/jvm-functions.json"
 
         ''')
+	}
+}
+
+
+tasks.named("jreleaserPrepare") {
+	dependsOn tasks.named("dist"), tasks.named("distStandalone")
+}
+
+jreleaser {
+	distributions {
+		naftah {
+			active = 'ALWAYS'
+			distributionType = 'JAVA_BINARY'
+			stereotype = 'CLI'
+
+			executable {
+				name = 'naftah'
+				unixExtension = 'sh'
+				windowsExtension = 'cmd'
+			}
+
+			tags = ['cli', 'naftah', 'programming', 'language', 'Arabic', 'Tunisian', 'REPL']
+
+			artifact {
+				path = "${layout.buildDirectory}/libs/${project.name}-${project.version}.jar"
+			}
+
+			artifact {
+				path = "${layout.buildDirectory}/distributions/${project.name}-${project.version}-bin.zip"
+			}
+
+			artifact {
+				path = "${layout.buildDirectory}/distributions/${project.name}-${project.version}-standalone-bin.zip"
+			}
+		}
 	}
 }

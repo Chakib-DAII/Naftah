@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils;
 
 import java.io.IOException;
@@ -21,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ResourceUtilsTests {
+class ResourceUtilsTests {
 
 	@Test
 	void readFileLinesCorrectlyTest() throws IOException {

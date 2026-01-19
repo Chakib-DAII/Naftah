@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
 import java.io.File;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -67,6 +71,7 @@ import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.STANDARD_EXTENSIONS;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isEmpty;
 import static org.daiitech.naftah.errors.ExceptionUtils.INVALID_INSTANCE_METHOD_CALL_MSG;
 import static org.daiitech.naftah.errors.ExceptionUtils.NOTE;
@@ -97,12 +102,12 @@ import static org.daiitech.naftah.parser.StringInterpolator.cleanInput;
 import static org.daiitech.naftah.utils.ResourceUtils.getJarDirectory;
 import static org.daiitech.naftah.utils.ResourceUtils.getProperties;
 import static org.daiitech.naftah.utils.ResourceUtils.readFileLines;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.getRawHexBytes;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.convertArgument;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.findBestExecutable;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.invokeJvmConstructor;
 import static org.daiitech.naftah.utils.reflect.InvocationUtils.invokeJvmExecutable;
+import static org.daiitech.naftah.utils.script.ScriptUtils.getRawHexBytes;
 
 /**
  * Helper class for various parsing-related utilities used in the Naftah language parser.
@@ -417,11 +422,14 @@ public final class NaftahParserHelper {
 									(List<DeclaredParameter>) visit(naftahParserBaseVisitor,
 																	function.getParametersContext()));
 		}
-		if (function.getReturnType() == null && hasChild(function.getReturnTypeContext())) {
-			function.setReturnType((JavaType) visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
-		}
-		else {
-			function.setReturnType(JavaType.ofObject());
+
+		if (function.getReturnType() == null) {
+			if (hasChild(function.getReturnTypeContext())) {
+				function.setReturnType((JavaType) visit(naftahParserBaseVisitor, function.getReturnTypeContext()));
+			}
+			else {
+				function.setReturnType(JavaType.ofObject());
+			}
 		}
 	}
 
@@ -463,7 +471,11 @@ public final class NaftahParserHelper {
 				var argument = arguments.get(i);
 				var param = i >= requiredParams.size() ? parameters.get(i) : requiredParams.get(i);
 				return Map.entry(param.getName(), argument.getRight());
-			}).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			})
+					.collect(Collectors
+							.toMap( Map.Entry::getKey,
+									Map.Entry::getValue,
+									(o, o2) -> o2));
 		}
 		else {
 			Set<String> usedNames = new HashSet<>();
@@ -927,16 +939,21 @@ public final class NaftahParserHelper {
 	 *
 	 * @param constant True if the variable is constant, false if mutable.
 	 * @param name     The name of the variable.
+	 * @param type     the variable type, default {@code JavaType::ofObject}.
 	 * @param value    The value of the variable.
 	 * @return A formatted string representing the declared variable or constant.
 	 */
-	public static String declaredValueToString(boolean constant, String name, Object value) {
-		return "<%s %s = %s>".formatted(constant ? "ثابت" : "متغير", name, Optional.ofNullable(value).map(o -> {
-			if (o instanceof Boolean aBoolean) {
-				return ObjectUtils.booleanToString(aBoolean);
-			}
-			return o;
-		}).orElse(NaftahParserHelper.NULL));
+	public static String declaredValueToString(boolean constant, String name, JavaType type, Object value) {
+		return "<%s %s : %s = %s>"
+				.formatted( constant ? "ثابت" : "متغير",
+							name,
+							getNaftahType(PARSER_VOCABULARY, type),
+							Optional.ofNullable(value).map(o -> {
+								if (o instanceof Boolean aBoolean) {
+									return ObjectUtils.booleanToString(aBoolean);
+								}
+								return o;
+							}).orElse(NaftahParserHelper.NULL));
 	}
 
 	/**
@@ -1233,11 +1250,27 @@ public final class NaftahParserHelper {
 																	T ctx,
 																	TriFunction<DefaultNaftahParserVisitor, DefaultContext, T, Object> visitFunction,
 																	Class<R> returnType) {
-		debugCurrentContextVisit(methodName, ctx);
-		logExecution(ctx);
-		var result = visitFunction.apply(defaultNaftahParserVisitor, currentContext, ctx);
-		currentContext.markExecuted(ctx); // Mark as executed
-		return returnType.cast(result);
+		try {
+			debugCurrentContextVisit(methodName, ctx);
+			logExecution(ctx);
+			var result = visitFunction.apply(defaultNaftahParserVisitor, currentContext, ctx);
+			currentContext.markExecuted(ctx); // Mark as executed
+			return returnType.cast(result);
+		}
+		catch (NaftahBugError naftahBugError) {
+			if (!naftahBugError.hasCodePosition()) {
+				naftahBugError.setLine(ctx.getStart().getLine());
+				naftahBugError.setColumn(ctx.getStart().getCharPositionInLine());
+			}
+			throw naftahBugError;
+		}
+		catch (Throwable throwable) {
+			throw new NaftahBugError(   throwable.getMessage(),
+										throwable,
+										ctx.getStart().getLine(),
+										ctx.getStart().getCharPositionInLine()
+			);
+		}
 	}
 
 	/**
@@ -1438,134 +1471,147 @@ public final class NaftahParserHelper {
 														DefaultContext currentContext,
 														int line,
 														int column) {
-		Object result = None.get();
-		var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
-		boolean[] optional = new boolean[accessArray.length - 1];
+		try {
+			Object result = None.get();
+			var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
+			boolean[] optional = new boolean[accessArray.length - 1];
 
-		if (accessArray[0].endsWith("؟")) {
-			optional[0] = true;
-			accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
-		}
+			if (accessArray[0].endsWith("؟")) {
+				optional[0] = true;
+				accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
+			}
 
-		boolean found = false;
-		boolean safeChaining = false;
-		if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
-				.get() instanceof NaftahObject naftahObject) {
-			int i = 1;
+			boolean found = false;
+			boolean safeChaining = false;
+			if (accessArray.length > 1 && getVariable(accessArray[0], currentContext)
+					.get() instanceof NaftahObject naftahObject) {
+				int i = 1;
 
-			if (naftahObject.fromJava()) {
-				var javaObject = naftahObject.get(true);
-				for (; i < accessArray.length; i++) {
-					if (i < accessArray.length - 1) {
+				if (naftahObject.fromJava()) {
+					var javaObject = naftahObject.get(true);
+					for (; i < accessArray.length; i++) {
+						if (i < accessArray.length - 1) {
 
-						if (accessArray[i].endsWith("؟")) {
-							optional[i] = true;
-							accessArray[i] = accessArray[i]
-									.substring(0, accessArray[i].length() - 1);
+							if (accessArray[i].endsWith("؟")) {
+								optional[i] = true;
+								accessArray[i] = accessArray[i]
+										.substring(0, accessArray[i].length() - 1);
+							}
+
+							Object objectField = getObjectField(currentContext,
+																javaObject,
+																accessArray[i],
+																line,
+																column);
+							if (Objects.isNull(objectField)) {
+								safeChaining = IntStream
+										.range(0, optional.length)
+										.mapToObj(index -> optional[index])
+										.allMatch(Boolean.TRUE::equals);
+								found = false;
+								break;
+							}
+							else {
+								found = true;
+								javaObject = objectField;
+							}
 						}
-
-						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
-						if (Objects.isNull(objectField)) {
+						else if (Objects.nonNull(javaObject)) {
+							Object objectField = getObjectField(currentContext,
+																javaObject,
+																accessArray[i],
+																line,
+																column);
+							if (Objects.nonNull(objectField)) {
+								found = true;
+								result = objectField;
+							}
+							else {
+								found = false;
+							}
+						}
+						else {
 							safeChaining = IntStream
 									.range(0, optional.length)
 									.mapToObj(index -> optional[index])
 									.allMatch(Boolean.TRUE::equals);
-							found = false;
-							break;
-						}
-						else {
-							found = true;
-							javaObject = objectField;
 						}
 					}
-					else if (Objects.nonNull(javaObject)) {
-						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
-						if (Objects.nonNull(objectField)) {
-							found = true;
-							result = objectField;
+				}
+				else {
+					//noinspection unchecked
+					var object = (Map<String, DeclaredVariable>) naftahObject.get();
+					for (; i < accessArray.length; i++) {
+						if (i < accessArray.length - 1) {
+
+							if (accessArray[i].endsWith("؟")) {
+								optional[i] = true;
+								accessArray[i] = accessArray[i]
+										.substring(0, accessArray[i].length() - 1);
+							}
+
+							DeclaredVariable declaredVariable = object.get(accessArray[i]);
+							if (Objects.isNull(declaredVariable)) {
+								safeChaining = IntStream
+										.range(0, optional.length)
+										.mapToObj(index -> optional[index])
+										.allMatch(Boolean.TRUE::equals);
+								found = false;
+								break;
+							}
+							else {
+								found = true;
+								//noinspection unchecked
+								object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
+										.getValue()).get();
+							}
+						}
+						else if (Objects.nonNull(object)) {
+							DeclaredVariable declaredVariable = object.get(accessArray[i]);
+							if (Objects.nonNull(declaredVariable)) {
+								found = true;
+								result = declaredVariable;
+							}
+							else {
+								found = false;
+							}
 						}
 						else {
-							found = false;
+							safeChaining = IntStream
+									.range(0, optional.length)
+									.mapToObj(index -> optional[index])
+									.allMatch(Boolean.TRUE::equals);
 						}
+					}
+				}
+
+				if (!found) {
+					if (safeChaining) {
+						result = None.get();
 					}
 					else {
-						safeChaining = IntStream
-								.range(0, optional.length)
-								.mapToObj(index -> optional[index])
-								.allMatch(Boolean.TRUE::equals);
+						int finalI = i;
+						String traversedQualifiedName = IntStream
+								.range(0, accessArray.length)
+								.filter(index -> index <= finalI)
+								.mapToObj(index -> accessArray[index] + (index < optional.length ?
+										(optional[index] ?
+												"؟" :
+												"") :
+										""))
+								.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
+						throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
 					}
 				}
 			}
 			else {
-				//noinspection unchecked
-				var object = (Map<String, DeclaredVariable>) naftahObject.get();
-				for (; i < accessArray.length; i++) {
-					if (i < accessArray.length - 1) {
-
-						if (accessArray[i].endsWith("؟")) {
-							optional[i] = true;
-							accessArray[i] = accessArray[i]
-									.substring(0, accessArray[i].length() - 1);
-						}
-
-						DeclaredVariable declaredVariable = object.get(accessArray[i]);
-						if (Objects.isNull(declaredVariable)) {
-							safeChaining = IntStream
-									.range(0, optional.length)
-									.mapToObj(index -> optional[index])
-									.allMatch(Boolean.TRUE::equals);
-							found = false;
-							break;
-						}
-						else {
-							found = true;
-							//noinspection unchecked
-							object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
-									.getValue()).get();
-						}
-					}
-					else if (Objects.nonNull(object)) {
-						DeclaredVariable declaredVariable = object.get(accessArray[i]);
-						if (Objects.nonNull(declaredVariable)) {
-							found = true;
-							result = declaredVariable;
-						}
-						else {
-							found = false;
-						}
-					}
-					else {
-						safeChaining = IntStream
-								.range(0, optional.length)
-								.mapToObj(index -> optional[index])
-								.allMatch(Boolean.TRUE::equals);
-					}
-				}
+				result = getVariable(accessArray[0], currentContext).get();
 			}
-
-			if (!found) {
-				if (safeChaining) {
-					result = None.get();
-				}
-				else {
-					int finalI = i;
-					String traversedQualifiedName = IntStream
-							.range(0, accessArray.length)
-							.filter(index -> index <= finalI)
-							.mapToObj(index -> accessArray[index] + (index < optional.length ?
-									(optional[index] ?
-											"؟" :
-											"") :
-									""))
-							.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
-					throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
-				}
-			}
+			return result instanceof DeclaredVariable declaredVariable ? declaredVariable.getValue() : result;
 		}
-		else {
-			result = getVariable(accessArray[0], currentContext).get();
+		catch (Exception e) {
+			throw newNaftahBugVariableNotFoundError(qualifiedName, line, column);
 		}
-		return result instanceof DeclaredVariable declaredVariable ? declaredVariable.getValue() : result;
 	}
 
 	/**
@@ -1601,144 +1647,156 @@ public final class NaftahParserHelper {
 														Object newValue,
 														int line,
 														int column) {
-		var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
-		boolean[] optional = new boolean[accessArray.length - 1];
+		try {
+			var accessArray = qualifiedName.split(QUALIFIED_NAME_SEPARATOR);
+			boolean[] optional = new boolean[accessArray.length - 1];
 
-		if (accessArray[0].endsWith("؟")) {
-			optional[0] = true;
-			accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
-		}
+			if (accessArray[0].endsWith("؟")) {
+				optional[0] = true;
+				accessArray[0] = accessArray[0].substring(0, accessArray[0].length() - 1);
+			}
 
-		boolean found = false;
-		boolean safeChaining = false;
+			boolean found = false;
+			boolean safeChaining = false;
 
-		DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).getRight();
+			DeclaredVariable objectVariable = currentContext.getVariable(accessArray[0], false).getRight();
 
-		if (accessArray.length > 1 && objectVariable.getValue() instanceof NaftahObject naftahObject) {
-			int i = 1;
+			if (accessArray.length > 1 && objectVariable.getValue() instanceof NaftahObject naftahObject) {
+				int i = 1;
 
-			if (naftahObject.fromJava()) {
-				var javaObject = naftahObject.get(true);
-				for (; i < accessArray.length; i++) {
-					if (i < accessArray.length - 1) {
+				if (naftahObject.fromJava()) {
+					var javaObject = naftahObject.get(true);
+					for (; i < accessArray.length; i++) {
+						if (i < accessArray.length - 1) {
 
-						if (accessArray[i].endsWith("؟")) {
-							optional[i] = true;
-							accessArray[i] = accessArray[i]
-									.substring(0, accessArray[i].length() - 1);
+							if (accessArray[i].endsWith("؟")) {
+								optional[i] = true;
+								accessArray[i] = accessArray[i]
+										.substring(0, accessArray[i].length() - 1);
+							}
+
+							Object objectField = getObjectField(currentContext,
+																javaObject,
+																accessArray[i],
+																line,
+																column);
+							if (Objects.isNull(objectField)) {
+								safeChaining = IntStream
+										.range(0, optional.length)
+										.mapToObj(index -> optional[index])
+										.allMatch(Boolean.TRUE::equals);
+								found = false;
+								break;
+							}
+							else {
+								found = true;
+								javaObject = objectField;
+							}
 						}
+						else if (Objects.nonNull(javaObject)) {
+							var field = ObjectAccessUtils.findField(javaObject.getClass(), accessArray[i], true);
+							if (Objects.nonNull(field)) {
+								found = true;
+								var fieldValue = convertArgument(   newValue,
+																	field.getType(),
+																	field.getGenericType(),
+																	false);
+								setObjectField(currentContext, javaObject, accessArray[i], fieldValue, line, column);
 
-						Object objectField = getObjectField(currentContext, javaObject, accessArray[i], line, column);
-						if (Objects.isNull(objectField)) {
+								var afterUpdateFieldValue = accessObjectUsingQualifiedName( qualifiedName,
+																							currentContext,
+																							line,
+																							column);
+
+								if (!ObjectUtils.equals(fieldValue, afterUpdateFieldValue, true)) {
+									throw ExceptionUtils
+											.newNaftahSettingConstantError( qualifiedName,
+																			newIllegalFieldAccessException(field
+																					.getName()));
+								}
+
+							}
+							else {
+								found = false;
+							}
+						}
+						else {
 							safeChaining = IntStream
 									.range(0, optional.length)
 									.mapToObj(index -> optional[index])
 									.allMatch(Boolean.TRUE::equals);
-							found = false;
-							break;
-						}
-						else {
-							found = true;
-							javaObject = objectField;
 						}
 					}
-					else if (Objects.nonNull(javaObject)) {
-						var field = ObjectAccessUtils.findField(javaObject.getClass(), accessArray[i], true);
-						if (Objects.nonNull(field)) {
-							found = true;
-							var fieldValue = convertArgument(newValue, field.getType(), field.getGenericType(), false);
-							setObjectField(currentContext, javaObject, accessArray[i], fieldValue, line, column);
+				}
+				else {
+					//noinspection unchecked
+					var object = (Map<String, DeclaredVariable>) naftahObject.get();
+					for (; i < accessArray.length; i++) {
+						if (i < accessArray.length - 1) {
 
-							var afterUpdateFieldValue = accessObjectUsingQualifiedName( qualifiedName,
-																						currentContext,
-																						line,
-																						column);
-
-							if (!ObjectUtils.equals(fieldValue, afterUpdateFieldValue, true)) {
-								throw ExceptionUtils
-										.newNaftahSettingConstantError( qualifiedName,
-																		newIllegalFieldAccessException(field
-																				.getName()));
+							if (accessArray[i].endsWith("؟")) {
+								optional[i] = true;
+								accessArray[i] = accessArray[i]
+										.substring(0, accessArray[i].length() - 1);
 							}
 
+							DeclaredVariable declaredVariable = object.get(accessArray[i]);
+							if (Objects.isNull(declaredVariable)) {
+								safeChaining = IntStream
+										.range(0, optional.length)
+										.mapToObj(index -> optional[index])
+										.allMatch(Boolean.TRUE::equals);
+								found = false;
+								break;
+							}
+							else {
+								found = true;
+								//noinspection unchecked
+								object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
+										.getValue()).get();
+							}
+						}
+						else if (Objects.nonNull(object)) {
+							DeclaredVariable declaredVariable = object.get(accessArray[i]);
+							if (Objects.nonNull(declaredVariable)) {
+								found = true;
+								declaredVariable.setValue(newValue);
+							}
+							else {
+								found = false;
+							}
 						}
 						else {
-							found = false;
+							safeChaining = IntStream
+									.range(0, optional.length)
+									.mapToObj(index -> optional[index])
+									.allMatch(Boolean.TRUE::equals);
 						}
 					}
-					else {
-						safeChaining = IntStream
-								.range(0, optional.length)
-								.mapToObj(index -> optional[index])
-								.allMatch(Boolean.TRUE::equals);
-					}
+				}
+
+				if (!found && !safeChaining) {
+					int finalI = i;
+					String traversedQualifiedName = IntStream
+							.range(0, accessArray.length)
+							.filter(index -> index <= finalI)
+							.mapToObj(index -> accessArray[index] + (index < optional.length ?
+									(optional[index] ?
+											"؟" :
+											"") :
+									""))
+							.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
+					throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
 				}
 			}
 			else {
-				//noinspection unchecked
-				var object = (Map<String, DeclaredVariable>) naftahObject.get();
-				for (; i < accessArray.length; i++) {
-					if (i < accessArray.length - 1) {
-
-						if (accessArray[i].endsWith("؟")) {
-							optional[i] = true;
-							accessArray[i] = accessArray[i]
-									.substring(0, accessArray[i].length() - 1);
-						}
-
-						DeclaredVariable declaredVariable = object.get(accessArray[i]);
-						if (Objects.isNull(declaredVariable)) {
-							safeChaining = IntStream
-									.range(0, optional.length)
-									.mapToObj(index -> optional[index])
-									.allMatch(Boolean.TRUE::equals);
-							found = false;
-							break;
-						}
-						else {
-							found = true;
-							//noinspection unchecked
-							object = (Map<String, DeclaredVariable>) ((NaftahObject) declaredVariable
-									.getValue()).get();
-						}
-					}
-					else if (Objects.nonNull(object)) {
-						DeclaredVariable declaredVariable = object.get(accessArray[i]);
-						if (Objects.nonNull(declaredVariable)) {
-							found = true;
-							declaredVariable.setValue(newValue);
-						}
-						else {
-							found = false;
-						}
-					}
-					else {
-						safeChaining = IntStream
-								.range(0, optional.length)
-								.mapToObj(index -> optional[index])
-								.allMatch(Boolean.TRUE::equals);
-					}
-				}
+				objectVariable.setValue(newValue);
 			}
-
-			if (!found && !safeChaining) {
-				int finalI = i;
-				String traversedQualifiedName = IntStream
-						.range(0, accessArray.length)
-						.filter(index -> index <= finalI)
-						.mapToObj(index -> accessArray[index] + (index < optional.length ?
-								(optional[index] ?
-										"؟" :
-										"") :
-								""))
-						.collect(Collectors.joining(QUALIFIED_NAME_SEPARATOR));
-				throw newNaftahBugVariableNotFoundError(traversedQualifiedName, line, column);
-			}
+			return objectVariable;
 		}
-		else {
-			objectVariable.setValue(newValue);
+		catch (Exception e) {
+			throw newNaftahBugVariableNotFoundError(qualifiedName, line, column);
 		}
-		return objectVariable;
 	}
 
 	/**
@@ -1838,8 +1896,11 @@ public final class NaftahParserHelper {
 		var bestMatch = findBestExecutable(jvmFunctions, new ArrayList<>(naftahArgs), true);
 
 		var selectedFunction = bestMatch.getLeft();
-		Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
-				.isStatic() ? null : naftahArgs.remove(0).getRight();
+
+		Object possibleInstance = null;
+		if (selectedFunction instanceof JvmFunction jvmFunction && !jvmFunction.isStatic()) {
+			possibleInstance = naftahArgs.remove(0).getRight();
+		}
 
 		return invokeFunction(  functionName,
 								forceInvocation,
@@ -2556,8 +2617,10 @@ public final class NaftahParserHelper {
 					if (Objects.nonNull(functionIndex)) {
 						var selectedFunction = getFunction(jvmExecutables, functionIndex);
 
-						Object possibleInstance = selectedFunction instanceof JvmFunction jvmFunction && jvmFunction
-								.isStatic() ? null : args.remove(0).getRight();
+						Object possibleInstance = null;
+						if (selectedFunction instanceof JvmFunction jvmFunction && !jvmFunction.isStatic()) {
+							possibleInstance = args.remove(0).getRight();
+						}
 
 						result = invokeFunction(functionName,
 												forceInvocation,
@@ -3003,5 +3066,84 @@ public final class NaftahParserHelper {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Validates a snippet of Naftah code without executing it.
+	 *
+	 * <p>
+	 * This method parses the provided script to check for syntax errors or
+	 * other issues that would prevent the code from running successfully.
+	 * The validation is done in a “dry-run” mode—no code is executed, only parsed.
+	 * </p>
+	 *
+	 * <p>
+	 * If the system property defined by {@code DEBUG_PROPERTY} is enabled,
+	 * it is temporarily disabled during validation to avoid debug-related side effects,
+	 * and restored afterward.
+	 * </p>
+	 *
+	 * @param script the Naftah code to validate
+	 * @return {@code true} if the script is syntactically valid; {@code false} if any parsing
+	 *         errors or exceptions are encountered
+	 */
+	public static boolean validateCode(String script) {
+		boolean isDebug = Boolean.getBoolean(DEBUG_PROPERTY);
+
+		if (isDebug) {
+			System.setProperty(DEBUG_PROPERTY, Boolean.toString(false));
+		}
+
+		try {
+
+			var input = getCharStream(false, script);
+
+
+			var parser = prepareRun(input, new BaseErrorListener());
+
+			parser.program();
+
+			return true;
+		}
+		catch (Throwable ignored) {
+			return false;
+		}
+		finally {
+			if (isDebug) {
+				System.setProperty(DEBUG_PROPERTY, String.valueOf(true));
+			}
+		}
+	}
+
+	/**
+	 * Checks whether the given object represents a declared variable paired with a boolean flag.
+	 * <p>
+	 * The method verifies that:
+	 * <ul>
+	 * <li>The object is an instance of {@link Pair}</li>
+	 * <li>The first type parameter of the pair is {@link DeclaredVariable}</li>
+	 * <li>The second type parameter of the pair is {@link Boolean}</li>
+	 * </ul>
+	 *
+	 * This is typically used to detect structures of the form:
+	 * <pre>
+	 * Pair&lt;DeclaredVariable, Boolean&gt;
+	 * </pre>
+	 * where the boolean value represents an associated flag.
+	 *
+	 * @param object the object to check
+	 * @return {@code true} if the object is a {@code Pair<DeclaredVariable, Boolean>},
+	 *         {@code false} otherwise
+	 */
+	public static boolean isDeclaredVariableWithFlag(Object object) {
+		return object instanceof Pair<?, ?> pair && JavaType
+				.of(pair)
+				.getTypeParameters()
+				.get(0)
+				.isOfType(DeclaredVariable.class) && JavaType
+						.of(pair)
+						.getTypeParameters()
+						.get(1)
+						.isOfType(Boolean.class);
 	}
 }

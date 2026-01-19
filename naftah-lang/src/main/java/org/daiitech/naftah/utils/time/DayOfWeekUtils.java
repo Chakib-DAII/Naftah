@@ -1,9 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils.time;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
- * Utility class for converting numeric day-of-week values to Arabic names.
+ * Utility class for converting numeric day-of-week values to names.
  *
  * <p>This class supports both Gregorian and Hijri calendars (names are the same).</p>
  *
@@ -14,16 +17,16 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
 public final class DayOfWeekUtils {
 
 	/**
-	 * Arabic names of the week (Monday = 1, Sunday = 7).
+	 * names of the week (Monday = 1, Sunday = 7).
 	 */
-	private static final String[] ARABIC_WEEK_DAYS = {
-														"الاثنين",
-														"الثلاثاء",
-														"الأربعاء",
-														"الخميس",
-														"الجمعة",
-														"السبت",
-														"الأحد"
+	private static final String[] WEEK_DAYS = {
+												"الاثنين",
+												"الثلاثاء",
+												"الأربعاء",
+												"الخميس",
+												"الجمعة",
+												"السبت",
+												"الأحد"
 	};
 
 	/**
@@ -34,16 +37,16 @@ public final class DayOfWeekUtils {
 	}
 
 	/**
-	 * Converts a numeric day-of-week to its Arabic name.
+	 * Converts a numeric day-of-week to its name.
 	 *
 	 * @param dayOfWeek the day number (1 = Monday, ..., 7 = Sunday)
-	 * @return Arabic name of the day
+	 * @return name of the day
 	 * @throws IllegalArgumentException if the day number is not in 1–7
 	 */
-	public static String getArabicDayOfWeek(int dayOfWeek) {
+	public static String getDayOfWeek(int dayOfWeek) {
 		if (dayOfWeek < 1 || dayOfWeek > 7) {
 			throw new IllegalArgumentException("رقم اليوم يجب أن يكون بين 1 و 7، القيمة المدخلة: " + dayOfWeek);
 		}
-		return ARABIC_WEEK_DAYS[dayOfWeek - 1];
+		return WEEK_DAYS[dayOfWeek - 1];
 	}
 }

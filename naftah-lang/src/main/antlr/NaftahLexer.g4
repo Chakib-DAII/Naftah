@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 /**
  *
  * The Naftah grammar is based on multiple programming languages tokens and syntaxes
@@ -150,7 +153,7 @@ LT_TYPE_SIGN    : COLON LT_SIGN;
 GT_TYPE_SIGN    : GT_SIGN COLON;
 
 // Literals
-BASE_DIGITS		: (Digit | Character)+ QuotationMark QuotationMark;  // Digits for base up to 36 (including a-z for bases > 10)
+BASE_DIGITS		: QuotationMark (Digit | Character)+ QuotationMark QuotationMark;  // Digits for base up to 36 (including a-z for bases > 10)
 BASE_RADIX		: ([2-9٢-٩] | ([1-3١-٣] [0-9٠-٩])) QuotationMark; // base 2 to 36 radices
 NUMBER      	: Digit+ (COMMA Digit+)?;
 NAN				: 'ليس_رقم' | 'قيمة_غير_رقمية' | 'رقم_غير_صالح' | 'غير_عددي' | 'ليس_عددي';

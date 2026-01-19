@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
 import java.io.File;
@@ -49,7 +52,6 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.TestUtils.assertBugEquals;
 import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.TestUtils.runScript;
-import static org.daiitech.naftah.parser.DefaultContext.CONTEXTS;
 import static org.daiitech.naftah.parser.DefaultContext.bootstrap;
 import static org.daiitech.naftah.parser.DefaultContext.cleanClassThreadLocals;
 import static org.daiitech.naftah.utils.JulLoggerConfig.LOGGING_FILE;
@@ -57,7 +59,7 @@ import static org.daiitech.naftah.utils.JulLoggerConfig.initializeFromResources;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.CLASS_PATH_PROPERTY;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.JAVA_HOME_PROPERTY;
 
-public class DefaultNaftahParserVisitorTests {
+class DefaultNaftahParserVisitorTests {
 
 	@BeforeAll
 	static void setupAll() throws IOException {
@@ -98,7 +100,7 @@ public class DefaultNaftahParserVisitorTests {
 
 	@BeforeEach
 	void setup() {
-		CONTEXTS.clear();
+		DefaultContext.clear();
 		cleanClassThreadLocals();
 	}
 

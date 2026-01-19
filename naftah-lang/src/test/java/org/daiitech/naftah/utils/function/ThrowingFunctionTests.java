@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils.function;
 
 import java.util.function.BiFunction;
@@ -13,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ThrowingFunctionTests {
+class ThrowingFunctionTests {
 
 	static final BiFunction<String, Exception, RuntimeException> WRAPPER = (msg, ex) -> new IllegalStateException(
 																													"Wrapped: " + msg,

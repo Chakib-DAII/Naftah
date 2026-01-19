@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
@@ -12,7 +15,7 @@ import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSymbols;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 /**
  * Custom error listener for Naftah language parsing errors.

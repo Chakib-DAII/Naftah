@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin;
 
 import java.util.Objects;
@@ -8,8 +11,8 @@ import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
 import org.daiitech.naftah.builtin.utils.op.UnaryOperation;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.builtin.utils.FunctionUtils.allMatch;
 import static org.daiitech.naftah.builtin.utils.FunctionUtils.reduce;
@@ -20,7 +23,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 /**
  * Provides built-in functions used within the Naftah language for performing various
@@ -1022,7 +1025,7 @@ public final class Builtin {
 	 * and returns the most appropriate numeric type.
 	 *
 	 * <p>This method handles numeric strings containing Arabic digits and converts
-	 * them to Latin digits before parsing. The returned {@link Number} type depends
+	 * them to Ascii digits before parsing. The returned {@link Number} type depends
 	 * on the input value and the specified radix.</p>
 	 *
 	 * <p>Example usage:</p>
@@ -1046,7 +1049,7 @@ public final class Builtin {
 				returnType = Number.class
 	)
 	public static Number parseDynamicNumber(String text, DynamicNumber radix) {
-		String value = ArabicUtils
+		String value = ScriptUtils
 				.convertArabicToLatinLetterByLetter(text);
 		return NumberUtils.parseDynamicNumber(value, radix, text);
 	}

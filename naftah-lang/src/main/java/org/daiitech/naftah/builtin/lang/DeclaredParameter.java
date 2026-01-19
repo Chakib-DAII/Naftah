@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.lang;
 
 import java.util.Objects;
@@ -137,7 +140,7 @@ public final class DeclaredParameter extends Declaration {
 	 *
 	 * @return the parameter type
 	 */
-	public Object getType() {
+	public JavaType getType() {
 		return type;
 	}
 
@@ -189,6 +192,6 @@ public final class DeclaredParameter extends Declaration {
 	 */
 	@Override
 	public String toString() {
-		return NaftahParserHelper.declaredValueToString(constant, name, getValue());
+		return NaftahParserHelper.declaredValueToString(constant, name, type, getValue());
 	}
 }

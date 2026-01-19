@@ -1,6 +1,12 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -46,6 +52,31 @@ public final class OS {
 	 * System property key for the operating system version.
 	 */
 	public static final String OS_VERSION_PROPERTY = "os.version";
+
+	/**
+	 * WSL environment variable containing the current Linux distribution name.
+	 */
+	public static final String WSL_DISTRO_NAME_ENV = "WSL_DISTRO_NAME";
+
+	/**
+	 * WSL environment variable used for Windows–Linux process interop.
+	 */
+	public static final String WSL_INTEROP_ENV = "WSL_INTEROP";
+
+	/**
+	 * WSL-specific environment variable controlling Windows–Linux env propagation.
+	 */
+	public static final String WSL_ENV = "WSLENV";
+
+	/**
+	 * Terminal type identifier provided via terminfo (often misleading).
+	 */
+	public static final String TERM_ENV = "TERM";
+
+	/**
+	 * Set only by real xterm to expose its version and identify the emulator.
+	 */
+	public static final String XTERM_VERSION_ENV = "XTERM_VERSION";
 
 	/**
 	 * Identifier for OS/400 family.
@@ -101,6 +132,15 @@ public final class OS {
 	 * Identifier for Windows family.
 	 */
 	private static final String FAMILY_WINDOWS = "windows";
+	/**
+	 * Whether the current OS is running under Windows Subsystem for Linux (WSL).
+	 */
+	private static final boolean IS_WSL;
+
+	/**
+	 * Whether the current terminal is a real XTerm instance.
+	 */
+	private static final boolean IS_XTERM;
 
 	/**
 	 * The OS name in lowercase, retrieved from system properties.
@@ -127,6 +167,8 @@ public final class OS {
 		OS_ARCH = System.getProperty(OS_ARCH_PROPERTY).toLowerCase(Locale.US);
 		OS_VERSION = System.getProperty(OS_VERSION_PROPERTY).toLowerCase(Locale.US);
 		PATH_SEP = File.pathSeparator;
+		IS_WSL = checkIfInsideWSL();
+		IS_XTERM = checkIfInsideRealXTerm();
 	}
 
 	/**
@@ -135,6 +177,58 @@ public final class OS {
 	 */
 	private OS() {
 		throw newNaftahBugInvalidUsageError();
+	}
+
+	/**
+	 * Detects whether the JVM is running inside Windows Subsystem for Linux (WSL).
+	 * <p>
+	 * Checks environment variables first, then falls back to inspecting
+	 * the kernel version in /proc/version for "Microsoft".
+	 *
+	 * @return true if running inside WSL, false otherwise
+	 */
+	private static boolean checkIfInsideWSL() {
+		// WSL is always Linux
+		if (!isFamilyUnix()) {
+			return false;
+		}
+
+		// Fast path: environment variables
+		if (System.getenv().containsKey(WSL_DISTRO_NAME_ENV) || System.getenv().containsKey(WSL_INTEROP_ENV) || System
+				.getenv()
+				.containsKey(WSL_ENV)) {
+			return true;
+		}
+
+		// Fallback: kernel version
+		try {
+			String version = Files.readString(Path.of("/proc/version")).toLowerCase(Locale.US);
+			return version.contains("microsoft");
+		}
+		catch (IOException ignored) {
+			return false;
+		}
+	}
+
+	/**
+	 * Detects whether the JVM is running inside a real XTerm terminal.
+	 * <p>
+	 * Relies on TERM and XTERM_VERSION environment variables to distinguish
+	 * XTerm from other terminal emulators (like GNOME Terminal or Kitty).
+	 *
+	 * @return true if running inside XTerm, false otherwise
+	 */
+	private static boolean checkIfInsideRealXTerm() {
+		// XTERM is always Linux
+		if (!isFamilyUnix()) {
+			return false;
+		}
+		String term = System.getenv(TERM_ENV);
+		if (term != null && term.contains("xterm")) {
+			String xtermVersion = System.getenv(XTERM_VERSION_ENV);
+			return xtermVersion != null && xtermVersion.startsWith("XTerm");
+		}
+		return false;
 	}
 
 	/**
@@ -208,6 +302,24 @@ public final class OS {
 	 */
 	public static boolean isFamilyWindows() {
 		return isFamily(FAMILY_WINDOWS);
+	}
+
+	/**
+	 * Checks whether the current OS is running under Windows Subsystem for Linux (WSL).
+	 *
+	 * @return {@code true} if running in WSL, {@code false} otherwise
+	 */
+	public static boolean isWSL() {
+		return IS_WSL;
+	}
+
+	/**
+	 * Checks whether the current terminal is a real XTerm instance.
+	 *
+	 * @return {@code true} if running inside XTerm, {@code false} otherwise
+	 */
+	public static boolean isRealXTerm() {
+		return IS_XTERM;
 	}
 
 	/**

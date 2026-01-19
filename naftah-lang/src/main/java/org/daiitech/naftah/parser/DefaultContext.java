@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
 import java.io.IOException;
@@ -53,10 +56,10 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.Naftah.BUILTIN_CLASSES_PROPERTY;
 import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
@@ -76,7 +79,6 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_NAME_REGEX
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasAnyParentOfType;
 import static org.daiitech.naftah.utils.ConsoleLoader.startLoader;
 import static org.daiitech.naftah.utils.ConsoleLoader.stopLoader;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_CALL_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.QUALIFIED_NAME_SEPARATOR;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.filterClasses;
@@ -89,6 +91,7 @@ import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedCall;
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getQualifiedName;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.loadClasses;
 import static org.daiitech.naftah.utils.reflect.RuntimeClassScanner.scanClasses;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 /**
  * Represents the default execution context used to manage variables, functions, loops,
@@ -1245,15 +1248,16 @@ public class DefaultContext {
 	 * Attempts to deserialize a previously cached class scanning result.
 	 * If deserialization fails, triggers class loading asynchronously if configured.
 	 *
-	 * @param cachePath the file path where the Base64 string should be saved
+	 * @param cachePath      the file path where the Base64 string should be saved
+	 * @param loaderRunnable the loader call in case of deserialization failure
 	 */
-	protected static void deserializeClassScanningResult(Path cachePath) {
+	protected static void deserializeClassScanningResult(Path cachePath, Runnable loaderRunnable) {
 		try {
-			var result = (ClassScanningResult) Base64SerializationUtils.deserialize(cachePath);
+			ClassScanningResult result = (ClassScanningResult) Base64SerializationUtils.deserialize(cachePath);
 			setContextFromClassScanningResult(result);
 		}
 		catch (Exception e) {
-			callLoader(ASYNC_BOOT_STRAP, LOADER_TASK, LOADER_CONSUMER);
+			loaderRunnable.run();
 		}
 	}
 
@@ -1304,11 +1308,12 @@ public class DefaultContext {
 				throw new NaftahBugError(e);
 			}
 
+			Runnable loaderRunnable = () -> callLoader(ASYNC_BOOT_STRAP, LOADER_TASK, LOADER_CONSUMER);
 			if (FORCE_BOOT_STRAP || !Files.exists(CACHE_PATH)) {
-				callLoader(ASYNC_BOOT_STRAP, LOADER_TASK, LOADER_CONSUMER);
+				loaderRunnable.run();
 			}
 			else {
-				deserializeClassScanningResult(CACHE_PATH);
+				deserializeClassScanningResult(CACHE_PATH, loaderRunnable);
 			}
 		}
 		else {
@@ -1319,11 +1324,13 @@ public class DefaultContext {
 			catch (IOException e) {
 				throw new NaftahBugError(e);
 			}
+
+			Runnable loaderRunnable = () -> callLoader(false, MINIMAL_LOADER_TASK, MINIMAL_LOADER_CONSUMER);
 			if (FORCE_BOOT_STRAP || !Files.exists(MINIMAL_CACHE_PATH)) {
-				callLoader(false, MINIMAL_LOADER_TASK, MINIMAL_LOADER_CONSUMER);
+				loaderRunnable.run();
 			}
 			else {
-				deserializeClassScanningResult(MINIMAL_CACHE_PATH);
+				deserializeClassScanningResult(MINIMAL_CACHE_PATH, loaderRunnable);
 			}
 		}
 		if (Boolean.getBoolean(DEBUG_PROPERTY)) {
@@ -1650,6 +1657,11 @@ public class DefaultContext {
 				var jvmClassInitializers = ClassUtils
 						.getClassConstructors(  arabicQualifiedName,
 												clazz);
+
+				if (jvmClassInitializers.isEmpty()) {
+					return false;
+				}
+
 				setCurrentLookupJvmClassInitializers(jvmClassInitializers);
 				return true;
 			}
@@ -1682,9 +1694,14 @@ public class DefaultContext {
 						.getClassMethods(   arabicQualifiedCallParts[0],
 											clazz,
 											method -> arabicQualifiedCallParts[1]
-													.equals(ArabicUtils
+													.equals(ScriptUtils
 															.transliterateToArabicScriptDefault(
 																								method.getName())[0]));
+
+				if (jvmFunctions.isEmpty()) {
+					return false;
+				}
+
 				setCurrentLookupJvmFunctions(jvmFunctions);
 				return true;
 			}
@@ -3212,5 +3229,17 @@ public class DefaultContext {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Clears all stored contexts from the global {@link #CONTEXTS} map.
+	 * <p>
+	 * This removes every {@link DefaultContext} instance, effectively resetting
+	 * the entire context tracking system. After calling this method, any
+	 * previously stored contexts are lost.
+	 * </p>
+	 */
+	public static void clear() {
+		CONTEXTS.clear();
 	}
 }

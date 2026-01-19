@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser.provider.script;
 
 import java.util.List;
@@ -441,7 +444,7 @@ public class ConcurrencyProvider implements ArgumentsProvider {
 								تشغيل مستهلك(قناة_مشتركة؛طابعة؛10) --- تشغيل المستهلك بشكل متزامن لمعالجة 10 رسائل
 								}
 								""",
-								Pair.of(None.get(), true),
+								Pair.of(None.get(), None.get()),
 								null),
 					Arguments
 							.of(true,
@@ -478,7 +481,7 @@ public class ConcurrencyProvider implements ArgumentsProvider {
 								تشغيل مستهلك(قناة_مشتركة؛طابعة؛10) --- تشغيل المستهلك بشكل متزامن لمعالجة 10 رسائل
 								}
 								""",
-								Pair.of(None.get(), true),
+								Pair.of(None.get(), None.get()),
 								null),
 					Arguments
 							.of(true,
@@ -519,7 +522,7 @@ public class ConcurrencyProvider implements ArgumentsProvider {
 								تشغيل مستهلك(قناة_مشتركة؛طابعة؛10) --- تشغيل المستهلك بشكل متزامن لمعالجة 10 رسائل
 								}
 								""",
-								Pair.of(None.get(), true),
+								Pair.of(None.get(), None.get()),
 								null),
 					Arguments
 							.of(true,
@@ -562,7 +565,7 @@ public class ConcurrencyProvider implements ArgumentsProvider {
 								تشغيل مستهلك(قناة_مشتركة؛طابعة؛10) --- تشغيل المستهلك بشكل متزامن لمعالجة 10 رسائل
 								}
 								""",
-								Pair.of(None.get(), true),
+								Pair.of(None.get(), None.get()),
 								null)
 				);
 	}

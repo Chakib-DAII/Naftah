@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.utils;
 
 import java.math.BigDecimal;
@@ -20,7 +23,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugNullInputErr
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugUnsupportedBitwiseDecimalError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahNegativeNumberError;
 
-public class NumberUtilsTests {
+class NumberUtilsTests {
 	static Stream<Arguments> convertNumberToTargetClassProvider() {
 		return Stream
 				.of(

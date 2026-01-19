@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.lang;
 
 import java.io.Serial;
@@ -106,7 +109,7 @@ public record NaftahFunction(
 					\t\t\t- أنواع الاستثناءات: %s"""
 				.formatted(
 							name,
-							String.join(", ", aliases),
+							aliases.length == 0 ? "لا شيء" : String.join(", ", aliases),
 							description,
 							usage,
 							Objects.isNull(PARSER_VOCABULARY) ?

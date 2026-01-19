@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.utils.op;
 
 import org.daiitech.naftah.builtin.lang.NaN;
@@ -12,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UnaryOperationTests {
+class UnaryOperationTests {
 
 	@Test
 	void bitwiseNotIntegerTest() {

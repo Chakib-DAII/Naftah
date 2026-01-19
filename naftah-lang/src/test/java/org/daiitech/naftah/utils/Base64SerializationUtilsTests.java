@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils;
 
 import java.io.File;
@@ -16,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class Base64SerializationUtilsTests {
+class Base64SerializationUtilsTests {
 
 	private static final TestObject testObject = new TestObject("Test", 42);
 

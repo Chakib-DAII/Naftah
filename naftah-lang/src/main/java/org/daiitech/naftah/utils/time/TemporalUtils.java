@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils.time;
 
 import java.time.Duration;
@@ -19,8 +22,8 @@ import java.time.temporal.Temporal;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import org.daiitech.naftah.builtin.time.ArabicDate;
-import org.daiitech.naftah.builtin.time.ArabicTime;
+import org.daiitech.naftah.builtin.time.NaftahDate;
+import org.daiitech.naftah.builtin.time.NaftahTime;
 import org.daiitech.naftah.builtin.utils.tuple.NTuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
@@ -34,13 +37,13 @@ import static org.daiitech.naftah.utils.time.Constants.PM_SHORT;
 
 /**
  * Utility class for creating and manipulating Java {@link Temporal} instances
- * from Arabic date and time components.
+ * from Naftah date and time components.
  *
  * <p>Provides methods to create:
  * <ul>
- * <li>{@link LocalTime}, {@link OffsetTime}, and {@link ZonedDateTime} from {@link ArabicTime.Time}</li>
- * <li>{@link ChronoLocalDate} from Arabic date components and {@link Chronology}</li>
- * <li>{@link LocalDateTime}, {@link OffsetDateTime}, and {@link ZonedDateTime} from Arabic date-time components</li>
+ * <li>{@link LocalTime}, {@link OffsetTime}, and {@link ZonedDateTime} from {@link NaftahTime.Time}</li>
+ * <li>{@link ChronoLocalDate} from Naftah date components and {@link Chronology}</li>
+ * <li>{@link LocalDateTime}, {@link OffsetDateTime}, and {@link ZonedDateTime} from Naftah date-time components</li>
  * </ul>
  *
  * <p>Handles conversion between 12-hour and 24-hour formats, applies AM/PM logic,
@@ -58,15 +61,15 @@ public final class TemporalUtils {
 	}
 
 	/**
-	 * Creates a {@link Temporal} representing the given Arabic time,
+	 * Creates a {@link Temporal} representing the given Naftah time,
 	 * optionally including a time zone or offset.
 	 *
-	 * @param time         the Arabic time component
+	 * @param time         the Naftah time component
 	 * @param zoneOrOffset the optional time zone or offset
 	 * @return a Temporal representing the time, either {@link LocalTime},
 	 *         {@link OffsetTime}, or {@link ZonedDateTime} depending on the zone/offset
 	 */
-	public static Temporal createTime(ArabicTime.Time time, ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static Temporal createTime(NaftahTime.Time time, NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return createTime(
 							time.getHour24(),
 							time.minute(),
@@ -91,7 +94,7 @@ public final class TemporalUtils {
 	 * @param zoneOrOffset the optional time zone or offset, may be null
 	 * @return an {@link NTuple} containing the {@link LocalTime} and corresponding {@link Temporal}
 	 */
-	public static NTuple createTimeOfNanoOfDay(long nanoOfDay, ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static NTuple createTimeOfNanoOfDay(long nanoOfDay, NaftahTime.ZoneOrOffset zoneOrOffset) {
 		// Create LocalTime
 		LocalTime time = LocalTime.ofNanoOfDay(nanoOfDay);
 		Temporal temporal = createTime(time, Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null);
@@ -114,7 +117,7 @@ public final class TemporalUtils {
 	 * @param zoneOrOffset the optional time zone or offset, may be null
 	 * @return an {@link NTuple} containing the {@link LocalTime} and corresponding {@link Temporal}
 	 */
-	public static NTuple createTimeOfSecondOfDay(long secondOfDay, ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static NTuple createTimeOfSecondOfDay(long secondOfDay, NaftahTime.ZoneOrOffset zoneOrOffset) {
 		// Create LocalTime
 		LocalTime time = LocalTime.ofSecondOfDay(secondOfDay);
 		Temporal temporal = createTime(time, Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null);
@@ -139,7 +142,7 @@ public final class TemporalUtils {
 										Integer minute,
 										Integer second,
 										Integer nano,
-										ArabicTime.ZoneOrOffset zoneOrOffset) {
+										NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return createTime(
 							hour24,
 							minute,
@@ -184,10 +187,10 @@ public final class TemporalUtils {
 	/**
 	 * Returns the current {@link Temporal} representing the time in the specified zone or offset.
 	 *
-	 * @param zoneOrOffset the optional {@link ArabicTime.ZoneOrOffset}, may be null
+	 * @param zoneOrOffset the optional {@link NaftahTime.ZoneOrOffset}, may be null
 	 * @return a {@link Temporal} representing the current time in the given zone or offset
 	 */
-	public static Temporal currentTime(ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static Temporal currentTime(NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return currentTime(
 							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
 		);
@@ -281,14 +284,14 @@ public final class TemporalUtils {
 	}
 
 	/**
-	 * Returns the current {@link Temporal} for the specified {@link ArabicDate.Calendar}
-	 * and optional {@link ArabicTime.ZoneOrOffset}.
+	 * Returns the current {@link Temporal} for the specified {@link NaftahDate.Calendar}
+	 * and optional {@link NaftahTime.ZoneOrOffset}.
 	 *
-	 * @param calendar     the Arabic calendar
+	 * @param calendar     the Naftah calendar
 	 * @param zoneOrOffset the optional zone or offset, may be null
 	 * @return a {@link Temporal} representing the current date in the given calendar and zone
 	 */
-	public static Temporal currentDate(ArabicDate.Calendar calendar, ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static Temporal currentDate(NaftahDate.Calendar calendar, NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return currentDate(
 							calendar.chronology(),
 							Objects.nonNull(zoneOrOffset) ? zoneOrOffset.zoneId() : null
@@ -313,19 +316,19 @@ public final class TemporalUtils {
 	}
 
 	/**
-	 * Creates a {@link Temporal} representing the given Arabic date and time,
+	 * Creates a {@link Temporal} representing the given Naftah date and time,
 	 * optionally including a time zone or offset.
 	 *
-	 * @param date         the Arabic date component
-	 * @param calendar     the Arabic calendar component
-	 * @param time         the Arabic time component
+	 * @param date         the Naftah date component
+	 * @param calendar     the Naftah calendar component
+	 * @param time         the Naftah time component
 	 * @param zoneOrOffset the optional time zone or offset
 	 * @return a Temporal representing the date and time
 	 */
-	public static Temporal createDateTime(  ArabicDate.Date date,
-											ArabicDate.Calendar calendar,
-											ArabicTime.Time time,
-											ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static Temporal createDateTime(  NaftahDate.Date date,
+											NaftahDate.Calendar calendar,
+											NaftahTime.Time time,
+											NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return createDateTime(
 								date.day(),
 								date.monthValue(),

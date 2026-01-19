@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
 import java.nio.charset.StandardCharsets;
@@ -33,8 +36,8 @@ import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.builtin.lang.Result;
-import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
-import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
+import org.daiitech.naftah.builtin.time.NaftahTemporalAmount;
+import org.daiitech.naftah.builtin.time.NaftahTemporalPoint;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
@@ -49,10 +52,10 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.parser.time.ArabicDateParserHelper;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.parser.time.NaftahDateParserHelper;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.daiitech.naftah.utils.reflect.type.TypeReference;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
@@ -117,7 +120,9 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChildOrSubChildOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasParentOfType;
 import static org.daiitech.naftah.parser.NaftahParserHelper.invokeJvmClassInitializer;
+import static org.daiitech.naftah.parser.NaftahParserHelper.isDeclaredVariableWithFlag;
 import static org.daiitech.naftah.parser.NaftahParserHelper.matchImplementationName;
+import static org.daiitech.naftah.parser.NaftahParserHelper.prepareDeclaredFunction;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setForeachVariables;
 import static org.daiitech.naftah.parser.NaftahParserHelper.setObjectUsingQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.shouldBreakStatementsLoop;
@@ -1494,6 +1499,9 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										.of(currentContext.depth,
 											functionDeclarationContext,
 											implementationName);
+
+								prepareDeclaredFunction(defaultNaftahParserVisitor, declaredFunction);
+
 								if (!creatingImplementationFunction) {
 									currentContext.defineFunction(functionName, declaredFunction);
 								}
@@ -2297,13 +2305,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
-										.isNone(result) ?
-												Optional
-														.ofNullable((LoopSignal.LoopSignalDetails) result)
-														.map(LoopSignal.LoopSignalDetails::result)
-														.orElse(null) :
-												result;
+								if (loopSignal) {
+									if ((LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None.isNone(result)) {
+										return Optional
+												.ofNullable((LoopSignal.LoopSignalDetails) result)
+												.map(LoopSignal.LoopSignalDetails::result)
+												.orElse(None.get());
+									}
+									return result;
+								}
+								else {
+									return None.get();
+								}
 							}
 		);
 	}
@@ -2404,7 +2417,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 										setForeachVariables(currentContext, foreachTargetClass, target, targetValues);
 
-										defaultNaftahParserVisitor.visit(loopBlock);
+										result = defaultNaftahParserVisitor.visit(loopBlock);
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -2455,13 +2468,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
-										.isNone(result) ?
-												Optional
-														.ofNullable((LoopSignal.LoopSignalDetails) result)
-														.map(LoopSignal.LoopSignalDetails::result)
-														.orElse(null) :
-												result;
+								if (loopSignal) {
+									if ((LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None.isNone(result)) {
+										return Optional
+												.ofNullable((LoopSignal.LoopSignalDetails) result)
+												.map(LoopSignal.LoopSignalDetails::result)
+												.orElse(None.get());
+									}
+									return result;
+								}
+								else {
+									return None.get();
+								}
 							}
 		);
 	}
@@ -2593,7 +2611,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									while (isTruthy(defaultNaftahParserVisitor
 											.visit(whileStatementContext.expression()))) {
-										defaultNaftahParserVisitor.visit(whileStatementContext.block());
+										result = defaultNaftahParserVisitor.visit(whileStatementContext.block());
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -2638,14 +2656,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
-										.isNone(result) ?
-												Optional
-														.ofNullable((LoopSignal.LoopSignalDetails) result)
-														.map(LoopSignal.LoopSignalDetails::result)
-														.orElse(null) :
-												result;
-
+								if (loopSignal) {
+									if ((LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None.isNone(result)) {
+										return Optional
+												.ofNullable((LoopSignal.LoopSignalDetails) result)
+												.map(LoopSignal.LoopSignalDetails::result)
+												.orElse(None.get());
+									}
+									return result;
+								}
+								else {
+									return None.get();
+								}
 							}
 		);
 	}
@@ -2681,7 +2703,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									loopInStack = true;
 
 									do {
-										defaultNaftahParserVisitor.visit(repeatStatementContext.block());
+										result = defaultNaftahParserVisitor.visit(repeatStatementContext.block());
 
 										if (checkLoopSignal(result).equals(CONTINUE)) {
 											loopSignal = true;
@@ -2728,14 +2750,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 								}
 
-								return loopSignal && (LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None
-										.isNone(result) ?
-												Optional
-														.ofNullable((LoopSignal.LoopSignalDetails) result)
-														.map(LoopSignal.LoopSignalDetails::result)
-														.orElse(null) :
-												result;
-
+								if (loopSignal) {
+									if ((LOOP_STACK.get().isEmpty() || !propagateLoopSignal) && !None.isNone(result)) {
+										return Optional
+												.ofNullable((LoopSignal.LoopSignalDetails) result)
+												.map(LoopSignal.LoopSignalDetails::result)
+												.orElse(None.get());
+									}
+									return result;
+								}
+								else {
+									return None.get();
+								}
 							}
 		);
 	}
@@ -2810,7 +2836,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							(   defaultNaftahParserVisitor,
 								currentContext,
 								tryStatementWithTryCasesContext) -> {
-								Result<Object, NaftahBugError> result = null;
+								Result<Object, NaftahBugError> result;
 								String okVariableName = null;
 								String errorVariableName = null;
 								DeclaredVariable previousOkVariable = null;
@@ -2818,10 +2844,17 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 								var tryCases = tryStatementWithTryCasesContext.tryCases();
 								try {
-									Object expressionResult;
+									Object statementResult;
 									try {
-										expressionResult = defaultNaftahParserVisitor
-												.visit(tryStatementWithTryCasesContext.expression());
+										statementResult = defaultNaftahParserVisitor
+												.visit(tryStatementWithTryCasesContext.statement());
+
+										if (isDeclaredVariableWithFlag(statementResult)) {
+											//noinspection unchecked
+											statementResult = ((Pair<DeclaredVariable, Boolean>) statementResult)
+													.getLeft()
+													.getValue();
+										}
 									}
 									catch (Throwable th) {
 										var errorCase = tryCases.errorCase();
@@ -2866,10 +2899,10 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 
 									var okCase = tryCases.okCase();
 
-									if (Objects.nonNull(okCase) && Objects.nonNull(expressionResult)) {
+									if (Objects.nonNull(okCase) && Objects.nonNull(statementResult)) {
 										okVariableName = okCase.ID().getText();
 
-										result = Result.Ok.of(expressionResult);
+										result = Result.Ok.of(statementResult);
 
 										var declaredVariable = DeclaredVariable
 												.of(currentContext.depth,
@@ -2916,7 +2949,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 										}
 									}
 								}
-								return Objects.nonNull(result) ? result : None.get();
+								return None.get();
 							}
 		);
 	}
@@ -2935,7 +2968,14 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 								currentContext,
 								tryStatementWithOptionCasesContext) -> {
 								var result = defaultNaftahParserVisitor
-										.visit(tryStatementWithOptionCasesContext.expression());
+										.visit(tryStatementWithOptionCasesContext.statement());
+
+								if (isDeclaredVariableWithFlag(result)) {
+									//noinspection unchecked
+									result = ((Pair<DeclaredVariable, Boolean>) result)
+											.getLeft()
+											.getValue();
+								}
 
 								String someVariableName = null;
 								DeclaredVariable previousSomeVariable = null;
@@ -4253,18 +4293,18 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 							ctx,
 							(defaultNaftahParserVisitor, currentContext, radixNumberValueContext) -> {
 								String originalValue = radixNumberValueContext.BASE_DIGITS().getText();
-								String arabicValue = originalValue
-										.substring( 0,
+								String arabicIndicValue = originalValue
+										.substring( 1,
 													originalValue.length() - 2);
-								String value = ArabicUtils
-										.convertArabicToLatinLetterByLetter(arabicValue);
+								String value = ScriptUtils
+										.convertArabicToLatinLetterByLetter(arabicIndicValue);
 								String originalRadix = radixNumberValueContext.BASE_RADIX().getText();
 								int radix = Integer
 										.parseInt(originalRadix
 												.substring( 0,
 															originalRadix.length() - 1));
 
-								return NumberUtils.parseDynamicNumber(value, radix, arabicValue);
+								return NumberUtils.parseDynamicNumber(value, radix, arabicIndicValue);
 							}
 		);
 	}
@@ -4307,7 +4347,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									result = value = StringInterpolator.process(value, currentContext);
 									if (Objects.nonNull(stringValueContext.TEMPORAL_POINT())) {
 										try {
-											result = ArabicDateParserHelper.run(value, ArabicTemporalPoint.class);
+											result = NaftahDateParserHelper.run(value, NaftahTemporalPoint.class);
 										}
 										catch (Throwable throwable) {
 											throw new NaftahBugError(   """
@@ -4326,7 +4366,7 @@ public class DefaultNaftahParserVisitor extends org.daiitech.naftah.parser.Nafta
 									}
 									else if (Objects.nonNull(stringValueContext.TEMPORAL_AMOUNT())) {
 										try {
-											result = ArabicDateParserHelper.run(value, ArabicTemporalAmount.class);
+											result = NaftahDateParserHelper.run(value, NaftahTemporalAmount.class);
 										}
 										catch (Throwable throwable) {
 											throw new NaftahBugError(   """

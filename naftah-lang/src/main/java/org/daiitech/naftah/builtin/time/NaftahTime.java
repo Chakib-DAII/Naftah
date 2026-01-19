@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.time;
 
 import java.time.LocalTime;
@@ -29,7 +32,7 @@ import static org.daiitech.naftah.utils.time.ZoneUtils.parseZoneOffset;
  * <li>{@link Temporal} – the resolved temporal representation</li>
  * </ul>
  *
- * <p>This record implements {@link ArabicTemporalPoint} and is typically produced
+ * <p>This record implements {@link NaftahTemporalPoint} and is typically produced
  * after parsing Arabic time expressions.</p>
  *
  * @param time         the time component
@@ -37,11 +40,11 @@ import static org.daiitech.naftah.utils.time.ZoneUtils.parseZoneOffset;
  * @param temporal     the resolved {@link Temporal} representation
  * @author Chakib Daii
  */
-public record ArabicTime(
+public record NaftahTime(
 		Time time,
 		ZoneOrOffset zoneOrOffset,
 		Temporal temporal
-) implements ArabicTemporalPoint, TimeSupport {
+) implements NaftahTemporalPoint, TimeSupport {
 
 	/**
 	 * Obtains the current time using the system default time zone.
@@ -52,7 +55,7 @@ public record ArabicTime(
 	 *
 	 * @return the current {@code ArabicTime}
 	 */
-	public static ArabicTime now() {
+	public static NaftahTime now() {
 		return now(null);
 	}
 
@@ -68,8 +71,8 @@ public record ArabicTime(
 	 *                     to use the system default
 	 * @return the current {@code ArabicTime}
 	 */
-	public static ArabicTime now(ArabicTime.ZoneOrOffset zoneOrOffset) {
-		return ArabicTime
+	public static NaftahTime now(NaftahTime.ZoneOrOffset zoneOrOffset) {
+		return NaftahTime
 				.of(zoneOrOffset,
 					TemporalUtils
 							.currentTime(
@@ -87,7 +90,7 @@ public record ArabicTime(
 	 * @param minute the minute-of-hour (0–59)
 	 * @return a new {@code ArabicTime} instance
 	 */
-	public static ArabicTime of(int hour, int minute) {
+	public static NaftahTime of(int hour, int minute) {
 		return of(hour, minute, 0, 0);
 	}
 
@@ -103,9 +106,9 @@ public record ArabicTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be null
 	 * @return a new {@code ArabicTime} instance, not null
 	 */
-	public static ArabicTime of(int hour,
+	public static NaftahTime of(int hour,
 								int minute,
-								ArabicTime.ZoneOrOffset zoneOrOffset) {
+								NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(hour, minute, 0, 0, zoneOrOffset);
 	}
 
@@ -120,7 +123,7 @@ public record ArabicTime(
 	 * @param second the second-of-minute (0–59)
 	 * @return a new {@code ArabicTime} instance
 	 */
-	public static ArabicTime of(int hour, int minute, int second) {
+	public static NaftahTime of(int hour, int minute, int second) {
 		return of(hour, minute, second, 0);
 	}
 
@@ -136,10 +139,10 @@ public record ArabicTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be null
 	 * @return a new {@code ArabicTime} instance, not null
 	 */
-	public static ArabicTime of(int hour,
+	public static NaftahTime of(int hour,
 								int minute,
 								int second,
-								ArabicTime.ZoneOrOffset zoneOrOffset) {
+								NaftahTime.ZoneOrOffset zoneOrOffset) {
 		return of(hour, minute, second, 0, zoneOrOffset);
 	}
 
@@ -152,7 +155,7 @@ public record ArabicTime(
 	 * @param nanoOfSecond the nanosecond-of-second (0–999,999,999)
 	 * @return a new {@code ArabicTime} instance
 	 */
-	public static ArabicTime of(int hour,
+	public static NaftahTime of(int hour,
 								int minute,
 								int second,
 								int nanoOfSecond) {
@@ -170,11 +173,11 @@ public record ArabicTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be null
 	 * @return a new {@code ArabicTime} instance, not null
 	 */
-	public static ArabicTime of(int hour,
+	public static NaftahTime of(int hour,
 								int minute,
 								int second,
 								int nanoOfSecond,
-								ArabicTime.ZoneOrOffset zoneOrOffset) {
+								NaftahTime.ZoneOrOffset zoneOrOffset) {
 		var time = Time.of(hour, minute, second, nanoOfSecond, null);
 		var temporal = TemporalUtils.createTime(hour, minute, second, nanoOfSecond, zoneOrOffset);
 		return of(time, zoneOrOffset, temporal);
@@ -187,7 +190,7 @@ public record ArabicTime(
 	 * @param secondOfDay the second-of-day (0–86,399)
 	 * @return a new {@code ArabicTime} instance
 	 */
-	public static ArabicTime ofSecondOfDay(long secondOfDay) {
+	public static NaftahTime ofSecondOfDay(long secondOfDay) {
 		return ofSecondOfDay(secondOfDay, null);
 	}
 
@@ -199,7 +202,7 @@ public record ArabicTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be null
 	 * @return a new {@code ArabicTime} instance, not null
 	 */
-	public static ArabicTime ofSecondOfDay(long secondOfDay, ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static NaftahTime ofSecondOfDay(long secondOfDay, NaftahTime.ZoneOrOffset zoneOrOffset) {
 		var timeAndTemporal = TemporalUtils.createTimeOfSecondOfDay(secondOfDay, zoneOrOffset);
 		LocalTime lt = (LocalTime) timeAndTemporal.get(0);
 		Temporal temporal = (Temporal) timeAndTemporal.get(1);
@@ -214,7 +217,7 @@ public record ArabicTime(
 	 * @param nanoOfDay the nano-of-day (0–86,399,999,999,999)
 	 * @return a new {@code ArabicTime} instance
 	 */
-	public static ArabicTime ofNanoOfDay(long nanoOfDay) {
+	public static NaftahTime ofNanoOfDay(long nanoOfDay) {
 		return ofNanoOfDay(nanoOfDay, null);
 	}
 
@@ -226,7 +229,7 @@ public record ArabicTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be null
 	 * @return a new {@code ArabicTime} instance, not null
 	 */
-	public static ArabicTime ofNanoOfDay(long nanoOfDay, ArabicTime.ZoneOrOffset zoneOrOffset) {
+	public static NaftahTime ofNanoOfDay(long nanoOfDay, NaftahTime.ZoneOrOffset zoneOrOffset) {
 		var timeAndTemporal = TemporalUtils.createTimeOfNanoOfDay(nanoOfDay, zoneOrOffset);
 		LocalTime lt = (LocalTime) timeAndTemporal.get(0);
 		Temporal temporal = (Temporal) timeAndTemporal.get(1);
@@ -246,11 +249,11 @@ public record ArabicTime(
 	 * @param temporal     the resolved {@link Temporal} representation backing this time
 	 * @return a new {@code ArabicTime} instance
 	 */
-	public static ArabicTime of(
+	public static NaftahTime of(
 								Time time,
 								ZoneOrOffset zoneOrOffset,
 								Temporal temporal) {
-		return new ArabicTime(time, zoneOrOffset, temporal);
+		return new NaftahTime(time, zoneOrOffset, temporal);
 	}
 
 	/**
@@ -261,10 +264,10 @@ public record ArabicTime(
 	 * @param zoneOrOffset the optional time zone or offset, may be null
 	 * @return a new {@code ArabicTime} instance, not null
 	 */
-	public static ArabicTime of(
+	public static NaftahTime of(
 								Time time,
 								ZoneOrOffset zoneOrOffset) {
-		return new ArabicTime(  time,
+		return new NaftahTime(  time,
 								zoneOrOffset,
 								TemporalUtils
 										.createTime(
@@ -287,7 +290,7 @@ public record ArabicTime(
 	 * </ul>
 	 * Unsupported fields default to {@code 0}.</p>
 	 *
-	 * <p>The resulting {@link ArabicTime.Time} instance is created using
+	 * <p>The resulting {@link NaftahTime.Time} instance is created using
 	 * a 24-hour clock representation, with no AM/PM marker.</p>
 	 *
 	 * @param zoneOrOffset the optional time zone or offset information, may be {@code null}
@@ -295,7 +298,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance
 	 * @throws IllegalArgumentException if the temporal cannot represent a valid time
 	 */
-	public static ArabicTime of(
+	public static NaftahTime of(
 								ZoneOrOffset zoneOrOffset,
 								Temporal temporal) {
 		int hour = temporal.isSupported(ChronoField.HOUR_OF_DAY) ? temporal.get(ChronoField.HOUR_OF_DAY) : 0;
@@ -305,9 +308,9 @@ public record ArabicTime(
 				0;
 		int nano = temporal.isSupported(ChronoField.NANO_OF_SECOND) ? temporal.get(ChronoField.NANO_OF_SECOND) : 0;
 
-		var time = ArabicTime.Time.of(hour, minute, second, nano, null);
+		var time = NaftahTime.Time.of(hour, minute, second, nano, null);
 
-		return new ArabicTime(time, zoneOrOffset, temporal);
+		return new NaftahTime(time, zoneOrOffset, temporal);
 	}
 
 	/**
@@ -354,12 +357,12 @@ public record ArabicTime(
 	 * Returns a new {@code ArabicTime} obtained by adding the given Arabic temporal
 	 * amount to this time.
 	 *
-	 * @param arabicTemporalAmount the temporal amount to add
+	 * @param naftahTemporalAmount the temporal amount to add
 	 * @return a new {@code ArabicTime} instance
 	 */
 	@Override
-	public ArabicTime plus(ArabicTemporalAmount arabicTemporalAmount) {
-		return compute(arabicTemporalAmount, this.temporal::plus);
+	public NaftahTime plus(NaftahTemporalAmount naftahTemporalAmount) {
+		return compute(naftahTemporalAmount, this.temporal::plus);
 	}
 
 	/**
@@ -371,7 +374,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance with the hours added
 	 */
 	@Override
-	public ArabicTime plusHours(long hoursToAdd) {
+	public NaftahTime plusHours(long hoursToAdd) {
 		if (hoursToAdd == 0) {
 			return this;
 		}
@@ -387,7 +390,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance with the minutes added
 	 */
 	@Override
-	public ArabicTime plusMinutes(long minutesToAdd) {
+	public NaftahTime plusMinutes(long minutesToAdd) {
 		if (minutesToAdd == 0) {
 			return this;
 		}
@@ -403,7 +406,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance with the seconds added
 	 */
 	@Override
-	public ArabicTime plusSeconds(long secondsToAdd) {
+	public NaftahTime plusSeconds(long secondsToAdd) {
 		if (secondsToAdd == 0) {
 			return this;
 		}
@@ -419,7 +422,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance with the nanoseconds added
 	 */
 	@Override
-	public ArabicTime plusNanos(long nanosToAdd) {
+	public NaftahTime plusNanos(long nanosToAdd) {
 		if (nanosToAdd == 0) {
 			return this;
 		}
@@ -430,12 +433,12 @@ public record ArabicTime(
 	 * Returns a new {@code ArabicTime} obtained by subtracting the given Arabic temporal
 	 * amount from this time.
 	 *
-	 * @param arabicTemporalAmount the temporal amount to subtract
+	 * @param naftahTemporalAmount the temporal amount to subtract
 	 * @return a new {@code ArabicTime} instance
 	 */
 	@Override
-	public ArabicTime minus(ArabicTemporalAmount arabicTemporalAmount) {
-		return compute(arabicTemporalAmount, this.temporal::minus);
+	public NaftahTime minus(NaftahTemporalAmount naftahTemporalAmount) {
+		return compute(naftahTemporalAmount, this.temporal::minus);
 	}
 
 	/**
@@ -447,7 +450,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance with the hours subtracted
 	 */
 	@Override
-	public ArabicTime minusHours(long hoursToSubtract) {
+	public NaftahTime minusHours(long hoursToSubtract) {
 		if (hoursToSubtract == 0) {
 			return this;
 		}
@@ -463,7 +466,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance with the minutes subtracted
 	 */
 	@Override
-	public ArabicTime minusMinutes(long minutesToSubtract) {
+	public NaftahTime minusMinutes(long minutesToSubtract) {
 		if (minutesToSubtract == 0) {
 			return this;
 		}
@@ -479,7 +482,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance with the seconds subtracted
 	 */
 	@Override
-	public ArabicTime minusSeconds(long secondsToSubtract) {
+	public NaftahTime minusSeconds(long secondsToSubtract) {
 		if (secondsToSubtract == 0) {
 			return this;
 		}
@@ -495,7 +498,7 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance with the nanoseconds subtracted
 	 */
 	@Override
-	public ArabicTime minusNanos(long nanosToSubtract) {
+	public NaftahTime minusNanos(long nanosToSubtract) {
 		if (nanosToSubtract == 0) {
 			return this;
 		}
@@ -515,9 +518,9 @@ public record ArabicTime(
 	 * @return a new {@code ArabicTime} instance
 	 * @throws IllegalArgumentException if the operation is not supported
 	 */
-	ArabicTime compute( ArabicTemporalAmount arabicTemporalAmount,
+	NaftahTime compute( NaftahTemporalAmount arabicTemporalAmount,
 						Function<TemporalAmount, Temporal> computeFunction) {
-		if (arabicTemporalAmount instanceof ArabicDuration duration) {
+		if (arabicTemporalAmount instanceof NaftahDuration duration) {
 			long hours = duration.temporalAmount().toHours();
 
 			if (hours > 24) {
@@ -528,8 +531,8 @@ public record ArabicTime(
 
 			return of(zoneOrOffset, computeFunction.apply(duration.temporalAmount()));
 		}
-		else if (arabicTemporalAmount instanceof ArabicPeriodWithDuration arabicPeriodWithDuration) {
-			return of(zoneOrOffset, computeFunction.apply(arabicPeriodWithDuration.arabicDuration().temporalAmount()));
+		else if (arabicTemporalAmount instanceof NaftahPeriodWithDuration naftahPeriodWithDuration) {
+			return of(zoneOrOffset, computeFunction.apply(naftahPeriodWithDuration.naftahDuration().temporalAmount()));
 		}
 		throw new IllegalArgumentException(
 											"لا يمكن إضافة فترة (Period) إلى قيمة زمنية فقط"
@@ -667,7 +670,7 @@ public record ArabicTime(
 				return parseZoneOffset(arabicZoneOrOffset);
 			}
 			else {
-				String javaZoneId = ZoneUtils.arabicZoneNameToJava(arabicZoneOrOffset);
+				String javaZoneId = ZoneUtils.zoneNameToJavaZoneId(arabicZoneOrOffset);
 				return ZoneId.of(javaZoneId);
 			}
 		}

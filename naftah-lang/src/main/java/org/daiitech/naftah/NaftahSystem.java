@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah;
 
 import java.io.PrintStream;
@@ -12,10 +15,10 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.OS;
 import org.jline.terminal.Terminal;
 
-import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_LANGUAGE;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.DEFAULT_ARABIC_LANGUAGE_COUNTRY;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
+import static org.daiitech.naftah.utils.script.NaftahOutputTransformer.getPrintStream;
+import static org.daiitech.naftah.utils.script.ScriptUtils.ARABIC_LANGUAGE;
+import static org.daiitech.naftah.utils.script.ScriptUtils.DEFAULT_ARABIC_LANGUAGE_COUNTRY;
 
 /**
  * Utility class for managing system-wide settings, especially for terminal configuration
@@ -27,7 +30,7 @@ import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
  * <ul>
  * <li>Setting up terminal output/error streams</li>
  * <li>Retrieving Naftah version information</li>
- * <li>Setting the system locale to Arabic</li>
+ * <li>Setting the system locale to Tunisian Arabic</li>
  * <li>Auto-refreshing terminal dimensions</li>
  * </ul>
  *
@@ -85,12 +88,12 @@ public final class NaftahSystem {
 	}
 
 	/**
-	 * Sets the default {@link Locale} to Arabic using predefined constants
+	 * Sets the default {@link Locale} to Tunisian Arabic using predefined constants
 	 * for language and region.
 	 */
 	public static void setupLocale() {
-		Locale arabic = new Locale(ARABIC_LANGUAGE, DEFAULT_ARABIC_LANGUAGE_COUNTRY);
-		Locale.setDefault(arabic);
+		Locale tunisianArabic = new Locale(ARABIC_LANGUAGE, DEFAULT_ARABIC_LANGUAGE_COUNTRY);
+		Locale.setDefault(tunisianArabic);
 	}
 
 	/**

@@ -1,11 +1,14 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.time;
 
 /**
- * Provides arithmetic operations for {@code ArabicTemporalPoint} instances,
+ * Provides arithmetic operations for {@code NaftahTemporalPoint} instances,
  * including addition and subtraction of years, months, weeks, and days.
  *
- * <p>This interface can be implemented by {@link ArabicDate} or
- * used by {@link ArabicDateTime} to delegate date arithmetic.</p>
+ * <p>This interface can be implemented by {@link NaftahDate} or
+ * used by {@link NaftahDateTime} to delegate date arithmetic.</p>
  *
  * @author Chakib Daii
  */
@@ -33,9 +36,9 @@ public interface DateSupport {
 	int getMonthValue();
 
 	/**
-	 * Returns the Arabic name of the month for this date.
+	 * Returns the Naftah name of the month for this date.
 	 *
-	 * @return the Arabic month name
+	 * @return the Naftah month name
 	 */
 	String getMonth();
 
@@ -54,11 +57,11 @@ public interface DateSupport {
 	int getDayOfYear();
 
 	/**
-	 * Returns the day of the week as an Arabic string for this date.
+	 * Returns the day of the week as an Naftah string for this date.
 	 *
 	 * <p>The calculation is based on the epoch day of the underlying {@link java.time.chrono.ChronoLocalDate}.</p>
 	 *
-	 * @return the Arabic name of the day of the week
+	 * @return the Naftah name of the day of the week
 	 */
 	String getDayOfWeek();
 
@@ -97,63 +100,63 @@ public interface DateSupport {
 	 * Returns a new date instance with the specified number of years added.
 	 *
 	 * @param yearsToAdd the number of years to add, may be negative
-	 * @return a new {@code ArabicTemporalPoint} instance with years added
+	 * @return a new {@code NaftahTemporalPoint} instance with years added
 	 */
-	ArabicTemporalPoint plusYears(long yearsToAdd);
+	NaftahTemporalPoint plusYears(long yearsToAdd);
 
 	/**
 	 * Returns a new date instance with the specified number of months added.
 	 *
 	 * @param monthsToAdd the number of months to add, may be negative
-	 * @return a new {@code ArabicTemporalPoint} instance with months added
+	 * @return a new {@code NaftahTemporalPoint} instance with months added
 	 */
-	ArabicTemporalPoint plusMonths(long monthsToAdd);
+	NaftahTemporalPoint plusMonths(long monthsToAdd);
 
 	/**
 	 * Returns a new date instance with the specified number of weeks added.
 	 *
 	 * @param weeksToAdd the number of weeks to add, may be negative
-	 * @return a new {@code ArabicTemporalPoint} instance with weeks added
+	 * @return a new {@code NaftahTemporalPoint} instance with weeks added
 	 */
-	ArabicTemporalPoint plusWeeks(long weeksToAdd);
+	NaftahTemporalPoint plusWeeks(long weeksToAdd);
 
 	/**
 	 * Returns a new date instance with the specified number of days added.
 	 *
 	 * @param daysToAdd the number of days to add, may be negative
-	 * @return a new {@code ArabicTemporalPoint} instance with days added
+	 * @return a new {@code NaftahTemporalPoint} instance with days added
 	 */
-	ArabicTemporalPoint plusDays(long daysToAdd);
+	NaftahTemporalPoint plusDays(long daysToAdd);
 
 	/**
 	 * Returns a new date instance with the specified number of years subtracted.
 	 *
 	 * @param yearsToSubtract the number of years to subtract, may be negative
-	 * @return a new {@code ArabicTemporalPoint} instance with years subtracted
+	 * @return a new {@code NaftahTemporalPoint} instance with years subtracted
 	 */
-	ArabicTemporalPoint minusYears(long yearsToSubtract);
+	NaftahTemporalPoint minusYears(long yearsToSubtract);
 
 	/**
 	 * Returns a new date instance with the specified number of months subtracted.
 	 *
 	 * @param monthsToSubtract the number of months to subtract, may be negative
-	 * @return a new {@code ArabicTemporalPoint} instance with months subtracted
+	 * @return a new {@code NaftahTemporalPoint} instance with months subtracted
 	 */
-	ArabicTemporalPoint minusMonths(long monthsToSubtract);
+	NaftahTemporalPoint minusMonths(long monthsToSubtract);
 
 	/**
 	 * Returns a new date instance with the specified number of weeks subtracted.
 	 *
 	 * @param weeksToSubtract the number of weeks to subtract, may be negative
-	 * @return a new {@code ArabicTemporalPoint} instance with weeks subtracted
+	 * @return a new {@code NaftahTemporalPoint} instance with weeks subtracted
 	 */
-	ArabicTemporalPoint minusWeeks(long weeksToSubtract);
+	NaftahTemporalPoint minusWeeks(long weeksToSubtract);
 
 	/**
 	 * Returns a new date instance with the specified number of days subtracted.
 	 *
 	 * @param daysToSubtract the number of days to subtract, may be negative
-	 * @return a new {@code ArabicTemporalPoint} instance with days subtracted
+	 * @return a new {@code NaftahTemporalPoint} instance with days subtracted
 	 */
-	ArabicTemporalPoint minusDays(long daysToSubtract);
+	NaftahTemporalPoint minusDays(long daysToSubtract);
 }

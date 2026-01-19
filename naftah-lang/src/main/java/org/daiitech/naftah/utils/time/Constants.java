@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils.time;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -5,14 +8,14 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
- * A utility class containing constant values used across the Arabic date-time parsing library.
+ * A utility class containing constant values used across the Naftah date-time parsing library.
  *
  * <p>Includes:
  * <ul>
- * <li>Arabic lexer/parser keywords</li>
- * <li>Arabic calendar names (Gregorian and Hijri) and their aliases</li>
- * <li>AM/PM markers in Arabic</li>
- * <li>Gregorian and Hijri month names in Arabic and Latin variants</li>
+ * <li>Lexer/parser keywords</li>
+ * <li>Calendar names (Gregorian and Hijri) and their aliases</li>
+ * <li>AM/PM markers</li>
+ * <li>Gregorian and Hijri month names with variants</li>
  * </ul>
  *
  * <p>All constants are publicly accessible and static.</p>
@@ -21,27 +24,27 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  */
 public final class Constants {
 	/**
-	 * Arabic prefix used to indicate a time zone.
+	 * Prefix used to indicate a time zone.
 	 */
 	public static final String ZONE_PREFIX_AR = "بتوقيت";
 	/**
-	 * Arabic prefix used to indicate a calendar.
+	 * Prefix used to indicate a calendar.
 	 */
 	public static final String CALENDAR_PREFIX_AR = "بالتقويم";
 	/**
-	 * Default Gregorian calendar name in Arabic.
+	 * Default Gregorian calendar name.
 	 */
 	public static final String DEFAULT_CALENDAR_NAME = "ميلادي";
 	/**
-	 * Alternative Arabic spelling for the Gregorian calendar.
+	 * Alternative spelling for the Gregorian calendar.
 	 */
 	public static final String DEFAULT_CALENDAR_NAME_1 = "الميلادي";
 	/**
-	 * Alternative Arabic spelling for the Gregorian calendar.
+	 * Alternative spelling for the Gregorian calendar.
 	 */
 	public static final String DEFAULT_CALENDAR_NAME_2 = "التقويم الميلادي";
 	/**
-	 * Alternative Arabic spelling for the Gregorian calendar (Latin-based alias).
+	 * Alternative spelling for the Gregorian calendar (Latin-based alias).
 	 */
 	public static final String DEFAULT_CALENDAR_NAME_3 = "جرجوري";
 	/**
@@ -49,35 +52,35 @@ public final class Constants {
 	 */
 	public static final String HIJRI_CALENDAR_NAME = "هجري";
 	/**
-	 * Alternative Arabic spelling for the Hijri calendar.
+	 * Alternative spelling for the Hijri calendar.
 	 */
 	public static final String HIJRI_CALENDAR_NAME_1 = "الهجري";
 	/**
-	 * Alternative Arabic spelling for the Hijri calendar.
+	 * Alternative spelling for the Hijri calendar.
 	 */
 	public static final String HIJRI_CALENDAR_NAME_2 = "التقويم الهجري";
 	/**
-	 * Arabic short marker for AM (morning).
+	 * Short marker for AM (morning).
 	 */
 	public static final String AM_SHORT = "ص";
 	/**
-	 * Arabic full marker for AM (morning).
+	 * Full marker for AM (morning).
 	 */
 	public static final String AM_FULL_1 = "صباحاً";
 	/**
-	 * Alternative Arabic full marker for AM (morning).
+	 * Alternative full marker for AM (morning).
 	 */
 	public static final String AM_FULL_2 = "صباحا";
 	/**
-	 * Arabic short marker for PM (evening).
+	 * Short marker for PM (evening).
 	 */
 	public static final String PM_SHORT = "م";
 	/**
-	 * Arabic full marker for PM (evening).
+	 * Full marker for PM (evening).
 	 */
 	public static final String PM_FULL_1 = "مساءً";
 	/**
-	 * Alternative Arabic full marker for PM (evening).
+	 * Alternative full marker for PM (evening).
 	 */
 	public static final String PM_FULL_2 = "مساءا";
 	/**
@@ -150,7 +153,7 @@ public final class Constants {
 	 */
 	public static final String OCTOBER = "أكتوبر";
 	/**
-	 * Alternative Arabic spelling for October.
+	 * Alternative spelling for October.
 	 */
 	public static final String OCTOBER_ALT = "اكتوبر";
 	/**

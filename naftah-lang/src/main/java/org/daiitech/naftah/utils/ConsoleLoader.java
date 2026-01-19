@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils;
 
 import org.daiitech.naftah.errors.NaftahBugError;
@@ -5,8 +8,8 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import static java.lang.Thread.sleep;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.padText;
 import static org.daiitech.naftah.utils.repl.REPLHelper.clearScreen;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 /**
  * Utility class for displaying a console-based loading spinner animation.

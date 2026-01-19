@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.time;
 
 import java.time.Duration;
@@ -22,39 +25,39 @@ import static org.daiitech.naftah.utils.time.Constants.SECOND;
  * @param temporalAmount     the actual duration value
  * @author Chakib Daii
  */
-public record ArabicDuration(
+public record NaftahDuration(
 		DurationDefinition durationDefinition,
 		Duration temporalAmount
-) implements ArabicTemporalAmount {
+) implements NaftahTemporalAmount {
 
 	/**
-	 * Creates a new {@link ArabicDuration} instance using the provided
+	 * Creates a new {@link NaftahDuration} instance using the provided
 	 * Arabic duration definition and the underlying {@link Duration}.
 	 *
 	 * @param durationDefinition the Arabic textual definition describing the duration
 	 *                           (hours, minutes, seconds, etc.)
 	 * @param temporalAmount     the underlying {@link Duration} representing the actual
 	 *                           time-based amount
-	 * @return a new {@link ArabicDuration} instance
+	 * @return a new {@link NaftahDuration} instance
 	 */
-	public static ArabicDuration of(
+	public static NaftahDuration of(
 									DurationDefinition durationDefinition,
 									Duration temporalAmount) {
-		return new ArabicDuration(durationDefinition, temporalAmount);
+		return new NaftahDuration(durationDefinition, temporalAmount);
 	}
 
 	/**
-	 * Creates a new {@link ArabicDuration} instance from a {@link Duration}.
+	 * Creates a new {@link NaftahDuration} instance from a {@link Duration}.
 	 * <p>
 	 * The duration is decomposed into its time-based components
 	 * (hours, minutes, seconds, milliseconds, and nanoseconds) to
 	 * build the corresponding Arabic textual representation.
 	 * </p>
 	 *
-	 * @param duration the {@link Duration} to convert into an {@link ArabicDuration}
-	 * @return a new {@link ArabicDuration} instance representing the given duration
+	 * @param duration the {@link Duration} to convert into an {@link NaftahDuration}
+	 * @return a new {@link NaftahDuration} instance representing the given duration
 	 */
-	public static ArabicDuration of(Duration duration) {
+	public static NaftahDuration of(Duration duration) {
 		long totalSeconds = duration.getSeconds();
 		int nanos = duration.getNano();
 
@@ -75,14 +78,14 @@ public record ArabicDuration(
 	}
 
 	/**
-	 * Returns an {@link ArabicDuration} representing a zero duration.
+	 * Returns an {@link NaftahDuration} representing a zero duration.
 	 *
 	 * <p>The returned duration has all components set to zero: hours, minutes, seconds,
 	 * milliseconds, and nanoseconds.</p>
 	 *
-	 * @return an {@link ArabicDuration} representing a duration of zero
+	 * @return an {@link NaftahDuration} representing a duration of zero
 	 */
-	public static ArabicDuration ofZero() {
+	public static NaftahDuration ofZero() {
 		return of(DurationDefinition
 				.of(
 					0,
@@ -104,7 +107,7 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration}, not null
 	 * @throws ArithmeticException if the input days exceeds the capacity of {@code Duration}
 	 */
-	public static ArabicDuration ofDays(long days) {
+	public static NaftahDuration ofDays(long days) {
 		return of(Duration.ofDays(days));
 	}
 
@@ -119,7 +122,7 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration}, not null
 	 * @throws ArithmeticException if the input hours exceeds the capacity of {@code Duration}
 	 */
-	public static ArabicDuration ofHours(long hours) {
+	public static NaftahDuration ofHours(long hours) {
 		return of(Duration.ofHours(hours));
 	}
 
@@ -134,7 +137,7 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration}, not null
 	 * @throws ArithmeticException if the input minutes exceeds the capacity of {@code Duration}
 	 */
-	public static ArabicDuration ofMinutes(long minutes) {
+	public static NaftahDuration ofMinutes(long minutes) {
 		return of(Duration.ofMinutes(minutes));
 	}
 
@@ -146,7 +149,7 @@ public record ArabicDuration(
 	 * @param seconds the number of seconds, positive or negative
 	 * @return a {@code ArabicDuration}, not null
 	 */
-	public static ArabicDuration ofSeconds(long seconds) {
+	public static NaftahDuration ofSeconds(long seconds) {
 		return of(Duration.ofSeconds(seconds));
 	}
 
@@ -169,7 +172,7 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration}, not null
 	 * @throws ArithmeticException if the adjustment causes the seconds to exceed the capacity of {@code Duration}
 	 */
-	public static ArabicDuration ofSeconds(long seconds, long nanoAdjustment) {
+	public static NaftahDuration ofSeconds(long seconds, long nanoAdjustment) {
 		return of(Duration.ofSeconds(seconds, nanoAdjustment));
 	}
 
@@ -181,7 +184,7 @@ public record ArabicDuration(
 	 * @param millis the number of milliseconds, positive or negative
 	 * @return a {@code ArabicDuration}, not null
 	 */
-	public static ArabicDuration ofMillis(long millis) {
+	public static NaftahDuration ofMillis(long millis) {
 		return of(Duration.ofMillis(millis));
 	}
 
@@ -193,7 +196,7 @@ public record ArabicDuration(
 	 * @param nanos the number of nanoseconds, positive or negative
 	 * @return a {@code ArabicDuration}, not null
 	 */
-	public static ArabicDuration ofNanos(long nanos) {
+	public static NaftahDuration ofNanos(long nanos) {
 		return of(Duration.ofNanos(nanos));
 	}
 
@@ -242,7 +245,7 @@ public record ArabicDuration(
 	 * @return the milliseconds within the current second (0-999)
 	 */
 	public long getMillis() {
-		return temporalAmount.toMillis() % 1000;
+		return temporalAmount.toMillisPart();
 	}
 
 	/**
@@ -267,12 +270,12 @@ public record ArabicDuration(
 	 * @return a new {@code ArabicDuration} instance
 	 */
 	@Override
-	public ArabicDuration plus(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
+	public NaftahDuration plus(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
 			Duration result = temporalAmount.plus(otherDur.temporalAmount());
-			return ArabicDuration.of(result);
+			return NaftahDuration.of(result);
 		}
-		return (ArabicDuration) ArabicTemporalAmount.super.plus(other);
+		return (NaftahDuration) NaftahTemporalAmount.super.plus(other);
 	}
 
 	/**
@@ -287,11 +290,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified days added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration plusDays(long daysToAdd) {
+	public NaftahDuration plusDays(long daysToAdd) {
 		if (daysToAdd == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.plusDays(daysToAdd));
+		return NaftahDuration.of(temporalAmount.plusDays(daysToAdd));
 	}
 
 	/**
@@ -303,11 +306,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified hours added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration plusHours(long hoursToAdd) {
+	public NaftahDuration plusHours(long hoursToAdd) {
 		if (hoursToAdd == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.plusHours(hoursToAdd));
+		return NaftahDuration.of(temporalAmount.plusHours(hoursToAdd));
 	}
 
 	/**
@@ -319,11 +322,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified minutes added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration plusMinutes(long minutesToAdd) {
+	public NaftahDuration plusMinutes(long minutesToAdd) {
 		if (minutesToAdd == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.plusMinutes(minutesToAdd));
+		return NaftahDuration.of(temporalAmount.plusMinutes(minutesToAdd));
 	}
 
 	/**
@@ -335,11 +338,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified seconds added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration plusSeconds(long secondsToAdd) {
+	public NaftahDuration plusSeconds(long secondsToAdd) {
 		if (secondsToAdd == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.plusSeconds(secondsToAdd));
+		return NaftahDuration.of(temporalAmount.plusSeconds(secondsToAdd));
 	}
 
 	/**
@@ -351,11 +354,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified milliseconds added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration plusMillis(long millisToAdd) {
+	public NaftahDuration plusMillis(long millisToAdd) {
 		if (millisToAdd == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.plusMillis(millisToAdd));
+		return NaftahDuration.of(temporalAmount.plusMillis(millisToAdd));
 	}
 
 	/**
@@ -367,11 +370,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified nanoseconds added, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration plusNanos(long nanosToAdd) {
+	public NaftahDuration plusNanos(long nanosToAdd) {
 		if (nanosToAdd == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.plusNanos(nanosToAdd));
+		return NaftahDuration.of(temporalAmount.plusNanos(nanosToAdd));
 	}
 
 	/**
@@ -387,12 +390,12 @@ public record ArabicDuration(
 	 * @return a new {@code ArabicDuration} instance
 	 */
 	@Override
-	public ArabicDuration minus(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
+	public NaftahDuration minus(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
 			Duration result = temporalAmount.minus(otherDur.temporalAmount());
-			return ArabicDuration.of(result);
+			return NaftahDuration.of(result);
 		}
-		return (ArabicDuration) ArabicTemporalAmount.super.minus(other);
+		return (NaftahDuration) NaftahTemporalAmount.super.minus(other);
 	}
 
 	/**
@@ -407,11 +410,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified days subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration minusDays(long daysToSubtract) {
+	public NaftahDuration minusDays(long daysToSubtract) {
 		if (daysToSubtract == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.minusDays(daysToSubtract));
+		return NaftahDuration.of(temporalAmount.minusDays(daysToSubtract));
 	}
 
 	/**
@@ -425,11 +428,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified hours subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration minusHours(long hoursToSubtract) {
+	public NaftahDuration minusHours(long hoursToSubtract) {
 		if (hoursToSubtract == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.minusHours(hoursToSubtract));
+		return NaftahDuration.of(temporalAmount.minusHours(hoursToSubtract));
 	}
 
 	/**
@@ -443,11 +446,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified minutes subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration minusMinutes(long minutesToSubtract) {
+	public NaftahDuration minusMinutes(long minutesToSubtract) {
 		if (minutesToSubtract == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.minusMinutes(minutesToSubtract));
+		return NaftahDuration.of(temporalAmount.minusMinutes(minutesToSubtract));
 	}
 
 	/**
@@ -459,11 +462,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified seconds subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration minusSeconds(long secondsToSubtract) {
+	public NaftahDuration minusSeconds(long secondsToSubtract) {
 		if (secondsToSubtract == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.minusSeconds(secondsToSubtract));
+		return NaftahDuration.of(temporalAmount.minusSeconds(secondsToSubtract));
 	}
 
 	/**
@@ -475,11 +478,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified milliseconds subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration minusMillis(long millisToSubtract) {
+	public NaftahDuration minusMillis(long millisToSubtract) {
 		if (millisToSubtract == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.minusMillis(millisToSubtract));
+		return NaftahDuration.of(temporalAmount.minusMillis(millisToSubtract));
 	}
 
 	/**
@@ -491,11 +494,11 @@ public record ArabicDuration(
 	 * @return a {@code ArabicDuration} based on this duration with the specified nanoseconds subtracted, not null
 	 * @throws ArithmeticException if numeric overflow occurs
 	 */
-	public ArabicDuration minusNanos(long nanosToSubtract) {
+	public NaftahDuration minusNanos(long nanosToSubtract) {
 		if (nanosToSubtract == 0) {
 			return this;
 		}
-		return ArabicDuration.of(temporalAmount.minusNanos(nanosToSubtract));
+		return NaftahDuration.of(temporalAmount.minusNanos(nanosToSubtract));
 	}
 
 	/**
@@ -505,8 +508,8 @@ public record ArabicDuration(
 	 * @return {@code true} if the amounts are equal; {@code false} otherwise
 	 */
 	@Override
-	public boolean isEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
+	public boolean isEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
 			return temporalAmount.equals(otherDur.temporalAmount());
 		}
 		return false;
@@ -519,7 +522,7 @@ public record ArabicDuration(
 	 * @return {@code true} if the amounts are not equal; {@code false} otherwise
 	 */
 	@Override
-	public boolean notEquals(ArabicTemporalAmount other) {
+	public boolean notEquals(NaftahTemporalAmount other) {
 		return !isEquals(other);
 	}
 
@@ -530,11 +533,11 @@ public record ArabicDuration(
 	 * @return {@code true} if this duration is greater
 	 */
 	@Override
-	public boolean greaterThan(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
+	public boolean greaterThan(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
 			return temporalAmount.compareTo(otherDur.temporalAmount()) > 0;
 		}
-		return ArabicTemporalAmount.super.greaterThan(other);
+		return NaftahTemporalAmount.super.greaterThan(other);
 	}
 
 	/**
@@ -545,11 +548,11 @@ public record ArabicDuration(
 	 * @return {@code true} if this duration is greater than or equal
 	 */
 	@Override
-	public boolean greaterThanEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
+	public boolean greaterThanEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
 			return temporalAmount.compareTo(otherDur.temporalAmount()) >= 0;
 		}
-		return ArabicTemporalAmount.super.greaterThanEquals(other);
+		return NaftahTemporalAmount.super.greaterThanEquals(other);
 	}
 
 	/**
@@ -559,11 +562,11 @@ public record ArabicDuration(
 	 * @return {@code true} if this duration is less
 	 */
 	@Override
-	public boolean lessThan(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
+	public boolean lessThan(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
 			return temporalAmount.compareTo(otherDur.temporalAmount()) < 0;
 		}
-		return ArabicTemporalAmount.super.lessThan(other);
+		return NaftahTemporalAmount.super.lessThan(other);
 	}
 
 	/**
@@ -574,11 +577,11 @@ public record ArabicDuration(
 	 * @return {@code true} if this duration is less than or equal
 	 */
 	@Override
-	public boolean lessThanEquals(ArabicTemporalAmount other) {
-		if (other instanceof ArabicDuration otherDur) {
+	public boolean lessThanEquals(NaftahTemporalAmount other) {
+		if (other instanceof NaftahDuration otherDur) {
 			return temporalAmount.compareTo(otherDur.temporalAmount()) <= 0;
 		}
-		return ArabicTemporalAmount.super.lessThanEquals(other);
+		return NaftahTemporalAmount.super.lessThanEquals(other);
 	}
 
 	/**

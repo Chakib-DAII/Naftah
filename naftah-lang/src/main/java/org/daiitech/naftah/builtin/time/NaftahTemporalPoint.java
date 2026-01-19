@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.time;
 
 import java.time.temporal.Temporal;
@@ -5,29 +8,29 @@ import java.time.temporal.Temporal;
 import org.daiitech.naftah.utils.time.TemporalUtils;
 
 /**
- * Marker interface representing an Arabic temporal point.
+ * Marker interface representing a Naftah temporal point.
  * <p>
  * A temporal point represents a specific position on the time-line (such as a date,
- * time, or date-time) with an Arabic textual representation.
+ * time, or date-time) with an Naftah textual representation.
  * </p>
  *
  * <p>
- * This sealed interface provides a common abstraction for all Arabic-aware temporal
+ * This sealed interface provides a common abstraction for all Naftah-aware temporal
  * points and allows access to their underlying {@link Temporal} representation.
  * </p>
  *
  * <p>
  * The following implementations are permitted:
  * <ul>
- * <li>{@link ArabicTime} – a time-only temporal point</li>
- * <li>{@link ArabicDate} – a date-only temporal point</li>
- * <li>{@link ArabicDateTime} – a combined date and time temporal point</li>
+ * <li>{@link NaftahTime} – a time-only temporal point</li>
+ * <li>{@link NaftahDate} – a date-only temporal point</li>
+ * <li>{@link NaftahDateTime} – a combined date and time temporal point</li>
  * </ul>
  * </p>
  *
  * @author Chakib Daii
  */
-public sealed interface ArabicTemporalPoint extends ArabicTemporal permits ArabicTime, ArabicDate, ArabicDateTime {
+public sealed interface NaftahTemporalPoint extends NaftahTemporal permits NaftahTime, NaftahDate, NaftahDateTime {
 
 	/**
 	 * Returns the underlying {@link Temporal} representation of this temporal point.
@@ -37,34 +40,34 @@ public sealed interface ArabicTemporalPoint extends ArabicTemporal permits Arabi
 	Temporal temporal();
 
 	/**
-	 * Returns a temporal point obtained by adding the given Arabic temporal amount
+	 * Returns a temporal point obtained by adding the given Naftah temporal amount
 	 * to this temporal point.
 	 *
-	 * @param arabicTemporalAmount the amount to add
-	 * @return a new {@code ArabicTemporalPoint} with the amount added
+	 * @param naftahTemporalAmount the amount to add
+	 * @return a new {@code NaftahTemporalPoint} with the amount added
 	 */
-	ArabicTemporalPoint plus(ArabicTemporalAmount arabicTemporalAmount);
+	NaftahTemporalPoint plus(NaftahTemporalAmount naftahTemporalAmount);
 
 	/**
-	 * Returns a temporal point obtained by subtracting the given Arabic temporal
+	 * Returns a temporal point obtained by subtracting the given Naftah temporal
 	 * amount from this temporal point.
 	 *
-	 * @param arabicTemporalAmount the amount to subtract
-	 * @return a new {@code ArabicTemporalPoint} with the amount subtracted
+	 * @param naftahTemporalAmount the amount to subtract
+	 * @return a new {@code NaftahTemporalPoint} with the amount subtracted
 	 */
-	ArabicTemporalPoint minus(ArabicTemporalAmount arabicTemporalAmount);
+	NaftahTemporalPoint minus(NaftahTemporalAmount naftahTemporalAmount);
 
 	/**
 	 * Determines whether this temporal point represents the same instant
 	 * as the given temporal point.
 	 *
-	 * @param otherArabicTemporalPoint the temporal point to compare with
+	 * @param otherNaftahTemporalPoint the temporal point to compare with
 	 * @return {@code true} if both temporal points represent the same instant;
 	 *         {@code false} otherwise
 	 */
-	default boolean isEquals(ArabicTemporalPoint otherArabicTemporalPoint) {
+	default boolean isEquals(NaftahTemporalPoint otherNaftahTemporalPoint) {
 		var thisInstant = TemporalUtils.toInstant(temporal());
-		var otherInstant = TemporalUtils.toInstant(otherArabicTemporalPoint.temporal());
+		var otherInstant = TemporalUtils.toInstant(otherNaftahTemporalPoint.temporal());
 		return thisInstant.equals(otherInstant);
 	}
 
@@ -72,23 +75,23 @@ public sealed interface ArabicTemporalPoint extends ArabicTemporal permits Arabi
 	 * Determines whether this temporal point does not represent the same instant
 	 * as the given temporal point.
 	 *
-	 * @param otherArabicTemporalPoint the temporal point to compare with
+	 * @param otherNaftahTemporalPoint the temporal point to compare with
 	 * @return {@code true} if the temporal points are not equal; {@code false} otherwise
 	 */
-	default boolean notEquals(ArabicTemporalPoint otherArabicTemporalPoint) {
-		return !isEquals(otherArabicTemporalPoint);
+	default boolean notEquals(NaftahTemporalPoint otherNaftahTemporalPoint) {
+		return !isEquals(otherNaftahTemporalPoint);
 	}
 
 	/**
 	 * Determines whether this temporal point occurs after the given temporal point.
 	 *
-	 * @param otherArabicTemporalPoint the temporal point to compare with
+	 * @param otherNaftahTemporalPoint the temporal point to compare with
 	 * @return {@code true} if this temporal point is after the given one;
 	 *         {@code false} otherwise
 	 */
-	default boolean greaterThan(ArabicTemporalPoint otherArabicTemporalPoint) {
+	default boolean greaterThan(NaftahTemporalPoint otherNaftahTemporalPoint) {
 		var thisInstant = TemporalUtils.toInstant(temporal());
-		var otherInstant = TemporalUtils.toInstant(otherArabicTemporalPoint.temporal());
+		var otherInstant = TemporalUtils.toInstant(otherNaftahTemporalPoint.temporal());
 		return thisInstant.isAfter(otherInstant);
 	}
 
@@ -96,26 +99,26 @@ public sealed interface ArabicTemporalPoint extends ArabicTemporal permits Arabi
 	 * Determines whether this temporal point occurs after or at the same instant
 	 * as the given temporal point.
 	 *
-	 * @param otherArabicTemporalPoint the temporal point to compare with
+	 * @param otherNaftahTemporalPoint the temporal point to compare with
 	 * @return {@code true} if this temporal point is after or equal to the given one;
 	 *         {@code false} otherwise
 	 */
-	default boolean greaterThanEquals(ArabicTemporalPoint otherArabicTemporalPoint) {
+	default boolean greaterThanEquals(NaftahTemporalPoint otherNaftahTemporalPoint) {
 		var thisInstant = TemporalUtils.toInstant(temporal());
-		var otherInstant = TemporalUtils.toInstant(otherArabicTemporalPoint.temporal());
+		var otherInstant = TemporalUtils.toInstant(otherNaftahTemporalPoint.temporal());
 		return !thisInstant.isBefore(otherInstant);
 	}
 
 	/**
 	 * Determines whether this temporal point occurs before the given temporal point.
 	 *
-	 * @param otherArabicTemporalPoint the temporal point to compare with
+	 * @param otherNaftahTemporalPoint the temporal point to compare with
 	 * @return {@code true} if this temporal point is before the given one;
 	 *         {@code false} otherwise
 	 */
-	default boolean lessThan(ArabicTemporalPoint otherArabicTemporalPoint) {
+	default boolean lessThan(NaftahTemporalPoint otherNaftahTemporalPoint) {
 		var thisInstant = TemporalUtils.toInstant(temporal());
-		var otherInstant = TemporalUtils.toInstant(otherArabicTemporalPoint.temporal());
+		var otherInstant = TemporalUtils.toInstant(otherNaftahTemporalPoint.temporal());
 		return thisInstant.isBefore(otherInstant);
 	}
 
@@ -123,13 +126,13 @@ public sealed interface ArabicTemporalPoint extends ArabicTemporal permits Arabi
 	 * Determines whether this temporal point occurs before or at the same instant
 	 * as the given temporal point.
 	 *
-	 * @param otherArabicTemporalPoint the temporal point to compare with
+	 * @param otherNaftahTemporalPoint the temporal point to compare with
 	 * @return {@code true} if this temporal point is before or equal to the given one;
 	 *         {@code false} otherwise
 	 */
-	default boolean lessThanEquals(ArabicTemporalPoint otherArabicTemporalPoint) {
+	default boolean lessThanEquals(NaftahTemporalPoint otherNaftahTemporalPoint) {
 		var thisInstant = TemporalUtils.toInstant(temporal());
-		var otherInstant = TemporalUtils.toInstant(otherArabicTemporalPoint.temporal());
+		var otherInstant = TemporalUtils.toInstant(otherNaftahTemporalPoint.temporal());
 		return !thisInstant.isAfter(otherInstant);
 	}
 

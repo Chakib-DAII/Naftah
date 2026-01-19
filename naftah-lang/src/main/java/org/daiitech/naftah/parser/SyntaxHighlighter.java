@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
 import java.util.ArrayList;
@@ -20,13 +23,13 @@ import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shouldReshape;
 import static org.daiitech.naftah.utils.repl.REPLHelper.ESCAPE_CHARS_REGEX;
 import static org.daiitech.naftah.utils.repl.REPLHelper.MULTILINE_IS_ACTIVE;
 import static org.daiitech.naftah.utils.repl.REPLHelper.TEXT_PASTE_DETECTED;
 import static org.daiitech.naftah.utils.repl.REPLHelper.println;
 import static org.daiitech.naftah.utils.repl.REPLHelper.rightAlign;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shape;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shouldReshape;
 
 /**
  * A syntax highlighter class specifically tailored for highlighting
@@ -174,7 +177,10 @@ public class SyntaxHighlighter extends BaseHighlighter {
 		}
 
 		// Join lines with newline separator
-		Collections.reverse(lines);
+		if (shouldReshape()) {
+			Collections.reverse(lines);
+		}
+
 		return AttributedString.join(AttributedString.NEWLINE, lines);
 	}
 
@@ -218,10 +224,10 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.DURATION, org.daiitech.naftah.parser.NaftahLexer.PERIOD,
 					org.daiitech.naftah.parser.NaftahLexer.PERIOD_DURATION, org.daiitech.naftah.parser.NaftahLexer.DATE,
 					org.daiitech.naftah.parser.NaftahLexer.TIME, org.daiitech.naftah.parser.NaftahLexer.DATE_TIME,
-					org.daiitech.naftah.parser.NaftahLexer.PAIR, org.daiitech.naftah.parser.NaftahLexer.LIST,
-					org.daiitech.naftah.parser.NaftahLexer.TUPLE, org.daiitech.naftah.parser.NaftahLexer.SET,
-					org.daiitech.naftah.parser.NaftahLexer.MAP -> AttributedStyle.BOLD
-							.foreground(AttributedStyle.MAGENTA);
+					org.daiitech.naftah.parser.NaftahLexer.PAIR, org.daiitech.naftah.parser.NaftahLexer.TRIPLE,
+					org.daiitech.naftah.parser.NaftahLexer.TUPLE, org.daiitech.naftah.parser.NaftahLexer.LIST,
+					org.daiitech.naftah.parser.NaftahLexer.SET, org.daiitech.naftah.parser.NaftahLexer.MAP ->
+				AttributedStyle.BOLD.foreground(AttributedStyle.MAGENTA);
 			case org.daiitech.naftah.parser.NaftahLexer.CHARACTER, org.daiitech.naftah.parser.NaftahLexer.STRING,
 					org.daiitech.naftah.parser.NaftahLexer.NUMBER, org.daiitech.naftah.parser.NaftahLexer.BASE_DIGITS,
 					org.daiitech.naftah.parser.NaftahLexer.TRUE, org.daiitech.naftah.parser.NaftahLexer.FALSE ->
@@ -241,6 +247,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.BITWISE_AND,
 					org.daiitech.naftah.parser.NaftahLexer.BITWISE_OR,
 					org.daiitech.naftah.parser.NaftahLexer.BITWISE_XOR,
+					org.daiitech.naftah.parser.NaftahLexer.BITWISE_USHR,
+					org.daiitech.naftah.parser.NaftahLexer.BITWISE_SHR,
+					org.daiitech.naftah.parser.NaftahLexer.BITWISE_SHL,
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_PLUS,
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MINUS,
 					org.daiitech.naftah.parser.NaftahLexer.ELEMENTWISE_MUL,
@@ -253,7 +262,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.TEMPORAL_AMOUNT,
 					org.daiitech.naftah.parser.NaftahLexer.OK, org.daiitech.naftah.parser.NaftahLexer.ERROR,
 					org.daiitech.naftah.parser.NaftahLexer.SOME, org.daiitech.naftah.parser.NaftahLexer.NONE,
-					org.daiitech.naftah.parser.NaftahLexer.ORDERED -> AttributedStyle.BOLD
+					org.daiitech.naftah.parser.NaftahLexer.ORDERED, org.daiitech.naftah.parser.NaftahLexer.SIZE_OF,
+					org.daiitech.naftah.parser.NaftahLexer.TYPE_OF,
+					org.daiitech.naftah.parser.NaftahLexer.INSTANCE_OF -> AttributedStyle.BOLD
 							.foreground(AttributedStyle.RED);
 			case org.daiitech.naftah.parser.NaftahLexer.LPAREN, org.daiitech.naftah.parser.NaftahLexer.RPAREN,
 					org.daiitech.naftah.parser.NaftahLexer.LBRACE, org.daiitech.naftah.parser.NaftahLexer.RBRACE,
@@ -270,7 +281,9 @@ public class SyntaxHighlighter extends BaseHighlighter {
 					org.daiitech.naftah.parser.NaftahLexer.DOLLAR_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.STAR_SIGN,
 					org.daiitech.naftah.parser.NaftahLexer.LT_SIGN,
-					org.daiitech.naftah.parser.NaftahLexer.GT_SIGN ->
+					org.daiitech.naftah.parser.NaftahLexer.GT_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.GT_TYPE_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.LT_TYPE_SIGN ->
 				AttributedStyle.BOLD.foreground(AttributedStyle.CYAN);
 			case org.daiitech.naftah.parser.NaftahLexer.ID -> AttributedStyle.BOLD.foreground(AttributedStyle.YELLOW);
 			default -> AttributedStyle.BOLD.foreground(AttributedStyle.WHITE);

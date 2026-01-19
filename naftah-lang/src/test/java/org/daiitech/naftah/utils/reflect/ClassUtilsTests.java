@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils.reflect;
 
 import java.lang.reflect.Method;
@@ -22,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ClassUtilsTests {
+class ClassUtilsTests {
 
 	@Test
 	void constantsTest() {
@@ -130,7 +133,7 @@ public class ClassUtilsTests {
 	@Test
 	void isAccessibleInstantiableStaticInvocableTest() throws Exception {
 		assertTrue(ClassUtils.isAccessibleClass(Optional.class)); // static factory
-		assertTrue(ClassUtils.isInstantiableClass(String.class)); // public no-arg
+		assertTrue(ClassUtils.isInstantiableClass(String.class)); //  no-arg
 		Method m = String.class.getMethod("valueOf", Object.class);
 		assertTrue(ClassUtils.isStatic(m));
 		assertTrue(ClassUtils.isInvocable(m));
@@ -156,7 +159,7 @@ public class ClassUtilsTests {
 							ConcurrencyBuiltinFunctions.class
 						));
 		assertNotNull(builtinFunctions);
-		assertEquals(93, builtinFunctions.size());
+		assertEquals(97, builtinFunctions.size());
 	}
 
 	@Test
@@ -172,7 +175,7 @@ public class ClassUtilsTests {
 							"org.daiitech.naftah.builtin.functions.ConcurrencyBuiltinFunctions",
 							ConcurrencyBuiltinFunctions.class));
 		assertNotNull(builtinFunctions);
-		assertEquals(93, builtinFunctions.size());
+		assertEquals(95, builtinFunctions.size());
 	}
 
 	@Test

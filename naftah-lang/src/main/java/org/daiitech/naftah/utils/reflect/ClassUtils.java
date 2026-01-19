@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils.reflect;
 
 import java.lang.reflect.Constructor;
@@ -22,7 +25,7 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
 import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.Naftah.UNDERSCORE;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
@@ -159,7 +162,7 @@ public final class ClassUtils {
 	public static String getQualifiedName(String className) {
 		return String
 				.join(  QUALIFIED_NAME_SEPARATOR,
-						ArabicUtils.transliterateToArabicScriptDefault(className.split(CLASS_SEPARATORS_REGEX)));
+						ScriptUtils.transliterateToArabicScriptDefault(className.split(CLASS_SEPARATORS_REGEX)));
 	}
 
 	/**
@@ -175,7 +178,7 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, Method method) {
 		return "%s::%s"
-				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(method.getName())[0]);
+				.formatted(qualifiedName, ScriptUtils.transliterateToArabicScriptDefault(method.getName())[0]);
 	}
 
 	/**
@@ -191,7 +194,7 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, String methodName) {
 		return "%s::%s"
-				.formatted(qualifiedName, ArabicUtils.transliterateToArabicScriptDefault(methodName)[0]);
+				.formatted(qualifiedName, ScriptUtils.transliterateToArabicScriptDefault(methodName)[0]);
 	}
 
 
@@ -244,7 +247,7 @@ public final class ClassUtils {
 		return classQualifiers
 				.stream()
 				.map(strings -> String
-						.join(QUALIFIED_NAME_SEPARATOR, ArabicUtils.transliterateToArabicScriptDefault(strings)))
+						.join(QUALIFIED_NAME_SEPARATOR, ScriptUtils.transliterateToArabicScriptDefault(strings)))
 				.collect(Collectors.toSet());
 	}
 
@@ -269,7 +272,7 @@ public final class ClassUtils {
 						.entry(
 								String
 										.join(  QUALIFIED_NAME_SEPARATOR,
-												ArabicUtils
+												ScriptUtils
 														.transliterateToArabicScriptDefault(strings
 																.getRight()
 																.clone())),
@@ -789,7 +792,7 @@ public final class ClassUtils {
 	public static String cleanBuiltinFunctionName(  String name,
 													String replacement,
 													boolean removeDiacritics) {
-		name = removeDiacritics ? ArabicUtils.removeDiacritics(name) : name;
+		name = removeDiacritics ? ScriptUtils.removeDiacritics(name) : name;
 		return name.replaceAll("\\s+", replacement);
 	}
 
@@ -863,7 +866,7 @@ public final class ClassUtils {
 	 * <p>
 	 * Additionally, the method includes Arabic transliteration (phonetic representation in Arabic script)
 	 * for class names and package names, using {@link ClassUtils#getQualifiedName(String)}
-	 * or {@link ArabicUtils#transliterateToArabicScriptDefault(String...)}.
+	 * or {@link ScriptUtils#transliterateToArabicScriptDefault(String...)}.
 	 * For example, the simple name {@code ArrayList} might appear as:
 	 * <pre>{@code
 	 * ArrayList - أرَي لِسْتْ
@@ -910,7 +913,7 @@ public final class ClassUtils {
 						"""
 						.formatted(
 									clazz.getName() + " - " + getQualifiedName(clazz.getName()),
-									clazz.getSimpleName() + " - " + ArabicUtils
+									clazz.getSimpleName() + " - " + ScriptUtils
 											.transliterateToArabicScriptDefault(clazz.getSimpleName())[0],
 									clazz.getPackage() != null ?
 											clazz.getPackage().getName() + " - " + getQualifiedName(clazz

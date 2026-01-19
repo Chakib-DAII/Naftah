@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.utils;
 
 import java.lang.reflect.Array;
@@ -26,15 +29,15 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaN;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.None;
-import org.daiitech.naftah.builtin.time.ArabicDate;
-import org.daiitech.naftah.builtin.time.ArabicDateTime;
-import org.daiitech.naftah.builtin.time.ArabicDuration;
-import org.daiitech.naftah.builtin.time.ArabicPeriod;
-import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
-import org.daiitech.naftah.builtin.time.ArabicTemporal;
-import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
-import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
-import org.daiitech.naftah.builtin.time.ArabicTime;
+import org.daiitech.naftah.builtin.time.NaftahDate;
+import org.daiitech.naftah.builtin.time.NaftahDateTime;
+import org.daiitech.naftah.builtin.time.NaftahDuration;
+import org.daiitech.naftah.builtin.time.NaftahPeriod;
+import org.daiitech.naftah.builtin.time.NaftahPeriodWithDuration;
+import org.daiitech.naftah.builtin.time.NaftahTemporal;
+import org.daiitech.naftah.builtin.time.NaftahTemporalAmount;
+import org.daiitech.naftah.builtin.time.NaftahTemporalPoint;
+import org.daiitech.naftah.builtin.time.NaftahTime;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
 import org.daiitech.naftah.builtin.utils.concurrent.Channel;
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
@@ -51,8 +54,9 @@ import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
 import org.daiitech.naftah.utils.reflect.type.TypeReference;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
-import static org.daiitech.naftah.Naftah.ARABIC_NUMBER_FORMATTER_PROPERTY;
+import static org.daiitech.naftah.Naftah.NUMBER_FORMATTER_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.FunctionUtils.allMatch;
 import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -64,8 +68,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.getFormattedTokenSym
 import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visit;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.ARABIC_NUMBER_FORMAT;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.latinNumberToArabicString;
+import static org.daiitech.naftah.utils.script.ScriptUtils.NUMBER_FORMAT;
 
 /**
  * Utility class providing various helper methods for working with Java objects in the context of the Naftah language
@@ -471,22 +474,22 @@ public final class ObjectUtils {
 			return JavaType.of(String.class);
 		}
 		if (hasChild(builtInContext.DURATION())) {
-			return JavaType.of(ArabicDuration.class);
+			return JavaType.of(NaftahDuration.class);
 		}
 		if (hasChild(builtInContext.PERIOD())) {
-			return JavaType.of(ArabicPeriod.class);
+			return JavaType.of(NaftahPeriod.class);
 		}
 		if (hasChild(builtInContext.PERIOD_DURATION())) {
-			return JavaType.of(ArabicPeriodWithDuration.class);
+			return JavaType.of(NaftahPeriodWithDuration.class);
 		}
 		if (hasChild(builtInContext.DATE())) {
-			return JavaType.of(ArabicDate.class);
+			return JavaType.of(NaftahDate.class);
 		}
 		if (hasChild(builtInContext.TIME())) {
-			return JavaType.of(ArabicTime.class);
+			return JavaType.of(NaftahTime.class);
 		}
 		if (hasChild(builtInContext.DATE_TIME())) {
-			return JavaType.of(ArabicDateTime.class);
+			return JavaType.of(NaftahDateTime.class);
 		}
 		return JavaType.ofObject();
 	}
@@ -678,32 +681,32 @@ public final class ObjectUtils {
 												org.daiitech.naftah.parser.NaftahLexer.ACTOR,
 												false);
 			}
-			if (javaType.isOfType(ArabicDuration.class)) {
+			if (javaType.isOfType(NaftahDuration.class)) {
 				return getFormattedTokenSymbols(vocabulary,
 												org.daiitech.naftah.parser.NaftahLexer.DURATION,
 												false);
 			}
-			if (javaType.isOfType(ArabicPeriod.class)) {
+			if (javaType.isOfType(NaftahPeriod.class)) {
 				return getFormattedTokenSymbols(vocabulary,
 												org.daiitech.naftah.parser.NaftahLexer.PERIOD,
 												false);
 			}
-			if (javaType.isOfType(ArabicPeriodWithDuration.class)) {
+			if (javaType.isOfType(NaftahPeriodWithDuration.class)) {
 				return getFormattedTokenSymbols(vocabulary,
 												org.daiitech.naftah.parser.NaftahLexer.PERIOD_DURATION,
 												false);
 			}
-			if (javaType.isOfType(ArabicDate.class)) {
+			if (javaType.isOfType(NaftahDate.class)) {
 				return getFormattedTokenSymbols(vocabulary,
 												org.daiitech.naftah.parser.NaftahLexer.DATE,
 												false);
 			}
-			if (javaType.isOfType(ArabicTime.class)) {
+			if (javaType.isOfType(NaftahTime.class)) {
 				return getFormattedTokenSymbols(vocabulary,
 												org.daiitech.naftah.parser.NaftahLexer.TIME,
 												false);
 			}
-			if (javaType.isOfType(ArabicDateTime.class)) {
+			if (javaType.isOfType(NaftahDateTime.class)) {
 				return getFormattedTokenSymbols(vocabulary,
 												org.daiitech.naftah.parser.NaftahLexer.DATE_TIME,
 												false);
@@ -802,7 +805,7 @@ public final class ObjectUtils {
 		}
 		Class<?> cls = obj.getClass();
 		return cls == BuiltinFunction.class || cls == JvmFunction.class || cls == DeclaredFunction.class || cls == DeclaredParameter.class || cls == DeclaredVariable.class || cls == DynamicNumber.class || cls == LoopSignal.LoopSignalDetails.class || cls == NaftahObject.class || cls == Task.class || cls == Channel.class || Actor.class
-				.isAssignableFrom(cls) || ArabicTemporal.class.isAssignableFrom(cls);
+				.isAssignableFrom(cls) || NaftahTemporal.class.isAssignableFrom(cls);
 	}
 
 	/**
@@ -1016,7 +1019,7 @@ public final class ObjectUtils {
 
 		// Number vs Number or Boolean vs Boolean or Character vs Character or String vs String or String vs Character
 		if ((NaN.isNaN(left) || NaN.isNaN(right)) || (None.isNone(left) || None
-				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String) || (left instanceof ArabicTemporalPoint && right instanceof ArabicTemporalAmount) || (left instanceof ArabicTemporalPoint && right instanceof ArabicTemporalPoint) || (left instanceof ArabicTemporalAmount && right instanceof ArabicTemporalAmount)) {
+				.isNone(right)) || (left instanceof Number && right instanceof Number) || (left instanceof Boolean && right instanceof Boolean) || (left instanceof Character && right instanceof Character) || (left instanceof String && right instanceof String) || (left instanceof String && right instanceof Character) || (left instanceof Character && right instanceof String) || (left instanceof NaftahTemporalPoint && right instanceof NaftahTemporalAmount) || (left instanceof NaftahTemporalPoint && right instanceof NaftahTemporalPoint) || (left instanceof NaftahTemporalAmount && right instanceof NaftahTemporalAmount)) {
 			return operation.apply(left, right);
 		}
 
@@ -1357,25 +1360,25 @@ public final class ObjectUtils {
 	 * {@link java.text.NumberFormat} instance for the Arabic locale. This includes Arabic-style decimal and grouping
 	 * separators and may render digits in Arabic-Indic form, depending on JVM and font support.
 	 * <p>
-	 * The method synchronizes on {@link org.daiitech.naftah.utils.arabic.ArabicUtils#ARABIC_NUMBER_FORMAT}
+	 * The method synchronizes on {@link ScriptUtils#NUMBER_FORMAT}
 	 * since {@code NumberFormat} is not thread-safe.
 	 * <p>
 	 * If the system property is not set to {@code true}, the method falls back to a custom digit conversion
-	 * via {@link org.daiitech.naftah.utils.arabic.ArabicUtils#latinNumberToArabicString(Number)}.
+	 * via {@link ScriptUtils#numberToString(Number)}.
 	 *
 	 * @param number the number to format; must not be {@code null}
 	 * @return the number formatted as a string using Arabic locale or Arabic digits
 	 * @throws NullPointerException if {@code number} is {@code null}
 	 * @see java.text.NumberFormat#format(double)
 	 * @see java.util.Locale
-	 * @see org.daiitech.naftah.utils.arabic.ArabicUtils#latinNumberToArabicString(Number)
+	 * @see ScriptUtils#numberToString(Number)
 	 */
 	public static String numberToString(Number number) {
-		if (Boolean.getBoolean(ARABIC_NUMBER_FORMATTER_PROPERTY)) {
-			return ARABIC_NUMBER_FORMAT.get().format(number);
+		if (Boolean.getBoolean(NUMBER_FORMATTER_PROPERTY)) {
+			return NUMBER_FORMAT.get().format(number);
 		}
 		else {
-			return latinNumberToArabicString(number);
+			return ScriptUtils.numberToString(number);
 		}
 	}
 

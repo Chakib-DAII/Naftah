@@ -1,11 +1,18 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.lang;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.daiitech.naftah.parser.NaftahParser;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.daiitech.naftah.utils.reflect.type.JavaType;
+
+import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahType;
+import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 
 /**
  * Represents a function declaration in the Naftah scripting language.
@@ -243,6 +250,28 @@ public final class DeclaredFunction<T extends ParserRuleContext> extends Declara
 	 */
 	@Override
 	public String toString() {
-		return "<%s %s>".formatted("دالة", name);
+		String params = parameters == null || parameters.isEmpty() ?
+				"" :
+				parameters
+						.stream()
+						.map(p -> "%s: %s"
+								.formatted( p.getName(),
+											getNaftahType(PARSER_VOCABULARY, p.getType())))
+						.collect(Collectors.joining(", "));
+
+		String asyncText = async ? " (غير متزامنة)" : "";
+		String returnTypeText = returnType == null ? "غير محدد" : getNaftahType(PARSER_VOCABULARY, returnType);
+
+		return "<دالة%s: %s | معاملات: [%s] | الإرجاع: %s%s>"
+				.formatted(
+							asyncText,
+							name,
+							params,
+							returnTypeText,
+							implementationName != null && !implementationName.isBlank() ?
+									" | تهيئة: " + implementationName :
+									""
+				);
 	}
+
 }

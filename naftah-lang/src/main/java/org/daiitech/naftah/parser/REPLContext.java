@@ -1,9 +1,16 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.daiitech.naftah.builtin.lang.DeclaredFunction;
+import org.daiitech.naftah.builtin.lang.DeclaredImplementation;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
+import org.daiitech.naftah.builtin.lang.DeclaredVariable;
 
 /**
  * REPLContext extends {@link DefaultContext} to provide
@@ -111,5 +118,116 @@ public class REPLContext extends DefaultContext {
 													Map<String, DeclaredParameter> parameters,
 													Map<String, Object> arguments) {
 		return new DefaultContext(parent, blockImports, parameters, arguments);
+	}
+
+	/**
+	 * Clears all REPL-related contexts.
+	 * <p>
+	 * This method performs two main actions:
+	 * <ol>
+	 * <li>Calls {@link DefaultContext#clear()} to remove all globally stored contexts.</li>
+	 * <li>Invokes {@link #cleanThreadLocals()} to reset any
+	 * thread-local data associated with the REPL, preventing leakage across sessions.</li>
+	 * </ol>
+	 * After calling this method, the REPL state is fully reset and ready for a fresh session.
+	 * </p>
+	 */
+	public static void clear() {
+		DefaultContext.clear();
+		ETERNAL_CONTEXT.cleanThreadLocals();
+	}
+
+	/**
+	 * Returns all currently imported elements in the REPL session.
+	 *
+	 * <p>
+	 * Each import is returned as a string in the format:
+	 * {@code <imported_element> تحت_إسم <alias>} (meaning "under the name").
+	 * </p>
+	 *
+	 * @return a collection of strings representing all imports and their aliases
+	 */
+	public static Collection<String> getImports() {
+		return IMPORTS
+				.entrySet()
+				.stream()
+				.map(
+						importEntry -> importEntry.getValue() + " تحت_إسم " + importEntry.getKey()
+				)
+				.toList();
+	}
+
+	/**
+	 * Removes the specified imports from the REPL session.
+	 *
+	 * @param ids an array of import identifiers to remove; whitespace is trimmed
+	 */
+	public static void dropImports(String[] ids) {
+		for (String id : ids) {
+			IMPORTS.remove(id.trim());
+		}
+	}
+
+	/**
+	 * Returns all declared variables in the current REPL session.
+	 *
+	 * @return a collection of {@link DeclaredVariable} objects
+	 */
+	public static Collection<DeclaredVariable> getVariables() {
+		return ETERNAL_CONTEXT.variables.get().values();
+	}
+
+	/**
+	 * Removes the specified variables from the current REPL session.
+	 *
+	 * @param ids an array of variable names to remove; whitespace is trimmed
+	 */
+	public static void dropVariables(String[] ids) {
+		var variableMap = ETERNAL_CONTEXT.variables.get();
+		for (String id : ids) {
+			variableMap.remove(id.trim());
+		}
+	}
+
+	/**
+	 * Returns all declared functions in the current REPL session.
+	 *
+	 * @return a collection of {@link DeclaredFunction} objects
+	 */
+	public static Collection<DeclaredFunction<?>> getFunctions() {
+		return ETERNAL_CONTEXT.functions.get().values();
+	}
+
+	/**
+	 * Removes the specified functions from the current REPL session.
+	 *
+	 * @param ids an array of function names to remove; whitespace is trimmed
+	 */
+	public static void dropFunctions(String[] ids) {
+		var functionMap = ETERNAL_CONTEXT.functions.get();
+		for (String id : ids) {
+			functionMap.remove(id.trim());
+		}
+	}
+
+	/**
+	 * Returns all declared implementations (behaviors) in the current REPL session.
+	 *
+	 * @return a collection of {@link DeclaredImplementation} objects
+	 */
+	public static Collection<DeclaredImplementation> getImplementations() {
+		return ETERNAL_CONTEXT.implementations.get().values();
+	}
+
+	/**
+	 * Removes the specified implementations (behaviors) from the current REPL session.
+	 *
+	 * @param ids an array of implementation names to remove; whitespace is trimmed
+	 */
+	public static void dropImplementations(String[] ids) {
+		var implemetationMap = ETERNAL_CONTEXT.implementations.get();
+		for (String id : ids) {
+			implemetationMap.remove(id.trim());
+		}
 	}
 }

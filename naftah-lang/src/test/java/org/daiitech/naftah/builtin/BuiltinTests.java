@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +18,7 @@ import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.parser.LoopSignal;
 import org.daiitech.naftah.parser.NaftahParserHelper;
-import org.daiitech.naftah.utils.arabic.ArabicOutputTransformer;
+import org.daiitech.naftah.utils.script.NaftahOutputTransformer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +30,8 @@ import static org.daiitech.naftah.NaftahSystem.TERMINAL_HEIGHT_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
 import static org.daiitech.naftah.TestUtils.assertEquals;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.containsArabic;
-import static org.daiitech.naftah.utils.arabic.ArabicUtils.shape;
+import static org.daiitech.naftah.utils.script.ScriptUtils.containsArabicLetters;
+import static org.daiitech.naftah.utils.script.ScriptUtils.shape;
 
 class BuiltinTests {
 
@@ -82,7 +85,7 @@ class BuiltinTests {
 	void setup() {
 		// Redirect System.out
 		out = new ByteArrayOutputStream();
-		PrintStream printStream = ArabicOutputTransformer.getPrintStream(out);
+		PrintStream printStream = NaftahOutputTransformer.getPrintStream(out);
 		System.setOut(printStream);
 	}
 
@@ -91,7 +94,7 @@ class BuiltinTests {
 	void printTest(Object input, Object expectedOutput) {
 		Builtin.print(input);
 		String output = out.toString(StandardCharsets.UTF_8).trim();
-		if (containsArabic(output)) {
+		if (containsArabicLetters(output)) {
 			output = NaftahParserHelper.NORMALIZER.normalize(shape(output));
 		}
 		assertEquals(output, expectedOutput);

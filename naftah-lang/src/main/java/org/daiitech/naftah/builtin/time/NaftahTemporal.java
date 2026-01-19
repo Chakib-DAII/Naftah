@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.time;
 
 /**
@@ -12,9 +15,9 @@ package org.daiitech.naftah.builtin.time;
  *
  * <p>Permitted subtypes:
  * <ul>
- * <li>{@link ArabicTemporalPoint} – represents a specific point in time
+ * <li>{@link NaftahTemporalPoint} – represents a specific point in time
  * (e.g. date, time, or date-time)</li>
- * <li>{@link ArabicTemporalAmount} – represents a temporal amount
+ * <li>{@link NaftahTemporalAmount} – represents a temporal amount
  * (e.g. duration or period)</li>
  * </ul>
  * </p>
@@ -24,6 +27,6 @@ package org.daiitech.naftah.builtin.time;
  *
  * @author Chakib Daii
  */
-public sealed interface ArabicTemporal
-		permits ArabicTemporalPoint, ArabicTemporalAmount {
+public sealed interface NaftahTemporal
+		permits NaftahTemporalPoint, NaftahTemporalAmount {
 }

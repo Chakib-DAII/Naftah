@@ -1,18 +1,18 @@
-# Naftah Programming Language : Let's write programs in Arabic, like living in Naftah
+# Naftah Programming Language : Let's write programs in Tunisian/Arabic, like living in Naftah
 
 # نفطه: لغة برمجة، لنكتب برامج باللغة العربية وكأننا نعيش في نفطه
 
 ## 🌟 Motivation: Why I Created Naftah
 
 As a **Tunisian** and an **Arabic speaker** passionate about programming, I was always searching for a programming
-language that uses **Arabic naturally** — not just in keywords, but in structure, logic, and **support for dialects**,
+language that uses **Tunisian/Arabic naturally** — not just in keywords, but in structure, logic, and **support for dialects**,
 including my own Tunisian dialect.
 I wanted something that makes programming feel **familiar, intuitive, and accessible**,
 especially for those of us who **don’t speak English fluently**.
 
-But after years of searching, I found that **no existing Arabic programming language truly met those needs**. Most were
+But after years of searching, I found that **no existing Tunisian/Arabic programming language truly met those needs**. Most were
 limited, overly simplistic, or not designed with real-world learning and development in mind. None of them made me feel
-like I could write code the way I speak and think in Arabic.
+like I could write code the way I speak and think in Tunisian/Arabic.
 
 What pushed me even more was seeing how many people around me — **students, kids, and even adults** — struggle to learn
 programming **not because it’s too hard**, but because of the **language barrier**. Most programming resources,
@@ -89,7 +89,7 @@ Naftah code runs with the **speed and efficiency** of Java code, making it suita
 
 #### 🔗 Full Interoperability with Java
 
-Naftah is **fully interoperable with the Java ecosystem**, making it an ideal **gateway language** for Arabic speakers
+Naftah is **fully interoperable with the Java ecosystem**, making it an ideal **gateway language** for Tunisian/Arabic speakers
 entering the world of modern software development.
 
 ##### ✅ What This Means:
@@ -140,7 +140,7 @@ This code:
 
 ##### 🚀 Why This Matters
 
-* You can **start programming in Arabic**, then gradually shift to more advanced Java/Kotlin/Groovy systems.
+* You can **start programming in Tunisian/Arabic**, then gradually shift to more advanced Java/Kotlin/Groovy systems.
 * You gain access to the **entire JVM ecosystem**: libraries, frameworks, tools.
 * You don’t have to choose between **expressiveness** and **power** — with Naftah, you get both.
 
@@ -164,7 +164,7 @@ By standing on the shoulders of a giant like the JVM, Naftah gets:
 * A **reliable runtime**
 * Compatibility with modern systems
 * Tools that developers already know and trust
-* Time to focus on what matters: **a great Arabic programming experience**
+* Time to focus on what matters: **a great Tunisian/Arabic programming experience**
 
 > We didn’t want to reinvent the wheel — we wanted to **drive it in our direction**.
 
@@ -411,7 +411,7 @@ cp mylib.jar lib/
 | `--scan-classpath` (`-scp`) | Enable reuse of Java types from classpath in your Naftah script             |
 | `--force-scan-classpath`    | Force classpath re-scan even if already initialized                         |
 | `--enable-cache=M,I`        | Enable performance caches: `M` for multiline strings, `I` for interpolation |
-| `--arabic_formatting`       | Use Arabic-style number formatting (e.g., decimal separator)                |
+| `--number_formatting`       | Use Tunisian/Arabic-style number formatting (e.g., decimal separator)                |
 | `--arabic_indic`            | Use Arabic-Indic digit shapes (٠١٢٣٤٥٦٧٨٩)                                  |
 | `-d, --debug`               | Enable debug mode (prints stack traces)                                     |
 | `-c, --encoding <charset>`  | Specify character encoding (e.g., `UTF-8`, `windows-1256`)                  |
@@ -451,9 +451,7 @@ Looking to learn the Naftah programming language?
 
 > 🚀 Visit the full **Language Reference Guide** for syntax, types, control flow, functions, and more:
 
-[//]: # (TODO: github page)
-
-👉 **[docs]()**
+👉 **[docs](https://naftah.daiitech.org)**
 
 Or explore by topic:
 
@@ -463,7 +461,7 @@ Or explore by topic:
 | 📙 [Primitives And Variables](./docs-site/_includes/language/02_primitives_and_variables.md) | Explanation of basic data types: numbers, strings, booleans; Arabic digits usage; constants (ثابت) vs variables (متغير); typing and assignment rules.             |
 | 📕 [Collections](./docs-site/_includes/language/03_collections.md)                           | Detailed overview of data structures like lists, tuples, sets, and associative arrays with examples and element-wise operations.                                  |
 | 📒 [Expressions](./docs-site/_includes/language/04_expressions.md)                           | How to write and evaluate expressions, including arithmetic, logical, and bitwise operations.                                                                     |
-| 📘 [Radix Numbers](./docs-site/_includes/language/05_radix_numbers.md)                       | How to define numbers in different numeral systems (from base 2 to 36) using the `''` syntax; includes Arabic and Latin digit support with examples.              |
+| 📘 [Radix Numbers](./docs-site/_includes/language/05_radix_numbers.md)                       | How to define numbers in different numeral systems (from base 2 to 36) using the `''` syntax; includes Arabic and Ascii digit support with examples.              |
 | 📙 [Objects](./docs-site/_includes/language/06_objects.md)                                   | Defining and working with structured data using key-value fields; includes nested objects and multiple field-access syntaxes.                                     |
 | 📕 [Control Flow](./docs-site/_includes/language/07_control_flow.md)                         | Overview of conditionals (if, else), loops (while, for), and pattern matching; control statements like stop, تابع, and return.                                    |
 | 📘 [Functions](./docs-site/_includes/language/08_functions.md)                               | Defining named and anonymous functions; parameter passing, default values, return types, and function composition in Naftah.                                      |

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser.time;
 
 
@@ -5,18 +8,18 @@ import java.time.Duration;
 import java.time.Period;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.daiitech.naftah.builtin.time.ArabicDate;
-import org.daiitech.naftah.builtin.time.ArabicDateTime;
-import org.daiitech.naftah.builtin.time.ArabicDuration;
-import org.daiitech.naftah.builtin.time.ArabicPeriod;
-import org.daiitech.naftah.builtin.time.ArabicPeriodWithDuration;
-import org.daiitech.naftah.builtin.time.ArabicTemporal;
-import org.daiitech.naftah.builtin.time.ArabicTemporalAmount;
-import org.daiitech.naftah.builtin.time.ArabicTemporalPoint;
-import org.daiitech.naftah.builtin.time.ArabicTime;
+import org.daiitech.naftah.builtin.time.NaftahDate;
+import org.daiitech.naftah.builtin.time.NaftahDateTime;
+import org.daiitech.naftah.builtin.time.NaftahDuration;
+import org.daiitech.naftah.builtin.time.NaftahPeriod;
+import org.daiitech.naftah.builtin.time.NaftahPeriodWithDuration;
+import org.daiitech.naftah.builtin.time.NaftahTemporal;
+import org.daiitech.naftah.builtin.time.NaftahTemporalAmount;
+import org.daiitech.naftah.builtin.time.NaftahTemporalPoint;
+import org.daiitech.naftah.builtin.time.NaftahTime;
 import org.daiitech.naftah.builtin.utils.NumberUtils;
-import org.daiitech.naftah.parser.ArabicDateParser;
-import org.daiitech.naftah.parser.ArabicDateParserBaseVisitor;
+import org.daiitech.naftah.parser.NaftahDateParser;
+import org.daiitech.naftah.parser.NaftahDateParserBaseVisitor;
 import org.daiitech.naftah.parser.NaftahParserHelper;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
@@ -32,9 +35,9 @@ import static org.daiitech.naftah.utils.time.Constants.YEAR;
 /**
  * A default visitor implementation for parsing Arabic date and time expressions.
  *
- * <p>This class extends {@link ArabicDateParserBaseVisitor} and provides implementations for
- * converting parse tree nodes into corresponding {@link ArabicTemporal} objects, such as
- * {@link ArabicDate}, {@link ArabicTime}, and {@link ArabicDateTime}.</p>
+ * <p>This class extends {@link NaftahDateParserBaseVisitor} and provides implementations for
+ * converting parse tree nodes into corresponding {@link NaftahTemporal} objects, such as
+ * {@link NaftahDate}, {@link NaftahTime}, and {@link NaftahDateTime}.</p>
  *
  * <p>It handles:
  * <ul>
@@ -47,11 +50,11 @@ import static org.daiitech.naftah.utils.time.Constants.YEAR;
  *
  * @author Chakib Daii
  */
-public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<Object> {
+public class DefaultNaftahDateParserVisitor extends NaftahDateParserBaseVisitor<Object> {
 
-	private final ArabicDateParser parser;
+	private final NaftahDateParser parser;
 
-	public DefaultArabicDateParserVisitor(ArabicDateParser parser) {
+	public DefaultNaftahDateParserVisitor(NaftahDateParser parser) {
 		this.parser = parser;
 	}
 
@@ -61,34 +64,34 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 *
 	 * @return the result of visiting the parse tree
 	 */
-	public ArabicTemporal visit() {
+	public NaftahTemporal visit() {
 		// Parse the input and get the parse tree
 		ParseTree tree = parser.root();
-		return (ArabicTemporal) visit(tree);
+		return (NaftahTemporal) visit(tree);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporalPoint visitNow(ArabicDateParser.NowContext ctx) {
-		return (ArabicTemporalPoint) visit(ctx.nowSpecifier());
+	public NaftahTemporalPoint visitNow(NaftahDateParser.NowContext ctx) {
+		return (NaftahTemporalPoint) visit(ctx.nowSpecifier());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporalPoint visitNowAsDateTime(ArabicDateParser.NowAsDateTimeContext ctx) {
-		ArabicDate date = ArabicDateParserHelper
+	public NaftahTemporalPoint visitNowAsDateTime(NaftahDateParser.NowAsDateTimeContext ctx) {
+		NaftahDate date = NaftahDateParserHelper
 				.currentDate(   this,
 								ctx.calendarSpecifier(),
 								ctx.zoneOrOffsetSpecifier());
 
 
-		ArabicTime time = ArabicDateParserHelper.currentTime(this, ctx.zoneOrOffsetSpecifier());
+		NaftahTime time = NaftahDateParserHelper.currentTime(this, ctx.zoneOrOffsetSpecifier());
 
-		return ArabicDateTime
+		return NaftahDateTime
 				.of(
 					date,
 					time
@@ -99,45 +102,45 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicDate visitNowAsDate(ArabicDateParser.NowAsDateContext ctx) {
-		return ArabicDateParserHelper.currentDate(this, ctx.calendarSpecifier(), ctx.zoneOrOffsetSpecifier());
+	public NaftahDate visitNowAsDate(NaftahDateParser.NowAsDateContext ctx) {
+		return NaftahDateParserHelper.currentDate(this, ctx.calendarSpecifier(), ctx.zoneOrOffsetSpecifier());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTime visitNowAsTime(ArabicDateParser.NowAsTimeContext ctx) {
-		return ArabicDateParserHelper.currentTime(this, ctx.zoneOrOffsetSpecifier());
+	public NaftahTime visitNowAsTime(NaftahDateParser.NowAsTimeContext ctx) {
+		return NaftahDateParserHelper.currentTime(this, ctx.zoneOrOffsetSpecifier());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporalPoint visitDateTime(ArabicDateParser.DateTimeContext ctx) {
-		return (ArabicTemporalPoint) visit(ctx.dateTimeSpecifier());
+	public NaftahTemporalPoint visitDateTime(NaftahDateParser.DateTimeContext ctx) {
+		return (NaftahTemporalPoint) visit(ctx.dateTimeSpecifier());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTime visitTime(ArabicDateParser.TimeContext ctx) {
-		return (ArabicTime) visit(ctx.zonedOrOffsetTimeSpecifier());
+	public NaftahTime visitTime(NaftahDateParser.TimeContext ctx) {
+		return (NaftahTime) visit(ctx.zonedOrOffsetTimeSpecifier());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporalPoint visitDateTimeSpecifier(ArabicDateParser.DateTimeSpecifierContext ctx) {
-		ArabicDate date = (ArabicDate) visit(ctx.dateSpecifier());
+	public NaftahTemporalPoint visitDateTimeSpecifier(NaftahDateParser.DateTimeSpecifierContext ctx) {
+		NaftahDate date = (NaftahDate) visit(ctx.dateSpecifier());
 
 		if (NaftahParserHelper.hasChild(ctx.zonedOrOffsetTimeSpecifier())) {
-			ArabicTime time = (ArabicTime) visit(ctx.zonedOrOffsetTimeSpecifier());
+			NaftahTime time = (NaftahTime) visit(ctx.zonedOrOffsetTimeSpecifier());
 
-			return ArabicDateTime
+			return NaftahDateTime
 					.of(
 						date,
 						time
@@ -150,17 +153,17 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicDate visitDateSpecifier(ArabicDateParser.DateSpecifierContext ctx) {
-		ArabicDate.Calendar calendar = NaftahParserHelper.hasChild(ctx.calendarSpecifier()) ?
-				(ArabicDate.Calendar) visit(ctx.calendarSpecifier()) :
-				ArabicDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
+	public NaftahDate visitDateSpecifier(NaftahDateParser.DateSpecifierContext ctx) {
+		NaftahDate.Calendar calendar = NaftahParserHelper.hasChild(ctx.calendarSpecifier()) ?
+				(NaftahDate.Calendar) visit(ctx.calendarSpecifier()) :
+				NaftahDate.Calendar.of(ChronologyUtils.DEFAULT_CHRONOLOGY);
 
 		int day = NumberUtils.parseDynamicNumber(ctx.NUMBER(0).getText()).intValue();
 		String arabicMonth = ctx.MONTH_NAME().getText();
 		int year = NumberUtils.parseDynamicNumber(ctx.NUMBER(1).getText()).intValue();
-		var date = ArabicDate.Date.of(day, arabicMonth, calendar.chronology(), year);
+		var date = NaftahDate.Date.of(day, arabicMonth, calendar.chronology(), year);
 
-		return ArabicDate
+		return NaftahDate
 				.of(date,
 					calendar
 				);
@@ -170,14 +173,14 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTime visitZonedOrOffsetTimeSpecifier(ArabicDateParser.ZonedOrOffsetTimeSpecifierContext ctx) {
-		ArabicTime.Time time = (ArabicTime.Time) visit(ctx.timeSpecifier());
+	public NaftahTime visitZonedOrOffsetTimeSpecifier(NaftahDateParser.ZonedOrOffsetTimeSpecifierContext ctx) {
+		NaftahTime.Time time = (NaftahTime.Time) visit(ctx.timeSpecifier());
 
-		ArabicTime.ZoneOrOffset zoneOrOffset = NaftahParserHelper.hasChild(ctx.zoneOrOffsetSpecifier()) ?
-				(ArabicTime.ZoneOrOffset) visit(ctx.zoneOrOffsetSpecifier()) :
+		NaftahTime.ZoneOrOffset zoneOrOffset = NaftahParserHelper.hasChild(ctx.zoneOrOffsetSpecifier()) ?
+				(NaftahTime.ZoneOrOffset) visit(ctx.zoneOrOffsetSpecifier()) :
 				null;
 
-		return ArabicTime
+		return NaftahTime
 				.of(time,
 					zoneOrOffset
 				);
@@ -187,7 +190,7 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTime.Time visitTimeSpecifier(ArabicDateParser.TimeSpecifierContext ctx) {
+	public NaftahTime.Time visitTimeSpecifier(NaftahDateParser.TimeSpecifierContext ctx) {
 		int numberIndex = 0;
 		int hour = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
 		int minute = NumberUtils.parseDynamicNumber(ctx.NUMBER(numberIndex++).getText()).intValue();
@@ -202,31 +205,31 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 				TemporalUtils.isPM(ctx.AMPM().getText()) :
 				null;
 
-		return ArabicTime.Time.of(hour, minute, second, nano, isPM);
+		return NaftahTime.Time.of(hour, minute, second, nano, isPM);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTime.ZoneOrOffset visitZoneSpecifier(ArabicDateParser.ZoneSpecifierContext ctx) {
-		return ArabicTime.ZoneOrOffset.ofZone(ctx.ARABIC_WORDS().getText());
+	public NaftahTime.ZoneOrOffset visitZoneSpecifier(NaftahDateParser.ZoneSpecifierContext ctx) {
+		return NaftahTime.ZoneOrOffset.ofZone(ctx.ARABIC_WORDS().getText());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTime.ZoneOrOffset visitOffsetSpecifier(ArabicDateParser.OffsetSpecifierContext ctx) {
-		return ArabicTime.ZoneOrOffset.ofOffset(ctx.OFFSET().getText());
+	public NaftahTime.ZoneOrOffset visitOffsetSpecifier(NaftahDateParser.OffsetSpecifierContext ctx) {
+		return NaftahTime.ZoneOrOffset.ofOffset(ctx.OFFSET().getText());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicDate.Calendar visitCalendarSpecifier(ArabicDateParser.CalendarSpecifierContext ctx) {
-		return ArabicDate.Calendar
+	public NaftahDate.Calendar visitCalendarSpecifier(NaftahDateParser.CalendarSpecifierContext ctx) {
+		return NaftahDate.Calendar
 				.of(ctx.ARABIC_WORDS().getText(),
 					ChronologyUtils.getChronologyByName(ctx.ARABIC_WORDS().getText()));
 	}
@@ -235,47 +238,47 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporalAmount visitPeriodWithDuration(ArabicDateParser.PeriodWithDurationContext ctx) {
-		ArabicPeriod arabicPeriod = (ArabicPeriod) visit(ctx.periodSpecifier());
+	public NaftahTemporalAmount visitPeriodWithDuration(NaftahDateParser.PeriodWithDurationContext ctx) {
+		NaftahPeriod naftahPeriod = (NaftahPeriod) visit(ctx.periodSpecifier());
 
 		if (NaftahParserHelper.hasChild(ctx.timeAmount())) {
-			ArabicDuration arabicDuration = (ArabicDuration) visit(ctx.timeAmount());
+			NaftahDuration naftahDuration = (NaftahDuration) visit(ctx.timeAmount());
 
-			return ArabicPeriodWithDuration.of(arabicPeriod, arabicDuration);
+			return NaftahPeriodWithDuration.of(naftahPeriod, naftahDuration);
 		}
 
-		return arabicPeriod;
+		return naftahPeriod;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicDuration visitDuration(ArabicDateParser.DurationContext ctx) {
-		return (ArabicDuration) visit(ctx.durationSpecifier());
+	public NaftahDuration visitDuration(NaftahDateParser.DurationContext ctx) {
+		return (NaftahDuration) visit(ctx.durationSpecifier());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporalAmount visitBetweenTemporalAmount(ArabicDateParser.BetweenTemporalAmountContext ctx) {
-		return (ArabicTemporalAmount) visit(ctx.betweenSpecifier());
+	public NaftahTemporalAmount visitBetweenTemporalAmount(NaftahDateParser.BetweenTemporalAmountContext ctx) {
+		return (NaftahTemporalAmount) visit(ctx.betweenSpecifier());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicDuration visitDurationSpecifier(ArabicDateParser.DurationSpecifierContext ctx) {
-		return (ArabicDuration) visit(ctx.timeAmount());
+	public NaftahDuration visitDurationSpecifier(NaftahDateParser.DurationSpecifierContext ctx) {
+		return (NaftahDuration) visit(ctx.timeAmount());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicDuration visitTimeAmount(ArabicDateParser.TimeAmountContext ctx) {
+	public NaftahDuration visitTimeAmount(NaftahDateParser.TimeAmountContext ctx) {
 		int hours = 0;
 		int minutes = 0;
 		int seconds = 0;
@@ -308,9 +311,9 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 		}
 
 
-		return ArabicDuration
+		return NaftahDuration
 				.of(
-					ArabicDuration.DurationDefinition
+					NaftahDuration.DurationDefinition
 							.of(hours,
 								hourText,
 								minutes,
@@ -333,15 +336,15 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicPeriod visitPeriodSpecifier(ArabicDateParser.PeriodSpecifierContext ctx) {
-		return (ArabicPeriod) visit(ctx.dateAmount());
+	public NaftahPeriod visitPeriodSpecifier(NaftahDateParser.PeriodSpecifierContext ctx) {
+		return (NaftahPeriod) visit(ctx.dateAmount());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicPeriod visitDateAmount(ArabicDateParser.DateAmountContext ctx) {
+	public NaftahPeriod visitDateAmount(NaftahDateParser.DateAmountContext ctx) {
 		int years = 0;
 		int months = 0;
 		int days = 0;
@@ -363,9 +366,9 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 		}
 
 
-		return ArabicPeriod
+		return NaftahPeriod
 				.of(
-					ArabicPeriod.PeriodDefinition.of(years, yearText, months, monthText, days, dayText),
+					NaftahPeriod.PeriodDefinition.of(years, yearText, months, monthText, days, dayText),
 					Period.of(years, months, days)
 				);
 	}
@@ -374,26 +377,26 @@ public class DefaultArabicDateParserVisitor extends ArabicDateParserBaseVisitor<
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporalAmount visitBetweenSpecifier(ArabicDateParser.BetweenSpecifierContext ctx) {
-		ArabicTemporalPoint left = (ArabicTemporalPoint) visit(ctx.betweenTimeSpecifier(0));
-		ArabicTemporalPoint right = (ArabicTemporalPoint) visit(ctx.betweenTimeSpecifier(1));
-		return ArabicDateParserHelper.getArabicTemporalAmountBetween(left, right);
+	public NaftahTemporalAmount visitBetweenSpecifier(NaftahDateParser.BetweenSpecifierContext ctx) {
+		NaftahTemporalPoint left = (NaftahTemporalPoint) visit(ctx.betweenTimeSpecifier(0));
+		NaftahTemporalPoint right = (NaftahTemporalPoint) visit(ctx.betweenTimeSpecifier(1));
+		return NaftahDateParserHelper.getArabicTemporalAmountBetween(left, right);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ArabicTemporalPoint visitBetweenTimeSpecifier(ArabicDateParser.BetweenTimeSpecifierContext ctx) {
-		ArabicTemporalPoint result;
+	public NaftahTemporalPoint visitBetweenTimeSpecifier(NaftahDateParser.BetweenTimeSpecifierContext ctx) {
+		NaftahTemporalPoint result;
 		if (NaftahParserHelper.hasChild(ctx.nowSpecifier())) {
-			result = (ArabicTemporalPoint) visit(ctx.nowSpecifier());
+			result = (NaftahTemporalPoint) visit(ctx.nowSpecifier());
 		}
 		else if (NaftahParserHelper.hasChild(ctx.dateTimeSpecifier())) {
-			result = (ArabicTemporalPoint) visit(ctx.dateTimeSpecifier());
+			result = (NaftahTemporalPoint) visit(ctx.dateTimeSpecifier());
 		}
 		else {
-			result = (ArabicTemporalPoint) visit(ctx.zonedOrOffsetTimeSpecifier());
+			result = (NaftahTemporalPoint) visit(ctx.zonedOrOffsetTimeSpecifier());
 		}
 		return result;
 	}

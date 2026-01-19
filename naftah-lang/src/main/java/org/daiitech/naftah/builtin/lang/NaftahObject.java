@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.builtin.lang;
 
 import java.lang.reflect.Array;
@@ -16,7 +19,7 @@ import java.util.stream.Collectors;
 
 import org.daiitech.naftah.builtin.utils.CollectionUtils;
 import org.daiitech.naftah.builtin.utils.ObjectUtils;
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.Naftah.JAVA_OBJECT_REFLECT_ACTIVE_PROPERTY;
 import static org.daiitech.naftah.Naftah.JAVA_OBJECT_REFLECT_MAX_DEPTH_PROPERTY;
@@ -117,7 +120,7 @@ public record NaftahObject(
 	public static String formatKeyOrFieldName(String keyOrFieldName) {
 		return KEY_OR_FIELD_TRANSLITERATION_FORMAT
 				.formatted(
-							ArabicUtils
+							ScriptUtils
 									.transliterateToArabicScriptDefault(keyOrFieldName)[0],
 							keyOrFieldName
 				);

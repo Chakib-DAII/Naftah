@@ -58,3 +58,14 @@ To test if you have successfully installed the CLI you can run the following com
 	naftah --version
 
 After completing these steps, Naftah is ready to use on your system.
+
+Linux Users: For better Arabic support, it is recommended to use XTerm mode:
+
+	naftah --xterm
+
+Or set the environment variable:
+
+	export NAFTAH_XTERM=true
+	naftah
+
+This will launch Naftah in XTerm with improved handling of Arabic text and key bindings.

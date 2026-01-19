@@ -1,8 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
 import java.io.IOException;
 
-import org.daiitech.naftah.utils.arabic.ArabicUtils;
+import org.daiitech.naftah.utils.script.ScriptUtils;
 import org.jline.reader.EOFError;
 import org.jline.reader.LineReader;
 import org.jline.reader.impl.LineReaderImpl;
@@ -14,13 +17,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_HEIGHT_PROPERTY;
 import static org.daiitech.naftah.NaftahSystem.TERMINAL_WIDTH_PROPERTY;
-import static org.daiitech.naftah.utils.arabic.ArabicOutputTransformer.getPrintStream;
+import static org.daiitech.naftah.utils.script.NaftahOutputTransformer.getPrintStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SyntaxHighlighterTests {
+class SyntaxHighlighterTests {
 
 	private Terminal terminal;
 	private LineReader reader;
@@ -57,7 +60,7 @@ public class SyntaxHighlighterTests {
 
 		AttributedString result = highlighter.highlight(reader, buffer);
 		assertNotNull(result);
-		if (ArabicUtils.shouldReshape()) {
+		if (ScriptUtils.shouldReshape()) {
 			assertEquals(124, result.toAnsi().length());
 		}
 		else {
@@ -72,7 +75,12 @@ public class SyntaxHighlighterTests {
 		AttributedString result = highlighter.highlight(reader, buffer);
 
 		assertNotNull(result);
-		assertTrue(result.toString().contains("invalidشسيشسيشسي"));
+		if (ScriptUtils.shouldReshape()) {
+			assertTrue(result.toString().contains("ﻲﺴﺸﻴﺴﺸﻴﺴﺷinvalid"));
+		}
+		else {
+			assertTrue(result.toString().contains("invalidشسيشسيشسي"));
+		}
 	}
 
 	@Test

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.utils.time;
 
 import java.time.chrono.Chronology;
@@ -20,12 +23,12 @@ import static org.daiitech.naftah.utils.time.Constants.HIJRI_CALENDAR_NAME_2;
 
 /**
  * Utility class for working with Java {@link Chronology} instances
- * and their corresponding Arabic calendar names.
+ * and their corresponding calendar names.
  *
  * <p>Provides methods to:
  * <ul>
- * <li>Map Arabic calendar names to Java {@link Chronology} instances</li>
- * <li>Retrieve the canonical Arabic calendar name for a given {@link Chronology}</li>
+ * <li>Map calendar names to Java {@link Chronology} instances</li>
+ * <li>Retrieve the canonical calendar name for a given {@link Chronology}</li>
  * </ul>
  *
  * <p>Supports both ISO (Gregorian) and Hijrah (Islamic) chronologies by default.</p>
@@ -43,7 +46,7 @@ public final class ChronologyUtils {
 	 */
 	public static final Chronology HIJRAH_CHRONOLOGY = HijrahChronology.INSTANCE;
 	/**
-	 * A map from Arabic calendar names to their corresponding {@link Chronology} instances.
+	 * A map from calendar names to their corresponding {@link Chronology} instances.
 	 *
 	 * <p>Supports multiple aliases for ISO and Hijrah calendars.</p>
 	 */
@@ -58,22 +61,22 @@ public final class ChronologyUtils {
 						Map.entry(HIJRI_CALENDAR_NAME_2, HIJRAH_CHRONOLOGY)
 			);
 	/**
-	 * A reverse map from {@link Chronology} instances to a canonical Arabic calendar name.
+	 * A reverse map from {@link Chronology} instances to a canonical calendar name.
 	 *
-	 * <p>If multiple Arabic names map to the same chronology, only the first encountered
+	 * <p>If multiple names map to the same chronology, only the first encountered
 	 * name is stored as the canonical name.</p>
 	 */
-	private static final Map<Chronology, String> CHRONOLOGY_TO_ARABIC;
+	private static final Map<Chronology, String> CHRONOLOGY_NAME_MAP;
 
 	static {
 		Map<Chronology, String> reverseMap = new HashMap<>();
 		for (Map.Entry<String, Chronology> entry : CALENDAR_MAP.entrySet()) {
-			// If multiple Arabic names map to same java zone,
+			// If multiple names map to same java zone,
 			// only the first one encountered will be kept here.
 			// solution: alias based map
 			reverseMap.putIfAbsent(entry.getValue(), entry.getKey());
 		}
-		CHRONOLOGY_TO_ARABIC = Collections.unmodifiableMap(reverseMap);
+		CHRONOLOGY_NAME_MAP = Collections.unmodifiableMap(reverseMap);
 	}
 
 	/**
@@ -85,9 +88,9 @@ public final class ChronologyUtils {
 	}
 
 	/**
-	 * Returns the {@link Chronology} instance corresponding to the given Arabic calendar name.
+	 * Returns the {@link Chronology} instance corresponding to the given calendar name.
 	 *
-	 * @param chronologyName the Arabic name of the calendar
+	 * @param chronologyName the name of the calendar
 	 * @return the corresponding {@link Chronology} instance
 	 * @throws IllegalArgumentException if the calendar name is unknown
 	 */
@@ -103,16 +106,16 @@ public final class ChronologyUtils {
 	}
 
 	/**
-	 * Returns the canonical Arabic calendar name corresponding to the given {@link Chronology} instance.
+	 * Returns the canonical calendar name corresponding to the given {@link Chronology} instance.
 	 *
 	 * @param chronology the chronology instance
-	 * @return the canonical Arabic calendar name
+	 * @return the canonical calendar name
 	 * @throws IllegalArgumentException if the chronology is not supported
 	 */
 	public static String getChronologyName(Chronology chronology) {
-		String name = CHRONOLOGY_TO_ARABIC.get(chronology);
+		String name = CHRONOLOGY_NAME_MAP.get(chronology);
 		if (name == null) {
-			String supported = String.join(", ", CHRONOLOGY_TO_ARABIC.values());
+			String supported = String.join(", ", CHRONOLOGY_NAME_MAP.values());
 			throw new IllegalArgumentException(
 												"التقويم غير مدعوم: " + chronology + ". القيم المدعومة هي: " + supported
 			);

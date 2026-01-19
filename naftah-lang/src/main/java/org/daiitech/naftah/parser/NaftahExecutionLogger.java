@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright © The Naftah Project Authors
+
 package org.daiitech.naftah.parser;
 
 import java.util.Collection;
@@ -3159,7 +3162,7 @@ public final class NaftahExecutionLogger {
 								context -> """
 											TryStatementWithTryCasesContext::TRY -> %s
 											TryStatementWithTryCasesContext::LPAREN -> %s
-											TryStatementWithTryCasesContext::expression -> {
+											TryStatementWithTryCasesContext::statement -> {
 											%s
 											}
 											TryStatementWithTryCasesContext::RPAREN -> %s
@@ -3174,8 +3177,8 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.LPAREN()) ?
 															context.LPAREN().getText() :
 															null,
-													Objects.nonNull(context.expression()) ?
-															context.expression().getText() :
+													Objects.nonNull(context.statement()) ?
+															context.statement().getText() :
 															null,
 													Objects.nonNull(context.RPAREN()) ?
 															context.RPAREN().getText() :
@@ -3273,7 +3276,7 @@ public final class NaftahExecutionLogger {
 								context -> """
 											TryStatementWithOptionCasesContext::TRY -> %s
 											TryStatementWithOptionCasesContext::LPAREN -> %s
-											TryStatementWithOptionCasesContext::expression -> {
+											TryStatementWithOptionCasesContext::statement -> {
 											%s
 											}
 											TryStatementWithOptionCasesContext::RPAREN -> %s
@@ -3288,8 +3291,8 @@ public final class NaftahExecutionLogger {
 													Objects.nonNull(context.LPAREN()) ?
 															context.LPAREN().getText() :
 															null,
-													Objects.nonNull(context.expression()) ?
-															context.expression().getText() :
+													Objects.nonNull(context.statement()) ?
+															context.statement().getText() :
 															null,
 													Objects.nonNull(context.RPAREN()) ?
 															context.RPAREN().getText() :
