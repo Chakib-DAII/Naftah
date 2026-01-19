@@ -180,7 +180,7 @@ changelog {
 }
 
 tasks.named('jreleaserPrepare') {
-	dependsOn tasks.named('changelog')
+	dependsOn tasks.named('patchChangelog')
 }
 
 subprojects { subproj ->
