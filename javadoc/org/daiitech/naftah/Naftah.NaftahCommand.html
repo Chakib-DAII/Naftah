@@ -108,7 +108,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>private static final class&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="Naftah.NaftahCommand.ManualCommand.html" class="type-name-link" title="class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The 'man' subcommand that loads and displays documentation topics related to Naftah usage.</div>
+<div class="block">The <code>'man'</code> subcommand for Naftah.</div>
 </div>
 <div class="col-first even-row-color"><code>private static final class&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="Naftah.NaftahCommand.RunCommand.html" class="type-name-link" title="class in org.daiitech.naftah">Naftah.NaftahCommand.RunCommand</a></code></div>
@@ -118,7 +118,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>private static final class&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="Naftah.NaftahCommand.ShellCommand.html" class="type-name-link" title="class in org.daiitech.naftah">Naftah.NaftahCommand.ShellCommand</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The 'shell' subcommand that starts the interactive Naftah REPL.</div>
+<div class="block">The 'shell' subcommand that starts the interactive Naftah REPL (Read-Eval-Print Loop).</div>
 </div>
 </div>
 </section>
@@ -171,10 +171,10 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color"><code><a href="#systemProperties" class="member-name-link">systemProperties</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>private boolean</code></div>
-<div class="col-second even-row-color"><code><a href="#useArabicFormatter" class="member-name-link">useArabicFormatter</a></code></div>
+<div class="col-second even-row-color"><code><a href="#useArabicIndic" class="member-name-link">useArabicIndic</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>private boolean</code></div>
-<div class="col-second odd-row-color"><code><a href="#useArabicIndic" class="member-name-link">useArabicIndic</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#useNumberFormatter" class="member-name-link">useNumberFormatter</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>private boolean</code></div>
 <div class="col-second even-row-color"><code><a href="#useVectorApi" class="member-name-link">useVectorApi</a></code></div>
@@ -212,7 +212,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#process(picocli.CommandLine.ParseResult)" class="member-name-link">process</a><wbr>(picocli.CommandLine.ParseResult&nbsp;parseResult)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#process(picocli.CommandLine.ParseResult,org.daiitech.naftah.Naftah.NaftahCommand)" class="member-name-link">process</a><wbr>(picocli.CommandLine.ParseResult&nbsp;parseResult,
+ <a href="Naftah.NaftahCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand</a>&nbsp;matchedCommand)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Processes the parsed command line arguments and configures the environment.</div>
 </div>
@@ -327,9 +328,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="useArabicFormatter">
-<h3>useArabicFormatter</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useArabicFormatter</span></div>
+<section class="detail" id="useNumberFormatter">
+<h3>useNumberFormatter</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useNumberFormatter</span></div>
 </section>
 </li>
 <li>
@@ -383,14 +384,16 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="process(picocli.CommandLine.ParseResult)">
+<section class="detail" id="process(picocli.CommandLine.ParseResult,org.daiitech.naftah.Naftah.NaftahCommand)">
 <h3>process</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">process</span><wbr><span class="parameters">(picocli.CommandLine.ParseResult&nbsp;parseResult)</span>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">process</span><wbr><span class="parameters">(picocli.CommandLine.ParseResult&nbsp;parseResult,
+ <a href="Naftah.NaftahCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand</a>&nbsp;matchedCommand)</span>
                  throws <span class="exceptions">picocli.CommandLine.ParameterException</span></div>
 <div class="block">Processes the parsed command line arguments and configures the environment.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>parseResult</code> - the parsed command line result</dd>
+<dd><code>matchedCommand</code> - the matched command</dd>
 <dt>Returns:</dt>
 <dd>true if processing succeeded; false otherwise</dd>
 <dt>Throws:</dt>

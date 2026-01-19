@@ -302,6 +302,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Causes the currently executing thread to sleep for the specified number of milliseconds.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sleep(java.lang.Number,java.lang.Number)" class="member-name-link">sleep</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;millis,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;nanos)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Causes the currently executing thread to sleep for the specified number of
+ milliseconds plus an additional nanoseconds adjustment.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sleep(org.daiitech.naftah.builtin.time.NaftahDuration)" class="member-name-link">sleep</a><wbr>(<a href="../time/NaftahDuration.html" title="class in org.daiitech.naftah.builtin.time">NaftahDuration</a>&nbsp;duration)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Causes the currently executing thread to sleep for the specified duration.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#stopActor(org.daiitech.naftah.builtin.utils.concurrent.Actor)" class="member-name-link">stopActor</a><wbr>(<a href="../utils/concurrent/Actor.html" title="class in org.daiitech.naftah.builtin.utils.concurrent">Actor</a>&lt;?&gt;&nbsp;actor)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Stops the specified actor gracefully.</div>
@@ -416,6 +428,35 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>millis</code> - the length of time to sleep in milliseconds</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the sleep is interrupted</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="sleep(java.lang.Number,java.lang.Number)">
+<h3>sleep</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sleep</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;millis,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Number.html" title="class or interface in java.lang" class="external-link">Number</a>&nbsp;nanos)</span></div>
+<div class="block">Causes the currently executing thread to sleep for the specified number of
+ milliseconds plus an additional nanoseconds adjustment.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>millis</code> - the length of time to sleep in milliseconds</dd>
+<dd><code>nanos</code> - additional nanoseconds to sleep (0–999999)</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the sleep is interrupted</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="sleep(org.daiitech.naftah.builtin.time.NaftahDuration)">
+<h3>sleep</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">sleep</span><wbr><span class="parameters">(<a href="../time/NaftahDuration.html" title="class in org.daiitech.naftah.builtin.time">NaftahDuration</a>&nbsp;duration)</span></div>
+<div class="block">Causes the currently executing thread to sleep for the specified duration.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>duration</code> - the duration to sleep</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the sleep is interrupted</dd>
 </dl>

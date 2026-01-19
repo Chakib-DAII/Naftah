@@ -74,15 +74,15 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="ArabicDate.html" title="class in org.daiitech.naftah.builtin.time">ArabicDate</a></code>, <code><a href="ArabicDateTime.html" title="class in org.daiitech.naftah.builtin.time">ArabicDateTime</a></code></dd>
+<dd><code><a href="NaftahDate.html" title="class in org.daiitech.naftah.builtin.time">NaftahDate</a></code>, <code><a href="NaftahDateTime.html" title="class in org.daiitech.naftah.builtin.time">NaftahDateTime</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">DateSupport</span></div>
-<div class="block">Provides arithmetic operations for <code>ArabicTemporalPoint</code> instances,
+<div class="block">Provides arithmetic operations for <code>NaftahTemporalPoint</code> instances,
  including addition and subtraction of years, months, weeks, and days.
 
- <p>This interface can be implemented by <a href="ArabicDate.html" title="class in org.daiitech.naftah.builtin.time"><code>ArabicDate</code></a> or
- used by <a href="ArabicDateTime.html" title="class in org.daiitech.naftah.builtin.time"><code>ArabicDateTime</code></a> to delegate date arithmetic.</p></div>
+ <p>This interface can be implemented by <a href="NaftahDate.html" title="class in org.daiitech.naftah.builtin.time"><code>NaftahDate</code></a> or
+ used by <a href="NaftahDateTime.html" title="class in org.daiitech.naftah.builtin.time"><code>NaftahDateTime</code></a> to delegate date arithmetic.</p></div>
 <dl class="notes">
 <dt>Author:</dt>
 <dd>Chakib Daii</dd>
@@ -109,7 +109,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDayOfWeek()" class="member-name-link">getDayOfWeek</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Returns the day of the week as an Arabic string for this date.</div>
+<div class="block">Returns the day of the week as an Naftah string for this date.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDayOfYear()" class="member-name-link">getDayOfYear</a>()</code></div>
@@ -119,7 +119,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getMonth()" class="member-name-link">getMonth</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Returns the Arabic name of the month for this date.</div>
+<div class="block">Returns the Naftah name of the month for this date.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getMonthValue()" class="member-name-link">getMonthValue</a>()</code></div>
@@ -146,42 +146,42 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns the length of the year in days for this date.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#minusDays(long)" class="member-name-link">minusDays</a><wbr>(long&nbsp;daysToSubtract)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns a new date instance with the specified number of days subtracted.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#minusMonths(long)" class="member-name-link">minusMonths</a><wbr>(long&nbsp;monthsToSubtract)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns a new date instance with the specified number of months subtracted.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#minusWeeks(long)" class="member-name-link">minusWeeks</a><wbr>(long&nbsp;weeksToSubtract)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns a new date instance with the specified number of weeks subtracted.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#minusYears(long)" class="member-name-link">minusYears</a><wbr>(long&nbsp;yearsToSubtract)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns a new date instance with the specified number of years subtracted.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#plusDays(long)" class="member-name-link">plusDays</a><wbr>(long&nbsp;daysToAdd)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns a new date instance with the specified number of days added.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#plusMonths(long)" class="member-name-link">plusMonths</a><wbr>(long&nbsp;monthsToAdd)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns a new date instance with the specified number of months added.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#plusWeeks(long)" class="member-name-link">plusWeeks</a><wbr>(long&nbsp;weeksToAdd)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns a new date instance with the specified number of weeks added.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#plusYears(long)" class="member-name-link">plusYears</a><wbr>(long&nbsp;yearsToAdd)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns a new date instance with the specified number of years added.</div>
@@ -242,10 +242,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getMonth()">
 <h3>getMonth</h3>
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getMonth</span>()</div>
-<div class="block">Returns the Arabic name of the month for this date.</div>
+<div class="block">Returns the Naftah name of the month for this date.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the Arabic month name</dd>
+<dd>the Naftah month name</dd>
 </dl>
 </section>
 </li>
@@ -275,12 +275,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getDayOfWeek()">
 <h3>getDayOfWeek</h3>
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getDayOfWeek</span>()</div>
-<div class="block">Returns the day of the week as an Arabic string for this date.
+<div class="block">Returns the day of the week as an Naftah string for this date.
 
  <p>The calculation is based on the epoch day of the underlying <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/ChronoLocalDate.html" title="class or interface in java.time.chrono" class="external-link"><code>ChronoLocalDate</code></a>.</p></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the Arabic name of the day of the week</dd>
+<dd>the Naftah name of the day of the week</dd>
 </dl>
 </section>
 </li>
@@ -330,104 +330,104 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="plusYears(long)">
 <h3>plusYears</h3>
-<div class="member-signature"><span class="return-type"><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></span>&nbsp;<span class="element-name">plusYears</span><wbr><span class="parameters">(long&nbsp;yearsToAdd)</span></div>
+<div class="member-signature"><span class="return-type"><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></span>&nbsp;<span class="element-name">plusYears</span><wbr><span class="parameters">(long&nbsp;yearsToAdd)</span></div>
 <div class="block">Returns a new date instance with the specified number of years added.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>yearsToAdd</code> - the number of years to add, may be negative</dd>
 <dt>Returns:</dt>
-<dd>a new <code>ArabicTemporalPoint</code> instance with years added</dd>
+<dd>a new <code>NaftahTemporalPoint</code> instance with years added</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="plusMonths(long)">
 <h3>plusMonths</h3>
-<div class="member-signature"><span class="return-type"><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></span>&nbsp;<span class="element-name">plusMonths</span><wbr><span class="parameters">(long&nbsp;monthsToAdd)</span></div>
+<div class="member-signature"><span class="return-type"><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></span>&nbsp;<span class="element-name">plusMonths</span><wbr><span class="parameters">(long&nbsp;monthsToAdd)</span></div>
 <div class="block">Returns a new date instance with the specified number of months added.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>monthsToAdd</code> - the number of months to add, may be negative</dd>
 <dt>Returns:</dt>
-<dd>a new <code>ArabicTemporalPoint</code> instance with months added</dd>
+<dd>a new <code>NaftahTemporalPoint</code> instance with months added</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="plusWeeks(long)">
 <h3>plusWeeks</h3>
-<div class="member-signature"><span class="return-type"><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></span>&nbsp;<span class="element-name">plusWeeks</span><wbr><span class="parameters">(long&nbsp;weeksToAdd)</span></div>
+<div class="member-signature"><span class="return-type"><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></span>&nbsp;<span class="element-name">plusWeeks</span><wbr><span class="parameters">(long&nbsp;weeksToAdd)</span></div>
 <div class="block">Returns a new date instance with the specified number of weeks added.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>weeksToAdd</code> - the number of weeks to add, may be negative</dd>
 <dt>Returns:</dt>
-<dd>a new <code>ArabicTemporalPoint</code> instance with weeks added</dd>
+<dd>a new <code>NaftahTemporalPoint</code> instance with weeks added</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="plusDays(long)">
 <h3>plusDays</h3>
-<div class="member-signature"><span class="return-type"><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></span>&nbsp;<span class="element-name">plusDays</span><wbr><span class="parameters">(long&nbsp;daysToAdd)</span></div>
+<div class="member-signature"><span class="return-type"><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></span>&nbsp;<span class="element-name">plusDays</span><wbr><span class="parameters">(long&nbsp;daysToAdd)</span></div>
 <div class="block">Returns a new date instance with the specified number of days added.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>daysToAdd</code> - the number of days to add, may be negative</dd>
 <dt>Returns:</dt>
-<dd>a new <code>ArabicTemporalPoint</code> instance with days added</dd>
+<dd>a new <code>NaftahTemporalPoint</code> instance with days added</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="minusYears(long)">
 <h3>minusYears</h3>
-<div class="member-signature"><span class="return-type"><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></span>&nbsp;<span class="element-name">minusYears</span><wbr><span class="parameters">(long&nbsp;yearsToSubtract)</span></div>
+<div class="member-signature"><span class="return-type"><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></span>&nbsp;<span class="element-name">minusYears</span><wbr><span class="parameters">(long&nbsp;yearsToSubtract)</span></div>
 <div class="block">Returns a new date instance with the specified number of years subtracted.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>yearsToSubtract</code> - the number of years to subtract, may be negative</dd>
 <dt>Returns:</dt>
-<dd>a new <code>ArabicTemporalPoint</code> instance with years subtracted</dd>
+<dd>a new <code>NaftahTemporalPoint</code> instance with years subtracted</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="minusMonths(long)">
 <h3>minusMonths</h3>
-<div class="member-signature"><span class="return-type"><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></span>&nbsp;<span class="element-name">minusMonths</span><wbr><span class="parameters">(long&nbsp;monthsToSubtract)</span></div>
+<div class="member-signature"><span class="return-type"><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></span>&nbsp;<span class="element-name">minusMonths</span><wbr><span class="parameters">(long&nbsp;monthsToSubtract)</span></div>
 <div class="block">Returns a new date instance with the specified number of months subtracted.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>monthsToSubtract</code> - the number of months to subtract, may be negative</dd>
 <dt>Returns:</dt>
-<dd>a new <code>ArabicTemporalPoint</code> instance with months subtracted</dd>
+<dd>a new <code>NaftahTemporalPoint</code> instance with months subtracted</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="minusWeeks(long)">
 <h3>minusWeeks</h3>
-<div class="member-signature"><span class="return-type"><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></span>&nbsp;<span class="element-name">minusWeeks</span><wbr><span class="parameters">(long&nbsp;weeksToSubtract)</span></div>
+<div class="member-signature"><span class="return-type"><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></span>&nbsp;<span class="element-name">minusWeeks</span><wbr><span class="parameters">(long&nbsp;weeksToSubtract)</span></div>
 <div class="block">Returns a new date instance with the specified number of weeks subtracted.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>weeksToSubtract</code> - the number of weeks to subtract, may be negative</dd>
 <dt>Returns:</dt>
-<dd>a new <code>ArabicTemporalPoint</code> instance with weeks subtracted</dd>
+<dd>a new <code>NaftahTemporalPoint</code> instance with weeks subtracted</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="minusDays(long)">
 <h3>minusDays</h3>
-<div class="member-signature"><span class="return-type"><a href="ArabicTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">ArabicTemporalPoint</a></span>&nbsp;<span class="element-name">minusDays</span><wbr><span class="parameters">(long&nbsp;daysToSubtract)</span></div>
+<div class="member-signature"><span class="return-type"><a href="NaftahTemporalPoint.html" title="interface in org.daiitech.naftah.builtin.time">NaftahTemporalPoint</a></span>&nbsp;<span class="element-name">minusDays</span><wbr><span class="parameters">(long&nbsp;daysToSubtract)</span></div>
 <div class="block">Returns a new date instance with the specified number of days subtracted.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>daysToSubtract</code> - the number of days to subtract, may be negative</dd>
 <dt>Returns:</dt>
-<dd>a new <code>ArabicTemporalPoint</code> instance with days subtracted</dd>
+<dd>a new <code>NaftahTemporalPoint</code> instance with days subtracted</dd>
 </dl>
 </section>
 </li>

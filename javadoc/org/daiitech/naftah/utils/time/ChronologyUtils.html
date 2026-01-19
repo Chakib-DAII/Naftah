@@ -79,12 +79,12 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ChronologyUtils</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Utility class for working with Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances
- and their corresponding Arabic calendar names.
+ and their corresponding calendar names.
 
  <p>Provides methods to:
  <ul>
- <li>Map Arabic calendar names to Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances</li>
- <li>Retrieve the canonical Arabic calendar name for a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a></li>
+ <li>Map calendar names to Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances</li>
+ <li>Retrieve the canonical calendar name for a given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a></li>
  </ul>
 
  <p>Supports both ISO (Gregorian) and Hijrah (Islamic) chronologies by default.</p></div>
@@ -107,12 +107,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#CALENDAR_MAP" class="member-name-link">CALENDAR_MAP</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">A map from Arabic calendar names to their corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances.</div>
+<div class="block">A map from calendar names to their corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances.</div>
 </div>
 <div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#CHRONOLOGY_TO_ARABIC" class="member-name-link">CHRONOLOGY_TO_ARABIC</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#CHRONOLOGY_NAME_MAP" class="member-name-link">CHRONOLOGY_NAME_MAP</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">A reverse map from <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances to a canonical Arabic calendar name.</div>
+<div class="block">A reverse map from <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances to a canonical calendar name.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a></code></div>
 <div class="col-second even-row-color"><code><a href="#DEFAULT_CHRONOLOGY" class="member-name-link">DEFAULT_CHRONOLOGY</a></code></div>
@@ -158,12 +158,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getChronologyByName(java.lang.String)" class="member-name-link">getChronologyByName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;chronologyName)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance corresponding to the given Arabic calendar name.</div>
+<div class="block">Returns the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance corresponding to the given calendar name.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getChronologyName(java.time.chrono.Chronology)" class="member-name-link">getChronologyName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&nbsp;chronology)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns the canonical Arabic calendar name corresponding to the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance.</div>
+<div class="block">Returns the canonical calendar name corresponding to the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance.</div>
 </div>
 </div>
 </div>
@@ -201,18 +201,18 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="CALENDAR_MAP">
 <h3>CALENDAR_MAP</h3>
 <div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&gt;</span>&nbsp;<span class="element-name">CALENDAR_MAP</span></div>
-<div class="block">A map from Arabic calendar names to their corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances.
+<div class="block">A map from calendar names to their corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances.
 
  <p>Supports multiple aliases for ISO and Hijrah calendars.</p></div>
 </section>
 </li>
 <li>
-<section class="detail" id="CHRONOLOGY_TO_ARABIC">
-<h3>CHRONOLOGY_TO_ARABIC</h3>
-<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">CHRONOLOGY_TO_ARABIC</span></div>
-<div class="block">A reverse map from <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances to a canonical Arabic calendar name.
+<section class="detail" id="CHRONOLOGY_NAME_MAP">
+<h3>CHRONOLOGY_NAME_MAP</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">CHRONOLOGY_NAME_MAP</span></div>
+<div class="block">A reverse map from <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instances to a canonical calendar name.
 
- <p>If multiple Arabic names map to the same chronology, only the first encountered
+ <p>If multiple names map to the same chronology, only the first encountered
  name is stored as the canonical name.</p></div>
 </section>
 </li>
@@ -244,10 +244,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getChronologyByName(java.lang.String)">
 <h3>getChronologyByName</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a></span>&nbsp;<span class="element-name">getChronologyByName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;chronologyName)</span></div>
-<div class="block">Returns the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance corresponding to the given Arabic calendar name.</div>
+<div class="block">Returns the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance corresponding to the given calendar name.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>chronologyName</code> - the Arabic name of the calendar</dd>
+<dd><code>chronologyName</code> - the name of the calendar</dd>
 <dt>Returns:</dt>
 <dd>the corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance</dd>
 <dt>Throws:</dt>
@@ -259,12 +259,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getChronologyName(java.time.chrono.Chronology)">
 <h3>getChronologyName</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getChronologyName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&nbsp;chronology)</span></div>
-<div class="block">Returns the canonical Arabic calendar name corresponding to the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance.</div>
+<div class="block">Returns the canonical calendar name corresponding to the given <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a> instance.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>chronology</code> - the chronology instance</dd>
 <dt>Returns:</dt>
-<dd>the canonical Arabic calendar name</dd>
+<dd>the canonical calendar name</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the chronology is not supported</dd>
 </dl>

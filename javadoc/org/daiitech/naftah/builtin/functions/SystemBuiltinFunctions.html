@@ -137,10 +137,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the current time in milliseconds since the Unix epoch (January 1, 1970 UTC).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getEnv(java.lang.String)" class="member-name-link">getEnv</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;variableName)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getEnv()" class="member-name-link">getEnv</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves all environment variables as a map.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getEnv(java.lang.String)" class="member-name-link">getEnv</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;variableName)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Retrieves the value of an environment variable.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getProperties()" class="member-name-link">getProperties</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves all system properties as a map.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getProperty(java.lang.String)" class="member-name-link">getProperty</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
@@ -269,6 +279,21 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getEnv()">
+<h3>getEnv</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a></span>&nbsp;<span class="element-name">getEnv</span>()</div>
+<div class="block">Retrieves all environment variables as a map.
+ <p>
+ This corresponds to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/System.html#getenv()" title="class or interface in java.lang" class="external-link"><code>System.getenv()</code></a> and returns an unmodifiable map
+ containing all environment variables available to the JVM.
+ </p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a map of environment variable names to their values</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="getProperty(java.lang.String)">
 <h3>getProperty</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getProperty</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</span></div>
@@ -286,6 +311,21 @@ loadScripts(document, 'script');</script>
 <dd><code>key</code> - the property key</dd>
 <dt>Returns:</dt>
 <dd>the property value, or <code>null</code> if undefined</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getProperties()">
+<h3>getProperties</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../lang/NaftahObject.html" title="class in org.daiitech.naftah.builtin.lang">NaftahObject</a></span>&nbsp;<span class="element-name">getProperties</span>()</div>
+<div class="block">Retrieves all system properties as a map.
+ <p>
+ This corresponds to <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/System.html#getProperties()" title="class or interface in java.lang" class="external-link"><code>System.getProperties()</code></a> and returns a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Properties.html" title="class or interface in java.util" class="external-link"><code>Properties</code></a> object
+ containing all system properties available to the JVM.
+ </p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a map of system property keys to their values</dd>
 </dl>
 </section>
 </li>

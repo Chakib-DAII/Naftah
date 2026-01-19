@@ -78,16 +78,16 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">MonthUtils</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Utility class for converting Arabic month names to numeric month values.
+<div class="block">Utility class for converting month names to numeric month values.
 
  <p>This class supports both Gregorian and Hijri calendars.</p>
 
  <p>Methods include:
  <ul>
- <li><a href="#getGregorianMonth(java.lang.String)"><code>getGregorianMonth(String)</code></a> – maps Arabic or Latinized Gregorian month names to
+ <li><a href="#getGregorianMonth(java.lang.String)"><code>getGregorianMonth(String)</code></a> – maps Gregorian month names to
  * <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link"><code>Month</code></a>.</li>
- <li><a href="#getHijriMonth(java.lang.String)"><code>getHijriMonth(String)</code></a> – maps Arabic Hijri month names to integer month values (1–12).</li>
- <li><a href="#arabicMonthToInt(java.lang.String,java.time.chrono.Chronology)"><code>arabicMonthToInt(String, java.time.chrono.Chronology)</code></a> – converts a month name to its numeric
+ <li><a href="#getHijriMonth(java.lang.String)"><code>getHijriMonth(String)</code></a> – maps Hijri month names to integer month values (1–12).</li>
+ <li><a href="#monthNameToNumber(java.lang.String,java.time.chrono.Chronology)"><code>monthNameToNumber(String, java.time.chrono.Chronology)</code></a> – converts a month name to its numeric
  * value based on the given chronology.</li>
  </ul>
  </p>
@@ -128,44 +128,44 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link">Month</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getGregorianMonth(java.lang.String)" class="member-name-link">getGregorianMonth</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthName)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Converts a Gregorian month name to a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link"><code>Month</code></a> enum.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getGregorianMonthName(int)" class="member-name-link">getGregorianMonthName</a><wbr>(int&nbsp;month)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the name of a Gregorian month given its numeric value.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#arabicMonthToInt(java.lang.String,java.time.chrono.Chronology)" class="member-name-link">arabicMonthToInt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthArabic,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&nbsp;chronology)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getHijriMonth(java.lang.String)" class="member-name-link">getHijriMonth</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthName)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts an Arabic month name to its numeric value according to the given chronology.</div>
+<div class="block">Converts an Hijri month name to its corresponding numeric value (1–12).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link">Month</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getGregorianMonth(java.lang.String)" class="member-name-link">getGregorianMonth</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthName)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getHijriMonthName(int)" class="member-name-link">getHijriMonthName</a><wbr>(int&nbsp;month)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts a Gregorian month name (Arabic or Latinized) to a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link"><code>Month</code></a> enum.</div>
+<div class="block">Returns the Hijri month name corresponding to the given numeric value.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getGregorianMonthName(int)" class="member-name-link">getGregorianMonthName</a><wbr>(int&nbsp;month)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns the Latinized Arabic name of a Gregorian month given its numeric value.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getHijriMonth(java.lang.String)" class="member-name-link">getHijriMonth</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthName)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts an Arabic Hijri month name to its corresponding numeric value (1–12).</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getHijriMonthName(int)" class="member-name-link">getHijriMonthName</a><wbr>(int&nbsp;month)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns the Arabic Hijri month name corresponding to the given numeric value.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMonthLength(int,int,java.time.chrono.Chronology)" class="member-name-link">getMonthLength</a><wbr>(int&nbsp;month,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMonthLength(int,int,java.time.chrono.Chronology)" class="member-name-link">getMonthLength</a><wbr>(int&nbsp;month,
  int&nbsp;year,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&nbsp;chronology)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the number of days in a given month for the specified chronology and year.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#monthNameToNumber(java.lang.String,java.time.chrono.Chronology)" class="member-name-link">monthNameToNumber</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&nbsp;chronology)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Converts a month name to its numeric value according to the given chronology.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#monthNumberToArabicName(int,java.time.chrono.Chronology)" class="member-name-link">monthNumberToArabicName</a><wbr>(int&nbsp;month,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#monthNumberToName(int,java.time.chrono.Chronology)" class="member-name-link">monthNumberToName</a><wbr>(int&nbsp;month,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&nbsp;chronology)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts a numeric month value to its Arabic month name according to the given chronology.</div>
+<div class="block">Converts a numeric month value to its month name according to the given chronology.</div>
 </div>
 </div>
 </div>
@@ -204,10 +204,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getGregorianMonth(java.lang.String)">
 <h3>getGregorianMonth</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link">Month</a></span>&nbsp;<span class="element-name">getGregorianMonth</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthName)</span></div>
-<div class="block">Converts a Gregorian month name (Arabic or Latinized) to a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link"><code>Month</code></a> enum.</div>
+<div class="block">Converts a Gregorian month name to a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link"><code>Month</code></a> enum.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>monthName</code> - the month name in Arabic or Latinized form</dd>
+<dd><code>monthName</code> - the month name</dd>
 <dt>Returns:</dt>
 <dd>the corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Month.html" title="class or interface in java.time" class="external-link"><code>Month</code></a> enum</dd>
 <dt>Throws:</dt>
@@ -219,15 +219,15 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getGregorianMonthName(int)">
 <h3>getGregorianMonthName</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getGregorianMonthName</span><wbr><span class="parameters">(int&nbsp;month)</span></div>
-<div class="block">Returns the Latinized Arabic name of a Gregorian month given its numeric value.
+<div class="block">Returns the name of a Gregorian month given its numeric value.
 
- <p>The returned name corresponds to the commonly used Arabic/Latin variant
+ <p>The returned name corresponds to the commonly used variant
  (e.g., "جانفي", "فيفري", "أفريل").</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>month</code> - the Gregorian month number (1–12)</dd>
 <dt>Returns:</dt>
-<dd>the Latinized Arabic month name</dd>
+<dd>the month name</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the month number is not in the range 1–12</dd>
 </dl>
@@ -237,10 +237,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getHijriMonth(java.lang.String)">
 <h3>getHijriMonth</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getHijriMonth</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthName)</span></div>
-<div class="block">Converts an Arabic Hijri month name to its corresponding numeric value (1–12).</div>
+<div class="block">Converts an Hijri month name to its corresponding numeric value (1–12).</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>monthName</code> - the Arabic Hijri month name</dd>
+<dd><code>monthName</code> - the Hijri month name</dd>
 <dt>Returns:</dt>
 <dd>the month number (1 for Muharram, 12 for Dhu al-Hijjah)</dd>
 <dt>Throws:</dt>
@@ -252,7 +252,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getHijriMonthName(int)">
 <h3>getHijriMonthName</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getHijriMonthName</span><wbr><span class="parameters">(int&nbsp;month)</span></div>
-<div class="block">Returns the Arabic Hijri month name corresponding to the given numeric value.
+<div class="block">Returns the Hijri month name corresponding to the given numeric value.
 
  <p>The mapping follows the standard Hijri calendar ordering
  (1 = Muharram, 12 = Dhu al-Hijjah).</p></div>
@@ -260,24 +260,24 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>month</code> - the Hijri month number (1–12)</dd>
 <dt>Returns:</dt>
-<dd>the Arabic Hijri month name</dd>
+<dd>the Hijri month name</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the month number is not in the range 1–12</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="arabicMonthToInt(java.lang.String,java.time.chrono.Chronology)">
-<h3>arabicMonthToInt</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">arabicMonthToInt</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthArabic,
+<section class="detail" id="monthNameToNumber(java.lang.String,java.time.chrono.Chronology)">
+<h3>monthNameToNumber</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">monthNameToNumber</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;monthName,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&nbsp;chronology)</span></div>
-<div class="block">Converts an Arabic month name to its numeric value according to the given chronology.
+<div class="block">Converts a month name to its numeric value according to the given chronology.
 
  <p>If the chronology is <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/HijrahChronology.html" title="class or interface in java.time.chrono" class="external-link"><code>HijrahChronology</code></a>, uses Hijri months;
  otherwise uses Gregorian months.</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>monthArabic</code> - the Arabic month name</dd>
+<dd><code>monthName</code> - the month name</dd>
 <dd><code>chronology</code> - the chronology to determine the calendar type</dd>
 <dt>Returns:</dt>
 <dd>the numeric month value</dd>
@@ -287,11 +287,11 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="monthNumberToArabicName(int,java.time.chrono.Chronology)">
-<h3>monthNumberToArabicName</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">monthNumberToArabicName</span><wbr><span class="parameters">(int&nbsp;month,
+<section class="detail" id="monthNumberToName(int,java.time.chrono.Chronology)">
+<h3>monthNumberToName</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">monthNumberToName</span><wbr><span class="parameters">(int&nbsp;month,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link">Chronology</a>&nbsp;chronology)</span></div>
-<div class="block">Converts a numeric month value to its Arabic month name according to the given chronology.
+<div class="block">Converts a numeric month value to its month name according to the given chronology.
 
  <p>If the chronology is <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/HijrahChronology.html" title="class or interface in java.time.chrono" class="external-link"><code>HijrahChronology</code></a>, the returned
  name is a Hijri month name. Otherwise, a Gregorian month name is returned.</p></div>
@@ -300,7 +300,7 @@ loadScripts(document, 'script');</script>
 <dd><code>month</code> - the month number (1–12)</dd>
 <dd><code>chronology</code> - the chronology used to determine the calendar system</dd>
 <dt>Returns:</dt>
-<dd>the Arabic month name corresponding to the given month number</dd>
+<dd>the month name corresponding to the given month number</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the month number is invalid or unsupported</dd>
 </dl>

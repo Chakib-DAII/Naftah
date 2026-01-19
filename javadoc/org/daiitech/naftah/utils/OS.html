@@ -168,6 +168,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Identifier for z/OS family.</div>
 </div>
+<div class="col-first odd-row-color"><code>private static final boolean</code></div>
+<div class="col-second odd-row-color"><code><a href="#IS_WSL" class="member-name-link">IS_WSL</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Whether the current OS is running under Windows Subsystem for Linux (WSL).</div>
+</div>
+<div class="col-first even-row-color"><code>private static final boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#IS_XTERM" class="member-name-link">IS_XTERM</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Whether the current terminal is a real XTerm instance.</div>
+</div>
 <div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#OS_ARCH" class="member-name-link">OS_ARCH</a></code></div>
 <div class="col-last odd-row-color">
@@ -203,6 +213,31 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">The system path separator character(s).</div>
 </div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#TERM_ENV" class="member-name-link">TERM_ENV</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Terminal type identifier provided via terminfo (often misleading).</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#WSL_DISTRO_NAME_ENV" class="member-name-link">WSL_DISTRO_NAME_ENV</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">WSL environment variable containing the current Linux distribution name.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#WSL_ENV" class="member-name-link">WSL_ENV</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">WSL-specific environment variable controlling Windows–Linux env propagation.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#WSL_INTEROP_ENV" class="member-name-link">WSL_INTEROP_ENV</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">WSL environment variable used for Windows–Linux process interop.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#XTERM_VERSION_ENV" class="member-name-link">XTERM_VERSION_ENV</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Set only by real xterm to expose its version and identify the emulator.</div>
+</div>
 </div>
 </section>
 </li>
@@ -234,6 +269,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkIfInsideRealXTerm()" class="member-name-link">checkIfInsideRealXTerm</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Detects whether the JVM is running inside a real XTerm terminal.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>private static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#checkIfInsideWSL()" class="member-name-link">checkIfInsideWSL</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Detects whether the JVM is running inside Windows Subsystem for Linux (WSL).</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isArch(java.lang.String)" class="member-name-link">isArch</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;arch)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -313,9 +358,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks whether the current OS matches a combination of criteria.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isVersion(java.lang.String)" class="member-name-link">isVersion</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;version)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isRealXTerm()" class="member-name-link">isRealXTerm</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks whether the current terminal is a real XTerm instance.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isVersion(java.lang.String)" class="member-name-link">isVersion</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;version)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Checks whether the current OS version matches the given version exactly.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isWSL()" class="member-name-link">isWSL</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Checks whether the current OS is running under Windows Subsystem for Linux (WSL).</div>
 </div>
 </div>
 </div>
@@ -374,6 +429,81 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="see-list">
 <li><a href="../../../../constant-values.html#org.daiitech.naftah.utils.OS.OS_VERSION_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="WSL_DISTRO_NAME_ENV">
+<h3>WSL_DISTRO_NAME_ENV</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">WSL_DISTRO_NAME_ENV</span></div>
+<div class="block">WSL environment variable containing the current Linux distribution name.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.utils.OS.WSL_DISTRO_NAME_ENV">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="WSL_INTEROP_ENV">
+<h3>WSL_INTEROP_ENV</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">WSL_INTEROP_ENV</span></div>
+<div class="block">WSL environment variable used for Windows–Linux process interop.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.utils.OS.WSL_INTEROP_ENV">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="WSL_ENV">
+<h3>WSL_ENV</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">WSL_ENV</span></div>
+<div class="block">WSL-specific environment variable controlling Windows–Linux env propagation.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.utils.OS.WSL_ENV">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="TERM_ENV">
+<h3>TERM_ENV</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">TERM_ENV</span></div>
+<div class="block">Terminal type identifier provided via terminfo (often misleading).</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.utils.OS.TERM_ENV">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="XTERM_VERSION_ENV">
+<h3>XTERM_VERSION_ENV</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">XTERM_VERSION_ENV</span></div>
+<div class="block">Set only by real xterm to expose its version and identify the emulator.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.utils.OS.XTERM_VERSION_ENV">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
@@ -545,6 +675,20 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="IS_WSL">
+<h3>IS_WSL</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">IS_WSL</span></div>
+<div class="block">Whether the current OS is running under Windows Subsystem for Linux (WSL).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="IS_XTERM">
+<h3>IS_XTERM</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">IS_XTERM</span></div>
+<div class="block">Whether the current terminal is a real XTerm instance.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="OS_NAME">
 <h3>OS_NAME</h3>
 <div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">OS_NAME</span></div>
@@ -596,6 +740,34 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="checkIfInsideWSL()">
+<h3>checkIfInsideWSL</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">checkIfInsideWSL</span>()</div>
+<div class="block">Detects whether the JVM is running inside Windows Subsystem for Linux (WSL).
+ <p>
+ Checks environment variables first, then falls back to inspecting
+ the kernel version in /proc/version for "Microsoft".</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if running inside WSL, false otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="checkIfInsideRealXTerm()">
+<h3>checkIfInsideRealXTerm</h3>
+<div class="member-signature"><span class="modifiers">private static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">checkIfInsideRealXTerm</span>()</div>
+<div class="block">Detects whether the JVM is running inside a real XTerm terminal.
+ <p>
+ Relies on TERM and XTERM_VERSION environment variables to distinguish
+ XTerm from other terminal emulators (like GNOME Terminal or Kitty).</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if running inside XTerm, false otherwise</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="isFamily(java.lang.String)">
 <h3>isFamily</h3>
@@ -683,6 +855,28 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd><code>true</code> if the OS is in the Windows family, <code>false</code> otherwise.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isWSL()">
+<h3>isWSL</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isWSL</span>()</div>
+<div class="block">Checks whether the current OS is running under Windows Subsystem for Linux (WSL).</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><code>true</code> if running in WSL, <code>false</code> otherwise</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isRealXTerm()">
+<h3>isRealXTerm</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isRealXTerm</span>()</div>
+<div class="block">Checks whether the current terminal is a real XTerm instance.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd><code>true</code> if running inside XTerm, <code>false</code> otherwise</dd>
 </dl>
 </section>
 </li>

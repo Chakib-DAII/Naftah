@@ -23,7 +23,7 @@
 	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
 	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
 	<h1>
-		<a href="/">
+		<a href="https://naftah.daiitech.org/">
 			Naftah Language Documentation - مستندات لغة نفطه
 		</a>
 	</h1>
@@ -90,12 +90,12 @@ It provides practical examples of using various <strong>primitive types</strong>
 
 <hr />
 
-<h2 id="-الأنواع-الأولية-المدعومة">🎯 الأنواع الأولية المدعومة</h2>
+<h2 id="-الأنواع-الأولية-المدعومة-simple--primitive-types">🎯 الأنواع الأولية المدعومة (Simple / Primitive Types)</h2>
 
 <table>
   <thead>
     <tr>
-      <th>الاسم في نفطه</th>
+      <th>الاسم في نفطه (والمرادفات)</th>
       <th>النوع المقابل (بالإنجليزية)</th>
       <th>الوصف</th>
     </tr>
@@ -104,52 +104,67 @@ It provides practical examples of using various <strong>primitive types</strong>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">منطقي</code>, <code class="language-plaintext highlighter-rouge">بوليان</code></td>
       <td><code class="language-plaintext highlighter-rouge">BOOLEAN</code></td>
-      <td>القيم المنطقية: <code class="language-plaintext highlighter-rouge">صحيح</code> أو <code class="language-plaintext highlighter-rouge">خطأ</code></td>
+      <td>قيم منطقية: <code class="language-plaintext highlighter-rouge">صحيح</code> أو <code class="language-plaintext highlighter-rouge">خطأ</code></td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">حرف</code></td>
+      <td><code class="language-plaintext highlighter-rouge">حرف</code>, <code class="language-plaintext highlighter-rouge">رمز</code></td>
       <td><code class="language-plaintext highlighter-rouge">CHAR</code></td>
-      <td>تمثيل حرف مفرد</td>
+      <td>تمثيل حرف واحد</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">عدد_قصير_جدا</code></td>
-      <td><code class="language-plaintext highlighter-rouge">BYTE</code></td>
-      <td>عدد صحيح صغير جداً</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">عدد_قصير</code></td>
-      <td><code class="language-plaintext highlighter-rouge">SHORT</code></td>
-      <td>عدد صحيح صغير</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">عدد_صحيح</code></td>
-      <td><code class="language-plaintext highlighter-rouge">INT</code></td>
-      <td>عدد صحيح قياسي (32-بت)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">عدد_طويل</code></td>
-      <td><code class="language-plaintext highlighter-rouge">LONG</code></td>
-      <td>عدد صحيح طويل (64-بت)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">عدد_عائم</code></td>
-      <td><code class="language-plaintext highlighter-rouge">FLOAT</code></td>
-      <td>عدد عشري (دقة عادية)</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">عدد_عائم_طويل</code></td>
-      <td><code class="language-plaintext highlighter-rouge">DOUBLE</code></td>
-      <td>عدد عشري دقيق جداً</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">تسلسل_رموز</code></td>
+      <td><code class="language-plaintext highlighter-rouge">تسلسل_أحرف</code>, <code class="language-plaintext highlighter-rouge">تسلسل_حروف</code>, <code class="language-plaintext highlighter-rouge">تسلسل_رموز</code></td>
       <td><code class="language-plaintext highlighter-rouge">STRING</code></td>
       <td>سلسلة نصية</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">أي_نمط</code></td>
-      <td><code class="language-plaintext highlighter-rouge">Any</code> أو <code class="language-plaintext highlighter-rouge">Untyped</code></td>
-      <td>يستخدم عندما لا يُحدد نوع معين</td>
+      <td><code class="language-plaintext highlighter-rouge">عدد_قصير_جدا</code>, <code class="language-plaintext highlighter-rouge">قصير_جدا</code></td>
+      <td><code class="language-plaintext highlighter-rouge">BYTE</code></td>
+      <td>عدد صحيح صغير جدًا</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">عدد_قصير</code>, <code class="language-plaintext highlighter-rouge">قصير</code></td>
+      <td><code class="language-plaintext highlighter-rouge">SHORT</code></td>
+      <td>عدد صحيح صغير</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">عدد_صحيح</code>, <code class="language-plaintext highlighter-rouge">عدد</code></td>
+      <td><code class="language-plaintext highlighter-rouge">INT</code></td>
+      <td>عدد صحيح قياسي (32-بت)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">عدد_طويل</code>, <code class="language-plaintext highlighter-rouge">طويل</code></td>
+      <td><code class="language-plaintext highlighter-rouge">LONG</code></td>
+      <td>عدد صحيح طويل (64-بت)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">عدد_طويل_جدا</code>, <code class="language-plaintext highlighter-rouge">طويل_جدا</code></td>
+      <td><code class="language-plaintext highlighter-rouge">BIG_INT</code></td>
+      <td>عدد صحيح كبير جدًا (بدقة غير محدودة)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">عدد_عائم</code>, <code class="language-plaintext highlighter-rouge">عائم</code></td>
+      <td><code class="language-plaintext highlighter-rouge">FLOAT</code></td>
+      <td>عدد عشري (دقة عادية)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">عدد_عائم_طويل</code>, <code class="language-plaintext highlighter-rouge">عائم_طويل</code></td>
+      <td><code class="language-plaintext highlighter-rouge">DOUBLE</code></td>
+      <td>عدد عشري عالي الدقة</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">عدد_عائم_طويل_جدا</code>, <code class="language-plaintext highlighter-rouge">عائم_طويل_جدا</code></td>
+      <td><code class="language-plaintext highlighter-rouge">BIG_DECIMAL</code></td>
+      <td>عدد عشري بدقة عالية جدًا (غير محدودة)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">أي_عدد</code></td>
+      <td><code class="language-plaintext highlighter-rouge">VAR_NUMBER</code></td>
+      <td>أي نوع عددي (صحيح أو عشري)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">أي_نوع</code>, <code class="language-plaintext highlighter-rouge">أي_نمط</code></td>
+      <td><code class="language-plaintext highlighter-rouge">Any / Untyped</code></td>
+      <td>نوع عام غير مقيّد</td>
     </tr>
   </tbody>
 </table>
@@ -170,44 +185,44 @@ It provides practical examples of using various <strong>primitive types</strong>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">مدة</code></td>
       <td><code class="language-plaintext highlighter-rouge">DURATION</code></td>
-      <td>تمثيل مقدار زمني محدد، مثل 5 دقائق أو 2 ساعة</td>
+      <td>مقدار زمني محدد (مثل: 5 دقائق، 2 ساعة)</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">فترة</code></td>
       <td><code class="language-plaintext highlighter-rouge">PERIOD</code></td>
-      <td>تمثيل فترة زمنية بين تاريخين أو نقطتين</td>
+      <td>فترة زمنية بين تاريخين</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">فترة_و_مدة</code></td>
       <td><code class="language-plaintext highlighter-rouge">PERIOD_DURATION</code></td>
-      <td>تمثيل مزيج من فترة زمنية ومقدار زمني</td>
+      <td>مزيج من فترة ومقدار زمني</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">تاريخ</code></td>
       <td><code class="language-plaintext highlighter-rouge">DATE</code></td>
-      <td>تمثيل تاريخ معين</td>
+      <td>تاريخ فقط (بدون وقت)</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">وقت</code></td>
       <td><code class="language-plaintext highlighter-rouge">TIME</code></td>
-      <td>تمثيل وقت معين</td>
+      <td>وقت فقط (بدون تاريخ)</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">تاريخ_و_وقت</code></td>
       <td><code class="language-plaintext highlighter-rouge">DATE_TIME</code></td>
-      <td>تمثيل تاريخ ووقت معًا</td>
+      <td>تاريخ ووقت معًا</td>
     </tr>
   </tbody>
 </table>
 
 <hr />
 
-<h2 id="الأنواع-المركّبة-complex-types">الأنواع المركّبة (Complex Types)</h2>
+<h2 id="-الأنواع-المركّبة-complex-types">🧩 الأنواع المركّبة (Complex Types)</h2>
 
 <table>
   <thead>
     <tr>
-      <th>الاسم في نفطه</th>
+      <th>الاسم في نفطه (والمرادفات)</th>
       <th>النوع المقابل (بالإنجليزية)</th>
       <th>الوصف</th>
     </tr>
@@ -216,35 +231,51 @@ It provides practical examples of using various <strong>primitive types</strong>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">كائن</code>, <code class="language-plaintext highlighter-rouge">هيكل</code></td>
       <td><code class="language-plaintext highlighter-rouge">STRUCT</code></td>
-      <td>كائن يحتوي حقولاً (Object-like)</td>
+      <td>كائن يحتوي حقولًا مسماة</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">زوج</code>, <code class="language-plaintext highlighter-rouge">مفتاح_و_قيمة</code>, <code class="language-plaintext highlighter-rouge">زوج_مفتاح_و_قيمة</code></td>
-      <td><code class="language-plaintext highlighter-rouge">PAIR&lt;:T, U:&gt;</code></td>
-      <td>زوج يحتوي عنصرين غالباً (مفتاح/قيمة)</td>
+      <td><code class="language-plaintext highlighter-rouge">PAIR&lt;T, U&gt;</code></td>
+      <td>عنصران مترابطان (غالبًا مفتاح/قيمة)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">ثلاثي</code>, <code class="language-plaintext highlighter-rouge">ثلاثي_القيم</code></td>
+      <td><code class="language-plaintext highlighter-rouge">TRIPLE&lt;T, U, V&gt;</code></td>
+      <td>تركيبة من ثلاثة عناصر</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">قائمة</code></td>
-      <td><code class="language-plaintext highlighter-rouge">LIST&lt;:T:&gt;</code></td>
-      <td>قائمة مرتّبة من العناصر</td>
+      <td><code class="language-plaintext highlighter-rouge">LIST&lt;T&gt;</code></td>
+      <td>قائمة مرتبة قابلة للتكرار</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">تركيبة</code></td>
       <td><code class="language-plaintext highlighter-rouge">TUPLE</code></td>
-      <td>تركيبة عناصر ثابتة الترتيب والعدد</td>
+      <td>عناصر ثابتة العدد والترتيب</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">مجموعة</code></td>
-      <td><code class="language-plaintext highlighter-rouge">SET&lt;:T:&gt;</code></td>
-      <td>مجموعة لا تحتوي عناصر مكررة</td>
+      <td><code class="language-plaintext highlighter-rouge">SET&lt;T&gt;</code></td>
+      <td>مجموعة بدون عناصر مكررة</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">مصفوفة_ترابطية</code></td>
-      <td><code class="language-plaintext highlighter-rouge">MAP&lt;:K, V:&gt;</code></td>
+      <td><code class="language-plaintext highlighter-rouge">MAP&lt;K, V&gt;</code></td>
       <td>خريطة (مفتاح → قيمة)</td>
     </tr>
   </tbody>
 </table>
+
+<hr />
+
+<h3 id="-ملاحظات-تصميمية">✨ ملاحظات تصميمية</h3>
+
+<ul>
+  <li>تم <strong>فصل الأنواع العددية الكبيرة</strong> (<code class="language-plaintext highlighter-rouge">BIG_INT</code>, <code class="language-plaintext highlighter-rouge">BIG_DECIMAL</code>) بوضوح لدعم الدقة غير المحدودة.</li>
+  <li><code class="language-plaintext highlighter-rouge">أي_عدد</code> يوفّر <strong>تجريدًا عدديًا</strong> مفيدًا في التواقيع العامة.</li>
+  <li>إضافة <code class="language-plaintext highlighter-rouge">TRIPLE</code> تعزز نمذجة البيانات دون الحاجة إلى <code class="language-plaintext highlighter-rouge">STRUCT</code> كامل.</li>
+  <li>تعدد المرادفات العربية يهدف إلى <strong>مرونة لغوية</strong> دون التأثير على المترجم.</li>
+</ul>
 
 <hr />
 
@@ -344,7 +375,8 @@ It provides practical examples of using various <strong>primitive types</strong>
 
 <h3 id="-أمثلة-تجمع-بين-الإسناد-والحساب">🟫 أمثلة تجمع بين الإسناد والحساب</h3>
 
-<pre><code class="language-naftah">متغير المدينة تعيين {
+<pre><code class="language-naftah">متغير ه : عدد_صحيح تعيين 2147483647
+متغير المدينة تعيين {
     متغير الاسم تعيين "قبلي",
     متغير عدد_السكان تعيين 50000,
     متغير البلدة تعيين {
@@ -361,9 +393,10 @@ It provides practical examples of using various <strong>primitive types</strong>
 
 <h3 id="-الإسناد-متعدد-الأبعاد-داخل-القوائم-nested-lists">🟦 الإسناد متعدد الأبعاد داخل القوائم (Nested Lists)</h3>
 
-<pre><code class="language-naftah">متغير قائمة_ تعيين [٨٥، ٩٠، ٧٨، ٩٢]
-
-قائمة_[0]؛قائمة_[0][0]؛قائمة_[0][0][0]؛قائمة_[0][0][0][0]
+<pre><code class="language-naftah">متغير ه : عدد_صحيح تعيين 2147483647
+متغير قائمة_ تعيين [٨٥، ٩٠، ٧٨، ٩٢]
+قائمة_[0]؛قائمة_[0][0]؛قائمة_[0][0][0]؛قائمة_[0][0][0][0]؛قائمة_[0][0][0][0][0]؛ه = [٨٥، ٩٠، ٧٨، ٩٢] , [٨٥، ٩٠، ٧٨، ٩٢], [٨٥، ٩٠، ٧٨، ٩٢], [٨٥، ٩٠، ٧٨، ٩٢], [٨٥، ٩٠، ٧٨، ٩٢], ه - 1
+(ه , قائمة_[0][0][0][0][0])
 </code></pre>
 
 <hr />
@@ -396,19 +429,19 @@ It provides practical examples of using various <strong>primitive types</strong>
 ثابت ي تعيين ١
 
 --- تعريف ثابت "ت" من نوع "أي_نمط" وتعيينه بالقيمة 2
-ثابت ت : أي_نمط تعيين 2
+ثابت ت_1 : أي_نمط تعيين 2
 
 --- تعريف متغير "ش" من نوع منطقي (Boolean) وتعيينه بالقيمة صائب (True)
-متغير ش : منطقي تعيين صائب
+متغير ش_1 : منطقي تعيين صائب
 
 --- تعريف متغير "ع" من نوع تسلسل_رموز (String) وتعيينه بالنص "15"
-متغير ع : تسلسل_رموز تعيين "15"
+متغير ع_1 : تسلسل_رموز تعيين "15"
 
 --- تعريف ثابت "ي" من نوع بوليان (Boolean) وتعيينه بالقيمة خاطئ (False)
-ثابت ي : بوليان تعيين خاطئ
+ثابت ي_1 : بوليان تعيين خاطئ
 
---- تعريف ثابت "ز" من نوع حرف (Character) وتعيينه بالحرف "ث"
-ثابت ز : حرف تعيين "ث"
+--- تعريف ثابت "ز" من نوع حرف (Character) وتعيينه بالحرف 'ث'
+ثابت ز : حرف تعيين 'ث'
 
 --- تعريف ثابت "س" من نوع عدد_قصير_جدا (Very Short Integer) وتعيينه بالقيمة ١
 ثابت س : عدد_قصير_جدا تعيين ١
@@ -420,25 +453,25 @@ It provides practical examples of using various <strong>primitive types</strong>
 ثابت ه : عدد_صحيح تعيين 2147483647
 
 --- تعريف ثابت "ض" من نوع عدد_صحيح (Integer) وتعيينه بالقيمة 2147483648 (أكبر من الحد السابق)
-ثابت ض : عدد_صحيح تعيين 2147483648
+ثابت ض : عدد_صحيح_طويل تعيين 2147483648
 
 --- تعريف ثابت "ق" من نوع عدد_طويل (Long Integer) وتعيينه بالقيمة 9223372036854775807 (أكبر قيمة 64-بت)
 ثابت ق : عدد_طويل تعيين 9223372036854775807
 
 --- تعريف ثابت "ذ" من نوع عدد_طويل (Long Integer) وتعيينه بقيمة أكبر من الحد الأعلى السابق
-ثابت ذ : عدد_طويل تعيين 9223372036854775808
+ثابت ذ : عدد_طويل_جدا تعيين 9223372036854775808
 
 --- تعريف ثابت "ل" من نوع عدد_عائم (Floating Point Number) بقيمة كبيرة جداً (تمثيل عشري)
-ثابت ل : عدد_عائم تعيين 340282346638528860000000000000000000000,000000
+ثابت ل : عدد_عائم_طويل تعيين 340282346638528860000000000000000000000,000000
 
 --- تعريف ثابت "ك" من نوع عدد_عائم_طويل (Extended Floating Point) بقيمة ضخمة جداً
-ثابت ك : عدد_عائم_طويل تعيين 179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,000000
+ثابت ك : عدد_عائم_طويل_جدا تعيين 179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,000000
 
 --- تعريف ثابت "ن" من نوع عدد_عائم_طويل بتقريب قيمته لأعلى قليلاً (بالأعداد العشرية)
-ثابت ن : عدد_عائم_طويل تعيين 179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000
+ثابت ن : عدد_عائم_طويل_جدا تعيين 179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000
 
 --- تعريف ثابت "م" من نوع عدد_عائم_طويل بقيمة ضخمة جدا مركبة (سلسلة متكررة من أعداد)
-ثابت م : عدد_عائم_طويل تعيين 179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000
+ثابت م : عدد_عائم_طويل_جدا تعيين 179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001,000000
 
 --- تعريف ثابت "ج" من نوع معرّف مركب (مثل مسار أو نوع مخصص) وتعيينه بقيمة "لاشيء" (Null)
 ثابت ج : ا:ب:ت:ث:ج:ح تعيين لاشيء
@@ -450,7 +483,8 @@ It provides practical examples of using various <strong>primitive types</strong>
 
 <h3 id="-استخدام-قوالب-النصوص-string-templates">✅ استخدام قوالب النصوص (String Templates)</h3>
 
-<pre><code class="language-naftah">--- إرجاع نص مع تضمين القيم باستخدام قوالب ${}
+<pre><code class="language-naftah">
+--- إرجاع نص مع تضمين القيم باستخدام قوالب ${}
 ارجع "ت = ${ت}، ش = ${ش}، ع = ${ع}، ي = ${ي}"
 
 --- إرجاع النص بصيغة "خام" دون تنفيذ القوالب
@@ -467,24 +501,27 @@ It provides practical examples of using various <strong>primitive types</strong>
 --- إرجاع مع قيمة افتراضية في حال كانت المتغيرات غير معرفة باستخدام قوالب {}$
 ارجع "ت = {ت:ت_فارغ}$، ش = {ش:ش_فارغ}$، ع = {ع:ع_فارغ}$، ي = {ي:ي_فارغ}$"
 
---- إرجاع نص مع تضمين القيم باستخدام قوالب 
-ارجع "ت = ، ش = ، ع = ، ي = "
+--- إرجاع نص مع تضمين القيم باستخدام قوالب {{}}
+ارجع "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
 
---- إرجاع مع قيمة افتراضية في حال كانت المتغيرات غير معرفة باستخدام قوالب 
-ارجع "ت = ، ش = ، ع = ، ي = "
+--- إرجاع مع قيمة افتراضية في حال كانت المتغيرات غير معرفة باستخدام قوالب {{}}
+ارجع "ت = {{ت:ت_فارغ}}، ش = {{ش:ش_فارغ}}، ع = {{ع:ع_فارغ}}، ي = {{ي:ي_فارغ}}"
+
 </code></pre>
 
 <hr />
 
 <h3 id="-تحويل-إلى-ثمانية-بت-byte-arrays">🔁 تحويل إلى ثمانية-بت (Byte Arrays)</h3>
 
-<pre><code class="language-naftah">--- تحويل السلسلة إلى تمثيل 8-بت (byte array)
-ارجع ثمانية_بت "ت = ، ش = ، ع = ، ي = "
-ارجع بايتات "ت = ، ش = ، ع = ، ي = "
-ارجع سلسلة_ثمانية_بت "ت = ، ش = ، ع = ، ي = "
-ارجع مصفوفة_ثمانية_بت "ت = ، ش = ، ع = ، ي = "
-ارجع سلسلة_بايتات "ت = ، ش = ، ع = ، ي = "
-ارجع مصفوفة_بايتات "ت = ، ش = ، ع = ، ي = "
+<pre><code class="language-naftah">
+--- تحويل السلسلة إلى تمثيل 8-بت (byte array)
+ارجع ثمانية_بت "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+ارجع بايتات "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+ارجع سلسلة_ثمانية_بت "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+ارجع مصفوفة_ثمانية_بت "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+ارجع سلسلة_بايتات "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+ارجع مصفوفة_بايتات "ت = {{ت}}، ش = {{ش}}، ع = {{ع}}، ي = {{ي}}"
+
 </code></pre>
 
 <hr />
@@ -582,8 +619,12 @@ It provides practical examples of using various <strong>primitive types</strong>
 
 <ul>
   <li>يمكن استخدام كل نوع مع <code class="language-plaintext highlighter-rouge">ثابت</code> أو <code class="language-plaintext highlighter-rouge">متغير</code> باستخدام <code class="language-plaintext highlighter-rouge">:</code> للتحديد النوعي.</li>
-  <li>الأعداد العشرية تفصل بين الجزء الصحيح والكسري بـ <code class="language-plaintext highlighter-rouge">،</code> بدلًا من <code class="language-plaintext highlighter-rouge">.</code> (وفق تنسيق نفطه).</li>
-  <li>السلاسل النصية تدعم التضمين الديناميكي عبر عدة أنماط من القوالب <code class="language-plaintext highlighter-rouge">${}</code>، <code class="language-plaintext highlighter-rouge">{}</code>$، ``.</li>
+  <li>
+    <p>الأعداد العشرية تفصل بين الجزء الصحيح والكسري بـ <code class="language-plaintext highlighter-rouge">،</code> بدلًا من <code class="language-plaintext highlighter-rouge">.</code> (وفق تنسيق نفطه).</p>
+  </li>
+  <li>
+    <p>السلاسل النصية تدعم التضمين الديناميكي عبر عدة أنماط من القوالب <code class="language-plaintext highlighter-rouge">${}</code>، <code class="language-plaintext highlighter-rouge">{}</code>$، <code class="language-plaintext highlighter-rouge">{{}}</code>.</p>
+  </li>
   <li>تدعم نفطه أنواعًا مخصصة أو مؤهلة (<code class="language-plaintext highlighter-rouge">ا:ب:ت</code>) للتوسعة عبر الوحدات أو الحزم.</li>
 </ul>
 

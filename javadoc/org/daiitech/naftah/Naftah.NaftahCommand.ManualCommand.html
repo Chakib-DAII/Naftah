@@ -44,7 +44,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -84,10 +84,55 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">private static final class </span><span class="element-name type-name-label">Naftah.NaftahCommand.ManualCommand</span>
 <span class="extends-implements">extends <a href="Naftah.NaftahCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand</a></span></div>
-<div class="block">The 'man' subcommand that loads and displays documentation topics related to Naftah usage.</div>
+<div class="block">The <code>'man'</code> subcommand for Naftah.
+
+ <p>This command loads and displays documentation topics related to Naftah usage.
+ It provides help pages for classes, accessible classes, instantiable classes,
+ built-in functions, JVM functions, and other runtime information.</p>
+
+ <p>The command supports both English and Arabic aliases for flexibility in multi-language environments.</p>
+
+ <p><strong>Usage:</strong></p>
+ <pre><code>
+ naftah man [options] [filename] [args]
+ </code></pre>
+
+ <p>The <code>ManualCommand</code> maintains lists of:</p>
+ <ul>
+ <li><a href="#classes"><code>classes</code></a> – all available classes</li>
+ <li><a href="#accessibleClasses"><code>accessibleClasses</code></a> – classes accessible from the current context</li>
+ <li><a href="#instantiableClasses"><code>instantiableClasses</code></a> – classes that can be instantiated</li>
+ <li><a href="#builtinFunctions"><code>builtinFunctions</code></a> – built-in Naftah functions</li>
+ <li><a href="#jvmFunctions"><code>jvmFunctions</code></a> – Java/JVM functions available for use</li>
+ </ul>
+
+ <p>It also keeps track of filtered results in <a href="#filteredClassesOrFunctions"><code>filteredClassesOrFunctions</code></a>
+ and uses a <code>LineReader</code> for interactive input, if needed.</p></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>private static enum&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="Naftah.NaftahCommand.ManualCommand.ManCommand.html" class="type-name-link" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.ManCommand</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Enum representing all manual subcommands supported in Naftah.</div>
+</div>
+<div class="col-first odd-row-color"><code>private static enum&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="Naftah.NaftahCommand.ManualCommand.Target.html" class="type-name-link" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Represents different targets for the manual command.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -99,34 +144,69 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#accessibleClasses" class="member-name-link">accessibleClasses</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">List of classes accessible in the current context.</div>
+</div>
 <div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#builtinFunctions" class="member-name-link">builtinFunctions</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">List of all built-in functions available.</div>
+</div>
 <div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#classes" class="member-name-link">classes</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">List of all classes known to the manual.</div>
+</div>
 <div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#instantiableClasses" class="member-name-link">instantiableClasses</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-second odd-row-color"><code><a href="#filteredClassesOrFunctions" class="member-name-link">filteredClassesOrFunctions</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Filtered results for classes or functions after applying user input.</div>
+</div>
 <div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#jvmFunctions" class="member-name-link">jvmFunctions</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#manualDir" class="member-name-link">manualDir</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-second even-row-color"><code><a href="#instantiableClasses" class="member-name-link">instantiableClasses</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">List of classes that can be instantiated.</div>
+</div>
+<div class="col-first odd-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#jvmFunctions" class="member-name-link">jvmFunctions</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">List of JVM/Java functions available.</div>
+</div>
+<div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
+<div class="col-second even-row-color"><code><a href="#manualDir" class="member-name-link">manualDir</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Path to the manual directory relative to the JAR.</div>
+</div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#NAME" class="member-name-link">NAME</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The name of this command.</div>
+</div>
+<div class="col-first even-row-color"><code>private static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#PAGE_SIZE" class="member-name-link">PAGE_SIZE</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Number of items to display per page in paginated output.</div>
+</div>
+<div class="col-first odd-row-color"><code>private org.jline.reader.LineReader</code></div>
+<div class="col-second odd-row-color"><code><a href="#reader" class="member-name-link">reader</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Interactive line reader for user input.</div>
+</div>
 <div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#NAME" class="member-name-link">NAME</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>private static final int</code></div>
-<div class="col-second odd-row-color"><code><a href="#PAGE_SIZE" class="member-name-link">PAGE_SIZE</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>private org.jline.reader.LineReader</code></div>
-<div class="col-second even-row-color"><code><a href="#reader" class="member-name-link">reader</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#topics" class="member-name-link">topics</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-second even-row-color"><code><a href="#SKIP" class="member-name-link">SKIP</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Marker value to skip processing certain entries.</div>
+</div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#START_TIME" class="member-name-link">START_TIME</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The start time when the command was initialized.</div>
+</div>
+<div class="col-first even-row-color"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#topics" class="member-name-link">topics</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Mapping of topic names to their corresponding documentation paths.</div>
+</div>
 </div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-org.daiitech.naftah.Naftah.NaftahCommand">Fields inherited from class&nbsp;org.daiitech.naftah.<a href="Naftah.NaftahCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand</a></h3>
@@ -160,60 +240,78 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#checkManagementCommands(java.lang.String)" class="member-name-link">checkManagementCommands</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;line)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#checkManagementCommands(java.lang.String,org.jline.reader.History)" class="member-name-link">checkManagementCommands</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;line,
+ org.jline.reader.History&nbsp;history)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks if the given input line matches any predefined management commands.</div>
+<div class="block">Processes and executes management (meta) commands entered by the user in the interactive Naftah manual.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTotal(java.util.List)" class="member-name-link">getTotal</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSearchTextFromCommand(java.lang.String%5B%5D)" class="member-name-link">getSearchTextFromCommand</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;commandParts)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Determines the total number of elements in a target list, ensuring the count
- is at least as large as the corresponding collection from <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>.</div>
+<div class="block">Extracts and normalizes the search text from a tokenized command line.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadAvailableTopics()" class="member-name-link">loadAvailableTopics</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTotal(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,int)" class="member-name-link">getTotal</a><wbr>(<a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a>&nbsp;target,
+ int&nbsp;total)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Computes the effective total number of elements for a given <a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah"><code>Naftah.NaftahCommand.ManualCommand.Target</code></a>
+ by comparing the provided total with the size of the corresponding
+ collection in <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadAvailableTopics()" class="member-name-link">loadAvailableTopics</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Loads all available manual topics from the <code>manualDir</code> directory
  and returns them as a map of topic keys to their corresponding file paths.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadBuiltinFunction(java.util.Map.Entry)" class="member-name-link">loadBuiltinFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;&nbsp;builtinFunction)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadBuiltinFunction(java.util.Map.Entry)" class="member-name-link">loadBuiltinFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;&nbsp;builtinFunction)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Builds a detailed textual representation of a single built-in function entry.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadClassesAndFunctions()" class="member-name-link">loadClassesAndFunctions</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadClassesAndFunctions()" class="member-name-link">loadClassesAndFunctions</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Loads detailed metadata for classes and functions from the <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>
  in parallel using a fixed thread pool executor.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadClassOrFunction(int,java.util.List)" class="member-name-link">loadClassOrFunction</a><wbr>(int&nbsp;index,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Retrieves and formats the detailed information for a class or function
- at a given index from the specified target list or its related context collection.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadDetailedClass(java.util.Map.Entry)" class="member-name-link">loadDetailedClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;JvmFunction)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadDetailedClasses(java.util.Map,java.util.List)" class="member-name-link">loadDetailedClasses</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadClassOrFunction(int,org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List,java.lang.String)" class="member-name-link">loadClassOrFunction</a><wbr>(int&nbsp;index,
+ <a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a>&nbsp;target,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;targetList,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classOrFunctionFilter)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Resolves, loads, and formats the detailed representation of a class or function
+ at the specified index for the given target category.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadDetailedClass(java.util.Map.Entry)" class="member-name-link">loadDetailedClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;JvmFunction)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadDetailedClasses(java.util.Map,java.util.List)" class="member-name-link">loadDetailedClasses</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;classes,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Loads detailed string representations of the provided classes and appends them
  to the given target list.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadJvmFunction(java.util.Map.Entry)" class="member-name-link">loadJvmFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;&gt;&nbsp;jvmFunction)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#loadJvmFunction(java.util.Map.Entry)" class="member-name-link">loadJvmFunction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">Map.Entry</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="builtin/lang/JvmFunction.html" title="class in org.daiitech.naftah.builtin.lang">JvmFunction</a>&gt;&gt;&nbsp;jvmFunction)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Builds a detailed textual representation of a single JVM function entry.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#printPaginated(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List)" class="member-name-link">printPaginated</a><wbr>(<a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a>&nbsp;target,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Prints elements of the specified target to the terminal in a paginated manner.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#printPaginated(java.util.List)" class="member-name-link">printPaginated</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#printPaginated(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List,java.lang.String)" class="member-name-link">printPaginated</a><wbr>(<a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a>&nbsp;target,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classOrFunctionFilter)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Prints a list of lines to the terminal in a paginated format, displaying
- a fixed number of lines per page and prompting the user to continue after each page.</div>
+<div class="block">Prints elements of the specified target to the terminal in a paginated manner,
+ with optional filtering applied during lazy loading.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#run(org.daiitech.naftah.Naftah,boolean)" class="member-name-link">run</a><wbr>(<a href="Naftah.html" title="class in org.daiitech.naftah">Naftah</a>&nbsp;main,
@@ -247,6 +345,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="NAME">
 <h3>NAME</h3>
 <div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NAME</span></div>
+<div class="block">The name of this command.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -258,9 +357,32 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="START_TIME">
+<h3>START_TIME</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a></span>&nbsp;<span class="element-name">START_TIME</span></div>
+<div class="block">The start time when the command was initialized.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="SKIP">
+<h3>SKIP</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">SKIP</span></div>
+<div class="block">Marker value to skip processing certain entries.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../constant-values.html#org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.SKIP">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="PAGE_SIZE">
 <h3>PAGE_SIZE</h3>
 <div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">PAGE_SIZE</span></div>
+<div class="block">Number of items to display per page in paginated output.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -275,48 +397,63 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="manualDir">
 <h3>manualDir</h3>
 <div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">manualDir</span></div>
+<div class="block">Path to the manual directory relative to the JAR.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="classes">
 <h3>classes</h3>
 <div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">classes</span></div>
+<div class="block">List of all classes known to the manual.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="accessibleClasses">
 <h3>accessibleClasses</h3>
 <div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">accessibleClasses</span></div>
+<div class="block">List of classes accessible in the current context.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="instantiableClasses">
 <h3>instantiableClasses</h3>
 <div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">instantiableClasses</span></div>
+<div class="block">List of classes that can be instantiated.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="builtinFunctions">
 <h3>builtinFunctions</h3>
 <div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">builtinFunctions</span></div>
+<div class="block">List of all built-in functions available.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="jvmFunctions">
 <h3>jvmFunctions</h3>
 <div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">jvmFunctions</span></div>
+<div class="block">List of JVM/Java functions available.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="filteredClassesOrFunctions">
+<h3>filteredClassesOrFunctions</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">filteredClassesOrFunctions</span></div>
+<div class="block">Filtered results for classes or functions after applying user input.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="reader">
 <h3>reader</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">org.jline.reader.LineReader</span>&nbsp;<span class="element-name">reader</span></div>
+<div class="block">Interactive line reader for user input.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="topics">
 <h3>topics</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&gt;</span>&nbsp;<span class="element-name">topics</span></div>
+<div class="block">Mapping of topic names to their corresponding documentation paths.</div>
 </section>
 </li>
 </ul>
@@ -360,24 +497,99 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="checkManagementCommands(java.lang.String)">
-<h3>checkManagementCommands</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">checkManagementCommands</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;line)</span></div>
-<div class="block">Checks if the given input line matches any predefined management commands.
+<section class="detail" id="getSearchTextFromCommand(java.lang.String[])">
+<h3>getSearchTextFromCommand</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSearchTextFromCommand</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;commandParts)</span></div>
+<div class="block">Extracts and normalizes the search text from a tokenized command line.
  <p>
- Recognized commands include help, listing topics, displaying Java classes,
- accessible classes, instantiable classes, builtin functions, JVM functions,
- and exiting the program. Commands can be provided in either English or Arabic.
+ This method skips the first element of <code>commandParts</code> (the command keyword)
+ and concatenates the remaining parts <strong>without any separator</strong>,
+ then trims leading and trailing whitespace from the resulting string.
+ </p>
+
+ <p>
+ For example:
+ <pre>
+ ["classes", "java", "util"] → "javautil"
+ ["الأصناف", "نص", "بحث"] → "نصبحث"
+ </pre>
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>line</code> - the input command line to check</dd>
+<dd><code>commandParts</code> - the command line split into parts, where the first element
+                     represents the command keyword</dd>
 <dt>Returns:</dt>
-<dd><code>true</code> if the input matches a known command and the corresponding
-         action has been executed; <code>false</code> otherwise</dd>
+<dd>the concatenated search text derived from the remaining command parts,
+         or an empty string if no search text is provided</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="checkManagementCommands(java.lang.String,org.jline.reader.History)">
+<h3>checkManagementCommands</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">checkManagementCommands</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;line,
+ org.jline.reader.History&nbsp;history)</span>
+                                 throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Processes and executes management (meta) commands entered by the user in the interactive Naftah manual.
+
+ <p>This method parses the given input line and determines if it corresponds to a supported
+ management command. Supported commands allow the user to:</p>
+ <ul>
+ <li>Display usage/help instructions</li>
+ <li>List available topics</li>
+ <li>List Java classes, accessible classes, or instantiable classes</li>
+ <li>List builtin (Naftah) functions or JVM functions</li>
+ <li>Filter any of the above lists by a search text</li>
+ <li>View or manage command history</li>
+ <li>Exit the program</li>
+ </ul>
+
+ <p>Commands may be entered in either English or Arabic. Some commands optionally accept
+ a search text argument, in which case only entries matching the search text are displayed.</p>
+
+ <p>When a recognized command is matched, this method executes the corresponding action
+ (e.g., printing paginated results, filtering lists, or updating the command history)
+ and returns <code>true</code>. If the input does not match any known management command,
+ no action is taken and <code>false</code> is returned.</p>
+
+ <p><strong>Examples of supported commands:</strong></p>
+ <ul>
+ <li><code>usage / مساعدة</code> – Display detailed instructions for the interactive manual</li>
+ <li><code>list / المواضيع</code> – List all available documentation topics</li>
+ <li><code>classes &lt;search&gt; / الأصناف &lt;نص البحث&gt;</code> – Show Java classes optionally filtered by a search
+ term</li>
+ <li><code>accessible-classes / الأصناف-المتاحة</code> – Show accessible classes</li>
+ <li><code>instantiable-classes / الأصناف-القابلة-للتهيئة</code> – Show classes that can be instantiated</li>
+ <li><code>builtin-functions / الدوال-المدمجة</code> – List Naftah builtin functions</li>
+ <li><code>jvm-functions / دوال-جافا</code> – List available JVM/Java functions</li>
+ <li><code>history / الأوامر-المحفوظة</code> – Display all saved REPL commands</li>
+ <li><code>exit / خروج</code> – Exit the interactive session</li>
+ </ul>
+
+ <p>Commands that accept search text (e.g., classes or functions) will filter results
+ and display them in a paginated format. The filtering uses the <a href="#filteredClassesOrFunctions"><code>filteredClassesOrFunctions</code></a>
+ list, and paginated output is handled by <a href="#printPaginated(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List)"><code>printPaginated(Target, List)</code></a>.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>line</code> - the raw input command line provided by the user</dd>
+<dd><code>history</code> - the REPL command history used for displaying, sanitizing, or purging entries</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if the input matched a known management command and an action was executed;
+         <code>false</code> if the input did not match any known command</dd>
 <dt>Throws:</dt>
-<dd><code>org.jline.reader.UserInterruptException</code> - if the input command is an exit command ("exit" or "خروج"),
-                                which interrupts the user session and exits the program</dd>
+<dd><code>org.jline.reader.UserInterruptException</code> - if the input corresponds to an exit command
+                                (for example <code>"exit"</code> or <code>"خروج"</code>), signaling that
+                                the interactive session should be terminated</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if an I/O error occurs during reading, filtering, or paginated output</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="#printPaginated(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List)"><code>printPaginated(Target, List)</code></a></li>
+<li><a href="#filteredClassesOrFunctions"><code>filteredClassesOrFunctions</code></a></li>
+<li><a href="Naftah.NaftahCommand.ManualCommand.ManCommand.html" title="enum class in org.daiitech.naftah"><code>Naftah.NaftahCommand.ManualCommand.ManCommand</code></a></li>
+<li><a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah"><code>Naftah.NaftahCommand.ManualCommand.Target</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -446,73 +658,142 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getTotal(java.util.List)">
+<section class="detail" id="getTotal(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,int)">
 <h3>getTotal</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getTotal</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</span></div>
-<div class="block">Determines the total number of elements in a target list, ensuring the count
- is at least as large as the corresponding collection from <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>.
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getTotal</span><wbr><span class="parameters">(<a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a>&nbsp;target,
+ int&nbsp;total)</span></div>
+<div class="block">Computes the effective total number of elements for a given <a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah"><code>Naftah.NaftahCommand.ManualCommand.Target</code></a>
+ by comparing the provided total with the size of the corresponding
+ collection in <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>.
  <p>
- This helps synchronize manual or temporary lists with the runtime context
- to avoid index mismatches when accessing elements.
+ The returned value is always the maximum of:
+ <ul>
+ <li>the supplied <code>total</code> value (typically derived from a cached or
+ partially populated list), and</li>
+ <li>the size of the runtime collection associated with the specified
+ <code>target</code>.</li>
+ </ul>
+ This ensures pagination and indexed access remain consistent even when
+ the target list has not yet been fully populated.
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>target</code> - the list whose size should be compared to its related collection</dd>
+<dd><code>target</code> - the target type whose backing context collection should be used
+               for comparison</dd>
+<dd><code>total</code> - the current known total (for example, the size of a cached list)</dd>
 <dt>Returns:</dt>
-<dd>the maximum of the target's size and the associated context collection size</dd>
+<dd>the maximum of <code>total</code> and the size of the corresponding
+         <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a> collection for the given target</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="loadClassOrFunction(int,java.util.List)">
+<section class="detail" id="loadClassOrFunction(int,org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List,java.lang.String)">
 <h3>loadClassOrFunction</h3>
 <div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">loadClassOrFunction</span><wbr><span class="parameters">(int&nbsp;index,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;target)</span></div>
-<div class="block">Retrieves and formats the detailed information for a class or function
- at a given index from the specified target list or its related context collection.
+ <a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a>&nbsp;target,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;targetList,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classOrFunctionFilter)</span></div>
+<div class="block">Resolves, loads, and formats the detailed representation of a class or function
+ at the specified index for the given target category.
  <p>
- If the requested index exceeds the target list’s current size, this method
- attempts to fetch the corresponding element from the appropriate collection
- in <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>. Depending on the target, it delegates to one of:
+ This method first attempts to return a previously loaded (cached) entry from
+ <code>targetList</code>. If the requested index is not yet available in that list,
+ it performs a lazy lookup against the corresponding collection in
+ <a href="parser/DefaultContext.html" title="class in org.daiitech.naftah.parser"><code>DefaultContext</code></a>, based on the provided <a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah"><code>Naftah.NaftahCommand.ManualCommand.Target</code></a>.
+ </p>
+
+ <p>
+ Depending on the target type, the lookup is delegated to one of the following
+ detail loaders:
  <ul>
- <li><code>loadDetailedClass(Map.Entry)</code></li>
- <li><code>loadBuiltinFunction(Map.Entry)</code></li>
- <li><code>loadJvmFunction(Map.Entry)</code></li>
+ <li><code>loadDetailedClass(Map.Entry)</code> for class-based targets</li>
+ <li><code>loadBuiltinFunction(Map.Entry)</code> for builtin functions</li>
+ <li><code>loadJvmFunction(Map.Entry)</code> for JVM functions</li>
  </ul>
+ </p>
+
+ <p>
+ If a <code>classOrFunctionFilter</code> is provided, the resolved element must match
+ the filter (by name or related metadata, depending on the target). If the
+ element at the given index does not satisfy the filter, the lookup is considered
+ invalid and <code>null</code> is returned.
+ </p>
+
+ <p>
+ Successfully resolved elements are formatted, appended to <code>targetList</code>
+ for caching purposes, and then returned.
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>index</code> - the index of the element to retrieve (0-based)</dd>
-<dd><code>target</code> - the list corresponding to one of the tracked element types</dd>
+<dd><code>index</code> - the zero-based index of the element to resolve</dd>
+<dd><code>target</code> - the target category indicating which context
+                              collection should be queried</dd>
+<dd><code>targetList</code> - the cache of already loaded and formatted entries
+                              for the given target</dd>
+<dd><code>classOrFunctionFilter</code> - an optional search filter used to restrict results;
+                              may be <code>null</code> or blank</dd>
 <dt>Returns:</dt>
-<dd>a formatted string representing the detailed view of the element</dd>
+<dd>the formatted detailed representation of the resolved element,
+         or <code>null</code> if the index exists but does not satisfy the filter</dd>
 <dt>Throws:</dt>
-<dd><code><a href="errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if no valid element can be resolved for the given index</dd>
+<dd><code><a href="errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the index is valid but the element cannot be resolved
+                        or formatted due to an unexpected internal error</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="printPaginated(java.util.List)">
+<section class="detail" id="printPaginated(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List)">
 <h3>printPaginated</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">printPaginated</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</span></div>
-<div class="block">Prints a list of lines to the terminal in a paginated format, displaying
- a fixed number of lines per page and prompting the user to continue after each page.
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">printPaginated</span><wbr><span class="parameters">(<a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a>&nbsp;target,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines)</span></div>
+<div class="block">Prints elements of the specified target to the terminal in a paginated manner.
  <p>
- The method reads user input between pages and supports quitting early. After displaying
- each page of <code>PAGE_SIZE</code> lines, it prompts the user with:
- <pre>
- [اضغط Enter للمتابعة، أو أدخل 'q' أو 'quit' أو 'خروج' لإنهاء التصفح والعودة إلى البرنامج الرئيسي]
- </pre>
- If the user enters any of the following commands (case-insensitive):
- <ul>
- <li><code>q</code></li>
- <li><code>quit</code></li>
- <li><code>خروج</code> (Arabic for "exit")</li>
- </ul>
- the pagination is stopped, and the method exits early.</div>
+ This is a convenience overload that delegates to
+ <a href="#printPaginated(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List,java.lang.String)"><code>printPaginated(Target, List, String)</code></a> without applying any search filter.
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>lines</code> - the list of lines to display, paginated</dd>
+<dd><code>target</code> - the target category whose elements are being displayed</dd>
+<dd><code>lines</code> - the cache of already loaded and formatted elements; additional
+               elements may be lazily loaded during pagination</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="printPaginated(org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List,java.lang.String)">
+<h3>printPaginated</h3>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">printPaginated</span><wbr><span class="parameters">(<a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a>&nbsp;target,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;lines,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;classOrFunctionFilter)</span></div>
+<div class="block">Prints elements of the specified target to the terminal in a paginated manner,
+ with optional filtering applied during lazy loading.
+ <p>
+ Elements are resolved on demand using <a href="#loadClassOrFunction(int,org.daiitech.naftah.Naftah.NaftahCommand.ManualCommand.Target,java.util.List,java.lang.String)"><code>loadClassOrFunction(int, Target, List, String)</code></a>.
+ Already loaded entries are reused from <code>lines</code>, while missing entries
+ are fetched, formatted, and appended as needed.
+ </p>
+
+ <p>
+ Output is constrained by both a logical page size (<code>PAGE_SIZE</code>) and the
+ effective terminal height. Multi-line entries are split as necessary to avoid
+ overflowing the terminal viewport.
+ </p>
+
+ <p>
+ Between pages, and whenever the terminal height limit is reached, the user is
+ prompted to continue browsing. Pagination can be terminated early if the user
+ enters any quit command recognized by
+ <a href="utils/repl/REPLHelper.html#shouldQuit(org.jline.reader.LineReader)"><code>REPLHelper.shouldQuit(LineReader)</code></a>.
+ </p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>target</code> - the target category indicating which context
+                              collection is being paginated</dd>
+<dd><code>lines</code> - the cache of already loaded and formatted elements;
+                              this list may be mutated during execution</dd>
+<dd><code>classOrFunctionFilter</code> - an optional search filter applied during element
+                              resolution; may be <code>null</code> or blank</dd>
 </dl>
 </section>
 </li>

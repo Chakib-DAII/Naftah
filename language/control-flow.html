@@ -23,7 +23,7 @@
 	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
 	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
 	<h1>
-		<a href="/">
+		<a href="https://naftah.daiitech.org/">
 			Naftah Language Documentation - مستندات لغة نفطه
 		</a>
 	</h1>
@@ -122,7 +122,7 @@ It provides detailed definitions and illustrative examples.</p>
 
 <p>تعبير مختصر يسمح بالاختيار بين قيمتين بناءً على شرط:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>شرط ؟ قيمة_إذا_صحيح : قيمة_إذا_خطأ أنهي
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>شرط ؟ قيمة_إذا_صحيح : قيمة_إذا_خطأ أنهي
 </code></pre></div></div>
 
 <h4 id="أمثلة">أمثلة:</h4>
@@ -149,7 +149,7 @@ It provides detailed definitions and illustrative examples.</p>
 
 <p>يستخدم لاختيار القيمة الأولى غير <code class="language-plaintext highlighter-rouge">null</code> أو <code class="language-plaintext highlighter-rouge">undefined</code> (أو القيمة الفارغة حسب التعريف) بين قيمتين:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>قيمة_1 ؟؟ قيمة_2 أنهي
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>قيمة_1 ؟؟ قيمة_2 أنهي
 </code></pre></div></div>
 
 <h4 id="تعريف-متغيرات-إضافية-لاستخدامها-مع-nullish">تعريف متغيرات إضافية لاستخدامها مع nullish:</h4>
@@ -420,11 +420,11 @@ It provides detailed definitions and illustrative examples.</p>
 
 <h3 id="بناء-الجملة-في-نفطه">بناء الجملة في نفطه</h3>
 
-<pre><code class="language-naftah">بينما (الشرط) افعل {
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>بينما (الشرط) افعل {
     --- تعليمات التكرار طالما الشرط صحيح
 }
 أنهي
-</code></pre>
+</code></pre></div></div>
 
 <hr />
 
@@ -437,7 +437,7 @@ It provides detailed definitions and illustrative examples.</p>
 <pre><code class="language-naftah">متغير أ تعيين 1
 
 بينما أ أصغر_أو_يساوي 10 افعل {
-    إطبع(أ)
+    إطبع(أ) أنهي
     زد أ
 }
 أنهي
@@ -453,7 +453,7 @@ It provides detailed definitions and illustrative examples.</p>
     إذا أ == 5 إذن {
         اكسر  --- توقف الحلقة فورًا عند وصول أ إلى 5
     }
-    إطبع(أ)
+    إطبع(أ) أنهي
     زد أ
 }
 أنهي
@@ -465,7 +465,7 @@ It provides detailed definitions and illustrative examples.</p>
 
 <pre><code class="language-naftah">متغير أ تعيين 0
 
-بينما أ أقل_من 10 افعل {
+بينما أ أصغر_من 10 افعل {
     زد أ
     إذا أ == 3 إذن {
         تابع  --- تخطي طباعة الرقم 3
@@ -481,12 +481,12 @@ It provides detailed definitions and illustrative examples.</p>
 
 <pre><code class="language-naftah">متغير أ تعيين 1
 
-بينما أ أقل_أو_يساوي 3 افعل {
+بينما أ أصغر_أو_يساوي 3 افعل {
 
     متغير ب تعيين 1
 
-    بينما ب أقل_أو_يساوي 2 افعل {
-        إطبع("أ = ${أ}, ب = ${ب}")
+    بينما ب أصغر_أو_يساوي 2 افعل {
+        إطبع("أ = ${أ}, ب = ${ب}") أنهي
         زد ب
     }
     
@@ -502,10 +502,10 @@ It provides detailed definitions and illustrative examples.</p>
 <pre><code class="language-naftah">متغير أ تعيين 10
 متغير ب تعيين 20
 
-بينما (أ أقل_من ب) و (ب أصغر_من 30) افعل {
-    إطبع("أ = ${أ}، ب = ${ب}")
-    زد أ
-    زد ب
+بينما (أ أصغر_من ب) و (ب أصغر_من 30) افعل {
+    إطبع("أ = ${أ}، ب = ${ب}") أنهي
+    زد أ أنهي
+    نقص ب
 }
 أنهي
 </code></pre>
@@ -542,10 +542,10 @@ It provides detailed definitions and illustrative examples.</p>
 
 <h3 id="البناء-العام-في-نفطه">البناء العام في نفطه</h3>
 
-<pre><code class="language-naftah">كرر {
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>كرر {
     --- تعليمات التكرار
 } حتى (الشرط)
-</code></pre>
+</code></pre></div></div>
 
 <hr />
 
@@ -558,7 +558,7 @@ It provides detailed definitions and illustrative examples.</p>
 <pre><code class="language-naftah">متغير أ تعيين ١
 
 كرر {
-    إطبع(أ)
+    إطبع(أ) أنهي
     زد أ
 }
 حتى أ أكبر_من ٩
@@ -584,13 +584,13 @@ It provides detailed definitions and illustrative examples.</p>
 
     بينما ت أصغر_من ١٠ افعل {
 
-        إطبع(ت)
+        إطبع(ت) أنهي
         زد ت
 
         متغير ي تعيين ١
 
         كرر {
-            إطبع(ي)
+            إطبع(ي) أنهي
             زد ي
         }
         حتى ي أكبر_من ٩
@@ -654,9 +654,9 @@ It provides detailed definitions and illustrative examples.</p>
 متغير ب تعيين ١٠
 
 كرر {
-    إطبع("أ = ${أ}، ب = ${ب}")
-    زد أ
-    زد ب
+    إطبع("أ = ${أ}، ب = ${ب}") أنهي
+    زد أ أنهي
+    زد ب أنهي
 }
 حتى (أ أكبر_من ٩) أو (ب أكبر_من ٢٠)
 أنهي
@@ -688,7 +688,7 @@ It provides detailed definitions and illustrative examples.</p>
 
 <h3 id="البناء-العام">البناء العام</h3>
 
-<pre><code class="language-naftah">حسب (التعبير) من {
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>حسب (التعبير) من {
     قيمة1، قيمة2: {
         --- تعليمات للحالتين قيمة1 وقيمة2
     }
@@ -699,7 +699,7 @@ It provides detailed definitions and illustrative examples.</p>
         --- تعليمات افتراضية للحالات غير المتطابقة
     }
 }
-</code></pre>
+</code></pre></div></div>
 
 <hr />
 
@@ -769,7 +769,7 @@ It provides detailed definitions and illustrative examples.</p>
   <li>ينفذ كتلة عند الفشل (تُمرر سبب الخطأ).</li>
 </ul>
 
-<pre><code class="language-naftah">حاول (تعليمات_قد_تفشل) {
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>حاول (تعليمات_قد_تفشل) {
     نجاح(النتيجة) -&gt; {
         --- تعليمات عند النجاح
     }
@@ -777,7 +777,7 @@ It provides detailed definitions and illustrative examples.</p>
         --- تعليمات عند الخطأ
     }
 }
-</code></pre>
+</code></pre></div></div>
 
 <hr />
 
@@ -789,7 +789,7 @@ It provides detailed definitions and illustrative examples.</p>
   <li>ينفذ كتلة عند عدم وجود قيمة.</li>
 </ul>
 
-<pre><code class="language-naftah">حاول (خيار_محتمل) {
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>حاول (خيار_محتمل) {
     بعض(القيمة) -&gt; {
         --- تعليمات عند وجود القيمة
     }
@@ -797,7 +797,7 @@ It provides detailed definitions and illustrative examples.</p>
         --- تعليمات عند عدم وجود القيمة
     }
 }
-</code></pre>
+</code></pre></div></div>
 
 <hr />
 
@@ -844,16 +844,16 @@ It provides detailed definitions and illustrative examples.</p>
 <h3 id="مثال-4-التعامل-مع-كائن-object">مثال 4: التعامل مع كائن (Object)</h3>
 
 <pre><code class="language-naftah">متغير بلدة تعيين {
-    متغير الاسم تعيين "نفتة",
+    متغير الاسم تعيين "نفطه",
     متغير المدينة تعيين "مدينة",
     متغير عدد_الأحياء تعيين 5
 }
 
 حاول(بلدة) {
     نجاح(أ) -&gt; {
-        ثابت الاسم تعيين أ[الاسم]
-        ثابت المدينة تعيين أ[المدينة]
-        ثابت عدد_الأحياء تعيين أ[عدد_الأحياء]
+        ثابت الاسم تعيين بلدة["الاسم"]
+        ثابت المدينة تعيين أ["المدينة"]
+        ثابت عدد_الأحياء تعيين أ["عدد_الأحياء"]
         إطبع("الاسم = ${الاسم}، المدينة = ${المدينة}، عدد_الأحياء = ${عدد_الأحياء}")
     }
     فشل(ب) إفعل إطبع(ب)
@@ -979,7 +979,6 @@ It provides detailed definitions and illustrative examples.</p>
 ---
 </div>
 <!-- HIDDEN-SECTION-END -->
-
 
 
 </div>

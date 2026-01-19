@@ -15,7 +15,11 @@
 <script type="text/javascript" src="../../../script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="package-declaration-page">
-<script type="text/javascript">var pathtoroot = "../../../";
+<script type="text/javascript">var evenRowColor = "even-row-color";
+var oddRowColor = "odd-row-color";
+var tableTab = "table-tab";
+var activeTableTab = "active-table-tab";
+var pathtoroot = "../../../";
 loadScripts(document, 'script');</script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -96,7 +100,8 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="caption"><span>Classes</span></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab3" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab3', 2)" class="table-tab">Enum Classes</button></div>
+<div id="class-summary.tabpanel" role="tabpanel" aria-labelledby="class-summary-tab0">
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
@@ -114,7 +119,15 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Naftah.NaftahCommand.ManualCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">The 'man' subcommand that loads and displays documentation topics related to Naftah usage.</div>
+<div class="block">The <code>'man'</code> subcommand for Naftah.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab3"><a href="Naftah.NaftahCommand.ManualCommand.ManCommand.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.ManCommand</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab3">
+<div class="block">Enum representing all manual subcommands supported in Naftah.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab3"><a href="Naftah.NaftahCommand.ManualCommand.Target.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ManualCommand.Target</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab3">
+<div class="block">Represents different targets for the manual command.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="Naftah.NaftahCommand.RunCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand.RunCommand</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
@@ -122,20 +135,25 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Naftah.NaftahCommand.ShellCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand.ShellCommand</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">The 'shell' subcommand that starts the interactive Naftah REPL.</div>
+<div class="block">The 'shell' subcommand that starts the interactive Naftah REPL (Read-Eval-Print Loop).</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Naftah.VersionProvider.html" title="class in org.daiitech.naftah">Naftah.VersionProvider</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab3"><a href="Naftah.NaftahCommand.ShellCommand.ReplCommand.html" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ShellCommand.ReplCommand</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab3">
+<div class="block">Enum representing the REPL-specific commands supported in the Naftah interactive shell.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Naftah.VersionProvider.html" title="class in org.daiitech.naftah">Naftah.VersionProvider</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Provides version information for the Naftah command line.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="NaftahSystem.html" title="class in org.daiitech.naftah">NaftahSystem</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="NaftahSystem.html" title="class in org.daiitech.naftah">NaftahSystem</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Utility class for managing system-wide settings, especially for terminal configuration
  and versioning in the Naftah runtime environment.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ReleaseInfo.html" title="class in org.daiitech.naftah">ReleaseInfo</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ReleaseInfo.html" title="class in org.daiitech.naftah">ReleaseInfo</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Exposes the Naftah release information such as version, build date, and build time.</div>
+</div>
 </div>
 </div>
 </div>

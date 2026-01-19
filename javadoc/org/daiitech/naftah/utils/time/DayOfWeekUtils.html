@@ -78,7 +78,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">DayOfWeekUtils</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Utility class for converting numeric day-of-week values to Arabic names.
+<div class="block">Utility class for converting numeric day-of-week values to names.
 
  <p>This class supports both Gregorian and Hijri calendars (names are the same).</p>
 
@@ -100,9 +100,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
-<div class="col-second even-row-color"><code><a href="#ARABIC_WEEK_DAYS" class="member-name-link">ARABIC_WEEK_DAYS</a></code></div>
+<div class="col-second even-row-color"><code><a href="#WEEK_DAYS" class="member-name-link">WEEK_DAYS</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Arabic names of the week (Monday = 1, Sunday = 7).</div>
+<div class="block">names of the week (Monday = 1, Sunday = 7).</div>
 </div>
 </div>
 </section>
@@ -136,9 +136,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getArabicDayOfWeek(int)" class="member-name-link">getArabicDayOfWeek</a><wbr>(int&nbsp;dayOfWeek)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getDayOfWeek(int)" class="member-name-link">getDayOfWeek</a><wbr>(int&nbsp;dayOfWeek)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts a numeric day-of-week to its Arabic name.</div>
+<div class="block">Converts a numeric day-of-week to its name.</div>
 </div>
 </div>
 </div>
@@ -158,10 +158,10 @@ loadScripts(document, 'script');</script>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="ARABIC_WEEK_DAYS">
-<h3>ARABIC_WEEK_DAYS</h3>
-<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">ARABIC_WEEK_DAYS</span></div>
-<div class="block">Arabic names of the week (Monday = 1, Sunday = 7).</div>
+<section class="detail" id="WEEK_DAYS">
+<h3>WEEK_DAYS</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</span>&nbsp;<span class="element-name">WEEK_DAYS</span></div>
+<div class="block">names of the week (Monday = 1, Sunday = 7).</div>
 </section>
 </li>
 </ul>
@@ -188,15 +188,15 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="getArabicDayOfWeek(int)">
-<h3>getArabicDayOfWeek</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getArabicDayOfWeek</span><wbr><span class="parameters">(int&nbsp;dayOfWeek)</span></div>
-<div class="block">Converts a numeric day-of-week to its Arabic name.</div>
+<section class="detail" id="getDayOfWeek(int)">
+<h3>getDayOfWeek</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getDayOfWeek</span><wbr><span class="parameters">(int&nbsp;dayOfWeek)</span></div>
+<div class="block">Converts a numeric day-of-week to its name.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>dayOfWeek</code> - the day number (1 = Monday, ..., 7 = Sunday)</dd>
 <dt>Returns:</dt>
-<dd>Arabic name of the day</dd>
+<dd>name of the day</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the day number is not in 1–7</dd>
 </dl>

@@ -11,9 +11,9 @@ org.daiitech.naftah.errors
 org.daiitech.naftah.parser
 org.daiitech.naftah.parser.time
 org.daiitech.naftah.utils
-org.daiitech.naftah.utils.arabic
 org.daiitech.naftah.utils.function
 org.daiitech.naftah.utils.reflect
 org.daiitech.naftah.utils.reflect.type
 org.daiitech.naftah.utils.repl
+org.daiitech.naftah.utils.script
 org.daiitech.naftah.utils.time

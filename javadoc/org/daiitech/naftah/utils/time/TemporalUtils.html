@@ -79,13 +79,13 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">TemporalUtils</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Utility class for creating and manipulating Java <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> instances
- from Arabic date and time components.
+ from Naftah date and time components.
 
  <p>Provides methods to create:
  <ul>
- <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalTime.html" title="class or interface in java.time" class="external-link"><code>LocalTime</code></a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetTime.html" title="class or interface in java.time" class="external-link"><code>OffsetTime</code></a>, and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZonedDateTime.html" title="class or interface in java.time" class="external-link"><code>ZonedDateTime</code></a> from <a href="../../builtin/time/ArabicTime.Time.html" title="class in org.daiitech.naftah.builtin.time"><code>ArabicTime.Time</code></a></li>
- <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/ChronoLocalDate.html" title="class or interface in java.time.chrono" class="external-link"><code>ChronoLocalDate</code></a> from Arabic date components and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a></li>
- <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalDateTime.html" title="class or interface in java.time" class="external-link"><code>LocalDateTime</code></a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html" title="class or interface in java.time" class="external-link"><code>OffsetDateTime</code></a>, and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZonedDateTime.html" title="class or interface in java.time" class="external-link"><code>ZonedDateTime</code></a> from Arabic date-time components</li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalTime.html" title="class or interface in java.time" class="external-link"><code>LocalTime</code></a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetTime.html" title="class or interface in java.time" class="external-link"><code>OffsetTime</code></a>, and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZonedDateTime.html" title="class or interface in java.time" class="external-link"><code>ZonedDateTime</code></a> from <a href="../../builtin/time/NaftahTime.Time.html" title="class in org.daiitech.naftah.builtin.time"><code>NaftahTime.Time</code></a></li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/ChronoLocalDate.html" title="class or interface in java.time.chrono" class="external-link"><code>ChronoLocalDate</code></a> from Naftah date components and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/chrono/Chronology.html" title="class or interface in java.time.chrono" class="external-link"><code>Chronology</code></a></li>
+ <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalDateTime.html" title="class or interface in java.time" class="external-link"><code>LocalDateTime</code></a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/OffsetDateTime.html" title="class or interface in java.time" class="external-link"><code>OffsetDateTime</code></a>, and <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZonedDateTime.html" title="class or interface in java.time" class="external-link"><code>ZonedDateTime</code></a> from Naftah date-time components</li>
  </ul>
 
  <p>Handles conversion between 12-hour and 24-hour formats, applies AM/PM logic,
@@ -167,12 +167,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing a date and time with optional time zone or offset.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDateTime(org.daiitech.naftah.builtin.time.ArabicDate.Date,org.daiitech.naftah.builtin.time.ArabicDate.Calendar,org.daiitech.naftah.builtin.time.ArabicTime.Time,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)" class="member-name-link">createDateTime</a><wbr>(<a href="../../builtin/time/ArabicDate.Date.html" title="class in org.daiitech.naftah.builtin.time">ArabicDate.Date</a>&nbsp;date,
- <a href="../../builtin/time/ArabicDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time">ArabicDate.Calendar</a>&nbsp;calendar,
- <a href="../../builtin/time/ArabicTime.Time.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.Time</a>&nbsp;time,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDateTime(org.daiitech.naftah.builtin.time.NaftahDate.Date,org.daiitech.naftah.builtin.time.NaftahDate.Calendar,org.daiitech.naftah.builtin.time.NaftahTime.Time,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)" class="member-name-link">createDateTime</a><wbr>(<a href="../../builtin/time/NaftahDate.Date.html" title="class in org.daiitech.naftah.builtin.time">NaftahDate.Date</a>&nbsp;date,
+ <a href="../../builtin/time/NaftahDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time">NaftahDate.Calendar</a>&nbsp;calendar,
+ <a href="../../builtin/time/NaftahTime.Time.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.Time</a>&nbsp;time,
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the given Arabic date and time,
+<div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the given Naftah date and time,
  optionally including a time zone or offset.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalDateTime.html" title="class or interface in java.time" class="external-link">LocalDateTime</a></code></div>
@@ -206,11 +206,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing a time with explicit components.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTime(int,java.lang.Integer,java.lang.Integer,java.lang.Integer,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)" class="member-name-link">createTime</a><wbr>(int&nbsp;hour24,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTime(int,java.lang.Integer,java.lang.Integer,java.lang.Integer,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)" class="member-name-link">createTime</a><wbr>(int&nbsp;hour24,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;minute,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;second,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;nano,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing a time using explicit components
  and an optional time zone or offset.</div>
@@ -222,22 +222,22 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> from a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalTime.html" title="class or interface in java.time" class="external-link"><code>LocalTime</code></a> and an optional <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneId.html" title="class or interface in java.time" class="external-link"><code>ZoneId</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTime(org.daiitech.naftah.builtin.time.ArabicTime.Time,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)" class="member-name-link">createTime</a><wbr>(<a href="../../builtin/time/ArabicTime.Time.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.Time</a>&nbsp;time,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTime(org.daiitech.naftah.builtin.time.NaftahTime.Time,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)" class="member-name-link">createTime</a><wbr>(<a href="../../builtin/time/NaftahTime.Time.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.Time</a>&nbsp;time,
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the given Arabic time,
+<div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the given Naftah time,
  optionally including a time zone or offset.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../builtin/utils/tuple/NTuple.html" title="interface in org.daiitech.naftah.builtin.utils.tuple">NTuple</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTimeOfNanoOfDay(long,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)" class="member-name-link">createTimeOfNanoOfDay</a><wbr>(long&nbsp;nanoOfDay,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTimeOfNanoOfDay(long,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)" class="member-name-link">createTimeOfNanoOfDay</a><wbr>(long&nbsp;nanoOfDay,
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalTime.html" title="class or interface in java.time" class="external-link"><code>LocalTime</code></a> and a corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a>
  from the total number of nanoseconds since midnight.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../builtin/utils/tuple/NTuple.html" title="interface in org.daiitech.naftah.builtin.utils.tuple">NTuple</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTimeOfSecondOfDay(long,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)" class="member-name-link">createTimeOfSecondOfDay</a><wbr>(long&nbsp;secondOfDay,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTimeOfSecondOfDay(long,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)" class="member-name-link">createTimeOfSecondOfDay</a><wbr>(long&nbsp;secondOfDay,
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalTime.html" title="class or interface in java.time" class="external-link"><code>LocalTime</code></a> and a corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a>
  from the total number of seconds since midnight.</div>
@@ -258,11 +258,11 @@ loadScripts(document, 'script');</script>
  and optional <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneId.html" title="class or interface in java.time" class="external-link"><code>ZoneId</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#currentDate(org.daiitech.naftah.builtin.time.ArabicDate.Calendar,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)" class="member-name-link">currentDate</a><wbr>(<a href="../../builtin/time/ArabicDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time">ArabicDate.Calendar</a>&nbsp;calendar,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#currentDate(org.daiitech.naftah.builtin.time.NaftahDate.Calendar,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)" class="member-name-link">currentDate</a><wbr>(<a href="../../builtin/time/NaftahDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time">NaftahDate.Calendar</a>&nbsp;calendar,
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Returns the current <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> for the specified <a href="../../builtin/time/ArabicDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time"><code>ArabicDate.Calendar</code></a>
- and optional <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time"><code>ArabicTime.ZoneOrOffset</code></a>.</div>
+<div class="block">Returns the current <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> for the specified <a href="../../builtin/time/NaftahDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time"><code>NaftahDate.Calendar</code></a>
+ and optional <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time"><code>NaftahTime.ZoneOrOffset</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#currentTime(java.time.ZoneId)" class="member-name-link">currentTime</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneId.html" title="class or interface in java.time" class="external-link">ZoneId</a>&nbsp;zoneId)</code></div>
@@ -270,7 +270,7 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the current <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the time in the specified <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneId.html" title="class or interface in java.time" class="external-link"><code>ZoneId</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#currentTime(org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)" class="member-name-link">currentTime</a><wbr>(<a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#currentTime(org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)" class="member-name-link">currentTime</a><wbr>(<a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns the current <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the time in the specified zone or offset.</div>
 </div>
@@ -344,15 +344,15 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="createTime(org.daiitech.naftah.builtin.time.ArabicTime.Time,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)">
+<section class="detail" id="createTime(org.daiitech.naftah.builtin.time.NaftahTime.Time,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)">
 <h3>createTime</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">createTime</span><wbr><span class="parameters">(<a href="../../builtin/time/ArabicTime.Time.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.Time</a>&nbsp;time,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
-<div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the given Arabic time,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">createTime</span><wbr><span class="parameters">(<a href="../../builtin/time/NaftahTime.Time.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.Time</a>&nbsp;time,
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
+<div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the given Naftah time,
  optionally including a time zone or offset.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>time</code> - the Arabic time component</dd>
+<dd><code>time</code> - the Naftah time component</dd>
 <dd><code>zoneOrOffset</code> - the optional time zone or offset</dd>
 <dt>Returns:</dt>
 <dd>a Temporal representing the time, either <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalTime.html" title="class or interface in java.time" class="external-link"><code>LocalTime</code></a>,
@@ -361,10 +361,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="createTimeOfNanoOfDay(long,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)">
+<section class="detail" id="createTimeOfNanoOfDay(long,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)">
 <h3>createTimeOfNanoOfDay</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../builtin/utils/tuple/NTuple.html" title="interface in org.daiitech.naftah.builtin.utils.tuple">NTuple</a></span>&nbsp;<span class="element-name">createTimeOfNanoOfDay</span><wbr><span class="parameters">(long&nbsp;nanoOfDay,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalTime.html" title="class or interface in java.time" class="external-link"><code>LocalTime</code></a> and a corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a>
  from the total number of nanoseconds since midnight.
  <p>
@@ -384,10 +384,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="createTimeOfSecondOfDay(long,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)">
+<section class="detail" id="createTimeOfSecondOfDay(long,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)">
 <h3>createTimeOfSecondOfDay</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../builtin/utils/tuple/NTuple.html" title="interface in org.daiitech.naftah.builtin.utils.tuple">NTuple</a></span>&nbsp;<span class="element-name">createTimeOfSecondOfDay</span><wbr><span class="parameters">(long&nbsp;secondOfDay,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/LocalTime.html" title="class or interface in java.time" class="external-link"><code>LocalTime</code></a> and a corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a>
  from the total number of seconds since midnight.
  <p>
@@ -407,13 +407,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="createTime(int,java.lang.Integer,java.lang.Integer,java.lang.Integer,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)">
+<section class="detail" id="createTime(int,java.lang.Integer,java.lang.Integer,java.lang.Integer,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)">
 <h3>createTime</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">createTime</span><wbr><span class="parameters">(int&nbsp;hour24,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;minute,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;second,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;nano,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
 <div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing a time using explicit components
  and an optional time zone or offset.
  <p>
@@ -452,13 +452,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="currentTime(org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)">
+<section class="detail" id="currentTime(org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)">
 <h3>currentTime</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">currentTime</span><wbr><span class="parameters">(<a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">currentTime</span><wbr><span class="parameters">(<a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
 <div class="block">Returns the current <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the time in the specified zone or offset.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>zoneOrOffset</code> - the optional <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time"><code>ArabicTime.ZoneOrOffset</code></a>, may be null</dd>
+<dd><code>zoneOrOffset</code> - the optional <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time"><code>NaftahTime.ZoneOrOffset</code></a>, may be null</dd>
 <dt>Returns:</dt>
 <dd>a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the current time in the given zone or offset</dd>
 </dl>
@@ -551,15 +551,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="currentDate(org.daiitech.naftah.builtin.time.ArabicDate.Calendar,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)">
+<section class="detail" id="currentDate(org.daiitech.naftah.builtin.time.NaftahDate.Calendar,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)">
 <h3>currentDate</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">currentDate</span><wbr><span class="parameters">(<a href="../../builtin/time/ArabicDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time">ArabicDate.Calendar</a>&nbsp;calendar,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
-<div class="block">Returns the current <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> for the specified <a href="../../builtin/time/ArabicDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time"><code>ArabicDate.Calendar</code></a>
- and optional <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time"><code>ArabicTime.ZoneOrOffset</code></a>.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">currentDate</span><wbr><span class="parameters">(<a href="../../builtin/time/NaftahDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time">NaftahDate.Calendar</a>&nbsp;calendar,
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
+<div class="block">Returns the current <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> for the specified <a href="../../builtin/time/NaftahDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time"><code>NaftahDate.Calendar</code></a>
+ and optional <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time"><code>NaftahTime.ZoneOrOffset</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>calendar</code> - the Arabic calendar</dd>
+<dd><code>calendar</code> - the Naftah calendar</dd>
 <dd><code>zoneOrOffset</code> - the optional zone or offset, may be null</dd>
 <dt>Returns:</dt>
 <dd>a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the current date in the given calendar and zone</dd>
@@ -583,19 +583,19 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="createDateTime(org.daiitech.naftah.builtin.time.ArabicDate.Date,org.daiitech.naftah.builtin.time.ArabicDate.Calendar,org.daiitech.naftah.builtin.time.ArabicTime.Time,org.daiitech.naftah.builtin.time.ArabicTime.ZoneOrOffset)">
+<section class="detail" id="createDateTime(org.daiitech.naftah.builtin.time.NaftahDate.Date,org.daiitech.naftah.builtin.time.NaftahDate.Calendar,org.daiitech.naftah.builtin.time.NaftahTime.Time,org.daiitech.naftah.builtin.time.NaftahTime.ZoneOrOffset)">
 <h3>createDateTime</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">createDateTime</span><wbr><span class="parameters">(<a href="../../builtin/time/ArabicDate.Date.html" title="class in org.daiitech.naftah.builtin.time">ArabicDate.Date</a>&nbsp;date,
- <a href="../../builtin/time/ArabicDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time">ArabicDate.Calendar</a>&nbsp;calendar,
- <a href="../../builtin/time/ArabicTime.Time.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.Time</a>&nbsp;time,
- <a href="../../builtin/time/ArabicTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">ArabicTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
-<div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the given Arabic date and time,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link">Temporal</a></span>&nbsp;<span class="element-name">createDateTime</span><wbr><span class="parameters">(<a href="../../builtin/time/NaftahDate.Date.html" title="class in org.daiitech.naftah.builtin.time">NaftahDate.Date</a>&nbsp;date,
+ <a href="../../builtin/time/NaftahDate.Calendar.html" title="class in org.daiitech.naftah.builtin.time">NaftahDate.Calendar</a>&nbsp;calendar,
+ <a href="../../builtin/time/NaftahTime.Time.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.Time</a>&nbsp;time,
+ <a href="../../builtin/time/NaftahTime.ZoneOrOffset.html" title="class in org.daiitech.naftah.builtin.time">NaftahTime.ZoneOrOffset</a>&nbsp;zoneOrOffset)</span></div>
+<div class="block">Creates a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/Temporal.html" title="class or interface in java.time.temporal" class="external-link"><code>Temporal</code></a> representing the given Naftah date and time,
  optionally including a time zone or offset.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>date</code> - the Arabic date component</dd>
-<dd><code>calendar</code> - the Arabic calendar component</dd>
-<dd><code>time</code> - the Arabic time component</dd>
+<dd><code>date</code> - the Naftah date component</dd>
+<dd><code>calendar</code> - the Naftah calendar component</dd>
+<dd><code>time</code> - the Naftah time component</dd>
 <dd><code>zoneOrOffset</code> - the optional time zone or offset</dd>
 <dt>Returns:</dt>
 <dd>a Temporal representing the date and time</dd>

@@ -44,7 +44,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -84,10 +84,59 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">private static final class </span><span class="element-name type-name-label">Naftah.NaftahCommand.ShellCommand</span>
 <span class="extends-implements">extends <a href="Naftah.NaftahCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand</a></span></div>
-<div class="block">The 'shell' subcommand that starts the interactive Naftah REPL.</div>
+<div class="block">The 'shell' subcommand that starts the interactive Naftah REPL (Read-Eval-Print Loop).
+
+ <p>This command launches an interactive programming environment where users can enter
+ single lines of Naftah code, evaluate them immediately, and see the results. It provides
+ a REPL interface for rapid experimentation, learning, and testing of Naftah scripts.</p>
+
+ <p>The REPL supports both English and Arabic commands, allowing users to:</p>
+ <ul>
+ <li>Exit the session</li>
+ <li>Display help instructions</li>
+ <li>Reset the session</li>
+ <li>List variables, functions, and implementations</li>
+ <li>Inspect imports</li>
+ <li>Save session state</li>
+ <li>View, sanitize, or purge command history</li>
+ </ul>
+
+ <p>Example usage:</p>
+ <pre><code>
+ naftah shell
+ :help                 // display available REPL commands
+ :vars                 // list defined variables
+ :functions            // list defined functions
+ :exit                 // terminate the REPL session
+ </code></pre></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="Naftah.NaftahCommand.ShellCommand.ReplCommand.html" title="enum class in org.daiitech.naftah"><code>Naftah.NaftahCommand.ShellCommand.ReplCommand</code></a></li>
+</ul>
+</dd>
+</dl>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>private static enum&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="Naftah.NaftahCommand.ShellCommand.ReplCommand.html" class="type-name-link" title="enum class in org.daiitech.naftah">Naftah.NaftahCommand.ShellCommand.ReplCommand</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Enum representing the REPL-specific commands supported in the Naftah interactive shell.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -99,7 +148,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="#NAME" class="member-name-link">NAME</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The name of the 'shell' subcommand and the REPL session start timestamp.</div>
+</div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#START_TIME" class="member-name-link">START_TIME</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">The timestamp marking when the REPL session was started.</div>
+</div>
 </div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-org.daiitech.naftah.Naftah.NaftahCommand">Fields inherited from class&nbsp;org.daiitech.naftah.<a href="Naftah.NaftahCommand.html" title="class in org.daiitech.naftah">Naftah.NaftahCommand</a></h3>
@@ -132,10 +188,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#checkManagementCommands(java.lang.String)" class="member-name-link">checkManagementCommands</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;line)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>private boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#checkManagementCommands(java.lang.String,org.jline.reader.History)" class="member-name-link">checkManagementCommands</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;line,
+ org.jline.reader.History&nbsp;history)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks for management commands like ':exit' or 'خروج:' and handles them accordingly.</div>
+<div class="block">Checks and executes REPL management commands entered by the user.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#run(org.daiitech.naftah.Naftah,boolean)" class="member-name-link">run</a><wbr>(<a href="Naftah.html" title="class in org.daiitech.naftah">Naftah</a>&nbsp;main,
@@ -164,6 +221,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="NAME">
 <h3>NAME</h3>
 <div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NAME</span></div>
+<div class="block">The name of the 'shell' subcommand and the REPL session start timestamp.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -172,6 +230,13 @@ loadScripts(document, 'script');</script>
 </ul>
 </dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="START_TIME">
+<h3>START_TIME</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a></span>&nbsp;<span class="element-name">START_TIME</span></div>
+<div class="block">The timestamp marking when the REPL session was started.</div>
 </section>
 </li>
 </ul>
@@ -215,13 +280,54 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="checkManagementCommands(java.lang.String)">
+<section class="detail" id="checkManagementCommands(java.lang.String,org.jline.reader.History)">
 <h3>checkManagementCommands</h3>
-<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">checkManagementCommands</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;line)</span></div>
-<div class="block">Checks for management commands like ':exit' or 'خروج:' and handles them accordingly.</div>
+<div class="member-signature"><span class="modifiers">private</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">checkManagementCommands</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;line,
+ org.jline.reader.History&nbsp;history)</span>
+                                 throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></span></div>
+<div class="block">Checks and executes REPL management commands entered by the user.
+
+ <p>
+ This method parses the provided input line and determines if it matches any
+ recognized REPL management command. Supported commands allow the user to:
+ </p>
+
+ <ul>
+ <li>Exit the REPL session (:exit or :خروج)</li>
+ <li>Display the help menu (:help or :مساعدة)</li>
+ <li>Reset the REPL session (:reset or :إعادة_ضبط)</li>
+ <li>List defined variables (:vars or :المتغيرات)</li>
+ <li>List defined functions (:functions or :الدوال)</li>
+ <li>List defined implementations and their functions (:implementations or :السلوكيات)</li>
+ <li>List imported elements (:imports or :الواردات)</li>
+ <li>Save the current session to a snippet file (:save or :حفظ)</li>
+ <li>View the full command history (:history or :الأوامر_المحفوظة)</li>
+ <li>View current session command history (:current_session_history or :الأوامر_المحفوظة_الحالية)</li>
+ <li>Sanitize command history (:sanitize_history or :تنظيف_الأوامر_المحفوظة)</li>
+ <li>Purge the command history (:purge_history or :مسح_الأوامر_المحفوظة)</li>
+ <li>Drop specific variables, functions, implementations, or imports (:drop)</li>
+ </ul>
+
+ <p>
+ Commands may be entered in either English or Arabic. Some commands, like
+ <code>:drop</code>, accept additional arguments to specify which elements
+ to remove. When a recognized command is executed, this method performs the
+ corresponding action (e.g., clearing variables, displaying lists, paginating output)
+ and returns <code>true</code>. If the input does not match any known management command,
+ <code>false</code> is returned.
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>line</code> - the input line to check</dd>
+<dd><code>line</code> - the input line to check for management commands</dd>
+<dd><code>history</code> - the REPL session history used for history-related commands</dd>
+<dt>Returns:</dt>
+<dd><code>true</code> if the input matches and executes a known REPL management command;
+         <code>false</code> otherwise</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/IOException.html" title="class or interface in java.io" class="external-link">IOException</a></code> - if an I/O error occurs while processing the command</dd>
+<dd><code>org.jline.reader.UserInterruptException</code> - if the input corresponds to an exit command
+                                (for example ":exit" or ":خروج"), indicating
+                                that the user session should be terminated</dd>
 </dl>
 </section>
 </li>

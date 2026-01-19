@@ -858,11 +858,11 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/NumberFormat.html" title="class or interface in java.text" class="external-link"><code>NumberFormat</code></a> instance for the Arabic locale. This includes Arabic-style decimal and grouping
  separators and may render digits in Arabic-Indic form, depending on JVM and font support.
  <p>
- The method synchronizes on <a href="../../utils/arabic/ArabicUtils.html#ARABIC_NUMBER_FORMAT"><code>ArabicUtils.ARABIC_NUMBER_FORMAT</code></a>
+ The method synchronizes on <a href="../../utils/script/ScriptUtils.html#NUMBER_FORMAT"><code>ScriptUtils.NUMBER_FORMAT</code></a>
  since <code>NumberFormat</code> is not thread-safe.
  <p>
  If the system property is not set to <code>true</code>, the method falls back to a custom digit conversion
- via <a href="../../utils/arabic/ArabicUtils.html#latinNumberToArabicString(java.lang.Number)"><code>ArabicUtils.latinNumberToArabicString(Number)</code></a>.</div>
+ via <a href="../../utils/script/ScriptUtils.html#numberToString(java.lang.Number)"><code>ScriptUtils.numberToString(Number)</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>number</code> - the number to format; must not be <code>null</code></dd>
@@ -875,7 +875,7 @@ loadScripts(document, 'script');</script>
 <ul class="see-list-long">
 <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/NumberFormat.html#format(double)" title="class or interface in java.text" class="external-link"><code>NumberFormat.format(double)</code></a></li>
 <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link"><code>Locale</code></a></li>
-<li><a href="../../utils/arabic/ArabicUtils.html#latinNumberToArabicString(java.lang.Number)"><code>ArabicUtils.latinNumberToArabicString(Number)</code></a></li>
+<li><a href="../../utils/script/ScriptUtils.html#numberToString(java.lang.Number)"><code>ScriptUtils.numberToString(Number)</code></a></li>
 </ul>
 </dd>
 </dl>

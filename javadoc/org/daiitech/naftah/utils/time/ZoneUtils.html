@@ -78,9 +78,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ZoneUtils</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Utility class for handling time zones with support for Arabic names.
+<div class="block">Utility class for handling time zones with support for names.
  <p>
- Provides methods to convert between Arabic time zone names and Java Zone IDs,
+ Provides methods to convert between time zone names and Java Zone IDs,
  as well as parsing string offsets into <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneOffset.html" title="class or interface in java.time" class="external-link"><code>ZoneOffset</code></a>.</div>
 <dl class="notes">
 <dt>Author:</dt>
@@ -98,20 +98,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#ARABIC_ZONE_MAP" class="member-name-link">ARABIC_ZONE_MAP</a></code></div>
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ResourceBundle.html" title="class or interface in java.util" class="external-link">ResourceBundle</a></code></div>
+<div class="col-second even-row-color"><code><a href="#BUNDLE" class="member-name-link">BUNDLE</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Map of Arabic time zone names to Java Zone IDs.</div>
+<div class="block">Resource bundle containing names of time zones mapped to Java Zone IDs.</div>
 </div>
-<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ResourceBundle.html" title="class or interface in java.util" class="external-link">ResourceBundle</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#BUNDLE" class="member-name-link">BUNDLE</a></code></div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#JAVA_ZONE_TO_MAP" class="member-name-link">JAVA_ZONE_TO_MAP</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Resource bundle containing Arabic names of time zones mapped to Java Zone IDs.</div>
+<div class="block">Reverse map from Java Zone IDs to canonical time zone names.</div>
 </div>
 <div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#JAVA_ZONE_TO_ARABIC_MAP" class="member-name-link">JAVA_ZONE_TO_ARABIC_MAP</a></code></div>
+<div class="col-second even-row-color"><code><a href="#ZONE_MAP" class="member-name-link">ZONE_MAP</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Reverse map from Java Zone IDs to canonical Arabic time zone names.</div>
+<div class="block">Map of time zone names to Java Zone IDs.</div>
 </div>
 </div>
 </section>
@@ -145,19 +145,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#arabicZoneNameToJava(java.lang.String)" class="member-name-link">arabicZoneNameToJava</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;arabicZoneName)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#javaZoneIdToName(java.lang.String)" class="member-name-link">javaZoneIdToName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;javaZoneId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts an Arabic time zone name to its corresponding Java Zone ID.</div>
+<div class="block">Converts a Java Zone ID to its canonical name.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#javaZoneIdToArabic(java.lang.String)" class="member-name-link">javaZoneIdToArabic</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;javaZoneId)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneOffset.html" title="class or interface in java.time" class="external-link">ZoneOffset</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#parseZoneOffset(java.lang.String)" class="member-name-link">parseZoneOffset</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;offsetStr)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Converts a Java Zone ID to its canonical Arabic name.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneOffset.html" title="class or interface in java.time" class="external-link">ZoneOffset</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#parseZoneOffset(java.lang.String)" class="member-name-link">parseZoneOffset</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;offsetStr)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Parses a string offset (e.g., "+03:00") into a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZoneOffset.html" title="class or interface in java.time" class="external-link"><code>ZoneOffset</code></a>.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#zoneNameToJavaZoneId(java.lang.String)" class="member-name-link">zoneNameToJavaZoneId</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;zoneName)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Converts a time zone name to its corresponding Java Zone ID.</div>
 </div>
 </div>
 </div>
@@ -180,25 +180,25 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="BUNDLE">
 <h3>BUNDLE</h3>
 <div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ResourceBundle.html" title="class or interface in java.util" class="external-link">ResourceBundle</a></span>&nbsp;<span class="element-name">BUNDLE</span></div>
-<div class="block">Resource bundle containing Arabic names of time zones mapped to Java Zone IDs.</div>
+<div class="block">Resource bundle containing names of time zones mapped to Java Zone IDs.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="ARABIC_ZONE_MAP">
-<h3>ARABIC_ZONE_MAP</h3>
-<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">ARABIC_ZONE_MAP</span></div>
-<div class="block">Map of Arabic time zone names to Java Zone IDs.
+<section class="detail" id="ZONE_MAP">
+<h3>ZONE_MAP</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">ZONE_MAP</span></div>
+<div class="block">Map of time zone names to Java Zone IDs.
  <p>
  This map is initialized from the <a href="#BUNDLE"><code>BUNDLE</code></a> and is unmodifiable.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="JAVA_ZONE_TO_ARABIC_MAP">
-<h3>JAVA_ZONE_TO_ARABIC_MAP</h3>
-<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">JAVA_ZONE_TO_ARABIC_MAP</span></div>
-<div class="block">Reverse map from Java Zone IDs to canonical Arabic time zone names.
+<section class="detail" id="JAVA_ZONE_TO_MAP">
+<h3>JAVA_ZONE_TO_MAP</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">JAVA_ZONE_TO_MAP</span></div>
+<div class="block">Reverse map from Java Zone IDs to canonical time zone names.
  <p>
- Only the first Arabic name encountered for a given Java Zone ID is retained.
+ Only the first name encountered for a given Java Zone ID is retained.
  This map is unmodifiable.</div>
 </section>
 </li>
@@ -242,30 +242,30 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="arabicZoneNameToJava(java.lang.String)">
-<h3>arabicZoneNameToJava</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">arabicZoneNameToJava</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;arabicZoneName)</span></div>
-<div class="block">Converts an Arabic time zone name to its corresponding Java Zone ID.</div>
+<section class="detail" id="zoneNameToJavaZoneId(java.lang.String)">
+<h3>zoneNameToJavaZoneId</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">zoneNameToJavaZoneId</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;zoneName)</span></div>
+<div class="block">Converts a time zone name to its corresponding Java Zone ID.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>arabicZoneName</code> - the Arabic name of the time zone</dd>
+<dd><code>zoneName</code> - the name of the time zone</dd>
 <dt>Returns:</dt>
 <dd>the Java Zone ID (e.g., "Asia/Riyadh")</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the Arabic name is unknown</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the name is unknown</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="javaZoneIdToArabic(java.lang.String)">
-<h3>javaZoneIdToArabic</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">javaZoneIdToArabic</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;javaZoneId)</span></div>
-<div class="block">Converts a Java Zone ID to its canonical Arabic name.</div>
+<section class="detail" id="javaZoneIdToName(java.lang.String)">
+<h3>javaZoneIdToName</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">javaZoneIdToName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;javaZoneId)</span></div>
+<div class="block">Converts a Java Zone ID to its canonical name.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>javaZoneId</code> - the Java Zone ID</dd>
 <dt>Returns:</dt>
-<dd>the corresponding Arabic name of the time zone</dd>
+<dd>the corresponding name of the time zone</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the Java Zone ID is unknown</dd>
 </dl>

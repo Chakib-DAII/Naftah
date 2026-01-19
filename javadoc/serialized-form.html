@@ -431,16 +431,16 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="serialized-class-details" id="org.daiitech.naftah.builtin.utils.AliasHashMap">
 <h3>Class&nbsp;<a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">org.daiitech.naftah.builtin.utils.AliasHashMap</a></h3>
-<div class="type-signature">class AliasHashMap extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt; implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
+<div class="type-signature">class AliasHashMap extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&gt; implements <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></div>
 <ul class="block-list">
 <li>
 <section class="detail">
 <h4>Serialized Fields</h4>
 <ul class="block-list">
 <li class="block-list">
-<h5>aliasToKeyMap</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&gt; aliasToKeyMap</pre>
-<div class="block">Internal map storing alias → canonical key mappings.</div>
+<h5>aliasToKeysMap</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="org/daiitech/naftah/builtin/utils/AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&gt;&gt; aliasToKeysMap</pre>
+<div class="block">Internal map storing alias → canonical key relationships.</div>
 </li>
 </ul>
 </section>

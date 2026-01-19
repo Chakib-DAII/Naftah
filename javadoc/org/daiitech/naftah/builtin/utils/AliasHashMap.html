@@ -73,7 +73,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/AbstractMap.html" title="class or interface in java.util" class="external-link">java.util.AbstractMap</a>&lt;K,<wbr>V&gt;
-<div class="inheritance"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">java.util.HashMap</a>&lt;K,<wbr>V&gt;
+<div class="inheritance"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">java.util.HashMap</a>&lt;K,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;V&gt;&gt;
 <div class="inheritance">org.daiitech.naftah.builtin.utils.AliasHashMap&lt;K,<wbr>V&gt;</div>
 </div>
 </div>
@@ -81,30 +81,29 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>K</code> - The type of keys maintained by this map.</dd>
-<dd><code>V</code> - The type of mapped values.</dd>
+<dd><code>K</code> - the type of keys maintained by this map</dd>
+<dd><code>V</code> - the type of mapped values</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Cloneable.html" title="class or interface in java.lang" class="external-link">Cloneable</a></code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;K,<wbr>V&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Cloneable.html" title="class or interface in java.lang" class="external-link">Cloneable</a></code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;K,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;V&gt;&gt;</code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">AliasHashMap&lt;K,<wbr>V&gt;</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;K,<wbr>V&gt;</span></div>
-<div class="block">A specialized HashMap that supports aliasing of keys.
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;K,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;V&gt;&gt;</span></div>
+<div class="block">A specialized <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link"><code>HashMap</code></a> that supports aliasing of keys.
 
- <p>This map allows you to associate multiple alias keys with a single
- canonical key, so that any of the aliases can be used to retrieve the value
- of the canonical key.</p>
+ <p>This map allows associating multiple alias keys with a single canonical key,
+ enabling any alias to retrieve the value associated with the canonical key.</p>
 
- <p>Example:</p>
+ <p>Example usage:</p>
  <pre><code>
  AliasHashMap&lt;String, String&gt; map = new AliasHashMap&lt;&gt;();
  map.put("NA", "Naftah", "NFTH", "Naftah");
 
- map.get("NA");      // "Naftah"
- map.get("NFTH");     // "Naftah"
- map.get("Naftah"); // "Naftah"
+ map.get("NA");      // returns "Naftah"
+ map.get("NFTH");    // returns "Naftah"
+ map.get("Naftah");  // returns "Naftah"
  </code></pre></div>
 <dl class="notes">
 <dt>Author:</dt>
@@ -140,10 +139,10 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#aliasToKeyMap" class="member-name-link">aliasToKeyMap</a></code></div>
+<div class="col-first even-row-color"><code>private final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&gt;&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#aliasToKeysMap" class="member-name-link">aliasToKeysMap</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Internal map storing alias → canonical key mappings.</div>
+<div class="block">Internal map storing alias → canonical key relationships.</div>
 </div>
 </div>
 </section>
@@ -186,34 +185,28 @@ V&gt;&nbsp;void</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Fills the alias-to-key mapping for a given <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#get(java.lang.Object)" class="member-name-link">get</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value to which the specified key is mapped, or <code>null</code>
  if this map contains no mapping for the key or its aliases.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newNaftahAliasOverrideError(org.daiitech.naftah.builtin.lang.BuiltinFunction)" class="member-name-link">newNaftahAliasOverrideError</a><wbr>(<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;fn)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a new <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> to indicate that an attempt was made
- to override a predefined function alias.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#put(K,V,K...)" class="member-name-link">put</a><wbr>(<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&nbsp;canonicalKey,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#put(K,V,K...)" class="member-name-link">put</a><wbr>(<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&nbsp;canonicalKey,
  <a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&nbsp;value,
  <a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>...&nbsp;aliases)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Associates the specified value with the specified canonical key,
  and registers any number of alias keys that map to the same value.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#putAll(java.util.Map)" class="member-name-link">putAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr>? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&nbsp;map)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#putAll(java.util.Map)" class="member-name-link">putAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr>? extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&gt;&nbsp;map)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Copies all mappings from the specified map into this map.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link">Collector</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toAliasGroupedByName()" class="member-name-link">toAliasGroupedByName</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link">Collector</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toAliasGroupedByName()" class="member-name-link">toAliasGroupedByName</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Returns a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link"><code>Collector</code></a> that groups <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> instances by their canonical function name,
  storing the results in an <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a> where:
  
@@ -251,10 +244,10 @@ V&gt;&nbsp;void</code></div>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="aliasToKeyMap">
-<h3>aliasToKeyMap</h3>
-<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&gt;</span>&nbsp;<span class="element-name">aliasToKeyMap</span></div>
-<div class="block">Internal map storing alias → canonical key mappings.</div>
+<section class="detail" id="aliasToKeysMap">
+<h3>aliasToKeysMap</h3>
+<div class="member-signature"><span class="modifiers">private final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>&gt;&gt;</span>&nbsp;<span class="element-name">aliasToKeysMap</span></div>
+<div class="block">Internal map storing alias → canonical key relationships.</div>
 </section>
 </li>
 </ul>
@@ -282,7 +275,7 @@ V&gt;&nbsp;void</code></div>
 <li>
 <section class="detail" id="toAliasGroupedByName()">
 <h3>toAliasGroupedByName</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link">Collector</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;&gt;</span>&nbsp;<span class="element-name">toAliasGroupedByName</span>()</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link">Collector</a>&lt;<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;&gt;</span>&nbsp;<span class="element-name">toAliasGroupedByName</span>()</div>
 <div class="block">Returns a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link"><code>Collector</code></a> that groups <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> instances by their canonical function name,
  storing the results in an <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a> where:
  <ul>
@@ -343,38 +336,10 @@ V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dd><code>K</code> - the type of keys (aliases and canonical keys)</dd>
 <dd><code>V</code> - the type of mapped values</dd>
 <dt>Parameters:</dt>
-<dd><code>map</code> - the <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a> to be updated</dd>
+<dd><code>map</code> - the <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a> to update</dd>
 <dd><code>alias</code> - the alias key to register</dd>
-<dd><code>canonicalKey</code> - the canonical key to which the alias refers</dd>
-<dd><code>fn</code> - the <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> context used for error reporting</dd>
-<dt>Throws:</dt>
-<dd><code><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></code> - if the alias is already defined in the map</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="newNaftahAliasOverrideError(org.daiitech.naftah.builtin.lang.BuiltinFunction)">
-<h3>newNaftahAliasOverrideError</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors">NaftahBugError</a></span>&nbsp;<span class="element-name">newNaftahAliasOverrideError</span><wbr><span class="parameters">(<a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;fn)</span></div>
-<div class="block">Creates a new <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> to indicate that an attempt was made
- to override a predefined function alias.
- <p>
- The error message explains that builtin function aliases are statically defined and
- cannot be overridden by other providers. It suggests using
- <code>useQualifiedAliases</code> or unique alias names for builtin extensions.
- </p>
-
- <p><strong>Arabic message:</strong></p>
- <blockquote>
- أسماء الدوال المستعارة (Function Aliases) معرفة بشكل ثابت، ولا يمكن لمزوّدين آخرين تعديلها أو تجاوزها.
- إذا كنت بصدد إنشاء امتداد مضمّن (builtin extension)، يُرجى تمييزه باستخدام useQualifiedAliases أو التأكد من
- استخدام أسماء مستعارة (aliases) فريدة من نوعها.
- </blockquote></div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>fn</code> - the <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> that triggered the alias conflict, may be <code>null</code></dd>
-<dt>Returns:</dt>
-<dd>a <a href="../../errors/NaftahBugError.html" title="class in org.daiitech.naftah.errors"><code>NaftahBugError</code></a> with a detailed error message</dd>
+<dd><code>canonicalKey</code> - the canonical key associated with the alias</dd>
+<dd><code>fn</code> - the <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> used for error reporting</dd>
 </dl>
 </section>
 </li>
@@ -401,7 +366,7 @@ V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <li>
 <section class="detail" id="putAll(java.util.Map)">
 <h3>putAll</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">putAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr>? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&nbsp;map)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">putAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;? extends <a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr>? extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&gt;&nbsp;map)</span></div>
 <div class="block">Copies all mappings from the specified map into this map.
  <p>
  This method behaves like <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#putAll(java.util.Map)" title="class or interface in java.util" class="external-link"><code>HashMap.putAll(Map)</code></a> for regular entries,
@@ -417,7 +382,7 @@ V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html#putAll(java.util.Map)" title="class or interface in java.util" class="external-link">putAll</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></dd>
 <dt>Overrides:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#putAll(java.util.Map)" title="class or interface in java.util" class="external-link">putAll</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#putAll(java.util.Map)" title="class or interface in java.util" class="external-link">putAll</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>map</code> - The map whose mappings are to be copied into this map.</dd>
 <dt>Throws:</dt>
@@ -434,7 +399,7 @@ V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <li>
 <section class="detail" id="get(java.lang.Object)">
 <h3>get</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a></span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;key)</span></div>
 <div class="block">Returns the value to which the specified key is mapped, or <code>null</code>
  if this map contains no mapping for the key or its aliases.
 
@@ -443,11 +408,11 @@ V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html#get(java.lang.Object)" title="class or interface in java.util" class="external-link">get</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></dd>
 <dt>Overrides:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#get(java.lang.Object)" title="class or interface in java.util" class="external-link">get</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#get(java.lang.Object)" title="class or interface in java.util" class="external-link">get</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>key</code> - The key (or alias) whose associated value is to be returned.</dd>
 <dt>Returns:</dt>
-<dd>The value associated with the key or alias, or <code>null</code> if none exists.</dd>
+<dd>a list of associated values, or <code>null</code> if none exists.</dd>
 </dl>
 </section>
 </li>
@@ -460,7 +425,7 @@ V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html#containsKey(java.lang.Object)" title="class or interface in java.util" class="external-link">containsKey</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></dd>
 <dt>Overrides:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#containsKey(java.lang.Object)" title="class or interface in java.util" class="external-link">containsKey</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;</code></dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html#containsKey(java.lang.Object)" title="class or interface in java.util" class="external-link">containsKey</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/HashMap.html" title="class or interface in java.util" class="external-link">HashMap</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">K</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="AliasHashMap.html" title="type parameter in AliasHashMap">V</a>&gt;&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>key</code> - The key (or alias) whose presence in this map is to be tested.</dd>
 <dt>Returns:</dt>
