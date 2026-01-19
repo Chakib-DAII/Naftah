@@ -240,7 +240,7 @@ subprojects { subproj ->
 		}
 	}
 
-	subproj.tasks.matching { it.name == 'jreleaserDeploy' }.configureEach {
+	subproj.tasks.withType(PublishToMavenRepository).configureEach {
 		dependsOn tasks.named('createJReleaserStagingDir')
 	}
 
@@ -324,28 +324,6 @@ subprojects { subproj ->
 				name = 'jreleaserStaging'
 				url = layout.buildDirectory.dir('jreleaser/staging-deploy')
 			}
-
-			// GitHub Packages
-			maven {
-				def m2SettingsFile = new File(System.getProperty("user.home"), ".m2/settings.xml")
-
-				def githubServer = null
-				if (m2SettingsFile.exists()) {
-					def xml = new XmlSlurper().parse(m2SettingsFile)
-					githubServer = xml.servers.server.find { it.id.text() == 'github' }
-				}
-
-				name = "github"
-				url = uri("https://maven.pkg.github.com/Chakib-DAII/Naftah")
-				credentials {
-					username = findProperty("gprUsername")
-							?: System.getenv("GITHUB_USERNAME")
-							?: (githubServer?.username?.text() ?: "")
-					password = findProperty("gprToken")
-							?: System.getenv("GITHUB_TOKEN")
-							?: (githubServer?.password?.text() ?: "")
-				}
-			}
 		}
 	}
 
@@ -353,13 +331,21 @@ subprojects { subproj ->
 	gradle.projectsEvaluated {
 		jreleaser {
 			environment {
+				strict = false
 				// Path to your external properties file
 				variables = "${System.getProperty('user.home')}/.jreleaser/config.properties"
 			}
 
 			release {
+				enabled = true
 				github {
-					enabled = false
+					enabled = true
+					draft = true
+					branch = 'main'
+					changelog {
+						external = "${rootProject.rootDir}/CHANGELOG.md"
+						format = 'markdown'
+					}
 				}
 			}
 
@@ -395,7 +381,22 @@ subprojects { subproj ->
 							stagingRepository('build/jreleaser/staging-deploy')
 						}
 					}
+
+					github {
+						'github-deploy' {
+										active = 'ALWAYS'
+										url = 'https://maven.pkg.github.com/Chakib-DAII/Naftah'
+										applyMavenCentralRules = false
+										snapshotSupported = true
+										stagingRepository('build/jreleaser/staging-deploy')
+
+						}
+					}
 				}
+			}
+
+			checksum {
+				enabled = true
 			}
 		}
 	}

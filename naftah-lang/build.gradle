@@ -674,3 +674,38 @@ tasks.register('exportNaftahFunctions') {
         ''')
 	}
 }
+
+
+tasks.named("jreleaserPrepare") {
+	dependsOn tasks.named("dist"), tasks.named("distStandalone")
+}
+
+jreleaser {
+	distributions {
+		naftah {
+			active = 'ALWAYS'
+			distributionType = 'JAVA_BINARY'
+			stereotype = 'CLI'
+
+			executable {
+				name = 'naftah'
+				unixExtension = 'sh'
+				windowsExtension = 'cmd'
+			}
+
+			tags = ['cli', 'naftah', 'programming', 'language', 'Arabic', 'Tunisian', 'REPL']
+
+			artifact {
+				path = "${layout.buildDirectory}/libs/${project.name}-${project.version}.jar"
+			}
+
+			artifact {
+				path = "${layout.buildDirectory}/distributions/${project.name}-${project.version}-bin.zip"
+			}
+
+			artifact {
+				path = "${layout.buildDirectory}/distributions/${project.name}-${project.version}-standalone-bin.zip"
+			}
+		}
+	}
+}
