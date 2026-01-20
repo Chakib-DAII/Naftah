@@ -15,16 +15,27 @@ plugins {
 
 scmVersion {
 	repository {
+		def m2SettingsFile = new File(System.getProperty("user.home"), ".m2/settings.xml")
+
+		def githubServer = null
+		if (m2SettingsFile.exists()) {
+			def xml = new XmlSlurper().parse(m2SettingsFile)
+			githubServer = xml.servers.server.find { it.id.text() == 'github' }
+		}
+
 		type = 'git'
+		customUsername = findProperty("githubUsername")
+				?: System.getenv("GITHUB_USERNAME")
+				?: (githubServer?.username?.text() ?: "")
+		customPassword = findProperty("githubPassword")
+				?: System.getenv("GITHUB_PASSWORD")
+				?: (githubServer?.password?.text() ?: "")
 	}
 	tag {
 		prefix = ''
 	}
 	versionIncrementer 'incrementMinor'
 //	versionIncrementer 'incrementPatch'
-	nextVersion { version ->
-		return version
-	}
 }
 
 tasks.register('printVersion') {
@@ -177,13 +188,234 @@ changelog {
 	unreleasedTerm = 'Unreleased'
 	keepUnreleasedSection = true
 	repositoryUrl = 'https://github.com/Chakib-DAII/Naftah'
+	versionPrefix = ''
 }
 
 tasks.named('jreleaserPrepare') {
 	dependsOn tasks.named('patchChangelog')
 }
 
-subprojects { subproj ->
+tasks.withType(PublishToMavenRepository).configureEach {
+	dependsOn(
+			tasks.named('createJReleaserStagingDir'),
+			project(":naftah-lang").tasks.named("dist"),
+			project(":naftah-lang").tasks.named("distStandalone")
+	)
+}
+
+jreleaser {
+	gitRootSearch = true
+	project {
+		name = 'Naftah'
+		version = rootProject.version
+		description = 'Naftah Programming Language'
+		longDescription = rootProject.description
+		license = 'Apache-2.0'
+		inceptionYear = '2026'
+		copyright = 'Copyright © ${LocalDate.now().year} The Naftah Project Authors'
+		vendor = 'Chakib Daii'
+		authors = ['Chakib Daii']
+
+		website = 'https://naftah.daiitech.org'
+
+		links {
+			homepage = 'https://naftah.daiitech.org'
+			documentation = 'https://naftah.daiitech.org'
+			bugTracker = 'https://github.com/Chakib-DAII/Naftah/issues'
+			vcsBrowser = 'https://github.com/Chakib-DAII/Naftah'
+			contribute = 'https://github.com/Chakib-DAII/Naftah/blob/main/CONTRIBUTING.md'
+		}
+	}
+
+	environment {
+		strict = false
+		// Path to your external properties file
+		variables = "${System.getProperty('user.home')}/.jreleaser/config.properties"
+	}
+
+	release {
+		enabled = true
+		github {
+			enabled = true
+			draft = true
+			branch = 'main'
+			tagName = rootProject.version
+			changelog {
+				external = "${rootProject.rootDir}/CHANGELOG.md"
+				format = 'markdown'
+			}
+			commitAuthor {
+				name = "The Naftah Project Authors"
+			}
+		}
+	}
+
+	signing {
+		signing {
+			pgp {
+				active = 'ALWAYS'
+				armored = true
+				mode = 'MEMORY'
+				secretKey.set(System.getenv("JRELEASER_GPG_SECRET_KEY"))
+				publicKey.set(System.getenv("JRELEASER_GPG_PUBLIC_KEY"))
+				passphrase.set(System.getenv("JRELEASER_GPG_PASSPHRASE"))
+			}
+		}
+	}
+
+	deploy {
+		maven {
+			// Maven Central Portal deployment
+			mavenCentral {
+				sonatype {
+					active = 'ALWAYS'
+					url = 'https://central.sonatype.com/api/v1/publisher'
+					subprojects.forEach { subproject ->
+						stagingRepository(subproject.layout.buildDirectory.dir('staging-deploy').get().asFile.path)
+					}
+				}
+			}
+			// Nexus2 deployer for snapshots
+			nexus2 {
+				'snapshot-deploy' {
+					active = 'SNAPSHOT'
+					snapshotUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+					applyMavenCentralRules = true
+					snapshotSupported = true
+					closeRepository = true
+					releaseRepository = true
+					subprojects.forEach { subproject ->
+						stagingRepository(subproject.layout.buildDirectory.dir('staging-deploy').get().asFile.path)
+					}
+				}
+			}
+
+			github {
+				'github-deploy' {
+					active = 'ALWAYS'
+					url = 'https://maven.pkg.github.com/Chakib-DAII/Naftah'
+					applyMavenCentralRules = false
+					snapshotSupported = true
+					subprojects.forEach { subproject ->
+						stagingRepository(subproject.layout.buildDirectory.dir('staging-deploy').get().asFile.path)
+					}
+				}
+			}
+		}
+	}
+	def version = rootProject.version
+	distributions {
+		naftahCore {
+				distributionType = 'JAVA_BINARY'
+				stereotype = 'NONE'
+
+				tags = [
+						'cli',
+						'naftah',
+						'programming',
+						'language',
+						'Arabic',
+						'Tunisian',
+				]
+
+
+				artifact {
+					path = project(":naftah-builtin-core")
+							.layout.buildDirectory.file(
+							"libs/naftah-builtin-core-${version}.jar"
+					).get().asFile.absolutePath
+				}
+		}
+
+		naftahLang {
+			distributionType = 'JAVA_BINARY'
+			stereotype = 'CLI'
+
+			tags = [
+					'cli',
+					'naftah',
+					'programming',
+					'language',
+					'Arabic',
+					'Tunisian',
+					'REPL'
+			]
+
+			executable {
+				name = 'naftah'
+			}
+
+			artifact {
+				path = project(":naftah-lang")
+						.layout.buildDirectory.file(
+						"libs/naftah-lang-${version}.jar"
+				).get().asFile.absolutePath
+			}
+		}
+
+		naftahLangBin {
+			distributionType = 'JAVA_BINARY'
+			stereotype = 'CLI'
+
+			tags = [
+					'cli',
+					'naftah',
+					'programming',
+					'language',
+					'Arabic',
+					'Tunisian',
+					'REPL'
+			]
+
+			executable {
+				name = 'naftah'
+				unixExtension = 'sh'
+				windowsExtension = 'cmd'
+			}
+
+			artifact {
+				path = project(":naftah-lang")
+						.layout.buildDirectory.file(
+						"distributions/naftah-lang-${version}-bin.zip"
+				).get().asFile.absolutePath
+			}
+		}
+
+		naftahLangStandalone {
+			distributionType = 'JAVA_BINARY'
+			stereotype = 'CLI'
+
+			tags = [
+					'cli',
+					'naftah',
+					'programming',
+					'language',
+					'Arabic',
+					'Tunisian',
+					'REPL'
+			]
+
+			executable {
+				name = 'naftah'
+				unixExtension = 'sh'
+				windowsExtension = 'cmd'
+			}
+
+			artifact {
+				path = project(":naftah-lang")
+						.layout.buildDirectory.file(
+						"distributions/naftah-lang-${version}-standalone-bin.zip"
+				).get().asFile.absolutePath
+			}
+		}
+	}
+
+	checksum {
+		enabled = true
+	}
+}
+
+subprojects {
 	apply plugin: 'java'
 	apply plugin: 'idea'
 	apply plugin: 'checkstyle'
@@ -191,7 +423,6 @@ subprojects { subproj ->
 	apply plugin: 'java-library'
 	apply plugin: 'maven-publish'
 	apply plugin: 'signing'
-	apply plugin: 'org.jreleaser'
 
 	java {
 		toolchain {
@@ -241,23 +472,6 @@ subprojects { subproj ->
 	dependencies {
 		testImplementation(platform('org.junit:junit-bom:5.7.0'))
 		testImplementation('org.junit.jupiter:junit-jupiter')
-	}
-
-	// Register the task
-	tasks.register('createJReleaserStagingDir') {
-		description = "Creates staging directory for JReleaser in ${subproj.name}"
-		doLast {
-			// Each subproject gets its own staging directory
-			def dir = subproj.layout.buildDirectory.dir('jreleaser/staging-deploy').get().asFile
-			if (!dir.exists()) {
-				logger.lifecycle("Creating JReleaser staging directory for ${subproj.name}: ${dir}")
-				dir.mkdirs()
-			}
-		}
-	}
-
-	subproj.tasks.withType(PublishToMavenRepository).configureEach {
-		dependsOn tasks.named('createJReleaserStagingDir')
 	}
 
 	checkstyle {
@@ -334,91 +548,10 @@ subprojects { subproj ->
 		}
 
 		repositories {
-			// Local staging dir for JReleaser
 			maven {
-				// Local staging directory for JReleaser
 				name = 'jreleaserStaging'
-				url = layout.buildDirectory.dir('jreleaser/staging-deploy')
+				url = layout.buildDirectory.dir('staging-deploy').get().asFile.toURI()
 			}
 		}
-	}
-
-	// JReleaser configuration
-	gradle.projectsEvaluated {
-		jreleaser {
-			environment {
-				strict = false
-				// Path to your external properties file
-				variables = "${System.getProperty('user.home')}/.jreleaser/config.properties"
-			}
-
-			release {
-				enabled = true
-				github {
-					enabled = true
-					draft = true
-					branch = 'main'
-					changelog {
-						external = "${rootProject.rootDir}/CHANGELOG.md"
-						format = 'markdown'
-					}
-				}
-			}
-
-			signing {
-				signing {
-					pgp {
-						active = 'ALWAYS'
-						armored = true
-						mode = 'COMMAND'
-					}
-				}
-			}
-
-			deploy {
-				maven {
-					// Maven Central Portal deployment
-					mavenCentral {
-						sonatype {
-							active = 'ALWAYS'
-							url = 'https://central.sonatype.com/api/v1/publisher'
-							stagingRepository('build/jreleaser/staging-deploy')
-						}
-					}
-					// Nexus2 deployer for snapshots
-					nexus2 {
-						'snapshot-deploy' {
-							active = 'SNAPSHOT'
-							snapshotUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
-							applyMavenCentralRules = true
-							snapshotSupported = true
-							closeRepository = true
-							releaseRepository = true
-							stagingRepository('build/jreleaser/staging-deploy')
-						}
-					}
-
-					github {
-						'github-deploy' {
-										active = 'ALWAYS'
-										url = 'https://maven.pkg.github.com/Chakib-DAII/Naftah'
-										applyMavenCentralRules = false
-										snapshotSupported = true
-										stagingRepository('build/jreleaser/staging-deploy')
-
-						}
-					}
-				}
-			}
-
-			checksum {
-				enabled = true
-			}
-		}
-	}
-
-	signing {
-		useGpgCmd()
-		sign publishing.publications.mavenJava
 	}
 }
