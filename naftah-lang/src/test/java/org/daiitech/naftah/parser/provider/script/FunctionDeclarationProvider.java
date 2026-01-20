@@ -6,13 +6,11 @@ package org.daiitech.naftah.parser.provider.script;
 import java.math.BigInteger;
 import java.util.stream.Stream;
 
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionArgumentError;
-import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionError;
-import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentFunctionParameterError;
 
 public class FunctionDeclarationProvider implements ArgumentsProvider {
 	@Override
@@ -76,7 +74,9 @@ public class FunctionDeclarationProvider implements ArgumentsProvider {
 								(أ , ب)
 								""",
 								null,
-								newNaftahBugExistentFunctionError("دالة_ترجع_تركيبة")),
+								new NaftahBugError( "الدالة 'دالة_ترجع_تركيبة' موجودة في السياق الحالي. لا يمكن إعادة إعلانها.",
+													5,
+													0)),
 					Arguments
 							.of(false,
 								"""
@@ -91,7 +91,9 @@ public class FunctionDeclarationProvider implements ArgumentsProvider {
 								دالة_المضروب(20)
 								""",
 								null,
-								newNaftahBugExistentFunctionParameterError("عدد_مضروب")),
+								new NaftahBugError( "المعامل 'عدد_مضروب' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.",
+													1,
+													0)),
 					Arguments
 							.of(false,
 								"""
@@ -106,7 +108,9 @@ public class FunctionDeclarationProvider implements ArgumentsProvider {
 								دالة_المضروب(عدد_مضروب تعيين 20 , عدد_مضروب تعيين 20)
 								""",
 								null,
-								newNaftahBugExistentFunctionArgumentError("عدد_مضروب"))
+								new NaftahBugError( "الوسيط 'عدد_مضروب' موجود في السياق الحالي للدالة. لا يمكن إعادة إعلانه.",
+													9,
+													0))
 				);
 	}
 }

@@ -166,6 +166,6 @@ public class CollectionAccessProvider implements ArgumentsProvider {
 								new NaftahBugError(String
 										.format("""
 												المؤشر المطلوب (%d) خارج حدود المجموعة. عدد العناصر الحالية هو %d.
-												""", 4, 4))));
+												""", 4, 4), 2, 0)));
 	}
 }

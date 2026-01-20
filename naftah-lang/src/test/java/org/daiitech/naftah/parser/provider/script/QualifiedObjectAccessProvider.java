@@ -74,7 +74,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 										}
 										}
 										المدي؟:البلدة؟["عدد_البيوت"]
-										""", null, newNaftahBugVariableNotFoundError("المدي")),
+										""", null, newNaftahBugVariableNotFoundError("المدي", 9, 0)),
 					Arguments
 							.of(false,
 								"""
@@ -133,7 +133,7 @@ public class QualifiedObjectAccessProvider implements ArgumentsProvider {
 										}
 										}
 										المدي؟["البلدة"]؟["عدد_البيوت"]
-										""", null, newNaftahBugVariableNotFoundError("المدي")),
+										""", null, newNaftahBugVariableNotFoundError("المدي", 9, 0)),
 					Arguments
 							.of(false,
 								"""

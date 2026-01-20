@@ -7,11 +7,10 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.daiitech.naftah.errors.ExceptionUtils;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
-
-import static org.daiitech.naftah.parser.DefaultContext.newNaftahBugExistentVariableError;
 
 public class DeclarationProvider implements ArgumentsProvider {
 	@Override
@@ -81,10 +80,14 @@ public class DeclarationProvider implements ArgumentsProvider {
 										ثابت ك : عدد_عائم_طويل
 										ك
 										""", null, null),
-					Arguments.of(false, """
-										ثابت ت
-										ثابت ت: عدد_عائم_طويل
-										""", null, newNaftahBugExistentVariableError("ت")),
+					Arguments
+							.of(false,
+								"""
+								ثابت ت
+								ثابت ت: عدد_عائم_طويل
+								""",
+								null,
+								new NaftahBugError("المتغير 'ت' موجود في السياق الحالي. لا يمكن إعادة إعلانه.", 2, 0)),
 					Arguments
 							.of(true,
 								"""
@@ -132,7 +135,7 @@ public class DeclarationProvider implements ArgumentsProvider {
 								]
 								""",
 								null,
-								newNaftahBugExistentVariableError("ت")),
+								new NaftahBugError("المتغير 'ت' موجود في السياق الحالي. لا يمكن إعادة إعلانه.", 1, 0)),
 					Arguments
 							.of(false,
 								"""

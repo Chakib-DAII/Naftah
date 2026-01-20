@@ -12,12 +12,11 @@ import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Tuple;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-import static org.daiitech.naftah.builtin.utils.CollectionUtils.newNaftahSizeBugError;
-import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahKeyNotFoundError;
 
 public class CollectionExpressionProvider implements ArgumentsProvider {
 	@Override
@@ -223,8 +222,11 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 							.of(false,
 								"[٨٥، ٩٠، ٧٨] + [٨٥، ٩٠، ٧٨، ٩٢]",
 								null,
-								newNaftahSizeBugError(  new Byte[]{85, 90, 78},
-														new Byte[]{85, 90, 78, 92})),
+								new NaftahBugError("""
+													يجب أن تكون أحجام المصفوفات متساوية.
+													'[85, 90, 78]'
+													'[85, 90, 78, 92]'
+													""", 1, 0)),
 					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] - [٨٥، ٩٠، ٧٨، ٩٢]", List.of(0, 0, 0, 0), null),
 					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] / [٨٥، ٩٠، ٧٨، ٩٢]", List.of(1, 1, 1, 1), null),
 					Arguments.of(true, "[٨٥، ٩٠، ٧٨، ٩٢] % [٨٥، ٩٠، ٧٨، ٩٢]", List.of(0, 0, 0, 0), null),
@@ -294,8 +296,11 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 							.of(false,
 								"(٨٥، ٩٠، ٧٨) * (٨٥، ٩٠، ٧٨، ٩٢)",
 								null,
-								newNaftahSizeBugError(  new Byte[]{85, 90, 78},
-														new Byte[]{85, 90, 78, 92})),
+								new NaftahBugError("""
+													يجب أن تكون أحجام المصفوفات متساوية.
+													'[85, 90, 78]'
+													'[85, 90, 78, 92]'
+													""", 1, 0)),
 					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) + (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(170, 180, 156, 184), null),
 					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) - (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(0, 0, 0, 0), null),
 					Arguments.of(true, "(٨٥، ٩٠، ٧٨، ٩٢) / (٨٥، ٩٠، ٧٨، ٩٢)", Tuple.of(1, 1, 1, 1), null),
@@ -368,8 +373,11 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 							.of(false,
 								"{٨٥، ٩٠، ٧٨} - {٨٥، ٩٠، ٧٨، ٩٢}",
 								null,
-								newNaftahSizeBugError(  new Byte[]{85, 90, 78},
-														new Byte[]{85, 90, 92, 78})),
+								new NaftahBugError("""
+													يجب أن تكون أحجام المصفوفات متساوية.
+													'[85, 90, 78]'
+													'[85, 90, 92, 78]'
+													""", 1, 0)),
 					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} / {٨٥، ٩٠، ٧٨، ٩٢}", List.of(1, 1, 1, 1), null),
 					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} % {٨٥، ٩٠، ٧٨، ٩٢}", List.of(0, 0, 0, 0), null),
 					Arguments.of(true, "{٨٥، ٩٠، ٧٨، ٩٢} .*. {٨٥، ٩٠، ٧٨، ٩٢}", List.of(85, 90, 92, 78), null),
@@ -676,7 +684,8 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 
 								""",
 								null,
-								newNaftahKeyNotFoundError("اسم")),
+								new NaftahBugError("""
+													المفتاح 'اسم' غير موجود في المصفوفة الترابطية الثانية.""", 1, 0)),
 					Arguments
 							.of(true,
 
@@ -898,19 +907,11 @@ public class CollectionExpressionProvider implements ArgumentsProvider {
 
 								""",
 								null,
-								newNaftahSizeBugError(  new HashMap<>() {
-															{
-																put("اسم", "أحمد");
-																put("عمر", 20);
-																put("معدل", 88);
-															}
-														},
-														new HashMap<>() {
-															{
-																put("اسم", "أحمد");
-																put("معدل", 88);
-															}
-														}))
+								new NaftahBugError("""
+													يجب أن تكون أحجام المصفوفات الترابطية متساوية.
+													'{معدل=88, عمر=20, اسم=أحمد}'
+													'{معدل=88, اسم=أحمد}'
+													""", 1, 0))
 				);
 	}
 }

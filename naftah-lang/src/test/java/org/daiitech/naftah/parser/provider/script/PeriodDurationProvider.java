@@ -16,7 +16,7 @@ import org.daiitech.naftah.builtin.time.NaftahDuration;
 import org.daiitech.naftah.builtin.time.NaftahPeriod;
 import org.daiitech.naftah.builtin.time.NaftahPeriodWithDuration;
 import org.daiitech.naftah.builtin.time.NaftahTemporalAmount;
-import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
 import org.daiitech.naftah.utils.time.ZoneUtils;
@@ -1256,30 +1256,33 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								مقدار_زمني "فترة 5 سنوات و 3 ساعات" أصغر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
 								null,
-								BinaryOperation
-										.newNaftahBugError( BinaryOperation.LESS_THAN,
-															NaftahPeriodWithDuration.ofZero(),
-															NaftahPeriod.ofZero())),
+								new NaftahBugError(
+													"""
+													العملية '''أصغر_من' أو>'' غير مدعومة للنوعين: ''فترة_و_مدة'' و''فترة''.""",
+													1,
+													0)),
 					Arguments
 							.of(false,
 								"""
 								مقدار_زمني "مدة 3 ساعات" أكبر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
 								null,
-								BinaryOperation
-										.newNaftahBugError( BinaryOperation.GREATER_THAN,
-															NaftahDuration.ofZero(),
-															NaftahPeriod.ofZero())),
+								new NaftahBugError(
+													"""
+													العملية '''أكبر_من' أو<'' غير مدعومة للنوعين: ''مدة'' و''فترة''.""",
+													1,
+													0)),
 					Arguments
 							.of(false,
 								"""
 								مقدار_زمني "فترة 5 سنوات و 3 ساعات" أصغر_أو_يساوي قيمة_زمنية "مدة 3 ساعات"
 								""",
 								null,
-								BinaryOperation
-										.newNaftahBugError( BinaryOperation.LESS_THAN_EQUALS,
-															NaftahPeriodWithDuration.ofZero(),
-															NaftahDuration.ofZero())),
+								new NaftahBugError(
+													"""
+													العملية ''=>' أو 'أصغر_أو_يساوي'' غير مدعومة للنوعين: ''فترة_و_مدة'' و''مدة''.""",
+													1,
+													0)),
 					Arguments
 							.of(true,
 								"""

@@ -10,10 +10,8 @@ import java.util.stream.Stream;
 
 import org.daiitech.naftah.builtin.time.NaftahDate;
 import org.daiitech.naftah.builtin.time.NaftahDateTime;
-import org.daiitech.naftah.builtin.time.NaftahDuration;
-import org.daiitech.naftah.builtin.time.NaftahPeriod;
 import org.daiitech.naftah.builtin.time.NaftahTime;
-import org.daiitech.naftah.builtin.utils.op.BinaryOperation;
+import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.time.ChronologyUtils;
 import org.daiitech.naftah.utils.time.TemporalUtils;
 import org.daiitech.naftah.utils.time.ZoneUtils;
@@ -808,30 +806,30 @@ public class DateTimeProvider implements ArgumentsProvider {
 								نقطة_زمنية "٧ صفر ١٤٤٣ بالتقويم الهجري ٠٨:٢٠:٤٥ +02:00" أصغر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
 								null,
-								BinaryOperation
-										.newNaftahBugError( BinaryOperation.LESS_THAN,
-															NaftahDateTime.now(),
-															NaftahPeriod.ofZero())),
+								new NaftahBugError( """
+													العملية '''أصغر_من' أو>'' غير مدعومة للنوعين: ''تاريخ_و_وقت'' و''فترة''.""",
+													1,
+													0)),
 					Arguments
 							.of(false,
 								"""
 								زمن "١٥ مارس ٢٠٢٣ بالتقويم الميلادي ٠٩:٤٥:١٥ بتوقيت دبي" أكبر_من قيمة_زمنية "فترة 1 سنة و 3 أشهر و 10 أيام"
 								""",
 								null,
-								BinaryOperation
-										.newNaftahBugError( BinaryOperation.GREATER_THAN,
-															NaftahDateTime.now(),
-															NaftahPeriod.ofZero())),
+								new NaftahBugError( """
+													العملية '''أكبر_من' أو<'' غير مدعومة للنوعين: ''تاريخ_و_وقت'' و''فترة''.""",
+													1,
+													0)),
 					Arguments
 							.of(false,
 								"""
 								زمن "١ يناير ٢٠٢٤ بالتقويم الميلادي ١٢:٠٠ صباحاً +02:00" أصغر_أو_يساوي قيمة_زمنية "مدة 3 ساعات"
 								""",
 								null,
-								BinaryOperation
-										.newNaftahBugError( BinaryOperation.LESS_THAN_EQUALS,
-															NaftahDateTime.now(),
-															NaftahDuration.ofZero())),
+								new NaftahBugError( """
+													العملية ''=>' أو 'أصغر_أو_يساوي'' غير مدعومة للنوعين: ''تاريخ_و_وقت'' و''مدة''.""",
+													1,
+													0)),
 					Arguments
 							.of(true,
 								"""
