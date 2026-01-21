@@ -521,7 +521,7 @@ subprojects {
 				pom {
 					name = project.name
 					description = "Naftah Programming Language module: ${project.name}"
-					url = "https://github.com/Chakib-DAII/Naftah"
+					url = "https://www.naftah.daiitech.org"
 
 					licenses {
 						license {
