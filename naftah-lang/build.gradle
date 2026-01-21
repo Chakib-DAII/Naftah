@@ -407,12 +407,16 @@ tasks.named('fatJar') {
 	dependsOn project(':naftah-builtin-core').tasks.named('jar')
 }
 
-def zipBaseFolder = 'naftah'
+def candidate = 'naftah'
+def version = project.version.toString()
+
+// Base ZIP folder as <candidate>-<version>
+def zipBaseFolder = "${candidate}-${version}"
 
 tasks.register('baseDistZip', Zip) {
 	// Set the name of the output zip file
 	destinationDirectory.set(layout.buildDirectory.file("distributions").get().asFile)
-	archiveBaseName.set("${project.name}")
+	archiveBaseName.set("${candidate}")
 
 	from('../.') {
 		include 'INSTALL', 'LICENSE'
@@ -447,7 +451,9 @@ tasks.register('baseDistZip', Zip) {
 }
 
 tasks.register('dist', Zip) {
-	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"), tasks.named("jar"), tasks.named("extractLexerLiterals"), tasks.named("writeResolvedJars"), tasks.named("baseDistZip")
+	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"),
+			tasks.named("jar"), tasks.named("extractLexerLiterals"),
+			tasks.named("writeResolvedJars"), tasks.named("baseDistZip")
 
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
@@ -460,7 +466,6 @@ tasks.register('dist', Zip) {
 		include 'lib/*.jar', "${project.name}-${project.version}.jar"
 		into "${zipBaseFolder}/lib"
 	}
-
 }
 
 tasks.register('distStandalone', Zip) {
