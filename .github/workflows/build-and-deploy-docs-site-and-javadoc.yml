@@ -54,6 +54,7 @@ jobs:
             echo "No releases found, creating empty releases.json"
             echo "[]" > docs-site/_data/releases.json
           else
+            echo "$RELEASES_JSON" 
             echo "$RELEASES_JSON" > docs-site/_data/releases.json
           fi
         shell: bash
