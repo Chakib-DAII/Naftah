@@ -1006,9 +1006,26 @@ default values, and void functions.</p>
 		<tbody>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">هل_لا_يساوي</code></td>
-			<td>دالة (هل_لا_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا غير متساويين في القيمة. تُرجع صحيح إذا كان العددان غير متساويين، وخطأ خلاف ذلك.</td>
-			<td><code class="language-plaintext highlighter-rouge">هل_لا_يساوي(ش ، ي)</code></td>
+			<td><code class="language-plaintext highlighter-rouge">هل_أصغر_من</code></td>
+			<td>دالة (هل_أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد الثاني. تُرجع صحيح إذا كان الأول أصغر، وخطأ خلاف ذلك.</td>
+			<td><code class="language-plaintext highlighter-rouge">هل_أصغر_من(ش ، ي)</code></td>
+			<td>
+				
+				-
+				
+			</td>
+			<td>
+				
+				جافا:لغة:كائن (java.lang.Object), جافا:لغة:كائن (java.lang.Object)
+				
+			</td>
+			<td>جافا:لغة:كائن (java.lang.Object)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">هل_أكبر_من</code></td>
+			<td>دالة (هل_أكبر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر من العدد الثاني. تُرجع صحيح إذا كان الأول أكبر، وخطأ خلاف ذلك.</td>
+			<td><code class="language-plaintext highlighter-rouge">هل_أكبر_من(ش ، ي)</code></td>
 			<td>
 				
 				-
@@ -1037,6 +1054,40 @@ default values, and void functions.</p>
 				
 			</td>
 			<td>جافا:لغة:كائن (java.lang.Object)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">هل_لا_يساوي</code></td>
+			<td>دالة (هل_لا_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا غير متساويين في القيمة. تُرجع صحيح إذا كان العددان غير متساويين، وخطأ خلاف ذلك.</td>
+			<td><code class="language-plaintext highlighter-rouge">هل_لا_يساوي(ش ، ي)</code></td>
+			<td>
+				
+				-
+				
+			</td>
+			<td>
+				
+				جافا:لغة:كائن (java.lang.Object), جافا:لغة:كائن (java.lang.Object)
+				
+			</td>
+			<td>جافا:لغة:كائن (java.lang.Object)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">إزاحة_إلى_اليمين_غير_موقعة</code></td>
+			<td>دالة (إزاحة_إلى_اليمين_غير_موقعة) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بدون اعتبار الإشارة، بعدد المواقع المحدد. تُستخدم هذه العملية لمعالجة الأعداد بدون تأثير الإشارة السالبة.</td>
+			<td><code class="language-plaintext highlighter-rouge">إزاحة_إلى_اليمين_غير_موقعة(ش ، مواقِع)</code></td>
+			<td>
+				
+				-
+				
+			</td>
+			<td>
+				
+				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number)
+				
+			</td>
+			<td>جافا:لغة:رقم (java.lang.Number)</td>
 		  </tr>
 		  
 		  <tr>
@@ -1156,23 +1207,6 @@ default values, and void functions.</p>
 				
 			</td>
 			<td>جافا:لغة:كائن (java.lang.Object)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">إزاحة_إلى_اليمين_غير_موقعة</code></td>
-			<td>دالة (إزاحة_إلى_اليمين_غير_موقعة) تُنفذ عملية إزاحة البتات للعدد المعطى إلى اليمين بدون اعتبار الإشارة، بعدد المواقع المحدد. تُستخدم هذه العملية لمعالجة الأعداد بدون تأثير الإشارة السالبة.</td>
-			<td><code class="language-plaintext highlighter-rouge">إزاحة_إلى_اليمين_غير_موقعة(ش ، مواقِع)</code></td>
-			<td>
-				
-				-
-				
-			</td>
-			<td>
-				
-				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number)
-				
-			</td>
-			<td>جافا:لغة:رقم (java.lang.Number)</td>
 		  </tr>
 		  
 		  <tr>
@@ -1376,23 +1410,6 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">إرفع</code></td>
-			<td>دالة (إرفع) تُستخدم لرفع عدد (الأساس) إلى قوة عدد صحيح (الأس). تُفيد هذه العملية في الحسابات الرياضية التي تتطلب التكرار الأسي مثل حساب المربعات أو المكعبات.</td>
-			<td><code class="language-plaintext highlighter-rouge">إرفع(الأساس ، الأس)</code></td>
-			<td>
-				
-				-
-				
-			</td>
-			<td>
-				
-				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number)
-				
-			</td>
-			<td>جافا:لغة:رقم (java.lang.Number)</td>
-		  </tr>
-		  
-		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">أس</code></td>
 			<td>رفع قيمة إلى قوة معينة. تُعيد الدالة النتيجة الناتجة عن رفع القيمة الأولى (الأساس) إلى القيمة الثانية (الأس)، وتُستخدم في الرياضيات والبرمجة لإجراء العمليات الأسية.</td>
 			<td><code class="language-plaintext highlighter-rouge">أس(س ، ص)</code></td>
@@ -1407,6 +1424,23 @@ default values, and void functions.</p>
 				
 			</td>
 			<td>جافا:لغة:كائن (java.lang.Object)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">إرفع</code></td>
+			<td>دالة (إرفع) تُستخدم لرفع عدد (الأساس) إلى قوة عدد صحيح (الأس). تُفيد هذه العملية في الحسابات الرياضية التي تتطلب التكرار الأسي مثل حساب المربعات أو المكعبات.</td>
+			<td><code class="language-plaintext highlighter-rouge">إرفع(الأساس ، الأس)</code></td>
+			<td>
+				
+				-
+				
+			</td>
+			<td>
+				
+				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number)
+				
+			</td>
+			<td>جافا:لغة:رقم (java.lang.Number)</td>
 		  </tr>
 		  
 		  <tr>
@@ -1827,40 +1861,6 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">هل_أصغر_من</code></td>
-			<td>دالة (هل_أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد الثاني. تُرجع صحيح إذا كان الأول أصغر، وخطأ خلاف ذلك.</td>
-			<td><code class="language-plaintext highlighter-rouge">هل_أصغر_من(ش ، ي)</code></td>
-			<td>
-				
-				-
-				
-			</td>
-			<td>
-				
-				جافا:لغة:كائن (java.lang.Object), جافا:لغة:كائن (java.lang.Object)
-				
-			</td>
-			<td>جافا:لغة:كائن (java.lang.Object)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">هل_أكبر_من</code></td>
-			<td>دالة (هل_أكبر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر من العدد الثاني. تُرجع صحيح إذا كان الأول أكبر، وخطأ خلاف ذلك.</td>
-			<td><code class="language-plaintext highlighter-rouge">هل_أكبر_من(ش ، ي)</code></td>
-			<td>
-				
-				-
-				
-			</td>
-			<td>
-				
-				جافا:لغة:كائن (java.lang.Object), جافا:لغة:كائن (java.lang.Object)
-				
-			</td>
-			<td>جافا:لغة:كائن (java.lang.Object)</td>
-		  </tr>
-		  
-		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">هل_مثيل_من</code></td>
 			<td>دالة (هل_مثيل_من) للتحقق مما إذا كان الكائن من النوع المحدد.<br />
 - تدعم المقارنة باستخدام JavaType بما في ذلك النوع الخام والمعلمات.<br />
@@ -1907,6 +1907,44 @@ default values, and void functions.</p>
 		<tbody>
 		  
 		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::معرف_شغل</code></td>
+			<td>يعيد المعرّف الفريد للمهمة.</td>
+			<td><code class="language-plaintext highlighter-rouge">ثابت شغل تعيين تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)<br />
+دوال:الخيوط::معرف_شغل(شغل)<br />
+</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">دوال:الخيوط::معرف_المهمة</code>
+				  
+				
+			</td>
+			<td>
+				
+				أورغ:داعيتاك:نفطه:مدرجة_مدرجة:أدوات:متزامنة:مهمة (org.daiitech.naftah.builtin.utils.concurrent.Task)
+				
+			</td>
+			<td>طويل (long)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::اسم_القناة</code></td>
+			<td>يعيد اسم القناة.</td>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::اسم_القناة(قناة_)</code></td>
+			<td>
+				
+				-
+				
+			</td>
+			<td>
+				
+				أورغ:داعيتاك:نفطه:مدرجة_مدرجة:أدوات:متزامنة:قناة (org.daiitech.naftah.builtin.utils.concurrent.Channel)
+				
+			</td>
+			<td>جافا:لغة:سلسلة (java.lang.String)</td>
+		  </tr>
+		  
+		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::إنشاء_قناة</code></td>
 			<td>ينشئ قناة جديدة للتواصل بين الخيوط.</td>
 			<td><code class="language-plaintext highlighter-rouge">ثابت قناة_ = دوال:الخيوط::إنشاء_قناة("أوامر")</code></td>
@@ -1921,23 +1959,6 @@ default values, and void functions.</p>
 				
 			</td>
 			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:أدوات:متزامنة:قناة (org.daiitech.naftah.builtin.utils.concurrent.Channel)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::قاطع_الخيط</code></td>
-			<td>يقاطع الخيط المُعطى.</td>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::قاطع_الخيط(خيط)</code></td>
-			<td>
-				
-				-
-				
-			</td>
-			<td>
-				
-				جافا:لغة:خيط (java.lang.Thread)
-				
-			</td>
-			<td>فارغ (void)</td>
 		  </tr>
 		  
 		  <tr>
@@ -2024,6 +2045,23 @@ default values, and void functions.</p>
 				
 			</td>
 			<td>بوولان (boolean)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::قاطع_الخيط</code></td>
+			<td>يقاطع الخيط المُعطى.</td>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::قاطع_الخيط(خيط)</code></td>
+			<td>
+				
+				-
+				
+			</td>
+			<td>
+				
+				جافا:لغة:خيط (java.lang.Thread)
+				
+			</td>
+			<td>فارغ (void)</td>
 		  </tr>
 		  
 		  <tr>
@@ -2470,27 +2508,6 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::معرف_شغل</code></td>
-			<td>يعيد المعرّف الفريد للمهمة.</td>
-			<td><code class="language-plaintext highlighter-rouge">ثابت شغل تعيين تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)<br />
-دوال:الخيوط::معرف_شغل(شغل)<br />
-</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">دوال:الخيوط::معرف_المهمة</code>
-				  
-				
-			</td>
-			<td>
-				
-				أورغ:داعيتاك:نفطه:مدرجة_مدرجة:أدوات:متزامنة:مهمة (org.daiitech.naftah.builtin.utils.concurrent.Task)
-				
-			</td>
-			<td>طويل (long)</td>
-		  </tr>
-		  
-		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::اسم_الخيط</code></td>
 			<td>يعيد اسم الخيط المُعطى.</td>
 			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::اسم_الخيط(دوال:الخيوط::الخيط_الحالي())</code></td>
@@ -2502,23 +2519,6 @@ default values, and void functions.</p>
 			<td>
 				
 				جافا:لغة:خيط (java.lang.Thread)
-				
-			</td>
-			<td>جافا:لغة:سلسلة (java.lang.String)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::اسم_القناة</code></td>
-			<td>يعيد اسم القناة.</td>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الخيوط::اسم_القناة(قناة_)</code></td>
-			<td>
-				
-				-
-				
-			</td>
-			<td>
-				
-				أورغ:داعيتاك:نفطه:مدرجة_مدرجة:أدوات:متزامنة:قناة (org.daiitech.naftah.builtin.utils.concurrent.Channel)
 				
 			</td>
 			<td>جافا:لغة:سلسلة (java.lang.String)</td>
@@ -2764,13 +2764,15 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">نسخة_جافا</code></td>
-			<td>يُعيد نسخة Java الحالية قيد التشغيل.</td>
-			<td><code class="language-plaintext highlighter-rouge">نسخة_جافا()</code></td>
+			<td><code class="language-plaintext highlighter-rouge">اسم_النظام</code></td>
+			<td>يُعيد اسم نظام التشغيل.</td>
+			<td><code class="language-plaintext highlighter-rouge">اسم_النظام()</code></td>
 			<td>
 				
 				  
-					<code class="language-plaintext highlighter-rouge">إصدار_جافا</code>
+					<code class="language-plaintext highlighter-rouge">النظام</code>, 
+				  
+					<code class="language-plaintext highlighter-rouge">اسم_نظام_التشغيل</code>
 				  
 				
 			</td>
@@ -2783,15 +2785,13 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">اسم_النظام</code></td>
-			<td>يُعيد اسم نظام التشغيل.</td>
-			<td><code class="language-plaintext highlighter-rouge">اسم_النظام()</code></td>
+			<td><code class="language-plaintext highlighter-rouge">نسخة_جافا</code></td>
+			<td>يُعيد نسخة Java الحالية قيد التشغيل.</td>
+			<td><code class="language-plaintext highlighter-rouge">نسخة_جافا()</code></td>
 			<td>
 				
 				  
-					<code class="language-plaintext highlighter-rouge">النظام</code>, 
-				  
-					<code class="language-plaintext highlighter-rouge">اسم_نظام_التشغيل</code>
+					<code class="language-plaintext highlighter-rouge">إصدار_جافا</code>
 				  
 				
 			</td>
@@ -3050,14 +3050,14 @@ default values, and void functions.</p>
 		<tbody>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_لا_يساوي</code></td>
-			<td>دالة (هل_لا_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا غير متساويين في القيمة. تُرجع صحيح إذا كان العددان غير متساويين، وخطأ خلاف ذلك.</td>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_لا_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})<br />
-دوال:الحزم::هل_لا_يساوي([1 , 2], [3 , 4])<br />
-دوال:الحزم::هل_لا_يساوي({1 , 2}, {3 , 5})<br />
-دوال:الحزم::هل_لا_يساوي((1 , 2), (1 , 2))<br />
-دوال:الحزم::هل_لا_يساوي([1 ,2 , 3], 10)<br />
-دوال:الحزم::هل_لا_يساوي(10 , [1 ,2 , 3])<br />
+			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_أصغر_من</code></td>
+			<td>دالة (هل_أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد الثاني. تُرجع صحيح إذا كان الأول أصغر، وخطأ خلاف ذلك.</td>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_أصغر_من({أ:1 , ب:2} , {أ:1 , ب:2})<br />
+دوال:الحزم::هل_أصغر_من([1 , 2], [3 , 4])<br />
+دوال:الحزم::هل_أصغر_من({1 , 2}, {3 , 5})<br />
+دوال:الحزم::هل_أصغر_من((1 , 2), (1 , 2))<br />
+دوال:الحزم::هل_أصغر_من([1 ,2 , 3], 10)<br />
+دوال:الحزم::هل_أصغر_من(10 , [1 ,2 , 3])<br />
 </code></td>
 			<td>
 				
@@ -3073,6 +3073,55 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_أكبر_من</code></td>
+			<td>دالة (هل_أكبر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر من العدد الثاني. تُرجع صحيح إذا كان الأول أكبر، وخطأ خلاف ذلك.</td>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_أكبر_من({أ:1 , ب:2} , {أ:1 , ب:2})<br />
+دوال:الحزم::هل_أكبر_من([1 , 2], [3 , 4])<br />
+دوال:الحزم::هل_أكبر_من({1 , 2}, {3 , 5})<br />
+دوال:الحزم::هل_أكبر_من((1 , 2), (1 , 2))<br />
+دوال:الحزم::هل_أكبر_من([1 ,2 , 3], 10)<br />
+دوال:الحزم::هل_أكبر_من(10 , [1 ,2 , 3])<br />
+</code></td>
+			<td>
+				
+				-
+				
+			</td>
+			<td>
+				
+				جافا:لغة:كائن (java.lang.Object), جافا:لغة:كائن (java.lang.Object)
+				
+			</td>
+			<td>جافا:لغة:كائن (java.lang.Object)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::أحصل_على_عنصر</code></td>
+			<td>الحصول على عنصر من مجموعة حسب الفهرس (index).</td>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)<br />
+دوال:الحزم::حصول_على_عنصر((1 , 2), 1)<br />
+دوال:الحزم::حصول_على_عنصر({1 , 2}, 1)<br />
+</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">دوال:الحزم::الحصول_على_عنصر</code>, 
+				  
+					<code class="language-plaintext highlighter-rouge">دوال:الحزم::عنصر</code>, 
+				  
+					<code class="language-plaintext highlighter-rouge">دوال:الحزم::حصول_على_عنصر</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:أدة:المجموع (java.util.Collection), جافا:لغة:رقم (java.lang.Number)
+				
+			</td>
+			<td>جافا:لغة:كائن (java.lang.Object)</td>
+		  </tr>
+		  
+		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::باقي_القسمة</code></td>
 			<td>عملية باقي القسمة (المودولو) هي العملية التي تُستخدم في الرياضيات لتحديد الباقي المتبقي بعد قسمة عدد على عدد آخر.</td>
 			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::باقي_القسمة({أ:1 , ب:2} , {أ:1 , ب:2})<br />
@@ -3081,6 +3130,29 @@ default values, and void functions.</p>
 دوال:الحزم::باقي_القسمة((1 , 2), (1 , 2))<br />
 دوال:الحزم::باقي_القسمة([1 ,2 , 3], 10)<br />
 دوال:الحزم::باقي_القسمة(10 , [1 ,2 , 3])<br />
+</code></td>
+			<td>
+				
+				-
+				
+			</td>
+			<td>
+				
+				جافا:لغة:كائن (java.lang.Object), جافا:لغة:كائن (java.lang.Object)
+				
+			</td>
+			<td>جافا:لغة:كائن (java.lang.Object)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_لا_يساوي</code></td>
+			<td>دالة (هل_لا_يساوي) تُستخدم لمقارنة عددين والتحقق مما إذا كانا غير متساويين في القيمة. تُرجع صحيح إذا كان العددان غير متساويين، وخطأ خلاف ذلك.</td>
+			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_لا_يساوي({أ:1 , ب:2} , {أ:1 , ب:2})<br />
+دوال:الحزم::هل_لا_يساوي([1 , 2], [3 , 4])<br />
+دوال:الحزم::هل_لا_يساوي({1 , 2}, {3 , 5})<br />
+دوال:الحزم::هل_لا_يساوي((1 , 2), (1 , 2))<br />
+دوال:الحزم::هل_لا_يساوي([1 ,2 , 3], 10)<br />
+دوال:الحزم::هل_لا_يساوي(10 , [1 ,2 , 3])<br />
 </code></td>
 			<td>
 				
@@ -3755,78 +3827,6 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_أصغر_من</code></td>
-			<td>دالة (هل_أصغر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أصغر من العدد الثاني. تُرجع صحيح إذا كان الأول أصغر، وخطأ خلاف ذلك.</td>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_أصغر_من({أ:1 , ب:2} , {أ:1 , ب:2})<br />
-دوال:الحزم::هل_أصغر_من([1 , 2], [3 , 4])<br />
-دوال:الحزم::هل_أصغر_من({1 , 2}, {3 , 5})<br />
-دوال:الحزم::هل_أصغر_من((1 , 2), (1 , 2))<br />
-دوال:الحزم::هل_أصغر_من([1 ,2 , 3], 10)<br />
-دوال:الحزم::هل_أصغر_من(10 , [1 ,2 , 3])<br />
-</code></td>
-			<td>
-				
-				-
-				
-			</td>
-			<td>
-				
-				جافا:لغة:كائن (java.lang.Object), جافا:لغة:كائن (java.lang.Object)
-				
-			</td>
-			<td>جافا:لغة:كائن (java.lang.Object)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_أكبر_من</code></td>
-			<td>دالة (هل_أكبر_من) تُستخدم لمقارنة عددين والتحقق مما إذا كان العدد الأول أكبر من العدد الثاني. تُرجع صحيح إذا كان الأول أكبر، وخطأ خلاف ذلك.</td>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::هل_أكبر_من({أ:1 , ب:2} , {أ:1 , ب:2})<br />
-دوال:الحزم::هل_أكبر_من([1 , 2], [3 , 4])<br />
-دوال:الحزم::هل_أكبر_من({1 , 2}, {3 , 5})<br />
-دوال:الحزم::هل_أكبر_من((1 , 2), (1 , 2))<br />
-دوال:الحزم::هل_أكبر_من([1 ,2 , 3], 10)<br />
-دوال:الحزم::هل_أكبر_من(10 , [1 ,2 , 3])<br />
-</code></td>
-			<td>
-				
-				-
-				
-			</td>
-			<td>
-				
-				جافا:لغة:كائن (java.lang.Object), جافا:لغة:كائن (java.lang.Object)
-				
-			</td>
-			<td>جافا:لغة:كائن (java.lang.Object)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::أحصل_على_عنصر</code></td>
-			<td>الحصول على عنصر من مجموعة حسب الفهرس (index).</td>
-			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)<br />
-دوال:الحزم::حصول_على_عنصر((1 , 2), 1)<br />
-دوال:الحزم::حصول_على_عنصر({1 , 2}, 1)<br />
-</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">دوال:الحزم::الحصول_على_عنصر</code>, 
-				  
-					<code class="language-plaintext highlighter-rouge">دوال:الحزم::عنصر</code>, 
-				  
-					<code class="language-plaintext highlighter-rouge">دوال:الحزم::حصول_على_عنصر</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:أدة:المجموع (java.util.Collection), جافا:لغة:رقم (java.lang.Number)
-				
-			</td>
-			<td>جافا:لغة:كائن (java.lang.Object)</td>
-		  </tr>
-		  
-		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::حذف_عنصر_عند_فهرس</code></td>
 			<td>يزيل عنصراً من المجموعة عند فهرس معين.</td>
 			<td><code class="language-plaintext highlighter-rouge">دوال:الحزم::حذف_عنصر_عند_فهرس([1 , 2 , 3], 1)<br />
@@ -3936,6 +3936,44 @@ default values, and void functions.</p>
 		<tbody>
 		  
 		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_من_اليوم_و_شهر_و_سنة</code></td>
+			<td>انشاء التاريخ من اليوم واسم الشهر والسنة</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(يوم, شهر, سنة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ (org.daiitech.naftah.builtin.time.NaftahDate)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم</code></td>
+			<td>انشاء التاريخ من اليوم واسم الشهر والسنة مع تحديد التقويم</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم(تقويم, يوم, شهر, سنة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ (org.daiitech.naftah.builtin.time.NaftahDate)</td>
+		  </tr>
+		  
+		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">التاريخ_الحالي</code></td>
 			<td>الحصول على التاريخ الحالي</td>
 			<td><code class="language-plaintext highlighter-rouge">التاريخ_الحالي()</code></td>
@@ -3980,9 +4018,9 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية</code></td>
-			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية والنانوثانية</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, نانوثانية)</code></td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية</code></td>
+			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية)</code></td>
 			<td>
 				
 				  
@@ -3992,7 +4030,7 @@ default values, and void functions.</p>
 			</td>
 			<td>
 				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number)
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number)
 				
 			</td>
 			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
@@ -4018,9 +4056,9 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية</code></td>
-			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_وثانية(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية)</code></td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية</code></td>
+			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية والنانوثانية</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, نانوثانية)</code></td>
 			<td>
 				
 				  
@@ -4030,102 +4068,7 @@ default values, and void functions.</p>
 			</td>
 			<td>
 				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_من_اليوم_و_شهر_و_سنة</code></td>
-			<td>انشاء التاريخ من اليوم واسم الشهر والسنة</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_من_اليوم_و_شهر_و_سنة(يوم, شهر, سنة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ (org.daiitech.naftah.builtin.time.NaftahDate)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم</code></td>
-			<td>انشاء التاريخ من اليوم واسم الشهر والسنة مع تحديد التقويم</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_من_اليوم_و_شهر_و_سنة_بتقويم(تقويم, يوم, شهر, سنة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ (org.daiitech.naftah.builtin.time.NaftahDate)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة</code></td>
-			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية والنانوثانية مع إزاحة زمنية محددة</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, نانوثانية, إزاحة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة</code></td>
-			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية مع إزاحة زمنية محددة</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, إزاحة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة</code></td>
-			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع إزاحة زمنية</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, إزاحة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number)
 				
 			</td>
 			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
@@ -4148,63 +4091,6 @@ default values, and void functions.</p>
 				
 			</td>
 			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_المدة (org.daiitech.naftah.builtin.time.NaftahDuration)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت</code></td>
-			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع منطقة زمنية</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, منطقة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت</code></td>
-			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية مع منطقة زمنية محددة</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, منطقة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت</code></td>
-			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية والنانوثانية مع منطقة زمنية محددة</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, نانوثانية, منطقة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
 		  </tr>
 		  
 		  <tr>
@@ -4265,6 +4151,25 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_مع_نانوثانية_بتوقيت</code></td>
+			<td>انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع منطقة زمنية محددة</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_مع_نانوثانية_بتوقيت(ساعة, دقيقة, ثانية, نانوثانية, منطقة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_الوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_وقت (org.daiitech.naftah.builtin.time.NaftahTime)</td>
+		  </tr>
+		  
+		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_بتوقيت_مع_ثانية</code></td>
 			<td>انشاء الوقت مع المنطقة الزمنية والثانية</td>
 			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_بتوقيت_مع_ثانية(ساعة, دقيقة, ثانية, المنطقة)</code></td>
@@ -4284,9 +4189,28 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_مع_نانوثانية_بتوقيت</code></td>
-			<td>انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع منطقة زمنية محددة</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_مع_نانوثانية_بتوقيت(ساعة, دقيقة, ثانية, نانوثانية, منطقة)</code></td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_بإزاحة</code></td>
+			<td>انشاء الوقت مع الإزاحة الزمنية</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_بإزاحة(ساعة, دقيقة, الإزاحة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_الوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_وقت (org.daiitech.naftah.builtin.time.NaftahTime)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_مع_الإزاحة_ونانوثانية</code></td>
+			<td>انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع إزاحة زمنية محددة</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_مع_الإزاحة_ونانوثانية(ساعة, دقيقة, ثانية, نانوثانية, إزاحة)</code></td>
 			<td>
 				
 				  
@@ -4316,44 +4240,6 @@ default values, and void functions.</p>
 			<td>
 				
 				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_وقت (org.daiitech.naftah.builtin.time.NaftahTime)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_مع_الإزاحة_ونانوثانية</code></td>
-			<td>انشاء الوقت من ساعة ودقيقة وثانية ونانوثانية مع إزاحة زمنية محددة</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_مع_الإزاحة_ونانوثانية(ساعة, دقيقة, ثانية, نانوثانية, إزاحة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_الوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_وقت (org.daiitech.naftah.builtin.time.NaftahTime)</td>
-		  </tr>
-		  
-		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_بإزاحة</code></td>
-			<td>انشاء الوقت مع الإزاحة الزمنية</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_الوقت_بإزاحة(ساعة, دقيقة, الإزاحة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_الوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
 				
 			</td>
 			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_وقت (org.daiitech.naftah.builtin.time.NaftahTime)</td>
@@ -4681,25 +4567,6 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت</code></td>
-			<td>انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع منطقة زمنية</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(سنة, شهر, يوم, ساعة, دقيقة, منطقة)</code></td>
-			<td>
-				
-				  
-					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
-				  
-				
-			</td>
-			<td>
-				
-				جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
-				
-			</td>
-			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
-		  </tr>
-		  
-		  <tr>
 			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت</code></td>
 			<td>انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية والنانوثانية مع منطقة زمنية</td>
 			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_وثانية_ونانوثانية_بتوقيت(سنة, شهر, يوم, ساعة, دقيقة, ثانية, نانوثانية, منطقة)</code></td>
@@ -4738,9 +4605,9 @@ default values, and void functions.</p>
 		  </tr>
 		  
 		  <tr>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة</code></td>
-			<td>انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع إزاحة زمنية</td>
-			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(سنة, شهر, يوم, ساعة, دقيقة, إزاحة)</code></td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت</code></td>
+			<td>انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع منطقة زمنية</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بتوقيت(سنة, شهر, يوم, ساعة, دقيقة, منطقة)</code></td>
 			<td>
 				
 				  
@@ -4789,6 +4656,139 @@ default values, and void functions.</p>
 			<td>
 				
 				جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة</code></td>
+			<td>انشاء التاريخ والوقت من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع إزاحة زمنية</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_من_سنة_وشهر_ويوم_وساعة_ودقيقة_بإزاحة(سنة, شهر, يوم, ساعة, دقيقة, إزاحة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت</code></td>
+			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية مع منطقة زمنية محددة</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_وبتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, منطقة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت</code></td>
+			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع منطقة زمنية</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, منطقة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت</code></td>
+			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية والنانوثانية مع منطقة زمنية محددة</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بتوقيت(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, نانوثانية, منطقة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة</code></td>
+			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة مع إزاحة زمنية</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وساعة_ودقيقة_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, إزاحة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة</code></td>
+			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية مع إزاحة زمنية محددة</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, إزاحة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
+				
+			</td>
+			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
+		  </tr>
+		  
+		  <tr>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة</code></td>
+			<td>انشاء التاريخ والوقت باستخدام تقويم محدد من السنة والشهر (اسم عربي أو رقم) واليوم والساعة والدقيقة والثانية والنانوثانية مع إزاحة زمنية محددة</td>
+			<td><code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت_بتقويم_وثانية_ونانوثانية_بإزاحة(تقويم, سنة, شهر, يوم, ساعة, دقيقة, ثانية, نانوثانية, إزاحة)</code></td>
+			<td>
+				
+				  
+					<code class="language-plaintext highlighter-rouge">انشاء_التاريخ_والوقت</code>
+				  
+				
+			</td>
+			<td>
+				
+				جافا:لغة:سلسلة (java.lang.String), جافا:لغة:رقم (java.lang.Number), جافا:لغة:كائن (java.lang.Object), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:رقم (java.lang.Number), جافا:لغة:سلسلة (java.lang.String)
 				
 			</td>
 			<td>أورغ:داعيتاك:نفطه:مدرجة_مدرجة:وقت:نفطه_التاريخ_وقت (org.daiitech.naftah.builtin.time.NaftahDateTime)</td>
