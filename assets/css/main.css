@@ -57,7 +57,9 @@ footer.site-footer { background-color: #2a353a !important; padding: 0.8rem 0; te
 
 .hidden-in-html { display: none; }
 
-@media (max-width: 600px) { nav ul { flex-direction: column; align-items: center; gap: 0.5rem; } nav ul li { width: 100%; display: flex; justify-content: center; } nav ul li a { width: 100%; display: flex; justify-content: center; align-items: center; text-align: center; padding: 0.6rem 1rem; font-size: 0.9rem; } .site-header h1 { font-size: 1rem; } h1 { font-size: 1.4rem; } h2 { font-size: 1.1rem; } .site-content { padding: 0 1rem; } table { font-size: 0.75rem; overflow-x: auto; } pre { font-size: 0.75rem; } }
+.menu-toggle { display: none; background: none; border: none; color: #ffb347; font-size: 1.8rem; cursor: pointer; margin: 0.5rem auto; justify-content: center; align-items: center; }
+
+@media (max-width: 600px) { .menu-toggle { display: block; } nav { display: none; width: 100%; } nav.active { display: block; } nav ul { flex-direction: column; align-items: center; gap: 0.5rem; } nav ul li { width: 100%; display: flex; justify-content: center; } nav ul li a { width: 100%; display: flex; justify-content: center; align-items: center; text-align: center; padding: 0.6rem 1rem; font-size: 0.9rem; } .site-header h1 { font-size: 1rem; } h1 { font-size: 1.4rem; } h2 { font-size: 1.1rem; } .site-content { padding: 0 1rem; } table { font-size: 0.75rem; overflow-x: auto; } pre { font-size: 0.75rem; } }
 
 .code-block { position: relative; margin: 1em 0; }
 
