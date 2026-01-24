@@ -236,7 +236,32 @@ footer.site-footer {
 }
 
 // 📱 Responsive Adjustments
+.menu-toggle {
+  display: none; // only show on mobile
+  background: none;
+  border: none;
+  color: $accent-color;
+  font-size: 1.8rem;
+  cursor: pointer;
+  margin: 0.5rem auto;
+  justify-content: center;
+  align-items: center;
+}
+
 @media (max-width: 600px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  nav {
+    display: none; // hide menu initially
+    width: 100%;
+  }
+
+  nav.active {
+    display: block; // show menu when toggled
+  }
+
   nav ul {
     flex-direction: column;
     align-items: center;

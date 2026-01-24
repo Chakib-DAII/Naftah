@@ -26,4 +26,23 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   });
+
+	const toggle = document.querySelector('.menu-toggle');
+	const nav = document.querySelector('nav');
+
+	if (!toggle || !nav) return;
+
+	// Toggle menu on click
+	toggle.addEventListener('click', () => {
+		if (window.innerWidth < 600) {
+		  nav.classList.toggle('active');
+		}
+	});
+
+	// Reset menu on window resize
+	window.addEventListener('resize', () => {
+	  if (window.innerWidth > 600) { // desktop breakpoint
+		nav.classList.remove('active'); // remove mobile toggle state
+	  }
+	});
 });
