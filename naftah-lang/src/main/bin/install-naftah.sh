@@ -4,6 +4,106 @@
 # Copyright © The Naftah Project Authors
 
 # ------------------------------------------------------------
+# install_arabic_fonts
+#
+# Installs recommended Arabic fonts for the system.
+#
+# Behavior:
+# - Detects the available package manager on the system.
+# - Installs a curated set of fonts for Arabic display:
+#     • Kacst fonts
+#     • Amiri font
+#     • Noto fonts (core, extra, UI, color emoji)
+#     • DejaVu fonts
+#     • IBM Plex fonts (for terminals and coding)
+# - Rebuilds the font cache after installation.
+# - Falls back gracefully if no supported package manager is found.
+#
+# Supported package managers:
+# - apt     (Debian / Ubuntu)
+# - dnf     (Fedora / RHEL)
+# - yum     (Legacy RHEL / CentOS)
+# - pacman  (Arch Linux)
+# - zypper  (openSUSE)
+# - apk     (Alpine Linux)
+#
+# Notes:
+# - Requires sudo privileges.
+# - Should work on most Linux distributions with GUI support.
+# - If no supported package manager is detected, fonts must be installed manually.
+#
+# Usage:
+#   install_arabic_fonts
+#
+# ------------------------------------------------------------
+install_arabic_fonts() {
+    echo "جاري تثبيت الخطوط العربية..."
+
+    if command -v apt >/dev/null; then
+        sudo apt update
+        sudo apt install -y \
+            fonts-kacst \
+            fonts-kacst-one \
+            fonts-amiri-core \
+            fonts-noto-core \
+            fonts-noto-extra \
+            fonts-noto-ui-core \
+            fonts-noto-color-emoji \
+            fonts-dejavu-core \
+            fonts-ibm-plex || true 
+
+    elif command -v dnf >/dev/null; then
+        sudo dnf install -y \
+            kacst-fonts \
+            amiri-fonts \
+            google-noto-sans-arabic-fonts \
+            dejavu-sans-fonts \
+            ibm-plex-fonts --skip-unavailable
+
+    elif command -v yum >/dev/null; then
+        sudo yum install -y \
+            kacst-fonts \
+            amiri-fonts \
+            google-noto-sans-arabic-fonts \
+            dejavu-sans-fonts \
+            ibm-plex-fonts --skip-broken
+
+    elif command -v pacman >/dev/null; then
+        sudo pacman -Sy --noconfirm --needed \
+            ttf-kacst \
+            ttf-amiri \
+            noto-fonts \
+            ttf-dejavu \
+            ttf-ibm-plex || true 
+
+    elif command -v zypper >/dev/null; then
+        sudo zypper install -y \
+            kacst-fonts \
+            amiri-fonts \
+            google-noto-sans-arabic-fonts \
+            dejavu-sans-fonts \
+            ibm-plex-fonts || true 
+
+    elif command -v apk >/dev/null; then
+        sudo apk add \
+            ttf-kacst \
+            ttf-amiri \
+            noto-fonts \
+            ttf-dejavu || true 
+
+    else
+        echo "لا يوجد مدير حزم مدعوم لتثبيت الخطوط تلقائياً."
+        echo "الرجاء تثبيت الخطوط العربية يدوياً."
+    fi
+
+
+    echo "إعادة بناء ذاكرة الخطوط..."
+    fc-cache -f -v
+}
+
+
+
+# ------------------------------------------------------------
 # install_xterm
 #
 # Ensure that the `xterm` terminal emulator is installed.
@@ -86,9 +186,14 @@ is_wsl() {
     grep -qi microsoft /proc/version 2>/dev/null
 }
 
-# Set UTF-8 for proper Arabic support
-echo 'export LANG=en_US.UTF-8' >> ~/.bashrc
-echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
+
+# Ensure UTF-8 is set for Arabic (only if not already in .bashrc)
+if ! grep -q "export LANG=en_US.UTF-8" ~/.bashrc; then
+    echo 'export LANG=en_US.UTF-8' >> ~/.bashrc
+fi
+if ! grep -q "export LC_ALL=en_US.UTF-8" ~/.bashrc; then
+    echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
+fi
 source ~/.bashrc
 
 # Directory where original scripts live (bin/)
@@ -112,6 +217,10 @@ mkdir -p "$BIN_DIR"
 SCRIPTS=(naftah-shell.sh naftah-shell-wrapper.sh naftah-repl.sh naftah-man.sh naftah-init.sh naftah.sh)
 
 echo "جاري تثبيت سكريبتات نفطه..."
+
+
+# Install recommended Arabic fonts
+install_arabic_fonts
 
 # Ensure xterm is installed
 install_xterm
