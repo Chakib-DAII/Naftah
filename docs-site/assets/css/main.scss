@@ -248,6 +248,14 @@ footer.site-footer {
   align-items: center;
 }
 
+table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
 @media (max-width: 600px) {
   .menu-toggle {
     display: block;
@@ -302,7 +310,11 @@ footer.site-footer {
 
   table {
     font-size: 0.75rem;
+    display: block;
+    width: 100%;
     overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch; // smooth iOS scrolling
   }
 
   pre {
