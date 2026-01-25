@@ -248,12 +248,10 @@ footer.site-footer {
   align-items: center;
 }
 
-table {
-  display: block;
+.table-wrapper {
   width: 100%;
-  max-width: 100%;
   overflow-x: auto;
-  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 600px) {
@@ -310,11 +308,8 @@ table {
 
   table {
     font-size: 0.75rem;
-    display: block;
-    width: 100%;
     overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch; // smooth iOS scrolling
+    -webkit-overflow-scrolling: touch;
   }
 
   pre {
