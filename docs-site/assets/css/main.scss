@@ -260,12 +260,15 @@ footer.site-footer {
   }
 
   nav {
-    display: none; // hide menu initially
+    display: none; /* hide menu initially */
     width: 100%;
+    max-height: 80vh; /* limit height to 80% of viewport */
+    overflow-y: auto; /* enable vertical scroll if content overflows */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
   }
 
   nav.active {
-    display: block; // show menu when toggled
+    display: block; /* show menu when toggled */
   }
 
   nav ul {
@@ -303,7 +306,8 @@ footer.site-footer {
   }
 
   .site-content {
-    padding: 0 1rem;
+    margin: 1.5rem auto 2rem auto; /* slightly more than desktop, still small */
+    padding: 6rem 1.5vw 3rem 1.5vw; /* keep header spacing */
   }
 
   table {
