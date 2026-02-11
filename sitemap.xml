@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+	
+
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/keywords</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/primitives-and-variables</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/collections</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/expressions</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/radix-numbers</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/objects</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/control-flow</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/functions</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/java-interop</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/concurrency</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/language/temporal</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/about</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/benchmarks</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>1.0</priority>
+		<changefreq>weekly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/java-doc</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/assets/css/main.css</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/releases</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/running-naftah</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/sitemap.xml</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/assets/main.css</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/feed.xml</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+	
+	<url>
+		<loc>https://naftah.daiitech.org/assets/css/main.css.map</loc>
+
+		<lastmod>
+			2026-02-11T22:06:00+00:00
+		</lastmod>
+
+		
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		
+
+	</url>
+	
+	
+
+</urlset>
