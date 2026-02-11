@@ -17,6 +17,7 @@ kramdown:
 
 plugins:
   - jekyll-seo-tag    # for SEO improvements
+  - jekyll-sitemap
 
 exclude:
   - Gemfile
