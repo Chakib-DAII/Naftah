@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+	{% assign pages = site.pages | concat: site.posts %}
+
+	{% for page in pages %}
+	{% unless page.url contains '404' %}
+	<url>
+		<loc>{{ page.url | prepend: site.baseurl | prepend: site.url }}</loc>
+
+		<lastmod>
+			{{ page.date | default: site.time | date_to_xmlschema }}
+		</lastmod>
+
+		{% if page.url == "/" %}
+		<priority>1.0</priority>
+		<changefreq>weekly</changefreq>
+		{% elsif page.url contains "/language/" %}
+		<priority>0.8</priority>
+		<changefreq>monthly</changefreq>
+		{% else %}
+		<priority>0.6</priority>
+		<changefreq>monthly</changefreq>
+		{% endif %}
+
+	</url>
+	{% endunless %}
+	{% endfor %}
+
+</urlset>
