@@ -145,7 +145,7 @@ public final class BuiltinFunction implements Serializable, JvmExecutable {
 	 */
 	@Override
 	public MethodHandle getMethodHandle() throws IllegalAccessException {
-		if (Objects.nonNull(handle)) {
+		if (Objects.isNull(handle)) {
 			handle = MethodHandles.lookup().unreflect(method);
 		}
 		return handle;

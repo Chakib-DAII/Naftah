@@ -184,7 +184,7 @@ public final class JvmClassInitializer implements Serializable, JvmExecutable {
 	 */
 	@Override
 	public MethodHandle getMethodHandle() throws IllegalAccessException {
-		if (isInvocable && Objects.nonNull(handle)) {
+		if (isInvocable && Objects.isNull(handle)) {
 			handle = MethodHandles.lookup().unreflectConstructor(constructor);
 		}
 		return handle;
