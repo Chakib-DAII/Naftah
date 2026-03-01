@@ -3,6 +3,7 @@
 
 package org.daiitech.naftah.utils.reflect;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
@@ -43,7 +44,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  *
  * <p>This class provides methods to:</p>
  * <ul>
- * <li>Invoke Java {@link java.lang.reflect.Method} and {@link java.lang.reflect.Constructor} instances
+ * <li>Invoke Java {@link Method} and {@link java.lang.reflect.Constructor} instances
  * reflectively.</li>
  * <li>Handle named and positional arguments, including conversion between Java types and Naftah types such as
  * {@link NaftahObject} and {@link DynamicNumber}.</li>
@@ -66,7 +67,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  * especially when integrating Java APIs with the Naftah programming language.</p>
  *
  * @author Chakib Daii
- * @see #invokeJvmConstructor(Executable, Object[], List, Class)
+ * @see #invokeJvmConstructor(Executable, MethodHandle, Object[], List, Class)
  * @see #invokeJvmExecutable(Object, Executable, Object[], List, Class)
  * @see #convertArgument(Object, Class, Type, boolean)
  * @see #convertArgumentsBack(Object[], List)
@@ -82,70 +83,78 @@ public final class InvocationUtils {
 	}
 
 	/**
-	 * Dynamically invokes a JVM {@link Method} or {@link Constructor} using reflection.
+	 * Dynamically invokes a JVM {@link Method} or {@link Constructor},
+	 * preferring a {@link MethodHandle} when available
+	 * and transparently falling back to reflection when necessary.
 	 *
-	 * <p>This unified utility abstracts the complexity of calling either a {@link Method} or
-	 * {@link Constructor} at runtime by automatically handling:</p>
+	 * <p>This unified utility abstracts the complexity of calling either a
+	 * {@link Method} or {@link Constructor} at runtime by automatically handling:</p>
 	 * <ul>
-	 * <li>Argument conversion to match JVM parameter types, including primitives, arrays,
-	 * collections, and generic types</li>
+	 * <li>Argument conversion to match JVM parameter types, including primitives,
+	 * arrays, collections, and generic types</li>
 	 * <li>Primitive boxing and unboxing</li>
-	 * <li>Naftah-specific type handling and conversions (when enabled)</li>
-	 * <li>Varargs executables, including automatic construction of the trailing vararg array
-	 * when possible</li>
+	 * <li>Optional Naftah-specific type handling and conversions</li>
+	 * <li>Varargs executables, including automatic construction of the trailing
+	 * vararg array when possible</li>
+	 * <li>Preferred invocation via {@link MethodHandle} for
+	 * improved runtime performance</li>
+	 * <li>Automatic fallback to reflective invocation if handle resolution
+	 * or invocation fails</li>
 	 * </ul>
 	 *
-	 * <p>This method is designed for runtime environments that need to dynamically invoke JVM
-	 * executables without compile-time type information.</p>
+	 * <p>This method is designed for dynamic runtime environments where
+	 * executable targets are resolved without compile-time type information.</p>
 	 *
 	 * <h3>Supported executable types</h3>
 	 * <ul>
-	 * <li><b>Instance methods:</b> invoked via {@link Method#invoke(Object, Object...)}</li>
+	 * <li><b>Instance methods:</b> invoked on the provided {@code instance}</li>
 	 * <li><b>Static methods:</b> invoked with a {@code null} instance</li>
-	 * <li><b>Constructors:</b> invoked via {@link Constructor#newInstance(Object...)}</li>
+	 * <li><b>Constructors:</b> invoked to create new object instances</li>
 	 * </ul>
 	 *
 	 * <h3>Argument handling</h3>
 	 * <ul>
 	 * <li>The number of provided arguments must match the executable’s parameter count</li>
-	 * <li>If the executable is {@code varargs}, a missing final array argument may be
-	 * synthesized automatically</li>
-	 * <li>Arguments are converted <i>before</i> invocation and may be converted back
-	 * into {@code naftahArgs} after invocation</li>
+	 * <li>If the executable is {@code varargs}, a missing trailing array argument
+	 * may be synthesized automatically</li>
+	 * <li>Arguments are converted <i>before</i> invocation</li>
+	 * <li>Arguments may be converted back into {@code naftahArgs} after invocation</li>
 	 * </ul>
 	 *
 	 * <h3>Return handling</h3>
-	 * <p>The raw result of the underlying reflective call is returned. Any Naftah-specific
-	 * wrapping or post-processing is handled by the delegated invocation logic.</p>
+	 * <p>The result of the underlying invocation is returned. Any Naftah-specific
+	 * wrapping, {@code void} handling, or {@code null} normalization is delegated
+	 * to the lower-level invocation logic.</p>
 	 *
-	 * @param instance            the target object for instance method calls, or {@code null} for static methods
-	 *                            or constructors
-	 * @param methodOrConstructor the {@link Executable} to invoke (either a {@link Method} or a {@link Constructor})
-	 * @param naftahArgs          a list of {@link Pair}&lt;String, Object&gt; representing argument names and values;
-	 *                            this list may be mutated during invocation (e.g. for varargs handling or
-	 *                            argument back-conversion)
-	 * @param returnType          the expected return type; use {@link Void#TYPE} or {@link Void} for {@code void}
-	 *                            executables
-	 * @param useNaftahTypes      whether Naftah-specific type semantics and conversions should be applied
+	 * @param instance            the target object for instance method calls,
+	 *                            or {@code null} for static methods or constructors
+	 * @param methodOrConstructor the {@link Executable} to invoke
+	 * @param handle              the pre-resolved {@link MethodHandle}
+	 *                            associated with the executable (may be {@code null})
+	 * @param naftahArgs          argument name/value pairs; may be mutated during invocation
+	 *                            (e.g., varargs handling or back-conversion)
+	 * @param returnType          the expected return type; use {@link Void#TYPE} or {@link Void}
+	 *                            for {@code void} executables
+	 * @param useNaftahTypes      whether Naftah-specific type semantics should be applied
 	 * @param <T>                 the type of executable being invoked
 	 * @return the result of the invocation
-	 * @throws InvocationTargetException if the underlying executable throws an exception
-	 * @throws InstantiationException    if a constructor fails to create a new instance
-	 * @throws IllegalAccessException    if the executable cannot be accessed due to Java access control
-	 * @throws IllegalArgumentException  if argument count or types do not match the executable signature
-	 * @see Method#invoke(Object, Object...)
-	 * @see Constructor#newInstance(Object...)
+	 * @throws Throwable                if invocation fails, including any exception thrown
+	 *                                  by the underlying executable
+	 * @throws IllegalArgumentException if argument count or types do not match
+	 *                                  the executable signature
+	 * @see Method
+	 * @see Constructor
+	 * @see MethodHandle
 	 * @see Executable
 	 */
 	public static <T extends Executable> Object invokeJvmExecutable(
 																	Object instance,
 																	T methodOrConstructor,
+																	MethodHandle handle,
 																	List<Pair<String, Object>> naftahArgs,
 																	Class<?> returnType,
 																	boolean useNaftahTypes)
-			throws InvocationTargetException,
-			InstantiationException,
-			IllegalAccessException {
+			throws Throwable {
 		Class<?>[] paramTypes = methodOrConstructor.getParameterTypes();
 
 		if (naftahArgs.size() != paramTypes.length) {
@@ -174,7 +183,7 @@ public final class InvocationUtils {
 												useNaftahTypes);
 		}
 
-		var result = invokeJvmExecutable(instance, methodOrConstructor, executableArgs, naftahArgs, returnType);
+		var result = invokeJvmExecutable(instance, methodOrConstructor, handle, executableArgs, naftahArgs, returnType);
 
 		convertArgumentsBack(executableArgs, naftahArgs);
 
@@ -227,28 +236,47 @@ public final class InvocationUtils {
 
 
 	/**
-	 * Invokes a given {@link Method} or {@link Constructor} reflectively with specified argument values.
+	 * Invokes a given {@link Method} or {@link Constructor} reflectively
+	 * with the specified argument values.
 	 *
-	 * <p>This low-level helper performs:</p>
+	 * <p>This is a low-level reflective helper responsible strictly for
+	 * performing the JVM invocation step. It assumes that argument
+	 * conversion has already been completed by the caller.</p>
+	 *
+	 * <p>The method performs the following:</p>
 	 * <ul>
-	 * <li>Access override via {@link java.lang.reflect.AccessibleObject#setAccessible(boolean)}</li>
-	 * <li>Unwrapping of {@link NaftahObject} instances when necessary</li>
-	 * <li>Automatic conversion of {@code void} or {@code null} results to {@link None#get()}</li>
+	 * <li>Overrides Java access checks via
+	 * {@link java.lang.reflect.AccessibleObject#setAccessible(boolean)}</li>
+	 * <li>Unwraps {@link NaftahObject} instances when invoking non-Naftah
+	 * declaring classes</li>
+	 * <li>Invokes either a {@link Method} or a {@link Constructor}</li>
+	 * <li>Normalizes {@code void} or {@code null} results to {@link None#get()}</li>
+	 * <li>Performs argument back-conversion after invocation</li>
 	 * </ul>
 	 *
-	 * @param instance            the target object for instance methods, or {@code null} for static methods or
-	 *                            constructors
+	 * <h3>Supported executable types</h3>
+	 * <ul>
+	 * <li><b>Instance methods:</b> invoked via {@link Method#invoke(Object, Object...)}</li>
+	 * <li><b>Static methods:</b> invoked with a {@code null} instance</li>
+	 * <li><b>Constructors:</b> invoked via {@link Constructor#newInstance(Object...)}</li>
+	 * </ul>
+	 *
+	 * @param instance            the target object for instance methods,
+	 *                            or {@code null} for static methods or constructors
 	 * @param methodOrConstructor the {@link Executable} to invoke
 	 * @param executableArgs      the argument values in declared parameter order
-	 * @param naftahArgs          the original argument name/value pairs (used for back-conversion)
-	 * @param returnType          the expected return type
-	 * @param <T>                 the type of executable
-	 * @return the invocation result, or {@link None#get()} if the result is {@code null} or {@code void}
-	 * @throws InvocationTargetException if the underlying executable throws an exception
-	 * @throws InstantiationException    if a constructor fails to instantiate a new object
-	 * @throws IllegalAccessException    if the executable cannot be accessed
-	 * @see java.lang.reflect.Method#invoke(Object, Object...)
-	 * @see java.lang.reflect.Constructor#newInstance(Object...)
+	 * @param naftahArgs          the original argument name/value pairs
+	 *                            (used for post-invocation back-conversion)
+	 * @param returnType          the expected return type; use {@link Void#TYPE}
+	 *                            or {@link Void} for {@code void} executables
+	 * @param <T>                 the type of executable being invoked
+	 * @return the invocation result, or {@link None#get()} if the result is
+	 *         {@code null} or the executable has a {@code void} return type
+	 * @throws Throwable if the underlying executable throws an exception
+	 *                   or cannot be accessed
+	 * @see Method#invoke(Object, Object...)
+	 * @see Constructor#newInstance(Object...)
+	 * @see Executable
 	 * @see NaftahObject
 	 * @see None#get()
 	 */
@@ -258,9 +286,7 @@ public final class InvocationUtils {
 																	Object[] executableArgs,
 																	List<Pair<String, Object>> naftahArgs,
 																	Class<?> returnType)
-			throws InvocationTargetException,
-			InstantiationException,
-			IllegalAccessException {
+			throws Throwable {
 		methodOrConstructor.setAccessible(true);
 		Object possibleResult = null;
 		if (methodOrConstructor instanceof Method method) {
@@ -281,84 +307,205 @@ public final class InvocationUtils {
 	}
 
 	/**
-	 * Convenience method to invoke a {@link Constructor} reflectively using a list of arguments.
+	 * Invokes a given {@link MethodHandle} with specified argument values.
 	 *
-	 * <p>This method is a thin wrapper around
-	 * {@link #invokeJvmExecutable(Object, Executable, List, Class, boolean)} that automatically
-	 * supplies a {@code null} instance, as constructors do not require one.</p>
+	 * <p>This low-level helper performs:</p>
+	 * <ul>
+	 * <li>Invocation via {@link MethodHandle#invokeWithArguments(Object...)}</li>
+	 * <li>Unwrapping of {@link NaftahObject} instances when necessary</li>
+	 * <li>Automatic conversion of {@code void} or {@code null} results to {@link None#get()}</li>
+	 * </ul>
 	 *
-	 * <p>Constructor arguments are converted automatically to match the constructor’s parameter
-	 * types, including primitives, arrays, collections, and generic types. Naftah-specific
-	 * type semantics and conversions are applied when enabled.</p>
-	 *
-	 * <p>The provided argument list may be mutated during invocation (for example, to support
-	 * varargs handling or argument back-conversion).</p>
-	 *
-	 * @param methodOrConstructor the {@link Constructor} to invoke
-	 * @param args                the constructor arguments as a list of {@link Pair}&lt;String, Object&gt;
-	 * @param returnType          the expected type of the constructed object
-	 * @param useNaftahTypes      whether Naftah-specific type semantics and conversions should be applied
-	 * @param <T>                 the type of executable (constructor) being invoked
-	 * @return the newly created instance
-	 * @throws InvocationTargetException if the constructor throws an exception
-	 * @throws InstantiationException    if the constructor fails to instantiate a new object
-	 * @throws IllegalAccessException    if reflective access is not allowed
-	 * @throws IllegalArgumentException  if the argument count or types do not match the constructor signature
-	 * @see #invokeJvmExecutable(Object, Executable, List, Class, boolean)
-	 * @see Constructor#newInstance(Object...)
+	 * @param instance       the target object for instance methods, or {@code null} for static methods
+	 * @param handle         the {@link MethodHandle} to invoke
+	 * @param executableArgs the argument values in declared parameter order
+	 * @param naftahArgs     the original argument name/value pairs (used for back-conversion)
+	 * @param returnType     the expected return type
+	 * @return the invocation result, or {@link None#get()} if the result is {@code null} or {@code void}
+	 * @throws Throwable if the underlying method handle throws anything
+	 * @see MethodHandle#invokeWithArguments(Object...)
+	 * @see NaftahObject
+	 * @see None#get()
 	 */
-	public static <T extends Executable> Object invokeJvmConstructor(   T methodOrConstructor,
-																		List<Pair<String, Object>> args,
-																		Class<?> returnType,
-																		boolean useNaftahTypes)
-			throws InvocationTargetException,
-			InstantiationException,
-			IllegalAccessException {
-		return invokeJvmExecutable(null, methodOrConstructor, args, returnType, useNaftahTypes);
+	public static Object invokeJvmMethodHandle(
+												Object instance,
+												Class<?> declaringClass,
+												MethodHandle handle,
+												Object[] executableArgs,
+												List<Pair<String, Object>> naftahArgs,
+												Class<?> returnType
+	) throws Throwable {
+
+		Object[] invocationArgs;
+
+		// Handle instance binding
+		if (Objects.nonNull(instance)) {
+			if (!NaftahObject.class.isAssignableFrom(declaringClass) && instance instanceof NaftahObject naftahObject) {
+				instance = naftahObject.get(true);
+			}
+
+			invocationArgs = new Object[executableArgs.length + 1];
+			invocationArgs[0] = instance;
+			System.arraycopy(executableArgs, 0, invocationArgs, 1, executableArgs.length);
+		}
+		else {
+			invocationArgs = executableArgs;
+		}
+
+		Object possibleResult = handle.invokeWithArguments(invocationArgs);
+
+		var result = returnType != Void.class && possibleResult != null ? possibleResult : None.get();
+
+		convertArgumentsBack(executableArgs, naftahArgs);
+
+		return result;
+	}
+
+
+	/**
+	 * Attempts invocation via {@link MethodHandle} first,
+	 * and falls back to {@link #invokeJvmExecutable(Object, Executable, Object[], List, Class)}
+	 * if handle invocation fails.
+	 *
+	 * @param instance            target instance (null for static / constructors)
+	 * @param methodOrConstructor reflective executable (fallback path)
+	 * @param methodHandle        resolved method handle (may be null)
+	 * @param executableArgs      invocation arguments
+	 * @param naftahArgs          original named args (for back-conversion)
+	 * @param returnType          expected return type
+	 * @param <T>                 executable type
+	 * @return invocation result or {@link None#get()}
+	 * @throws Throwable if both strategies fail
+	 */
+	public static <T extends Executable> Object invokeJvmExecutable(
+																	Object instance,
+																	T methodOrConstructor,
+																	MethodHandle methodHandle,
+																	Object[] executableArgs,
+																	List<Pair<String, Object>> naftahArgs,
+																	Class<?> returnType
+	) throws Throwable {
+
+		if (Objects.nonNull(methodHandle)) {
+			try {
+				return invokeJvmMethodHandle(
+												instance,
+												methodOrConstructor.getDeclaringClass(),
+												methodHandle,
+												executableArgs,
+												naftahArgs,
+												returnType
+				);
+			}
+			catch (Throwable handleFailure) {
+				return invokeJvmExecutable(
+											instance,
+											methodOrConstructor,
+											executableArgs,
+											naftahArgs,
+											returnType
+				);
+			}
+		}
+
+		// No handle provided → direct reflection
+		return invokeJvmExecutable(
+									instance,
+									methodOrConstructor,
+									executableArgs,
+									naftahArgs,
+									returnType
+		);
 	}
 
 	/**
-	 * Invokes a Java {@link Constructor} reflectively using the specified argument array.
+	 * Convenience method to invoke a {@link Constructor}, preferring a
+	 * {@link MethodHandle} when available and transparently
+	 * falling back to reflection.
 	 *
-	 * <p>This is a convenience wrapper around {@link #invokeJvmExecutable(Object, Executable, Object[], List, Class)}
-	 * that specifically targets constructors. Since constructors do not require a target object, this method
-	 * automatically supplies {@code null} for the {@code instance} parameter.</p>
+	 * <p>This is a thin wrapper around
+	 * {@link #invokeJvmExecutable(Object, Executable, MethodHandle, List, Class, boolean)}
+	 * that automatically supplies {@code null} for the {@code instance} parameter,
+	 * as constructors do not require one.</p>
+	 *
+	 * <p>Constructor arguments are automatically converted to match the
+	 * constructor’s parameter types, including primitives, arrays,
+	 * collections, and generic types. Optional Naftah-specific type
+	 * semantics are applied when enabled.</p>
+	 *
+	 * <p>The provided argument list may be mutated during invocation
+	 * (for example, for varargs handling or argument back-conversion).</p>
+	 *
+	 * @param methodOrConstructor the {@link Constructor} to invoke
+	 * @param handle              the associated {@link MethodHandle}
+	 *                            (may be {@code null}, in which case reflection is used)
+	 * @param args                the constructor arguments as a list of
+	 *                            {@link Pair}&lt;String, Object&gt;
+	 * @param returnType          the expected type of the constructed object
+	 * @param useNaftahTypes      whether Naftah-specific type semantics should be applied
+	 * @param <T>                 the executable type (typically {@link Constructor})
+	 * @return the newly created instance, or {@link None#get()} if normalized
+	 * @throws Throwable if invocation fails or the constructor throws an exception
+	 * @see #invokeJvmExecutable(Object, Executable, MethodHandle, List, Class, boolean)
+	 * @see Constructor
+	 * @see MethodHandle
+	 */
+	public static <T extends Executable> Object invokeJvmConstructor(   T methodOrConstructor,
+																		MethodHandle handle,
+																		List<Pair<String, Object>> args,
+																		Class<?> returnType,
+																		boolean useNaftahTypes)
+			throws Throwable {
+		return invokeJvmExecutable(null, methodOrConstructor, handle, args, returnType, useNaftahTypes);
+	}
+
+	/**
+	 * Invokes a {@link Constructor} using pre-converted argument values,
+	 * preferring a {@link MethodHandle} when available
+	 * and falling back to reflection if necessary.
+	 *
+	 * <p>This is a convenience wrapper around
+	 * {@link #invokeJvmExecutable(Object, Executable, MethodHandle, Object[], List, Class)}
+	 * that supplies {@code null} as the {@code instance} parameter.</p>
 	 *
 	 * <h3>Behavior overview</h3>
 	 * <ul>
-	 * <li>Invokes the provided {@link Constructor} using
-	 * {@link java.lang.reflect.Constructor#newInstance(Object...)}.</li>
-	 * <li>Delegates argument handling, type checking, and {@link None#get()} substitution to
-	 * {@link #invokeJvmExecutable(Object, Executable, Object[], List, Class)}.</li>
-	 * <li>Returns {@link None#get()} if the constructor result is {@code null}.</li>
+	 * <li>Invokes the constructor via {@link MethodHandle}
+	 * when available</li>
+	 * <li>Falls back to reflective
+	 * {@link java.lang.reflect.Constructor#newInstance(Object...)}
+	 * if handle invocation fails</li>
+	 * <li>Normalizes {@code null} results to {@link None#get()}</li>
+	 * <li>Performs argument back-conversion using {@code naftahArgs}</li>
 	 * </ul>
 	 *
-	 * <p>Note: This method assumes that all arguments in {@code executableArgs} are already
-	 * type-compatible with the constructor’s parameter types. For automatic type conversion,
-	 * named arguments, or more complex argument handling, use the
-	 * {@link #invokeJvmConstructor(Executable, List, Class, boolean)} variant.</p>
+	 * <p>This variant assumes that {@code executableArgs} are already
+	 * type-compatible with the constructor’s parameter types. For automatic
+	 * argument conversion and varargs synthesis, use the
+	 * {@link #invokeJvmConstructor(Executable, MethodHandle, List, Class, boolean)}
+	 * overload.</p>
 	 *
-	 * @param methodOrConstructor the {@link Constructor} to invoke reflectively.
-	 * @param executableArgs      an array of argument values to pass to the constructor.
-	 * @param naftahArgs          a list of named argument pairs, for optional post-processing.
-	 * @param returnType          the expected type of the constructed object.
-	 * @param <T>                 the type of {@link Executable} (usually {@link Constructor}).
-	 * @return the newly constructed instance, or {@link None#get()} if the result is {@code null}.
-	 * @throws InvocationTargetException if the underlying constructor throws an exception.
-	 * @throws InstantiationException    if the constructor cannot instantiate a new object.
-	 * @throws IllegalAccessException    if reflective access is not permitted.
-	 * @see #invokeJvmExecutable(Object, Executable, Object[], List, Class)
-	 * @see java.lang.reflect.Constructor#newInstance(Object...)
+	 * @param methodOrConstructor the {@link Constructor} to invoke
+	 * @param handle              the associated {@link MethodHandle}
+	 *                            (may be {@code null})
+	 * @param executableArgs      argument values in declared parameter order
+	 * @param naftahArgs          named argument pairs used for post-processing
+	 * @param returnType          the expected constructed type
+	 * @param <T>                 the executable type (typically {@link Constructor})
+	 * @return the newly constructed instance, or {@link None#get()} if normalized
+	 * @throws Throwable if invocation fails or the constructor throws an exception
+	 * @see #invokeJvmExecutable(Object, Executable, MethodHandle, Object[], List, Class)
+	 * @see Constructor
+	 * @see MethodHandle
 	 * @see None#get()
 	 */
 	public static <T extends Executable> Object invokeJvmConstructor(   T methodOrConstructor,
+																		MethodHandle handle,
 																		Object[] executableArgs,
 																		List<Pair<String, Object>> naftahArgs,
 																		Class<?> returnType)
-			throws InvocationTargetException,
-			InstantiationException,
-			IllegalAccessException {
-		return invokeJvmExecutable(null, methodOrConstructor, executableArgs, naftahArgs, returnType);
+			throws Throwable {
+		return invokeJvmExecutable(null, methodOrConstructor, handle, executableArgs, naftahArgs, returnType);
 	}
 
 	/**
@@ -597,7 +744,7 @@ public final class InvocationUtils {
 	 */
 	public static void convertArgumentsBack(
 											Object[] executableArgs,
-											List<Pair<String, Object>> naftahArgs) {
+											List<Pair<String, Object>> naftahArgs) throws Throwable {
 		if (executableArgs == null || naftahArgs == null || naftahArgs.isEmpty()) {
 			return;
 		}
@@ -663,13 +810,13 @@ public final class InvocationUtils {
 	 * @param converted the value produced by the reflective invocation
 	 * @return the merged value, either the updated original instance or a suitable
 	 *         replacement object
-	 * @throws NaftahBugError if reflective field updates fail
+	 * @throws Throwable if reflective field updates fail
 	 * @apiNote This method relies on reflective field access and unchecked casts. Callers
 	 *          must ensure that {@code original} and {@code converted} are structurally
 	 *          compatible.
 	 * @see #convertArgumentsBack(Object[], List)
 	 */
-	public static Object convertArgumentBack(Object original, Object converted) {
+	public static Object convertArgumentBack(Object original, Object converted) throws Throwable {
 		if (original == null || None.isNone(original)) {
 			return None.get();
 		}
@@ -712,6 +859,7 @@ public final class InvocationUtils {
 						.set(   original,
 								"left",
 								null,
+								null,
 								pair.getLeft(),
 								false,
 								true);
@@ -719,6 +867,7 @@ public final class InvocationUtils {
 				ObjectAccessUtils
 						.set(   original,
 								"right",
+								null,
 								null,
 								pair.getRight(),
 								false,
@@ -736,6 +885,7 @@ public final class InvocationUtils {
 						.set(   original,
 								"left",
 								null,
+								null,
 								triple.getLeft(),
 								false,
 								true);
@@ -743,6 +893,7 @@ public final class InvocationUtils {
 				ObjectAccessUtils
 						.set(   original,
 								"middle",
+								null,
 								null,
 								triple.getMiddle(),
 								false,
@@ -752,6 +903,7 @@ public final class InvocationUtils {
 				ObjectAccessUtils
 						.set(   original,
 								"right",
+								null,
 								null,
 								triple.getRight(),
 								false,
@@ -782,6 +934,7 @@ public final class InvocationUtils {
 							.set(   pair,
 									"left",
 									null,
+									null,
 									getConvertedElementAt(converted, convertedType, 0),
 									false,
 									true);
@@ -789,6 +942,7 @@ public final class InvocationUtils {
 					ObjectAccessUtils
 							.set(   pair,
 									"right",
+									null,
 									null,
 									getConvertedElementAt(converted, convertedType, 1),
 									false,
@@ -804,6 +958,7 @@ public final class InvocationUtils {
 							.set(   triple,
 									"left",
 									null,
+									null,
 									getConvertedElementAt(converted, convertedType, 0),
 									false,
 									true);
@@ -812,6 +967,7 @@ public final class InvocationUtils {
 							.set(   triple,
 									"middle",
 									null,
+									null,
 									getConvertedElementAt(converted, convertedType, 1),
 									false,
 									true);
@@ -819,6 +975,7 @@ public final class InvocationUtils {
 					ObjectAccessUtils
 							.set(   triple,
 									"right",
+									null,
 									null,
 									getConvertedElementAt(converted, convertedType, 2),
 									false,
@@ -838,6 +995,7 @@ public final class InvocationUtils {
 					ObjectAccessUtils
 							.set(   tuple,
 									"values",
+									null,
 									null,
 									List.of(tupleArray),
 									false,
