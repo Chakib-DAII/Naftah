@@ -4,7 +4,6 @@
 package org.daiitech.naftah.parser;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -2152,7 +2151,7 @@ public final class NaftahParserHelper {
 	 * <p>This method supports two types of argument inputs:
 	 * <ul>
 	 * <li>If {@code executableArgs} is provided, it is passed directly to the underlying
-	 * {@link java.lang.reflect.Method}.</li>
+	 * {@link Method}.</li>
 	 * <li>If {@code naftahArgs} is provided as a {@link List} of {@link Pair} objects (name/value pairs),
 	 * each argument is automatically converted to match the parameter type using
 	 * {@link org.daiitech.naftah.utils.reflect.InvocationUtils#invokeJvmExecutable}.</li>
@@ -2199,6 +2198,7 @@ public final class NaftahParserHelper {
 			if (Objects.nonNull(executableArgs)) {
 				return invokeJvmExecutable( null,
 											builtinFunction.getMethod(),
+											builtinFunction.getMethodHandle(),
 											executableArgs,
 											naftahArgs,
 											builtinFunction
@@ -2208,6 +2208,7 @@ public final class NaftahParserHelper {
 			else {
 				return invokeJvmExecutable( null,
 											builtinFunction.getMethod(),
+											builtinFunction.getMethodHandle(),
 											naftahArgs,
 											builtinFunction
 													.getFunctionInfo()
@@ -2230,19 +2231,19 @@ public final class NaftahParserHelper {
 												line,
 												column);
 		}
-		catch (IllegalAccessException | InvocationTargetException e) {
-			throw newNaftahInvocationError( functionName,
-											builtinFunction.toDetailedString(),
-											e,
-											line,
-											column);
-		}
 		catch (InstantiationException e) {
 			throw newNaftahInstantiationError(  functionName,
 												builtinFunction.toDetailedString(),
 												e,
 												line,
 												column);
+		}
+		catch (Throwable e) {
+			throw newNaftahInvocationError( functionName,
+											builtinFunction.toDetailedString(),
+											e,
+											line,
+											column);
 		}
 	}
 
@@ -2322,6 +2323,7 @@ public final class NaftahParserHelper {
 				if (Objects.nonNull(executableArgs)) {
 					result = invokeJvmExecutable(   possibleInstance,
 													jvmFunction.getMethod(),
+													jvmFunction.getMethodHandle(),
 													executableArgs,
 													naftahArgs,
 													jvmFunction.getMethod().getReturnType());
@@ -2329,6 +2331,7 @@ public final class NaftahParserHelper {
 				else {
 					result = invokeJvmExecutable(   possibleInstance,
 													jvmFunction.getMethod(),
+													jvmFunction.getMethodHandle(),
 													naftahArgs,
 													jvmFunction.getMethod().getReturnType(),
 													false);
@@ -2354,7 +2357,14 @@ public final class NaftahParserHelper {
 													line,
 													column);
 			}
-			catch (IllegalAccessException | InvocationTargetException e) {
+			catch (InstantiationException e) {
+				throw newNaftahInstantiationError(  functionName,
+													jvmFunction.toDetailedString(),
+													e,
+													line,
+													column);
+			}
+			catch (Throwable e) {
 				throw newNaftahInvocationError( functionName,
 												jvmFunction.isStatic() ?
 														jvmFunction
@@ -2365,13 +2375,6 @@ public final class NaftahParserHelper {
 												e,
 												line,
 												column);
-			}
-			catch (InstantiationException e) {
-				throw newNaftahInstantiationError(  functionName,
-													jvmFunction.toDetailedString(),
-													e,
-													line,
-													column);
 			}
 		}
 		else {
@@ -2437,9 +2440,11 @@ public final class NaftahParserHelper {
 		try {
 			Object result;
 			var constructor = jvmClassInitializer.getConstructor();
+			var methodHandle = jvmClassInitializer.getMethodHandle();
 			var returnType = jvmClassInitializer.getClazz();
 			if (Objects.nonNull(executableArgs)) {
 				result = invokeJvmConstructor(  constructor,
+												methodHandle,
 												executableArgs,
 												naftahArgs,
 												returnType);
@@ -2447,6 +2452,7 @@ public final class NaftahParserHelper {
 			else {
 				result = invokeJvmConstructor(
 												constructor,
+												methodHandle,
 												naftahArgs,
 												jvmClassInitializer.getClazz(),
 												false);
@@ -2469,20 +2475,20 @@ public final class NaftahParserHelper {
 												line,
 												column);
 		}
-		catch (IllegalAccessException | InvocationTargetException e) {
-			throw newNaftahInvocationError( classInitializerName,
-											jvmClassInitializer
-													.toDetailedString(),
-											e,
-											line,
-											column);
-		}
 		catch (InstantiationException e) {
 			throw newNaftahInstantiationError(  classInitializerName,
 												jvmClassInitializer.toDetailedString(),
 												e,
 												line,
 												column);
+		}
+		catch (Throwable e) {
+			throw newNaftahInvocationError( classInitializerName,
+											jvmClassInitializer
+													.toDetailedString(),
+											e,
+											line,
+											column);
 		}
 	}
 
@@ -2772,7 +2778,13 @@ public final class NaftahParserHelper {
 				try {
 					Object function = currentContext.getFunction(functionName, false).getRight();
 					if (function instanceof JvmFunction jvmFunction) {
-						return ObjectAccessUtils.get(target, fieldName, jvmFunction.getMethod(), safe, failFast);
+						return ObjectAccessUtils
+								.get(   target,
+										fieldName,
+										jvmFunction.getMethod(),
+										jvmFunction.getMethodHandle(),
+										safe,
+										failFast);
 					}
 					else if (function instanceof Collection<?> functions) {
 						//noinspection unchecked
@@ -2784,6 +2796,7 @@ public final class NaftahParserHelper {
 									.get(   target,
 											fieldName,
 											(Method) bestMatch.getLeft().getExecutable(),
+											bestMatch.getLeft().getMethodHandle(),
 											safe,
 											failFast);
 						}
@@ -2814,7 +2827,7 @@ public final class NaftahParserHelper {
 
 			}
 
-			return ObjectAccessUtils.get(target, fieldName, null, safe, failFast);
+			return ObjectAccessUtils.get(target, fieldName, null, null, safe, failFast);
 		}
 		catch (Throwable th) {
 			if (safe) {
@@ -2910,7 +2923,14 @@ public final class NaftahParserHelper {
 			if (currentContext.containsFunction(functionName, -1)) {
 				Object function = currentContext.getFunction(functionName, false).getRight();
 				if (function instanceof JvmFunction jvmFunction) {
-					ObjectAccessUtils.set(target, fieldName, jvmFunction.getMethod(), value, safe, failFast);
+					ObjectAccessUtils
+							.set(   target,
+									fieldName,
+									jvmFunction.getMethod(),
+									jvmFunction.getMethodHandle(),
+									value,
+									safe,
+									failFast);
 				}
 				else if (function instanceof Collection<?> functions) {
 					//noinspection unchecked
@@ -2924,6 +2944,7 @@ public final class NaftahParserHelper {
 								.set(   target,
 										fieldName,
 										(Method) bestMatch.getLeft().getExecutable(),
+										bestMatch.getLeft().getMethodHandle(),
 										bestMatch.getRight()[0],
 										safe,
 										failFast);
@@ -2944,7 +2965,7 @@ public final class NaftahParserHelper {
 				}
 			}
 			else {
-				ObjectAccessUtils.set(target, fieldName, null, value, safe, failFast);
+				ObjectAccessUtils.set(target, fieldName, null, null, value, safe, failFast);
 			}
 		}
 		catch (Throwable th) {
