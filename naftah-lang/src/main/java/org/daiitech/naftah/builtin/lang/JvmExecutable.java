@@ -3,6 +3,7 @@
 
 package org.daiitech.naftah.builtin.lang;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Executable;
 
 /**
@@ -31,12 +32,32 @@ import java.lang.reflect.Executable;
 public sealed interface JvmExecutable permits BuiltinFunction, JvmFunction, JvmClassInitializer {
 	/**
 	 * Returns the underlying reflective {@link java.lang.reflect.Executable}
-	 * instance represented by this object.
+	 * represented by this object.
 	 *
-	 * <p>This may correspond to a Java method, constructor, or other callable
-	 * element recognized by the JVM.</p>
+	 * <p>The returned executable may be a {@link java.lang.reflect.Method}
+	 * or {@link java.lang.reflect.Constructor}, depending on the concrete
+	 * implementation.</p>
 	 *
-	 * @return the associated {@link java.lang.reflect.Executable} instance
+	 * @return the associated {@link java.lang.reflect.Executable}
 	 */
 	Executable getExecutable();
+
+	/**
+	 * Returns the {@link MethodHandle} corresponding to
+	 * the underlying executable.
+	 *
+	 * <p>The handle is typically resolved via
+	 * {@link java.lang.invoke.MethodHandles.Lookup} and may be cached
+	 * for repeated invocations.</p>
+	 *
+	 * <p>Callers should prefer this handle for invocation performance.
+	 * If access restrictions prevent handle creation, an
+	 * {@link IllegalAccessException} is thrown and the caller may
+	 * fall back to reflective invocation.</p>
+	 *
+	 * @return the resolved {@link MethodHandle}
+	 * @throws IllegalAccessException if the handle cannot be created
+	 *                                due to JVM access control restrictions
+	 */
+	MethodHandle getMethodHandle() throws IllegalAccessException;
 }
