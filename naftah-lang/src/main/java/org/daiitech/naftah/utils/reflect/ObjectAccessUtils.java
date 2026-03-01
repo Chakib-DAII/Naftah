@@ -3,8 +3,8 @@
 
 package org.daiitech.naftah.utils.reflect;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -73,24 +73,30 @@ public final class ObjectAccessUtils {
 	/**
 	 * Retrieves the value of a field or property from a target object.
 	 *
-	 * <p>If a {@code getter} method is provided, it will be invoked. Otherwise,
-	 * the method will attempt to access the field directly using reflection.
+	 * <p>If a {@code getter} method is provided, it will be invoked first,
+	 * optionally via the associated {@link MethodHandle}. If the getter is not
+	 * provided or fails (and {@code failFast} is {@code false}), the method
+	 * attempts to access the field directly via reflection.</p>
 	 *
-	 * @param target   the object from which to retrieve the value; may be null
-	 * @param name     the field name; may be null
-	 * @param getter   optional getter {@link Method} to invoke; may be null
-	 * @param safe     whether to swallow any exceptions and return {@code null}
-	 * @param failFast whether to throw immediately on resolution errors during getter execution
-	 * @return the value of the field or property, or {@code null} if not found
+	 * <p>Exceptions can be swallowed or propagated depending on {@code safe}
+	 * and {@code failFast} flags.</p>
+	 *
+	 * @param target             the object from which to retrieve the value; may be {@code null}
+	 * @param name               the field name; may be {@code null}
+	 * @param getter             optional getter {@link Method} to invoke; may be {@code null}
+	 * @param getterMethodHandle optional getter {@link MethodHandle} to invoke; may be {@code null}
+	 * @param safe               if {@code true}, exceptions are suppressed and {@code null} is returned
+	 * @param failFast           if {@code true}, exceptions during getter invocation are thrown immediately
+	 * @return the value of the field or property, or {@code null} if not found or suppressed
+	 * @throws Throwable if invocation fails and {@code failFast} is {@code true} or {@code safe} is {@code false}
 	 */
 	public static Object get(   Object target,
 								String name,
 								Method getter,
+								MethodHandle getterMethodHandle,
 								boolean safe,
 								boolean failFast)
-			throws InvocationTargetException,
-			InstantiationException,
-			IllegalAccessException {
+			throws Throwable {
 		if (target == null || name == null) {
 			return null;
 		}
@@ -100,6 +106,7 @@ public final class ObjectAccessUtils {
 				return InvocationUtils
 						.invokeJvmExecutable(   target,
 												getter,
+												getterMethodHandle,
 												new Object[]{},
 												List.of(),
 												getter.getReturnType());
@@ -137,26 +144,32 @@ public final class ObjectAccessUtils {
 	/**
 	 * Sets the value of a field or property on a target object.
 	 *
-	 * <p>If a {@code setter} method is provided, it will be invoked. Otherwise,
-	 * the method will attempt to access the field directly using reflection.
+	 * <p>If a {@code setter} method is provided, it will be invoked first,
+	 * optionally via the associated {@link MethodHandle}. If the setter is not
+	 * provided or fails (and {@code failFast} is {@code false}), the method
+	 * attempts to set the field directly via reflection.</p>
 	 *
-	 * @param target   the object on which to set the value; may be null
-	 * @param name     the field name; may be null
-	 * @param setter   optional setter {@link Method} to invoke; may be null
-	 * @param safe     whether to swallow any exceptions and return {@code null}
-	 * @param failFast whether to throw immediately on resolution errors during setter execution
-	 * @param value    the value to assign to the field
+	 * <p>Exceptions can be suppressed or propagated depending on {@code safe}
+	 * and {@code failFast} flags.</p>
+	 *
+	 * @param target             the object on which to set the value; may be {@code null}
+	 * @param name               the field name; may be {@code null}
+	 * @param setter             optional setter {@link Method} to invoke; may be {@code null}
+	 * @param setterMethodHandle optional setter {@link MethodHandle} to invoke; may be {@code null}
+	 * @param value              the value to assign to the field
+	 * @param safe               if {@code true}, exceptions are suppressed and {@code false} is returned on failure
+	 * @param failFast           if {@code true}, exceptions during setter invocation are thrown immediately
 	 * @return {@code true} if the value was successfully set, {@code false} otherwise
+	 * @throws Throwable if invocation fails and {@code failFast} is {@code true} or {@code safe} is {@code false}
 	 */
 	public static boolean set(  Object target,
 								String name,
 								Method setter,
+								MethodHandle setterMethodHandle,
 								Object value,
 								boolean safe,
 								boolean failFast)
-			throws InvocationTargetException,
-			InstantiationException,
-			IllegalAccessException {
+			throws Throwable {
 		if (target == null || name == null) {
 			return false;
 		}
@@ -166,6 +179,7 @@ public final class ObjectAccessUtils {
 				InvocationUtils
 						.invokeJvmExecutable(   target,
 												setter,
+												setterMethodHandle,
 												List.of(ImmutablePair.of(null, value)),
 												setter.getReturnType(),
 												false);
