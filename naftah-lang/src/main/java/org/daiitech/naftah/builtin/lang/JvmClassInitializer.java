@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Modifier;
@@ -67,9 +69,27 @@ public final class JvmClassInitializer implements Serializable, JvmExecutable {
 	private final boolean isInvocable;
 
 	/**
-	 * The reflected constructor instance (transient for serialization).
+	 * The reflected {@link java.lang.reflect.Constructor} instance.
+	 *
+	 * <p>Marked {@code transient} because {@link java.lang.reflect.Constructor}
+	 * is not serializable. It is expected to be re-resolved or restored
+	 * after deserialization.</p>
 	 */
 	private transient Constructor<?> constructor;
+
+	/**
+	 * The cached {@link MethodHandle} corresponding
+	 * to this constructor.
+	 *
+	 * <p>Marked {@code transient} because {@link MethodHandle}
+	 * is not serializable and must be recreated (typically via
+	 * {@link MethodHandles.Lookup#findConstructor(Class, java.lang.invoke.MethodType)})
+	 * after deserialization.</p>
+	 *
+	 * <p>This handle is preferred for instantiation performance and may
+	 * be used instead of reflective {@link Constructor#newInstance(Object...)}.</p>
+	 */
+	private transient MethodHandle handle;
 
 	/**
 	 * Creates a new {@code JvmClassInitializer} wrapper.
@@ -157,6 +177,17 @@ public final class JvmClassInitializer implements Serializable, JvmExecutable {
 	@Override
 	public Executable getExecutable() {
 		return constructor;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public MethodHandle getMethodHandle() throws IllegalAccessException {
+		if (isInvocable && Objects.nonNull(handle)) {
+			handle = MethodHandles.lookup().unreflectConstructor(constructor);
+		}
+		return handle;
 	}
 
 	/**
