@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -67,9 +69,26 @@ public final class JvmFunction implements Serializable, JvmExecutable {
 	private final boolean isInvocable;
 
 	/**
-	 * The reflected method instance. Marked transient for serialization.
+	 * The reflected {@link Method} instance.
+	 *
+	 * <p>Marked {@code transient} because {@link Method}
+	 * is not serializable and must be re-resolved after deserialization.</p>
 	 */
 	private transient Method method;
+
+	/**
+	 * The cached {@link MethodHandle} corresponding
+	 * to the reflected method.
+	 *
+	 * <p>Marked {@code transient} because {@link MethodHandle}
+	 * is not serializable and must be recreated (typically via
+	 * {@link MethodHandles.Lookup#unreflect(Method)})
+	 * after deserialization.</p>
+	 *
+	 * <p>This handle is preferred for invocation performance over
+	 * reflective {@link Method#invoke(Object, Object...)}.</p>
+	 */
+	private transient MethodHandle handle;
 
 	/**
 	 * Constructs a new {@code JvmFunction}.
@@ -176,6 +195,18 @@ public final class JvmFunction implements Serializable, JvmExecutable {
 	public Executable getExecutable() {
 		return method;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public MethodHandle getMethodHandle() throws IllegalAccessException {
+		if (isInvocable && Objects.nonNull(handle)) {
+			handle = MethodHandles.lookup().unreflect(method);
+		}
+		return handle;
+	}
+
 
 	/**
 	 * Custom serialization logic to write the object's non-transient fields.
