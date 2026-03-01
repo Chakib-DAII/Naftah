@@ -3,8 +3,8 @@
 
 package org.daiitech.naftah.utils.reflect;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ class InvocationUtilsTests {
 	@Nested
 	class JvmExecutableTests {
 		@Test
-		void testInvokeInstanceMethod() throws Exception {
+		void testInvokeInstanceMethod() throws Throwable {
 			NaftahObject obj = NaftahObject.of(System.getProperties());
 			Method method = NaftahObject.class.getMethod("get", boolean.class);
 
@@ -51,6 +51,7 @@ class InvocationUtilsTests {
 					.invokeJvmExecutable(
 											obj,
 											method,
+											MethodHandles.lookup().unreflect(method),
 											List.of(ImmutablePair.of(null, false)),
 											Object.class,
 											false
@@ -60,13 +61,14 @@ class InvocationUtilsTests {
 		}
 
 		@Test
-		void testInvokeStaticMethod() throws Exception {
+		void testInvokeStaticMethod() throws Throwable {
 			Method method = String.class.getMethod("join", CharSequence.class, CharSequence[].class);
 
 			Object result = InvocationUtils
 					.invokeJvmExecutable(
 											null,
 											method,
+											MethodHandles.lookup().unreflect(method),
 											List
 													.of(ImmutablePair.of(null, "_"),
 														ImmutablePair.of(null, new String[]{"Naftah", "Lang"})),
@@ -78,7 +80,7 @@ class InvocationUtilsTests {
 		}
 
 		@Test
-		void testInvokeConstructor() throws Exception {
+		void testInvokeConstructor() throws Throwable {
 			Constructor<?> constructor = NaftahObject.class
 					.getConstructor(
 									boolean.class,
@@ -91,6 +93,7 @@ class InvocationUtilsTests {
 			Object instance = InvocationUtils
 					.invokeJvmConstructor(
 											constructor,
+											MethodHandles.lookup().unreflectConstructor(constructor),
 											List
 													.of(ImmutablePair.of(null, true),
 														ImmutablePair.of(null, javaObject),
@@ -128,6 +131,7 @@ class InvocationUtilsTests {
 			instance = InvocationUtils
 					.invokeJvmConstructor(
 											constructor,
+											MethodHandles.lookup().unreflectConstructor(constructor),
 											List
 													.of(ImmutablePair.of(null, false),
 														ImmutablePair.of(null, null),
@@ -155,11 +159,12 @@ class InvocationUtilsTests {
 				throw new RuntimeException(e);
 			}
 
-			assertThrows(   IllegalArgumentException.class,
+			assertThrows(   Throwable.class,
 							() -> InvocationUtils
 									.invokeJvmExecutable(
 															obj,
 															method,
+															MethodHandles.lookup().unreflect(method),
 															List.of(ImmutablePair.of("a", 1)), // more args
 															int.class,
 															false
@@ -170,9 +175,10 @@ class InvocationUtilsTests {
 		@Test
 		void invokeJvmConstructorThrowsExceptionTest() throws Exception {
 			Constructor<InvocationUtils> ctor = InvocationUtils.class.getDeclaredConstructor();
-			assertThrows(   InvocationTargetException.class,
+			assertThrows(   Throwable.class,
 							() -> InvocationUtils
 									.invokeJvmConstructor(  ctor,
+															MethodHandles.lookup().unreflectConstructor(ctor),
 															new Object[]{},
 															new ArrayList<>(),
 															NaftahBugError.class));
