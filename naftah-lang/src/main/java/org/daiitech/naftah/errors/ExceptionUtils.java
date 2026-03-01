@@ -409,14 +409,14 @@ public final class ExceptionUtils {
 	 *
 	 * @param functionName           the name of the function being invoked.
 	 * @param functionDetailedString detailed string representation of the function.
-	 * @param e                      the underlying exception.
+	 * @param th                     the underlying throwable.
 	 * @param line                   the line number where the error occurred.
 	 * @param column                 the column number where the error occurred.
 	 * @return a {@code NaftahBugError} describing the invocation error.
 	 */
 	public static NaftahBugError newNaftahInvocationError(  String functionName,
 															String functionDetailedString,
-															Exception e,
+															Throwable th,
 															int line,
 															int column) {
 		return new NaftahBugError(  """
@@ -426,7 +426,7 @@ public final class ExceptionUtils {
 									"""
 											.formatted( functionName,
 														functionDetailedString),
-									e,
+									th,
 									line,
 									column);
 	}
