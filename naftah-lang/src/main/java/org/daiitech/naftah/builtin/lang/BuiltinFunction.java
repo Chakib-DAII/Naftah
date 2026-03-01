@@ -8,9 +8,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Representation of a builtin function.
@@ -53,10 +56,26 @@ public final class BuiltinFunction implements Serializable, JvmExecutable {
 	private final NaftahFunction functionInfo;
 
 	/**
-	 * The reflected method instance. Marked transient because
-	 * it is not serializable and restored after deserialization.
+	 * The reflected {@link Method} instance.
+	 *
+	 * <p>Marked {@code transient} because {@link Method}
+	 * is not serializable. It is expected to be lazily restored or
+	 * re-resolved after deserialization.</p>
 	 */
 	private transient Method method;
+
+	/**
+	 * The cached {@link MethodHandle} corresponding
+	 * to the reflected method.
+	 *
+	 * <p>Marked {@code transient} because {@link MethodHandle}
+	 * is not serializable. It must be re-created (typically via
+	 * {@link MethodHandles.Lookup}) after deserialization.</p>
+	 *
+	 * <p>This handle is preferred for invocation performance and may
+	 * fall back to reflection if resolution or invocation fails.</p>
+	 */
+	private transient MethodHandle handle;
 
 	/**
 	 * Constructs a {@code BuiltinFunction} with the given method and metadata.
@@ -119,6 +138,17 @@ public final class BuiltinFunction implements Serializable, JvmExecutable {
 	@Override
 	public Executable getExecutable() {
 		return method;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public MethodHandle getMethodHandle() throws IllegalAccessException {
+		if (Objects.nonNull(handle)) {
+			handle = MethodHandles.lookup().unreflect(method);
+		}
+		return handle;
 	}
 
 	/**
