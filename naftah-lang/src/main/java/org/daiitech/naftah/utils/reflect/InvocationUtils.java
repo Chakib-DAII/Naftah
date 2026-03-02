@@ -4,6 +4,7 @@
 package org.daiitech.naftah.utils.reflect;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.WrongMethodTypeException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
@@ -31,6 +32,7 @@ import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.builtin.utils.tuple.Tuple;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.Naftah.INVOKE_API_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createCollection;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.createMap;
 import static org.daiitech.naftah.builtin.utils.CollectionUtils.getElementAt;
@@ -73,6 +75,16 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  * @see #convertArgumentsBack(Object[], List)
  */
 public final class InvocationUtils {
+	/**
+	 * Indicates whether the Naftah Invoke API should be used.
+	 * <p>
+	 * This flag is controlled via the JVM system property
+	 * {@link org.daiitech.naftah.Naftah#INVOKE_API_PROPERTY}. If set to {@code true}, the runtime will
+	 * attempt to use the optimized MethodHandle-based invocation path
+	 * instead of standard reflection calls.
+	 * <p>
+	 */
+	public static final Boolean USE_INVOKE_API = Boolean.getBoolean(INVOKE_API_PROPERTY);
 
 	/**
 	 * Private constructor to prevent instantiation.
@@ -311,7 +323,7 @@ public final class InvocationUtils {
 	 *
 	 * <p>This low-level helper performs:</p>
 	 * <ul>
-	 * <li>Invocation via {@link MethodHandle#invokeWithArguments(Object...)}</li>
+	 * <li>Invocation via {@link MethodHandle#invoke(Object...)}</li>
 	 * <li>Unwrapping of {@link NaftahObject} instances when necessary</li>
 	 * <li>Automatic conversion of {@code void} or {@code null} results to {@link None#get()}</li>
 	 * </ul>
@@ -323,7 +335,7 @@ public final class InvocationUtils {
 	 * @param returnType     the expected return type
 	 * @return the invocation result, or {@link None#get()} if the result is {@code null} or {@code void}
 	 * @throws Throwable if the underlying method handle throws anything
-	 * @see MethodHandle#invokeWithArguments(Object...)
+	 * @see MethodHandle#invoke(Object...)
 	 * @see NaftahObject
 	 * @see None#get()
 	 */
@@ -335,24 +347,77 @@ public final class InvocationUtils {
 												List<Pair<String, Object>> naftahArgs,
 												Class<?> returnType
 	) throws Throwable {
-
-		Object[] invocationArgs;
-
 		// Handle instance binding
 		if (Objects.nonNull(instance)) {
 			if (!NaftahObject.class.isAssignableFrom(declaringClass) && instance instanceof NaftahObject naftahObject) {
 				instance = naftahObject.get(true);
 			}
-
-			invocationArgs = new Object[executableArgs.length + 1];
-			invocationArgs[0] = instance;
-			System.arraycopy(executableArgs, 0, invocationArgs, 1, executableArgs.length);
-		}
-		else {
-			invocationArgs = executableArgs;
+			handle = handle.bindTo(instance);
 		}
 
-		Object possibleResult = handle.invokeWithArguments(invocationArgs);
+		Object possibleResult = switch (executableArgs.length) {
+			case 0 -> handle.invoke();
+			case 1 -> handle.invoke(executableArgs[0]);
+			case 2 -> handle.invoke(executableArgs[0], executableArgs[1]);
+			case 3 -> handle.invoke(executableArgs[0], executableArgs[1], executableArgs[2]);
+			case 4 -> handle.invoke(executableArgs[0], executableArgs[1], executableArgs[2], executableArgs[3]);
+			case 5 -> handle
+					.invoke(executableArgs[0],
+							executableArgs[1],
+							executableArgs[2],
+							executableArgs[3],
+							executableArgs[4]);
+			case 6 -> handle
+					.invoke(executableArgs[0],
+							executableArgs[1],
+							executableArgs[2],
+							executableArgs[3],
+							executableArgs[4],
+							executableArgs[5]);
+			case 7 -> handle
+					.invoke(executableArgs[0],
+							executableArgs[1],
+							executableArgs[2],
+							executableArgs[3],
+							executableArgs[4],
+							executableArgs[5],
+							executableArgs[6]);
+			case 8 -> handle
+					.invoke(executableArgs[0],
+							executableArgs[1],
+							executableArgs[2],
+							executableArgs[3],
+							executableArgs[4],
+							executableArgs[5],
+							executableArgs[6],
+							executableArgs[7]);
+			case 9 -> handle
+					.invoke(executableArgs[0],
+							executableArgs[1],
+							executableArgs[2],
+							executableArgs[3],
+							executableArgs[4],
+							executableArgs[5],
+							executableArgs[6],
+							executableArgs[7],
+							executableArgs[8]);
+			case 10 -> handle
+					.invoke(executableArgs[0],
+							executableArgs[1],
+							executableArgs[2],
+							executableArgs[3],
+							executableArgs[4],
+							executableArgs[5],
+							executableArgs[6],
+							executableArgs[7],
+							executableArgs[8],
+							executableArgs[9]);
+			default -> {
+				// For more than 10 args, use asSpreader to convert array into individual arguments
+				handle = handle.asSpreader(Object[].class, executableArgs.length);
+				yield handle.invoke(executableArgs);
+			}
+		};
 
 		var result = returnType != Void.class && possibleResult != null ? possibleResult : None.get();
 
@@ -386,7 +451,7 @@ public final class InvocationUtils {
 																	Class<?> returnType
 	) throws Throwable {
 
-		if (Objects.nonNull(methodHandle)) {
+		if (USE_INVOKE_API && Objects.nonNull(methodHandle)) {
 			try {
 				return invokeJvmMethodHandle(
 												instance,
@@ -398,13 +463,19 @@ public final class InvocationUtils {
 				);
 			}
 			catch (Throwable handleFailure) {
-				return invokeJvmExecutable(
-											instance,
-											methodOrConstructor,
-											executableArgs,
-											naftahArgs,
-											returnType
-				);
+				// Retry with reflection only if JVM-level / invocation infrastructure errors
+				if (handleFailure instanceof IllegalAccessException || handleFailure instanceof WrongMethodTypeException || handleFailure instanceof ClassCastException || handleFailure instanceof LinkageError) {
+					return invokeJvmExecutable(
+												instance,
+												methodOrConstructor,
+												executableArgs,
+												naftahArgs,
+												returnType
+					);
+				}
+
+				// Otherwise, propagate user-thrown exceptions
+				throw handleFailure;
 			}
 		}
 
