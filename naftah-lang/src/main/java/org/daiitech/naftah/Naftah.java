@@ -192,6 +192,16 @@ public final class Naftah {
 	 */
 	public static final String VECTOR_API_PROPERTY = "naftah.vector.api.active";
 	/**
+	 * Property to enable Invoke API.
+	 * <p>
+	 * When set to {@code true}, the runtime will use the optimized MethodHandle-based
+	 * invocation path where possible, instead of falling back to standard reflection.
+	 * This can improve performance for hot methods but requires that arguments and
+	 * method types match exactly.
+	 * <p>
+	 */
+	public static final String INVOKE_API_PROPERTY = "naftah.invoke.api.active";
+	/**
 	 * Property to enable number formatter in Naftah.
 	 */
 	public static final String NUMBER_FORMATTER_PROPERTY = "naftah.number.formatter.active";
@@ -663,6 +673,15 @@ public final class Naftah {
 								"تمكين تحسينات واجهة برمجة التطبيقات المتجهة لتحسين الأداء"})
 		private boolean useVectorApi;
 
+		@Option(
+				names = {"-inv", "--invoke"},
+				description = {
+								"Enable Invoke API optimizations for performance",
+								"تمكين تحسينات واجهة برمجة التطبيقات Invoke لتحسين الأداء"
+				}
+		)
+		private boolean useInvokeApi;
+
 		@Option(names = {"-nr_f", "--number_formatting"},
 				description = {
 								"""
@@ -761,6 +780,11 @@ public final class Naftah {
 			if (matchedCommand.useVectorApi) {
 				System.setProperty(VECTOR_API_PROPERTY, Boolean.toString(true));
 			}
+
+			if (matchedCommand.useInvokeApi) {
+				System.setProperty(INVOKE_API_PROPERTY, Boolean.toString(true));
+			}
+
 
 			if (matchedCommand.useNumberFormatter) {
 				System.setProperty(NUMBER_FORMATTER_PROPERTY, Boolean.toString(true));
