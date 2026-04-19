@@ -8,7 +8,7 @@ permalink: /releases
 
 {% for release in site.data.releases %}
 
-## [{{ release.name | default: release.tag_name }}]({{ release.html_url }})
+## [{{ release.name | default: release.tag_name }}]({{ release.html_url }}){:target="_blank"}
 
 **Published:** {{ release.published_at | date: "%Y-%m-%d" }}
 
@@ -22,7 +22,7 @@ _لا توجد إصدارات متوفرة._
 **Downloads - التنزيلات:**
 <ul>
   {% for asset in release.assets %}
-  <li><a href="{{ asset.browser_download_url }}">{{ asset.name }}</a> ({{ asset.size | divided_by: 1024 }} KB)</li>
+  <li><a href="{{ asset.browser_download_url }}" target="_blank">{{ asset.name }}</a> ({{ asset.size | divided_by: 1024 }} KB)</li>
   {% endfor %}
 </ul>
 {% endif %}
