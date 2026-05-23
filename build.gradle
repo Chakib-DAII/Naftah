@@ -1,3 +1,4 @@
+import groovy.json.JsonOutput
 import groovy.xml.XmlSlurper
 
 plugins {
@@ -179,6 +180,81 @@ tasks.register('copyJavadocAll', Copy) {
 
 	from tasks.named('javadocAll').get().destinationDir
 	into "$rootDir/docs-site/javadoc"
+}
+
+tasks.register('exportNaftahExamples') {
+	doLast {
+
+		def sourceDir = file("learn-by-example")
+		def targetAssets = file("docs-site/assets/examples")
+		def targetPages = file("docs-site/examples")
+		def dataDir = file("docs-site/_data")
+
+		targetAssets.mkdirs()
+		targetPages.mkdirs()
+		dataDir.mkdirs()
+
+		def examples = []
+
+		fileTree(sourceDir).matching {
+			include "**/*.naftah", "**/*.nfth", "**/*.na", "**/*.nsh"
+		}.each { file ->
+
+			def relativePath = sourceDir.toPath().relativize(file.toPath()).toString()
+			def safeName = file.name.substring(0, file.name.lastIndexOf("."))
+
+			def safeFileName = relativePath.replace(File.separator, "_")
+
+			// copy asset
+			def assetFile = new File(targetAssets, safeFileName)
+			assetFile.parentFile.mkdirs()
+			assetFile.bytes = file.bytes
+
+			// read code
+			def content = file.getText("UTF-8")
+
+			// store metadata ONLY
+			examples << [
+					name: safeName,
+					filename: safeFileName,
+					extension: file.name.substring(file.name.lastIndexOf(".") + 1)
+			]
+
+			// ======================================
+			// CREATE REAL JEKYLL PAGE (.md FILE)
+			// ======================================
+			def mdFile = new File(targetPages, "${safeName}.md")
+
+			mdFile.text = """---
+title: ${safeName}
+layout: default
+permalink: /examples/${safeName}/
+---
+
+# ${safeName}
+
+📄 الأصل: `${file.name}`
+
+📦 تحميل الملف:
+[⬇ تحميل](/assets/examples/${safeFileName})
+
+🔗 عرض الملف:
+
+```naftah
+	{% raw %}
+		${content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}
+	{% endraw %}
+```
+"""
+		}
+
+		// write JSON (NO CODE INSIDE)
+		def jsonFile = new File(dataDir, "examples.json")
+		jsonFile.parentFile.mkdirs()
+		jsonFile.text = JsonOutput.prettyPrint(
+				JsonOutput.toJson(examples)
+		)
+	}
 }
 
 changelog {
