@@ -1,7 +1,9 @@
-<nav>
-	<ul>
+<nav class="site-nav">
+	<ul class="nav-list">
+
 		{% for item in site.data.navigation %}
-		<li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+		{% include nav-item.html item=item %}
 		{% endfor %}
+
 	</ul>
 </nav>

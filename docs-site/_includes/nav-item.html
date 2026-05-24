@@ -1,0 +1,24 @@
+<li class="nav-item">
+
+	{% if include.item.children %}
+
+	<span class="nav-link has-dropdown">
+      {{ include.item.title }}
+    </span>
+
+	<ul class="dropdown">
+		{% for child in include.item.children %}
+		{% include nav-item.html item=child %}
+		{% endfor %}
+	</ul>
+
+	{% else %}
+
+	<a class="nav-link"
+	   href="{{ include.item.url | relative_url }}">
+		{{ include.item.title }}
+	</a>
+
+	{% endif %}
+
+</li>
