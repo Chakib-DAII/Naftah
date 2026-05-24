@@ -3,6 +3,7 @@ let SEARCH_INDEX = {};
 
 const CHUNK_CACHE = {};
 let currentRequestId = 0;
+let READY = false;
 
 // Scroll helper, Scroll to the table top after each draw (paging/filtering)
 function scrollToJvmFunctionsTable() {
@@ -111,6 +112,7 @@ function searchData(query) {
 	return Array.from(resultSet);
 }
 
+// concurrency limiter
 function limitConcurrency(items, limit, fn) {
 	let index = 0;
 	let active = 0;
@@ -149,32 +151,30 @@ function debounce(fn, delay) {
 	};
 }
 
+// INIT DATA
+Promise.all([
+	fetch('/assets/data/jvm-functions-meta.json').then(r => r.json()),
+	loadSearchIndex()
+])
+.then(([meta, index]) => {
+	META = meta;
+	SEARCH_INDEX = index;
+	READY = true;
+})
+.catch(err => console.warn("Init failed", err));
+
 // MAIN
 $(document).ready(function () {
 
-	// META
-	fetch('/assets/data/jvm-functions-meta.json')
-		.then(r => r.json())
-		.then(meta => META = meta)
-		.catch(() => {
-			META = {
-				file: "jvm-functions.json",
-				total_items: 0,
-				chunk_size: 100,
-				pages: 0
-			};
-		});
-
-	// SEARCH INDEX
-	loadSearchIndex()
-		.then(data => SEARCH_INDEX = data)
-		.catch(err => console.warn("Search index missing", err));
-
 	// DataTable
 	const table = $('#jvm-functions-table').DataTable({
+
 		ajax: function (data, callback) {
 
-			if (!META || !META.chunk_size) {
+			// wait for readiness instead of failing once
+			if (!READY || !META || !META.chunk_size) {
+				setTimeout(() => table.ajax.reload(null, false), 50);
+
 				callback({
 					draw: data.draw,
 					data: [],
@@ -186,7 +186,7 @@ $(document).ready(function () {
 
 			const requestId = ++currentRequestId;
 
-			const query = $('#jvm-functions-table_filter input').val()?.trim();
+			const query = $('#jvm-functions-table_filter input').val() || '';
 			const baseName = META.file.replace('.json', '');
 			const chunkSize = META.chunk_size;
 
@@ -220,29 +220,29 @@ $(document).ready(function () {
 				)
 				.then(chunks => {
 
-					if (requestId !== currentRequestId) return;
+						if (requestId !== currentRequestId) return;
 
-					const all = chunks.flat();
-					const idSet = new Set(ids);
+						const all = chunks.flat();
+						const idSet = new Set(ids);
 
-					const filtered = all.filter(r => idSet.has(r.id));
+						const filtered = all.filter(r => idSet.has(r.id));
 
-					callback({
-						draw: data.draw,
-						data: filtered,
-						recordsTotal: META.total_items,
-						recordsFiltered: ids.length
+						callback({
+							draw: data.draw,
+							data: filtered,
+							recordsTotal: META.total_items,
+							recordsFiltered: ids.length
+						});
+					})
+					.catch(err => {
+						console.error(err);
+						callback({
+							draw: data.draw,
+							data: [],
+							recordsTotal: META.total_items,
+							recordsFiltered: 0
+						});
 					});
-				})
-				.catch(err => {
-					console.error(err);
-					callback({
-						draw: data.draw,
-						data: [],
-						recordsTotal: META.total_items,
-						recordsFiltered: 0
-					});
-				});
 
 				return;
 			}
@@ -267,30 +267,31 @@ $(document).ready(function () {
 			)
 			.then(chunks => {
 
-				if (requestId !== currentRequestId) return;
+					if (requestId !== currentRequestId) return;
 
-				const merged = chunks.flat();
+					const merged = chunks.flat();
 
-				const offset = start % chunkSize;
-				const result = merged.slice(offset, offset + length);
+					const offset = start % chunkSize;
+					const result = merged.slice(offset, offset + length);
 
-				callback({
-					draw: data.draw,
-					data: result,
-					recordsTotal: META.total_items,
-					recordsFiltered: META.total_items
+					callback({
+						draw: data.draw,
+						data: result,
+						recordsTotal: META.total_items,
+						recordsFiltered: META.total_items
+					});
+				})
+				.catch(err => {
+					console.error(err);
+					callback({
+						draw: data.draw,
+						data: [],
+						recordsTotal: META.total_items,
+						recordsFiltered: 0
+					});
 				});
-			})
-			.catch(err => {
-				console.error(err);
-				callback({
-					draw: data.draw,
-					data: [],
-					recordsTotal: META.total_items,
-					recordsFiltered: 0
-				});
-			});
 		},
+
 		serverSide: true,
 		processing: true,
 		deferRender: true,
