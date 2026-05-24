@@ -11,7 +11,7 @@ system to work with existing Java/Kotlin/Groovy libraries.
 
 ---
 
-## 🔧 Prerequisites
+## 🔧 Prerequisites {#nla-prerequisites}
 
 * **Java 17 or higher** (ensure `JAVA_HOME` is set correctly)
 * Naftah distribution folder with:
@@ -20,7 +20,7 @@ system to work with existing Java/Kotlin/Groovy libraries.
 
 ---
 
-## 🗂️ Available Scripts
+## 🗂️ Available Scripts {#nla-available-scripts}
 
 | Script Name               | Description                                    |
 |---------------------------|------------------------------------------------|
@@ -33,11 +33,11 @@ system to work with existing Java/Kotlin/Groovy libraries.
 
 ---
 
-## ✅ 1. Run a Naftah Script
+## ✅ 1. Run a Naftah Script {#nla-run}
 
 To execute a `.naftah` file:
 
-### Linux / macOS
+### Linux / macOS {#nla-run-linux-macos}
 
 ```bash
 ./naftah-shell.sh run hello.naftah
@@ -49,7 +49,7 @@ Or directly (default subcommand is `run`):
 ./naftah.sh hello.naftah
 ```
 
-### Windows
+### Windows {#nla-run-windows}
 
 ```cmd
 naftah-shell.bat run hello.naftah
@@ -63,11 +63,11 @@ naftah.bat hello.naftah
 
 ---
 
-## 💬 2. Start the Interactive Shell (REPL)
+## 💬 2. Start the Interactive Shell (REPL) {#nla-repl}
 
 The REPL allows you to experiment with Naftah code line-by-line in a terminal.
 
-### Linux / macOS
+### Linux / macOS {#nla-repl-linux-macos}
 
 ```bash
 ./naftah-repl.sh
@@ -79,7 +79,7 @@ Or:
 ./naftah-shell.sh shell
 ```
 
-### Windows
+### Windows {#nla-repl-windows}
 
 ```cmd
 naftah-repl.bat
@@ -91,7 +91,7 @@ Or:
 naftah.bat shell
 ```
 
-### Features:
+### Features: {#nla-features}
 
 * Multi-line code support
 * Auto history and arrow key navigation
@@ -99,7 +99,7 @@ naftah.bat shell
 
 ---
 
-## ⚙️ 3. Initialize Java Libraries for Use in Naftah
+## ⚙️ 3. Initialize Java Libraries for Use in Naftah {#nla-init}
 
 The `init` command processes all `.jar` files inside the `lib/` folder and adds them to Naftah's reflection system.
 This enables:
@@ -108,7 +108,7 @@ This enables:
 * Interacting with them via Arabic transliterated syntax.
 * Seamless interop without additional build steps.
 
-### Linux / macOS
+### Linux / macOS {#nla-init-linux-macos}
 
 ```bash
 ./naftah-init.sh
@@ -120,7 +120,7 @@ Or:
 ./naftah.sh init
 ```
 
-### Windows
+### Windows {#nla-init-windows}
 
 ```cmd
 naftah-init.bat
@@ -136,7 +136,7 @@ naftah.bat init
 
 ---
 
-## 📚 4. Use the Naftah Manual (Dynamic CLI Help)
+## 📚 4. Use the Naftah Manual (Dynamic CLI Help) {#nla-manual}
 
 The `man` command launches **Naftah's interactive manual system**, which supports exploring all built-in commands,
 functions, and Java interop metadata — in both **Arabic and English**.
@@ -160,7 +160,7 @@ It behaves like a smart REPL-based help system, not just a static manual:
 
 ---
 
-### Linux / macOS
+### Linux / macOS {#nla-manual-linux-macos}
 
 ```bash
 ./naftah-man.sh
@@ -172,7 +172,7 @@ Or:
 ./naftah.sh man
 ```
 
-### Windows
+### Windows {#nla-manual-windows}
 
 ```cmd
 naftah-man.bat
@@ -189,7 +189,7 @@ naftah.bat man
 
 ---
 
-## 🧪 Example Workflow
+## 🧪 Example Workflow {#nla-example-workflow}
 
 1. Add your Java/Kotlin/Groovy `.jar` files under `lib/`
 2. Run `naftah-init` to scan and index classes
@@ -211,9 +211,9 @@ cp mylib.jar lib/
 
 ---
 
-## 📄 CLI Usage Summary
+## 📄 CLI Usage Summary {#nla-cli-usage-summary}
 
-### Available Subcommands:
+### Available Subcommands: {#nla-cli-usage-subcommands-summary}
 
 | Command | Purpose                                       |
 |---------|-----------------------------------------------|
@@ -222,7 +222,7 @@ cp mylib.jar lib/
 | `init`  | Scans Java/Kotlin/Groovy `.jar`s under `lib/` |
 | `man`   | launches Naftah's interactive manual system   |
 
-### Global Options:
+### Global Options: {#nla-cli-usage-global-options-summary}
 
 | Option                      | Description                                                                 |
 |-----------------------------|-----------------------------------------------------------------------------|
@@ -242,7 +242,7 @@ cp mylib.jar lib/
 
 ---
 
-### 🧠 Examples
+### 🧠 Examples {#nla-examples}
 
 ```bash
 # Run a Naftah script file

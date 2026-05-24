@@ -16,7 +16,7 @@ permalink: /language/java-interop
 {{ included_content | markdownify }}
 
 {% if site.data.jvm-class-initializers.size > 0 %}
-<h2>📌 جميع مُهيئات الكائنات</h2>
+<h2 id="nla-jvm-class-initializers">📌 جميع مُهيئات الكائنات</h2>
 <table id="jvm-class-initializers-table" class="display" style="width:100%">
 <thead>
 <tr>
@@ -31,7 +31,7 @@ permalink: /language/java-interop
 {% endif %}
 
 {% if site.data.jvm-functions.size > 0 %}
-<h2>📌 جميع استدعاءات الدوال</h2>
+<h2 id="nla-jvm-functions">📌 جميع استدعاءات الدوال</h2>
 <table id="jvm-functions-table" class="display" style="width:100%">
 <thead>
 <tr>
@@ -48,7 +48,7 @@ permalink: /language/java-interop
 {% endif %}
 
 
-<h2 id="-ملاحظات">🧠 ملاحظات</h2>
+<h2 id="nla-notes">🧠 ملاحظات</h2>
 
 <ul>
   <li>يمكن استدعاء <strong>الدوال الثابتة والمثيلة</strong> من مكتبات جافا مباشرة داخل نفطه.</li>

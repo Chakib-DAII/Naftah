@@ -8,7 +8,9 @@ permalink: /releases
 
 {% for release in site.data.releases %}
 
-## [{{ release.name | default: release.tag_name }}]({{ release.html_url }}){:target="_blank"}
+<h2 id="nla-release-{{ release.name | default: release.tag_name | slugify }}">
+	<a href="{{ release.html_url }}" target="_blank">{{ release.name | default: release.tag_name }}</a>
+</h2>
 
 **Published:** {{ release.published_at | date: "%Y-%m-%d" }}
 

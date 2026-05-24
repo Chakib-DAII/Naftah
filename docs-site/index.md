@@ -14,7 +14,7 @@ permalink: /
 
 ---
 
-## 📚 Documentation
+## 📚 Documentation {#nla-documentation}
 
 - [Language Reference](./language/keywords)
 - [Running Naftah](./running-naftah)
@@ -25,13 +25,13 @@ permalink: /
 
 ---
 
-## 🔗 Links
+## 🔗 Links {#nla-links}
 
 - [GitHub Repository](https://github.com/Chakib-DAII/Naftah){:target="_blank"}
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contributing {#nla-contributing}
 
 We welcome contributions of all kinds!
 Please see our [Contributing Guidelines](https://github.com/Chakib-DAII/Naftah/blob/main/CONTRIBUTING.md){:target="_
@@ -42,7 +42,7 @@ our [Code of Conduct](https://github.com/Chakib-DAII/Naftah/blob/main/CODE_OF_CO
 
 ---
 
-## 💸 Support This Project
+## 💸 Support This Project {#nla-sponsor-project}
 
 This project is actively maintained and developed. If you find it useful or want to support ongoing development, you can
 sponsor or donate through any of the platforms below:
