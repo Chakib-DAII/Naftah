@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+	<meta charset="UTF-8"/>
+	<meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+	<!-- SEO (handles title, description, OG, Twitter, canonical) -->
+	<!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>try-statement | Naftah Language Documentation - مستندات لغة نفطه</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="try-statement" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Documentation and guides for Naftah programming language" />
+<meta name="twitter:description" property="og:description" content="Documentation and guides for Naftah programming language" />
+<link rel="canonical" href="https://naftah.daiitech.org/examples/try-statement/" />
+<meta property="og:url" content="https://naftah.daiitech.org/examples/try-statement/" />
+<meta property="og:site_name" content="Naftah Language Documentation - مستندات لغة نفطه" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="try-statement" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Documentation and guides for Naftah programming language","headline":"try-statement","url":"https://naftah.daiitech.org/examples/try-statement/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+	<!-- Styles -->
+	<link href="/assets/css/main.css" rel="stylesheet">
+
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<!-- DataTables CSS & JS -->
+	<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+	<!-- Utilities -->
+	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
+	<!-- Main JS -->
+	<script src="/assets/js/main.js"></script>
+
+	<!-- Structured Data (FIXED: correct schema for a programming language project) -->
+	<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "SoftwareSourceCode",
+			"name": "Naftah Language Documentation - مستندات لغة نفطه",
+			"description": "Documentation and guides for Naftah programming language",
+			"url": "https://naftah.daiitech.org",
+			"codeRepository": "https://github.com/Chakib-DAII/Naftah",
+			"programmingLanguage": "Naftah",
+			"runtimePlatform": "JVM",
+			"author": {
+				"@type": "Person",
+				"name": "Chakib-DAII"
+			},
+			"publisher": {
+				"@type": "Organization",
+				"name": "Naftah",
+				"logo": {
+					"@type": "ImageObject",
+					"url": "https://naftah.daiitech.org/assets/images/logo.png"
+				}
+			},
+			"inLanguage": "ar"
+		}
+	</script>
+
+</head>
+
+<body>
+
+<header class="site-header">
+	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
+	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
+	<h1>
+		<a href="https://naftah.daiitech.org/">
+			Naftah Language Documentation - مستندات لغة نفطه
+		</a>
+	</h1>
+
+	<button class="menu-toggle">☰</button>
+
+	<nav class="site-nav">
+	<ul class="nav-list">
+
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/">
+		الرئيسية
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/about">
+		حول نفطه
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/running-naftah">
+		تشغيل نفطه
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<span class="nav-link has-dropdown">
+      اللغة
+    </span>
+
+	<ul class="dropdown">
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/keywords">
+		الكلمات المفتاحية
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/primitives-and-variables">
+		الأنواع الأولية
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/collections">
+		بُنى المعطيات
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/expressions">
+		التعبيرات
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/radix-numbers">
+		الأعداد بأنظمة العد المختلفة
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/objects">
+		الكائنات
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/control-flow">
+		التحكم في تدفق البرنامج
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/functions">
+		الدوال
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/java-interop">
+		التكامل مع جافا
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/concurrency">
+		التزامن
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/language/temporal">
+		الزمن والتاريخ
+	</a>
+
+	
+
+</li>
+		
+	</ul>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<span class="nav-link has-dropdown">
+      الأمثلة
+    </span>
+
+	<ul class="dropdown">
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/hello-naftah">
+		مرحباً نفطه
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/hello-world">
+		مرحباً بالعالم
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/expressions">
+		التعبيرات
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/assignment">
+		التعيين
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/typed-assignment">
+		الأنواع والتعيين
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<span class="nav-link has-dropdown">
+      الدوال
+    </span>
+
+	<ul class="dropdown">
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/function-declaration">
+		تعريف دوال
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/function-declaration-1">
+		تعريف الدوال (1)
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/function-declaration-factorial">
+		دالة المضروب
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/function-declaration-invalid">
+		تعريف الدوال (غير صالح)
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/function-call">
+		استدعاء الدوال
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/jvm-functions-qualified-call">
+		استدعاء دوال جافا
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/import-statement">
+		الاستيراد
+	</a>
+
+	
+
+</li>
+		
+	</ul>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<span class="nav-link has-dropdown">
+      التحكم في التدفق
+    </span>
+
+	<ul class="dropdown">
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/conditional">
+		الشرطيات
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/for-loop">
+		الحلقات (for)
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/while-statement">
+		الحلقات (while)
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/repeat-statement">
+		الحلقات (repeat)
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/switch-expression">
+		جملة الحالة (switch case)
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/try-statement">
+		حاول (try)
+	</a>
+
+	
+
+</li>
+		
+	</ul>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/objects">
+		الكائنات
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/collections">
+		المجموعات (Collections)
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/concurrency">
+		التزامن
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/temporal">
+		الزمن والتاريخ
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/radix-numbers">
+		الأنظمة العددية
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/examples/implementations">
+		السلوكات
+	</a>
+
+	
+
+</li>
+		
+	</ul>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/java-doc">
+		التوثيق (جاڤا)
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/benchmarks">
+		المقارنات المعيارية
+	</a>
+
+	
+
+</li>
+		
+		<li class="nav-item">
+
+	
+
+	<a class="nav-link"
+	   href="/releases">
+		الإصدارات
+	</a>
+
+	
+
+</li>
+		
+
+	</ul>
+</nav>
+</header>
+
+<main class="site-content" dir="rtl">
+	<h1 id="حاول-try">حاول (try)</h1>
+
+<p>📄 الأصل: <code class="language-plaintext highlighter-rouge">try-statement.nfth</code></p>
+
+<p>📦 تحميل الملف:
+<a href="/assets/examples/try-statement.nfth">⬇ تحميل</a></p>
+
+<p>🔗 عرض الملف:</p>
+
+<pre><code class="language-naftah">	
+		--- SPDX-License-Identifier: Apache-2.0
+--- Copyright © The Naftah Project Authors
+
+---*
+  هذا البرنامج يستعرض آلية التعامل مع القيم باستخدام تعبيرات `حاول` في لغة نفطه.
+
+  يحتوي على أمثلة لتعامل مع:
+  - نجاح العمليات وفشلها (مثل القسمة على صفر)
+  - التداخل بين المحاولات
+  - تفكيك كائن يحتوي خصائص متعددة (مثل "بلدة")
+  - قراءة عناصر من قائمة متداخلة
+
+  يتم استخدام:
+  - `نجاح(أ) -&amp;gt; ...` لمعالجة القيم الناجحة
+  - `فشل(ب) إفعل ...` لمعالجة الأخطاء
+  - `إطبع(...)` لطباعة المخرجات
+  - `تعيين` لإسناد القيم
+  - `ثابت` و `متغير` لتعريف الثوابت والمتغيرات
+*---
+
+---*
+محاولة تنفيذ القيمة 1.
+هذه القيمة صحيحة وثابتة، لذا سيتم اعتبارها "نجاح".
+*---
+ حاول(1){
+--- عند النجاح، يتم تنفيذ هذا الفرع، ويتم طباعة المتغير "أ" الذي يحمل القيمة 1.
+نجاح(أ) -&amp;gt; إطبع(أ)
+--- هذا الفرع لن يُنفذ هنا، لأنه لا يوجد فشل.
+فشل(ب) إفعل إطبع(ب)
+ }
+
+---*
+محاولة تنفيذ عملية رياضية: 1 ÷ 0.
+هذه العملية ستفشل (قسمة على صفر).
+*---
+ حاول(1 قسمة 0){
+--- لن يتم تنفيذ هذا الفرع لأنه حدث فشل.
+نجاح(أ) -&amp;gt; إطبع(أ)
+--- سيتم تنفيذ هذا الفرع، وسيتم طباعة الخطأ "ب".
+فشل(ب) إفعل إطبع(ب)
+ }
+
+--- محاولة أخرى للقسمة على صفر - ستفشل.
+  حاول(1 قسمة 0){
+--- لن يتم تنفيذه.
+ نجاح(أ) -&amp;gt; إطبع(أ)
+--- سيتم تنفيذ هذا الفرع عند الفشل.
+ فشل(ب) إفعل {
+--- طباعة الخطأ "ب".
+ إطبع(ب)
+--- محاولة جديدة داخلية لتقييم 1.
+  حاول(1){
+--- سيتم تنفيذ هذا الفرع لأن 1 ناجحة، ويتم طباعة "أ" (1).
+ نجاح(أ) -&amp;gt; إطبع(أ)
+--- هذا لن يُنفذ لأنه لا يوجد فشل.
+ فشل(ب) إفعل إطبع(ب)
+  }
+ }
+  }
+
+  --- تعريف متغير 'بلدة' يحتوي الاسم، مرجع إلى المدينة، وعدد الأحياء
+متغير بلدة تعيين {
+    متغير الاسم تعيين "نفتة",
+    متغير المدينة تعيين مدينة,
+    متغير عدد_الأحياء تعيين 5
+}
+
+---*
+محاولة قراءة الكائن "بلدة" ككل.
+ستنجح إذا كانت "بلدة" كائنًا صالحًا.
+*---
+ حاول(بلدة){
+--- عند النجاح، يتم تنفيذ هذا الفرع.
+--- "أ" هو المتغير الذي يمثل الكائن "بلدة".
+نجاح(أ) -&amp;gt; {
+--- استخراج خاصية "الاسم" من الكائن.
+ثابت الاسم تعيين أ["الاسم"]
+--- استخراج خاصية "المدينة".
+ثابت المدينة تعيين أ["المدينة"]
+--- استخراج خاصية "عدد_الأحياء".
+ثابت عدد_الأحياء تعيين أ["عدد_الأحياء"]
+--- طباعة جميع القيم المستخرجة بشكل منسق.
+إطبع("الاسم = ${الاسم}، المدينة = ${المدينة}، عدد_الأحياء = ${عدد_الأحياء}")
+}
+--- إذا فشل الوصول إلى "بلدة"، يتم طباعة الخطأ "ب".
+فشل(ب) إفعل إطبع(ب)
+ }
+
+--- تعريف قائمة متداخلة
+متغير قائمة_1 تعيين [١٠ ، [ ٩  ، [ ٨ ، [ ٧ ، [٦ ، [ ٥ ، [ ٤ ، [٣ ، [٢ ، ١]]]]]]]]]
+
+--- محاولة تحليل القائمة "قائمة_1".
+ حاول(قائمة_1){
+--- إذا كانت القائمة صالحة، يتم تنفيذ هذا الفرع.
+نجاح(أ) -&amp;gt; {
+--- استخراج أول عنصر من القائمة: ١٠
+ثابت قائمة_1_0 تعيين قائمة_1[0]
+--- استخراج العنصر الثاني: وهو قائمة متداخلة.
+ثابت قائمة_1_1 تعيين قائمة_1[1]
+--- استخراج أول عنصر من القائمة الداخلية: ٩
+ثابت قائمة_1_1_0 تعيين قائمة_1[1][0]
+--- طباعة القيم الثلاثة المستخرجة.
+إطبع("قائمة_1_0 = ${قائمة_1_0}، قائمة_1_1 = ${قائمة_1_1}، قائمة_1_1_0 = ${قائمة_1_1_0}")
+}
+--- إذا فشل الوصول إلى أي عنصر (مثلاً القائمة غير موجودة أو المؤشرات خاطئة)، يتم طباعة الخطأ "ب".
+فشل(ب) إفعل إطبع(ب)
+ }
+
+--- محاولة التعامل مع القيمة 1 كخيار (Option). القيمة موجودة، لذا يُنفذ الفرع "بعض".
+حاول(1){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+--- تجربة التعامل مع القيمة "لاشيء" كخيار (Option). القيمة غير موجودة، لذا يُنفذ الفرع "معدوم".
+حاول(لاشيء){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+--- تجربة التعامل مع القيمة "باطل" كخيار (Option). تعتبر قيمة فارغة.
+حاول(باطل){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+--- تجربة التعامل مع القيمة "فارغ" كخيار (Option). تمثل غياب القيمة.
+حاول(فارغ){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+--- تجربة التعامل مع القيمة "ليس_رقم" كخيار. تمثل NaN أو قيمة غير رقمية.
+حاول(ليس_رقم){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+--- تجربة التعامل مع القيمة "قيمة_غير_رقمية" كخيار. تمثل قيمة ليست من النوع العددي.
+حاول(قيمة_غير_رقمية){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+--- تجربة التعامل مع القيمة "رقم_غير_صالح" كخيار. مثل NaN أو قيم مرفوضة.
+حاول(رقم_غير_صالح){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+--- تجربة التعامل مع القيمة "غير_عددي" كخيار. القيمة ليست رقمًا.
+حاول(غير_عددي){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+--- تجربة التعامل مع القيمة "ليس_عددي" كخيار. تستخدم للنفي بأن القيمة ليست عددًا.
+حاول(ليس_عددي){
+--- إذا كانت القيمة موجودة، يتم طباعتها.
+بعض(أ) -&amp;gt; إطبع(أ)
+--- إذا لم تكن هناك قيمة، يتم طباعة "لاشيء."
+معدوم إفعل إطبع("لاشيء.")
+}
+
+	
+</code></pre>
+
+</main>
+
+<footer class="site-footer">
+	&copy; 2026 Naftah Lang - لغة برمجة نفطه
+</footer>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+		data-cf-beacon='{"token": "68aacf910c9f46a28419fcd83af7a79e"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>

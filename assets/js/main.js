@@ -27,34 +27,55 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-	const toggle = document.querySelector('.menu-toggle');
-	const nav = document.querySelector('nav');
+  const toggle = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('nav');
 
-	if (!toggle || !nav) return;
+  if (toggle && nav) {
 
-	// Toggle menu on click
-	toggle.addEventListener('click', () => {
-		if (window.innerWidth < 600) {
-		  nav.classList.toggle('active');
-		}
-	});
+    // Toggle menu on click
+    toggle.addEventListener('click', () => {
+      if (window.innerWidth < 600) {
+        nav.classList.toggle('active');
+      }
+    });
 
-	// Reset menu on window resize
-	window.addEventListener('resize', () => {
-	  if (window.innerWidth > 600) { // desktop breakpoint
-		nav.classList.remove('active'); // remove mobile toggle state
-	  }
-	});
+    // Reset menu on window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 600) {
+        nav.classList.remove('active');
+      }
+    });
+  }
 
-	// Rrap tables for horizontal scroll
-	 document.querySelectorAll('table').forEach(table => {
-        // Skip if already wrapped
-        if (table.parentElement.classList.contains('table-wrapper')) return;
+  // Wrap tables for horizontal scroll
+  document.querySelectorAll('table').forEach(table => {
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'table-wrapper';
+    // Skip if already wrapped
+    if (table.parentElement.classList.contains('table-wrapper')) return;
 
-        table.parentNode.insertBefore(wrapper, table);
-        wrapper.appendChild(table);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'table-wrapper';
+
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(table);
+  });
+
+  // Update URL hash while scrolling
+  const headings = document.querySelectorAll('[id^="nla-"]');
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          history.replaceState(null, null, `#${entry.target.id}`);
+        }
       });
+    },
+    {
+      rootMargin: '-120px 0px -70% 0px',
+      threshold: 0
+    }
+  );
+
+  headings.forEach((heading) => observer.observe(heading));
 });
