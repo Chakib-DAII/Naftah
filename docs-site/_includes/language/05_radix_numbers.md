@@ -10,7 +10,7 @@ supporting bases from 2 up to 36, including binary, octal, hexadecimal, and more
 
 ---
 
-## ⚙️ صيغة كتابة الأعداد براديكس معين
+## ⚙️ صيغة كتابة الأعداد براديكس معين {#nla-radix-number-format}
 
 الصيغة العامة لكتابة عدد في قاعدة معينة هي:
 
@@ -24,7 +24,7 @@ supporting bases from 2 up to 36, including binary, octal, hexadecimal, and more
 
 ---
 
-## 📝 قواعد عامة
+## 📝 قواعد عامة {#nla-general-rules}
 
 * القواعد مدعومة من 2 (ثنائي) حتى 36.
 * يمكن استخدام الأرقام والحروف لتمثيل القيم حسب النظام (مثلاً في 16: 0-9 وA-F، وفي 36: 0-9 وA-Z).
@@ -33,30 +33,30 @@ supporting bases from 2 up to 36, including binary, octal, hexadecimal, and more
 
 ---
 
-## 🔍 أمثلة حسب أنظمة العد
+## 🔍 أمثلة حسب أنظمة العد {#nla-radix-examples}
 
-### 1. النظام الثنائي (Base 2)
+### 1. النظام الثنائي (Base 2) {#nla-base-2}
 
 ```naftah
 '1010''2'     --- العدد 1010 في نظام ثنائي
 '1000000''2'
 ```
 
-### 2. النظام الثلاثي (Base 3)
+### 2. النظام الثلاثي (Base 3) {#nla-base-3}
 
 ```naftah
 '202''3'      --- الأرقام: 0، 1، 2
 '1201''3'
 ```
 
-### 3. النظام العشري (Base 10)
+### 3. النظام العشري (Base 10) {#nla-base-10}
 
 ```naftah
 '12345''10'   --- الأرقام 0-9 فقط
 '987654321''10'
 ```
 
-### 4. النظام الست عشري (Base 16)
+### 4. النظام الست عشري (Base 16) {#nla-base-16}
 
 ```naftah
 'A0''16'      --- الأرقام 0-9 وA-F
@@ -64,7 +64,7 @@ supporting bases from 2 up to 36, including binary, octal, hexadecimal, and more
 'ح٠٠٠''١٦'     --- باستخدام الحروف العربية
 ```
 
-### 5. النظام الأعلى (Base 36)
+### 5. النظام الأعلى (Base 36) {#nla-base-36}
 
 ```naftah
 'Z1A3''36'    --- أرقام 0-9 وحروف A-Z
@@ -72,7 +72,7 @@ supporting bases from 2 up to 36, including binary, octal, hexadecimal, and more
 
 ---
 
-## 🔤 استخدام الحروف في الأنظمة الأعلى من 10
+## 🔤 استخدام الحروف في الأنظمة الأعلى من 10 {#nla-letters-in-high-radix}
 
 | القاعدة | رموز الأرقام بعد 9 | أمثلة على الحروف                      |
 |---------|--------------------|---------------------------------------|
@@ -82,7 +82,7 @@ supporting bases from 2 up to 36, including binary, octal, hexadecimal, and more
 
 ---
 
-## 💡 نصائح وملاحظات
+## 💡 نصائح وملاحظات {#nla-notes-and-tips}
 
 * تحقق من أن جميع رموز العدد صالحة للقاعدة.
 * استخدام الأقواس المفردة `''` للفصل ضروري لتمييز القاعدة.

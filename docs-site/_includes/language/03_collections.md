@@ -10,7 +10,7 @@ arrays.
 It also shows how to perform element-wise arithmetic and logical operations with practical examples.
 ---
 
-## 🗂️ جدول أنواع بُنى المعطيات
+## 🗂️ جدول أنواع بُنى المعطيات {#nla-collections-types-table}
 
 | النوع              | التعريف                        | الشكل                  | مثال                         | ملاحظات                                    |
 |--------------------|--------------------------------|------------------------|------------------------------|--------------------------------------------|
@@ -21,9 +21,9 @@ It also shows how to perform element-wise arithmetic and logical operations with
 
 ---
 
-## 📋 تعريفات وأمثلة على بُنى المعطيات
+## 📋 تعريفات وأمثلة على بُنى المعطيات {#nla-collections-definitions-and-examples}
 
-### 1. قوائم (Lists)
+### 1. قوائم (Lists) {#nla-lists}
 
 ```naftah
 ثابت درجات تعيين [٨٥، ٩٠، ٧٨، ٩٢]
@@ -31,7 +31,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 ثابت متداخلة تعيين [١٠، [٩، [٨، [٧، [٦، [٥، [٤، [٣، [٢، ١]]]]]]]]]
 ```
 
-### 2. تركيبات (Tuples)
+### 2. تركيبات (Tuples) {#nla-tuples}
 
 ```naftah
 ثابت موقع تعيين (٣٢، ٤٥)
@@ -39,14 +39,14 @@ It also shows how to perform element-wise arithmetic and logical operations with
 ثابت زوج_متداخل تعيين (١٠، (٩، (٨، (٧، (٦، (٥، (٤، (٣، (٢، ١))))))))))
 ```
 
-### 3. مجموعات (Sets)
+### 3. مجموعات (Sets) {#nla-sets}
 
 ```naftah
 ثابت عناصر_فريدة تعيين {١، ٢، ٣، ٤}
 ثابت رموز تعيين {"أ"، "ب"، "ج"}
 ```
 
-### 4. مصفوفات ترابطية (Associative Arrays)
+### 4. مصفوفات ترابطية (Associative Arrays) {#nla-associative-arrays}
 
 ```naftah
 ثابت الطالب تعيين {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨}
@@ -61,9 +61,9 @@ It also shows how to perform element-wise arithmetic and logical operations with
 
 ---
 
-## ⚙️ العمليات الحسابية والمنطقية على بُنى المعطيات
+## ⚙️ العمليات الحسابية والمنطقية على بُنى المعطيات {#nla-collections-operations}
 
-### العمليات بين قائمتين (عنصر بعنصر)
+### العمليات بين قائمتين (عنصر بعنصر) {#nla-element-wise-list-operations}
 
 | العملية         | مثال                                  |
 |-----------------|---------------------------------------|
@@ -73,7 +73,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 | قسمة `/`        | `[٨٥، ٩٠، ٧٨، ٩٢] / [٨٥، ٩٠، ٧٨، ٩٢]` |
 | باقي القسمة `%` | `[٨٥، ٩٠، ٧٨، ٩٢] % [٨٥، ٩٠، ٧٨، ٩٢]` |
 
-### العمليات بصيغة النقطية (dot-notation)
+### العمليات بصيغة النقطية (dot-notation) {#nla-dot-notation-operations}
 
 ```naftah
 [٨٥، ٩٠، ٧٨، ٩٢] .*. [٨٥، ٩٠، ٧٨، ٩٢]
@@ -87,7 +87,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 [٨٥، ٩٠، ٧٨، ٩٢] .%. [٨٥، ٩٠، ٧٨، ٩٢]
 ```
 
-### العمليات البتية بين قائمتين (للأعداد الصحيحة فقط)
+### العمليات البتية بين قائمتين (للأعداد الصحيحة فقط) {#nla-bitwise-list-operations}
 
 ```naftah
 [٨٥، ٩٠، ٧٨، ٩٢] بت_و [٨٥، ٩٠، ٧٨، ٩٢]
@@ -95,7 +95,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 [٨٥، ٩٠، ٧٨، ٩٢] بت_أو_حصري [٨٥، ٩٠، ٧٨، ٩٢]
 ```
 
-### المقارنات بين قائمتين (عنصر بعنصر)
+### المقارنات بين قائمتين (عنصر بعنصر) {#nla-list-comparisons}
 
 ```naftah
 [٨٥، ٩٠، ٧٨، ٩٢] أصغر_من [٨٥، ٩٠، ٧٨، ٩٢]
@@ -106,7 +106,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 [٨٥، ٩٠، ٧٨، ٩٢] لا_يساوي [٨٥، ٩٠، ٧٨، ٩٢]
 ```
 
-### العمليات بين رقم وقائمة (تُطبّق على كل عنصر في القائمة)
+### العمليات بين رقم وقائمة (تُطبّق على كل عنصر في القائمة) {#nla-number-list-operations}
 
 ```naftah
 2 * [٨٥، ٩٠، ٧٨، ٩٢]
@@ -116,7 +116,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 2 % [٨٥، ٩٠، ٧٨، ٩٢]
 ```
 
-### العمليات ++ و -- (قبلية وبعدية) على القوائم
+### العمليات ++ و -- (قبلية وبعدية) على القوائم {#nla-increment-decrement-operations}
 
 ```naftah
 [٨٥، ٩٠، ٧٨، ٩٢]++
@@ -125,7 +125,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 --[٨٥، ٩٠، ٧٨، ٩٢]
 ```
 
-### عملية النفي البتي
+### عملية النفي البتي {#nla-bitwise-negation}
 
 ```naftah
 بت_ليس [٨٥، ٩٠، ٧٨، ٩٢]
@@ -133,14 +133,14 @@ It also shows how to perform element-wise arithmetic and logical operations with
 
 ---
 
-### 🧾 الوصول إلى عناصر الوسائط (Arguments)
+### 🧾 الوصول إلى عناصر الوسائط (Arguments) {#nla-arguments-access}
 
 عند تنفيذ سكربت في نفطه، يتم تمرير الوسائط (arguments) كسلسلة من القيم من الخارج، ويُتاح الوصول إليها داخل السكربت عبر
 **صف (tuple)** اسمها `وسائط` و تحتوي على القيم المرسلة.
 
 ---
 
-#### ✅ الصيغة:
+#### ✅ الصيغة: {#nla-arguments-syntax}
 
 ```text
 وسائط[n]        ← للوصول إلى العنصر رقم n من قائمة الوسائط
@@ -151,7 +151,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 
 ---
 
-#### 🧰 الاستخدام النموذجي في سكربت نفطه
+#### 🧰 الاستخدام النموذجي في سكربت نفطه {#nla-arguments-example}
 
 ```naftah
 {% raw %}
@@ -182,7 +182,7 @@ It also shows how to perform element-wise arithmetic and logical operations with
 
 ---
 
-## 🧠 ملاحظات مهمة
+## 🧠 ملاحظات مهمة {#nla-important-notes}
 
 * يمكن تطبيق معظم العمليات السابقة على التركيبات، المجموعات، والمصفوفات الترابطية بنفس الطريقة.
 * العمليات على البُنى المتداخلة تتم عنصرًا بعنصر مع الحفاظ على نوع كل عنصر.

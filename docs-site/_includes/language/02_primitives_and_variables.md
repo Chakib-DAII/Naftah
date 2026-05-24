@@ -13,7 +13,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-## 🎯 الأنواع الأولية المدعومة (Simple / Primitive Types)
+## 🎯 الأنواع الأولية المدعومة (Simple / Primitive Types) {#nla-primitive-types}
 
 | الاسم في نفطه (والمرادفات)               | النوع المقابل (بالإنجليزية) | الوصف                                 |
 | ---------------------------------------- | --------------------------- | ------------------------------------- |
@@ -33,7 +33,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-## 🗓️ أنواع التاريخ والزمن (Date & Temporal Types)
+## 🗓️ أنواع التاريخ والزمن (Date & Temporal Types) {#nla-date-and-temporal-types}
 
 | الاسم في نفطه | النوع المقابل (بالإنجليزية) | الوصف                                  |
 | ------------- | --------------------------- | -------------------------------------- |
@@ -46,7 +46,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-## 🧩 الأنواع المركّبة (Complex Types)
+## 🧩 الأنواع المركّبة (Complex Types) {#nla-complex-types}
 
 | الاسم في نفطه (والمرادفات)                | النوع المقابل (بالإنجليزية) | الوصف                               |
 | ----------------------------------------- | --------------------------- | ----------------------------------- |
@@ -60,7 +60,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### ✨ ملاحظات تصميمية
+### ✨ ملاحظات تصميمية {#nla-design-notes}
 
 * تم **فصل الأنواع العددية الكبيرة** (`BIG_INT`, `BIG_DECIMAL`) بوضوح لدعم الدقة غير المحدودة.
 * `أي_عدد` يوفّر **تجريدًا عدديًا** مفيدًا في التواقيع العامة.
@@ -69,7 +69,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-## 🧾 التصريحات والإسنادات في لغة نفطه
+## 🧾 التصريحات والإسنادات في لغة نفطه {#nla-declarations-and-assignments}
 
 يوضح هذا القسم كيفية **إعلان المتغيرات والثوابت**، وكيفية **إسناد القيم** سواء كانت قيمة مفردة، أو تركيبة (Tuple)، أو
 عدة قيم مفصولة بفواصل. كما يوضح كيفية التعامل مع **التصريحات متعددة المعرفات**، وكيفية **توزيع القيم** على عدة متغيرات.
@@ -79,7 +79,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🟦 التصريح المفرد (Single Declaration)
+### 🟦 التصريح المفرد (Single Declaration) {#nla-single-declaration}
 
 ```naftah
 متغير ه : عدد_صحيح تعيين 2147483647
@@ -87,23 +87,23 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🟩 التصريح المتعدد (Multiple Declarations)
+### 🟩 التصريح المتعدد (Multiple Declarations) {#nla-multiple-declarations}
 
-#### بدون أنواع
+#### بدون أنواع {#nla-multiple-declarations-without-types}
 
 ```naftah
 ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق
 [ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق]
 ```
 
-#### مع نوع واحد لجميع المتغيرات
+#### مع نوع واحد لجميع المتغيرات {#nla-multiple-declarations-single-type}
 
 ```naftah
 ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق: منطقي
 [ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق]
 ```
 
-#### مع عدة أنواع (كل نوع يقابل متغير)
+#### مع عدة أنواع (كل نوع يقابل متغير) {#nla-multiple-declarations-multiple-types}
 
 ```naftah
 ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق:
@@ -111,7 +111,7 @@ It provides practical examples of using various **primitive types**. It also inc
 [ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق]
 ```
 
-#### عندما يكون عدد الأنواع أقل من عدد المتغيرات
+#### عندما يكون عدد الأنواع أقل من عدد المتغيرات {#nla-multiple-declarations-fewer-types}
 
 ```naftah
 ثابت ت٫ش٬ع،ي؛ز,س؛ص٫ه٬ض،ق:
@@ -121,7 +121,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🟧 الإسناد المفرد (Single Assignment)
+### 🟧 الإسناد المفرد (Single Assignment) {#nla-single-assignment}
 
 ```naftah
 متغير أ تعيين 50
@@ -130,16 +130,16 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🟨 الإسناد المتعدد (Multiple Assignments)
+### 🟨 الإسناد المتعدد (Multiple Assignments) {#nla-multiple-assignments}
 
-#### 📌 إسناد عدة متغيرات باستخدام تركيبة (Tuple)
+#### 📌 إسناد عدة متغيرات باستخدام تركيبة (Tuple) {#nla-tuple-assignment}
 
 ```naftah
 متغير أ؛ب تعيين (٣٢، ٤٥)
 (أ , ب)
 ```
 
-#### إعلان ثم إسناد لاحقًا
+#### إعلان ثم إسناد لاحقًا {#nla-declaration-then-assignment}
 
 ```naftah
 متغير أ؛ب
@@ -149,7 +149,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🟪 إسناد عبر دالة تُرجع تركيبة
+### 🟪 إسناد عبر دالة تُرجع تركيبة {#nla-function-returning-tuple}
 
 ```naftah
 دالة دالة_ترجع_تركيبة() : عدد_طويل {
@@ -160,7 +160,7 @@ It provides practical examples of using various **primitive types**. It also inc
 (أ , ب)
 ```
 
-### دالة تُرجع قيمًا مفصولة (تُعامل كـ Tuple)
+### دالة تُرجع قيمًا مفصولة (تُعامل كـ Tuple) {#nla-function-returning-separated-values}
 
 ```naftah
 دالة دالة_ترجع_تركيبة() : عدد_طويل {
@@ -173,7 +173,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🟫 أمثلة تجمع بين الإسناد والحساب
+### 🟫 أمثلة تجمع بين الإسناد والحساب {#nla-assignment-and-calculation-examples}
 
 ```naftah
 متغير ه : عدد_صحيح تعيين 2147483647
@@ -192,7 +192,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🟦 الإسناد متعدد الأبعاد داخل القوائم (Nested Lists)
+### 🟦 الإسناد متعدد الأبعاد داخل القوائم (Nested Lists) {#nla-nested-list-assignment}
 
 ```naftah
 متغير ه : عدد_صحيح تعيين 2147483647
@@ -203,7 +203,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🌀 إسناد تركيبي متعدد الأنواع (Mixed-Type Tuple Assignment)
+### 🌀 إسناد تركيبي متعدد الأنواع (Mixed-Type Tuple Assignment) {#nla-mixed-type-tuple-assignment}
 
 ```naftah
 ثابت ت٫ش٬ع،ي: تسلسل_رموز؛عدد_طويل؛عدد_طويل؛أي_نوع
@@ -214,7 +214,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### ✅ أمثلة على التعيين النوعي
+### ✅ أمثلة على التعيين النوعي {#nla-typed-assignment-examples}
 
 ```naftah
 --- تعريف ثابت اسمه "ت" بقيمة 2
@@ -283,9 +283,9 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-## 🧪 استخدامات متقدمة
+## 🧪 استخدامات متقدمة {#nla-advanced-usage}
 
-### ✅ استخدام قوالب النصوص (String Templates)
+### ✅ استخدام قوالب النصوص (String Templates) {#nla-string-templates}
 
 ```naftah
 {% raw %}
@@ -316,7 +316,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🔁 تحويل إلى ثمانية-بت (Byte Arrays)
+### 🔁 تحويل إلى ثمانية-بت (Byte Arrays) {#nla-byte-arrays}
 
 ```naftah
 {% raw %}
@@ -332,7 +332,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-## 🧠 فحص الأنواع والحجم (Type, Instance & Size Checking)
+## 🧠 فحص الأنواع والحجم (Type, Instance & Size Checking) {#nla-type-instance-size-checking}
 
 يدعم Naftah فحص النوع، التحقق من الانتماء، وحساب الحجم **بطريقتين متكافئتين**:
 
@@ -341,7 +341,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-### 🔍 معرفة النوع (Type Of)
+### 🔍 معرفة النوع (Type Of) {#nla-type-of}
 
 ```naftah
 نوع 6
@@ -363,7 +363,7 @@ It provides practical examples of using various **primitive types**. It also inc
 
 ---
 
-## 🧪 التحقق من الانتماء (Instance Of)#
+## 🧪 التحقق من الانتماء (Instance Of)# {#nla-instance-of}
 
 ```naftah
 6 مثيل_من أي_عدد
@@ -387,7 +387,7 @@ true
 
 ---
 
-### 📏 حساب الحجم (Size Of)
+### 📏 حساب الحجم (Size Of) {#nla-size-of}
 
 ```naftah
 حجم 6
@@ -398,7 +398,7 @@ true
 
 ---
 
-### 🧱 مثال مركّب (Type + Instance)
+### 🧱 مثال مركّب (Type + Instance) {#nla-type-instance-example}
 
 ```naftah
 متغير شخص: كائن تعيين {
@@ -414,7 +414,7 @@ true
 
 ---
 
-### 🌀 مثال مع التراكيب (Tuples & Collections)
+### 🌀 مثال مع التراكيب (Tuples & Collections) {#nla-tuples-and-collections}
 
 ```naftah
 متغير تركيبة_ تعيين (٣٢، ٤٥)
@@ -426,7 +426,7 @@ true
 
 ---
 
-## 🧠 ملاحظات
+## 🧠 ملاحظات {#nla-notes}
 
 * يمكن استخدام كل نوع مع `ثابت` أو `متغير` باستخدام `:` للتحديد النوعي.
 * الأعداد العشرية تفصل بين الجزء الصحيح والكسري بـ `،` بدلًا من `.` (وفق تنسيق نفطه).
