@@ -58,3 +58,6 @@ out/
 /docs-site/_data/jvm-class-initializers.json
 /docs-site/_data/jvm-functions.json
 /docs-site/_data/releases.json
+/docs-site/_data/examples.json
+/docs-site/assets/examples/
+/docs-site/examples/
