@@ -1,34 +1,130 @@
 - title: الرئيسية
   url: /
-- title: الكلمات المفتاحية
-  url: /language/keywords
-- title: الأنواع الأولية
-  url: /language/primitives-and-variables
-- title: بُنى المعطيات
-  url: /language/collections
-- title: التعبيرات
-  url: /language/expressions
-- title: الأعداد بأنظمة العد المختلفة
-  url: /language/radix-numbers
-- title: الكائنات
-  url: /language/objects
-- title: التحكم في تدفق البرنامج
-  url: /language/control-flow
-- title: الدوال
-  url: /language/functions
-- title: التكامل مع جافا
-  url: /language/java-interop
-- title: التزامن
-  url: /language/concurrency
-- title: الزمن والتاريخ
-  url: /language/temporal
-- title: تشغيل نفطه
-  url: /running-naftah
-- title: التوثيق (جاڤا)
-  url: /java-doc
-- title: المقارنات المعيارية
-  url: /benchmarks
-- title: الإصدارات
-  url: /releases
+
 - title: حول نفطه
   url: /about
+
+- title: تشغيل نفطه
+  url: /running-naftah
+
+- title: اللغة
+  children:
+    - title: الكلمات المفتاحية
+      url: /language/keywords
+
+    - title: الأنواع الأولية
+      url: /language/primitives-and-variables
+
+    - title: بُنى المعطيات
+      url: /language/collections
+
+    - title: التعبيرات
+      url: /language/expressions
+
+    - title: الأعداد بأنظمة العد المختلفة
+      url: /language/radix-numbers
+
+    - title: الكائنات
+      url: /language/objects
+
+    - title: التحكم في تدفق البرنامج
+      url: /language/control-flow
+
+    - title: الدوال
+      url: /language/functions
+
+    - title: التكامل مع جافا
+      url: /language/java-interop
+
+    - title: التزامن
+      url: /language/concurrency
+
+    - title: الزمن والتاريخ
+      url: /language/temporal
+
+- title: الأمثلة
+  children:
+    - title: مرحباً نفطه
+      url: /examples/hello-naftah
+
+    - title: مرحباً بالعالم
+      url: /examples/hello-world
+
+    - title: التعبيرات
+      url: /examples/expressions
+
+    - title: التعيين
+      url: /examples/assignment
+
+    - title: الأنواع والتعيين
+      url: /examples/typed-assignment
+
+    - title: الدوال
+      children:
+        - title: تعريف دوال
+          url: /examples/function-declaration
+
+        - title: تعريف الدوال (1)
+          url: /examples/function-declaration-1
+
+        - title: دالة المضروب
+          url: /examples/function-declaration-factorial
+
+        - title: تعريف الدوال (غير صالح)
+          url: /examples/function-declaration-invalid
+
+        - title: استدعاء الدوال
+          url: /examples/function-call
+
+        - title: استدعاء دوال جافا
+          url: /examples/jvm-functions-qualified-call
+
+        - title: الاستيراد
+          url: /examples/import-statement
+
+    - title: التحكم في التدفق
+      children:
+        - title: الشرطيات
+          url: /examples/conditional
+
+        - title: الحلقات (for)
+          url: /examples/for-loop
+
+        - title: الحلقات (while)
+          url: /examples/while-statement
+
+        - title: الحلقات (repeat)
+          url: /examples/repeat-statement
+
+        - title: جملة الحالة (switch case)
+          url: /examples/switch-expression
+
+        - title: حاول (try)
+          url: /examples/try-statement
+
+    - title: الكائنات
+      url: /examples/objects
+
+    - title: المجموعات (Collections)
+      url: /examples/collections
+
+    - title: التزامن
+      url: /examples/concurrency
+
+    - title: الزمن والتاريخ
+      url: /examples/temporal
+
+    - title: الأنظمة العددية
+      url: /examples/radix-numbers
+
+    - title: السلوكات
+      url: /examples/implementations
+
+- title: التوثيق (جاڤا)
+  url: /java-doc
+
+- title: المقارنات المعيارية
+  url: /benchmarks
+
+- title: الإصدارات
+  url: /releases
