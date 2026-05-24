@@ -43,6 +43,9 @@ jobs:
       - name: export Naftah Functions, JVM Functions and Initializers for Jekyll
         run: ./gradlew exportNaftahFunctions
 
+      - name: export Naftah Examples
+        run: ./gradlew exportNaftahExamples
+
       - name: Fetch GitHub Releases for Jekyll
         run: |
           echo "Fetching releases..."
