@@ -1,19 +1,21 @@
 let META = null;
-let SEARCH_INDEX = [];
+let SEARCH_INDEX = {};
+
 const CHUNK_CACHE = {};
+let currentRequestId = 0;
 
 // Scroll helper, Scroll to the table top after each draw (paging/filtering)
 function scrollToJvmFunctionsTable() {
-	var $table = $('#jvm-functions-table');
+	const $table = $('#jvm-functions-table');
 
 	// Get the table's top relative to the viewport
-	var tableTop = $table[0].getBoundingClientRect().top + window.pageYOffset;
+	const tableTop = $table[0].getBoundingClientRect().top + window.pageYOffset;
 
 	// Consider the fixed site header height
-	var siteHeaderHeight = $('.site-header').outerHeight() || 0;
+	const siteHeaderHeight = $('.site-header').outerHeight() || 0;
 
 	// DataTables FixedHeader is active, subtract its height as well
-	var fixedHeaderHeight = 0;
+	let fixedHeaderHeight = 0;
 	if ($.fn.DataTable.FixedHeader) {
 		fixedHeaderHeight = $('.fixedHeader-floating').outerHeight() || 0;
 	}
@@ -21,23 +23,22 @@ function scrollToJvmFunctionsTable() {
 	// Scroll to the correct position
 	$('html, body').animate({
 		scrollTop: tableTop - siteHeaderHeight - fixedHeaderHeight - 100 // extra padding
-	}, 300);
+	}, 250);
 }
 
-// Chunk helpers
+// Chunk loader
 function getChunkFile(base, page) {
 	return `/assets/data/${base}-page-${String(page).padStart(4, '0')}.json.gz`;
 }
 
 function loadChunk(base, page) {
-
 	if (CHUNK_CACHE[page]) {
 		return Promise.resolve(CHUNK_CACHE[page]);
 	}
 
 	return fetch(getChunkFile(base, page))
 		.then(resp => {
-			if (!resp.ok) throw new Error(`Missing chunk page ${page}`);
+			if (!resp.ok) throw new Error(`Missing chunk ${page}`);
 			return resp.arrayBuffer();
 		})
 		.then(buffer => {
@@ -50,26 +51,91 @@ function loadChunk(base, page) {
 		});
 }
 
-// Search engine (FAST INDEX)
+// FAST SEARCH ENGINE
+function loadSearchIndex() {
+	return fetch('/assets/data/jvm-functions-search-index.json.gz')
+		.then(async r => {
+			if (!r.ok) throw new Error("Failed to load index");
+			return r.arrayBuffer();
+		})
+		.then(buffer => {
+			try {
+				const decompressed = pako.inflate(new Uint8Array(buffer), {
+					to: 'string'
+				});
+
+				return JSON.parse(decompressed);
+			} catch (e) {
+				console.error("Decompression/parse failed");
+				throw e;
+			}
+		});
+}
+
 function searchData(query) {
+	if (!query) return [];
 
-	if (!query) return null;
+	const tokens = query.toLowerCase().split(/\s+/);
 
-	query = query.toLowerCase();
+	let resultSet = null;
 
-	return SEARCH_INDEX.filter(item => {
-		return (
-			item.className?.toLowerCase().includes(query) ||
-			item.methodName?.toLowerCase().includes(query) ||
-			item.qualifiedCall?.toLowerCase().includes(query)
-		);
+	for (const token of tokens) {
+		const ids = SEARCH_INDEX[token];
+
+		if (!ids) return [];
+
+		if (!resultSet) {
+			resultSet = new Set(ids);
+		} else {
+			resultSet = new Set(ids.filter(id => resultSet.has(id)));
+		}
+	}
+
+	return Array.from(resultSet || []);
+}
+
+function limitConcurrency(items, limit, fn) {
+	let index = 0;
+	let active = 0;
+	let results = [];
+
+	return new Promise(resolve => {
+		function next() {
+			if (index === items.length && active === 0) {
+				resolve(results);
+				return;
+			}
+
+			while (active < limit && index < items.length) {
+				const i = index++;
+				active++;
+
+				Promise.resolve(fn(items[i]))
+					.then(res => results[i] = res)
+					.finally(() => {
+						active--;
+						next();
+					});
+			}
+		}
+
+		next();
 	});
 }
 
-// Main
-$(document).ready(function() {
+// debounce helper (CRITICAL for performance)
+function debounce(fn, delay) {
+	let t;
+	return function (...args) {
+		clearTimeout(t);
+		t = setTimeout(() => fn.apply(this, args), delay);
+	};
+}
 
-	// Load META
+// MAIN
+$(document).ready(function () {
+
+	// META
 	fetch('/assets/data/jvm-functions-meta.json')
 		.then(r => r.json())
 		.then(meta => META = meta)
@@ -82,32 +148,35 @@ $(document).ready(function() {
 			};
 		});
 
-	// Load SEARCH INDEX
-	fetch('/assets/data/jvm-functions-search-index.json')
-		.then(r => r.json())
+	// INVERTED INDEX
+	loadSearchIndex()
 		.then(data => SEARCH_INDEX = data)
 		.catch(err => console.warn("Search index missing", err));
 
 	// DataTable
-	var table = $('#jvm-functions-table').DataTable({
+	const table = $('#jvm-functions-table').DataTable({
 
-		ajax: function(data, callback) {
+		ajax: function (data, callback) {
 
 			if (!META) {
 				callback({ data: [] });
 				return;
 			}
 
+			const requestId = ++currentRequestId;
+
 			const query = $('#jvm-functions-table_filter input').val();
 			const baseName = META.file.replace('.json', '');
 			const chunkSize = META.chunk_size;
 
-			//  SEARCH MODE (INDEX)
-			if (query && SEARCH_INDEX.length > 0) {
+			// SEARCH MODE
+			if (query && Object.keys(SEARCH_INDEX).length > 0) {
 
-				const results = searchData(query);
+				const ids = searchData(query);
 
-				if (!results || results.length === 0) {
+				if (requestId !== currentRequestId) return;
+
+				if (!ids.length) {
 					callback({
 						data: [],
 						recordsTotal: META.total_items,
@@ -116,31 +185,54 @@ $(document).ready(function() {
 					return;
 				}
 
-				const pages = [...new Set(results.map(r => r.page))];
+				const uniqueIds = Array.from(new Set(ids));
 
-				Promise.all(pages.map(p => loadChunk(baseName, p)))
-					.then(chunks => {
+                // map id → chunk (from META logic)
+                const pageMap = new Map();
+
+                for (const id of uniqueIds) {
+                	const page = Math.floor((id - 1) / chunkSize) + 1;
+
+                	if (!pageMap.has(page)) {
+                		pageMap.set(page, []);
+                	}
+
+                	pageMap.get(page).push(id);
+                }
+
+                // convert to sorted, capped page list
+                const pages = Array.from(pageMap.keys())
+                	.sort((a, b) => a - b)
+                	.slice(0, 20); // HARD SAFETY LIMIT
+
+				limitConcurrency(
+					[...pages],
+					4, // max parallel requests
+					p => loadChunk(baseName, p)
+				).then(chunks => {
+
+						if (requestId !== currentRequestId) return;
 
 						const all = chunks.flat();
-						const idSet = new Set(results.map(r => r.id));
+						const idSet = new Set(ids);
 
 						const filtered = all.filter(row => idSet.has(row.id));
 
 						callback({
 							data: filtered,
 							recordsTotal: META.total_items,
-							recordsFiltered: results.length
+							recordsFiltered: ids.length
 						});
 					})
 					.catch(err => {
-						console.error("Search load failed:", err);
+						console.error("Search failed:", err);
 						callback({ data: [] });
 					});
 
 				return;
 			}
 
-			// NORMAL PAGINATION MODE
+			// PAGINATION MODE
 			const start = data.start;
 			const length = data.length;
 
@@ -155,6 +247,8 @@ $(document).ready(function() {
 
 			Promise.all(promises)
 				.then(chunks => {
+
+					if (requestId !== currentRequestId) return;
 
 					const merged = chunks.flat();
 
@@ -172,9 +266,9 @@ $(document).ready(function() {
 					callback({ data: [] });
 				});
 		},
-		deferRender: true,
-		processing: true,
 		serverSide: true,
+		processing: true,
+		deferRender: true,
 		pageLength: 10,
 		scrollX: true,
 		responsive: true,
@@ -191,11 +285,17 @@ $(document).ready(function() {
         language: { url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json" }
 	});
 
+	// debounce search binding
+	const debouncedSearch = debounce(scrollToJvmFunctionsTable, 300);
+
 	// Track user interactions: pagination, length, search input
 	$(document).on(
 		"input",
 		"#jvm-functions-table_filter > label > input[type=search]",
-		scrollToJvmFunctionsTable);
+		function () {
+			debouncedSearch();
+			table.ajax.reload();
+		});
 
     $(document).on(
         "change",
