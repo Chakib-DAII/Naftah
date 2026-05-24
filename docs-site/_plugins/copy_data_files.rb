@@ -19,6 +19,7 @@ Jekyll::Hooks.register :site, :post_write do |site|
       filename = entry
       compress = false
       chunk    = false
+
     elsif entry.is_a?(Hash)
       filename = entry["file"]
       compress = entry.fetch("compress", false)  # default = false
@@ -37,7 +38,7 @@ Jekyll::Hooks.register :site, :post_write do |site|
 
     base_name = File.basename(filename, ".json")
 
-    # MODE 1: CHUNKED DATASET
+    # CHUNKED MODE + INDEXING
     if chunk
 
       begin
@@ -52,6 +53,27 @@ Jekyll::Hooks.register :site, :post_write do |site|
 
         Jekyll.logger.info "DataPipeline:", "Chunking #{filename} → #{total_pages} pages (#{CHUNK_SIZE}/page)"
 
+        # INVERTED INDEX
+        inverted_index = Hash.new { |h, k| h[k] = [] }
+
+        data.each_with_index do |item, global_id|
+
+          tokens = [
+            item["className"],
+            item["methodName"],
+            item["qualifiedCall"]
+          ]
+          .compact
+          .flat_map { |v| v.downcase.split(/[^a-z0-9]+/) }
+          .reject(&:empty?)
+          .uniq
+
+          tokens.each do |token|
+            inverted_index[token] << global_id + 1
+          end
+        end
+
+        # WRITE CHUNKS
         data.each_slice(CHUNK_SIZE).with_index do |slice, index|
           page_num = index + 1
           padded   = page_num.to_s.rjust(4, '0')
@@ -75,7 +97,7 @@ Jekyll::Hooks.register :site, :post_write do |site|
           end
         end
 
-        # Metadata file
+        # META FILE
         meta = {
           file: filename,
           total_items: data.size,
@@ -83,13 +105,23 @@ Jekyll::Hooks.register :site, :post_write do |site|
           pages: total_pages
         }
 
+        # WRITE META
         meta_path = File.join(dest_dir, "#{base_name}-meta.json")
         File.write(meta_path, JSON.pretty_generate(meta))
 
         Jekyll.logger.info "DataPipeline:", "Wrote meta file for #{filename}"
 
+        # WRITE INVERTED INDEX
+		index_path = File.join(dest_dir, "#{base_name}-search-index.json.gz")
+
+		Zlib::GzipWriter.open(index_path, Zlib::BEST_COMPRESSION) do |gz|
+		  gz.write(JSON.generate(inverted_index))
+		end
+
+        Jekyll.logger.info "DataPipeline:", "Wrote compressed search index (gzipped) (#{inverted_index.keys.size} tokens)"
+
       rescue => e
-        Jekyll.logger.error "DataPipeline:", "Chunking failed for #{filename}: #{e.message}"
+        Jekyll.logger.error "DataPipeline:", "Failed: #{e.message}"
       end
 
     # MODE 2: SIMPLE COPY + OPTIONAL GZIP
