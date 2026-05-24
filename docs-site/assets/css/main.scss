@@ -77,7 +77,6 @@ nav.site-nav {
   margin: 0 0 0.5rem 0;
 
   display: flex;
-  flex-wrap: nowrap;
   justify-content: center;
   gap: 0.2rem;
 
@@ -87,6 +86,8 @@ nav.site-nav {
   white-space: nowrap;
 }
 
+/* ---------- ITEMS ---------- */
+
 .nav-item {
   position: relative; /* anchor dropdown */
 }
@@ -94,10 +95,19 @@ nav.site-nav {
 .nav-link {
   font-weight: 500;
   font-size: 0.85rem;
+
   color: $link-color !important;
-  padding: 0.15rem 0.3rem;
-  border-radius: 3px;
-  display: inline-block;
+
+  padding: 0.25rem 0.5rem;
+
+  border-radius: 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
   cursor: pointer;
 
   &:hover {
@@ -107,30 +117,34 @@ nav.site-nav {
 }
 
 .has-dropdown {
-  cursor: pointer;
   user-select: none;
-  display: inline-block;
 }
+
+/* ---------- DROPDOWNS ---------- */
 
 .dropdown {
   display: none;
+
   position: absolute;
+
   top: 100%;
   right: 0;
 
   min-width: 220px;
 
   background-color: $header-bg !important;
+
   border: 1px solid $border-color !important;
   border-radius: 6px;
 
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 
-  z-index: 999999 !important; /* ALWAYS ON TOP */
+  z-index: 999999;
 
   padding: 0.4rem 0;
-  list-style: none;
   margin: 0;
+
+  list-style: none;
 }
 
 /* show dropdown */
@@ -139,17 +153,39 @@ nav.site-nav {
   display: block;
 }
 
-/* dropdown items */
-.dropdown li {
-  list-style: none;
+/* ---------- NESTED DROPDOWNS ---------- */
+
+/* submenu item anchor */
+.dropdown .nav-item {
+  position: relative;
 }
 
-.dropdown li a {
-  display: block;
+/* nested dropdowns open sideways */
+.dropdown .dropdown {
+  top: 0;
+  right: 100%;
+}
+
+/* ---------- DROPDOWN LINKS ---------- */
+
+.dropdown .nav-link,
+.dropdown a {
+  display: flex;
+
+  justify-content: flex-start;
+  align-items: center;
+
+  width: 100%;
+
   padding: 0.5rem 0.8rem;
-  font-size: 0.85rem;
-  color: $link-color !important;
+
   text-align: right;
+
+  font-size: 0.85rem;
+
+  color: $link-color !important;
+
+  box-sizing: border-box;
 
   &:hover {
     background-color: $link-color !important;
