@@ -26,8 +26,11 @@ exclude:
   - node_modules
   - vendor
 
+data_chunk_size: 100
+
 copy_data_files:
   - file: jvm-class-initializers.json
   - file: jvm-functions.json
+    chunk: true
     compress: true
 
