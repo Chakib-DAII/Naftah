@@ -1,0 +1,36 @@
+---
+layout: default
+title: Page not found
+permalink: /404.html
+---
+
+<div style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:70vh; text-align:center;" dir="rtl">
+
+	<h2>الصفحة غير موجودة</h2>
+
+	<p>هذه الصفحة غير موجودة.</p>
+
+	<p>
+		<a href="{{ '/' | relative_url }}">العودة إلى الصفحة الرئيسية</a>
+	</p>
+
+	<p style="opacity:0.8; font-size:0.95em;">
+		سيتم توجيهك إلى الصفحة الرئيسية خلال <span id="countdown">6</span> ثوانٍ...
+	</p>
+
+</div>
+
+<script>
+	let seconds = 6;
+	const el = document.getElementById("countdown");
+
+	const timer = setInterval(() => {
+		seconds--;
+		el.textContent = seconds;
+
+		if (seconds <= 0) {
+			clearInterval(timer);
+			window.location.href = "/";
+		}
+	}, 1000);
+</script>
