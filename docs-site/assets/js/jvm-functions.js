@@ -54,21 +54,16 @@ function loadChunk(base, page) {
 // FAST SEARCH ENGINE
 function loadSearchIndex() {
 	return fetch('/assets/data/jvm-functions-search-index.json.gz')
-		.then(async r => {
+		.then(r => {
 			if (!r.ok) throw new Error("Failed to load index");
 			return r.arrayBuffer();
 		})
 		.then(buffer => {
-			try {
-				const decompressed = pako.inflate(new Uint8Array(buffer), {
-					to: 'string'
-				});
+			const decompressed = pako.inflate(new Uint8Array(buffer), {
+				to: 'string'
+			});
 
-				return JSON.parse(decompressed);
-			} catch (e) {
-				console.error("Decompression/parse failed");
-				throw e;
-			}
+			return JSON.parse(decompressed);
 		});
 }
 
@@ -81,17 +76,14 @@ function searchData(query) {
 
 	for (const token of tokens) {
 		const ids = SEARCH_INDEX[token];
-
 		if (!ids) return [];
 
-		if (!resultSet) {
-			resultSet = new Set(ids);
-		} else {
-			resultSet = new Set(ids.filter(id => resultSet.has(id)));
-		}
+		resultSet = resultSet
+			? new Set(ids.filter(id => resultSet.has(id)))
+			: new Set(ids);
 	}
 
-	return Array.from(resultSet || []);
+	return Array.from(resultSet);
 }
 
 function limitConcurrency(items, limit, fn) {
@@ -148,24 +140,28 @@ $(document).ready(function () {
 			};
 		});
 
-	// INVERTED INDEX
+	// SEARCH INDEX
 	loadSearchIndex()
 		.then(data => SEARCH_INDEX = data)
 		.catch(err => console.warn("Search index missing", err));
 
 	// DataTable
 	const table = $('#jvm-functions-table').DataTable({
-
 		ajax: function (data, callback) {
 
-			if (!META) {
-				callback({ data: [] });
+			if (!META || !META.chunk_size) {
+				callback({
+					draw: data.draw,
+					data: [],
+					recordsTotal: 0,
+					recordsFiltered: 0
+				});
 				return;
 			}
 
 			const requestId = ++currentRequestId;
 
-			const query = $('#jvm-functions-table_filter input').val();
+			const query = $('#jvm-functions-table_filter input').val()?.trim();
 			const baseName = META.file.replace('.json', '');
 			const chunkSize = META.chunk_size;
 
@@ -178,6 +174,7 @@ $(document).ready(function () {
 
 				if (!ids.length) {
 					callback({
+						draw: data.draw,
 						data: [],
 						recordsTotal: META.total_items,
 						recordsFiltered: 0
@@ -185,49 +182,42 @@ $(document).ready(function () {
 					return;
 				}
 
-				const uniqueIds = Array.from(new Set(ids));
-
-                // map id → chunk (from META logic)
-                const pageMap = new Map();
-
-                for (const id of uniqueIds) {
-                	const page = Math.floor((id - 1) / chunkSize) + 1;
-
-                	if (!pageMap.has(page)) {
-                		pageMap.set(page, []);
-                	}
-
-                	pageMap.get(page).push(id);
-                }
-
-                // convert to sorted, capped page list
-                const pages = Array.from(pageMap.keys())
-                	.sort((a, b) => a - b)
-                	.slice(0, 20); // HARD SAFETY LIMIT
+				const pages = [...new Set(
+					ids.slice(0, 100).map(id =>
+						Math.floor((id - 1) / chunkSize) + 1
+					)
+				)];
 
 				limitConcurrency(
-					[...pages],
-					4, // max parallel requests
+					pages,
+					4,
 					p => loadChunk(baseName, p)
-				).then(chunks => {
+				)
+				.then(chunks => {
 
-						if (requestId !== currentRequestId) return;
+					if (requestId !== currentRequestId) return;
 
-						const all = chunks.flat();
-						const idSet = new Set(ids);
+					const all = chunks.flat();
+					const idSet = new Set(ids);
 
-						const filtered = all.filter(row => idSet.has(row.id));
+					const filtered = all.filter(r => idSet.has(r.id));
 
-						callback({
-							data: filtered,
-							recordsTotal: META.total_items,
-							recordsFiltered: ids.length
-						});
-					})
-					.catch(err => {
-						console.error("Search failed:", err);
-						callback({ data: [] });
+					callback({
+						draw: data.draw,
+						data: filtered,
+						recordsTotal: META.total_items,
+						recordsFiltered: ids.length
 					});
+				})
+				.catch(err => {
+					console.error(err);
+					callback({
+						draw: data.draw,
+						data: [],
+						recordsTotal: META.total_items,
+						recordsFiltered: 0
+					});
+				});
 
 				return;
 			}
@@ -239,32 +229,42 @@ $(document).ready(function () {
 			const firstChunk = Math.floor(start / chunkSize) + 1;
 			const lastChunk = Math.floor((start + length - 1) / chunkSize) + 1;
 
-			const promises = [];
+			const pages = [];
 
 			for (let p = firstChunk; p <= lastChunk; p++) {
-				promises.push(loadChunk(baseName, p));
+				pages.push(p);
 			}
 
-			Promise.all(promises)
-				.then(chunks => {
+			limitConcurrency(
+				pages,
+				4,
+				p => loadChunk(baseName, p)
+			)
+			.then(chunks => {
 
-					if (requestId !== currentRequestId) return;
+				if (requestId !== currentRequestId) return;
 
-					const merged = chunks.flat();
+				const merged = chunks.flat();
 
-					const offset = start % chunkSize;
-					const result = merged.slice(offset, offset + length);
+				const offset = start % chunkSize;
+				const result = merged.slice(offset, offset + length);
 
-					callback({
-						data: result,
-						recordsTotal: META.total_items,
-						recordsFiltered: META.total_items
-					});
-				})
-				.catch(err => {
-					console.error("Chunk load failed:", err);
-					callback({ data: [] });
+				callback({
+					draw: data.draw,
+					data: result,
+					recordsTotal: META.total_items,
+					recordsFiltered: META.total_items
 				});
+			})
+			.catch(err => {
+				console.error(err);
+				callback({
+					draw: data.draw,
+					data: [],
+					recordsTotal: META.total_items,
+					recordsFiltered: 0
+				});
+			});
 		},
 		serverSide: true,
 		processing: true,
@@ -285,8 +285,10 @@ $(document).ready(function () {
         language: { url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json" }
 	});
 
+	// UI EVENTS
+
 	// debounce search binding
-	const debouncedSearch = debounce(scrollToJvmFunctionsTable, 300);
+	const debouncedSearch = debounce(scrollToJvmFunctionsTable, 200);
 
 	// Track user interactions: pagination, length, search input
 	$(document).on(
