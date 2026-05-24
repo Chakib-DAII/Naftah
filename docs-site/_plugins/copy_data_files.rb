@@ -11,7 +11,7 @@ Jekyll::Hooks.register :site, :post_write do |site|
 
   FileUtils.mkdir_p(dest_dir)
 
-  CHUNK_SIZE = (site.config["data_chunk_size"] || 100).to_i
+  chunk_size = (site.config["data_chunk_size"] || 100).to_i
 
   files_to_process.each do |entry|
     # Resolve entry config; Entry can be a String OR an Object
@@ -38,7 +38,7 @@ Jekyll::Hooks.register :site, :post_write do |site|
 
     base_name = File.basename(filename, ".json")
 
-    # CHUNKED MODE + INDEXING
+    # CHUNKED + SEARCH INDEX
     if chunk
 
       begin
@@ -49,14 +49,18 @@ Jekyll::Hooks.register :site, :post_write do |site|
           next
         end
 
-        total_pages = (data.size.to_f / CHUNK_SIZE).ceil
+        total_pages = (data.size.to_f / chunk_size).ceil
 
-        Jekyll.logger.info "DataPipeline:", "Chunking #{filename} → #{total_pages} pages (#{CHUNK_SIZE}/page)"
+        Jekyll.logger.info "DataPipeline:", "Chunking #{filename} → #{total_pages} pages (#{chunk_size}/page)"
 
         # INVERTED INDEX
         inverted_index = Hash.new { |h, k| h[k] = [] }
 
-        data.each_with_index do |item, global_id|
+        global_id = 0
+
+        # build indexed dataset first (fixes ID mismatch)
+        enriched_data = data.map do |item|
+          global_id += 1
 
           tokens = [
             item["className"],
@@ -64,19 +68,23 @@ Jekyll::Hooks.register :site, :post_write do |site|
             item["qualifiedCall"]
           ]
           .compact
-          .flat_map { |v| v.downcase.split(/[^a-z0-9]+/) }
+          .map { |v| v.to_s.downcase }
+          .flat_map { |v| v.split(/[^a-z0-9_]+/) }
           .reject(&:empty?)
           .uniq
 
-          tokens.each do |token|
-            inverted_index[token] << global_id + 1
+          tokens.each do |t|
+            inverted_index[t] << global_id
           end
+
+          item.merge("id" => global_id)
         end
 
-        # WRITE CHUNKS
-        data.each_slice(CHUNK_SIZE).with_index do |slice, index|
+        # write chunks
+        enriched_data.each_slice(chunk_size).with_index do |slice, index|
+
           page_num = index + 1
-          padded   = page_num.to_s.rjust(4, '0')
+          padded   = page_num.to_s.rjust(4, "0")
 
           out_name = "#{base_name}-page-#{padded}.json"
           out_path = File.join(dest_dir, out_name)
@@ -100,8 +108,8 @@ Jekyll::Hooks.register :site, :post_write do |site|
         # META FILE
         meta = {
           file: filename,
-          total_items: data.size,
-          chunk_size: CHUNK_SIZE,
+          total_items: enriched_data.size,
+          chunk_size: chunk_size,
           pages: total_pages
         }
 
@@ -112,16 +120,16 @@ Jekyll::Hooks.register :site, :post_write do |site|
         Jekyll.logger.info "DataPipeline:", "Wrote meta file for #{filename}"
 
         # WRITE INVERTED INDEX
-		index_path = File.join(dest_dir, "#{base_name}-search-index.json.gz")
+        index_path = File.join(dest_dir, "#{base_name}-search-index.json.gz")
 
-		Zlib::GzipWriter.open(index_path, Zlib::BEST_COMPRESSION) do |gz|
-		  gz.write(JSON.generate(inverted_index))
-		end
+        Zlib::GzipWriter.open(index_path, Zlib::BEST_COMPRESSION) do |gz|
+          gz.write(JSON.generate(inverted_index))
+        end
 
         Jekyll.logger.info "DataPipeline:", "Wrote compressed search index (gzipped) (#{inverted_index.keys.size} tokens)"
 
       rescue => e
-        Jekyll.logger.error "DataPipeline:", "Failed: #{e.message}"
+        Jekyll.logger.error "DataPipeline:", "Chunking failed: #{e.message}"
       end
 
     # MODE 2: SIMPLE COPY + OPTIONAL GZIP
