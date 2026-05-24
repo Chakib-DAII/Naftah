@@ -695,7 +695,7 @@ system to work with existing Java/Kotlin/Groovy libraries.</p>
 
 <hr />
 
-<h2 id="-prerequisites">🔧 Prerequisites</h2>
+<h2 id="nla-prerequisites">🔧 Prerequisites</h2>
 
 <ul>
   <li><strong>Java 17 or higher</strong> (ensure <code class="language-plaintext highlighter-rouge">JAVA_HOME</code> is set correctly)</li>
@@ -709,7 +709,7 @@ system to work with existing Java/Kotlin/Groovy libraries.</p>
 
 <hr />
 
-<h2 id="️-available-scripts">🗂️ Available Scripts</h2>
+<h2 id="nla-available-scripts">🗂️ Available Scripts</h2>
 
 <table>
   <thead>
@@ -744,11 +744,11 @@ system to work with existing Java/Kotlin/Groovy libraries.</p>
 
 <hr />
 
-<h2 id="-1-run-a-naftah-script">✅ 1. Run a Naftah Script</h2>
+<h2 id="nla-run">✅ 1. Run a Naftah Script</h2>
 
 <p>To execute a <code class="language-plaintext highlighter-rouge">.naftah</code> file:</p>
 
-<h3 id="linux--macos">Linux / macOS</h3>
+<h3 id="nla-run-linux-macos">Linux / macOS</h3>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-shell.sh run hello.naftah
 </code></pre></div></div>
@@ -758,7 +758,7 @@ system to work with existing Java/Kotlin/Groovy libraries.</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah.sh hello.naftah
 </code></pre></div></div>
 
-<h3 id="windows">Windows</h3>
+<h3 id="nla-run-windows">Windows</h3>
 
 <pre><code class="language-cmd">naftah-shell.bat run hello.naftah
 </code></pre>
@@ -770,11 +770,11 @@ system to work with existing Java/Kotlin/Groovy libraries.</p>
 
 <hr />
 
-<h2 id="-2-start-the-interactive-shell-repl">💬 2. Start the Interactive Shell (REPL)</h2>
+<h2 id="nla-repl">💬 2. Start the Interactive Shell (REPL)</h2>
 
 <p>The REPL allows you to experiment with Naftah code line-by-line in a terminal.</p>
 
-<h3 id="linux--macos-1">Linux / macOS</h3>
+<h3 id="nla-repl-linux-macos">Linux / macOS</h3>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-repl.sh
 </code></pre></div></div>
@@ -784,7 +784,7 @@ system to work with existing Java/Kotlin/Groovy libraries.</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-shell.sh shell
 </code></pre></div></div>
 
-<h3 id="windows-1">Windows</h3>
+<h3 id="nla-repl-windows">Windows</h3>
 
 <pre><code class="language-cmd">naftah-repl.bat
 </code></pre>
@@ -794,7 +794,7 @@ system to work with existing Java/Kotlin/Groovy libraries.</p>
 <pre><code class="language-cmd">naftah.bat shell
 </code></pre>
 
-<h3 id="features">Features:</h3>
+<h3 id="nla-features">Features:</h3>
 
 <ul>
   <li>Multi-line code support</li>
@@ -804,7 +804,7 @@ system to work with existing Java/Kotlin/Groovy libraries.</p>
 
 <hr />
 
-<h2 id="️-3-initialize-java-libraries-for-use-in-naftah">⚙️ 3. Initialize Java Libraries for Use in Naftah</h2>
+<h2 id="nla-init">⚙️ 3. Initialize Java Libraries for Use in Naftah</h2>
 
 <p>The <code class="language-plaintext highlighter-rouge">init</code> command processes all <code class="language-plaintext highlighter-rouge">.jar</code> files inside the <code class="language-plaintext highlighter-rouge">lib/</code> folder and adds them to Naftah’s reflection system.
 This enables:</p>
@@ -815,7 +815,7 @@ This enables:</p>
   <li>Seamless interop without additional build steps.</li>
 </ul>
 
-<h3 id="linux--macos-2">Linux / macOS</h3>
+<h3 id="nla-init-linux-macos">Linux / macOS</h3>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-init.sh
 </code></pre></div></div>
@@ -825,7 +825,7 @@ This enables:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah.sh init
 </code></pre></div></div>
 
-<h3 id="windows-2">Windows</h3>
+<h3 id="nla-init-windows">Windows</h3>
 
 <pre><code class="language-cmd">naftah-init.bat
 </code></pre>
@@ -841,7 +841,7 @@ This enables:</p>
 
 <hr />
 
-<h2 id="-4-use-the-naftah-manual-dynamic-cli-help">📚 4. Use the Naftah Manual (Dynamic CLI Help)</h2>
+<h2 id="nla-manual">📚 4. Use the Naftah Manual (Dynamic CLI Help)</h2>
 
 <p>The <code class="language-plaintext highlighter-rouge">man</code> command launches <strong>Naftah’s interactive manual system</strong>, which supports exploring all built-in commands,
 functions, and Java interop metadata — in both <strong>Arabic and English</strong>.</p>
@@ -873,7 +873,7 @@ functions, and Java interop metadata — in both <strong>Arabic and English</str
 
 <hr />
 
-<h3 id="linux--macos-3">Linux / macOS</h3>
+<h3 id="nla-manual-linux-macos">Linux / macOS</h3>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah-man.sh
 </code></pre></div></div>
@@ -883,7 +883,7 @@ functions, and Java interop metadata — in both <strong>Arabic and English</str
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./naftah.sh man
 </code></pre></div></div>
 
-<h3 id="windows-3">Windows</h3>
+<h3 id="nla-manual-windows">Windows</h3>
 
 <pre><code class="language-cmd">naftah-man.bat
 </code></pre>
@@ -900,7 +900,7 @@ supports Arabic output with pagination.</p>
 
 <hr />
 
-<h2 id="-example-workflow">🧪 Example Workflow</h2>
+<h2 id="nla-example-workflow">🧪 Example Workflow</h2>
 
 <ol>
   <li>Add your Java/Kotlin/Groovy <code class="language-plaintext highlighter-rouge">.jar</code> files under <code class="language-plaintext highlighter-rouge">lib/</code></li>
@@ -923,9 +923,9 @@ supports Arabic output with pagination.</p>
 
 <hr />
 
-<h2 id="-cli-usage-summary">📄 CLI Usage Summary</h2>
+<h2 id="nla-cli-usage-summary">📄 CLI Usage Summary</h2>
 
-<h3 id="available-subcommands">Available Subcommands:</h3>
+<h3 id="nla-cli-usage-subcommands-summary">Available Subcommands:</h3>
 
 <table>
   <thead>
@@ -954,7 +954,7 @@ supports Arabic output with pagination.</p>
   </tbody>
 </table>
 
-<h3 id="global-options">Global Options:</h3>
+<h3 id="nla-cli-usage-global-options-summary">Global Options:</h3>
 
 <table>
   <thead>
@@ -1021,7 +1021,7 @@ supports Arabic output with pagination.</p>
 
 <hr />
 
-<h3 id="-examples">🧠 Examples</h3>
+<h3 id="nla-examples">🧠 Examples</h3>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Run a Naftah script file</span>
 naftah run myscript.naftah
