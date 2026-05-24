@@ -70,14 +70,39 @@ function loadSearchIndex() {
 function searchData(query) {
 	if (!query) return [];
 
-	const tokens = query.toLowerCase().split(/\s+/);
+	const tokens = query.toLowerCase().trim().split(/\s+/);
 
 	let resultSet = null;
 
 	for (const token of tokens) {
-		const ids = SEARCH_INDEX[token];
-		if (!ids) return [];
+		let ids = SEARCH_INDEX[token];
 
+		// EXACT MATCH (fast path)
+		if (!ids) {
+			// PREFIX MATCH (fast-ish)
+			const prefixMatches = [];
+
+			for (const key in SEARCH_INDEX) {
+				if (key.startsWith(token)) {
+					prefixMatches.push(...SEARCH_INDEX[key]);
+				}
+			}
+
+			// SUBSTRING MATCH (LIKE '%token%')
+			if (prefixMatches.length === 0) {
+				for (const key in SEARCH_INDEX) {
+					if (key.includes(token)) {
+						prefixMatches.push(...SEARCH_INDEX[key]);
+					}
+				}
+			}
+
+			ids = prefixMatches;
+		}
+
+		if (!ids || ids.length === 0) return [];
+
+		// INTERSECTION logic (AND between tokens)
 		resultSet = resultSet
 			? new Set(ids.filter(id => resultSet.has(id)))
 			: new Set(ids);
