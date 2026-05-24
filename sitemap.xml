@@ -9,7 +9,7 @@
 		<loc>https://naftah.daiitech.org/language/keywords</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -25,7 +25,7 @@
 		<loc>https://naftah.daiitech.org/language/primitives-and-variables</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -41,7 +41,7 @@
 		<loc>https://naftah.daiitech.org/language/collections</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -57,7 +57,7 @@
 		<loc>https://naftah.daiitech.org/language/expressions</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -73,7 +73,7 @@
 		<loc>https://naftah.daiitech.org/language/radix-numbers</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -89,7 +89,7 @@
 		<loc>https://naftah.daiitech.org/language/objects</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -105,7 +105,7 @@
 		<loc>https://naftah.daiitech.org/language/control-flow</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -121,7 +121,7 @@
 		<loc>https://naftah.daiitech.org/language/functions</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -137,7 +137,7 @@
 		<loc>https://naftah.daiitech.org/language/java-interop</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -153,7 +153,7 @@
 		<loc>https://naftah.daiitech.org/language/concurrency</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -169,7 +169,7 @@
 		<loc>https://naftah.daiitech.org/language/temporal</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -181,11 +181,13 @@
 	
 	
 	
+	
+	
 	<url>
 		<loc>https://naftah.daiitech.org/about</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -201,7 +203,7 @@
 		<loc>https://naftah.daiitech.org/examples/assignment/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -217,7 +219,7 @@
 		<loc>https://naftah.daiitech.org/benchmarks</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -233,7 +235,7 @@
 		<loc>https://naftah.daiitech.org/examples/collections/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -249,7 +251,7 @@
 		<loc>https://naftah.daiitech.org/examples/concurrency/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -265,7 +267,7 @@
 		<loc>https://naftah.daiitech.org/examples/conditional/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -281,7 +283,7 @@
 		<loc>https://naftah.daiitech.org/examples/expressions/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -297,7 +299,7 @@
 		<loc>https://naftah.daiitech.org/examples/for-loop/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -313,7 +315,7 @@
 		<loc>https://naftah.daiitech.org/examples/function-call/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -329,7 +331,7 @@
 		<loc>https://naftah.daiitech.org/examples/function-declaration-1/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -345,7 +347,7 @@
 		<loc>https://naftah.daiitech.org/examples/function-declaration-factorial/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -361,7 +363,7 @@
 		<loc>https://naftah.daiitech.org/examples/function-declaration-invalid/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -377,7 +379,7 @@
 		<loc>https://naftah.daiitech.org/examples/function-declaration/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -393,7 +395,7 @@
 		<loc>https://naftah.daiitech.org/examples/hello-naftah/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -409,7 +411,7 @@
 		<loc>https://naftah.daiitech.org/examples/hello-world/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -425,7 +427,7 @@
 		<loc>https://naftah.daiitech.org/examples/implementations/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -441,7 +443,7 @@
 		<loc>https://naftah.daiitech.org/examples/import-statement/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -457,7 +459,7 @@
 		<loc>https://naftah.daiitech.org/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -473,7 +475,7 @@
 		<loc>https://naftah.daiitech.org/java-doc</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -489,7 +491,7 @@
 		<loc>https://naftah.daiitech.org/examples/jvm-functions-qualified-call/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -505,7 +507,7 @@
 		<loc>https://naftah.daiitech.org/assets/css/main.css</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -521,7 +523,7 @@
 		<loc>https://naftah.daiitech.org/examples/objects/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -537,7 +539,7 @@
 		<loc>https://naftah.daiitech.org/examples/radix-numbers/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -553,7 +555,7 @@
 		<loc>https://naftah.daiitech.org/releases</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -569,7 +571,7 @@
 		<loc>https://naftah.daiitech.org/examples/repeat-statement/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -585,7 +587,7 @@
 		<loc>https://naftah.daiitech.org/running-naftah</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -601,7 +603,7 @@
 		<loc>https://naftah.daiitech.org/sitemap.xml</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -617,7 +619,7 @@
 		<loc>https://naftah.daiitech.org/examples/switch-expression/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -633,7 +635,7 @@
 		<loc>https://naftah.daiitech.org/examples/temporal/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -649,7 +651,7 @@
 		<loc>https://naftah.daiitech.org/examples/try-statement/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -665,7 +667,7 @@
 		<loc>https://naftah.daiitech.org/examples/typed-assignment/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -681,7 +683,7 @@
 		<loc>https://naftah.daiitech.org/examples/while-statement/</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -697,7 +699,7 @@
 		<loc>https://naftah.daiitech.org/assets/main.css</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -713,7 +715,7 @@
 		<loc>https://naftah.daiitech.org/feed.xml</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
@@ -729,7 +731,7 @@
 		<loc>https://naftah.daiitech.org/assets/css/main.css.map</loc>
 
 		<lastmod>
-			2026-05-24T11:52:41+00:00
+			2026-05-24T17:00:12+00:00
 		</lastmod>
 
 		
