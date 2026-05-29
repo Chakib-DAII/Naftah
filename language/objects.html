@@ -6,20 +6,20 @@
 
 	<!-- SEO (handles title, description, OG, Twitter, canonical) -->
 	<!-- Begin Jekyll SEO tag v2.9.0 -->
-<title>Naftah Objects | Naftah Language Documentation - مستندات لغة نفطه</title>
+<title>Naftah Objects | Naftah Docs - مستندات نفطه</title>
 <meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Naftah Objects" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Documentation of how to define and use objects in Naftah, including fields, explicit typing, nested objects, and dot-notation property access." />
-<meta name="twitter:description" property="og:description" content="Documentation of how to define and use objects in Naftah, including fields, explicit typing, nested objects, and dot-notation property access." />
+<meta name="description" content="Guide to Naftah objects with fields, explicit typing, nested structures, and dot-notation property access." />
+<meta name="twitter:description" property="og:description" content="Guide to Naftah objects with fields, explicit typing, nested structures, and dot-notation property access." />
 <link rel="canonical" href="https://naftah.daiitech.org/language/objects" />
 <meta property="og:url" content="https://naftah.daiitech.org/language/objects" />
-<meta property="og:site_name" content="Naftah Language Documentation - مستندات لغة نفطه" />
+<meta property="og:site_name" content="Naftah Docs - مستندات نفطه" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Naftah Objects" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Documentation of how to define and use objects in Naftah, including fields, explicit typing, nested objects, and dot-notation property access.","headline":"Naftah Objects","url":"https://naftah.daiitech.org/language/objects"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Guide to Naftah objects with fields, explicit typing, nested structures, and dot-notation property access.","headline":"Naftah Objects","url":"https://naftah.daiitech.org/language/objects"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -39,7 +39,7 @@
 	<!-- Main JS -->
 	<script src="/assets/js/main.js"></script>
 
-	<!-- Structured Data (FIXED: correct schema for a programming language project) -->
+	<!-- Structured Data -->
 	<script type="application/ld+json">
 		{
 			"@context": "https://schema.org",
@@ -73,11 +73,11 @@
 <header class="site-header">
 	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
 	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
-	<h1>
+	<div class="site-title">
 		<a href="https://naftah.daiitech.org/">
 			Naftah Language Documentation - مستندات لغة نفطه
 		</a>
-	</h1>
+	</div>
 
 	<button class="menu-toggle">☰</button>
 
@@ -845,7 +845,7 @@ define a simple object or explicitly specify its type.</p>
 
 <hr />
 
-<h1 id="nla-implementations">🧠 السلوك (Implementations) في لغة نفطه</h1>
+<h2 id="nla-implementations">🧠 السلوك (Implementations) في لغة نفطه</h2>
 
 <p>في لغة نفطه، <strong>السلوك</strong> (<code class="language-plaintext highlighter-rouge">سلوك</code>) هو آلية لإضافة <strong>منطق ودوال</strong> إلى كائن مُعرَّف مسبقًا، دون إعادة تعريف بنيته.</p>
 
@@ -857,7 +857,7 @@ define a simple object or explicitly specify its type.</p>
 
 <hr />
 
-<h2 id="nla-behavior-definition">📌 تعريف سلوك لكائن</h2>
+<h3 id="nla-behavior-definition">📌 تعريف سلوك لكائن</h3>
 
 <p>يتم تعريف السلوك باستخدام الكلمة المفتاحية <code class="language-plaintext highlighter-rouge">سلوك</code> متبوعة باسم الكائن:</p>
 
@@ -877,7 +877,7 @@ define a simple object or explicitly specify its type.</p>
 
 <hr />
 
-<h2 id="nla-person-behavior-example">👤 مثال: سلوك كائن “شخص”</h2>
+<h3 id="nla-person-behavior-example">👤 مثال: سلوك كائن “شخص”</h3>
 
 <pre><code class="language-naftah">--- تعريف متغير 'شخص' ككائن يحتوي حقول الاسم، العمر، حالة الزواج
 متغير شخص تعيين {
@@ -889,7 +889,7 @@ define a simple object or explicitly specify its type.</p>
 }
 </code></pre>
 
-<h2 id="nla-person-behavior-example-methods">🔧 السلوك المرتبط بالكائن “شخص”</h2>
+<h3 id="nla-person-behavior-example-methods">🔧 السلوك المرتبط بالكائن “شخص”</h3>
 
 <pre><code class="language-naftah">سلوك شخص {
 
@@ -966,7 +966,7 @@ define a simple object or explicitly specify its type.</p>
 
 <hr />
 
-<h2 id="nla-address-behavior-example">🏠 مثال: سلوك كائن “عنوان”</h2>
+<h3 id="nla-address-behavior-example">🏠 مثال: سلوك كائن “عنوان”</h3>
 
 <pre><code class="language-naftah">--- تعريف متغير 'عنوان' يحتوي الشارع، المدينة، والرمز البريدي
 متغير عنوان تعيين {
@@ -1022,7 +1022,7 @@ define a simple object or explicitly specify its type.</p>
 
 <hr />
 
-<h2 id="nla-city-behavior-example">🏙️ مثال: سلوك كائن “مدينة”</h2>
+<h3 id="nla-city-behavior-example">🏙️ مثال: سلوك كائن “مدينة”</h3>
 
 <pre><code class="language-naftah">--- تعريف متغير 'مدينة' يحتوي الاسم، عدد السكان، ومرجع إلى العنوان
 متغير مدينة تعيين {
@@ -1086,7 +1086,7 @@ define a simple object or explicitly specify its type.</p>
 
 <hr />
 
-<h2 id="nla-town-behavior-example">🏘️ مثال: سلوك كائن “بلدة”</h2>
+<h3 id="nla-town-behavior-example">🏘️ مثال: سلوك كائن “بلدة”</h3>
 
 <pre><code class="language-naftah">--- تعريف متغير 'بلدة' يحتوي الاسم، مرجع إلى المدينة، وعدد الأحياء
 متغير بلدة تعيين {

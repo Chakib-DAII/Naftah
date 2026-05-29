@@ -6,20 +6,20 @@
 
 	<!-- SEO (handles title, description, OG, Twitter, canonical) -->
 	<!-- Begin Jekyll SEO tag v2.9.0 -->
-<title>Naftah Concurrency | Naftah Language Documentation - مستندات لغة نفطه</title>
+<title>Naftah Concurrency | Naftah Docs - مستندات نفطه</title>
 <meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Naftah Concurrency" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="A comprehensive guide to concurrency in the Naftah language, covering asynchronous tasks, scopes, channels, actors, and the producer–consumer pattern." />
-<meta name="twitter:description" property="og:description" content="A comprehensive guide to concurrency in the Naftah language, covering asynchronous tasks, scopes, channels, actors, and the producer–consumer pattern." />
+<meta name="description" content="Guide to Naftah concurrency with asynchronous tasks, scoped execution, channels, actors, and producer–consumer patterns." />
+<meta name="twitter:description" property="og:description" content="Guide to Naftah concurrency with asynchronous tasks, scoped execution, channels, actors, and producer–consumer patterns." />
 <link rel="canonical" href="https://naftah.daiitech.org/language/concurrency" />
 <meta property="og:url" content="https://naftah.daiitech.org/language/concurrency" />
-<meta property="og:site_name" content="Naftah Language Documentation - مستندات لغة نفطه" />
+<meta property="og:site_name" content="Naftah Docs - مستندات نفطه" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Naftah Concurrency" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"A comprehensive guide to concurrency in the Naftah language, covering asynchronous tasks, scopes, channels, actors, and the producer–consumer pattern.","headline":"Naftah Concurrency","url":"https://naftah.daiitech.org/language/concurrency"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Guide to Naftah concurrency with asynchronous tasks, scoped execution, channels, actors, and producer–consumer patterns.","headline":"Naftah Concurrency","url":"https://naftah.daiitech.org/language/concurrency"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -39,7 +39,7 @@
 	<!-- Main JS -->
 	<script src="/assets/js/main.js"></script>
 
-	<!-- Structured Data (FIXED: correct schema for a programming language project) -->
+	<!-- Structured Data -->
 	<script type="application/ld+json">
 		{
 			"@context": "https://schema.org",
@@ -73,11 +73,11 @@
 <header class="site-header">
 	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
 	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
-	<h1>
+	<div class="site-title">
 		<a href="https://naftah.daiitech.org/">
 			Naftah Language Documentation - مستندات لغة نفطه
 		</a>
-	</h1>
+	</div>
 
 	<button class="menu-toggle">☰</button>
 
@@ -714,9 +714,9 @@
 
 <hr />
 
-<h1 id="nla-async-tasks">1️⃣ المهام غير المتزامنة (Async Tasks)</h1>
+<h2 id="nla-async-tasks">1️⃣ المهام غير المتزامنة (Async Tasks)</h2>
 
-<h2 id="nla-async-function-definition">📌 تعريف دالة غير متزامنة</h2>
+<h3 id="nla-async-function-definition">📌 تعريف دالة غير متزامنة</h3>
 
 <pre><code class="language-naftah">
 غير_متزامن دالة مهمة_طويلة_المدى(ثابت بادئة : تسلسل_أحرف ، ثابت نهاية_الحلقة_التكرارية = 100000) {
@@ -734,28 +734,28 @@
 
 </code></pre>
 
-<h2 id="nla-async-run">▶️ تشغيل دالة async</h2>
+<h3 id="nla-async-run">▶️ تشغيل دالة async</h3>
 
 <pre><code class="language-naftah">ثابت شغل تعيين مهمة_طويلة_المدى("مهمة")
 </code></pre>
 
-<h2 id="nla-async-await">⏳ انتظار نتيجة دالة async</h2>
+<h3 id="nla-async-await">⏳ انتظار نتيجة دالة async</h3>
 
 <pre><code class="language-naftah">انتظار مهمة_طويلة_المدى("مهمة")
 </code></pre>
 
-<h2 id="nla-async-invalid-example">⚠️ مثال غير صالح</h2>
+<h3 id="nla-async-invalid-example">⚠️ مثال غير صالح</h3>
 
 <pre><code class="language-naftah">ثابت شغل تعيين تشغيل مهمة_طويلة_المدى("مهمة")   --- ❌
 </code></pre>
 
-<h2 id="nla-async-valid-examples">✔️ أمثلة صحيحة</h2>
+<h3 id="nla-async-valid-examples">✔️ أمثلة صحيحة</h3>
 
 <pre><code class="language-naftah">ثابت شغل تعيين مهمة_طويلة_المدى("مهمة"؛10)
 انتظار شغل
 </code></pre>
 
-<h2 id="nla-async-composition">🔢 دمج await مع عمليات أخرى</h2>
+<h3 id="nla-async-composition">🔢 دمج await مع عمليات أخرى</h3>
 
 <pre><code class="language-naftah">ثابت نتيجة_شغل تعيين انتظار مهمة_طويلة_المدى("مهمة"؛10) * (انتظار تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1))
 
@@ -765,7 +765,7 @@
 
 <hr />
 
-<h1 id="nla-scopes">2️⃣ النطاقات (Scopes)</h1>
+<h2 id="nla-scopes">2️⃣ النطاقات (Scopes)</h2>
 
 <p>تستخدم النفطه <strong>نطاق</strong> و <strong>نطاق مرتب</strong> للتحكم في:</p>
 
@@ -775,7 +775,7 @@
   <li>العزل بين العمليات</li>
 </ul>
 
-<h2 id="nla-scope-basic">📌 مثال — نطاق عادي</h2>
+<h3 id="nla-scope-basic">📌 مثال — نطاق عادي</h3>
 
 <pre><code class="language-naftah">نطاق {
     متغير قائمة_ تعيين [1 , 2 , 3]
@@ -784,7 +784,7 @@
 }
 </code></pre>
 
-<h2 id="nla-scope-ordered">📌 مثال — نطاق مرتب</h2>
+<h3 id="nla-scope-ordered">📌 مثال — نطاق مرتب</h3>
 
 <pre><code class="language-naftah">نطاق مرتب {
     مهمة_طويلة_المدى("مهمة-1"؛2)
@@ -795,13 +795,13 @@
 
 <hr />
 
-<h1 id="nla-package-functions">3️⃣ دوال الحزم: الحصول على عنصر وتعديل عنصر</h1>
+<h2 id="nla-package-functions">3️⃣ دوال الحزم: الحصول على عنصر وتعديل عنصر</h2>
 
 <pre><code class="language-naftah">تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)
 دوال:الحزم::تعيين_عنصر(قائمة_, 1, 99)
 </code></pre>
 
-<h2 id="nla-deep-nested-example">🧩 مثال كامل مع تكرارات متعددة ونطاقات متداخلة</h2>
+<h3 id="nla-deep-nested-example">🧩 مثال كامل مع تكرارات متعددة ونطاقات متداخلة</h3>
 
 <pre><code class="language-naftah">--- تشغيل مهمة غير متزامنة للحصول على عنصر من قائمة
 --- إطلاق مهمة
@@ -911,22 +911,22 @@
 
 <hr />
 
-<h1 id="nla-channels">4️⃣ القنوات (Channels)</h1>
+<h2 id="nla-channels">4️⃣ القنوات (Channels)</h2>
 
 <p>تُستخدم القنوات لإرسال واستقبال الرسائل بين المهام المتوازية.</p>
 
-<h2 id="nla-channel-create">📌 إنشاء قناة</h2>
+<h3 id="nla-channel-create">📌 إنشاء قناة</h3>
 
 <pre><code class="language-naftah">قناة قناة_مشتركة
 </code></pre>
 
 <hr />
 
-<h1 id="nla-actors">5️⃣ الممثلون (Actors)</h1>
+<h2 id="nla-actors">5️⃣ الممثلون (Actors)</h2>
 
 <p>الممثل هو وحدة تنفيذ تستقبل رسائل وتنفذ منطقًا عند استقبالها.</p>
 
-<h2 id="nla-actors-examples">📌 أمثلة على ممثلين</h2>
+<h3 id="nla-actors-examples">📌 أمثلة على ممثلين</h3>
 
 <pre><code class="language-naftah">
 ممثل طابعة(رسالة_الطابعة){
@@ -955,9 +955,9 @@
 
 <hr />
 
-<h1 id="nla-producer-consumer">6️⃣ المنتج–المستهلك (Producer / Consumer)</h1>
+<h2 id="nla-producer-consumer">6️⃣ المنتج–المستهلك (Producer / Consumer)</h2>
 
-<h2 id="nla-producer">📌 producer</h2>
+<h3 id="nla-producer">📌 producer</h3>
 
 <pre><code class="language-naftah">
 غير_متزامن دالة منتج(ثابت قناة_ ، ثابت نهاية_الحلقة_التكرارية = 100000) {
@@ -969,7 +969,7 @@
 
 </code></pre>
 
-<h2 id="nla-consumer">📌 consumer</h2>
+<h3 id="nla-consumer">📌 consumer</h3>
 
 <pre><code class="language-naftah">دالة مستهلك(ثابت قناة_ ، ثابت طابعة ، ثابت نهاية_الحلقة_التكرارية = 100000) {
     كرر_حلقة أ تعيين 0 إلى نهاية_الحلقة_التكرارية إفعل {
@@ -980,7 +980,7 @@
 }
 </code></pre>
 
-<h2 id="nla-producer-consumer-run">▶️ تشغيلهما معًا</h2>
+<h3 id="nla-producer-consumer-run">▶️ تشغيلهما معًا</h3>
 
 <pre><code class="language-naftah">نطاق {
     منتج(قناة_مشتركة؛10)

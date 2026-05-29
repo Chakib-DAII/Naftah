@@ -6,20 +6,20 @@
 
 	<!-- SEO (handles title, description, OG, Twitter, canonical) -->
 	<!-- Begin Jekyll SEO tag v2.9.0 -->
-<title>Page not found | Naftah Language Documentation - مستندات لغة نفطه</title>
+<title>Page not found | Naftah Docs - مستندات نفطه</title>
 <meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Page not found" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Documentation and guides for Naftah programming language" />
-<meta name="twitter:description" property="og:description" content="Documentation and guides for Naftah programming language" />
+<meta name="description" content="The requested Naftah documentation page does not exist. Return to the homepage or explore available guides, examples, and resources." />
+<meta name="twitter:description" property="og:description" content="The requested Naftah documentation page does not exist. Return to the homepage or explore available guides, examples, and resources." />
 <link rel="canonical" href="https://naftah.daiitech.org/404.html" />
 <meta property="og:url" content="https://naftah.daiitech.org/404.html" />
-<meta property="og:site_name" content="Naftah Language Documentation - مستندات لغة نفطه" />
+<meta property="og:site_name" content="Naftah Docs - مستندات نفطه" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Page not found" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Documentation and guides for Naftah programming language","headline":"Page not found","url":"https://naftah.daiitech.org/404.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"The requested Naftah documentation page does not exist. Return to the homepage or explore available guides, examples, and resources.","headline":"Page not found","url":"https://naftah.daiitech.org/404.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -39,7 +39,7 @@
 	<!-- Main JS -->
 	<script src="/assets/js/main.js"></script>
 
-	<!-- Structured Data (FIXED: correct schema for a programming language project) -->
+	<!-- Structured Data -->
 	<script type="application/ld+json">
 		{
 			"@context": "https://schema.org",
@@ -73,11 +73,11 @@
 <header class="site-header">
 	<!--	<img alt="NaftahLang" src="/assets/images/logo.png"-->
 	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
-	<h1>
+	<div class="site-title">
 		<a href="https://naftah.daiitech.org/">
 			Naftah Language Documentation - مستندات لغة نفطه
 		</a>
-	</h1>
+	</div>
 
 	<button class="menu-toggle">☰</button>
 
@@ -690,9 +690,13 @@
 <main class="site-content" >
 	<div style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:70vh; text-align:center;" dir="rtl">
 
-	<h2>الصفحة غير موجودة</h2>
+	<h1>الصفحة غير موجودة</h1>
 
-	<p>هذه الصفحة غير موجودة.</p>
+	<h2 style="font-weight: normal; opacity: 0.85;">
+		عذرًا، هذه الصفحة غير متوفرة
+	</h2>
+
+	<p>يمكنك العودة إلى الصفحة الرئيسية أو تصفح التوثيق المتاح.</p>
 
 	<p>
 		<a href="/">العودة إلى الصفحة الرئيسية</a>
@@ -709,13 +713,13 @@
 	const el = document.getElementById("countdown");
 
 	const timer = setInterval(() => {
-		seconds--;
-		el.textContent = seconds;
+	  seconds--;
+	  el.textContent = seconds;
 
-		if (seconds <= 0) {
-			clearInterval(timer);
-			window.location.href = "/";
-		}
+	  if (seconds <= 0) {
+		clearInterval(timer);
+		window.location.href = "/";
+	  }
 	}, 1000);
 </script>
 </main>

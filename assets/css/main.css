@@ -98,4 +98,10 @@ h1, h2, h3, h4, h5, h6 { scroll-margin-top: 6rem; }
 
 .copy-button:hover { background: #2a353a; }
 
+.site-title { font-size: 1.2rem; font-weight: 300; line-height: 1.2; margin: 0; }
+
+.site-title a { color: inherit; text-decoration: none; }
+
+.site-title a:hover { opacity: 0.85; }
+
 /*# sourceMappingURL=main.css.map */
