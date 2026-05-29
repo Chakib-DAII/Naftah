@@ -23,12 +23,12 @@
 	<!-- Main JS -->
 	<script src="{{ '/assets/js/main.js' | relative_url }}"></script>
 
-	<!-- Structured Data (FIXED: correct schema for a programming language project) -->
+	<!-- Structured Data -->
 	<script type="application/ld+json">
 		{
 			"@context": "https://schema.org",
 			"@type": "SoftwareSourceCode",
-			"name": "{{ site.title }}",
+			"name": "{{ site.full_title }}",
 			"description": "{{ site.description }}",
 			"url": "{{ site.url }}",
 			"codeRepository": "https://github.com/Chakib-DAII/Naftah",
@@ -57,11 +57,11 @@
 <header class="site-header">
 	<!--	<img alt="NaftahLang" src="{{ '/assets/images/logo.png' | relative_url }}"-->
 	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
-	<h1>
+	<div class="site-title">
 		<a href="{{ '/' | absolute_url }}">
-			{{ site.title }}
+			{{ site.full_title }}
 		</a>
-	</h1>
+	</div>
 
 	<button class="menu-toggle">☰</button>
 
