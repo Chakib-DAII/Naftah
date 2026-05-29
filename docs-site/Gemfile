@@ -9,3 +9,7 @@ gem "jekyll-sass-converter", "~> 2.1" # SCSS compilation
 gem "jekyll-seo-tag", "~> 2.8" # SEO metadata
 gem "jekyll-relative-links", "~> 0.6" # Optional: relative link handling
 gem "jekyll-sitemap"
+
+group :development do
+  gem "html-proofer"
+end

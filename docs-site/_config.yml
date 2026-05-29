@@ -1,6 +1,7 @@
 # _config.yml
 
-title: "Naftah Language Documentation - مستندات لغة نفطه"
+title: "Naftah Docs - مستندات نفطه"
+full_title: "Naftah Language Documentation - مستندات لغة نفطه"
 description: "Documentation and guides for Naftah programming language"
 baseurl: ""
 url:  "https://naftah.daiitech.org"
@@ -25,6 +26,13 @@ exclude:
   - Gemfile.lock
   - node_modules
   - vendor
+  - package.json
+  - package-lock.json
+  - yarn.lock
+  - npm-debug.log
+  - seo-audit.js
+  - seo-report.json
+  - seo-summary.json
 
 data_chunk_size: 100
 
