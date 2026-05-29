@@ -39,6 +39,7 @@ console.log(`📁 Files to scan (${files.length}):\n`);
 
 for (const file of files) {
   console.log(`- Scanning ${file}`);
+
   const html = fs.readFileSync(file, "utf-8");
   const $ = cheerio.load(html);
 
@@ -110,18 +111,64 @@ for (const file of files) {
 }
 
 console.log(`\n📊 Pages scanned: ${report.length}`);
-console.log(`📊 Average score: ${
-report.length
-  ? (report.reduce((a, b) => a + b.score, 0) / report.length).toFixed(2)
-  : 0
-}`);
+
+const averageScore = report.length
+  ? report.reduce((a, b) => a + b.score, 0) / report.length
+  : 0;
+
+console.log(`📊 Average score: ${averageScore.toFixed(2)}`);
 
 console.log("\n🔎 Scanning results:");
 
 for (const page of report) {
-console.log(`\n${page.file} → score: ${page.score}`);
+  console.log(`\n${page.file} → score: ${page.score}`);
 
-for (const issue of page.issues) {
-  console.log(`  ⚠️ [${issue.type}] ${issue.message}`);
+  for (const issue of page.issues) {
+    console.log(`  ⚠️ [${issue.type}] ${issue.message}`);
+  }
 }
-}
+
+// Result exports
+
+const outputDir = process.cwd();
+
+const fullReportPath = path.join(outputDir, "seo-report.json");
+const summaryPath = path.join(outputDir, "seo-summary.json");
+
+// Full detailed report
+fs.writeFileSync(
+  fullReportPath,
+  JSON.stringify(
+    {
+      generatedAt: new Date().toISOString(),
+      summary: {
+        pages: report.length,
+        averageScore,
+      },
+      results: report,
+    },
+    null,
+    2
+  )
+);
+
+// CI-friendly summary
+const failed = report.filter(p => p.score < 70);
+
+fs.writeFileSync(
+  summaryPath,
+  JSON.stringify(
+    {
+      passed: failed.length === 0,
+      total: report.length,
+      failedCount: failed.length,
+      averageScore,
+    },
+    null,
+    2
+  )
+);
+
+console.log(`\n📦 Export complete:`);
+console.log(`- Full report → ${fullReportPath}`);
+console.log(`- Summary → ${summaryPath}`);
