@@ -1,6 +1,6 @@
 ---
 title: Naftah Objects
-description: Documentation of how to define and use objects in Naftah, including fields, explicit typing, nested objects, and dot-notation property access.
+description: Guide to Naftah objects with fields, explicit typing, nested structures, and dot-notation property access.
 layout: default
 permalink: /language/objects
 ---

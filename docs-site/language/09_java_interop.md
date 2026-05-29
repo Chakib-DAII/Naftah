@@ -1,6 +1,6 @@
 ---
 title: Java Interoperability
-description: Guide to Java interoperability in Naftah — using Naftah as a JVM language to seamlessly call, extend, and integrate with Java classes and libraries.
+description: Guide to Naftah on the JVM with Java interoperability, including seamless use of Java classes and libraries.
 layout: default
 permalink: /language/java-interop
 ---

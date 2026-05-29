@@ -1,14 +1,13 @@
 ---
 title: Naftah Programming Language
+description: Naftah programming language for Arabic developers with JVM support, documentation, benchmarks, Java interoperability, and open-source contributions.
 layout: default
 permalink: /
 ---
 
-# Naftah Programming Language
+# Naftah Programming Language - لغة برمجة نفطه
 
 **Let's write programs in Arabic, like living in Naftah.**
-
-# نفطه: لغة برمجة
 
 **لنكتب برامج باللغة العربية وكأننا نعيش في نفطه.**
 

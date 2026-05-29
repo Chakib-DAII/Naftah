@@ -18,9 +18,9 @@
 
 ---
 
-# 1️⃣ المهام غير المتزامنة (Async Tasks) {#nla-async-tasks}
+## 1️⃣ المهام غير المتزامنة (Async Tasks) {#nla-async-tasks}
 
-## 📌 تعريف دالة غير متزامنة {#nla-async-function-definition}
+### 📌 تعريف دالة غير متزامنة {#nla-async-function-definition}
 
 ```naftah
 {% raw %}
@@ -39,32 +39,32 @@
 {% endraw %}
 ```
 
-## ▶️ تشغيل دالة async {#nla-async-run}
+### ▶️ تشغيل دالة async {#nla-async-run}
 
 ```naftah
 ثابت شغل تعيين مهمة_طويلة_المدى("مهمة")
 ```
 
-## ⏳ انتظار نتيجة دالة async {#nla-async-await}
+### ⏳ انتظار نتيجة دالة async {#nla-async-await}
 
 ```naftah
 انتظار مهمة_طويلة_المدى("مهمة")
 ```
 
-## ⚠️ مثال غير صالح {#nla-async-invalid-example}
+### ⚠️ مثال غير صالح {#nla-async-invalid-example}
 
 ```naftah
 ثابت شغل تعيين تشغيل مهمة_طويلة_المدى("مهمة")   --- ❌
 ```
 
-## ✔️ أمثلة صحيحة {#nla-async-valid-examples}
+### ✔️ أمثلة صحيحة {#nla-async-valid-examples}
 
 ```naftah
 ثابت شغل تعيين مهمة_طويلة_المدى("مهمة"؛10)
 انتظار شغل
 ```
 
-## 🔢 دمج await مع عمليات أخرى {#nla-async-composition}
+### 🔢 دمج await مع عمليات أخرى {#nla-async-composition}
 
 ```naftah
 ثابت نتيجة_شغل تعيين انتظار مهمة_طويلة_المدى("مهمة"؛10) * (انتظار تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1))
@@ -75,7 +75,7 @@
 
 ---
 
-# 2️⃣ النطاقات (Scopes) {#nla-scopes}
+## 2️⃣ النطاقات (Scopes) {#nla-scopes}
 
 تستخدم النفطه **نطاق** و **نطاق مرتب** للتحكم في:
 
@@ -83,7 +83,7 @@
 * ترتيب التنفيذ
 * العزل بين العمليات
 
-## 📌 مثال — نطاق عادي {#nla-scope-basic}
+### 📌 مثال — نطاق عادي {#nla-scope-basic}
 
 ```naftah
 نطاق {
@@ -93,7 +93,7 @@
 }
 ```
 
-## 📌 مثال — نطاق مرتب {#nla-scope-ordered}
+### 📌 مثال — نطاق مرتب {#nla-scope-ordered}
 
 ```naftah
 نطاق مرتب {
@@ -105,14 +105,14 @@
 
 ---
 
-# 3️⃣ دوال الحزم: الحصول على عنصر وتعديل عنصر {#nla-package-functions}
+## 3️⃣ دوال الحزم: الحصول على عنصر وتعديل عنصر {#nla-package-functions}
 
 ```naftah
 تشغيل دوال:الحزم::حصول_على_عنصر([1 , 2 , 3], 1)
 دوال:الحزم::تعيين_عنصر(قائمة_, 1, 99)
 ```
 
-## 🧩 مثال كامل مع تكرارات متعددة ونطاقات متداخلة {#nla-deep-nested-example}
+### 🧩 مثال كامل مع تكرارات متعددة ونطاقات متداخلة {#nla-deep-nested-example}
 
 ```naftah
 --- تشغيل مهمة غير متزامنة للحصول على عنصر من قائمة
@@ -223,11 +223,11 @@
 
 ---
 
-# 4️⃣ القنوات (Channels) {#nla-channels}
+## 4️⃣ القنوات (Channels) {#nla-channels}
 
 تُستخدم القنوات لإرسال واستقبال الرسائل بين المهام المتوازية.
 
-## 📌 إنشاء قناة {#nla-channel-create}
+### 📌 إنشاء قناة {#nla-channel-create}
 
 ```naftah
 قناة قناة_مشتركة
@@ -235,11 +235,11 @@
 
 ---
 
-# 5️⃣ الممثلون (Actors) {#nla-actors}
+## 5️⃣ الممثلون (Actors) {#nla-actors}
 
 الممثل هو وحدة تنفيذ تستقبل رسائل وتنفذ منطقًا عند استقبالها.
 
-## 📌 أمثلة على ممثلين {#nla-actors-examples}
+### 📌 أمثلة على ممثلين {#nla-actors-examples}
 
 ```naftah
 {% raw %}
@@ -269,9 +269,9 @@
 
 ---
 
-# 6️⃣ المنتج–المستهلك (Producer / Consumer) {#nla-producer-consumer}
+## 6️⃣ المنتج–المستهلك (Producer / Consumer) {#nla-producer-consumer}
 
-## 📌 producer {#nla-producer}
+### 📌 producer {#nla-producer}
 
 ```naftah
 {% raw %}
@@ -284,7 +284,7 @@
 {% endraw %}
 ```
 
-## 📌 consumer {#nla-consumer}
+### 📌 consumer {#nla-consumer}
 
 ```naftah
 دالة مستهلك(ثابت قناة_ ، ثابت طابعة ، ثابت نهاية_الحلقة_التكرارية = 100000) {
@@ -296,7 +296,7 @@
 }
 ```
 
-## ▶️ تشغيلهما معًا {#nla-producer-consumer-run}
+### ▶️ تشغيلهما معًا {#nla-producer-consumer-run}
 
 ```naftah
 نطاق {

@@ -1,5 +1,6 @@
 ---
 title: About Naftah
+description: Naftah is a modern Arabic programming language that lets developers write code naturally in Arabic and dialects, powered by the JVM and Java interoperability.
 layout: default
 permalink: /about
 ---

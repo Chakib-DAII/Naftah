@@ -1,5 +1,6 @@
 ---
 title: Running Naftah
+description: Guide to running Naftah on the JVM, including CLI commands, REPL usage, script execution, Java library initialization, and system configuration.
 layout: default
 permalink: /running-naftah
 ---

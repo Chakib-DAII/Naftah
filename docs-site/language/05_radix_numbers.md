@@ -1,6 +1,6 @@
 ---
 title: Naftah Radix Numbers
-description: Explains Naftah’s support for writing numbers in various radix systems, including binary, octal, hexadecimal, and up to base-36, with practical examples.
+description: Naftah supports multiple number bases, including binary, octal, hexadecimal, and base-36, with examples.
 layout: default
 permalink: /language/radix-numbers
 ---

@@ -1,6 +1,6 @@
 ---
 title: Naftah Functions
-description: Guide to defining and calling functions in Naftah, including typed parameters, default values, void functions, and complex function structures.
+description: Guide to Naftah functions, including typed parameters, default values, void functions, and advanced function definitions.
 layout: default
 permalink: /language/functions
 ---

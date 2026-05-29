@@ -1,6 +1,6 @@
 ---
 title: Naftah Expressions
-description: Explains how to write arithmetic and logical expressions in Naftah, including type behavior, invalid values, and differences between standard and dot notation.
+description: Guide to arithmetic and logical expressions in Naftah with examples of type behavior, invalid values, and dot notation.
 layout: default
 permalink: /language/expressions
 ---

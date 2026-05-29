@@ -1,5 +1,6 @@
 ---
 title: Naftah Releases
+description: Browse Naftah programming language releases, including version history, changelogs, and downloadable builds for the JVM.
 layout: default
 permalink: /releases
 ---
@@ -15,7 +16,7 @@ permalink: /releases
 **Published:** {{ release.published_at | date: "%Y-%m-%d" }}
 
 {% if release.body %}
-{{ release.body | markdownify }}
+{{ release.body | markdownify | shift_headings }}
 {% else %}
 _لا توجد إصدارات متوفرة._
 {% endif %}

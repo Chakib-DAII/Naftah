@@ -1,14 +1,18 @@
 ---
 layout: default
 title: Page not found
+description: The requested Naftah documentation page does not exist. Return to the homepage or explore available guides, examples, and resources.
 permalink: /404.html
 ---
-
 <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:70vh; text-align:center;" dir="rtl">
 
-	<h2>الصفحة غير موجودة</h2>
+	<h1>الصفحة غير موجودة</h1>
 
-	<p>هذه الصفحة غير موجودة.</p>
+	<h2 style="font-weight: normal; opacity: 0.85;">
+		عذرًا، هذه الصفحة غير متوفرة
+	</h2>
+
+	<p>يمكنك العودة إلى الصفحة الرئيسية أو تصفح التوثيق المتاح.</p>
 
 	<p>
 		<a href="{{ '/' | relative_url }}">العودة إلى الصفحة الرئيسية</a>
@@ -25,12 +29,12 @@ permalink: /404.html
 	const el = document.getElementById("countdown");
 
 	const timer = setInterval(() => {
-		seconds--;
-		el.textContent = seconds;
+	  seconds--;
+	  el.textContent = seconds;
 
-		if (seconds <= 0) {
-			clearInterval(timer);
-			window.location.href = "/";
-		}
+	  if (seconds <= 0) {
+		clearInterval(timer);
+		window.location.href = "/";
+	  }
 	}, 1000);
 </script>

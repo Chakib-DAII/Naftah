@@ -1,5 +1,6 @@
 ---
 title: About Benchmarks
+description: Performance benchmarks for Naftah language on the JVM, including string utilities, interpolation speed, and large-scale execution tests with detailed metrics.
 layout: default
 permalink: /benchmarks
 ---

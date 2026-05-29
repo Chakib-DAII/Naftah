@@ -160,7 +160,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-# 🧠 السلوك (Implementations) في لغة نفطه {#nla-implementations}
+## 🧠 السلوك (Implementations) في لغة نفطه {#nla-implementations}
 
 في لغة نفطه، **السلوك** (`سلوك`) هو آلية لإضافة **منطق ودوال** إلى كائن مُعرَّف مسبقًا، دون إعادة تعريف بنيته.
 
@@ -170,7 +170,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 📌 تعريف سلوك لكائن {#nla-behavior-definition}
+### 📌 تعريف سلوك لكائن {#nla-behavior-definition}
 
 يتم تعريف السلوك باستخدام الكلمة المفتاحية `سلوك` متبوعة باسم الكائن:
 
@@ -189,7 +189,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 👤 مثال: سلوك كائن "شخص" {#nla-person-behavior-example}
+### 👤 مثال: سلوك كائن "شخص" {#nla-person-behavior-example}
 
 ```naftah
 --- تعريف متغير 'شخص' ككائن يحتوي حقول الاسم، العمر، حالة الزواج
@@ -202,7 +202,7 @@ define a simple object or explicitly specify its type.
 }
 ```
 
-## 🔧 السلوك المرتبط بالكائن "شخص" {#nla-person-behavior-example-methods}
+### 🔧 السلوك المرتبط بالكائن "شخص" {#nla-person-behavior-example-methods}
 
 ```naftah
 سلوك شخص {
@@ -280,7 +280,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🏠 مثال: سلوك كائن "عنوان" {#nla-address-behavior-example}
+### 🏠 مثال: سلوك كائن "عنوان" {#nla-address-behavior-example}
 
 ```naftah
 --- تعريف متغير 'عنوان' يحتوي الشارع، المدينة، والرمز البريدي
@@ -338,7 +338,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🏙️ مثال: سلوك كائن "مدينة" {#nla-city-behavior-example}
+### 🏙️ مثال: سلوك كائن "مدينة" {#nla-city-behavior-example}
 
 ```naftah
 --- تعريف متغير 'مدينة' يحتوي الاسم، عدد السكان، ومرجع إلى العنوان
@@ -404,7 +404,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🏘️ مثال: سلوك كائن "بلدة" {#nla-town-behavior-example}
+### 🏘️ مثال: سلوك كائن "بلدة" {#nla-town-behavior-example}
 
 ```naftah
 --- تعريف متغير 'بلدة' يحتوي الاسم، مرجع إلى المدينة، وعدد الأحياء
