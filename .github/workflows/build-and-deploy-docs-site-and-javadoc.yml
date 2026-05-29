@@ -75,7 +75,7 @@ jobs:
 
       - name: Build Jekyll site
         working-directory: docs-site
-        run: bundle exec jekyll build -d ../site-output
+        run: JEKYLL_ENV=production bundle exec jekyll build -d ../site-output
 
       - name: Set up Node.js (for SEO validation)
         uses: actions/setup-node@v4
