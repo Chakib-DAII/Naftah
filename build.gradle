@@ -284,8 +284,19 @@ tasks.register('exportNaftahExamples') {
 			def mdFile =
 					new File(targetPages, "${safeName}.md")
 
+			def seoDescription =
+					"${safeName} is an example in the Naftah programming language demonstrating syntax, usage, and core language features."
+
+			def escapedContent = content
+					.replace("&", "&amp;")
+					.replace("<", "&lt;")
+					.replace(">", "&gt;")
+					.replaceAll(/\r\n/, "\n")
+					.trim()
+
 			mdFile.text = """---
 title: ${safeName}
+description: ${seoDescription}
 layout: default
 permalink: /examples/${safeName}/
 rtl: true
@@ -301,9 +312,9 @@ rtl: true
 🔗 عرض الملف:
 
 ```naftah
-	{% raw %}
-		${content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}
-	{% endraw %}
+{% raw %}
+${escapedContent}
+{% endraw %}
 ```
 """
 		}
