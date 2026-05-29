@@ -88,6 +88,8 @@ jobs:
 
       - name: Run SEO validation
         run: npm run seo
+        env:
+          SITE_DIR: ../site-output
 
       - name: Upload SEO reports
         uses: actions/upload-artifact@v4

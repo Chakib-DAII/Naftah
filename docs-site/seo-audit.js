@@ -2,13 +2,13 @@ import fs from "fs";
 import path from "path";
 import * as cheerio from "cheerio";
 
-const dir = "./_site";
+const dir = process.env.SITE_DIR || "_site";
 
 const ignore_dirs = [
-  "_site/javadoc",
-  "_site/assets",
-  "_site/feed",
-  "_site/sitemap",
+  `${dir}/javadoc`,
+  `${dir}/assets`,
+  `${dir}/feed`,
+  `${dir}/sitemap`,
 ];
 
 function normalize(p) {
