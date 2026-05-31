@@ -298,7 +298,7 @@ tasks.register('exportNaftahExamples') {
 title: ${safeName}
 description: ${seoDescription}
 layout: default
-permalink: /examples/${safeName}/
+permalink: /examples/${safeName}
 rtl: true
 ---
 
