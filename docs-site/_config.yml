@@ -41,4 +41,8 @@ copy_data_files:
   - file: jvm-functions.json
     chunk: true
     compress: true
+  - file: minimal-class-scanning-result.json
+    compress: true
+  - file: class-scanning-result.json
+    compress: true
 
