@@ -15,6 +15,7 @@ import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.OS;
 import org.jline.terminal.Terminal;
 
+import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.repl.REPLHelper.getTerminal;
 import static org.daiitech.naftah.utils.script.NaftahOutputTransformer.getPrintStream;
 import static org.daiitech.naftah.utils.script.ScriptUtils.ARABIC_LANGUAGE;
@@ -50,8 +51,10 @@ public final class NaftahSystem {
 
 	/**
 	 * Private constructor to prevent instantiation.
+	 * Throws {@link NaftahBugError} if called.
 	 */
 	private NaftahSystem() {
+		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
