@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -200,12 +199,7 @@ public final class JvmFunction implements Serializable, JvmExecutable {
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		try {
 			ois.defaultReadObject();
-			for (Method m : clazz.getMethods()) {
-				if (m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), methodParameterTypes)) {
-					this.method = m;
-					break;
-				}
-			}
+			this.method = clazz.getDeclaredMethod(methodName, methodParameterTypes);
 		}
 		catch (Throwable ignored) {
 		}

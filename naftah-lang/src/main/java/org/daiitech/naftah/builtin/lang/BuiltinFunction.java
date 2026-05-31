@@ -10,7 +10,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 /**
  * Representation of a builtin function.
@@ -148,12 +147,7 @@ public final class BuiltinFunction implements Serializable, JvmExecutable {
 		try {
 			ois.defaultReadObject();
 			Class<?> clazz = Class.forName(className);
-			for (Method m : clazz.getDeclaredMethods()) {
-				if (m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), methodParameterTypes)) {
-					this.method = m;
-					break;
-				}
-			}
+			this.method = clazz.getDeclaredMethod(methodName, methodParameterTypes);
 		}
 		catch (Throwable ignored) {
 		}
