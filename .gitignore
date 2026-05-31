@@ -64,3 +64,6 @@ out/
 /docs-site/node_modules/
 /docs-site/seo-report.json
 /docs-site/seo-summary.json
+/docs-site/assets/jars/
+/docs-site/_data/class-scanning-result.json
+/docs-site/_data/minimal-class-scanning-result.json
