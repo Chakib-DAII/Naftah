@@ -3,10 +3,17 @@ title: Java Interoperability
 description: Guide to Naftah on the JVM with Java interoperability, including seamless use of Java classes and libraries.
 layout: default
 permalink: /language/java-interop
+head_scripts: [
+	{ src: "https://code.jquery.com/jquery-3.6.0.min.js", defer: true },
+	{ src: "https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js", defer: true },
+	{ src: "https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js", defer: true },
+	{ src: "/assets/js/jvm-class-initializers.js", defer: true },
+	{ src: "/assets/js/jvm-functions.js", defer: true }
+]
+head_styles: [
+	{ href: "https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" }
+]
 ---
-
-<script src="{{ '/assets/js/jvm-class-initializers.js' | relative_url }}"></script>
-<script src="{{ '/assets/js/jvm-functions.js' | relative_url }}"></script>
 
 <div dir="rtl">
 
