@@ -144,7 +144,7 @@ Jekyll::Hooks.register :site, :post_write do |site|
       # Compress if requested
       if compress
         begin
-		  Jekyll.logger.info "CopyData:", "Compressing #{filename} → #{filename}.gz"
+		  Jekyll.logger.info "DataPipeline:", "Compressing #{filename} → #{filename}.gz"
 
           content = File.binread(src)
 
