@@ -46,6 +46,9 @@ jobs:
       - name: export Naftah Examples
         run: ./gradlew exportNaftahExamples
 
+      - name: export Naftah playground executable
+        run: ./gradlew copyPlaygroundJar
+
       - name: Fetch GitHub Releases for Jekyll
         run: |
           echo "Fetching releases..."
