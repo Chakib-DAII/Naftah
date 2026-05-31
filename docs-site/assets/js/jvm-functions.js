@@ -1,11 +1,46 @@
+/**
+ * JVM Functions DataTable Module
+ *
+ * This module powers a server-side DataTables view for JVM
+ * function metadata.
+ *
+ * Features:
+ * - Chunked JSON loading (.json.gz)
+ * - Full-text search index (token-based)
+ * - Client-side caching layer
+ * - Concurrency-limited fetch system
+ * - Debounced UI interactions
+ * - Smooth scroll UX for table navigation
+ *
+ * Data flow:
+ * Meta + Index → Search/Pagination → Chunk Loader → DataTable
+ *
+ */
+
+/** Metadata describing dataset structure (chunk size, totals, file name). */
 let META = null;
+
+/** Token → list of record IDs search index. */
 let SEARCH_INDEX = {};
 
+/** Cache of loaded JSON chunks (page → data). */
 const CHUNK_CACHE = {};
+
+/** Used to prevent race conditions between async requests. */
 let currentRequestId = 0;
+
+/** Indicates whether meta + index are fully loaded. */
 let READY = false;
 
-// Scroll helper, Scroll to the table top after each draw (paging/filtering)
+/**
+ * Scrolls the DataTable into view after pagination/search events.
+ *
+ * Adjusts for:
+ * - fixed site header
+ * - DataTables fixed header overlay
+ *
+ * @returns {void}
+ */
 function scrollToJvmFunctionsTable() {
 	const $table = $('#jvm-functions-table');
 
@@ -27,11 +62,30 @@ function scrollToJvmFunctionsTable() {
 	}, 250);
 }
 
-// Chunk loader
+/**
+ * Builds chunk file path.
+ *
+ * @param {string} base - dataset base name
+ * @param {number} page - chunk page number
+ * @returns {string}
+ */
 function getChunkFile(base, page) {
 	return `/assets/data/${base}-page-${String(page).padStart(4, '0')}.json.gz`;
 }
 
+/**
+ * Loads a compressed JSON chunk with caching.
+ *
+ * Steps:
+ * - check memory cache
+ * - fetch gzip file
+ * - decompress via pako
+ * - parse JSON
+ *
+ * @param {string} base
+ * @param {number} page
+ * @returns {Promise<Array<object>>}
+ */
 function loadChunk(base, page) {
 	if (CHUNK_CACHE[page]) {
 		return Promise.resolve(CHUNK_CACHE[page]);
@@ -52,7 +106,11 @@ function loadChunk(base, page) {
 		});
 }
 
-// FAST SEARCH ENGINE
+/**
+ * Loads the precomputed search index.
+ *
+ * @returns {Promise<Record<string, number[]>>}
+ */
 function loadSearchIndex() {
 	return fetch('/assets/data/jvm-functions-search-index.json.gz')
 		.then(r => {
@@ -68,6 +126,18 @@ function loadSearchIndex() {
 		});
 }
 
+/**
+ * Executes token-based search over SEARCH_INDEX.
+ *
+ * Matching strategy:
+ * - exact match
+ * - prefix match
+ * - substring fallback
+ * - AND intersection across tokens
+ *
+ * @param {string} query
+ * @returns {number[]} matched record IDs
+ */
 function searchData(query) {
 	if (!query) return [];
 
@@ -112,7 +182,15 @@ function searchData(query) {
 	return Array.from(resultSet);
 }
 
-// concurrency limiter
+/**
+ * Limits concurrency of async operations.
+ *
+ * @template T
+ * @param {T[]} items
+ * @param {number} limit
+ * @param {(item: T) => Promise<any>} fn
+ * @returns {Promise<any[]>}
+ */
 function limitConcurrency(items, limit, fn) {
 	let index = 0;
 	let active = 0;
@@ -142,7 +220,13 @@ function limitConcurrency(items, limit, fn) {
 	});
 }
 
-// debounce helper (CRITICAL for performance)
+/**
+ * Debounces function execution.
+ *
+ * @param {Function} fn
+ * @param {number} delay
+ * @returns {Function}
+ */
 function debounce(fn, delay) {
 	let t;
 	return function (...args) {
@@ -151,7 +235,9 @@ function debounce(fn, delay) {
 	};
 }
 
-// INIT DATA
+/**
+ * Loads metadata + search index before table initialization.
+ */
 Promise.all([
 	fetch('/assets/data/jvm-functions-meta.json').then(r => r.json()),
 	loadSearchIndex()
