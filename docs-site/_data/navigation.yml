@@ -7,6 +7,9 @@
 - title: تشغيل نفطه
   url: /running-naftah
 
+- title: ساحة التجارب
+  url: /playground
+
 - title: اللغة
   children:
     - title: الكلمات المفتاحية
