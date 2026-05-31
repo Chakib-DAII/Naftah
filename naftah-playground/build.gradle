@@ -1,0 +1,61 @@
+plugins {
+	id 'java'
+	id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+description = 'Naftah browser playground runtime'
+
+dependencies {
+	implementation project(':naftah-lang')
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+shadowJar {
+
+	archiveBaseName.set('naftah')
+	archiveClassifier.set('')
+	archiveVersion.set('')
+
+	mergeServiceFiles()
+
+	minimize {
+		exclude(dependency('org.glassfish:javax.json'))
+	}
+
+	dependencies {
+		exclude(dependency('org.junit:junit-bom'))
+		exclude(dependency('org.junit.jupiter:junit-jupiter'))
+		exclude(dependency('org.antlr:antlr4'))
+		exclude(dependency('com.puppycrawl.tools:checkstyle'))
+		exclude(dependency('info.picocli:picocli'))
+		exclude(dependency('org.jline:jline'))
+		exclude(dependency('org.jline:jline-terminal-jansi'))
+		exclude(dependency('org.openjdk.jmh:jmh-core'))
+		exclude(dependency('com.vladsch.flexmark:flexmark'))
+		exclude(dependency('org.openjdk.jmh:jmh-generator-annprocess'))
+	}
+
+	manifest {
+		attributes(
+				'Main-Class': 'org.daiitech.naftah.playground.NaftahPlayground'
+		)
+	}
+}
+
+tasks.register('copyPlaygroundJar', Copy) {
+	dependsOn shadowJar
+
+	from(shadowJar.archiveFile)
+
+	into(rootProject.file('docs-site/assets/jars'))
+
+	// overwrite always (important for dev loop)
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+shadowJar.finalizedBy(copyPlaygroundJar)
