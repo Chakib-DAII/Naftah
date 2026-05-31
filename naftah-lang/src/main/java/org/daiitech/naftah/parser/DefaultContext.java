@@ -63,6 +63,7 @@ import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.Naftah.BUILTIN_CLASSES_PROPERTY;
 import static org.daiitech.naftah.Naftah.BUILTIN_PACKAGES_PROPERTY;
+import static org.daiitech.naftah.Naftah.CACHE_PATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.CACHE_SCANNING_RESULTS_PROPERTY;
 import static org.daiitech.naftah.Naftah.DEBUG_PROPERTY;
 import static org.daiitech.naftah.Naftah.FORCE_CLASSPATH_PROPERTY;
@@ -70,6 +71,7 @@ import static org.daiitech.naftah.Naftah.INCLUDE_ALL_IN_COMPLETIONS_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_INIT_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_MAN_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
+import static org.daiitech.naftah.Naftah.MINIMAL_CACHE_PATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -123,11 +125,12 @@ public class DefaultContext {
 	/**
 	 * The path used for caching runtime data.
 	 */
-	public static final Path CACHE_PATH = Paths.get(".naftah/.naftah_cache");
+	public static final Path CACHE_PATH = Paths.get(System.getProperty(CACHE_PATH_PROPERTY, ".naftah/.naftah_cache"));
 	/**
 	 * The path used for caching minimal runtime data.
 	 */
-	public static final Path MINIMAL_CACHE_PATH = Paths.get(".naftah/.naftah_minimal_cache");
+	public static final Path MINIMAL_CACHE_PATH = Paths
+			.get(System.getProperty(MINIMAL_CACHE_PATH_PROPERTY, ".naftah/.naftah_minimal_cache"));
 
 	/**
 	 * Global map holding contexts indexed by their depth.
@@ -1339,6 +1342,26 @@ public class DefaultContext {
 
 			padText("الزمن المستغرق للتمهيد: " + elapsedMillis + " مللي ثانية.", true);
 		}
+	}
+
+	/**
+	 * Initializes the runtime using a precomputed {@link ClassScanningResult}
+	 * instead of performing a classpath scan or loading a cache file.
+	 *
+	 * <p>This method is primarily intended for browser-based and embedded
+	 * environments such as the Naftah Playground, where runtime metadata
+	 * is generated ahead of time and shipped as a serialized snapshot.
+	 *
+	 * <p>The supplied result is used to populate the runtime context,
+	 * including available classes, built-in functions, JVM functions,
+	 * qualifiers, and other runtime metadata.
+	 *
+	 * @param result the preloaded runtime snapshot to install into the
+	 *               current execution context
+	 * @throws NullPointerException if {@code result} is {@code null}
+	 */
+	public static void bootstrapPlayground(ClassScanningResult result) {
+		setContextFromClassScanningResult(result);
 	}
 
 	/**
