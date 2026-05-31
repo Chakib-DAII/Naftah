@@ -159,6 +159,19 @@ public final class Naftah {
 	 * Cache results of classpath and JDK scanning.
 	 */
 	public static final String CACHE_SCANNING_RESULTS_PROPERTY = "naftah.cacheScanningResults";
+
+	/**
+	 * System property key that defines the path used for caching runtime data.
+	 * If not provided, a default cache location will be used.
+	 */
+	public static final String CACHE_PATH_PROPERTY = "naftah.cache.path";
+
+	/**
+	 * System property key that defines the path used for caching minimal runtime data.
+	 * If not provided, a default minimal cache location will be used.
+	 */
+	public static final String MINIMAL_CACHE_PATH_PROPERTY = "naftah.cache.minimal.path";
+
 	/**
 	 * Property to enable debug mode.
 	 */
