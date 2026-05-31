@@ -599,15 +599,19 @@ public final class ScriptUtils {
 	 * @return the padded text if {@code print} is false; otherwise null
 	 */
 	private static String doPadText(String input, boolean print) {
-		int terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
-		int padding = terminalWidth - input.length();
-		if (padding < 0) {
-			// correct text in case of terminal overflow
-			String result = doPadText(input, terminalWidth, print);
-			return print ? null : result;
+		Integer terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
+
+		if (terminalWidth != null) {
+			int padding = terminalWidth - input.length();
+			if (padding < 0) {
+				// correct text in case of terminal overflow
+				String result = doPadText(input, terminalWidth, print);
+				return print ? null : result;
+			}
+			// add padding to align text
+			input = addPadding(input, padding);
 		}
-		// add padding to align text
-		input = addPadding(input, padding);
+
 		if (print) {
 			System.out.println(input);
 			return null;
