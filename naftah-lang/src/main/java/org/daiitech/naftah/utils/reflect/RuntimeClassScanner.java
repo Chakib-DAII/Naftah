@@ -122,7 +122,8 @@ public final class RuntimeClassScanner {
 	 * Array of ClassLoaders used when attempting to load classes.
 	 * Includes the system class loader, the platform class loader, and the bootstrap class loader.
 	 */
-	public static final ClassLoader[] CLASS_LOADERS = { ClassLoader.getSystemClassLoader(),
+	public static final ClassLoader[] CLASS_LOADERS = { Thread.currentThread().getContextClassLoader(),
+														ClassLoader.getSystemClassLoader(),
 														ClassLoader.getPlatformClassLoader(),
 														Object.class.getClassLoader()};
 
@@ -312,6 +313,54 @@ public final class RuntimeClassScanner {
 			}
 		}
 		return loadedClasses;
+	}
+
+	/**
+	 * Attempts to load a class with the given name using a set of class loaders.
+	 *
+	 * <p>The method tries the predefined class loaders, optionally including the provided
+	 * {@link URLClassLoader}, to load the class without initializing it.</p>
+	 *
+	 * @param className   the fully qualified name of the class to load
+	 * @param classLoader an optional {@link URLClassLoader} to use for loading the class; may be null
+	 * @return the {@link Class} object if found and loaded successfully; {@code null} if the class
+	 *         could not be loaded by any of the class loaders
+	 */
+	public static Class<?> loadClass(String className, URLClassLoader classLoader) {
+		var loaders = Arrays.copyOf(CLASS_LOADERS, CLASS_LOADERS.length + (Objects.nonNull(classLoader) ? 0 : 1));
+		if (Objects.nonNull(classLoader)) {
+			//noinspection DataFlowIssue
+			loaders[CLASS_LOADERS.length] = classLoader;
+		}
+
+		for (ClassLoader cl : loaders) {
+			try {
+				if (Objects.isNull(cl)) {
+					continue;
+				}
+				return Class.forName(className, false, cl);
+			}
+			catch (Throwable t) {
+				// Silently skip classes that can't be loaded
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Attempts to load a class with the specified fully qualified name using the
+	 * predefined class loaders.
+	 *
+	 * <p>This method is equivalent to invoking
+	 * {@link #loadClass(String, URLClassLoader)} with a {@code null}
+	 * class loader.</p>
+	 *
+	 * @param className the fully qualified name of the class to load
+	 * @return the resolved {@link Class} object, or {@code null} if the class
+	 *         cannot be loaded
+	 */
+	public static Class<?> loadClass(String className) {
+		return loadClass(className, null);
 	}
 
 	/**
