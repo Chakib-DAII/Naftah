@@ -71,3 +71,4 @@ out/
 /.venv/
 /docs-site/venv/
 /docs-site/.venv/
+/docs-site/indexnow.json
