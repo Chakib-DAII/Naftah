@@ -19,7 +19,6 @@ class ClassScanningResultLoaderTest {
 
 	@Test
 	void shouldLoadBasicStructure() throws Exception {
-
 		String json = """
 						{
 						"classNames": {
@@ -95,7 +94,7 @@ class ClassScanningResultLoaderTest {
 								"aliases": [],
 								"description": "string length",
 								"usage": "length()",
-								"returnType": "int",
+								"returnType": "java.lang.String",
 								"parameterTypes": [],
 								"exceptionTypes": []
 								}
@@ -107,7 +106,7 @@ class ClassScanningResultLoaderTest {
 		Path file = tempDir.resolve("scan.json");
 		Files.writeString(file, json);
 
-		var result = ClassScanningResultLoader.fromJson(file);
+		var result = ClassScanningResultLoader.fromJson(file, false);
 
 		assertNotNull(result);
 
