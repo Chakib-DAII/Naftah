@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 INDEXNOW_KEY = os.environ.get("INDEXNOW_KEY")
 SITE_MAP = Path(os.environ.get("SITE_MAP"))
-OUTPUT_PATH = Path("indexnow.json")
+OUTPUT_PATH = Path(os.environ.get("INDEXNOW_OUTPUT", "indexnow.json"))
 
 sitemap = ET.parse(SITE_MAP)
 root = sitemap.getroot()

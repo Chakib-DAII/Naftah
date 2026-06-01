@@ -33,6 +33,7 @@ exclude:
   - seo-audit.js
   - seo-report.json
   - seo-summary.json
+  - prepare-indexnow-payload.py
 
 data_chunk_size: 100
 

@@ -121,6 +121,14 @@ jobs:
       - name: Copy Javadoc into built site
         run: cp -r build/docs/javadoc site-output/javadoc
 
+      - name: prepare sitemap URLs for IndexNow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          SITE_MAP: site-output/sitemap.xml
+          INDEXNOW_OUTPUT: site-output/assets/data/indexnow.json
+        run: |
+          python docs-site/prepare-indexnow-payload.py
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -129,15 +137,10 @@ jobs:
           publish_branch: gh-pages
 
       - name: Submit sitemap URLs to IndexNow
-        env:
-          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
-          SITE_MAP: site-output/sitemap.xml
         run: |
-          python docs-site/prepare-indexnow-payload.py
-
           curl \
             -i \
             -X POST \
             -H "Content-Type: application/json; charset=utf-8" \
-            --data @indexnow.json \
+            --data @site-output/assets/data/indexnow.json \
             https://api.indexnow.org/indexnow
