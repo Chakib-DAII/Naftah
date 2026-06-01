@@ -10,6 +10,9 @@ org.daiitech.naftah.builtin.utils.tuple
 org.daiitech.naftah.errors
 org.daiitech.naftah.parser
 org.daiitech.naftah.parser.time
+org.daiitech.naftah.playground
+org.daiitech.naftah.playground.utils
+org.daiitech.naftah.playground.utils.logging
 org.daiitech.naftah.utils
 org.daiitech.naftah.utils.function
 org.daiitech.naftah.utils.reflect

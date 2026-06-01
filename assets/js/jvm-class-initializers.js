@@ -1,4 +1,34 @@
-// Scroll to the table top after each draw (paging/filtering)
+/**
+ * JVM Class Initializers DataTable Module
+ *
+ * This module renders a DataTable for JVM class constructors
+ * (initializers) using a static JSON dataset.
+ *
+ * Features:
+ * - DataTables integration (client-side JSON)
+ * - FixedHeader support
+ * - Responsive + scrollable layout
+ * - Smooth scroll UX on interactions
+ *
+ * Dataset:
+ * /assets/data/jvm-class-initializers.json
+ *
+ */
+
+/**
+ * Scrolls the JVM Class Initializers table into view.
+ *
+ * Adjusts for:
+ * - site header height
+ * - DataTables fixed header overlay
+ *
+ * Triggered after:
+ * - pagination
+ * - page size change
+ * - search input
+ *
+ * @returns {void}
+ */
 function scrollToJvmClassInitializersTable() {
 	var $table = $('#jvm-class-initializers-table');
 
