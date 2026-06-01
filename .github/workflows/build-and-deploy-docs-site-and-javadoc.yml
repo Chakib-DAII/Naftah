@@ -127,3 +127,17 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: site-output
           publish_branch: gh-pages
+
+      - name: Submit sitemap URLs to IndexNow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          SITE_MAP: site-output/sitemap.xml
+        run: |
+          python docs-site/prepare-indexnow-payload.py
+
+          curl \
+            -i \
+            -X POST \
+            -H "Content-Type: application/json; charset=utf-8" \
+            --data @indexnow.json \
+            https://api.indexnow.org/indexnow
