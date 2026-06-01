@@ -71,12 +71,32 @@ public class NaftahPlayground {
 	 * class initialization to determine the minimum log level emitted by
 	 * the playground runtime.</p>
 	 */
-	private static final String NAFTAH_PLAYGROUND_LOG_LEVEL = "naftah.playground.log.level";
+	private static final String NAFTAH_PLAYGROUND_LOG_LEVEL_PROPERTY = "naftah.playground.log.level";
+
+	/**
+	 * System property used to control asynchronous cache loading behavior.
+	 *
+	 * <p>If defined and enabled, cache entries may be loaded asynchronously,
+	 * allowing cache population to occur in the background without blocking
+	 * the calling thread. If not specified, the default cache loading
+	 * behavior configured by the runtime is used.</p>
+	 */
+	public static final String CACHE_LOAD_ASYNC_PROPERTY = "naftah.cache.async";
 
 	static {
-		LogManager.setLevel(System.getProperty(NAFTAH_PLAYGROUND_LOG_LEVEL));
+		LogManager.setLevel(System.getProperty(NAFTAH_PLAYGROUND_LOG_LEVEL_PROPERTY));
 		LOGGER = LogManager.getLogger("NaftahPlayground");
 	}
+
+	/**
+	 * Indicates whether the system is currently in the bootstrap phase.
+	 *
+	 * <p>When {@code true}, certain runtime behaviors may be restricted or handled
+	 * differently to support safe initialization.</p>
+	 *
+	 * <p>This field is {@code volatile} to ensure visibility across threads.</p>
+	 */
+	private static volatile boolean BOOTSTRAPPING = false;
 
 	/**
 	 * Sends text to the playground output area in the browser.
@@ -179,7 +199,8 @@ public class NaftahPlayground {
 	 * can be expensive in browser environments (e.g., CheerpJ), especially when
 	 * using the full cache. Consider using the minimal cache for faster startup.</p>
 	 */
-	private static void bootstrap() {
+	private static synchronized void bootstrap() {
+		BOOTSTRAPPING = true;
 		new Thread(() -> {
 			System.setProperty(INSIDE_RUN_PROPERTY, Boolean.toString(true));
 			System.setProperty(Naftah.SCAN_JDK_PROPERTY, Boolean.toString(false));
@@ -188,9 +209,9 @@ public class NaftahPlayground {
 				System.setProperty(Naftah.WORD_CHUNK_PROPERTY, Boolean.toString(true));
 			}
 
-			boolean shouldBootstrap = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
+			boolean shouldScanClasspath = Boolean.getBoolean(SCAN_CLASSPATH_PROPERTY);
 
-			LOGGER.debug("Should scan classpath: " + shouldBootstrap);
+			LOGGER.debug("Should scan classpath: " + shouldScanClasspath);
 
 			LOGGER.debug("Minimal cache path : " + System.getProperty(MINIMAL_CACHE_PATH_PROPERTY));
 			LOGGER.debug("Minimal cache path file exists: " + Files.exists(DefaultContext.MINIMAL_CACHE_PATH));
@@ -200,9 +221,16 @@ public class NaftahPlayground {
 
 			try {
 				setBootstrapState(RuntimeState.BOOTSTRAPPING.name());
+
+				boolean asyncCacheLoading = Boolean.getBoolean(CACHE_LOAD_ASYNC_PROPERTY);
+				LOGGER.debug("loading Cache asynchronously: " + asyncCacheLoading);
+
 				ClassScanningResult classScanningResult = ClassScanningResultLoader
-						.fromJson(shouldBootstrap ? DefaultContext.CACHE_PATH : DefaultContext.MINIMAL_CACHE_PATH);
+						.fromJson(  shouldScanClasspath ? DefaultContext.CACHE_PATH : DefaultContext.MINIMAL_CACHE_PATH,
+									asyncCacheLoading);
+
 				bootstrapPlayground(classScanningResult);
+
 				LOGGER.debug("Classes : " + Objects.requireNonNullElse(DefaultContext.getClasses(), Map.of()));
 				LOGGER
 						.debug("AccessibleClasses : " + Objects
@@ -227,6 +255,7 @@ public class NaftahPlayground {
 				setBootstrapState(RuntimeState.FAILED.name());
 			}
 			finally {
+				BOOTSTRAPPING = false;
 				LOGGER.info("bootstrap done.");
 			}
 		}).start();
@@ -250,6 +279,11 @@ public class NaftahPlayground {
 	 *         is produced; or the exception stack trace if execution fails
 	 */
 	public String run(String code) {
+		if (BOOTSTRAPPING) {
+			throw new IllegalStateException(
+											"لا يمكن تنفيذ هذا الأمر أثناء تهيئة النظام"
+			);
+		}
 
 		if (code == null || code.isBlank()) {
 			return "";
