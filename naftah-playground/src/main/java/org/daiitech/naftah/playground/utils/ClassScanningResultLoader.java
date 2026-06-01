@@ -14,7 +14,10 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 
 import javax.json.*;
@@ -56,6 +59,16 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
 public class ClassScanningResultLoader {
 
 	/**
+	 * Thread-safe cache of resolved {@link Class} objects indexed by fully qualified class name.
+	 *
+	 * <p>This cache is used to avoid repeated and expensive class-loading operations for the
+	 * same class name during runtime resolution/deserialization.</p>
+	 *
+	 * <p>Entries are stored indefinitely for the lifetime of the JVM.</p>
+	 */
+	private static final Map<String, Class<?>> CLASS_CACHE = new ConcurrentHashMap<>(4096);
+
+	/**
 	 * Private constructor to prevent instantiation.
 	 * Throws {@link NaftahBugError} if called.
 	 */
@@ -75,38 +88,33 @@ public class ClassScanningResultLoader {
 	 * @throws Exception if the file cannot be read or the JSON cannot be
 	 *                   deserialized successfully
 	 */
-	public static ClassScanningResult fromJson(Path path) throws Exception {
-		InputStream in = Files.newInputStream(path);
+	public static ClassScanningResult fromJson(Path path, boolean async) throws Exception {
+		try (   InputStream in = Files.newInputStream(path);
+				PushbackInputStream pb = new PushbackInputStream(in, 2)) {
 
-		PushbackInputStream pb = new PushbackInputStream(in, 2);
+			byte[] sig = new byte[2];
+			int n = pb.read(sig);
 
-		byte[] sig = new byte[2];
-		int n = pb.read(sig);
+			if (n > 0) {
+				pb.unread(sig, 0, n);
+			}
 
-		if (n > 0) {
-			pb.unread(sig, 0, n);
+			boolean gzip = n == 2 && (sig[0] & 0xFF) == 0x1F && (sig[1] & 0xFF) == 0x8B;
+
+			InputStream finalStream = gzip ? new GZIPInputStream(pb) : pb;
+
+			NaftahPlayground.LOGGER.debug("fromJson - parsing JSON stream");
+
+			try (   Reader reader = new InputStreamReader(finalStream);
+					JsonReader jsonReader = Json.createReader(reader)) {
+
+				var result = async ? fromJsonAsync(jsonReader.readObject()) : fromJson(jsonReader.readObject());
+
+				NaftahPlayground.LOGGER.debug("fromJson - class scanning result parsed");
+
+				return result;
+			}
 		}
-
-		boolean gzip = n == 2 && (sig[0] & 0xFF) == 0x1F && (sig[1] & 0xFF) == 0x8B;
-
-		InputStream finalStream = gzip ? new GZIPInputStream(pb) : pb;
-
-		Reader reader = new InputStreamReader(finalStream);
-
-		NaftahPlayground.LOGGER.debug("fromJson - parsing JSON stream");
-
-		JsonObject obj;
-		try (JsonReader jsonReader = Json.createReader(reader)) {
-			obj = jsonReader.readObject();
-		}
-
-		NaftahPlayground.LOGGER.debug("fromJson - obj loaded");
-
-		var result = fromJson(obj);
-
-		NaftahPlayground.LOGGER.debug("fromJson - class scanning result parsed");
-
-		return result;
 	}
 
 	/**
@@ -117,9 +125,8 @@ public class ClassScanningResultLoader {
 	 *
 	 * @param obj the serialized class scanning result
 	 * @return the reconstructed {@link ClassScanningResult}
-	 * @throws Exception if runtime metadata cannot be restored
 	 */
-	public static ClassScanningResult fromJson(JsonObject obj) throws Exception {
+	public static ClassScanningResult fromJson(JsonObject obj) {
 		NaftahPlayground.LOGGER.trace("fromJson - obj : " + obj);
 
 		ClassScanningResult result = new ClassScanningResult();
@@ -148,6 +155,103 @@ public class ClassScanningResultLoader {
 		return result;
 	}
 
+	public static ClassScanningResult fromJsonAsync(JsonObject obj) {
+		NaftahPlayground.LOGGER.trace("fromJsonAsync - obj loaded");
+
+		ExecutorService executor = Executors
+				.newFixedThreadPool(
+									Math.max(2, Runtime.getRuntime().availableProcessors()));
+
+		try {
+			// ClassLoaders
+			CompletableFuture<Map<String, ClassLoader>> classLoadersFuture = CompletableFuture
+					.supplyAsync(
+									() -> toClassLoaders(obj),
+									executor);
+
+			// Simple metadata
+			CompletableFuture<Set<String>> qualifiersFuture = CompletableFuture
+					.supplyAsync(
+									() -> toSet(obj.getJsonArray("classQualifiers")),
+									executor);
+
+			CompletableFuture<Map<String, String>> arabicFuture = CompletableFuture
+					.supplyAsync(
+									() -> toMap(obj.getJsonObject("arabicClassQualifiers")),
+									executor);
+
+			// Classes
+			CompletableFuture<Map<String, Class<?>>> classesFuture = CompletableFuture
+					.supplyAsync(
+									() -> toClassMap(obj.getJsonObject("classes")),
+									executor);
+
+			CompletableFuture<Map<String, Class<?>>> accessibleFuture = CompletableFuture
+					.supplyAsync(
+									() -> toClassMap(obj.getJsonObject("accessibleClasses")),
+									executor);
+
+			CompletableFuture<Map<String, Class<?>>> instantiableFuture = CompletableFuture
+					.supplyAsync(
+									() -> toClassMap(obj.getJsonObject("instantiableClasses")),
+									executor);
+
+			// JVM Functions (Methods)
+			CompletableFuture<Map<String, List<JvmFunction>>> jvmFunctionsFuture = CompletableFuture
+					.supplyAsync(
+									() -> toJvmFunctions(obj.getJsonObject("jvmFunctions")),
+									executor);
+
+			// JVM Class Initializers (Constructors)
+			CompletableFuture<Map<String, List<JvmClassInitializer>>> initializersFuture = CompletableFuture
+					.supplyAsync(
+									() -> toJvmClassInitializers(
+																	obj.getJsonObject("jvmClassInitializers")),
+									executor);
+
+			// Builtin Functions
+			CompletableFuture<Map<String, List<BuiltinFunction>>> builtinFuture = CompletableFuture
+					.supplyAsync(
+									() -> toBuiltinFunctions(
+																obj.getJsonObject("builtinFunctions")),
+									executor);
+
+			CompletableFuture
+					.allOf(
+							classLoadersFuture,
+							qualifiersFuture,
+							arabicFuture,
+							classesFuture,
+							accessibleFuture,
+							instantiableFuture,
+							jvmFunctionsFuture,
+							initializersFuture,
+							builtinFuture
+					)
+					.join();
+
+			ClassScanningResult result = new ClassScanningResult();
+
+			result.setClassNames(classLoadersFuture.join());
+
+			result.setClassQualifiers(qualifiersFuture.join());
+			result.setArabicClassQualifiers(arabicFuture.join());
+
+			result.setClasses(classesFuture.join());
+			result.setAccessibleClasses(accessibleFuture.join());
+			result.setInstantiableClasses(instantiableFuture.join());
+
+			result.setJvmFunctions(jvmFunctionsFuture.join());
+			result.setJvmClassInitializers(initializersFuture.join());
+			result.setBuiltinFunctions(builtinFuture.join());
+
+			return result;
+		}
+		finally {
+			executor.shutdown();
+		}
+	}
+
 	/**
 	 * Reconstructs the exported class loader mapping.
 	 *
@@ -164,7 +268,9 @@ public class ClassScanningResultLoader {
 		JsonObject classNamesObj = obj.getJsonObject("classNames");
 		NaftahPlayground.LOGGER.trace("toClassLoaders - classNames : " + classNamesObj);
 
-		Map<String, ClassLoader> result = new HashMap<>();
+		int size = classNamesObj.size();
+		Map<String, ClassLoader> result = size > 16 ? new HashMap<>(size) : new HashMap<>();
+
 
 		for (String key : classNamesObj.keySet()) {
 			NaftahPlayground.LOGGER.trace("toClassLoaders - key : " + key);
@@ -177,22 +283,21 @@ public class ClassScanningResultLoader {
 			JsonArray urlsArray = classNamesObj.getJsonArray(key);
 			NaftahPlayground.LOGGER.trace("toClassLoaders - urlsArray : " + urlsArray);
 
-			URL[] urls = urlsArray
-					.stream()
-					.map(v -> {
-						try {
-							return new URL(((JsonString) v).getString());
-						}
-						catch (Throwable th) {
-							NaftahPlayground.LOGGER.trace("toClassLoaders error : " + th.getMessage());
-							return null;
-						}
-					})
-					.filter(Objects::nonNull)
-					.toArray(URL[]::new);
+			size = urlsArray.size();
+			URL[] urls = new URL[size];
+			int count = 0;
 
-			NaftahPlayground.LOGGER.trace("toClassLoaders - urls : " + urlsArray);
-			result.put(key, new URLClassLoader(urls));
+			for (int i = 0; i < size; i++) {
+				try {
+					urls[count++] = new URL(urlsArray.getString(i));
+				}
+				catch (Throwable th) {
+					NaftahPlayground.LOGGER.trace("toClassLoaders error : " + th.getMessage());
+				}
+			}
+
+			NaftahPlayground.LOGGER.trace("toClassLoaders - urls : " + Arrays.toString(urls));
+			result.put(key, new URLClassLoader(count == size ? urls : Arrays.copyOf(urls, count)));
 		}
 
 		return result;
@@ -203,7 +308,7 @@ public class ClassScanningResultLoader {
 	 * {@link Class} instances.
 	 *
 	 * <p>Classes are loaded without initialization using
-	 * {@link RuntimeClassScanner#loadClass(String)}.</p>
+	 * {@link ClassScanningResultLoader#safeClass(String)}.</p>
 	 *
 	 * @param obj the JSON representation
 	 * @return a map of aliases to resolved classes, or {@code null}
@@ -212,19 +317,19 @@ public class ClassScanningResultLoader {
 		if (obj == null) return null;
 		NaftahPlayground.LOGGER.trace("toClassMap : " + obj);
 
-		Map<String, Class<?>> map = new HashMap<>();
+		int size = obj.size();
+		Map<String, Class<?>> map = size > 16 ? new HashMap<>(size) : new HashMap<>();
 
-		obj.forEach((k, v) -> {
+		for (String k : obj.keySet()) {
 			try {
-				var value = RuntimeClassScanner.loadClass(((JsonString) v).getString());
+				var value = safeClass(obj.getString(k));
 				NaftahPlayground.LOGGER.trace("toClassMap - key : " + k + " - value: " + value);
 				map.put(k, value);
 			}
 			catch (Throwable th) {
 				NaftahPlayground.LOGGER.trace("toClassMap error : " + th.getMessage());
 			}
-		});
-
+		}
 		return map;
 	}
 
@@ -238,14 +343,15 @@ public class ClassScanningResultLoader {
 		if (arr == null) return null;
 		NaftahPlayground.LOGGER.trace("toSet : " + arr);
 
-		return arr
-				.stream()
-				.map(v -> {
-					var value = ((JsonString) v).getString();
-					NaftahPlayground.LOGGER.trace("toSet - value: " + value);
-					return value;
-				})
-				.collect(Collectors.toSet());
+		int size = arr.size();
+		Set<String> set = size > 16 ? new HashSet<>(size) : new HashSet<>();
+
+		for (int i = 0; i < arr.size(); i++) {
+			var value = arr.getString(i);
+			NaftahPlayground.LOGGER.trace("toSet - value: " + value);
+			set.add(value);
+		}
+		return set;
 	}
 
 	/**
@@ -258,12 +364,14 @@ public class ClassScanningResultLoader {
 		if (obj == null) return null;
 		NaftahPlayground.LOGGER.trace("toMap : " + obj);
 
-		Map<String, String> map = new HashMap<>();
-		obj.forEach((k, v) -> {
-			var value = ((JsonString) v).getString();
+		int size = obj.size();
+		Map<String, String> map = size > 16 ? new HashMap<>(size) : new HashMap<>();
+
+		for (String k : obj.keySet()) {
+			var value = obj.getString(k);
 			NaftahPlayground.LOGGER.trace("toMap - key : " + k + " - value: " + value);
 			map.put(k, value);
-		});
+		}
 		return map;
 	}
 
@@ -280,39 +388,35 @@ public class ClassScanningResultLoader {
 		if (obj == null) return null;
 		NaftahPlayground.LOGGER.trace("toJvmFunctions : " + obj);
 
-		Map<String, List<JvmFunction>> result = new HashMap<>();
+		int size = obj.size();
+		Map<String, List<JvmFunction>> result = size > 16 ? new HashMap<>(size) : new HashMap<>();
 
 		for (String key : obj.keySet()) {
 			NaftahPlayground.LOGGER.trace("toJvmFunctions - key : " + key);
 			JsonArray arr = obj.getJsonArray(key);
-			List<JvmFunction> list = new ArrayList<>();
+
+			size = arr.size();
+			List<JvmFunction> list = size > 10 ? new ArrayList<>(size) : new ArrayList<>();
 
 			for (int i = 0; i < arr.size(); i++) {
 				JsonObject o = arr.getJsonObject(i);
 
 				try {
-					Class<?> clazz = RuntimeClassScanner.loadClass(o.getString("className"));
-					String methodName = o.getString("methodName");
-
+					Class<?> clazz = safeClass(o.getString("className"));
 					Class<?>[] params = toClassArray(o.getJsonArray("methodParameterTypes"));
 
-					Method method = findMethod(clazz, methodName, params);
+					Method method = findMethod(clazz, o.getString("methodName"), params);
+					if (method == null) continue;
 
-					if (Objects.nonNull(method)) {
-						String qualifiedCall = o.getString("qualifiedCall");
-						boolean isStatic = o.getBoolean("isStatic", false);
-						boolean isInvocable = o.getBoolean("isInvocable", true);
+					list
+							.add(new JvmFunction(
+													o.getString("qualifiedCall"),
+													clazz,
+													method,
+													o.getBoolean("isStatic", false),
+													o.getBoolean("isInvocable", true)
+							));
 
-						JvmFunction fn = new JvmFunction(
-															qualifiedCall,
-															clazz,
-															method,
-															isStatic,
-															isInvocable
-						);
-
-						list.add(fn);
-					}
 				}
 				catch (Throwable th) {
 					NaftahPlayground.LOGGER.trace("toJvmFunctions error : " + th.getMessage());
@@ -338,36 +442,33 @@ public class ClassScanningResultLoader {
 		if (obj == null) return null;
 		NaftahPlayground.LOGGER.trace("toJvmClassInitializers : " + obj);
 
-		Map<String, List<JvmClassInitializer>> result = new HashMap<>();
+		int size = obj.size();
+		Map<String, List<JvmClassInitializer>> result = size > 16 ? new HashMap<>(size) : new HashMap<>();
 
 		for (String key : obj.keySet()) {
 			NaftahPlayground.LOGGER.trace("toJvmClassInitializers - key : " + key);
 			JsonArray arr = obj.getJsonArray(key);
-			List<JvmClassInitializer> list = new ArrayList<>();
+
+			size = arr.size();
+			List<JvmClassInitializer> list = size > 10 ? new ArrayList<>(size) : new ArrayList<>();
 
 			for (int i = 0; i < arr.size(); i++) {
 				JsonObject o = arr.getJsonObject(i);
 
 				try {
-					Class<?> clazz = RuntimeClassScanner.loadClass(o.getString("className"));
-
+					Class<?> clazz = safeClass(o.getString("className"));
 					Class<?>[] params = toClassArray(o.getJsonArray("constructorParameterTypes"));
 
 					Constructor<?> ctor = findConstructor(clazz, params);
+					if (ctor == null) continue;
 
-					if (Objects.nonNull(ctor)) {
-						String qualifiedName = o.getString("qualifiedName");
-						boolean invocable = o.getBoolean("isInvocable", true);
-
-						JvmClassInitializer init = new JvmClassInitializer(
-																			qualifiedName,
-																			clazz,
-																			ctor,
-																			invocable
-						);
-
-						list.add(init);
-					}
+					list
+							.add(new JvmClassInitializer(
+															o.getString("qualifiedName"),
+															clazz,
+															ctor,
+															o.getBoolean("isInvocable", true)
+							));
 
 				}
 				catch (Throwable th) {
@@ -394,31 +495,33 @@ public class ClassScanningResultLoader {
 		if (obj == null) return null;
 		NaftahPlayground.LOGGER.trace("toBuiltinFunctions : " + obj);
 
-		Map<String, List<BuiltinFunction>> result = new HashMap<>();
+		int size = obj.size();
+		Map<String, List<BuiltinFunction>> result = size > 16 ? new HashMap<>(size) : new HashMap<>();
 
 		for (String key : obj.keySet()) {
 			NaftahPlayground.LOGGER.trace("toBuiltinFunctions - key : " + key);
 			JsonArray arr = obj.getJsonArray(key);
-			List<BuiltinFunction> list = new ArrayList<>();
+
+			size = arr.size();
+			List<BuiltinFunction> list = size > 10 ? new ArrayList<>(size) : new ArrayList<>();
 
 			for (int i = 0; i < arr.size(); i++) {
 				JsonObject o = arr.getJsonObject(i);
 
 				try {
-					Class<?> clazz = RuntimeClassScanner.loadClass(o.getString("className"));
-
-					String methodName = o.getString("methodName");
+					Class<?> clazz = safeClass(o.getString("className"));
 					Class<?>[] params = toClassArray(o.getJsonArray("methodParameterTypes"));
 
-					Method method = findMethod(clazz, methodName, params);
+					Method method = findMethod(clazz, o.getString("methodName"), params);
+					if (method == null) continue;
 
-					if (Objects.nonNull(method)) {
-						NaftahFunctionProvider provider = deserializeProvider(o.getJsonObject("providerInfo"));
+					list
+							.add(new BuiltinFunction(
+														method,
+														deserializeProvider(o.getJsonObject("providerInfo")),
+														deserializeFunction(o.getJsonObject("functionInfo"))
+							));
 
-						NaftahFunction function = deserializeFunction(o.getJsonObject("functionInfo"));
-
-						list.add(new BuiltinFunction(method, provider, function));
-					}
 				}
 				catch (Throwable th) {
 					NaftahPlayground.LOGGER.trace("toBuiltinFunctions error : " + th.getMessage());
@@ -447,11 +550,7 @@ public class ClassScanningResultLoader {
 					o.getBoolean("useQualifiedName", false),
 					o.getBoolean("useQualifiedAliases", false),
 					o.getString("description", ""),
-					o
-							.getJsonArray("functionNames")
-							.stream()
-							.map(v -> ((JsonString) v).getString())
-							.toArray(String[]::new)
+					toStringArray(o.getJsonArray("functionNames"))
 				);
 
 		NaftahPlayground.LOGGER.trace("deserializeProvider - naftahFunctionProvider: " + naftahFunctionProvider);
@@ -474,11 +573,7 @@ public class ClassScanningResultLoader {
 					o.getString("name"),
 					o.getBoolean("useQualifiedName", false),
 					o.getBoolean("useQualifiedAliases", false),
-					o
-							.getJsonArray("aliases")
-							.stream()
-							.map(v -> ((JsonString) v).getString())
-							.toArray(String[]::new),
+					toStringArray(o.getJsonArray("aliases")),
 					o.getString("description", ""),
 					o.getString("usage", ""),
 					safeClass(o.getString("returnType")),
@@ -489,6 +584,45 @@ public class ClassScanningResultLoader {
 		NaftahPlayground.LOGGER.trace("deserializeFunction - naftahFunction: " + naftahFunction);
 
 		return naftahFunction;
+	}
+
+	/**
+	 * Converts a {@link JsonArray} containing string values into a {@code String[]}.
+	 *
+	 * <p>If the provided array is {@code null}, an empty array is returned.</p>
+	 *
+	 * @param arr the JSON array to convert, or {@code null}
+	 * @return a new array containing all string values from the JSON array,
+	 *         or an empty array if {@code arr} is {@code null}
+	 */
+	private static String[] toStringArray(JsonArray arr) {
+		if (arr == null) return new String[0];
+
+		String[] out = new String[arr.size()];
+		for (int i = 0; i < arr.size(); i++) {
+			out[i] = arr.getString(i);
+		}
+		return out;
+	}
+
+	/**
+	 * Converts a JSON array of class names into an array of resolved classes.
+	 *
+	 * <p>Unresolvable classes are replaced with {@link Object} via
+	 * {@link #safeClass(String)}.</p>
+	 *
+	 * @param arr the JSON array of fully qualified class names
+	 * @return the resolved class array, never {@code null}
+	 */
+	private static Class<?>[] toClassArray(JsonArray arr) {
+		if (arr == null) return new Class<?>[0];
+		NaftahPlayground.LOGGER.trace("toClassArray :" + arr);
+
+		Class<?>[] out = new Class<?>[arr.size()];
+		for (int i = 0; i < arr.size(); i++) {
+			out[i] = safeClass(arr.getString(i));
+		}
+		return out;
 	}
 
 	/**
@@ -535,40 +669,27 @@ public class ClassScanningResultLoader {
 	}
 
 	/**
-	 * Converts a JSON array of class names into an array of resolved classes.
+	 * Resolves a class by its fully qualified name using a shared cache.
 	 *
-	 * <p>Unresolvable classes are replaced with {@link Object} via
-	 * {@link #safeClass(String)}.</p>
+	 * <p>If the class cannot be loaded for any reason, {@link Object} is returned
+	 * as a safe fallback to allow processing to continue.</p>
 	 *
-	 * @param arr the JSON array of fully qualified class names
-	 * @return the resolved class array, never {@code null}
-	 */
-	private static Class<?>[] toClassArray(JsonArray arr) {
-		if (arr == null) return new Class<?>[0];
-		NaftahPlayground.LOGGER.trace("toClassArray :" + arr);
-		return arr
-				.stream()
-				.map(v -> safeClass(((JsonString) v).getString()))
-				.toArray(Class<?>[]::new);
-	}
-
-	/**
-	 * Attempts to resolve a class by name.
+	 * <p>Results are cached in a thread-safe map to avoid repeated class loading
+	 * attempts for the same name.</p>
 	 *
-	 * <p>If the class cannot be resolved, {@link Object} is returned as a
-	 * safe fallback to allow deserialization to continue.</p>
-	 *
-	 * @param name the fully qualified class name
-	 * @return the resolved class, or {@link Object} when resolution fails
+	 * @param name the fully qualified binary class name
+	 * @return the resolved {@link Class}, or {@link Object} if resolution fails
 	 */
 	private static Class<?> safeClass(String name) {
-		try {
-			NaftahPlayground.LOGGER.trace("safeClass for class :" + name);
-			return RuntimeClassScanner.loadClass(name);
-		}
-		catch (Throwable th) {
-			NaftahPlayground.LOGGER.trace("safeClass error : " + th.getMessage());
-			return Object.class;
-		}
+		return CLASS_CACHE.computeIfAbsent(name, n -> {
+			try {
+				NaftahPlayground.LOGGER.trace("safeClass for class :" + name);
+				return RuntimeClassScanner.loadClass(name);
+			}
+			catch (Throwable th) {
+				NaftahPlayground.LOGGER.trace("safeClass error : " + th.getMessage());
+				return Object.class;
+			}
+		});
 	}
 }
