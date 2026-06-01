@@ -76,6 +76,9 @@ const LOG_LEVELS = Object.freeze({
 
 const ENABLE_TRACE = false;
 
+const SCAN_CLASS_PATH = false;
+const CACHE_LOAD_ASYNC = true;
+
 const LOG_LEVEL =
   (window.NAFTAH_ENV === "production")
     ? LOG_LEVELS.INFO
@@ -223,22 +226,24 @@ function showErrorBanner() {
 }
 
 async function Java_org_daiitech_naftah_playground_NaftahPlayground_setBootstrapState(lib, state) {
-  switch (state) {
-    case RUNTIME_STATE.BOOTSTRAPPING:
-      showBootstrapBanner();
-      break;
+	switch (state) {
+	case RUNTIME_STATE.BOOTSTRAPPING:
+	  showBootstrapBanner();
+	  break;
 
-    case RUNTIME_STATE.READY:
-      setRuntimeReady();
-      break;
+	case RUNTIME_STATE.READY:
+	  setRuntimeReady();
+  	  console.timeEnd("initRuntime");
+	  break;
 
-    case RUNTIME_STATE.FAILED:
-      showErrorBanner();
-      break;
+	case RUNTIME_STATE.FAILED:
+	  showErrorBanner();
+	  console.timeEnd("initRuntime");
+	  break;
 
-    default:
-      console.warn("[Naftah] Unknown runtime state:", state);
-  }
+	default:
+	  console.warn("[Naftah] Unknown runtime state:", state);
+	}
 }
 
 /**
@@ -258,6 +263,8 @@ async function initRuntime() {
     try {
         log("Initializing...");
 
+		console.time("initRuntime");
+
         await cheerpjInit({
 			version: 17,
 
@@ -269,15 +276,17 @@ async function initRuntime() {
             },
 
 			javaProperties: [
-			"naftah.playground.log.level="+LOG_LEVEL,
-			"naftah.scanClassPath=false",
-			"naftah.cache.minimal.path=/app/assets/data/minimal-class-scanning-result.json.gz",
-			"naftah.cache.path=/app/assets/data/class-scanning-result.json.gz",
+				`naftah.playground.log.level=${LOG_LEVEL}`,
+				`naftah.scanClassPath=${SCAN_CLASS_PATH}`,
+				`naftah.cache.async=${CACHE_LOAD_ASYNC}`,
+				`${SCAN_CLASS_PATH ? "naftah.cache.path=/app/assets/data/class-scanning-result.json.gz"
+								 : "naftah.cache.minimal.path=/app/assets/data/minimal-class-scanning-result.json.gz"}`
 			],
 
 			preloadResources: {
-			"/app/assets/data/minimal-class-scanning-result.json.gz": [],
-			"/app/assets/data/class-scanning-result.json.gz": [],
+				[SCAN_CLASS_PATH ? "/app/assets/data/class-scanning-result.json.gz"
+								 : "/app/assets/data/minimal-class-scanning-result.json.gz"
+				] : [],
 			},
 
 			preloadProgress(done, total) {
