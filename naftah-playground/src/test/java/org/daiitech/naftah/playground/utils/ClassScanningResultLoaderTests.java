@@ -7,12 +7,11 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class ClassScanningResultLoaderTest {
+class ClassScanningResultLoaderTests {
 
 	@TempDir
 	Path tempDir;
@@ -108,36 +107,37 @@ class ClassScanningResultLoaderTest {
 
 		var result = ClassScanningResultLoader.fromJson(file, false);
 
-		assertNotNull(result);
+		Assertions.assertNotNull(result);
 
 		// classQualifiers
-		assertTrue(result.getClassQualifiers().contains("java.lang.String"));
+		Assertions.assertTrue(result.getClassQualifiers().contains("java.lang.String"));
 
 		// arabic mapping
-		assertEquals(   "java.lang.String",
-						result.getArabicClassQualifiers().get("نص"));
+		Assertions
+				.assertEquals(  "java.lang.String",
+								result.getArabicClassQualifiers().get("نص"));
 
 		// class loader reconstruction
 		var loaders = result.getClassNames();
-		assertNotNull(loaders);
-		assertTrue(loaders.get("java.lang.String") instanceof URLClassLoader);
+		Assertions.assertNotNull(loaders);
+		Assertions.assertTrue(loaders.get("java.lang.String") instanceof URLClassLoader);
 
 		// classes
-		assertTrue(result.getClasses().containsKey("نص"));
-		assertTrue(result.getClasses().containsValue(String.class));
+		Assertions.assertTrue(result.getClasses().containsKey("نص"));
+		Assertions.assertTrue(result.getClasses().containsValue(String.class));
 
 		// JVM function
 		var fn = result.getJvmFunctions().get("test").get(0);
-		assertEquals("length", fn.getMethod().getName());
+		Assertions.assertEquals("length", fn.getMethod().getName());
 
 		// constructor
 		var init = result.getJvmClassInitializers().get("init").get(0);
-		assertEquals("java.lang.String", init.getClazz().getName());
+		Assertions.assertEquals("java.lang.String", init.getClazz().getName());
 
 		// builtin
 		var builtin = result.getBuiltinFunctions().get("builtin").get(0);
-		assertEquals("length", builtin.getMethod().getName());
-		assertNotNull(builtin.getProviderInfo());
-		assertEquals("core", builtin.getProviderInfo().name());
+		Assertions.assertEquals("length", builtin.getMethod().getName());
+		Assertions.assertNotNull(builtin.getProviderInfo());
+		Assertions.assertEquals("core", builtin.getProviderInfo().name());
 	}
 }
