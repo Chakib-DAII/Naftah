@@ -13,17 +13,29 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
-import org.daiitech.naftah.builtin.lang.*;
-import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
+import org.daiitech.naftah.builtin.lang.JvmFunction;
+import org.daiitech.naftah.builtin.lang.NaftahFunction;
+import org.daiitech.naftah.builtin.lang.NaftahFunctionProvider;
 import org.daiitech.naftah.playground.NaftahPlayground;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
@@ -56,7 +68,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  *
  * @author Chakib Daii
  */
-public class ClassScanningResultLoader {
+public final class ClassScanningResultLoader {
 
 	/**
 	 * Thread-safe cache of resolved {@link Class} objects indexed by fully qualified class name.
@@ -70,7 +82,7 @@ public class ClassScanningResultLoader {
 
 	/**
 	 * Private constructor to prevent instantiation.
-	 * Throws {@link NaftahBugError} if called.
+	 * Throws {@link org.daiitech.naftah.errors.NaftahBugError} if called.
 	 */
 	private ClassScanningResultLoader() {
 		throw newNaftahBugInvalidUsageError();
@@ -263,7 +275,9 @@ public class ClassScanningResultLoader {
 	 *         or {@code null} if no class loader information is present
 	 */
 	private static Map<String, ClassLoader> toClassLoaders(JsonObject obj) {
-		if (obj == null || !obj.containsKey("classNames")) return null;
+		if (obj == null || !obj.containsKey("classNames")) {
+			return null;
+		}
 
 		JsonObject classNamesObj = obj.getJsonObject("classNames");
 		NaftahPlayground.LOGGER.trace("toClassLoaders - classNames : " + classNamesObj);
@@ -314,7 +328,10 @@ public class ClassScanningResultLoader {
 	 * @return a map of aliases to resolved classes, or {@code null}
 	 */
 	private static Map<String, Class<?>> toClassMap(JsonObject obj) {
-		if (obj == null) return null;
+		if (obj == null) {
+			return null;
+		}
+
 		NaftahPlayground.LOGGER.trace("toClassMap : " + obj);
 
 		int size = obj.size();
@@ -340,7 +357,10 @@ public class ClassScanningResultLoader {
 	 * @return a set containing all string values, or {@code null} if the array is {@code null}
 	 */
 	private static Set<String> toSet(JsonArray arr) {
-		if (arr == null) return null;
+		if (arr == null) {
+			return null;
+		}
+
 		NaftahPlayground.LOGGER.trace("toSet : " + arr);
 
 		int size = arr.size();
@@ -361,7 +381,10 @@ public class ClassScanningResultLoader {
 	 * @return a map containing all key-value pairs, or {@code null} if the object is {@code null}
 	 */
 	private static Map<String, String> toMap(JsonObject obj) {
-		if (obj == null) return null;
+		if (obj == null) {
+			return null;
+		}
+
 		NaftahPlayground.LOGGER.trace("toMap : " + obj);
 
 		int size = obj.size();
@@ -385,7 +408,10 @@ public class ClassScanningResultLoader {
 	 * @return the reconstructed JVM function registry
 	 */
 	private static Map<String, List<JvmFunction>> toJvmFunctions(JsonObject obj) {
-		if (obj == null) return null;
+		if (obj == null) {
+			return null;
+		}
+
 		NaftahPlayground.LOGGER.trace("toJvmFunctions : " + obj);
 
 		int size = obj.size();
@@ -406,7 +432,10 @@ public class ClassScanningResultLoader {
 					Class<?>[] params = toClassArray(o.getJsonArray("methodParameterTypes"));
 
 					Method method = findMethod(clazz, o.getString("methodName"), params);
-					if (method == null) continue;
+
+					if (method == null) {
+						continue;
+					}
 
 					list
 							.add(new JvmFunction(
@@ -439,7 +468,10 @@ public class ClassScanningResultLoader {
 	 * @return the reconstructed JVM class initializer registry
 	 */
 	private static Map<String, List<JvmClassInitializer>> toJvmClassInitializers(JsonObject obj) {
-		if (obj == null) return null;
+		if (obj == null) {
+			return null;
+		}
+
 		NaftahPlayground.LOGGER.trace("toJvmClassInitializers : " + obj);
 
 		int size = obj.size();
@@ -460,7 +492,9 @@ public class ClassScanningResultLoader {
 					Class<?>[] params = toClassArray(o.getJsonArray("constructorParameterTypes"));
 
 					Constructor<?> ctor = findConstructor(clazz, params);
-					if (ctor == null) continue;
+					if (ctor == null) {
+						continue;
+					}
 
 					list
 							.add(new JvmClassInitializer(
@@ -492,7 +526,10 @@ public class ClassScanningResultLoader {
 	 * @return the reconstructed built-in function registry
 	 */
 	private static Map<String, List<BuiltinFunction>> toBuiltinFunctions(JsonObject obj) {
-		if (obj == null) return null;
+		if (obj == null) {
+			return null;
+		}
+
 		NaftahPlayground.LOGGER.trace("toBuiltinFunctions : " + obj);
 
 		int size = obj.size();
@@ -513,7 +550,9 @@ public class ClassScanningResultLoader {
 					Class<?>[] params = toClassArray(o.getJsonArray("methodParameterTypes"));
 
 					Method method = findMethod(clazz, o.getString("methodName"), params);
-					if (method == null) continue;
+					if (method == null) {
+						continue;
+					}
 
 					list
 							.add(new BuiltinFunction(
@@ -541,7 +580,10 @@ public class ClassScanningResultLoader {
 	 * @return the reconstructed provider descriptor, or {@code null}
 	 */
 	private static NaftahFunctionProvider deserializeProvider(JsonObject o) {
-		if (o == null) return null;
+		if (o == null) {
+			return null;
+		}
+
 		NaftahPlayground.LOGGER.trace("deserializeProvider : " + o);
 
 		var naftahFunctionProvider = NaftahFunctionProvider
@@ -565,7 +607,10 @@ public class ClassScanningResultLoader {
 	 * @return the reconstructed function descriptor, or {@code null}
 	 */
 	private static NaftahFunction deserializeFunction(JsonObject o) {
-		if (o == null) return null;
+		if (o == null) {
+			return null;
+		}
+
 		NaftahPlayground.LOGGER.trace("deserializeFunction : " + o);
 
 		var naftahFunction = NaftahFunction
@@ -596,7 +641,9 @@ public class ClassScanningResultLoader {
 	 *         or an empty array if {@code arr} is {@code null}
 	 */
 	private static String[] toStringArray(JsonArray arr) {
-		if (arr == null) return new String[0];
+		if (arr == null) {
+			return new String[0];
+		}
 
 		String[] out = new String[arr.size()];
 		for (int i = 0; i < arr.size(); i++) {
@@ -615,7 +662,10 @@ public class ClassScanningResultLoader {
 	 * @return the resolved class array, never {@code null}
 	 */
 	private static Class<?>[] toClassArray(JsonArray arr) {
-		if (arr == null) return new Class<?>[0];
+		if (arr == null) {
+			return new Class<?>[0];
+		}
+
 		NaftahPlayground.LOGGER.trace("toClassArray :" + arr);
 
 		Class<?>[] out = new Class<?>[arr.size()];

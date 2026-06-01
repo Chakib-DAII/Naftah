@@ -20,7 +20,7 @@ import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsage
  *
  * @author Chakib Daii
  */
-public class LogManager {
+public final class LogManager {
 
 	/**
 	 * Private constructor to prevent instantiation.

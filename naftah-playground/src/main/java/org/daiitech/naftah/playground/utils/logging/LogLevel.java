@@ -3,6 +3,8 @@
 
 package org.daiitech.naftah.playground.utils.logging;
 
+import java.util.Locale;
+
 /**
  * Defines the logging levels supported by the playground logging system.
  *
@@ -85,9 +87,12 @@ public enum LogLevel {
 	 *         the input is invalid
 	 */
 	public static LogLevel fromString(String s) {
-		if (s == null) return INFO;
+		if (s == null) {
+			return INFO;
+		}
+
 		try {
-			return LogLevel.valueOf(s.toUpperCase());
+			return LogLevel.valueOf(s.toUpperCase(Locale.US));
 		}
 		catch (Exception e) {
 			return INFO;
