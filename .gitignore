@@ -69,3 +69,5 @@ out/
 /docs-site/_data/minimal-class-scanning-result.json
 /venv/
 /.venv/
+/docs-site/venv/
+/docs-site/.venv/
