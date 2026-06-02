@@ -198,6 +198,20 @@ loadScripts(document, 'script');</script>
 <div class="block">Constructs the canonical name for a built-in function, optionally using a qualified name
  that includes the provider name.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBuiltinMethod(java.lang.Class,java.lang.reflect.Method)" class="member-name-link">getBuiltinMethod</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Constructs a <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> from a resolved <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBuiltinMethod(java.lang.String,java.lang.String,java.lang.String%5B%5D)" class="member-name-link">getBuiltinMethod</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;methodName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;parameterTypeNames)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resolves and constructs a <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> from a class name, method name,
+ and parameter type names.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getBuiltinMethods(java.lang.Class)" class="member-name-link">getBuiltinMethods</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -329,6 +343,11 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#normalizePrimitive(java.lang.Class)" class="member-name-link">normalizePrimitive</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Normalizes a primitive <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> to its corresponding wrapper type.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolveType(java.lang.String)" class="member-name-link">resolveType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resolves a Java type name into its corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> object.</div>
 </div>
 </div>
 </div>
@@ -983,6 +1002,65 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getBuiltinMethod(java.lang.String,java.lang.String,java.lang.String[])">
+<h3>getBuiltinMethod</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a></span>&nbsp;<span class="element-name">getBuiltinMethod</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;methodName,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;parameterTypeNames)</span></div>
+<div class="block">Resolves and constructs a <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> from a class name, method name,
+ and parameter type names.
+
+ <p>This is a convenience lookup method that performs the following steps:</p>
+ <ol>
+ <li>Resolves the target class using <a href="#resolveType(java.lang.String)"><code>resolveType(String)</code></a></li>
+ <li>Resolves each parameter type name into a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a></li>
+ <li>Locates the declared method via reflection</li>
+ <li>Delegates to <a href="#getBuiltinMethod(java.lang.Class,java.lang.reflect.Method)"><code>getBuiltinMethod(Class, Method)</code></a> for metadata enrichment</li>
+ </ol>
+
+ <p><b>Failure behavior:</b> If any step fails (class resolution, parameter resolution,
+ or method lookup), this method returns <code>null</code> without throwing an exception.</p>
+
+ <p>This method is typically used during deserialization of built-in function metadata
+ where only string-based type information is available.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>className</code> - fully qualified name of the declaring class</dd>
+<dd><code>methodName</code> - name of the method to resolve</dd>
+<dd><code>parameterTypeNames</code> - fully qualified parameter type names</dd>
+<dt>Returns:</dt>
+<dd>a <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a>, or <code>null</code> if resolution fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getBuiltinMethod(java.lang.Class,java.lang.reflect.Method)">
+<h3>getBuiltinMethod</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a></span>&nbsp;<span class="element-name">getBuiltinMethod</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link">Method</a>&nbsp;method)</span></div>
+<div class="block">Constructs a <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> from a resolved <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a>.
+
+ <p>This method enriches the raw reflection <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Method.html" title="class or interface in java.lang.reflect" class="external-link"><code>Method</code></a> with Naftah-specific metadata:</p>
+ <ul>
+ <li><a href="../../builtin/lang/NaftahFunctionProvider.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahFunctionProvider</code></a> from the declaring class</li>
+ <li><a href="../../builtin/lang/NaftahFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>NaftahFunction</code></a> from the method</li>
+ </ul>
+
+ <p>The provider configuration determines whether function names and aliases are qualified
+ during metadata extraction.</p>
+
+ <p>The resulting <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> is a fully constructed runtime descriptor
+ used by the Naftah execution engine.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>clazz</code> - declaring class of the method</dd>
+<dd><code>method</code> - reflected method instance</dd>
+<dt>Returns:</dt>
+<dd>a fully constructed <a href="../../builtin/lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a></dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="classToDetailedString(java.lang.Class)">
 <h3>classToDetailedString</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">classToDetailedString</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&nbsp;clazz)</span></div>
@@ -1062,6 +1140,43 @@ loadScripts(document, 'script');</script>
 <dd><code>clazz</code> - the class to normalize; must not be null</dd>
 <dt>Returns:</dt>
 <dd>the wrapper class for a primitive type, or the original class if not primitive</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="resolveType(java.lang.String)">
+<h3>resolveType</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">resolveType</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
+<div class="block">Resolves a Java type name into its corresponding <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> object.
+
+ <p>This method supports both primitive types and reference types:</p>
+
+ <h3>Primitive type mappings</h3>
+ <ul>
+ <li><code>int</code> → <code>int.class</code></li>
+ <li><code>long</code> → <code>long.class</code></li>
+ <li><code>boolean</code> → <code>boolean.class</code></li>
+ <li><code>double</code> → <code>double.class</code></li>
+ <li><code>float</code> → <code>float.class</code></li>
+ <li><code>char</code> → <code>char.class</code></li>
+ <li><code>byte</code> → <code>byte.class</code></li>
+ <li><code>short</code> → <code>short.class</code></li>
+ <li><code>void</code> → <code>void.class</code></li>
+ </ul>
+
+ <p><b>Reference types:</b> Any non-primitive type is resolved using
+ <a href="RuntimeClassScanner.html#loadClass(java.lang.String,java.util.function.Supplier)"><code>RuntimeClassScanner.loadClass(String, java.util.function.Supplier)</code></a>.
+ If resolution fails, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a> is returned as a safe fallback.</p>
+
+ <p>This fallback ensures that metadata loading and reflection-based reconstruction
+ can continue even when certain classes are unavailable at runtime.</p>
+
+ <p><b>Note:</b> This method never throws and always returns a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> instance.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - fully qualified class name or primitive type name</dd>
+<dt>Returns:</dt>
+<dd>resolved <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a>, or <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link"><code>Object</code></a> if resolution fails</dd>
 </dl>
 </section>
 </li>

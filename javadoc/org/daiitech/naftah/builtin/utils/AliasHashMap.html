@@ -178,10 +178,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;K,<wbr>
 V&gt;&nbsp;void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K,org.daiitech.naftah.builtin.lang.BuiltinFunction)" class="member-name-link">fillAliasToKeyMap</a><wbr>(<a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;K,<wbr>V&gt;&nbsp;map,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K)" class="member-name-link">fillAliasToKeyMap</a><wbr>(<a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;K,<wbr>V&gt;&nbsp;map,
  K&nbsp;alias,
- K&nbsp;canonicalKey,
- <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;fn)</code></div>
+ K&nbsp;canonicalKey)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Fills the alias-to-key mapping for a given <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a>.</div>
 </div>
@@ -216,6 +215,12 @@ V&gt;&nbsp;void</code></div>
  map,
  allowing lookup by alias as well.
  </div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link">Collector</a>&lt;<a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunctionInfo</a>,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunctionInfo</a>&gt;,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunctionInfo</a>&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toInfoAliasGroupedByName()" class="member-name-link">toInfoAliasGroupedByName</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link"><code>Collector</code></a> that groups <a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunctionInfo</code></a> instances by their canonical key
+ and registers all qualified aliases in an <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a>.</div>
 </div>
 </div>
 </div>
@@ -313,13 +318,44 @@ V&gt;&nbsp;void</code></div>
 </section>
 </li>
 <li>
-<section class="detail" id="fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K,org.daiitech.naftah.builtin.lang.BuiltinFunction)">
-<h3 id="fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,java.lang.Object,java.lang.Object,org.daiitech.naftah.builtin.lang.BuiltinFunction)">fillAliasToKeyMap</h3>
+<section class="detail" id="toInfoAliasGroupedByName()">
+<h3>toInfoAliasGroupedByName</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link">Collector</a>&lt;<a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunctionInfo</a>,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunctionInfo</a>&gt;,<wbr><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunctionInfo</a>&gt;&gt;</span>&nbsp;<span class="element-name">toInfoAliasGroupedByName</span>()</div>
+<div class="block">Returns a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collector.html" title="class or interface in java.util.stream" class="external-link"><code>Collector</code></a> that groups <a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunctionInfo</code></a> instances by their canonical key
+ and registers all qualified aliases in an <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a>.
+
+ <p>The resulting map behaves as follows:</p>
+ <ul>
+ <li>The key is the canonical function key returned by <a href="../lang/BuiltinFunctionInfo.html#canonicalKey()"><code>BuiltinFunctionInfo.canonicalKey()</code></a>.</li>
+ <li>The value is a <code>List</code> of <a href="../lang/BuiltinFunctionInfo.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunctionInfo</code></a> instances sharing that key.</li>
+ <li>Each qualified alias is mapped to the canonical key for alias-based lookup.</li>
+ </ul>
+
+ <p>This collector is useful when working with precomputed function metadata
+ rather than runtime <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> instances.</p>
+
+ <p><strong>Note:</strong> Alias resolution uses <a href="../lang/BuiltinFunctionInfo.html#qualifiedAliases()"><code>BuiltinFunctionInfo.qualifiedAliases()</code></a>.</p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a collector that groups <code>BuiltinFunctionInfo</code>s by canonical key and registers aliases</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a></li>
+<li><a href="../lang/BuiltinFunctionInfo.html#canonicalKey()"><code>BuiltinFunctionInfo.canonicalKey()</code></a></li>
+<li><a href="../lang/BuiltinFunctionInfo.html#qualifiedAliases()"><code>BuiltinFunctionInfo.qualifiedAliases()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K)">
+<h3 id="fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,java.lang.Object,java.lang.Object)">fillAliasToKeyMap</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;K,<wbr>
 V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fillAliasToKeyMap</span><wbr><span class="parameters">(<a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils">AliasHashMap</a>&lt;K,<wbr>V&gt;&nbsp;map,
  K&nbsp;alias,
- K&nbsp;canonicalKey,
- <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang">BuiltinFunction</a>&nbsp;fn)</span></div>
+ K&nbsp;canonicalKey)</span></div>
 <div class="block">Fills the alias-to-key mapping for a given <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a>.
  <p>
  This method registers a mapping from a given alias to its canonical key.
@@ -339,7 +375,6 @@ V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dd><code>map</code> - the <a href="AliasHashMap.html" title="class in org.daiitech.naftah.builtin.utils"><code>AliasHashMap</code></a> to update</dd>
 <dd><code>alias</code> - the alias key to register</dd>
 <dd><code>canonicalKey</code> - the canonical key associated with the alias</dd>
-<dd><code>fn</code> - the <a href="../lang/BuiltinFunction.html" title="class in org.daiitech.naftah.builtin.lang"><code>BuiltinFunction</code></a> used for error reporting</dd>
 </dl>
 </section>
 </li>
@@ -390,7 +425,7 @@ V&gt;</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="elemen
 <dt>See Also:</dt>
 <dd>
 <ul class="see-list-long">
-<li><a href="#fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K,org.daiitech.naftah.builtin.lang.BuiltinFunction)"><code>fillAliasToKeyMap(AliasHashMap, Object, Object, BuiltinFunction)</code></a></li>
+<li><a href="#fillAliasToKeyMap(org.daiitech.naftah.builtin.utils.AliasHashMap,K,K)"><code>fillAliasToKeyMap(AliasHashMap, Object, Object)</code></a></li>
 </ul>
 </dd>
 </dl>

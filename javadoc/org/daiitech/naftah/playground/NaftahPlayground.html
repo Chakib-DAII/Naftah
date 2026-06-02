@@ -139,15 +139,30 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color">
 <div class="block">System property used to control asynchronous cache loading behavior.</div>
 </div>
-<div class="col-first even-row-color"><code>static final <a href="utils/logging/Logger.html" title="class in org.daiitech.naftah.playground.utils.logging">Logger</a></code></div>
-<div class="col-second even-row-color"><code><a href="#LOGGER" class="member-name-link">LOGGER</a></code></div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
+<div class="col-second even-row-color"><code><a href="#INDEX_CACHE_PATH" class="member-name-link">INDEX_CACHE_PATH</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">Absolute file system path to the full runtime index cache used by the playground.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="utils/logging/Logger.html" title="class in org.daiitech.naftah.playground.utils.logging">Logger</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#LOGGER" class="member-name-link">LOGGER</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Logger used by the playground runtime.</div>
+</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></code></div>
+<div class="col-second even-row-color"><code><a href="#MINIMAL_INDEX_CACHE_PATH" class="member-name-link">MINIMAL_INDEX_CACHE_PATH</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Absolute file system path to the minimal runtime index cache used by the playground.</div>
 </div>
 <div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#NAFTAH_PLAYGROUND_LOG_LEVEL_PROPERTY" class="member-name-link">NAFTAH_PLAYGROUND_LOG_LEVEL_PROPERTY</a></code></div>
 <div class="col-last odd-row-color">
 <div class="block">System property used to configure the playground logging level.</div>
+</div>
+<div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY" class="member-name-link">NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">System property used to enable or disable the classpath index in the playground.</div>
 </div>
 </div>
 </section>
@@ -252,6 +267,46 @@ loadScripts(document, 'script');</script>
 </ul>
 </dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY">
+<h3>NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY</span></div>
+<div class="block">System property used to enable or disable the classpath index in the playground.
+
+ <p>When set to <code>true</code>, the runtime will use the precomputed classpath
+ index for faster lookup instead of performing full classpath scanning.</p>
+
+ <p>If not defined, the default behavior is used.</p></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.playground.NaftahPlayground.NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="INDEX_CACHE_PATH">
+<h3>INDEX_CACHE_PATH</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">INDEX_CACHE_PATH</span></div>
+<div class="block">Absolute file system path to the full runtime index cache used by the playground.
+
+ <p>This value is resolved during static initialization and points to the
+ precomputed index file used to accelerate class and function lookups.</p></div>
+</section>
+</li>
+<li>
+<section class="detail" id="MINIMAL_INDEX_CACHE_PATH">
+<h3>MINIMAL_INDEX_CACHE_PATH</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">MINIMAL_INDEX_CACHE_PATH</span></div>
+<div class="block">Absolute file system path to the minimal runtime index cache used by the playground.
+
+ <p>The minimal index is a lightweight version of the full runtime index,
+ optimized for reduced memory footprint and faster startup times.</p></div>
 </section>
 </li>
 <li>

@@ -76,6 +76,7 @@ const LOG_LEVELS = Object.freeze({
 
 const ENABLE_TRACE = false;
 
+const USE_INDEX = true;
 const SCAN_CLASS_PATH = false;
 const CACHE_LOAD_ASYNC = true;
 
@@ -190,6 +191,7 @@ function setBanner(state, text) {
 }
 
 function showBootstrapBanner() {
+  showSpinner();   // show spinner
   setBanner(
     "bootstrapping",
     "⚠️ يتم الآن تشغيل بيئة نفطه… بعض الميزات قد لا تعمل بشكل كامل بعد."
@@ -199,6 +201,7 @@ function showBootstrapBanner() {
 function setRuntimeReady() {
   runtimeState = RUNTIME_STATE.READY;
 
+  hideSpinner();   // hide spinner
   setBanner(
     "ready",
     "✅ تم تشغيل بيئة نفطه بنجاح"
@@ -219,6 +222,7 @@ function setRuntimeReady() {
 function showErrorBanner() {
   runtimeState = RUNTIME_STATE.FAILED;
 
+  hideSpinner();   // hide spinner
   setBanner(
     "error",
     "❌ فشل تشغيل بيئة نفطه. حاول إعادة تحميل الصفحة."
@@ -278,22 +282,26 @@ async function initRuntime() {
 			javaProperties: [
 				`naftah.playground.log.level=${LOG_LEVEL}`,
 				`naftah.scanClassPath=${SCAN_CLASS_PATH}`,
+				`naftah.playground.index.active=${USE_INDEX}`,
 				`naftah.cache.async=${CACHE_LOAD_ASYNC}`,
 				`${SCAN_CLASS_PATH ? "naftah.cache.path=/app/assets/data/class-scanning-result.json.gz"
-								 : "naftah.cache.minimal.path=/app/assets/data/minimal-class-scanning-result.json.gz"}`
+                   		   : (USE_INDEX ? "naftah.cache.index.minimal.path=/app/assets/data/minimal-class-scanning-index.json.gz"
+                   		   				: "naftah.cache.minimal.path=/app/assets/data/minimal-class-scanning-result.json.gz")}`
 			],
 
 			preloadResources: {
 				[SCAN_CLASS_PATH ? "/app/assets/data/class-scanning-result.json.gz"
-								 : "/app/assets/data/minimal-class-scanning-result.json.gz"
-				] : [],
+						   : (USE_INDEX ? "/app/assets/data/minimal-class-scanning-index.json.gz"
+						   				: "/app/assets/data/minimal-class-scanning-result.json.gz")
+				] : [0, 100],
 			},
 
 			preloadProgress(done, total) {
 				console.log(`Preloaded ${done}/${total}`);
 			},
 
-			enableDebug: false
+			status: LOG_LEVEL === LOG_LEVELS.DEBUG ? "none" : "default",
+			enableDebug: LOG_LEVEL === LOG_LEVELS.DEBUG ? true : false
         });
 
         log("Loading JAR...");
@@ -311,22 +319,22 @@ const examples = {
   // BASIC
   hello_world: { title: "مرحباً أيها العالم", code: `إطبع("مرحباً أيها العالم!")` },
   hello_naftah: { title: "مرحباً نفطه", code: `إطبع("🌴 نفطه: واحة السحر والجمال
-                                               في قلب الصحراء التونسية، حيث تمتد الرمال الذهبية بلا نهاية، تقع مدينة نفطه، المعروفة بلقب 'الكوفة الصغيرة' . هذه المدينة ليست مجرد نقطة على الخريطة، بل هي لوحة فنية حية تنبض بالحياة والتاريخ.
+في قلب الصحراء التونسية، حيث تمتد الرمال الذهبية بلا نهاية، تقع مدينة نفطه، المعروفة بلقب 'الكوفة الصغيرة' . هذه المدينة ليست مجرد نقطة على الخريطة، بل هي لوحة فنية حية تنبض بالحياة والتاريخ.
 
-                                               🕌 مدينة الألف مسجد
-                                               نفطه ليست فقط واحة من النخيل، بل هي أيضًا مركز روحي هام. تضم أكثر من 24 مسجدًا و100 زاوية، مما يجعلها واحدة من أبرز مراكز التصوف في العالم الإسلامي. . إذا كنت من محبي الهدوء والتأمل، فزيارة هذه الأماكن ستأخذك في رحلة روحية عميقة.
+🕌 مدينة الألف مسجد
+نفطه ليست فقط واحة من النخيل، بل هي أيضًا مركز روحي هام. تضم أكثر من 24 مسجدًا و100 زاوية، مما يجعلها واحدة من أبرز مراكز التصوف في العالم الإسلامي. . إذا كنت من محبي الهدوء والتأمل، فزيارة هذه الأماكن ستأخذك في رحلة روحية عميقة.
 
-                                               🎬 نفطه في عالم السينما
-                                               هل تعلم أن نفطه كانت موقعًا لتصوير مشاهد من فيلم 'حرب النجوم'؟ نعم، تلك الكهوف الصحراوية التي ظهرت في الفيلم تقع في نفطه، مما يجعلها وجهة مميزة لعشاق السينما والخيال العلمي.
+🎬 نفطه في عالم السينما
+هل تعلم أن نفطه كانت موقعًا لتصوير مشاهد من فيلم 'حرب النجوم'؟ نعم، تلك الكهوف الصحراوية التي ظهرت في الفيلم تقع في نفطه، مما يجعلها وجهة مميزة لعشاق السينما والخيال العلمي.
 
-                                               🏜️ مغامرة في الصحراء
-                                               إذا كنت من محبي المغامرة، فنفطه تقدم لك تجربة لا تُنسى. يمكنك ركوب الجمال عبر الكثبان الرملية، أو الاستمتاع بمشاهدة غروب الشمس الساحر من أعلى الكثبان.
+🏜️ مغامرة في الصحراء
+إذا كنت من محبي المغامرة، فنفطه تقدم لك تجربة لا تُنسى. يمكنك ركوب الجمال عبر الكثبان الرملية، أو الاستمتاع بمشاهدة غروب الشمس الساحر من أعلى الكثبان.
 
-                                               🍽️ المأكولات التقليدية
-                                               لا تكتمل زيارة نفطه دون تذوق المأكولات التقليدية. جرب 'الكسكسي' المحضر بطرق محلية، أو 'الطاجين' مع التوابل الفريدة التي تشتهر بها المنطقة.
+🍽️ المأكولات التقليدية
+لا تكتمل زيارة نفطه دون تذوق المأكولات التقليدية. جرب 'الكسكسي' المحضر بطرق محلية، أو 'الطاجين' مع التوابل الفريدة التي تشتهر بها المنطقة.
 
-                                               🌟 لماذا نفطه؟
-                                               نفطه ليست مجرد مدينة، بل هي تجربة ثقافية وروحية وطبيعية متكاملة. من تاريخها العريق إلى جمالها الطبيعي، ومن تقاليدها العميقة إلى ضيافة أهلها، تجعل من زيارتها رحلة لا تُنسى.")
+🌟 لماذا نفطه؟
+نفطه ليست مجرد مدينة، بل هي تجربة ثقافية وروحية وطبيعية متكاملة. من تاريخها العريق إلى جمالها الطبيعي، ومن تقاليدها العميقة إلى ضيافة أهلها، تجعل من زيارتها رحلة لا تُنسى.")
 ` },
 
 //  // ASSIGNMENT
@@ -341,7 +349,28 @@ const examples = {
 //  // CONDITIONALS
 //  if_basic: { title: "", code: `` },
 //  if_else: { title: "", code: `` },
-//  if_elseif: { title: "", code: `` },
+  if_elseif: { title: "تعبير شرطي يحتوي على ثلاث حالات", code: `
+--- تعريف متغيرين بقيم ابتدائية
+متغير أ تعيين ١
+متغير ب تعيين 4
+
+---* تحقق من قيمة مجموع "أ + ب" باستخدام تعبير شرطي يحتوي على ثلاث حالات:
+   - إذا كان الناتج أكبر من 10، اطبع رسالة بذلك.
+   - إذا كان الناتج أصغر من 10، اطبع رسالة مناسبة.
+   - إذا كان الناتج يساوي 10، اطبع رسالة مساوية.
+*---
+إذا أ زائد ب أكبر_من ١٠ إذن {
+  --- في حال تحقق الشرط: مجموع أ + ب أكبر من 10
+إطبع("أ زائد ب أكبر من 10")
+} غير_ذلك_إذا أ زائد ب أصغر_من ١٠ إذن {
+  --- في حال لم يتحقق الشرط الأول، وتحقق هذا الشرط: المجموع أصغر من 10
+إطبع("أ زائد ب أصغر من 10")
+} غير_ذلك {
+  --- في حال لم يتحقق أي من الشرطين السابقين، أي أن أ + ب = 10
+إطبع("أ زائد ب يساوي 10")
+}
+أنهي
+` },
 //  ternary_basic: { title: "", code: `` },
 //  ternary_nested: { title: "", code: `` },
 //  nullish_basic: { title: "", code: `` },
@@ -411,9 +440,17 @@ function loadExample(key) {
   const ex = examples[key];
   if (!ex) return;
 
-  document.getElementById("input").value = ex.code || "";
+  const textarea = document.getElementById("input");
+  textarea.value = ex.code || "";
+
+  // Force line‑number update & reset scroll
+  updateLineNumbers();
+  textarea.scrollTop = 0;
+  syncLineNumberScroll();
+
   document.getElementById("console").textContent = "";
 }
+
 function initExamplesSelect() {
   const select = document.getElementById("examples-select");
   if (!select) return;
@@ -448,8 +485,56 @@ function initExamplesSelect() {
 
 document.addEventListener("DOMContentLoaded", () => {
   runButton.disabled = true;
+  showSpinner();
   initExamplesSelect();
+  updateLineNumbers();
 });
+
+function updateLineNumbers() {
+  const textarea = document.getElementById('input');
+  const lineNumbers = document.getElementById('line-numbers');
+  if (!textarea || !lineNumbers) return;
+
+  const lines = textarea.value.split('\n').length;
+  // Create line numbers string (right-aligned within the div)
+  let numbers = '';
+  for (let i = 1; i <= lines; i++) {
+    numbers += i + '\n';
+  }
+  lineNumbers.textContent = numbers;
+}
+
+function syncLineNumberScroll() {
+  const textarea = document.getElementById('input');
+  const lineNumbers = document.getElementById('line-numbers');
+  if (!textarea || !lineNumbers) return;
+  lineNumbers.scrollTop = textarea.scrollTop;
+}
+
+// Initialize and attach events
+const textarea = document.getElementById('input');
+if (textarea) {
+  textarea.addEventListener('input', updateLineNumbers);
+  textarea.addEventListener('scroll', syncLineNumberScroll);
+  // Also update on resize (lines may be added/removed)
+  window.addEventListener('resize', updateLineNumbers);
+  new ResizeObserver(updateLineNumbers).observe(textarea);
+
+  // Initial population
+  updateLineNumbers();
+}
+
+const spinnerOverlay = document.getElementById('spinner-overlay');
+
+function showSpinner() {
+  if (spinnerOverlay) spinnerOverlay.classList.remove('hidden');
+  runButton.disabled = true;
+}
+
+function hideSpinner() {
+  if (spinnerOverlay) spinnerOverlay.classList.add('hidden');
+  runButton.disabled = false;
+}
 
 /**
  * Executes Naftah source code through the Java runtime.

@@ -233,16 +233,17 @@ loadScripts(document, 'script');</script>
 <div class="block">Extracts a nested JAR entry from a JAR file and writes it to a temporary file.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadClass(java.lang.String)" class="member-name-link">loadClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadClass(java.lang.String,java.net.URLClassLoader,java.util.function.Supplier)" class="member-name-link">loadClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html" title="class or interface in java.net" class="external-link">URLClassLoader</a>&nbsp;classLoader,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;defaultValue)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Attempts to load a class with the specified fully qualified name using the
- predefined class loaders.</div>
+<div class="block">Attempts to load a class using a chain of available class loaders.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadClass(java.lang.String,java.net.URLClassLoader)" class="member-name-link">loadClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html" title="class or interface in java.net" class="external-link">URLClassLoader</a>&nbsp;classLoader)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadClass(java.lang.String,java.util.function.Supplier)" class="member-name-link">loadClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;defaultValue)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Attempts to load a class with the given name using a set of class loaders.</div>
+<div class="block">Attempts to load a class using the predefined class loader chain.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadClasses(java.util.Map,boolean)" class="member-name-link">loadClasses</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ClassLoader.html" title="class or interface in java.lang" class="external-link">ClassLoader</a>&gt;&nbsp;classNames,
@@ -623,40 +624,59 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="loadClass(java.lang.String,java.net.URLClassLoader)">
+<section class="detail" id="loadClass(java.lang.String,java.net.URLClassLoader,java.util.function.Supplier)">
 <h3>loadClass</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">loadClass</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html" title="class or interface in java.net" class="external-link">URLClassLoader</a>&nbsp;classLoader)</span></div>
-<div class="block">Attempts to load a class with the given name using a set of class loaders.
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html" title="class or interface in java.net" class="external-link">URLClassLoader</a>&nbsp;classLoader,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;defaultValue)</span></div>
+<div class="block">Attempts to load a class using a chain of available class loaders.
 
- <p>The method tries the predefined class loaders, optionally including the provided
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html" title="class or interface in java.net" class="external-link"><code>URLClassLoader</code></a>, to load the class without initializing it.</p></div>
+ <p>This method iterates over the predefined <code>CLASS_LOADERS</code> array,
+ optionally appending the provided <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html" title="class or interface in java.net" class="external-link"><code>URLClassLoader</code></a>, and attempts
+ to resolve the class without initializing it.</p>
+
+ <p>Class loading is performed in a fail-safe manner: any exceptions thrown
+ by individual class loaders are ignored and the next loader is tried.</p>
+
+ <h3>Lookup behavior</h3>
+ <ul>
+ <li>Tries all predefined class loaders in order</li>
+ <li>Optionally includes the provided <code>classLoader</code> if not <code>null</code></li>
+ <li>Uses <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html#forName(java.lang.String,boolean,java.lang.ClassLoader)" title="class or interface in java.lang" class="external-link"><code>Class.forName(String, boolean, ClassLoader)</code></a> with initialization disabled</li>
+ </ul>
+
+ <h3>Failure behavior</h3>
+ <p>If no class loader is able to resolve the class, the <code>defaultValue</code>
+ supplier is invoked and its result is returned.</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>className</code> - the fully qualified name of the class to load</dd>
-<dd><code>classLoader</code> - an optional <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html" title="class or interface in java.net" class="external-link"><code>URLClassLoader</code></a> to use for loading the class; may be null</dd>
+<dd><code>className</code> - fully qualified binary name of the class to load</dd>
+<dd><code>classLoader</code> - optional <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URLClassLoader.html" title="class or interface in java.net" class="external-link"><code>URLClassLoader</code></a> appended to the loader chain; may be <code>null</code></dd>
+<dd><code>defaultValue</code> - fallback supplier invoked when class resolution fails; must not be <code>null</code></dd>
 <dt>Returns:</dt>
-<dd>the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> object if found and loaded successfully; <code>null</code> if the class
-         could not be loaded by any of the class loaders</dd>
+<dd>the resolved <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a>, or the value provided by <code>defaultValue</code></dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="loadClass(java.lang.String)">
+<section class="detail" id="loadClass(java.lang.String,java.util.function.Supplier)">
 <h3>loadClass</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">loadClass</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className)</span></div>
-<div class="block">Attempts to load a class with the specified fully qualified name using the
- predefined class loaders.
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">loadClass</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;className,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;&gt;&nbsp;defaultValue)</span></div>
+<div class="block">Attempts to load a class using the predefined class loader chain.
 
- <p>This method is equivalent to invoking
- <a href="#loadClass(java.lang.String,java.net.URLClassLoader)"><code>loadClass(String, URLClassLoader)</code></a> with a <code>null</code>
- class loader.</p></div>
+ <p>This is a convenience overload of
+ <a href="#loadClass(java.lang.String,java.net.URLClassLoader,java.util.function.Supplier)"><code>loadClass(String, URLClassLoader, Supplier)</code></a> that does not
+ provide an additional class loader.</p>
+
+ <p>If class resolution fails, the provided <code>defaultValue</code> supplier
+ is invoked.</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>className</code> - the fully qualified name of the class to load</dd>
+<dd><code>className</code> - fully qualified binary name of the class to load</dd>
+<dd><code>defaultValue</code> - fallback supplier invoked when class resolution fails</dd>
 <dt>Returns:</dt>
-<dd>the resolved <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a> object, or <code>null</code> if the class
-         cannot be loaded</dd>
+<dd>the resolved <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link"><code>Class</code></a>, or the value provided by <code>defaultValue</code></dd>
 </dl>
 </section>
 </li>
