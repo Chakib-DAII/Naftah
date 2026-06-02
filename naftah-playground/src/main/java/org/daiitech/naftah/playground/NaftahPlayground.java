@@ -6,6 +6,8 @@ package org.daiitech.naftah.playground;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -17,14 +19,17 @@ import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
-import org.daiitech.naftah.playground.utils.ClassScanningResultLoader;
+import org.daiitech.naftah.playground.utils.ClassScanningLoader;
 import org.daiitech.naftah.playground.utils.logging.LogManager;
 import org.daiitech.naftah.playground.utils.logging.Logger;
+import org.daiitech.naftah.utils.reflect.ClassScanningIndex;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 
 import static org.daiitech.naftah.Naftah.CACHE_PATH_PROPERTY;
+import static org.daiitech.naftah.Naftah.INDEX_CACHE_PATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_RUN_PROPERTY;
 import static org.daiitech.naftah.Naftah.MINIMAL_CACHE_PATH_PROPERTY;
+import static org.daiitech.naftah.Naftah.MINIMAL_INDEX_CACHE_PATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.getNaftahValueToString;
 import static org.daiitech.naftah.builtin.utils.ObjectUtils.isSimpleOrBuiltinOrCollectionOrMapOfSimpleType;
@@ -74,6 +79,32 @@ public class NaftahPlayground {
 	private static final String NAFTAH_PLAYGROUND_LOG_LEVEL_PROPERTY = "naftah.playground.log.level";
 
 	/**
+	 * System property used to enable or disable the classpath index in the playground.
+	 *
+	 * <p>When set to {@code true}, the runtime will use the precomputed classpath
+	 * index for faster lookup instead of performing full classpath scanning.</p>
+	 *
+	 * <p>If not defined, the default behavior is used.</p>
+	 */
+	private static final String NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY = "naftah.playground.index.active";
+
+	/**
+	 * Absolute file system path to the full runtime index cache used by the playground.
+	 *
+	 * <p>This value is resolved during static initialization and points to the
+	 * precomputed index file used to accelerate class and function lookups.</p>
+	 */
+	public static final Path INDEX_CACHE_PATH;
+
+	/**
+	 * Absolute file system path to the minimal runtime index cache used by the playground.
+	 *
+	 * <p>The minimal index is a lightweight version of the full runtime index,
+	 * optimized for reduced memory footprint and faster startup times.</p>
+	 */
+	public static final Path MINIMAL_INDEX_CACHE_PATH;
+
+	/**
 	 * System property used to control asynchronous cache loading behavior.
 	 *
 	 * <p>If defined and enabled, cache entries may be loaded asynchronously,
@@ -86,6 +117,12 @@ public class NaftahPlayground {
 	static {
 		LogManager.setLevel(System.getProperty(NAFTAH_PLAYGROUND_LOG_LEVEL_PROPERTY));
 		LOGGER = LogManager.getLogger("NaftahPlayground");
+
+		String indexCachePathProp = System.getProperty(INDEX_CACHE_PATH_PROPERTY);
+		INDEX_CACHE_PATH = indexCachePathProp == null ? null : Paths.get(indexCachePathProp);
+
+		String minimalIndexCachePathProp = System.getProperty(MINIMAL_INDEX_CACHE_PATH_PROPERTY);
+		MINIMAL_INDEX_CACHE_PATH = minimalIndexCachePathProp == null ? null : Paths.get(minimalIndexCachePathProp);
 	}
 
 	/**
@@ -213,6 +250,16 @@ public class NaftahPlayground {
 
 			LOGGER.debug("Should scan classpath: " + shouldScanClasspath);
 
+			LOGGER.debug("Minimal index cache path : " + System.getProperty(MINIMAL_INDEX_CACHE_PATH_PROPERTY));
+			LOGGER
+					.debug("Minimal index cache path file exists: " + (MINIMAL_INDEX_CACHE_PATH != null && Files
+							.exists(MINIMAL_INDEX_CACHE_PATH)));
+
+			LOGGER.debug("Index cache path : " + System.getProperty(INDEX_CACHE_PATH_PROPERTY));
+			LOGGER
+					.debug("Index cache path file exists: " + (INDEX_CACHE_PATH != null && Files
+							.exists(INDEX_CACHE_PATH)));
+
 			LOGGER.debug("Minimal cache path : " + System.getProperty(MINIMAL_CACHE_PATH_PROPERTY));
 			LOGGER.debug("Minimal cache path file exists: " + Files.exists(DefaultContext.MINIMAL_CACHE_PATH));
 
@@ -222,14 +269,26 @@ public class NaftahPlayground {
 			try {
 				setBootstrapState(RuntimeState.BOOTSTRAPPING.name());
 
+				boolean useIndex = Boolean.getBoolean(NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY);
 				boolean asyncCacheLoading = Boolean.getBoolean(CACHE_LOAD_ASYNC_PROPERTY);
-				LOGGER.debug("loading Cache asynchronously: " + asyncCacheLoading);
+				LOGGER.debug("loading Cache asynchronously: " + asyncCacheLoading + " using index: " + useIndex);
 
-				ClassScanningResult classScanningResult = ClassScanningResultLoader
-						.fromJson(  shouldScanClasspath ? DefaultContext.CACHE_PATH : DefaultContext.MINIMAL_CACHE_PATH,
-									asyncCacheLoading);
+				if (useIndex) {
+					ClassScanningIndex classScanningIndex = ClassScanningLoader
+							.loadClassScanningIndexFromJson(shouldScanClasspath ?
+									INDEX_CACHE_PATH :
+									MINIMAL_INDEX_CACHE_PATH, asyncCacheLoading);
 
-				bootstrapPlayground(classScanningResult);
+					bootstrapPlayground(classScanningIndex);
+				}
+				else {
+					ClassScanningResult classScanningResult = ClassScanningLoader
+							.loadClassScanningResultFromJson(shouldScanClasspath ?
+									DefaultContext.CACHE_PATH :
+									DefaultContext.MINIMAL_CACHE_PATH, asyncCacheLoading);
+
+					bootstrapPlayground(classScanningResult);
+				}
 
 				LOGGER.debug("Classes : " + Objects.requireNonNullElse(DefaultContext.getClasses(), Map.of()));
 				LOGGER
@@ -242,16 +301,22 @@ public class NaftahPlayground {
 						.debug("BuiltinFunctions : " + Objects
 								.requireNonNullElse(DefaultContext.getBuiltinFunctions(), Map.of()));
 				LOGGER
+						.debug("BuiltinFunctionsIndex : " + Objects
+								.requireNonNullElse(DefaultContext.getBuiltinFunctionsIndex(), Map.of()));
+				LOGGER
 						.debug("JvmFunctions : " + Objects
 								.requireNonNullElse(DefaultContext.getJvmFunctions(), Map.of()));
 				LOGGER
 						.debug("JvmClassInitializers : " + Objects
 								.requireNonNullElse(DefaultContext.getJvmClassInitializers(), Map.of()));
+
 				setBootstrapState(RuntimeState.READY.name());
 			}
 			catch (Throwable th) {
-				LOGGER.error("error : " + th.getClass() + " - " + ExceptionUtils.getMostSpecificCause(th).getMessage());
-				LOGGER.error("stack trace : " + Arrays.toString(th.getStackTrace()));
+				LOGGER
+						.error("error : " + th.getClass() + " - " + ExceptionUtils
+								.getMostSpecificCause(th)
+								.getMessage() + "\nstack trace : " + Arrays.toString(th.getStackTrace()));
 				setBootstrapState(RuntimeState.FAILED.name());
 			}
 			finally {
@@ -291,6 +356,8 @@ public class NaftahPlayground {
 
 		try {
 
+			LOGGER.debug("Running code: " + code);
+
 			CharStream input = getCharStream(code);
 
 			var parser = prepareRun(input, NaftahErrorListener.INSTANCE);
@@ -319,10 +386,14 @@ public class NaftahPlayground {
 			return output;
 
 		}
-		catch (Throwable t) {
+		catch (Throwable th) {
+			LOGGER
+					.debug("Error occurred while running code: " + th.getClass() + " - " + ExceptionUtils
+							.getMostSpecificCause(th)
+							.getMessage() + "\nstack trace : " + Arrays.toString(th.getStackTrace()));
 
 			StringWriter sw = new StringWriter();
-			t.printStackTrace(new PrintWriter(sw));
+			th.printStackTrace(new PrintWriter(sw));
 
 			String err = sw.toString();
 
