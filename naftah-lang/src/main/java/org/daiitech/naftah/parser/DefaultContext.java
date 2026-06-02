@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 import org.daiitech.naftah.builtin.Builtin;
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.BuiltinFunctionInfo;
 import org.daiitech.naftah.builtin.lang.DeclaredFunction;
 import org.daiitech.naftah.builtin.lang.DeclaredImplementation;
 import org.daiitech.naftah.builtin.lang.DeclaredParameter;
@@ -47,6 +49,7 @@ import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.builtin.lang.Result;
+import org.daiitech.naftah.builtin.utils.AliasHashMap;
 import org.daiitech.naftah.builtin.utils.concurrent.Actor;
 import org.daiitech.naftah.builtin.utils.concurrent.SuppliedInheritableThreadLocal;
 import org.daiitech.naftah.builtin.utils.concurrent.Task;
@@ -56,6 +59,7 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.Base64SerializationUtils;
+import org.daiitech.naftah.utils.reflect.ClassScanningIndex;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
@@ -74,6 +78,7 @@ import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.MINIMAL_CACHE_PATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
+import static org.daiitech.naftah.builtin.utils.AliasHashMap.toInfoAliasGroupedByName;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahInvocableNotFoundError;
 import static org.daiitech.naftah.parser.NaftahParserHelper.QUALIFIED_CALL_REGEX;
@@ -295,6 +300,9 @@ public class DefaultContext {
 	protected static volatile Map<String, List<JvmClassInitializer>> JVM_CLASS_INITIALIZERS;
 	protected static volatile ThreadLocal<List<JvmClassInitializer>> CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS;
 	protected static volatile Map<String, List<BuiltinFunction>> BUILTIN_FUNCTIONS;
+	protected static volatile boolean USE_BUILTIN_FUNCTIONS_INDEX = false;
+	protected static volatile Map<String, List<BuiltinFunctionInfo>> BUILTIN_FUNCTION_INFOS;
+	protected static volatile ThreadLocal<Pair<List<BuiltinFunctionInfo>, List<BuiltinFunction>>> CURRENT_LOOKUP_BUILTIN_FUNCTIONS;
 	protected static volatile Map<String, String> IMPORTS = new ConcurrentHashMap<>();
 	protected static volatile boolean SHOULD_BOOT_STRAP;
 	protected static volatile boolean FORCE_BOOT_STRAP;
@@ -978,31 +986,125 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Retrieves and clears the thread-local list of JVM functions for the current lookup context.
-	 * <p>
-	 * This method returns the current thread's {@link JvmFunction} list stored in
-	 * {@code CURRENT_LOOKUP_JVM_FUNCTIONS} and removes it from the thread-local storage,
-	 * preventing accidental reuse across lookups.
+	 * Retrieves and consumes the thread-local built-in function lookup context.
 	 *
-	 * @return the list of {@link JvmFunction} for the current lookup, or {@code null} if none is set
+	 * <p>This method:</p>
+	 * <ul>
+	 * <li>Reads the current thread-local {@code Pair} of
+	 * {@link BuiltinFunctionInfo} and {@link BuiltinFunction}</li>
+	 * <li>Registers resolved functions into the global {@code BUILTIN_FUNCTIONS}
+	 * {@link AliasHashMap}</li>
+	 * <li>Clears the thread-local value to prevent reuse across lookups</li>
+	 * </ul>
+	 *
+	 * <p><b>Side effects:</b></p>
+	 * <ul>
+	 * <li>Mutates the global {@code BUILTIN_FUNCTIONS} registry</li>
+	 * <li>Removes the thread-local lookup state</li>
+	 * </ul>
+	 *
+	 * <p>If no lookup context is present, this method returns {@code null}.</p>
+	 *
+	 * @return the resolved list of {@link BuiltinFunction}, or {@code null} if none is set
+	 */
+	public static List<BuiltinFunction> getCurrentLookupBuiltinFunctions() {
+		if (Objects.isNull(CURRENT_LOOKUP_BUILTIN_FUNCTIONS)) {
+			return null;
+		}
+		var result = CURRENT_LOOKUP_BUILTIN_FUNCTIONS.get();
+
+		if (Objects.isNull(result)) {
+			return null;
+		}
+
+		if (Objects.isNull(BUILTIN_FUNCTIONS)) {
+			BUILTIN_FUNCTIONS = new AliasHashMap<>();
+		}
+
+		var builtinFunctionInfos = result.getLeft();
+		var builtinFunctions = result.getRight();
+
+		for (int i = 0; i < builtinFunctions.size(); i++) {
+			var builtinFunctionInfo = builtinFunctionInfos.get(i);
+			((AliasHashMap<String, BuiltinFunction>) BUILTIN_FUNCTIONS)
+					.put(   builtinFunctionInfo.canonicalKey(),
+							builtinFunctions.get(i),
+							builtinFunctionInfo.qualifiedAliases());
+		}
+
+		CURRENT_LOOKUP_BUILTIN_FUNCTIONS.remove();
+		return builtinFunctions;
+	}
+
+	/**
+	 * Stores a built-in function lookup context in thread-local storage.
+	 *
+	 * <p>The provided pair contains:</p>
+	 * <ul>
+	 * <li>Metadata: {@link BuiltinFunctionInfo}</li>
+	 * <li>Resolved runtime functions: {@link BuiltinFunction}</li>
+	 * </ul>
+	 *
+	 * <p>This context is later consumed by
+	 * {@link #getCurrentLookupBuiltinFunctions()} within the same thread.</p>
+	 *
+	 * @param lookupBuiltinFunctions pair of function metadata and resolved functions
+	 *                               to store in thread-local context
+	 */
+	public static void setCurrentLookupBuiltinFunctions(Pair<List<BuiltinFunctionInfo>, List<BuiltinFunction>> lookupBuiltinFunctions) {
+		if (Objects.isNull(CURRENT_LOOKUP_BUILTIN_FUNCTIONS)) {
+			CURRENT_LOOKUP_BUILTIN_FUNCTIONS = new ThreadLocal<>();
+		}
+		CURRENT_LOOKUP_BUILTIN_FUNCTIONS.set(lookupBuiltinFunctions);
+	}
+
+	/**
+	 * Retrieves and consumes the thread-local JVM function lookup context.
+	 *
+	 * <p>If a JVM function list is present in the current thread, it is:</p>
+	 * <ul>
+	 * <li>Returned to the caller</li>
+	 * <li>Registered in the global {@code JVM_FUNCTIONS} cache
+	 * using the function's qualified call key</li>
+	 * <li>Removed from thread-local storage</li>
+	 * </ul>
+	 *
+	 * <p><b>Side effects:</b></p>
+	 * <ul>
+	 * <li>Mutates global {@code JVM_FUNCTIONS} registry</li>
+	 * <li>Clears thread-local state</li>
+	 * </ul>
+	 *
+	 * @return the list of {@link JvmFunction} for the current thread,
+	 *         or {@code null} if none exists
 	 */
 	public static List<JvmFunction> getCurrentLookupJvmFunctions() {
 		if (Objects.isNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
 			return null;
 		}
 		var result = CURRENT_LOOKUP_JVM_FUNCTIONS.get();
+
+		if (Objects.nonNull(result)) {
+			if (Objects.isNull(JVM_FUNCTIONS)) {
+				JVM_FUNCTIONS = new HashMap<>();
+			}
+
+			JVM_FUNCTIONS.putIfAbsent(result.get(0).getQualifiedCall(), result);
+		}
+
 		CURRENT_LOOKUP_JVM_FUNCTIONS.remove();
 		return result;
 	}
 
 	/**
-	 * Sets the thread-local list of JVM functions for the current lookup context.
-	 * <p>
-	 * If the thread-local variable {@code CURRENT_LOOKUP_JVM_FUNCTIONS} is not initialized,
-	 * it is created. This allows subsequent calls to {@link #getCurrentLookupJvmFunctions()}
-	 * to retrieve the list in the same thread.
+	 * Sets the thread-local JVM function lookup context.
 	 *
-	 * @param lookupJvmFunctions the list of {@link JvmFunction} to store for the current thread
+	 * <p>This value is used by
+	 * {@link #getCurrentLookupJvmFunctions()} to retrieve
+	 * functions resolved during a lookup operation.</p>
+	 *
+	 * @param lookupJvmFunctions list of resolved {@link JvmFunction} instances
+	 *                           to store in thread-local context
 	 */
 	public static void setCurrentLookupJvmFunctions(List<JvmFunction> lookupJvmFunctions) {
 		if (Objects.isNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
@@ -1012,31 +1114,52 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Retrieves and clears the thread-local list of JVM class initializers for the current lookup context.
-	 * <p>
-	 * This method returns the current thread's {@link JvmClassInitializer} list stored in
-	 * {@code CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS} and removes it from the thread-local storage
-	 * to prevent accidental reuse across lookups.
+	 * Retrieves and consumes the thread-local JVM class initializer lookup context.
 	 *
-	 * @return the list of {@link JvmClassInitializer} for the current lookup, or {@code null} if none is set
+	 * <p>If present, the initializer list is:</p>
+	 * <ul>
+	 * <li>Returned to the caller</li>
+	 * <li>Cached in the global {@code JVM_CLASS_INITIALIZERS} map
+	 * using the qualified class name as key</li>
+	 * <li>Removed from thread-local storage</li>
+	 * </ul>
+	 *
+	 * <p><b>Side effects:</b></p>
+	 * <ul>
+	 * <li>Mutates global initializer registry</li>
+	 * <li>Clears thread-local state</li>
+	 * </ul>
+	 *
+	 * @return the list of {@link JvmClassInitializer} for the current thread,
+	 *         or {@code null} if none is set
 	 */
 	public static List<JvmClassInitializer> getCurrentLookupJvmClassInitializers() {
 		if (Objects.isNull(CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS)) {
 			return null;
 		}
 		var result = CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS.get();
+
+		if (Objects.nonNull(result)) {
+			if (Objects.isNull(JVM_CLASS_INITIALIZERS)) {
+				JVM_CLASS_INITIALIZERS = new HashMap<>();
+			}
+
+			JVM_CLASS_INITIALIZERS.putIfAbsent(result.get(0).getQualifiedName(), result);
+		}
+
 		CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS.remove();
 		return result;
 	}
 
 	/**
-	 * Sets the thread-local list of JVM class initializers for the current lookup context.
-	 * <p>
-	 * If the thread-local variable {@code CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS} is not initialized,
-	 * it is created. This allows subsequent calls to {@link #getCurrentLookupJvmClassInitializers()}
-	 * to retrieve the list in the same thread.
+	 * Sets the thread-local JVM class initializer lookup context.
 	 *
-	 * @param lookupJvmClassInitializers the list of {@link JvmClassInitializer} to store for the current thread
+	 * <p>This value is consumed by
+	 * {@link #getCurrentLookupJvmClassInitializers()} within the same thread
+	 * and should not be reused across threads.</p>
+	 *
+	 * @param lookupJvmClassInitializers list of resolved {@link JvmClassInitializer}
+	 *                                   instances to store in thread-local context
 	 */
 	public static void setCurrentLookupJvmClassInitializers(List<JvmClassInitializer> lookupJvmClassInitializers) {
 		if (Objects.isNull(CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS)) {
@@ -1089,14 +1212,36 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Updates the context static fields from the given {@link ClassScanningResult}.
-	 * Marks bootstrapping as completed.
+	 * Initializes the global runtime context from a fully resolved
+	 * {@link ClassScanningResult}.
 	 *
-	 * @param result the class scanning result containing loaded class information
+	 * <p>This method populates all runtime registries used by the system,
+	 * including class metadata, JVM function mappings, and built-in functions.</p>
+	 *
+	 * <p>All data is defensively copied into immutable collections to ensure
+	 * the runtime context remains read-only after initialization.</p>
+	 *
+	 * <p><b>Side effects:</b></p>
+	 * <ul>
+	 * <li>Replaces global runtime registries (classes, functions, qualifiers)</li>
+	 * <li>Freezes input data via {@link Set#copyOf(Collection)} (Map#keySet())},
+	 * {@link Map#copyOf(Map)}, and unmodifiable wrappers</li>
+	 * <li>Sets {@code BOOT_STRAPPED = true}</li>
+	 * </ul>
+	 *
+	 * <p><b>Lifecycle note:</b> This method is intended to be called once during
+	 * application bootstrap. Subsequent calls may overwrite runtime state.</p>
+	 *
+	 * @param result the fully reconstructed class scanning result used to
+	 *               initialize runtime context
 	 */
 	protected static void setContextFromClassScanningResult(ClassScanningResult result) {
-		CLASS_NAMES = Set.copyOf(result.getClassNames().keySet());
-		CLASS_QUALIFIERS = Set.copyOf(result.getClassQualifiers());
+		if (Objects.nonNull(result.getClassNames())) {
+			CLASS_NAMES = Set.copyOf(result.getClassNames().keySet());
+		}
+		if (Objects.nonNull(result.getClassQualifiers())) {
+			CLASS_QUALIFIERS = Set.copyOf(result.getClassQualifiers());
+		}
 		ARABIC_CLASS_QUALIFIERS = Map.copyOf(result.getArabicClassQualifiers());
 		if (Objects.nonNull(result.getClasses())) {
 			CLASSES = Map.copyOf(result.getClasses());
@@ -1116,6 +1261,51 @@ public class DefaultContext {
 		if (Objects.nonNull(result.getBuiltinFunctions())) {
 			setBuiltinFunctions(Collections.unmodifiableMap(result.getBuiltinFunctions()));
 		}
+		BOOT_STRAPPED = true;
+	}
+
+	/**
+	 * Initializes a lightweight runtime context from a
+	 * {@link ClassScanningIndex}.
+	 *
+	 * <p>This variant initializes only minimal metadata required for fast lookup
+	 * and startup, without full reflection-based resolution.</p>
+	 *
+	 * <p>Specifically, it initializes:</p>
+	 * <ul>
+	 * <li>Class name and qualifier registries</li>
+	 * <li>Arabic class qualifiers</li>
+	 * <li>Built-in function metadata index</li>
+	 * </ul>
+	 *
+	 * <p>Built-in functions are transformed into a grouped alias index using
+	 * {@code toAliasGroupedByName()} for fast lookup.</p>
+	 *
+	 * <p><b>Side effects:</b></p>
+	 * <ul>
+	 * <li>Replaces global class and function metadata registries</li>
+	 * <li>Enables index-based lookup mode ({@code USE_BUILTIN_FUNCTIONS_INDEX = true})</li>
+	 * <li>Sets {@code BOOT_STRAPPED = true}</li>
+	 * </ul>
+	 *
+	 * <p><b>Lifecycle note:</b> This method is intended for lightweight or
+	 * client-side bootstrap scenarios where full reflection data is not required.</p>
+	 *
+	 * @param index the lightweight scanning index used to initialize runtime context
+	 */
+	protected static void setContextFromClassScanningIndex(ClassScanningIndex index) {
+		if (Objects.nonNull(index.classNames())) {
+			CLASS_NAMES = Set.copyOf(index.classNames());
+		}
+		if (Objects.nonNull(index.classNames())) {
+			CLASS_QUALIFIERS = Set.copyOf(index.classQualifiers());
+		}
+		ARABIC_CLASS_QUALIFIERS = Map.copyOf(index.arabicClassQualifiers());
+		if (Objects.nonNull(index.builtinFunctions())) {
+			BUILTIN_FUNCTION_INFOS = Collections
+					.unmodifiableMap(Arrays.stream(index.builtinFunctions()).collect(toInfoAliasGroupedByName()));
+		}
+		USE_BUILTIN_FUNCTIONS_INDEX = true;
 		BOOT_STRAPPED = true;
 	}
 
@@ -1345,23 +1535,77 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Initializes the runtime using a precomputed {@link ClassScanningResult}
-	 * instead of performing a classpath scan or loading a cache file.
+	 * Bootstraps the runtime using a precomputed {@link ClassScanningResult}.
 	 *
-	 * <p>This method is primarily intended for browser-based and embedded
-	 * environments such as the Naftah Playground, where runtime metadata
-	 * is generated ahead of time and shipped as a serialized snapshot.
+	 * <p>This method initializes the entire runtime context without performing
+	 * any classpath scanning or cache reconstruction. It is intended for
+	 * environments where all metadata is precomputed, such as the Naftah Playground
+	 * or embedded/browser deployments.</p>
 	 *
-	 * <p>The supplied result is used to populate the runtime context,
-	 * including available classes, built-in functions, JVM functions,
-	 * qualifiers, and other runtime metadata.
+	 * <p>Before installing the result into the runtime context, this method
+	 * transforms built-in function metadata into an {@link AliasHashMap}-based
+	 * alias index for efficient lookup.</p>
 	 *
-	 * @param result the preloaded runtime snapshot to install into the
-	 *               current execution context
+	 * <p>Specifically, built-in functions are:</p>
+	 * <ul>
+	 * <li>Flattened from grouped structure</li>
+	 * <li>Re-indexed using {@code toAliasGroupedByName()}</li>
+	 * <li>Reattached into the {@code ClassScanningResult} before installation</li>
+	 * </ul>
+	 *
+	 * <p>After transformation, the runtime context is initialized via
+	 * {@link #setContextFromClassScanningResult(ClassScanningResult)}.</p>
+	 *
+	 * <p><b>Side effects:</b></p>
+	 * <ul>
+	 * <li>Mutates the provided {@link ClassScanningResult} (replaces builtin function structure)</li>
+	 * <li>Initializes global runtime state</li>
+	 * <li>Marks the system as bootstrapped</li>
+	 * </ul>
+	 *
+	 * @param result precomputed runtime snapshot to install
 	 * @throws NullPointerException if {@code result} is {@code null}
 	 */
 	public static void bootstrapPlayground(ClassScanningResult result) {
+		result
+				.setBuiltinFunctions(result
+						.getBuiltinFunctions()
+						.values()
+						.stream()
+						.flatMap(Collection::stream)
+						.collect(toAliasGroupedByName()));
 		setContextFromClassScanningResult(result);
+	}
+
+	/**
+	 * Bootstraps the runtime using a lightweight {@link ClassScanningIndex}.
+	 *
+	 * <p>This variant performs a minimal initialization suitable for fast startup
+	 * scenarios where only metadata (not full reflection structures) is required.</p>
+	 *
+	 * <p>No class resolution or JVM function reconstruction is performed.</p>
+	 *
+	 * <p>Instead, the runtime is initialized with:</p>
+	 * <ul>
+	 * <li>Class name and qualifier registries</li>
+	 * <li>Arabic class qualifiers</li>
+	 * <li>Built-in function metadata index (pre-grouped)</li>
+	 * </ul>
+	 *
+	 * <p>This method delegates directly to
+	 * {@link #setContextFromClassScanningIndex(ClassScanningIndex)}.</p>
+	 *
+	 * <p><b>Side effects:</b></p>
+	 * <ul>
+	 * <li>Initializes global runtime state</li>
+	 * <li>Enables index-based lookup mode</li>
+	 * <li>Marks the system as bootstrapped</li>
+	 * </ul>
+	 *
+	 * @param index lightweight precomputed runtime index
+	 */
+	public static void bootstrapPlayground(ClassScanningIndex index) {
+		setContextFromClassScanningIndex(index);
 	}
 
 	/**
@@ -1537,7 +1781,7 @@ public class DefaultContext {
 	 *
 	 * @param builtinFunctions a map of function names to lists of {@link BuiltinFunction} to add.
 	 */
-	public static synchronized void putAllInBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
+	private static synchronized void putAllInBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
 		BUILTIN_FUNCTIONS
 				.putAll(builtinFunctions);
 	}
@@ -1552,6 +1796,22 @@ public class DefaultContext {
 	}
 
 	/**
+	 * Returns the indexed view of built-in function metadata.
+	 *
+	 * <p>This index contains lightweight {@link BuiltinFunctionInfo} entries
+	 * used for fast lookup and bootstrap scenarios, without requiring full
+	 * {@link BuiltinFunction} resolution.</p>
+	 *
+	 * <p>This structure is typically used in index-based runtime mode
+	 * (see {@code USE_BUILTIN_FUNCTIONS_INDEX}).</p>
+	 *
+	 * @return map of canonical function names to metadata lists
+	 */
+	public static Map<String, List<BuiltinFunctionInfo>> getBuiltinFunctionsIndex() {
+		return BUILTIN_FUNCTION_INFOS;
+	}
+
+	/**
 	 * Replaces the global built-in functions map with the provided one.
 	 * <p>
 	 * This method is synchronized to ensure thread-safe updates.
@@ -1559,7 +1819,7 @@ public class DefaultContext {
 	 *
 	 * @param builtinFunctions the new map of built-in functions to set.
 	 */
-	public static synchronized void setBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
+	private static synchronized void setBuiltinFunctions(Map<String, List<BuiltinFunction>> builtinFunctions) {
 		BUILTIN_FUNCTIONS = builtinFunctions;
 	}
 
@@ -1654,11 +1914,70 @@ public class DefaultContext {
 			CURRENT_TASK_SCOPE.remove();
 		}
 		if (Objects.nonNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
+			CURRENT_LOOKUP_BUILTIN_FUNCTIONS.remove();
+		}
+		if (Objects.nonNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
 			CURRENT_LOOKUP_JVM_FUNCTIONS.remove();
 		}
 		if (Objects.nonNull(CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS)) {
 			CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS.remove();
 		}
+	}
+
+	/**
+	 * Resolves built-in functions by their canonical qualified name and prepares them
+	 * for execution in the current lookup context.
+	 *
+	 * <p>This method performs the following steps:</p>
+	 * <ol>
+	 * <li>Retrieves {@link BuiltinFunctionInfo} entries from the global index</li>
+	 * <li>Resolves each entry into a {@link BuiltinFunction} using reflection</li>
+	 * <li>Filters out unresolved or invalid methods</li>
+	 * <li>Stores the result in thread-local lookup state via
+	 * {@link #setCurrentLookupBuiltinFunctions}</li>
+	 * </ol>
+	 *
+	 * <p><b>Failure behavior:</b></p>
+	 * <ul>
+	 * <li>Returns {@code false} if no metadata exists for the given name</li>
+	 * <li>Returns {@code false} if no functions can be resolved</li>
+	 * <li>Silently skips individual unresolved methods</li>
+	 * </ul>
+	 *
+	 * <p><b>Side effects:</b> Populates thread-local built-in function lookup state
+	 * for later retrieval by {@code getCurrentLookupBuiltinFunctions()}.</p>
+	 *
+	 * @param qualifiedName canonical function group identifier
+	 * @return {@code true} if at least one function was successfully resolved,
+	 *         {@code false} otherwise
+	 */
+	public static boolean lookupBuiltinFunctions(String qualifiedName) {
+		if (BUILTIN_FUNCTION_INFOS.containsKey(qualifiedName)) {
+			List<BuiltinFunctionInfo> builtinFunctionInfos = BUILTIN_FUNCTION_INFOS.get(qualifiedName);
+
+			if (builtinFunctionInfos == null || builtinFunctionInfos.isEmpty()) {
+				return false;
+			}
+
+			List<BuiltinFunction> builtinFunctions = builtinFunctionInfos
+					.stream()
+					.map(builtinFunctionInfo -> ClassUtils
+							.getBuiltinMethod(
+												builtinFunctionInfo.className(),
+												builtinFunctionInfo.methodName(),
+												builtinFunctionInfo.methodParameterTypes()
+							))
+					.filter(Objects::nonNull)
+					.toList();
+
+			if (builtinFunctions.isEmpty()) {
+				return false;
+			}
+
+			setCurrentLookupBuiltinFunctions(Pair.of(builtinFunctionInfos, builtinFunctions));
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -1737,61 +2056,109 @@ public class DefaultContext {
 
 	/**
 	 * Checks whether a JVM class initializer exists for the specified qualified name.
-	 * <p>
-	 * If {@link #SHOULD_BOOT_STRAP} is enabled, this checks both the bootstrap-loaded
-	 * initializers and performs a lookup if necessary. Otherwise, it checks the current
-	 * thread-local lookup context.
 	 *
-	 * @param qualifiedName the Arabic-transliterated qualified class name
-	 * @return {@code true} if a class initializer exists; {@code false} otherwise
+	 * <p>This method validates the input format and then attempts to determine whether
+	 * a matching {@link JvmClassInitializer} is available either in the cached runtime
+	 * state or via a dynamic lookup.</p>
+	 *
+	 * <p>Lookup order:</p>
+	 * <ol>
+	 * <li>If bootstrap data is available, checks the cached
+	 * {@code JVM_CLASS_INITIALIZERS} map</li>
+	 * <li>If not found (or not initialized), attempts a dynamic lookup via
+	 * {@link #lookupJvmClassInitializer(String)}</li>
+	 * </ol>
+	 *
+	 * <p><b>Important behavior:</b></p>
+	 * <ul>
+	 * <li>This method may trigger a lookup operation with side effects
+	 * (ThreadLocal population)</li>
+	 * <li>A return value of {@code true} may result from either cached data or
+	 * successful dynamic resolution</li>
+	 * <li>A return value of {@code false} does not distinguish between
+	 * "not present" and "lookup failed"</li>
+	 * </ul>
+	 *
+	 * <p><b>Input constraint:</b> The qualified name must match {@code QUALIFIED_NAME_REGEX}
+	 * or the method immediately returns {@code false}.</p>
+	 *
+	 * @param qualifiedName Arabic-transliterated fully qualified class name
+	 * @return {@code true} if a matching class initializer exists or can be resolved,
+	 *         {@code false} otherwise
 	 */
 	public boolean containsJvmClassInitializer(String qualifiedName) {
 		return qualifiedName
-				.matches(
-							QUALIFIED_NAME_REGEX) && (SHOULD_BOOT_STRAP ?
-									(!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_CLASS_INITIALIZERS != null && JVM_CLASS_INITIALIZERS
-											.containsKey(
-															qualifiedName)) :
-									(!BOOT_STRAP_FAILED && BOOT_STRAPPED && lookupJvmClassInitializer(
-																										qualifiedName)));
+				.matches(QUALIFIED_NAME_REGEX) && ((JVM_CLASS_INITIALIZERS != null && JVM_CLASS_INITIALIZERS
+						.containsKey(qualifiedName)) || lookupJvmClassInitializer(qualifiedName));
 	}
 
 	/**
-	 * Retrieves the JVM class initializer(s) for the specified Arabic-transliterated
-	 * qualified name.
-	 * <p>
-	 * Depending on the bootstrap and lookup state, this method retrieves initializers
-	 * from the global {@link #JVM_CLASS_INITIALIZERS} map or from the current
-	 * thread-local lookup context. If only one initializer exists, it is returned
-	 * directly; otherwise, the list of initializers is returned.
+	 * Retrieves JVM class initializer(s) for the specified Arabic-transliterated qualified name.
 	 *
-	 * @param arabicQualifiedName the Arabic-transliterated qualified class name
-	 * @param safe                if {@code false}, throws {@link NaftahBugError} if no initializer is found; if
-	 *                            * {@code true}, returns {@code null} instead
-	 * @return a {@link Pair} containing the current depth and the initializer(s), or {@code null} if not found and
-	 *         * {@code safe} is {@code true}
-	 * @throws NaftahBugError if the initializer does not exist and {@code safe} is {@code false}
+	 * <p>This method resolves class initializers from multiple possible sources depending
+	 * on the runtime state:</p>
+	 *
+	 * <h3>Lookup order</h3>
+	 * <ol>
+	 * <li>Global bootstrap registry ({@link #JVM_CLASS_INITIALIZERS})</li>
+	 * <li>Deferred bootstrap loading (if {@code SHOULD_BOOT_STRAP} is enabled)</li>
+	 * <li>Thread-local lookup context ({@code CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS})</li>
+	 * </ol>
+	 *
+	 * <h3>Bootstrap behavior</h3>
+	 * <p>If bootstrap is enabled but not yet completed, this method may block until
+	 * {@code BOOT_STRAPPED} becomes {@code true}, unless {@code BOOT_STRAP_FAILED}
+	 * is set.</p>
+	 *
+	 * <h3>Return shape</h3>
+	 * <p>The returned value is a {@link Pair} containing:</p>
+	 * <ul>
+	 * <li>{@code left} → current execution depth</li>
+	 * <li>{@code right} → either:
+	 * <ul>
+	 * <li>a single {@link JvmClassInitializer}, or</li>
+	 * <li>a {@code List&lt;JvmClassInitializer&gt;} if multiple exist</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 *
+	 * <h3>Failure behavior</h3>
+	 * <ul>
+	 * <li>If {@code safe == true}, returns {@code null} when no initializer is found</li>
+	 * <li>If {@code safe == false}, throws {@link NaftahBugError}</li>
+	 * </ul>
+	 *
+	 * <h3>Important notes</h3>
+	 * <ul>
+	 * <li>Return type is heterogeneous (single object or list), depending on cardinality</li>
+	 * <li>May depend on thread-local state</li>
+	 * <li>May block during bootstrap initialization</li>
+	 * </ul>
+	 *
+	 * @param arabicQualifiedName Arabic-transliterated fully qualified class name
+	 * @param safe                if {@code false}, throws {@link NaftahBugError} when not found;
+	 *                            if {@code true}, returns {@code null}
+	 * @return a {@link Pair} of depth and initializer(s), or {@code null} if not found and {@code safe} is {@code true}
+	 * @throws NaftahBugError if {@code safe == false} and no initializer exists
 	 */
 	public Pair<Integer, Object> getJvmClassInitializer(String arabicQualifiedName, boolean safe) {
-		if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
-			if (BOOT_STRAPPED && JVM_CLASS_INITIALIZERS.containsKey(arabicQualifiedName)) {
-				var jvmClassInitializers = JVM_CLASS_INITIALIZERS.get(arabicQualifiedName);
-				return ImmutablePair
-						.of(depth,
-							jvmClassInitializers.size() == 1 ? jvmClassInitializers.get(0) : jvmClassInitializers);
-			}
-			else if (arabicQualifiedName.matches(QUALIFIED_NAME_REGEX)) {
-				while (!BOOT_STRAPPED && Objects.isNull(JVM_CLASS_INITIALIZERS)) {
-					// block the execution until bootstrapped
-					if (BOOT_STRAP_FAILED) {
-						return null;
-					}
+		if (JVM_CLASS_INITIALIZERS != null && JVM_CLASS_INITIALIZERS.containsKey(arabicQualifiedName)) {
+			var jvmClassInitializers = JVM_CLASS_INITIALIZERS.get(arabicQualifiedName);
+			return ImmutablePair
+					.of(depth,
+						jvmClassInitializers.size() == 1 ? jvmClassInitializers.get(0) : jvmClassInitializers);
+		}
+		else if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED && arabicQualifiedName.matches(QUALIFIED_NAME_REGEX)) {
+			while (!BOOT_STRAPPED && Objects.isNull(JVM_CLASS_INITIALIZERS)) {
+				// block the execution until bootstrapped
+				if (BOOT_STRAP_FAILED) {
+					return null;
 				}
-				var jvmClassInitializers = JVM_CLASS_INITIALIZERS.get(arabicQualifiedName);
-				return ImmutablePair
-						.of(depth,
-							jvmClassInitializers.size() == 1 ? jvmClassInitializers.get(0) : jvmClassInitializers);
 			}
+			var jvmClassInitializers = JVM_CLASS_INITIALIZERS.get(arabicQualifiedName);
+			return ImmutablePair
+					.of(depth,
+						jvmClassInitializers.size() == 1 ? jvmClassInitializers.get(0) : jvmClassInitializers);
 		}
 		else if (!BOOT_STRAP_FAILED && BOOT_STRAPPED && Objects.nonNull(CURRENT_LOOKUP_JVM_CLASS_INITIALIZERS)) {
 			var jvmClassInitializers = getCurrentLookupJvmClassInitializers();
@@ -2099,23 +2466,47 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Checks if the function with the given name exists in the current context, built-in functions,
-	 * JVM functions (if bootstrapped), or any parent context.
+	 * Checks whether a function exists in the current runtime context.
 	 *
-	 * @param depth the depth of look up
-	 * @param name  the function name
-	 * @return true if the function exists, false otherwise
+	 * <p>This method performs a multi-stage lookup across several function sources,
+	 * combining lexical scope resolution with global and lazy-loaded registries.</p>
+	 *
+	 * <h3>Lookup order</h3>
+	 * <ol>
+	 * <li>Declared functions in the current context</li>
+	 * <li>Declared function implementations</li>
+	 * <li>Built-in function registry ({@code BUILTIN_FUNCTIONS})</li>
+	 * <li>Built-in function index (if {@code USE_BUILTIN_FUNCTIONS_INDEX} is enabled,
+	 * may trigger {@link #lookupBuiltinFunctions(String)})</li>
+	 * <li>JVM functions (if name matches {@code QUALIFIED_CALL_REGEX})</li>
+	 * </ol>
+	 *
+	 * <h3>Important behavior</h3>
+	 * <ul>
+	 * <li>This method may trigger side effects via:
+	 * <ul>
+	 * <li>{@link #lookupBuiltinFunctions(String)}</li>
+	 * <li>{@link #lookupJvmFunctions(String)}</li>
+	 * </ul>
+	 * </li>
+	 * <li>Lookup is short-circuiting: evaluation stops at the first successful match</li>
+	 * <li>JVM function lookup only occurs if the name matches {@code QUALIFIED_CALL_REGEX}</li>
+	 * </ul>
+	 *
+	 * <h3>Performance note</h3>
+	 * <p>Because this method may trigger reflection-based or index-based resolution,
+	 * repeated calls with unknown names can be expensive.</p>
+	 *
+	 * @param name  function name or qualified call name
+	 * @param depth current lookup depth in the call/interpretation stack
+	 * @return {@code true} if the function exists in any context, {@code false} otherwise
 	 */
 	public boolean containsFunction(String name, int depth) {
 		return containsDeclaredFunction(name, depth) || containsDeclaredImplementation( name,
-																						depth) || BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS
-																								.containsKey(name) || (name
-																										.matches(
-																													QUALIFIED_CALL_REGEX) && (SHOULD_BOOT_STRAP ?
-																															(!BOOT_STRAP_FAILED && BOOT_STRAPPED && JVM_FUNCTIONS != null && JVM_FUNCTIONS
-																																	.containsKey(
-																																					name)) :
-																															(!BOOT_STRAP_FAILED && BOOT_STRAPPED && lookupJvmFunctions(name))));
+																						depth) || (BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS
+																								.containsKey(name)) || (USE_BUILTIN_FUNCTIONS_INDEX && lookupBuiltinFunctions(name)) || (name
+																										.matches(QUALIFIED_CALL_REGEX) && ((JVM_FUNCTIONS != null && JVM_FUNCTIONS
+																												.containsKey(name)) || lookupJvmFunctions(name)));
 	}
 
 	/**
@@ -2203,13 +2594,64 @@ public class DefaultContext {
 	}
 
 	/**
-	 * Retrieves a function by name from the current context, built-in functions, JVM functions,
-	 * or parent contexts.
+	 * Retrieves a function by name from the current execution context.
 	 *
-	 * @param name the function name
-	 * @param safe if true, returns null instead of throwing an error if not found
-	 * @return a pair of the context depth and the function object(s)
-	 * @throws NaftahBugError if function not found and safe is false
+	 * <p>This method performs a hierarchical lookup across multiple scopes,
+	 * including local context, parent contexts, built-in functions, and JVM functions.
+	 * It may also trigger lazy resolution or bootstrap blocking depending on runtime state.</p>
+	 *
+	 * <h3>Lookup order</h3>
+	 * <ol>
+	 * <li>Current context-local function map</li>
+	 * <li>Declared implementations in the current scope</li>
+	 * <li>Parent contexts (recursive lookup)</li>
+	 * <li>Built-in function registry ({@code BUILTIN_FUNCTIONS})</li>
+	 * <li>Built-in function index lookup (may trigger {@link #getCurrentLookupBuiltinFunctions()})</li>
+	 * <li>JVM function registry ({@code JVM_FUNCTIONS})</li>
+	 * <li>Bootstrap-loaded JVM functions (may block until bootstrap completes)</li>
+	 * <li>Thread-local JVM lookup context ({@code CURRENT_LOOKUP_JVM_FUNCTIONS})</li>
+	 * </ol>
+	 *
+	 * <h3>Important behavior</h3>
+	 * <ul>
+	 * <li>This method may block during bootstrap if runtime initialization is incomplete</li>
+	 * <li>This method may trigger side effects via:
+	 * <ul>
+	 * <li>{@link #getCurrentLookupBuiltinFunctions()}</li>
+	 * <li>{@link #getCurrentLookupJvmFunctions()}</li>
+	 * </ul>
+	 * </li>
+	 * <li>Lookup is recursive through parent contexts</li>
+	 * <li>Resolution is short-circuiting (first match wins)</li>
+	 * </ul>
+	 *
+	 * <h3>Return shape</h3>
+	 * <p>The returned {@link Pair} contains:</p>
+	 * <ul>
+	 * <li>{@code left} → current context depth</li>
+	 * <li>{@code right} → either:
+	 * <ul>
+	 * <li>a single function object, or</li>
+	 * <li>a {@code List} of functions (if overloaded)</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 *
+	 * <h3>Failure behavior</h3>
+	 * <ul>
+	 * <li>If {@code safe == true}, returns {@code null} when no function is found</li>
+	 * <li>If {@code safe == false}, throws {@link NaftahBugError}</li>
+	 * </ul>
+	 *
+	 * <h3>Performance note</h3>
+	 * <p>Lookup may involve recursive scope traversal, thread-local access,
+	 * index resolution, reflection-based JVM loading, and bootstrap synchronization.</p>
+	 *
+	 * @param name function name or qualified call name
+	 * @param safe if {@code true}, returns {@code null} when not found;
+	 *             if {@code false}, throws {@link NaftahBugError}
+	 * @return a {@link Pair} of (depth, function object(s)), or {@code null} if not found and {@code safe == true}
+	 * @throws NaftahBugError if {@code safe == false} and function does not exist
 	 */
 	public Pair<Integer, Object> getFunction(String name, boolean safe) {
 		var functionMap = functions.get();
@@ -2223,25 +2665,30 @@ public class DefaultContext {
 			return parent.getFunction(name, safe);
 		}
 		else { // root parent
-			if (BUILTIN_FUNCTIONS.containsKey(name)) {
+			if (BUILTIN_FUNCTIONS != null && BUILTIN_FUNCTIONS.containsKey(name)) {
 				var functions = BUILTIN_FUNCTIONS.get(name);
 				return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
 			}
-			else if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED) {
-				if (BOOT_STRAPPED && JVM_FUNCTIONS.containsKey(name)) {
-					var functions = JVM_FUNCTIONS.get(name);
-					return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
-				}
-				else if (name.matches(QUALIFIED_CALL_REGEX)) {
-					while (!BOOT_STRAPPED && Objects.isNull(JVM_FUNCTIONS)) {
-						// block the execution until bootstrapped
-						if (BOOT_STRAP_FAILED) {
-							return null;
+			else if (USE_BUILTIN_FUNCTIONS_INDEX && BUILTIN_FUNCTION_INFOS.containsKey(name) && Objects
+					.nonNull(CURRENT_LOOKUP_BUILTIN_FUNCTIONS)) {
+						var functions = getCurrentLookupBuiltinFunctions();
+						if (Objects.nonNull(functions)) {
+							return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
 						}
 					}
-					var functions = JVM_FUNCTIONS.get(name);
-					return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
+			else if (JVM_FUNCTIONS != null && JVM_FUNCTIONS.containsKey(name)) {
+				var functions = JVM_FUNCTIONS.get(name);
+				return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
+			}
+			else if (SHOULD_BOOT_STRAP && !BOOT_STRAP_FAILED && name.matches(QUALIFIED_CALL_REGEX)) {
+				while (!BOOT_STRAPPED && Objects.isNull(JVM_FUNCTIONS)) {
+					// block the execution until bootstrapped
+					if (BOOT_STRAP_FAILED) {
+						return null;
+					}
 				}
+				var functions = JVM_FUNCTIONS.get(name);
+				return ImmutablePair.of(depth, functions.size() == 1 ? functions.get(0) : functions);
 			}
 			else if (!BOOT_STRAP_FAILED && BOOT_STRAPPED && Objects.nonNull(CURRENT_LOOKUP_JVM_FUNCTIONS)) {
 				var functions = getCurrentLookupJvmFunctions();
