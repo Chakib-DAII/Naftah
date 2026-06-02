@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collector;
 
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.BuiltinFunctionInfo;
 import org.daiitech.naftah.errors.NaftahBugError;
 
 import static org.daiitech.naftah.utils.reflect.ClassUtils.getBuiltinFunctionName;
@@ -107,11 +108,61 @@ public class AliasHashMap<K, V> extends HashMap<K, List<V>> {
 																				alias,
 																				false);
 
-							fillAliasToKeyMap(map, maybeQualifiedAlias, canonicalKey, fn);
+							fillAliasToKeyMap(map, maybeQualifiedAlias, canonicalKey);
 						}
 					},
 					(left, right) -> {
 						for (Map.Entry<String, List<BuiltinFunction>> entry : right.entrySet()) {
+							left.merge(entry.getKey(), entry.getValue(), (list1, list2) -> {
+								list1.addAll(list2);
+								return list1;
+							});
+						}
+
+						// Merge alias maps
+						left.aliasToKeysMap.putAll(right.aliasToKeysMap);
+
+						return left;
+					},
+					Collector.Characteristics.IDENTITY_FINISH
+				);
+	}
+
+	/**
+	 * Returns a {@link Collector} that groups {@link BuiltinFunctionInfo} instances by their canonical key
+	 * and registers all qualified aliases in an {@link AliasHashMap}.
+	 *
+	 * <p>The resulting map behaves as follows:</p>
+	 * <ul>
+	 * <li>The key is the canonical function key returned by {@link BuiltinFunctionInfo#canonicalKey()}.</li>
+	 * <li>The value is a {@code List} of {@link BuiltinFunctionInfo} instances sharing that key.</li>
+	 * <li>Each qualified alias is mapped to the canonical key for alias-based lookup.</li>
+	 * </ul>
+	 *
+	 * <p>This collector is useful when working with precomputed function metadata
+	 * rather than runtime {@link BuiltinFunction} instances.</p>
+	 *
+	 * <p><strong>Note:</strong> Alias resolution uses {@link BuiltinFunctionInfo#qualifiedAliases()}.</p>
+	 *
+	 * @return a collector that groups {@code BuiltinFunctionInfo}s by canonical key and registers aliases
+	 *
+	 * @see AliasHashMap
+	 * @see BuiltinFunctionInfo#canonicalKey()
+	 * @see BuiltinFunctionInfo#qualifiedAliases()
+	 */
+	public static Collector<BuiltinFunctionInfo, AliasHashMap<String, BuiltinFunctionInfo>, AliasHashMap<String, BuiltinFunctionInfo>> toInfoAliasGroupedByName() {
+		return Collector
+				.of(
+					AliasHashMap::new,
+					(map, fn) -> {
+						String canonicalKey = fn.canonicalKey();
+						map.computeIfAbsent(canonicalKey, k -> new ArrayList<>()).add(fn);
+						for (String maybeQualifiedAlias : fn.qualifiedAliases()) {
+							fillAliasToKeyMap(map, maybeQualifiedAlias, canonicalKey);
+						}
+					},
+					(left, right) -> {
+						for (Map.Entry<String, List<BuiltinFunctionInfo>> entry : right.entrySet()) {
 							left.merge(entry.getKey(), entry.getValue(), (list1, list2) -> {
 								list1.addAll(list2);
 								return list1;
@@ -145,9 +196,8 @@ public class AliasHashMap<K, V> extends HashMap<K, List<V>> {
 	 * @param map          the {@link AliasHashMap} to update
 	 * @param alias        the alias key to register
 	 * @param canonicalKey the canonical key associated with the alias
-	 * @param fn           the {@link BuiltinFunction} used for error reporting
 	 */
-	public static <K, V> void fillAliasToKeyMap(AliasHashMap<K, V> map, K alias, K canonicalKey, BuiltinFunction fn) {
+	public static <K, V> void fillAliasToKeyMap(AliasHashMap<K, V> map, K alias, K canonicalKey) {
 		map.aliasToKeysMap.computeIfAbsent(alias, k -> new HashSet<>()).add(canonicalKey);
 	}
 
@@ -185,7 +235,7 @@ public class AliasHashMap<K, V> extends HashMap<K, List<V>> {
 	 *
 	 * @param map The map whose mappings are to be copied into this map.
 	 * @throws NaftahBugError if an alias conflict occurs during merging.
-	 * @see #fillAliasToKeyMap(AliasHashMap, Object, Object, BuiltinFunction)
+	 * @see #fillAliasToKeyMap(AliasHashMap, Object, Object)
 	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends List<V>> map) {
@@ -197,7 +247,7 @@ public class AliasHashMap<K, V> extends HashMap<K, List<V>> {
 				//noinspection unchecked
 				Set<K> canonicalKeys = (Set<K>) e.getValue();
 				for (K ck : canonicalKeys) {
-					fillAliasToKeyMap(this, key, ck, null);
+					fillAliasToKeyMap(this, key, ck);
 				}
 			}
 		}
