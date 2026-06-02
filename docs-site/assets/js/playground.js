@@ -191,6 +191,7 @@ function setBanner(state, text) {
 }
 
 function showBootstrapBanner() {
+  showSpinner();   // show spinner
   setBanner(
     "bootstrapping",
     "⚠️ يتم الآن تشغيل بيئة نفطه… بعض الميزات قد لا تعمل بشكل كامل بعد."
@@ -200,6 +201,7 @@ function showBootstrapBanner() {
 function setRuntimeReady() {
   runtimeState = RUNTIME_STATE.READY;
 
+  hideSpinner();   // hide spinner
   setBanner(
     "ready",
     "✅ تم تشغيل بيئة نفطه بنجاح"
@@ -220,6 +222,7 @@ function setRuntimeReady() {
 function showErrorBanner() {
   runtimeState = RUNTIME_STATE.FAILED;
 
+  hideSpinner();   // hide spinner
   setBanner(
     "error",
     "❌ فشل تشغيل بيئة نفطه. حاول إعادة تحميل الصفحة."
@@ -290,14 +293,15 @@ async function initRuntime() {
 				[SCAN_CLASS_PATH ? "/app/assets/data/class-scanning-result.json.gz"
 						   : (USE_INDEX ? "/app/assets/data/minimal-class-scanning-index.json.gz"
 						   				: "/app/assets/data/minimal-class-scanning-result.json.gz")
-				] : [],
+				] : [0, 100],
 			},
 
 			preloadProgress(done, total) {
 				console.log(`Preloaded ${done}/${total}`);
 			},
 
-			enableDebug: false
+			status: LOG_LEVEL === LOG_LEVELS.DEBUG ? "none" : "default",
+			enableDebug: LOG_LEVEL === LOG_LEVELS.DEBUG ? true : false
         });
 
         log("Loading JAR...");
@@ -481,7 +485,9 @@ function initExamplesSelect() {
 
 document.addEventListener("DOMContentLoaded", () => {
   runButton.disabled = true;
+  showSpinner();
   initExamplesSelect();
+  updateLineNumbers();
 });
 
 function updateLineNumbers() {
@@ -512,8 +518,22 @@ if (textarea) {
   textarea.addEventListener('scroll', syncLineNumberScroll);
   // Also update on resize (lines may be added/removed)
   window.addEventListener('resize', updateLineNumbers);
+  new ResizeObserver(updateLineNumbers).observe(textarea);
+
   // Initial population
   updateLineNumbers();
+}
+
+const spinnerOverlay = document.getElementById('spinner-overlay');
+
+function showSpinner() {
+  if (spinnerOverlay) spinnerOverlay.classList.remove('hidden');
+  runButton.disabled = true;
+}
+
+function hideSpinner() {
+  if (spinnerOverlay) spinnerOverlay.classList.add('hidden');
+  runButton.disabled = false;
 }
 
 /**
