@@ -23,10 +23,6 @@ shadowJar {
 
 	mergeServiceFiles()
 
-	minimize {
-		exclude(dependency('org.glassfish:javax.json'))
-	}
-
 	dependencies {
 		exclude(dependency('org.junit:junit-bom'))
 		exclude(dependency('org.junit.jupiter:junit-jupiter'))
