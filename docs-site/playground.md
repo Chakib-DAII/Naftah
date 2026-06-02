@@ -34,9 +34,11 @@ head_styles: [
   <!-- PANES -->
   <div class="panes">
 
-    <div class="editor-pane">
-      <textarea id="input" placeholder="اكتب كود نفطه هنا..." aria-label="Editor"></textarea>
-    </div>
+	<div class="editor-pane">
+	  <div id="line-numbers" aria-hidden="true"></div>
+	  <textarea id="input" wrap="off" placeholder="اكتب كود نفطه هنا..." aria-label="Editor"></textarea>
+	</div>
+
 
     <div class="console-pane">
       <pre id="console" aria-label="Console"></pre>
