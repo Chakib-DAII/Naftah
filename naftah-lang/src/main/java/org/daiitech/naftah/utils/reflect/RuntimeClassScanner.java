@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -316,17 +317,32 @@ public final class RuntimeClassScanner {
 	}
 
 	/**
-	 * Attempts to load a class with the given name using a set of class loaders.
+	 * Attempts to load a class using a chain of available class loaders.
 	 *
-	 * <p>The method tries the predefined class loaders, optionally including the provided
-	 * {@link URLClassLoader}, to load the class without initializing it.</p>
+	 * <p>This method iterates over the predefined {@code CLASS_LOADERS} array,
+	 * optionally appending the provided {@link URLClassLoader}, and attempts
+	 * to resolve the class without initializing it.</p>
 	 *
-	 * @param className   the fully qualified name of the class to load
-	 * @param classLoader an optional {@link URLClassLoader} to use for loading the class; may be null
-	 * @return the {@link Class} object if found and loaded successfully; {@code null} if the class
-	 *         could not be loaded by any of the class loaders
+	 * <p>Class loading is performed in a fail-safe manner: any exceptions thrown
+	 * by individual class loaders are ignored and the next loader is tried.</p>
+	 *
+	 * <h3>Lookup behavior</h3>
+	 * <ul>
+	 * <li>Tries all predefined class loaders in order</li>
+	 * <li>Optionally includes the provided {@code classLoader} if not {@code null}</li>
+	 * <li>Uses {@link Class#forName(String, boolean, ClassLoader)} with initialization disabled</li>
+	 * </ul>
+	 *
+	 * <h3>Failure behavior</h3>
+	 * <p>If no class loader is able to resolve the class, the {@code defaultValue}
+	 * supplier is invoked and its result is returned.</p>
+	 *
+	 * @param className    fully qualified binary name of the class to load
+	 * @param classLoader  optional {@link URLClassLoader} appended to the loader chain; may be {@code null}
+	 * @param defaultValue fallback supplier invoked when class resolution fails; must not be {@code null}
+	 * @return the resolved {@link Class}, or the value provided by {@code defaultValue}
 	 */
-	public static Class<?> loadClass(String className, URLClassLoader classLoader) {
+	public static Class<?> loadClass(String className, URLClassLoader classLoader, Supplier<Class<?>> defaultValue) {
 		var loaders = Arrays.copyOf(CLASS_LOADERS, CLASS_LOADERS.length + (Objects.nonNull(classLoader) ? 0 : 1));
 		if (Objects.nonNull(classLoader)) {
 			//noinspection DataFlowIssue
@@ -344,23 +360,25 @@ public final class RuntimeClassScanner {
 				// Silently skip classes that can't be loaded
 			}
 		}
-		return null;
+		return defaultValue.get();
 	}
 
 	/**
-	 * Attempts to load a class with the specified fully qualified name using the
-	 * predefined class loaders.
+	 * Attempts to load a class using the predefined class loader chain.
 	 *
-	 * <p>This method is equivalent to invoking
-	 * {@link #loadClass(String, URLClassLoader)} with a {@code null}
-	 * class loader.</p>
+	 * <p>This is a convenience overload of
+	 * {@link #loadClass(String, URLClassLoader, Supplier)} that does not
+	 * provide an additional class loader.</p>
 	 *
-	 * @param className the fully qualified name of the class to load
-	 * @return the resolved {@link Class} object, or {@code null} if the class
-	 *         cannot be loaded
+	 * <p>If class resolution fails, the provided {@code defaultValue} supplier
+	 * is invoked.</p>
+	 *
+	 * @param className    fully qualified binary name of the class to load
+	 * @param defaultValue fallback supplier invoked when class resolution fails
+	 * @return the resolved {@link Class}, or the value provided by {@code defaultValue}
 	 */
-	public static Class<?> loadClass(String className) {
-		return loadClass(className, null);
+	public static Class<?> loadClass(String className, Supplier<Class<?>> defaultValue) {
+		return loadClass(className, null, defaultValue);
 	}
 
 	/**
