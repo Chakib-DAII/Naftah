@@ -743,6 +743,9 @@ tasks.register('exportNaftahFunctions') {
 					},
                 builtinFunctions: builtinFunctions?.collectEntries { builtinFunctionName, builtinFunctionList ->
 						[(builtinFunctionName): builtinFunctionList?.collect { builtinFunction ->
+								def provider = builtinFunction?.getProviderInfo()
+								def fn = builtinFunction?.getFunctionInfo()
+
 								[
 									methodName: builtinFunction?.methodName,
 									className: builtinFunction?.className,
@@ -750,25 +753,25 @@ tasks.register('exportNaftahFunctions') {
 										it?.name
 									},
 									providerInfo: [
-										name: builtinFunction?.getProviderInfo()?.name(),
-										useQualifiedName: builtinFunction?.getProviderInfo()?.useQualifiedName(),
-										useQualifiedAliases: builtinFunction?.getProviderInfo()?.useQualifiedAliases(),
-										description: builtinFunction?.getProviderInfo()?.description(),
-										functionNames: builtinFunction?.getProviderInfo()?.functionNames()
+										name: provider?.name(),
+										useQualifiedName: provider?.useQualifiedName(),
+										useQualifiedAliases: provider?.useQualifiedAliases(),
+										description: provider?.description(),
+										functionNames: provider?.functionNames()
 									],
 
 									functionInfo: [
-										name: builtinFunction?.getFunctionInfo()?.name(),
-										useQualifiedName: builtinFunction?.getFunctionInfo()?.useQualifiedName(),
-										useQualifiedAliases: builtinFunction?.getFunctionInfo()?.useQualifiedAliases(),
-										aliases: builtinFunction?.getFunctionInfo()?.aliases(),
-										description: builtinFunction?.getFunctionInfo()?.description(),
-										usage: builtinFunction?.getFunctionInfo()?.usage(),
-										returnType: builtinFunction?.getFunctionInfo()?.returnType()?.name,
-										parameterTypes: builtinFunction?.getFunctionInfo()?.parameterTypes()?.collect {
+										name: fn?.name(),
+										useQualifiedName: fn?.useQualifiedName(),
+										useQualifiedAliases: fn?.useQualifiedAliases(),
+										aliases: fn?.aliases(),
+										description: fn?.description(),
+										usage: fn?.usage(),
+										returnType: fn?.returnType()?.name,
+										parameterTypes: fn?.parameterTypes()?.collect {
 											it?.name
 										},
-										exceptionTypes: builtinFunction?.getFunctionInfo()?.exceptionTypes()?.collect {
+										exceptionTypes: fn?.exceptionTypes()?.collect {
 											it?.name
 										}
 									]
@@ -779,17 +782,53 @@ tasks.register('exportNaftahFunctions') {
             ]
 
             new File(dataDir, "class-scanning-result.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(classScanningResult))
-            println "Exported class scanning result snapshot with full runtime to ${dataDir}/class-scanning-result.json"
+            println "Exported class scanning result with full runtime to ${dataDir}/class-scanning-result.json"
 
             def minimalClassScanningResult = [
-				classNames: classScanningResult.classNames,
-				classQualifiers: classScanningResult.classQualifiers,
 				arabicClassQualifiers: classScanningResult.arabicClassQualifiers,
 				builtinFunctions: classScanningResult.builtinFunctions
 			]
 
             new File(dataDir, "minimal-class-scanning-result.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(minimalClassScanningResult))
-            println "Exported minimal class scanning result snapshot with full runtime to ${dataDir}/minimal-class-scanning-result.json"
+            println "Exported minimal class scanning result with minimal runtime to ${dataDir}/minimal-class-scanning-result.json"
+
+            def classScanningIndex = [
+				classNames: classNames?.keySet(),
+				classQualifiers: classScanningResult.classQualifiers,
+				arabicClassQualifiers: classScanningResult.arabicClassQualifiers,
+				builtinFunctions:  builtinFunctions?.values()?.flatten()?.collect { builtinFunction ->
+					def provider = builtinFunction?.getProviderInfo()
+					def fn = builtinFunction?.getFunctionInfo()
+
+					[
+						methodName: builtinFunction?.methodName,
+						className: builtinFunction?.className,
+						methodParameterTypes: builtinFunction?.methodParameterTypes?.collect {
+							it?.name
+						},
+						canonicalKey: ClassUtils.getBuiltinFunctionName(provider.useQualifiedName() | fn.useQualifiedName(), provider.name(), fn.name(), true),
+						qualifiedAliases: fn.aliases().collect { alias ->
+							ClassUtils.getBuiltinFunctionName(
+								provider.useQualifiedAliases() | fn.useQualifiedAliases(),
+								provider.name(),
+								alias,
+								false
+							)
+						}
+					]
+				 }
+			]
+
+            new File(dataDir, "class-scanning-index.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(classScanningIndex))
+            println "Exported class scanning index to ${dataDir}/class-scanning-index.json"
+
+			def minimalClassScanningIndex = [
+			        arabicClassQualifiers: classScanningIndex.arabicClassQualifiers,
+			        builtinFunctions: classScanningIndex.builtinFunctions
+			]
+
+            new File(dataDir, "minimal-class-scanning-index.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(minimalClassScanningIndex))
+            println "Exported minimal class scanning index to ${dataDir}/minimal-class-scanning-index.json"
         ''')
 	}
 }
