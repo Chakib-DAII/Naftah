@@ -17,22 +17,22 @@ head_styles: [
 
 <div class="playground">
 
-  <!-- TOP BAR -->
-  <div class="topbar">
+	<!-- TOP BAR -->
+	<div class="topbar">
 
-    <div class="examples">
-      <label for="examples-select">أمثلة لغة نفطه</label>
-      <select id="examples-select" aria-label="أمثلة لغة نفطه"></select>
-    </div>
+	<div class="examples">
+	  <label for="examples-select">أمثلة لغة نفطه</label>
+	  <select id="examples-select" aria-label="أمثلة لغة نفطه"></select>
+	</div>
 
-    <button id="run-btn">تشغيل</button>
+	<button id="run-btn">تشغيل</button>
 
-  </div>
+	</div>
 
-  <div id="runtime-banner" class="runtime-banner"></div>
+	<div id="runtime-banner" class="runtime-banner"></div>
 
-  <!-- PANES -->
-  <div class="panes">
+	<!-- PANES -->
+	<div class="panes">
 
 	<div class="editor-pane">
 	  <div id="line-numbers" aria-hidden="true"></div>
@@ -40,10 +40,17 @@ head_styles: [
 	</div>
 
 
-    <div class="console-pane">
-      <pre id="console" aria-label="Console"></pre>
-    </div>
+	<div class="console-pane">
+	  <pre id="console" aria-label="Console"></pre>
+	</div>
 
-  </div>
+	</div>
+
+	<div id="spinner-overlay" class="spinner-overlay">
+	  <div class="spinner"></div>
+	 	<p class="spinner-text">
+			جاري تحميل بيئة نفطه… قد تستغرق العملية دقيقة تقريبًا. شكرًا على انتظارك.
+		</p>
+	</div>
 
 </div>
