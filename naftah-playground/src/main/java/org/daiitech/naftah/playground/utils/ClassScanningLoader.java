@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.zip.GZIPInputStream;
 
 import javax.json.Json;
@@ -32,43 +33,48 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import org.daiitech.naftah.builtin.lang.BuiltinFunction;
+import org.daiitech.naftah.builtin.lang.BuiltinFunctionInfo;
 import org.daiitech.naftah.builtin.lang.JvmClassInitializer;
 import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.lang.NaftahFunction;
 import org.daiitech.naftah.builtin.lang.NaftahFunctionProvider;
 import org.daiitech.naftah.playground.NaftahPlayground;
+import org.daiitech.naftah.utils.reflect.ClassScanningIndex;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
-import org.daiitech.naftah.utils.reflect.RuntimeClassScanner;
+import org.daiitech.naftah.utils.reflect.ClassUtils;
 
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 
 /**
- * Utility responsible for reconstructing a {@link ClassScanningResult}
- * from a JSON snapshot.
+ * Utility responsible for reconstructing {@link ClassScanningResult} and {@link ClassScanningIndex}
+ * instances from a serialized JSON snapshot.
  *
- * <p>This loader is primarily used by the browser-based Naftah Playground,
- * where runtime metadata is generated ahead of time and distributed as a
- * serialized JSON document instead of performing a full classpath scan
- * at startup.</p>
+ * <p>This loader is primarily used by the Naftah Playground environment, where runtime classpath
+ * scanning results are precomputed and shipped as JSON instead of being generated at runtime.</p>
  *
- * <p>The loader supports both plain JSON and GZIP-compressed JSON files.
- * During deserialization it restores runtime metadata such as:</p>
- *
+ * <p>The loader supports:</p>
  * <ul>
- * <li>Class loader mappings</li>
- * <li>Class qualifiers</li>
- * <li>Accessible and instantiable classes</li>
- * <li>JVM functions and constructors</li>
- * <li>Built-in function descriptors</li>
+ * <li>Plain JSON and GZIP-compressed JSON inputs</li>
+ * <li>Sync and async reconstruction modes</li>
+ * <li>Reflection-based restoration of classes, methods, and constructors</li>
  * </ul>
  *
- * <p>Class references are resolved lazily using
- * {@link RuntimeClassScanner#loadClass(String)} to avoid triggering
- * class initialization during reconstruction.</p>
+ * <p>Reconstructed metadata includes:</p>
+ * <ul>
+ * <li>Class loader mappings</li>
+ * <li>Class registries (accessible / instantiable classes)</li>
+ * <li>JVM methods and constructors</li>
+ * <li>Built-in function descriptors and metadata</li>
+ * </ul>
+ *
+ * <p><b>Failure strategy:</b> Any unresolved class, method, or constructor is skipped or
+ * replaced with safe defaults to ensure partial recovery instead of full failure.</p>
+ *
+ * <p><b>Threading note:</b> Async methods create a temporary thread pool per invocation.</p>
  *
  * @author Chakib Daii
  */
-public final class ClassScanningResultLoader {
+public final class ClassScanningLoader {
 
 	/**
 	 * Thread-safe cache of resolved {@link Class} objects indexed by fully qualified class name.
@@ -84,61 +90,51 @@ public final class ClassScanningResultLoader {
 	 * Private constructor to prevent instantiation.
 	 * Throws {@link org.daiitech.naftah.errors.NaftahBugError} if called.
 	 */
-	private ClassScanningResultLoader() {
+	private ClassScanningLoader() {
 		throw newNaftahBugInvalidUsageError();
 	}
 
 	/**
-	 * Reads and deserializes a {@link ClassScanningResult} from the specified file.
+	 * Loads and reconstructs a {@link ClassScanningResult} from a JSON snapshot file.
 	 *
-	 * <p>The input may be either a plain JSON document or a GZIP-compressed
-	 * JSON document. Compression is detected automatically by inspecting
-	 * the file signature.</p>
+	 * <p>The input file may be either:</p>
+	 * <ul>
+	 * <li>Plain JSON</li>
+	 * <li>GZIP-compressed JSON (auto-detected via header)</li>
+	 * </ul>
 	 *
-	 * @param path the path to the serialized snapshot
+	 * <p>When {@code async = true}, reconstruction of major sections (classes, functions,
+	 * metadata) is performed in parallel using a temporary executor service.</p>
+	 *
+	 * @param path  the snapshot file path
+	 * @param async whether to reconstruct the result using parallel execution
 	 * @return the reconstructed {@link ClassScanningResult}
-	 * @throws Exception if the file cannot be read or the JSON cannot be
-	 *                   deserialized successfully
+	 * @throws Exception if the file cannot be read or parsed
 	 */
-	public static ClassScanningResult fromJson(Path path, boolean async) throws Exception {
-		try (   InputStream in = Files.newInputStream(path);
-				PushbackInputStream pb = new PushbackInputStream(in, 2)) {
-
-			byte[] sig = new byte[2];
-			int n = pb.read(sig);
-
-			if (n > 0) {
-				pb.unread(sig, 0, n);
-			}
-
-			boolean gzip = n == 2 && (sig[0] & 0xFF) == 0x1F && (sig[1] & 0xFF) == 0x8B;
-
-			InputStream finalStream = gzip ? new GZIPInputStream(pb) : pb;
-
-			NaftahPlayground.LOGGER.debug("fromJson - parsing JSON stream");
-
-			try (   Reader reader = new InputStreamReader(finalStream);
-					JsonReader jsonReader = Json.createReader(reader)) {
-
-				var result = async ? fromJsonAsync(jsonReader.readObject()) : fromJson(jsonReader.readObject());
-
-				NaftahPlayground.LOGGER.debug("fromJson - class scanning result parsed");
-
-				return result;
-			}
-		}
+	public static ClassScanningResult loadClassScanningResultFromJson(Path path, boolean async) throws Exception {
+		return loadFromJson(path,
+							(jsonObject) -> async ?
+									loadClassScanningResultFromJsonAsync(jsonObject) :
+									loadClassScanningResultFromJson(jsonObject));
 	}
 
 	/**
 	 * Reconstructs a {@link ClassScanningResult} from its JSON representation.
 	 *
-	 * <p>The supplied JSON object is expected to conform to the structure
-	 * produced by the runtime class scanning export process.</p>
+	 * <p>The JSON must match the structure produced by the Naftah class scanning export system.</p>
 	 *
-	 * @param obj the serialized class scanning result
-	 * @return the reconstructed {@link ClassScanningResult}
+	 * <p>This method performs synchronous reconstruction of:</p>
+	 * <ul>
+	 * <li>Class loader mappings</li>
+	 * <li>Class registries</li>
+	 * <li>JVM functions and constructors</li>
+	 * <li>Built-in functions</li>
+	 * </ul>
+	 *
+	 * @param obj serialized class scanning snapshot
+	 * @return reconstructed {@link ClassScanningResult}
 	 */
-	public static ClassScanningResult fromJson(JsonObject obj) {
+	public static ClassScanningResult loadClassScanningResultFromJson(JsonObject obj) {
 		NaftahPlayground.LOGGER.trace("fromJson - obj : " + obj);
 
 		ClassScanningResult result = new ClassScanningResult();
@@ -147,7 +143,10 @@ public final class ClassScanningResultLoader {
 		result.setClassNames(toClassLoaders(obj));
 
 		// Simple metadata
-		result.setClassQualifiers(toSet(obj.getJsonArray("classQualifiers")));
+		result
+				.setClassQualifiers(obj.containsKey("classQualifiers") ?
+						toSet(obj.getJsonArray("classQualifiers")) :
+						null);
 		result.setArabicClassQualifiers(toMap(obj.getJsonObject("arabicClassQualifiers")));
 
 		// Classes
@@ -167,7 +166,21 @@ public final class ClassScanningResultLoader {
 		return result;
 	}
 
-	public static ClassScanningResult fromJsonAsync(JsonObject obj) {
+	/**
+	 * Reconstructs a {@link ClassScanningResult} from JSON using parallel execution.
+	 *
+	 * <p>Each major section of the snapshot is loaded concurrently using a fixed thread pool sized
+	 * to the available CPU cores.</p>
+	 *
+	 * <p>The executor is created per invocation and shut down after completion.</p>
+	 *
+	 * <p>This method is functionally equivalent to the synchronous loader but optimized for large
+	 * snapshots and browser-playground workloads.</p>
+	 *
+	 * @param obj serialized class scanning snapshot
+	 * @return reconstructed {@link ClassScanningResult}
+	 */
+	public static ClassScanningResult loadClassScanningResultFromJsonAsync(JsonObject obj) {
 		NaftahPlayground.LOGGER.trace("fromJsonAsync - obj loaded");
 
 		ExecutorService executor = Executors
@@ -184,7 +197,9 @@ public final class ClassScanningResultLoader {
 			// Simple metadata
 			CompletableFuture<Set<String>> qualifiersFuture = CompletableFuture
 					.supplyAsync(
-									() -> toSet(obj.getJsonArray("classQualifiers")),
+									() -> obj.containsKey("classQualifiers") ?
+											toSet(obj.getJsonArray("classQualifiers")) :
+											null,
 									executor);
 
 			CompletableFuture<Map<String, String>> arabicFuture = CompletableFuture
@@ -265,6 +280,180 @@ public final class ClassScanningResultLoader {
 	}
 
 	/**
+	 * Loads a lightweight {@link ClassScanningIndex} from a JSON snapshot file.
+	 *
+	 * <p>The index version contains only minimal metadata required for fast lookup:</p>
+	 * <ul>
+	 * <li>Class names</li>
+	 * <li>Class qualifiers</li>
+	 * <li>Localized (Arabic) qualifiers</li>
+	 * <li>Built-in function metadata</li>
+	 * </ul>
+	 *
+	 * <p>This is a reduced form of {@link ClassScanningResult} intended for fast startup
+	 * and lightweight runtime usage.</p>
+	 *
+	 * @param path  snapshot file path
+	 * @param async whether to use parallel reconstruction
+	 * @return reconstructed {@link ClassScanningIndex}
+	 * @throws Exception if loading or parsing fails
+	 */
+	public static ClassScanningIndex loadClassScanningIndexFromJson(Path path, boolean async) throws Exception {
+		return loadFromJson(path,
+							(jsonObject) -> async ?
+									loadClassScanningIndexFromJsonAsync(jsonObject) :
+									loadClassScanningIndexFromJson(jsonObject));
+	}
+
+	/**
+	 * Reconstructs a {@link ClassScanningIndex} from JSON.
+	 *
+	 * <p>This method extracts only lightweight metadata and does not resolve full class
+	 * or method structures.</p>
+	 *
+	 * @param obj serialized index snapshot
+	 * @return reconstructed index
+	 */
+	public static ClassScanningIndex loadClassScanningIndexFromJson(JsonObject obj) {
+		NaftahPlayground.LOGGER.trace("fromJson - obj : " + obj);
+
+		// Simple metadata
+		var classNames = obj.containsKey("classNames") ? toSet(obj.getJsonArray("classNames")) : null;
+		var classQualifiers = obj.containsKey("classQualifiers") ? toSet(obj.getJsonArray("classQualifiers")) : null;
+		var arabicClassQualifiers = toMap(obj.getJsonObject("arabicClassQualifiers"));
+
+		// Builtin Functions
+		var builtinFunctions = toBuiltinFunctionArray(obj.getJsonArray("builtinFunctions"));
+
+		return new ClassScanningIndex(classNames, classQualifiers, arabicClassQualifiers, builtinFunctions);
+	}
+
+	/**
+	 * Asynchronously reconstructs a {@link ClassScanningIndex}.
+	 *
+	 * <p>Uses a temporary thread pool to parallelize parsing of metadata sections.</p>
+	 *
+	 * @param obj serialized index snapshot
+	 * @return reconstructed index
+	 */
+	public static ClassScanningIndex loadClassScanningIndexFromJsonAsync(JsonObject obj) {
+		NaftahPlayground.LOGGER.trace("fromJsonAsync - obj loaded");
+
+		ExecutorService executor = Executors
+				.newFixedThreadPool(
+									Math.max(2, Runtime.getRuntime().availableProcessors()));
+
+		try {
+			// Simple metadata
+			CompletableFuture<Set<String>> classNamesFuture = CompletableFuture
+					.supplyAsync(
+									() -> obj.containsKey("classNames") ? toSet(obj.getJsonArray("classNames")) : null,
+									executor);
+
+			CompletableFuture<Set<String>> qualifiersFuture = CompletableFuture
+					.supplyAsync(
+									() -> obj.containsKey("classQualifiers") ?
+											toSet(obj.getJsonArray("classQualifiers")) :
+											null,
+									executor);
+
+			CompletableFuture<Map<String, String>> arabicFuture = CompletableFuture
+					.supplyAsync(
+									() -> toMap(obj.getJsonObject("arabicClassQualifiers")),
+									executor);
+
+
+			// Builtin Functions
+			CompletableFuture<BuiltinFunctionInfo[]> builtinFuture = CompletableFuture
+					.supplyAsync(
+									() -> toBuiltinFunctionArray(obj.getJsonArray("builtinFunctions")),
+									executor);
+
+			CompletableFuture
+					.allOf(
+							classNamesFuture,
+							qualifiersFuture,
+							arabicFuture,
+							builtinFuture
+					)
+					.join();
+
+			return new ClassScanningIndex(  classNamesFuture.join(),
+											qualifiersFuture.join(),
+											arabicFuture.join(),
+											builtinFuture.join());
+
+		}
+		finally {
+			executor.shutdown();
+		}
+	}
+
+	/**
+	 * Generic JSON snapshot loader that handles file IO, compression detection, and parsing.
+	 *
+	 * <p>This method:</p>
+	 * <ol>
+	 * <li>Detects GZIP compression via magic bytes</li>
+	 * <li>Parses JSON using {@link javax.json.JsonReader}</li>
+	 * <li>Delegates conversion to the provided loader function</li>
+	 * </ol>
+	 *
+	 * <p>Performance diagnostics are logged at TRACE level.</p>
+	 *
+	 * @param path   input snapshot file
+	 * @param loader function that converts parsed JSON into a target object
+	 * @param <R>    return type
+	 * @return reconstructed object
+	 * @throws Exception on IO or parsing failure
+	 */
+	public static <R> R loadFromJson(Path path, Function<JsonObject, R> loader) throws Exception {
+		long t0 = System.nanoTime();
+
+		try (   InputStream in = Files.newInputStream(path);
+				PushbackInputStream pb = new PushbackInputStream(in, 2)) {
+
+			byte[] sig = new byte[2];
+			int n = pb.read(sig);
+
+			if (n > 0) {
+				pb.unread(sig, 0, n);
+			}
+
+			boolean gzip = n == 2 && (sig[0] & 0xFF) == 0x1F && (sig[1] & 0xFF) == 0x8B;
+
+			InputStream finalStream = gzip ? new GZIPInputStream(pb) : pb;
+
+			long t1 = System.nanoTime();
+
+			NaftahPlayground.LOGGER.debug("loadFromJson - parsing JSON stream");
+
+			try (   Reader reader = new InputStreamReader(finalStream);
+					JsonReader jsonReader = Json.createReader(reader)) {
+
+				JsonObject jsonObject = jsonReader.readObject();
+
+				NaftahPlayground.LOGGER.debug("loadFromJson - json object ready");
+
+				long t2 = System.nanoTime();
+
+				var result = loader.apply(jsonObject);
+
+				long t3 = System.nanoTime();
+
+				NaftahPlayground.LOGGER.debug("loadFromJson - class scanning parsed");
+
+
+				NaftahPlayground.LOGGER.trace("JSON loading (in ms): " + (t1 - t0) / 1_000_000);
+				NaftahPlayground.LOGGER.trace("JSON-P parse (in ms): " + (t2 - t1) / 1_000_000);
+				NaftahPlayground.LOGGER.trace("Conversion (in ms):" + (t3 - t1) / 1_000_000);
+				NaftahPlayground.LOGGER.trace("TOTAL (in ms):" + (t3 - t0) / 1_000_000);
+				return result;
+			}
+		}
+	}
+
+	/**
 	 * Reconstructs the exported class loader mapping.
 	 *
 	 * <p>Each entry associates a class name with the URLs that were used
@@ -322,7 +511,7 @@ public final class ClassScanningResultLoader {
 	 * {@link Class} instances.
 	 *
 	 * <p>Classes are loaded without initialization using
-	 * {@link ClassScanningResultLoader#safeClass(String)}.</p>
+	 * {@link ClassScanningLoader#safeClass(String)}.</p>
 	 *
 	 * @param obj the JSON representation
 	 * @return a map of aliases to resolved classes, or {@code null}
@@ -574,6 +763,73 @@ public final class ClassScanningResultLoader {
 	}
 
 	/**
+	 * Converts a JSON array of serialized built-in function metadata into an array of
+	 * {@link BuiltinFunctionInfo} objects.
+	 *
+	 * <p>Each JSON element is expected to contain the following structure:</p>
+	 * <ul>
+	 * <li>{@code methodName} - the JVM method name</li>
+	 * <li>{@code className} - declaring class name</li>
+	 * <li>{@code methodParameterTypes} - array of parameter type names</li>
+	 * <li>{@code canonicalKey} - canonical function identifier</li>
+	 * <li>{@code qualifiedAliases} - array of fully qualified alias names</li>
+	 * </ul>
+	 *
+	 * <p>The returned array preserves the original JSON order. Each index corresponds
+	 * directly to the input array index.</p>
+	 *
+	 * <p><b>Failure behavior:</b></p>
+	 * <ul>
+	 * <li>If the input array is {@code null}, an empty array is returned.</li>
+	 * <li>If an individual element fails to parse, it is skipped and the corresponding
+	 * array slot remains {@code null}.</li>
+	 * <li>Parsing errors do not interrupt the overall conversion process.</li>
+	 * </ul>
+	 *
+	 * <p>This method is used as part of the lightweight {@link ClassScanningIndex}
+	 * reconstruction pipeline where only metadata (not executable reflection objects)
+	 * is required.</p>
+	 *
+	 * @param arr JSON array of built-in function metadata
+	 * @return an array of {@link BuiltinFunctionInfo}, possibly containing {@code null} entries
+	 */
+	private static BuiltinFunctionInfo[] toBuiltinFunctionArray(JsonArray arr) {
+		if (arr == null) {
+			return new BuiltinFunctionInfo[0];
+		}
+
+		NaftahPlayground.LOGGER.trace("toBuiltinFunctionArray :" + arr);
+
+		BuiltinFunctionInfo[] out = new BuiltinFunctionInfo[arr.size()];
+		for (int i = 0; i < arr.size(); i++) {
+
+			JsonObject o = arr.getJsonObject(i);
+
+			try {
+				String methodName = o.getString("methodName");
+				String className = o.getString("className");
+				String[] methodParameterTypes = toStringArray(o.getJsonArray("methodParameterTypes"));
+				String canonicalKey = o.getString("canonicalKey");
+				String[] qualifiedAliases = toStringArray(o.getJsonArray("qualifiedAliases"));
+
+
+				out[i] = new BuiltinFunctionInfo(
+													methodName,
+													className,
+													methodParameterTypes,
+													canonicalKey,
+													qualifiedAliases
+				);
+
+			}
+			catch (Throwable th) {
+				NaftahPlayground.LOGGER.trace("toBuiltinFunctions error : " + th.getMessage());
+			}
+		}
+		return out;
+	}
+
+	/**
 	 * Reconstructs a {@link NaftahFunctionProvider} descriptor from JSON.
 	 *
 	 * @param o the serialized provider descriptor
@@ -719,22 +975,21 @@ public final class ClassScanningResultLoader {
 	}
 
 	/**
-	 * Resolves a class by its fully qualified name using a shared cache.
+	 * Resolves a class by name using {@link ClassUtils}, with caching and safe fallback.
 	 *
-	 * <p>If the class cannot be loaded for any reason, {@link Object} is returned
-	 * as a safe fallback to allow processing to continue.</p>
+	 * <p>If resolution fails, {@link Object} is returned instead of throwing an exception,
+	 * ensuring partial reconstruction of the snapshot.</p>
 	 *
-	 * <p>Results are cached in a thread-safe map to avoid repeated class loading
-	 * attempts for the same name.</p>
+	 * <p>Results are cached in {@link #CLASS_CACHE} for the lifetime of the JVM.</p>
 	 *
-	 * @param name the fully qualified binary class name
-	 * @return the resolved {@link Class}, or {@link Object} if resolution fails
+	 * @param name fully qualified class name
+	 * @return resolved class or {@link Object} if resolution fails
 	 */
 	private static Class<?> safeClass(String name) {
 		return CLASS_CACHE.computeIfAbsent(name, n -> {
 			try {
 				NaftahPlayground.LOGGER.trace("safeClass for class :" + name);
-				return RuntimeClassScanner.loadClass(name);
+				return ClassUtils.resolveType(name);
 			}
 			catch (Throwable th) {
 				NaftahPlayground.LOGGER.trace("safeClass error : " + th.getMessage());
