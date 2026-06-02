@@ -33,6 +33,7 @@ exclude:
   - seo-audit.js
   - seo-report.json
   - seo-summary.json
+  - indexnow.json
   - prepare-indexnow-payload.py
 
 data_chunk_size: 100
@@ -42,8 +43,12 @@ copy_data_files:
   - file: jvm-functions.json
     chunk: true
     compress: true
+  - file: class-scanning-result.json
+    compress: true
   - file: minimal-class-scanning-result.json
     compress: true
-  - file: class-scanning-result.json
+  - file: class-scanning-index.json
+    compress: true
+  - file: minimal-class-scanning-index.json
     compress: true
 
