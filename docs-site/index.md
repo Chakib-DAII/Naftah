@@ -27,6 +27,7 @@ permalink: /
 ## 🔗 Links {#nla-links}
 
 - [GitHub Repository](https://github.com/Chakib-DAII/Naftah){:target="_blank"}
+- [Chakib's Portfolio](https://chakibdaii.daiitech.org){:target="_blank"}
 
 ---
 
