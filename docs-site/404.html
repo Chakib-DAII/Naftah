@@ -1,0 +1,40 @@
+---
+layout: default
+title: Page not found
+description: The requested Naftah documentation page does not exist. Return to the homepage or explore available guides, examples, and resources.
+permalink: /404.html
+---
+<div style="display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:70vh; text-align:center;" dir="rtl">
+
+	<h1>الصفحة غير موجودة</h1>
+
+	<h2 style="font-weight: normal; opacity: 0.85;">
+		عذرًا، هذه الصفحة غير متوفرة
+	</h2>
+
+	<p>يمكنك العودة إلى الصفحة الرئيسية أو تصفح التوثيق المتاح.</p>
+
+	<p>
+		<a href="{{ '/' | relative_url }}">العودة إلى الصفحة الرئيسية</a>
+	</p>
+
+	<p style="opacity:0.8; font-size:0.95em;">
+		سيتم توجيهك إلى الصفحة الرئيسية خلال <span id="countdown">6</span> ثوانٍ...
+	</p>
+
+</div>
+
+<script>
+	let seconds = 6;
+	const el = document.getElementById("countdown");
+
+	const timer = setInterval(() => {
+	  seconds--;
+	  el.textContent = seconds;
+
+	  if (seconds <= 0) {
+		clearInterval(timer);
+		window.location.href = "/";
+	  }
+	}, 1000);
+</script>

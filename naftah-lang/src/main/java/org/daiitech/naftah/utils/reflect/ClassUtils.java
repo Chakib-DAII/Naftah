@@ -737,11 +737,7 @@ public final class ClassUtils {
 				.map(methodEntry -> {
 					Class<?> clazz = methodEntry.getValue().getValue();
 					Method method = methodEntry.getKey();
-					var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
-					var naftahFunction = getNaftahFunctionAnnotation(   method,
-																		naftahFunctionProvider.useQualifiedName(),
-																		naftahFunctionProvider.useQualifiedAliases());
-					return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
+					return getBuiltinMethod(clazz, method);
 				})
 				.collect(toAliasGroupedByName());
 	}
@@ -768,11 +764,11 @@ public final class ClassUtils {
 																														UNDERSCORE,
 																														removeNameDiacritics);
 			if (QUALIFIED_CALL_REGEX.matcher(qualifiedName).matches()) {
-				System.out.println(qualifiedName);
 				throw new NaftahBugError(
 											"""
-											تنسيق الاسم المؤهل غير صالح. يجب أن يحتوي على ':' واحد على الأقل و'::' واحد بالضبط، مثل: 'أ:ب::ج' أو 'أ:ب:ب:أ::ج'..
+											تنسيق الاسم المؤهل (%s) غير صالح. يجب أن يحتوي على ':' واحد على الأقل و'::' واحد بالضبط، مثل: 'أ:ب::ج' أو 'أ:ب:ب:أ::ج'..
 											"""
+													.formatted(qualifiedName)
 				);
 			}
 			return qualifiedName;
@@ -818,15 +814,7 @@ public final class ClassUtils {
 				Arrays
 						.stream(clazz.getMethods())
 						.filter(method -> isAnnotationsPresent(method, NaftahFn.class))
-						.map(method -> {
-							var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
-							var naftahFunction = getNaftahFunctionAnnotation(   method,
-																				naftahFunctionProvider
-																						.useQualifiedName(),
-																				naftahFunctionProvider
-																						.useQualifiedAliases());
-							return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
-						})
+						.map(method -> getBuiltinMethod(clazz, method))
 						.toList() :
 				List.of();
 	}
@@ -847,6 +835,76 @@ public final class ClassUtils {
 				.stream()
 				.flatMap(aClass -> getBuiltinMethods(aClass).stream())
 				.toList();
+	}
+
+	/**
+	 * Resolves and constructs a {@link BuiltinFunction} from a class name, method name,
+	 * and parameter type names.
+	 *
+	 * <p>This is a convenience lookup method that performs the following steps:</p>
+	 * <ol>
+	 * <li>Resolves the target class using {@link ClassUtils#resolveType(String)}</li>
+	 * <li>Resolves each parameter type name into a {@link Class}</li>
+	 * <li>Locates the declared method via reflection</li>
+	 * <li>Delegates to {@link #getBuiltinMethod(Class, Method)} for metadata enrichment</li>
+	 * </ol>
+	 *
+	 * <p><b>Failure behavior:</b> If any step fails (class resolution, parameter resolution,
+	 * or method lookup), this method returns {@code null} without throwing an exception.</p>
+	 *
+	 * <p>This method is typically used during deserialization of built-in function metadata
+	 * where only string-based type information is available.</p>
+	 *
+	 * @param className          fully qualified name of the declaring class
+	 * @param methodName         name of the method to resolve
+	 * @param parameterTypeNames fully qualified parameter type names
+	 * @return a {@link BuiltinFunction}, or {@code null} if resolution fails
+	 */
+	public static BuiltinFunction getBuiltinMethod(String className, String methodName, String[] parameterTypeNames) {
+		try {
+			Class<?> clazz = resolveType(className);
+
+			Class<?>[] parameterTypes = Arrays
+					.stream(parameterTypeNames)
+					.map(ClassUtils::resolveType)
+					.toArray(Class[]::new);
+
+			Method method = clazz.getDeclaredMethod(methodName, parameterTypes);
+
+			return getBuiltinMethod(clazz, method);
+		}
+		catch (Throwable ignored) {
+			return null;
+		}
+	}
+
+	/**
+	 * Constructs a {@link BuiltinFunction} from a resolved {@link Method}.
+	 *
+	 * <p>This method enriches the raw reflection {@link Method} with Naftah-specific metadata:</p>
+	 * <ul>
+	 * <li>{@link org.daiitech.naftah.builtin.lang.NaftahFunctionProvider} from the declaring class</li>
+	 * <li>{@link org.daiitech.naftah.builtin.lang.NaftahFunction} from the method</li>
+	 * </ul>
+	 *
+	 * <p>The provider configuration determines whether function names and aliases are qualified
+	 * during metadata extraction.</p>
+	 *
+	 * <p>The resulting {@link BuiltinFunction} is a fully constructed runtime descriptor
+	 * used by the Naftah execution engine.</p>
+	 *
+	 * @param clazz  declaring class of the method
+	 * @param method reflected method instance
+	 * @return a fully constructed {@link BuiltinFunction}
+	 */
+	public static BuiltinFunction getBuiltinMethod(Class<?> clazz, Method method) {
+		var naftahFunctionProvider = getNaftahFunctionProviderAnnotation(clazz);
+
+		var naftahFunction = getNaftahFunctionAnnotation(   method,
+															naftahFunctionProvider.useQualifiedName(),
+															naftahFunctionProvider.useQualifiedAliases());
+
+		return BuiltinFunction.of(method, naftahFunctionProvider, naftahFunction);
 	}
 
 	/**
@@ -1029,5 +1087,50 @@ public final class ClassUtils {
 			return Void.class;
 		}
 		return clazz; // fallback, should not happen
+	}
+
+	/**
+	 * Resolves a Java type name into its corresponding {@link Class} object.
+	 *
+	 * <p>This method supports both primitive types and reference types:</p>
+	 *
+	 * <h3>Primitive type mappings</h3>
+	 * <ul>
+	 * <li>{@code int} → {@code int.class}</li>
+	 * <li>{@code long} → {@code long.class}</li>
+	 * <li>{@code boolean} → {@code boolean.class}</li>
+	 * <li>{@code double} → {@code double.class}</li>
+	 * <li>{@code float} → {@code float.class}</li>
+	 * <li>{@code char} → {@code char.class}</li>
+	 * <li>{@code byte} → {@code byte.class}</li>
+	 * <li>{@code short} → {@code short.class}</li>
+	 * <li>{@code void} → {@code void.class}</li>
+	 * </ul>
+	 *
+	 * <p><b>Reference types:</b> Any non-primitive type is resolved using
+	 * {@link RuntimeClassScanner#loadClass(String, java.util.function.Supplier)}.
+	 * If resolution fails, {@link Object} is returned as a safe fallback.</p>
+	 *
+	 * <p>This fallback ensures that metadata loading and reflection-based reconstruction
+	 * can continue even when certain classes are unavailable at runtime.</p>
+	 *
+	 * <p><b>Note:</b> This method never throws and always returns a {@link Class} instance.</p>
+	 *
+	 * @param name fully qualified class name or primitive type name
+	 * @return resolved {@link Class}, or {@link Object} if resolution fails
+	 */
+	public static Class<?> resolveType(String name) {
+		return switch (name) {
+			case "int" -> int.class;
+			case "long" -> long.class;
+			case "boolean" -> boolean.class;
+			case "double" -> double.class;
+			case "float" -> float.class;
+			case "char" -> char.class;
+			case "byte" -> byte.class;
+			case "short" -> short.class;
+			case "void" -> void.class;
+			default -> RuntimeClassScanner.loadClass(name, () -> Object.class);
+		};
 	}
 }

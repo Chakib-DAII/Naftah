@@ -1,6 +1,6 @@
 ---
 title: Naftah Functions
-description: Guide to defining and calling functions in Naftah, including typed parameters, default values, void functions, and complex function structures.
+description: Guide to Naftah functions, including typed parameters, default values, void functions, and advanced function definitions.
 layout: default
 permalink: /language/functions
 ---
@@ -14,10 +14,10 @@ permalink: /language/functions
 
 {% if site.data.builtin-functions.size > 0 %}
 <hr />
-<h2>جميع الدوال المضمنة مع الوصف 📋</h2>
+<h2 id="nla-builtin-functions">جميع الدوال المضمنة مع الوصف 📋</h2>
 
 	{% for provider in site.data.builtin-functions %}
-	<h3>{{ provider.provider }}</h3>
+	<h3 id="nla-builtin-functions-{{ forloop.index }}">{{ provider.provider }}</h3>
 	  <p>{{ provider.description | newline_to_br }}</p>
 	
 	  <table>
@@ -62,7 +62,7 @@ permalink: /language/functions
 
 {% endif %}
 
-<h2 id="1-ملاحظات">🧠 ملاحظات</h2>
+<h2 id="nla-notes">🧠 ملاحظات</h2>
 
 <ul>
   <li>أسماء الدوال في نفطه عربية مع إمكانيات استخدامها مع الأرقام الصحيحة والعشرية.</li>

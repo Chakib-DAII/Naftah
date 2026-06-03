@@ -3,40 +3,116 @@
 <head>
 	<meta charset="UTF-8"/>
 	<meta content="width=device-width, initial-scale=1" name="viewport"/>
-	<title>{{ page.title }} | {{ site.title }}</title>
+
+	<!-- SEO (handles title, description, OG, Twitter, canonical) -->
+	{% seo %}
+	<meta name="robots" content="index, follow">
+
+	<!-- Styles -->
 	<link href="{{ '/assets/css/main.css' | relative_url }}" rel="stylesheet">
-	<!-- jQuery -->
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-	<!-- DataTables CSS & JS -->
-	<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-	<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-	<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
-	
+	<!-- Main JS -->
 	<script src="{{ '/assets/js/main.js' | relative_url }}"></script>
 
-	{{ seo }}  <!-- used by jekyll-seo-tag plugin -->
+	<!-- Structured Data -->
+	<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "SoftwareSourceCode",
+			"name": "{{ site.full_title }}",
+			"description": "{{ site.description }}",
+			"url": "{{ site.url }}",
+			"codeRepository": "https://github.com/Chakib-DAII/Naftah",
+			"programmingLanguage": "Naftah",
+			"runtimePlatform": "JVM",
+			"author": {
+				"@type": "Person",
+				"name": "Chakib-DAII"
+			},
+			"publisher": {
+				"@type": "Organization",
+				"name": "Naftah",
+				"logo": {
+					"@type": "ImageObject",
+					"url": "{{ '/assets/images/logo.png' | absolute_url }}"
+				}
+			},
+			"inLanguage": "ar"
+		}
+	</script>
+
+	<script>
+		window.NAFTAH_ENV = "{{ jekyll.environment }}";
+	</script>
+
+	{%- comment -%} ===================== STYLES ===================== {%- endcomment -%}
+
+	{% if page.head_styles %}
+	{% for style in page.head_styles %}
+
+	{% if style.href %}
+	{% assign href = style.href %}
+	{% else %}
+	{% assign href = style %}
+	{% endif %}
+
+	<link rel="stylesheet"
+		  href="{% if href contains 'http' %}{{ href }}{% else %}{{ href | relative_url }}{% endif %}"
+		  {% if style.media %}media="{{ style.media }}"{% endif %}>
+
+	{% endfor %}
+	{% endif %}
+
+
+	{%- comment -%} ===================== SCRIPTS ===================== {%- endcomment -%}
+
+	{% if page.head_scripts %}
+	{% for script in page.head_scripts %}
+
+	{% if script.src %}
+	{% assign src = script.src %}
+	{% else %}
+	{% assign src = script %}
+	{% endif %}
+
+	<script
+			src="{% if src contains 'http' %}{{ src }}{% else %}{{ src | relative_url }}{% endif %}"
+			{% if script.type %}type="{{ script.type }}"{% endif %}
+			{% if script.defer %}defer{% endif %}
+			{% if script.async %}async{% endif %}>
+	</script>
+
+	{% endfor %}
+	{% endif %}
 </head>
+
 <body>
+
 <header class="site-header">
 	<!--	<img alt="NaftahLang" src="{{ '/assets/images/logo.png' | relative_url }}"-->
 	<!--		 style="height: 40px; vertical-align: middle; margin-right: 10px;">-->
-	<h1>
-		<a href="{{ site.baseurl | prepend: site.url }}/">
-			{{ site.title }}
+	<div class="site-title">
+		<a href="{{ '/' | absolute_url }}">
+			{{ site.full_title }}
 		</a>
-	</h1>
-	<br>
+	</div>
+
+	<button class="menu-toggle">☰</button>
+
 	{% include nav.html %}
 </header>
 
-<main class="site-content">
+<main class="site-content" {% if page.rtl %}dir="rtl"{% endif %}>
 	{{ content }}
 </main>
 
 <footer class="site-footer">
 	&copy; {{ "now" | date: "%Y" }} Naftah Lang - لغة برمجة نفطه
 </footer>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+		data-cf-beacon='{"token": "68aacf910c9f46a28419fcd83af7a79e"}'></script>
+<!-- End Cloudflare Web Analytics -->
 </body>
 </html>

@@ -1,10 +1,11 @@
 ---
 title: About Benchmarks
+description: Performance benchmarks for Naftah language on the JVM, including string utilities, interpolation speed, and large-scale execution tests with detailed metrics.
 layout: default
 permalink: /benchmarks
 ---
 
-# 🧪 Benchmark Results
+# 🧪 Benchmark Results {#nla-benchmark-results}
 
 | Benchmark                                                                          | Params                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Mode  | Score           | Error            | Units  | Percentiles                                                                                                                                                                                        |
 |------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------|-----------------|------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -30,15 +31,15 @@ permalink: /benchmarks
 
 ## 📈 Benchmark Graphs
 
-### StringUtilsBenchmark comparison
+### StringUtilsBenchmark comparison {#nla-StringUtilsBenchmark-benchmark}
 
 ![StringUtilsBenchmark comparison](assets/images/benchmark-graphs/org.daiitech.naftah.benchmarks.builtin.utils.StringUtilsBenchmark_comparison.png)
 
-### StringInterpolatorBenchmark comparison
+### StringInterpolatorBenchmark comparison {#nla-StringInterpolatorBenchmark-benchmark}
 
 ![StringInterpolatorBenchmark comparison](assets/images/benchmark-graphs/org.daiitech.naftah.benchmarks.parser.StringInterpolatorBenchmark_comparison.png)
 
-### StringInterpolatorLargeInputsBenchmark comparison
+### StringInterpolatorLargeInputsBenchmark comparison {#nla-StringInterpolatorLargeInputsBenchmark-benchmark}
 
 ![StringInterpolatorLargeInputsBenchmark comparison](assets/images/benchmark-graphs/org.daiitech.naftah.benchmarks.parser.StringInterpolatorLargeInputsBenchmark_comparison.png)
 

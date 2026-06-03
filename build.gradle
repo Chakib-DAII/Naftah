@@ -1,4 +1,6 @@
 import groovy.xml.XmlSlurper
+import org.yaml.snakeyaml.Yaml
+import groovy.json.JsonOutput
 
 plugins {
 	id 'java'
@@ -179,6 +181,153 @@ tasks.register('copyJavadocAll', Copy) {
 
 	from tasks.named('javadocAll').get().destinationDir
 	into "$rootDir/docs-site/javadoc"
+}
+
+tasks.register('exportNaftahExamples') {
+
+	doLast {
+
+		def sourceDir    = file("learn-by-example")
+		def targetAssets = file("docs-site/assets/examples")
+		def targetPages  = file("docs-site/examples")
+		def dataDir      = file("docs-site/_data")
+
+		targetAssets.mkdirs()
+		targetPages.mkdirs()
+		dataDir.mkdirs()
+
+		def navigationFile =
+				file("docs-site/_data/navigation.yml")
+
+		def navigation =
+				new Yaml().load(navigationFile.text)
+
+		def titleMap = [:]
+
+		def collectTitles
+
+		collectTitles = { items ->
+
+			items.each { item ->
+
+				if (item.url?.startsWith("/examples/")) {
+
+					def safeName =
+							item.url
+									.replace("/examples/", "")
+									.replaceAll(/\/+$/, "")
+
+					titleMap[safeName] = item.title
+				}
+
+				if (item.children) {
+					collectTitles(item.children)
+				}
+			}
+		}
+
+		collectTitles(navigation)
+
+
+		def examples = []
+
+		fileTree(sourceDir).matching {
+
+			include "**/*.naftah",
+					"**/*.nfth",
+					"**/*.na",
+					"**/*.nsh"
+
+		}.each { file ->
+
+			def relativePath =
+					sourceDir.toPath()
+							.relativize(file.toPath())
+							.toString()
+
+			def safeName =
+					file.name.substring(
+							0,
+							file.name.lastIndexOf(".")
+					)
+
+			def safeFileName =
+					relativePath.replace(
+							File.separator,
+							"_"
+					)
+
+			def extension =
+					file.name.substring(
+							file.name.lastIndexOf(".") + 1
+					)
+
+			def assetFile =
+					new File(targetAssets, safeFileName)
+
+			assetFile.parentFile.mkdirs()
+			assetFile.bytes = file.bytes
+
+			def content =
+					file.getText("UTF-8")
+
+			def arabicTitle =
+					titleMap[safeName] ?: safeName
+
+			examples << [
+					name      : safeName,
+					title     : arabicTitle,
+					filename  : safeFileName,
+					extension : extension
+			]
+
+			def mdFile =
+					new File(targetPages, "${safeName}.md")
+
+			def seoDescription =
+					"${safeName} is an example in the Naftah programming language demonstrating syntax, usage, and core language features."
+
+			def escapedContent = content
+					.replace("&", "&amp;")
+					.replace("<", "&lt;")
+					.replace(">", "&gt;")
+					.replaceAll(/\r\n/, "\n")
+					.trim()
+
+			mdFile.text = """---
+title: ${safeName}
+description: ${seoDescription}
+layout: default
+permalink: /examples/${safeName}
+rtl: true
+---
+
+# ${arabicTitle}
+
+📄 الأصل: `${file.name}`
+
+📦 تحميل الملف:
+[⬇ تحميل](/assets/examples/${safeFileName})
+
+🔗 عرض الملف:
+
+```naftah
+{% raw %}
+${escapedContent}
+{% endraw %}
+```
+"""
+		}
+
+		def jsonFile =
+				new File(dataDir, "examples.json")
+
+		jsonFile.parentFile.mkdirs()
+
+		jsonFile.text = JsonOutput.prettyPrint(
+				JsonOutput.toJson(examples)
+		)
+	}
 }
 
 changelog {

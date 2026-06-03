@@ -17,7 +17,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 🔢 أمثلة على التعبيرات الحسابية
+## 🔢 أمثلة على التعبيرات الحسابية {#nla-arithmetic-expressions}
 
 ```naftah
 --- ضرب عددين صحيحين
@@ -38,7 +38,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## ✅ العمليات بين القيم المنطقية والأرقام
+## ✅ العمليات بين القيم المنطقية والأرقام {#nla-boolean-and-number-operations}
 
 ```naftah
 --- صحيح * 5 = 1 * 5 = 5
@@ -56,7 +56,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## ✨ التعامل مع السلاسل النصية
+## ✨ التعامل مع السلاسل النصية {#nla-string-operations}
 
 ```naftah
 --- تكرار الحرف "ب" 3 مرات
@@ -68,7 +68,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 🧠 سلوك التعبيرات مع أنواع غير عددية
+## 🧠 سلوك التعبيرات مع أنواع غير عددية {#nla-non-numeric-expression-behavior}
 
 ```naftah
 --- سلسلة فارغة للأس 2 => NaN
@@ -87,7 +87,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 🧪 عمليات عنصر-بعنصر على البنى المركبة
+## 🧪 عمليات عنصر-بعنصر على البنى المركبة {#nla-element-wise-operations}
 
 ```naftah
 --- قائمة ضرب نفسها
@@ -102,7 +102,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## ⚙️ الصيغ النقطية للتعبيرات
+## ⚙️ الصيغ النقطية للتعبيرات {#nla-dot-notation-expressions}
 
 ```naftah
 --- ضرب نقطي
@@ -117,7 +117,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 🧮 المقارنات المنطقية
+## 🧮 المقارنات المنطقية {#nla-logical-comparisons}
 
 ```naftah
 [٨٥، ٩٠، ٧٨، ٩٢] يساوي [٨٥، ٩٠، ٧٨، ٩٢]
@@ -127,7 +127,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 📌 التعبيرات بين أرقام ومصفوفات
+## 📌 التعبيرات بين أرقام ومصفوفات {#nla-number-and-array-expressions}
 
 ```naftah
 --- ضرب رقم بقائمة
@@ -139,7 +139,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 🧬 التعبيرات على التركيبات (Tuples)
+## 🧬 التعبيرات على التركيبات (Tuples) {#nla-tuple-expressions}
 
 ```naftah
 (١، ٢، ٣) + (٤، ٥، ٦)
@@ -149,7 +149,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 📁 المصفوفات الترابطية (Dictionaries)
+## 📁 المصفوفات الترابطية (Dictionaries) {#nla-dictionary-expressions}
 
 ```naftah
 {"عمر": ٢٠} + {"عمر": ٢}
@@ -158,7 +158,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 📦 أمثلة على استخدام الاستيراد (Imports)
+## 📦 أمثلة على استخدام الاستيراد (Imports) {#nla-import-examples}
 
 ```naftah
 ---* استدعاء دوال مدمجة وإعادة التسمية *---
@@ -193,7 +193,7 @@ non-numeric strings or invalid values.
 
 ---
 
-### 🔹 ملاحظات على الاستيراد في نفطه
+### 🔹 ملاحظات على الاستيراد في نفطه {#nla-import-notes}
 
 1. **إجلب / استيراد**: يستخدم لجلب الدوال أو الحزم أو الكائنات.
 2. **تحت_إسم / مثل**: يسمح بإعادة تسمية الوحدة أو الدالة محليًا لتسهيل الاستخدام.
@@ -202,16 +202,16 @@ non-numeric strings or invalid values.
 
 ---
 
-## 🔀 عمليات الإزاحة البتّية (Bitwise Shift Operations)
+## 🔀 عمليات الإزاحة البتّية (Bitwise Shift Operations) {#nla-bitwise-shift-operations}
 
 تُستخدم عمليات الإزاحة لتحريك البتّات يمينًا أو يسارًا داخل القيمة العددية.
 يدعم Naftah أعدادًا **غير محدودة الحجم** طالما كانت **أعدادًا صحيحة**.
 
 ---
 
-### ⬅️ الإزاحة إلى اليسار (Shift Left)
+### ⬅️ الإزاحة إلى اليسار (Shift Left) {#nla-shift-left}
 
-#### 🔹 الصيغة الرمزية
+#### 🔹 الصيغة الرمزية {#nla-shift-left-symbolic-syntax}
 
 ```naftah
 64 << 2
@@ -219,7 +219,7 @@ non-numeric strings or invalid values.
 1 << 100
 ```
 
-#### 🔹 الصيغة اللفظية
+#### 🔹 الصيغة اللفظية {#nla-shift-left-verbal-syntax}
 
 ```naftah
 64 إزاحة_يسار 2
@@ -227,7 +227,7 @@ non-numeric strings or invalid values.
 1 إزاحة_يسار 100
 ```
 
-#### 🧠 الشرح
+#### 🧠 الشرح {#nla-shift-left-explanation}
 
 * كل إزاحة لليسار تعادل **الضرب في 2ⁿ**
 * تدعم أعدادًا ضخمة جدًا بدون فقدان دقة
@@ -241,9 +241,9 @@ non-numeric strings or invalid values.
 
 ---
 
-### ➡️ الإزاحة إلى اليمين (Shift Right – Signed)
+### ➡️ الإزاحة إلى اليمين (Shift Right – Signed) {#nla-shift-right}
 
-#### 🔹 الصيغة الرمزية
+#### 🔹 الصيغة الرمزية {#nla-shift-right-symbolic-syntax}
 
 ```naftah
 128 >> 2
@@ -251,7 +251,7 @@ non-numeric strings or invalid values.
 9223372036854775808 >> 2
 ```
 
-#### 🔹 الصيغة اللفظية
+#### 🔹 الصيغة اللفظية {#nla-shift-right-verbal-syntax}
 
 ```naftah
 128 إزاحة_يمين 2
@@ -259,7 +259,7 @@ non-numeric strings or invalid values.
 9223372036854775808 إزاحة_يمين 2
 ```
 
-#### 🧠 الشرح
+#### 🧠 الشرح {#nla-shift-right-explanation}
 
 * تعادل **القسمة الصحيحة على 2ⁿ**
 * تحافظ على الإشارة (في حال دعم الأعداد السالبة)
@@ -272,9 +272,9 @@ non-numeric strings or invalid values.
 
 ---
 
-### ➡️➡️ الإزاحة إلى اليمين غير الموقعة (Unsigned Shift Right)
+### ➡️➡️ الإزاحة إلى اليمين غير الموقعة (Unsigned Shift Right) {#nla-unsigned-shift-right}
 
-#### 🔹 الصيغة الرمزية
+#### 🔹 الصيغة الرمزية {#nla-unsigned-shift-right-symbolic-syntax}
 
 ```naftah
 128 >>> 2
@@ -282,7 +282,7 @@ non-numeric strings or invalid values.
 9223372036854775808 >>> 2
 ```
 
-#### 🔹 الصيغة اللفظية
+#### 🔹 الصيغة اللفظية {#nla-unsigned-shift-right-verbal-syntax}
 
 ```naftah
 128 إزاحة_يمين_غير_موقعة 2
@@ -290,16 +290,16 @@ non-numeric strings or invalid values.
 9223372036854775808 إزاحة_يمين_غير_موقعة 2
 ```
 
-#### 🧠 الشرح
+#### 🧠 الشرح {#nla-unsigned-shift-right-explanation}
 
 * إزاحة يمين **بدون اعتبار الإشارة**
 * مفيدة في العمليات منخفضة المستوى (Low-level / Bit masking)
 
 ---
 
-### ⚠️ القيود والأخطاء
+### ⚠️ القيود والأخطاء {#nla-shift-constraints-and-errors}
 
-#### ❌ الأعداد العشرية غير مدعومة
+#### ❌ الأعداد العشرية غير مدعومة {#nla-decimal-shift-not-supported}
 
 أي محاولة لاستخدام الإزاحة مع عدد عشري تؤدي إلى خطأ لغوي (Bug Error):
 
@@ -313,7 +313,7 @@ non-numeric strings or invalid values.
 
 ---
 
-## 🧠 ملاحظات مهمة
+## 🧠 ملاحظات مهمة {#nla-important-notes}
 
 * التعبيرات يمكن أن تكون **بين نفس النوع** أو بين **أنواع مختلفة** مثل رقم وسلسلة.
 * عند استخدام سلاسل نصية غير رقمية في عمليات عددية، النتيجة غالبًا `قيمة_غير_رقمية (NaN)`.

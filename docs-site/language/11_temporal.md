@@ -1,6 +1,6 @@
 ---
 title: Naftah Temporal
-description: Date, time, duration, and calendar support in the Naftah language, including multiple chronologies and time zones.
+description: Guide to Naftah date and time support with durations, calendars, time zones, and multiple chronologies.
 layout: default
 permalink: /language/temporal
 ---

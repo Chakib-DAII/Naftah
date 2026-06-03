@@ -12,7 +12,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -178,12 +177,7 @@ public final class BuiltinFunction implements Serializable, JvmExecutable {
 		try {
 			ois.defaultReadObject();
 			Class<?> clazz = Class.forName(className);
-			for (Method m : clazz.getDeclaredMethods()) {
-				if (m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), methodParameterTypes)) {
-					this.method = m;
-					break;
-				}
-			}
+			this.method = clazz.getDeclaredMethod(methodName, methodParameterTypes);
 		}
 		catch (Throwable ignored) {
 		}

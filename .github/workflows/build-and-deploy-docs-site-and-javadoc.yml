@@ -6,6 +6,7 @@ on:
       - main
     tags:
       - '*'
+  workflow_dispatch:
 
 jobs:
   build-docs-site-and-javadoc:
@@ -42,10 +43,26 @@ jobs:
       - name: export Naftah Functions, JVM Functions and Initializers for Jekyll
         run: ./gradlew exportNaftahFunctions
 
+      - name: export Naftah Examples
+        run: ./gradlew exportNaftahExamples
+
+      - name: export Naftah playground executable
+        run: ./gradlew copyPlaygroundJar
+
       - name: Fetch GitHub Releases for Jekyll
         run: |
-          curl -s https://api.github.com/repos/${{ github.repository }}/releases \
-            > docs-site/_data/releases.json
+          echo "Fetching releases..."
+          RELEASES_JSON=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/releases)
+          # If no releases yet, create empty array
+          if echo "$RELEASES_JSON" | grep -q '"message": "Not Found"'; then
+            echo "No releases found, creating empty releases.json"
+            echo "[]" > docs-site/_data/releases.json
+          else
+            echo "$RELEASES_JSON" 
+            echo "$RELEASES_JSON" > docs-site/_data/releases.json
+          fi
         shell: bash
 
       - name: Set up Ruby
@@ -61,10 +78,56 @@ jobs:
 
       - name: Build Jekyll site
         working-directory: docs-site
-        run: bundle exec jekyll build -d ../site-output
+        run: JEKYLL_ENV=production bundle exec jekyll build -d ../site-output
+
+      - name: Set up Node.js (for SEO validation)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: docs-site/package-lock.json
+
+      - name: Install Node dependencies
+        working-directory: docs-site
+        run: npm ci
+
+      - name: Run SEO validation
+        working-directory: docs-site
+        run: npm run seo
+        env:
+          SITE_DIR: ../site-output
+
+      - name: Upload SEO reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-reports
+          path: |
+            docs-site/seo-report.json
+            docs-site/seo-summary.json
+
+      - name: Enforce SEO quality gate
+        working-directory: docs-site
+        run: |
+          node -e "
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('seo-summary.json','utf8'));
+          if (!data.passed) {
+           console.error('❌ SEO validation failed');
+           process.exit(1);
+          }
+          console.log('✅ SEO validation passed');
+          "
 
       - name: Copy Javadoc into built site
         run: cp -r build/docs/javadoc site-output/javadoc
+
+      - name: prepare sitemap URLs for IndexNow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          SITE_MAP: site-output/sitemap.xml
+          INDEXNOW_OUTPUT: site-output/assets/data/indexnow.json
+        run: |
+          python docs-site/prepare-indexnow-payload.py
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
@@ -72,3 +135,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: site-output
           publish_branch: gh-pages
+
+      - name: Submit sitemap URLs to IndexNow
+        run: |
+          curl \
+            -i \
+            -X POST \
+            -H "Content-Type: application/json; charset=utf-8" \
+            --data @site-output/assets/data/indexnow.json \
+            https://api.indexnow.org/indexnow

@@ -159,6 +159,39 @@ public final class Naftah {
 	 * Cache results of classpath and JDK scanning.
 	 */
 	public static final String CACHE_SCANNING_RESULTS_PROPERTY = "naftah.cacheScanningResults";
+
+	/**
+	 * System property key that defines the path used for caching runtime data.
+	 * If not provided, a default cache location will be used.
+	 */
+	public static final String CACHE_PATH_PROPERTY = "naftah.cache.path";
+
+	/**
+	 * System property key that defines the path used for caching minimal runtime data.
+	 * If not provided, a default minimal cache location will be used.
+	 */
+	public static final String MINIMAL_CACHE_PATH_PROPERTY = "naftah.cache.minimal.path";
+
+	/**
+	 * System property key that defines the file system path used for caching the full runtime index.
+	 *
+	 * <p>The index cache typically stores precomputed lookup structures such as
+	 * class and function indices to accelerate runtime resolution.</p>
+	 *
+	 * <p>If not provided, a default index cache location is used.</p>
+	 */
+	public static final String INDEX_CACHE_PATH_PROPERTY = "naftah.cache.index.path";
+
+	/**
+	 * System property key that defines the file system path used for caching the minimal runtime index.
+	 *
+	 * <p>The minimal index is a lightweight version of the runtime index, intended
+	 * for constrained or performance-sensitive environments.</p>
+	 *
+	 * <p>If not provided, a default minimal index cache location is used.</p>
+	 */
+	public static final String MINIMAL_INDEX_CACHE_PATH_PROPERTY = "naftah.cache.index.minimal.path";
+
 	/**
 	 * Property to enable debug mode.
 	 */

@@ -13,7 +13,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -214,12 +213,7 @@ public final class JvmClassInitializer implements Serializable, JvmExecutable {
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		try {
 			ois.defaultReadObject();
-			for (Constructor<?> c : clazz.getConstructors()) {
-				if (Arrays.equals(c.getParameterTypes(), constructorParameterTypes)) {
-					this.constructor = c;
-					break;
-				}
-			}
+			this.constructor = clazz.getDeclaredConstructor(constructorParameterTypes);
 		}
 		catch (Throwable ignored) {
 		}

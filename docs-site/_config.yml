@@ -1,6 +1,7 @@
 # _config.yml
 
-title: "Naftah Language Documentation - مستندات لغة نفطه"
+title: "Naftah Docs - مستندات نفطه"
+full_title: "Naftah Language Documentation - مستندات لغة نفطه"
 description: "Documentation and guides for Naftah programming language"
 baseurl: ""
 url:  "https://naftah.daiitech.org"
@@ -14,18 +15,40 @@ theme: minima          # built-in simple theme (easy to customize)
 markdown: kramdown     # recommended Markdown parser
 kramdown:
   input: GFM           # GitHub Flavored Markdown
+  auto_ids: true
 
 plugins:
   - jekyll-seo-tag    # for SEO improvements
+  - jekyll-sitemap
 
 exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules
   - vendor
+  - package.json
+  - package-lock.json
+  - yarn.lock
+  - npm-debug.log
+  - seo-audit.js
+  - seo-report.json
+  - seo-summary.json
+  - indexnow.json
+  - prepare-indexnow-payload.py
+
+data_chunk_size: 100
 
 copy_data_files:
   - file: jvm-class-initializers.json
   - file: jvm-functions.json
+    chunk: true
+    compress: true
+  - file: class-scanning-result.json
+    compress: true
+  - file: minimal-class-scanning-result.json
+    compress: true
+  - file: class-scanning-index.json
+    compress: true
+  - file: minimal-class-scanning-index.json
     compress: true
 

@@ -1,12 +1,19 @@
 ---
 title: Java Interoperability
-description: Guide to Java interoperability in Naftah — using Naftah as a JVM language to seamlessly call, extend, and integrate with Java classes and libraries.
+description: Guide to Naftah on the JVM with Java interoperability, including seamless use of Java classes and libraries.
 layout: default
 permalink: /language/java-interop
+head_scripts: [
+	{ src: "https://code.jquery.com/jquery-3.6.0.min.js", defer: true },
+	{ src: "https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js", defer: true },
+	{ src: "https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js", defer: true },
+	{ src: "/assets/js/jvm-class-initializers.js", defer: true },
+	{ src: "/assets/js/jvm-functions.js", defer: true }
+]
+head_styles: [
+	{ href: "https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" }
+]
 ---
-
-<script src="{{ '/assets/js/jvm-class-initializers.js' | relative_url }}"></script>
-<script src="{{ '/assets/js/jvm-functions.js' | relative_url }}"></script>
 
 <div dir="rtl">
 
@@ -16,7 +23,7 @@ permalink: /language/java-interop
 {{ included_content | markdownify }}
 
 {% if site.data.jvm-class-initializers.size > 0 %}
-<h2>📌 جميع مُهيئات الكائنات</h2>
+<h2 id="nla-jvm-class-initializers">📌 جميع مُهيئات الكائنات</h2>
 <table id="jvm-class-initializers-table" class="display" style="width:100%">
 <thead>
 <tr>
@@ -31,7 +38,7 @@ permalink: /language/java-interop
 {% endif %}
 
 {% if site.data.jvm-functions.size > 0 %}
-<h2>📌 جميع استدعاءات الدوال</h2>
+<h2 id="nla-jvm-functions">📌 جميع استدعاءات الدوال</h2>
 <table id="jvm-functions-table" class="display" style="width:100%">
 <thead>
 <tr>
@@ -48,7 +55,7 @@ permalink: /language/java-interop
 {% endif %}
 
 
-<h2 id="-ملاحظات">🧠 ملاحظات</h2>
+<h2 id="nla-notes">🧠 ملاحظات</h2>
 
 <ul>
   <li>يمكن استدعاء <strong>الدوال الثابتة والمثيلة</strong> من مكتبات جافا مباشرة داخل نفطه.</li>

@@ -1,6 +1,6 @@
 ---
 title: Naftah Control Flow
-description: Comprehensive guide to control flow structures in Naftah, including conditionals, loops, switch-case statements, and option/error handling with try.
+description: Learn control flow in Naftah with conditionals, loops, switch-case statements, and option or error handling using try.
 layout: default
 permalink: /language/control-flow
 ---

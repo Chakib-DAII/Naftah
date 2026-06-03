@@ -13,7 +13,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-## 🔀 جمل الشرط (If Statements)
+## 🔀 جمل الشرط (If Statements) {#nla-if-statements}
 
 صيغة شرطية تسمح بتنفيذ كتلة برمجية عند تحقق شرط معين، مع إمكانية إضافة عدة شروط بديلة وكتلة بديلة أخيرة.
 
@@ -42,7 +42,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 📌 تعبيرات شرطية ثلاثية (Ternary Expressions)
+### 📌 تعبيرات شرطية ثلاثية (Ternary Expressions) {#nla-ternary-expressions}
 
 تعبير مختصر يسمح بالاختيار بين قيمتين بناءً على شرط:
 
@@ -50,7 +50,7 @@ It provides detailed definitions and illustrative examples.
 شرط ؟ قيمة_إذا_صحيح : قيمة_إذا_خطأ أنهي
 ```
 
-#### أمثلة:
+#### أمثلة:  {#nla-ternary-expression-examples}
 
 ```naftah
 --- تعبير ثلاثي: إذا كانت أ صحيحة، أ، وإلا ب
@@ -71,7 +71,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 📌 تعبير nullish (Nullish Coalescing)
+### 📌 تعبير nullish (Nullish Coalescing) {#nla-nullish-coalescing}
 
 يستخدم لاختيار القيمة الأولى غير `null` أو `undefined` (أو القيمة الفارغة حسب التعريف) بين قيمتين:
 
@@ -87,7 +87,7 @@ It provides detailed definitions and illustrative examples.
 متغير ج تعيين 5
 ```
 
-#### أمثلة:
+#### أمثلة: {#nla-nullish-coalescing_examples}
 
 ```naftah
 --- تعبير nullish: إذا كانت أ غير nullish، استخدم أ، وإلا ب
@@ -107,7 +107,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-## 🔄 حلقات التكرار (Loops)
+## 🔄 حلقات التكرار (Loops) {#nla-loops}
 
 ---*
 هذا الملف يشرح كيفية استخدام الحلقات (loops) في لغة نفطه، ويغطي:
@@ -124,7 +124,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 1. حلقات رقمية بترتيب تصاعدي أو تنازلي (Index-based loops)
+### 1. حلقات رقمية بترتيب تصاعدي أو تنازلي (Index-based loops) {#nla-index-based-loops}
 
 تكرار يبدأ من قيمة مبدئية إلى قيمة نهائية، مع إمكانية تحديد الخطوة والاتجاه (تصاعدي أو تنازلي):
 
@@ -178,7 +178,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 2. الحلقات المتداخلة (Nested loops)
+### 2. الحلقات المتداخلة (Nested loops) {#nla-nested-loops}
 
 يمكن وضع حلقة داخل أخرى:
 
@@ -247,9 +247,9 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 3. حلقات foreach للتكرار على عناصر مجموعة أو قائمة أو كائنات
+### 3. حلقات foreach للتكرار على عناصر مجموعة أو قائمة أو كائنات {#nla-foreach-loops}
 
-#### التكرار على قائمة (List):
+#### التكرار على قائمة (List): {#nla-list-foreach-loop}
 
 ```naftah
 كرر_حلقة عنصر من ["واحة"، "نخيل", "ينبوع"] إفعل {
@@ -258,7 +258,7 @@ It provides detailed definitions and illustrative examples.
 أنهي
 ```
 
-#### التكرار على مصفوفة (Array) باستخدام `داخل`:
+#### التكرار على مصفوفة (Array) باستخدام `داخل`: {#nla-array-foreach-loop}
 
 ```naftah
 كرر_حلقة أ داخل [1؛2؛3؛4] إفعل {
@@ -267,7 +267,7 @@ It provides detailed definitions and illustrative examples.
 أنهي
 ```
 
-#### التكرار على قائمة مع فهرس وقيمة:
+#### التكرار على قائمة مع فهرس وقيمة: {#nla-index-and-value-set-foreach-loop}
 
 ```naftah
 كرر_حلقة فهرس؛ قيمة ضمن {"واحة", "نخيل", "ينبوع", "ظل"} إفعل {
@@ -276,7 +276,7 @@ It provides detailed definitions and illustrative examples.
 أنهي
 ```
 
-#### التكرار على قاموس (Object) بمفتاح وقيمة باستخدام `من_بين`:
+#### التكرار على قاموس بمفتاح وقيمة باستخدام `من_بين`: {#nla-dictionary-foreach-loop}
 
 ```naftah
 كرر_حلقة مفتاح: قيمة من_بين {"اسم": "أحمد", "عمر": ٢٠, "معدل": ٨٨} إفعل {
@@ -285,7 +285,7 @@ It provides detailed definitions and illustrative examples.
 أنهي
 ```
 
-#### التكرار على كائن مع مفاتيح وقيم وأسماء متغيرة مخصصة:
+#### التكرار على كائن مع مفاتيح وقيم وأسماء متغيرة مخصصة: {#nla-object-foreach-loop}
 
 ```naftah
 كرر_حلقة فهرس؛ مفتاح: قيمة داخل {
@@ -300,7 +300,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 4. أخطاء شائعة مع التسمية في الكسر (break)
+### 4. أخطاء شائعة مع التسمية في الكسر (break) {#nla-break-label-errors}
 
 ```naftah
 حلقة:
@@ -320,7 +320,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 5. حلقات واسعة النطاق وأداء
+### 5. حلقات واسعة النطاق وأداء {#nla-large-loops-performance}
 
 ```naftah
 --- حلقة طويلة بدون حد واقعي (2147483647 = max int)
@@ -341,9 +341,9 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-## 🔄 حلقة while (بينما)
+## 🔄 حلقة while (بينما) {#nla-while-loop}
 
-### مفهوم حلقة while:
+### مفهوم حلقة while: {#nla-while-loop-intro}
 
 * **تكرار تنفيذ كتلة التعليمات طالما الشرط صحيح.**
 * الشرط يُفحص قبل تنفيذ الكتلة في كل دورة.
@@ -352,7 +352,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### بناء الجملة في نفطه
+### بناء الجملة في نفطه {#nla-while-loop-syntax}
 
 ```text
 بينما (الشرط) افعل {
@@ -363,11 +363,11 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### أمثلة تفصيلية مع شرح
+### أمثلة تفصيلية مع شرح {#nla-while-loop-examples}
 
 ---
 
-### 1. طباعة الأعداد من 1 إلى 10 باستخدام while
+### 1. طباعة الأعداد من 1 إلى 10 باستخدام while {#nla-while-loop-example-1}
 
 ```naftah
 متغير أ تعيين 1
@@ -381,7 +381,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 2. التوقف المبكر باستخدام `اكسر`
+### 2. التوقف المبكر باستخدام `اكسر` {#nla-while-loop-example-2}
 
 ```naftah
 متغير أ تعيين 1
@@ -398,7 +398,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 3. تخطي خطوة باستخدام `تابع`
+### 3. تخطي خطوة باستخدام `تابع` {#nla-while-loop-example-3}
 
 ```naftah
 متغير أ تعيين 0
@@ -415,7 +415,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 4. حلقة while متداخلة مع for loop (كرر_حلقة)
+### 4. حلقة while متداخلة مع for loop (كرر_حلقة) {#nla-while-loop-example-4}
 
 ```naftah
 متغير أ تعيين 1
@@ -436,7 +436,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 5. استخدام while مع شرط معقد
+### 5. استخدام while مع شرط معقد {#nla-while-loop-example-5}
 
 ```naftah
 متغير أ تعيين 10
@@ -465,9 +465,9 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-## 🔄 حلقة repeat-until (كرر ... حتى)
+## 🔄 حلقة repeat-until (كرر ... حتى) {#nla-repeat-until}
 
-### مفهوم حلقة repeat-until:
+### مفهوم حلقة repeat-until: {#nla-repeat-until-intro}
 
 * **تُنفذ كتلة التعليمات مرة واحدة على الأقل، ثم تكرر طالما الشرط غير محقق.**
 * الشرط يُفحص في نهاية كل دورة.
@@ -476,7 +476,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### البناء العام في نفطه
+### البناء العام في نفطه {#nla-repeat-until-syntax}
 
 ```text
 كرر {
@@ -486,11 +486,11 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### أمثلة تفصيلية مع شرح
+### أمثلة تفصيلية مع شرح {#nla-repeat-until-examples}
 
 ---
 
-### 1. طباعة الأعداد من 1 حتى أكبر من 9
+### 1. طباعة الأعداد من 1 حتى أكبر من 9 {#nla-repeat-until-example-1}
 
 ```naftah
 متغير أ تعيين ١
@@ -512,7 +512,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 2. حلقة متداخلة مع `بينما` و `كرر ... حتى`
+### 2. حلقة متداخلة مع `بينما` و `كرر ... حتى` {#nla-repeat-until-example-2}
 
 ```naftah
 كرر_حلقة أ تعيين 1 إلى 5 إفعل {
@@ -549,7 +549,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 3. مثال مع كسر مبكر (باستخدام `اكسر`)
+### 3. مثال مع كسر مبكر (باستخدام `اكسر`) {#nla-repeat-until-example-3}
 
 ```naftah
 متغير أ تعيين ١
@@ -567,7 +567,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 4. مثال مع تخطي خطوة (باستخدام `تابع`)
+### 4. مثال مع تخطي خطوة (باستخدام `تابع`) {#nla-repeat-until-example-4}
 
 ```naftah
 متغير أ تعيين ٠
@@ -585,7 +585,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 5. استخدام شرط مركب في `حتى`
+### 5. استخدام شرط مركب في `حتى` {#nla-repeat-until-example-5}
 
 ```naftah
 متغير أ تعيين ١
@@ -615,14 +615,14 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-## 🎯 جملة الحالة (Case Statement)
+## 🎯 جملة الحالة (Case Statement) {#nla-case-statement}
 
 جملة الحالة تسمح بالاختيار بين عدة كتل تنفيذية بناءً على قيمة تعبير معين. يمكن استخدام عدة قيم للحالة الواحدة، بالإضافة
 إلى حالة افتراضية `وإلا` تُنفذ إذا لم تتطابق أي حالة.
 
 ---
 
-### البناء العام
+### البناء العام {#nla-case-statement-syntax}
 
 ```text
 حسب (التعبير) من {
@@ -640,7 +640,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### مثال مفصل مع دعم القيم المتعددة والشروط:
+### مثال مفصل مع دعم القيم المتعددة والشروط: {#nla-case-statement-example}
 
 ```naftah
 --- تعريف متغير أ وتعيينه بالقيمة ١
@@ -674,7 +674,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### شرح المثال:
+#### شرح المثال:
 
 * المتغير `ت` هو مجموع `أ + ب`.
 * جملة الحالة `حسب (ت) من { ... }` تفحص قيمة `ت`.
@@ -690,14 +690,14 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-## 🛠️ معالجة الأخطاء والخيارات (Try Statement)
+## 🛠️ معالجة الأخطاء والخيارات (Try Statement) {#nla-try-statement}
 
 في لغة نفطه، تعبير **حاول** يُستخدم لتنفيذ تعبير قد يفشل أو يكون له قيمة محتملة، مع التعامل المدمج لحالات النجاح والفشل
 أو وجود/عدم وجود قيمة.
 
 ---
 
-### 1. التعامل مع الحالات `نجاح` و `فشل`
+### 1. التعامل مع الحالات `نجاح` و `فشل` {#nla-try-statement-success-and-failure}
 
 * يحاول تنفيذ تعبير (مثل عملية حسابية أو دالة).
 * ينفذ كتلة عند النجاح (تُمرر النتيجة).
@@ -716,7 +716,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### 2. التعامل مع الحالات `بعض` و `معدوم`
+### 2. التعامل مع الحالات `بعض` و `معدوم` {#nla-try-statement-optional}
 
 * نمط مشابه لكن مع القيم المحتملة أو الغائبة (خيارات).
 * ينفذ كتلة عند وجود قيمة.
@@ -735,11 +735,11 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-## أمثلة تطبيقية مفصلة
+## أمثلة تطبيقية مفصلة {#nla-practical-examples}
 
 ---
 
-### مثال 1: محاولة تنفيذ قيمة ثابتة ناجحة
+### مثال 1: محاولة تنفيذ قيمة ثابتة ناجحة {#nla-practical-example-1}
 
 ```naftah
 حاول(1) {
@@ -750,7 +750,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### مثال 2: محاولة قسمة على صفر - تسبب خطأ
+### مثال 2: محاولة قسمة على صفر - تسبب خطأ {#nla-practical-example-2}
 
 ```naftah
 حاول(1 قسمة 0) {
@@ -761,7 +761,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### مثال 3: تداخل محاولات داخل فشل
+### مثال 3: تداخل محاولات داخل فشل {#nla-practical-example-3}
 
 ```naftah
 حاول(1 قسمة 0) {
@@ -778,7 +778,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### مثال 4: التعامل مع كائن (Object)
+### مثال 4: التعامل مع كائن (Object) {#nla-practical-example-4}
 
 ```naftah
 متغير بلدة تعيين {
@@ -800,7 +800,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### مثال 5: التعامل مع قائمة متداخلة
+### مثال 5: التعامل مع قائمة متداخلة {#nla-practical-example-5}
 
 ```naftah
 متغير قائمة_1 تعيين [١٠, [٩, [٨, [٧, [٦, [٥, [٤, [٣, [٢, ١]]]]]]]]]
@@ -818,7 +818,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### مثال 6: التعامل مع خيارات (Option) - بعض ومعدوم
+### مثال 6: التعامل مع خيارات (Option) - بعض ومعدوم {#nla-practical-example-6}
 
 ```naftah
 حاول(1) {
@@ -834,7 +834,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-### أمثلة أخرى للقيم الغائبة أو غير الصالحة:
+### أمثلة أخرى للقيم الغائبة أو غير الصالحة: {#nla-other-practical-examples}
 
 ```naftah
 حاول(باطل) { بعض(أ) -> إطبع(أ) معدوم إفعل إطبع("لاشيء.") }
@@ -848,7 +848,7 @@ It provides detailed definitions and illustrative examples.
 
 ---
 
-## 📝 ملخص بناء الجمل
+## 📝 ملخص بناء الجمل {#nla-syntax-summary}
 
 | البنية            | الوصف                                 | شكل التعريف                                                                                           | مثال مختصر                         |
 |-------------------|---------------------------------------|-------------------------------------------------------------------------------------------------------|------------------------------------|

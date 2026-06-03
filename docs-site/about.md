@@ -1,5 +1,6 @@
 ---
 title: About Naftah
+description: Naftah is a modern Arabic programming language that lets developers write code naturally in Arabic and dialects, powered by the JVM and Java interoperability.
 layout: default
 permalink: /about
 ---
@@ -14,7 +15,7 @@ natural and expressive for Arabic-speaking developers.
 
 ---
 
-## 🌟 Motivation: Why I Created Naftah
+## 🌟 Motivation: Why I Created Naftah {#nla-motivation}
 
 As a **Tunisian** and an **Arabic speaker** passionate about programming, I was always searching for a programming
 language that uses **Arabic naturally** — not just in keywords, but in structure, logic, and **support for dialects**,
@@ -84,7 +85,7 @@ making sure Naftah remains:
 * 🌍 **Cross-platform**
 * 🔌 **Easily integrated** with existing tools and libraries
 
-### 🚀 Benefits of the JVM for Naftah
+### 🚀 Benefits of the JVM for Naftah {#nla-naftah-and-jvm}
 
 #### ✅ Massive Ecosystem
 
@@ -166,7 +167,7 @@ Code written in Naftah runs on **Windows, macOS, Linux**, and even on **mobile d
 
 This means developers can **build once and run anywhere**.
 
-### 🧠 Why Not Build a New VM From Scratch?
+### 🧠 Why Not Build a New VM From Scratch? {#nla-why-jvm}
 
 Building a virtual machine from scratch is possible, but it takes **years of effort**, and the result may lack
 performance, stability, or community adoption.
@@ -182,7 +183,7 @@ By standing on the shoulders of a giant like the JVM, Naftah gets:
 
 ---
 
-## 🧩 Java/Kotlin/Groovy Interoperability
+## 🧩 Java/Kotlin/Groovy Interoperability {#nla-java-language-interop}
 
 Naftah allows full access to Java libraries:
 

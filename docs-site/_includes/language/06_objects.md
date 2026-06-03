@@ -12,7 +12,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## أمثلة تعريف كائنات:
+## أمثلة تعريف كائنات: {#nla-object-examples}
 
 ```naftah
 --- كائن بسيط يحتوي على حقلين عددين
@@ -31,7 +31,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🏠 كائنات متداخلة (Nested Objects)
+## 🏠 كائنات متداخلة (Nested Objects) {#nla-nested-objects}
 
 يمكن أن يحتوي الكائن على حقول تكون بدورها كائنات، ما يسمح ببناء بنى بيانات معقدة.
 
@@ -53,21 +53,21 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 📌 كيفية الوصول إلى حقول الكائن
+## 📌 كيفية الوصول إلى حقول الكائن {#nla-object-field-access}
 
-### باستخدام نقطتين `:`
+### باستخدام نقطتين `:` {#nla-colon-access}
 
 ```naftah
 مدينة:العنوان
 ```
 
-### باستخدام الأقواس المربعة `[]`
+### باستخدام الأقواس المربعة `[]` {#nla-bracket-access}
 
 ```naftah
 مدينة["العنوان"]
 ```
 
-### الوصول الاختياري مع علامات استفهام `؟` لتجنب الأخطاء عند عدم وجود الحقل
+### الوصول الاختياري مع علامات استفهام `؟` لتجنب الأخطاء عند عدم وجود الحقل {#nla-optional-access}
 
 ```naftah
 مدينة؟:العنوان
@@ -76,7 +76,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 📌 تعديل قيم الحقول باستخدام النقطتين `:`
+## 📌 تعديل قيم الحقول باستخدام النقطتين `:` {#nla-modify-fields-colon}
 
 ```naftah
 متغير المدينة تعيين {
@@ -98,7 +98,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 📌 تعديل قيم الحقول باستخدام الأقواس المربعة `[]`
+## 📌 تعديل قيم الحقول باستخدام الأقواس المربعة `[]` {#nla-modify-fields-brackets}
 
 ```naftah
 --- تعديل عدد البيوت في البلدة إلى 5000
@@ -110,7 +110,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 📌 الوصول الاختياري مع علامات استفهام `؟` لتجنب الأخطاء عند عدم وجود الحقل
+## 📌 الوصول الاختياري مع علامات استفهام `؟` لتجنب الأخطاء عند عدم وجود الحقل {#nla-modify-fields-optional}
 
 ```naftah
 --- تعديل عدد البيوت مع التحقق من وجود الحقول
@@ -126,7 +126,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🧩 مثال كامل لكائن متعدد المستويات
+## 🧩 مثال كامل لكائن متعدد المستويات {#nla-complex-object-example}
 
 ```naftah
 متغير النظام تعيين {
@@ -160,7 +160,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-# 🧠 السلوك (Implementations) في لغة نفطه
+## 🧠 السلوك (Implementations) في لغة نفطه {#nla-implementations}
 
 في لغة نفطه، **السلوك** (`سلوك`) هو آلية لإضافة **منطق ودوال** إلى كائن مُعرَّف مسبقًا، دون إعادة تعريف بنيته.
 
@@ -170,7 +170,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 📌 تعريف سلوك لكائن
+### 📌 تعريف سلوك لكائن {#nla-behavior-definition}
 
 يتم تعريف السلوك باستخدام الكلمة المفتاحية `سلوك` متبوعة باسم الكائن:
 
@@ -189,7 +189,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 👤 مثال: سلوك كائن "شخص"
+### 👤 مثال: سلوك كائن "شخص" {#nla-person-behavior-example}
 
 ```naftah
 --- تعريف متغير 'شخص' ككائن يحتوي حقول الاسم، العمر، حالة الزواج
@@ -202,7 +202,7 @@ define a simple object or explicitly specify its type.
 }
 ```
 
-## 🔧 السلوك المرتبط بالكائن "شخص"
+### 🔧 السلوك المرتبط بالكائن "شخص" {#nla-person-behavior-example-methods}
 
 ```naftah
 سلوك شخص {
@@ -280,7 +280,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🏠 مثال: سلوك كائن "عنوان"
+### 🏠 مثال: سلوك كائن "عنوان" {#nla-address-behavior-example}
 
 ```naftah
 --- تعريف متغير 'عنوان' يحتوي الشارع، المدينة، والرمز البريدي
@@ -338,7 +338,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🏙️ مثال: سلوك كائن "مدينة"
+### 🏙️ مثال: سلوك كائن "مدينة" {#nla-city-behavior-example}
 
 ```naftah
 --- تعريف متغير 'مدينة' يحتوي الاسم، عدد السكان، ومرجع إلى العنوان
@@ -404,7 +404,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🏘️ مثال: سلوك كائن "بلدة"
+### 🏘️ مثال: سلوك كائن "بلدة" {#nla-town-behavior-example}
 
 ```naftah
 --- تعريف متغير 'بلدة' يحتوي الاسم، مرجع إلى المدينة، وعدد الأحياء
@@ -470,7 +470,7 @@ define a simple object or explicitly specify its type.
 
 ---
 
-## 🧠 ملاحظات مهمة
+## 🧠 ملاحظات مهمة {#nla-important-notes}
 
 * `سلوك` لا يمكن تعريفه إلا لكائن موجود
 * `هذا` يشير دائمًا إلى الكائن المرتبط بالسلوك

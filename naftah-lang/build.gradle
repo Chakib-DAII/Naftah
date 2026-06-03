@@ -582,15 +582,28 @@ tasks.register('exportNaftahFunctions') {
 
 			def loaders = [
 					gcl,
+					Thread.currentThread().getContextClassLoader(),
 					ClassLoader.getSystemClassLoader(),
-					ClassLoader.getPlatformClassLoader(),
-					Thread.currentThread().getContextClassLoader()
+					ClassLoader.getPlatformClassLoader()
 				] as ClassLoader[]
 
 			scanPaths = scanPaths + [RuntimeClassScanner.JAVA_HOME] as String[]
             def classNames = RuntimeClassScanner.scanClasses(RuntimeClassScanner.getPaths(scanPaths, ignoredJars), null)
             def classes = RuntimeClassScanner.loadClasses(classNames, loaders, false)
+
             def accessibleClasses = ClassUtils.filterClasses(classes, ClassUtils::isAccessibleClass)
+            def instantiableClasses = ClassUtils.filterClasses(classes, ClassUtils::isInstantiableClass)
+
+            def jvmClassInitializers = ClassUtils.getClassConstructors(instantiableClasses)
+            def accessibleAndInstantiable = accessibleClasses + instantiableClasses
+            def jvmFunctions = ClassUtils.getClassMethods(accessibleAndInstantiable)
+
+            def builtinFunctions = ClassUtils.getBuiltinMethods(accessibleAndInstantiable)
+
+            def classQualifiersMap = ClassUtils.getClassQualifiers(classNames.keySet(), false)
+			classQualifiers = new HashSet<>(classQualifiersMap.keySet())
+			def arabicClassQualifiers = ClassUtils.getArabicClassQualifiersMapping(classQualifiersMap.values())
+
             def providerClasses = ClassUtils.filterClasses(accessibleClasses, clazz -> AnnotationsUtils.isAnnotationsPresent(clazz, NaftahFnProvider))
 
             def providers = []
@@ -636,9 +649,6 @@ tasks.register('exportNaftahFunctions') {
             new File(dataDir, "builtin-functions.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(providers))
             println "Exported ${providers.size()} builtin providers to ${dataDir}/builtin-functions.json"
 
-            def instantiableClasses = ClassUtils.filterClasses(classes, ClassUtils::isInstantiableClass)
-			def jvmClassInitializers = ClassUtils.getClassConstructors(instantiableClasses)
-
             def initializers = []
 
 			jvmClassInitializers.values().flatten().each { jvmClassInitializer ->
@@ -656,9 +666,6 @@ tasks.register('exportNaftahFunctions') {
 
             new File(dataDir, "jvm-class-initializers.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(initializers))
             println "Exported ${initializers.size()} JVM class initializers to ${dataDir}/jvm-class-initializers.json"
-
-            def accessibleAndInstantiable = accessibleClasses + instantiableClasses
-            def jvmFunctions = ClassUtils.getClassMethods(accessibleAndInstantiable)
 
             def functions = []
 
@@ -680,6 +687,153 @@ tasks.register('exportNaftahFunctions') {
             new File(dataDir, "jvm-functions.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(functions))
             println "Exported ${functions.size()} JVM functions to ${dataDir}/jvm-functions.json"
 
+            def classScanningResult = [
+                classNames: classNames?.collectEntries { className, classLoader ->
+						[(className):  classLoader instanceof URLClassLoader? classLoader.URLs.collect { it.toExternalForm() } : null
+                		]
+					},
+                classQualifiers: classQualifiers,
+                arabicClassQualifiers: arabicClassQualifiers,
+                classes: classes?.findResults  { arabicClassName, clazz ->
+						try {
+							[(arabicClassName):  clazz.name]
+						} catch (NoClassDefFoundError | ClassNotFoundException e) {
+							println "Skipping ${arabicClassName}: ${e.message}"
+							null
+						}
+					}?.collectEntries(),
+                accessibleClasses: accessibleClasses?.findResults  { arabicClassName, clazz ->
+						try {
+							[(arabicClassName):  clazz.name]
+						} catch (NoClassDefFoundError | ClassNotFoundException e) {
+							println "Skipping ${arabicClassName}: ${e.message}"
+							null
+						}
+					}?.collectEntries(),
+                instantiableClasses: instantiableClasses?.findResults  { arabicClassName, clazz ->
+						try {
+							[(arabicClassName):  clazz.name]
+						} catch (NoClassDefFoundError | ClassNotFoundException e) {
+							println "Skipping ${arabicClassName}: ${e.message}"
+							null
+						}
+					}?.collectEntries(),
+                jvmClassInitializers: jvmClassInitializers?.collectEntries { jvmClassInitializerName, jvmClassInitializerList ->
+						[(jvmClassInitializerName): jvmClassInitializerList?.collect { jvmClassInitializer ->
+								[
+									className: jvmClassInitializer?.getClazz()?.name,
+									qualifiedName: jvmClassInitializer?.getQualifiedName(),
+									constructorParameterTypes: jvmClassInitializer?.getConstructorParameterTypes()?.collect {
+										it?.name
+									},
+									isInvocable: jvmClassInitializer?.isInvocable()
+								]
+							}
+						]
+					},
+                jvmFunctions: jvmFunctions?.collectEntries { jvmFunctionName, jvmFunctionList ->
+						[(jvmFunctionName): jvmFunctionList?.collect { jvmFunction ->
+								[
+									className: jvmFunction.getClazz().name,
+									methodName: jvmFunction.getMethodName(),
+									qualifiedCall: jvmFunction.getQualifiedCall(),
+									methodParameterTypes: jvmFunction.getMethodParameterTypes()?.collect {
+										it?.name
+									},
+									isStatic: jvmFunction.isStatic(),
+									isInvocable: jvmFunction.isInvocable()
+								]
+							}
+						]
+					},
+                builtinFunctions: builtinFunctions?.collectEntries { builtinFunctionName, builtinFunctionList ->
+						[(builtinFunctionName): builtinFunctionList?.collect { builtinFunction ->
+								def provider = builtinFunction?.getProviderInfo()
+								def fn = builtinFunction?.getFunctionInfo()
+
+								[
+									methodName: builtinFunction?.methodName,
+									className: builtinFunction?.className,
+									methodParameterTypes: builtinFunction?.methodParameterTypes?.collect {
+										it?.name
+									},
+									providerInfo: [
+										name: provider?.name(),
+										useQualifiedName: provider?.useQualifiedName(),
+										useQualifiedAliases: provider?.useQualifiedAliases(),
+										description: provider?.description(),
+										functionNames: provider?.functionNames()
+									],
+
+									functionInfo: [
+										name: fn?.name(),
+										useQualifiedName: fn?.useQualifiedName(),
+										useQualifiedAliases: fn?.useQualifiedAliases(),
+										aliases: fn?.aliases(),
+										description: fn?.description(),
+										usage: fn?.usage(),
+										returnType: fn?.returnType()?.name,
+										parameterTypes: fn?.parameterTypes()?.collect {
+											it?.name
+										},
+										exceptionTypes: fn?.exceptionTypes()?.collect {
+											it?.name
+										}
+									]
+								]
+							}
+						]
+					}
+            ]
+
+            new File(dataDir, "class-scanning-result.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(classScanningResult))
+            println "Exported class scanning result with full runtime to ${dataDir}/class-scanning-result.json"
+
+            def minimalClassScanningResult = [
+				arabicClassQualifiers: classScanningResult.arabicClassQualifiers,
+				builtinFunctions: classScanningResult.builtinFunctions
+			]
+
+            new File(dataDir, "minimal-class-scanning-result.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(minimalClassScanningResult))
+            println "Exported minimal class scanning result with minimal runtime to ${dataDir}/minimal-class-scanning-result.json"
+
+            def classScanningIndex = [
+				classNames: classNames?.keySet(),
+				classQualifiers: classScanningResult.classQualifiers,
+				arabicClassQualifiers: classScanningResult.arabicClassQualifiers,
+				builtinFunctions:  builtinFunctions?.values()?.flatten()?.collect { builtinFunction ->
+					def provider = builtinFunction?.getProviderInfo()
+					def fn = builtinFunction?.getFunctionInfo()
+
+					[
+						methodName: builtinFunction?.methodName,
+						className: builtinFunction?.className,
+						methodParameterTypes: builtinFunction?.methodParameterTypes?.collect {
+							it?.name
+						},
+						canonicalKey: ClassUtils.getBuiltinFunctionName(provider.useQualifiedName() | fn.useQualifiedName(), provider.name(), fn.name(), true),
+						qualifiedAliases: fn.aliases().collect { alias ->
+							ClassUtils.getBuiltinFunctionName(
+								provider.useQualifiedAliases() | fn.useQualifiedAliases(),
+								provider.name(),
+								alias,
+								false
+							)
+						}
+					]
+				 }
+			]
+
+            new File(dataDir, "class-scanning-index.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(classScanningIndex))
+            println "Exported class scanning index to ${dataDir}/class-scanning-index.json"
+
+			def minimalClassScanningIndex = [
+			        arabicClassQualifiers: classScanningIndex.arabicClassQualifiers,
+			        builtinFunctions: classScanningIndex.builtinFunctions
+			]
+
+            new File(dataDir, "minimal-class-scanning-index.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(minimalClassScanningIndex))
+            println "Exported minimal class scanning index to ${dataDir}/minimal-class-scanning-index.json"
         ''')
 	}
 }

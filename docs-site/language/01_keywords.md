@@ -1,6 +1,6 @@
 ---
 title: Naftah Keywords
-description: A comprehensive list of all reserved keywords in the Naftah programming language, including their functional roles and supported synonyms as defined in the language lexer. These keywords form the core syntax of writing code in Naftah.
+description: Explore all reserved keywords in the Naftah programming language, including syntax functions and lexer-supported synonyms.
 layout: default
 permalink: /language/keywords
 ---
