@@ -683,7 +683,7 @@ subprojects {
 						developer {
 							id = "chakib-daii"
 							name = "Chakib Daii"
-							email = "chakiibdaii@gmail.com"
+							email = "chakiibdaii@daiitech.org"
 						}
 					}
 
