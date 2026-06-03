@@ -39,7 +39,7 @@ This Code of Conduct applies within all project spaces, and also applies when an
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team at:
 
-**[chakiibdaii@gmail.com]**
+**[chakiibdaii@daiitech.org]**
 
 All complaints will be reviewed and investigated promptly and fairly.
 
