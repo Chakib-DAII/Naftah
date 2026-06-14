@@ -15,15 +15,19 @@ import java.util.Objects;
 
 import org.antlr.v4.runtime.CharStream;
 import org.daiitech.naftah.Naftah;
+import org.daiitech.naftah.builtin.lang.BuiltinFunctionInfo;
 import org.daiitech.naftah.builtin.lang.None;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.parser.DefaultContext;
 import org.daiitech.naftah.parser.NaftahErrorListener;
 import org.daiitech.naftah.playground.utils.ClassScanningLoader;
+import org.daiitech.naftah.playground.utils.JSBridge;
 import org.daiitech.naftah.playground.utils.logging.LogManager;
 import org.daiitech.naftah.playground.utils.logging.Logger;
 import org.daiitech.naftah.utils.reflect.ClassScanningIndex;
 import org.daiitech.naftah.utils.reflect.ClassScanningResult;
+
+import netscape.javascript.JSObject;
 
 import static org.daiitech.naftah.Naftah.CACHE_PATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.INDEX_CACHE_PATH_PROPERTY;
@@ -87,6 +91,18 @@ public class NaftahPlayground {
 	 * <p>If not defined, the default behavior is used.</p>
 	 */
 	private static final String NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY = "naftah.playground.index.active";
+
+	/**
+	 * System property key used to enable or disable usage of the classpath index
+	 * when accessed from JavaScript (JS bridge context).
+	 *
+	 * <p>When set to {@code true}, JavaScript-driven lookups will use the same
+	 * precomputed classpath index for improved performance instead of falling back
+	 * to dynamic resolution.</p>
+	 *
+	 * <p>If the property is not defined, the default behavior is used.</p>
+	 */
+	private static final String NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_FROM_JS_PROPERTY = "naftah.playground.index.js.active";
 
 	/**
 	 * Absolute file system path to the full runtime index cache used by the playground.
@@ -176,6 +192,17 @@ public class NaftahPlayground {
 	 * @param state the current runtime state
 	 */
 	public static native void setBootstrapState(String state);
+
+	/**
+	 * Loads and returns the JavaScript-based index object from the host environment.
+	 *
+	 * <p>This method is implemented natively in the JavaScript bridge and provides
+	 * access to the precomputed index structure used by the runtime for faster
+	 * lookup and resolution.</p>
+	 *
+	 * @return a {@link netscape.javascript.JSObject} representing the loaded index object
+	 */
+	public static native JSObject loadIndexObject();
 
 	/**
 	 * Initializes and starts the playground runtime.
@@ -269,11 +296,54 @@ public class NaftahPlayground {
 			try {
 				setBootstrapState(RuntimeState.BOOTSTRAPPING.name());
 
+				boolean useJsIndex = Boolean.getBoolean(NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_FROM_JS_PROPERTY);
 				boolean useIndex = Boolean.getBoolean(NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY);
 				boolean asyncCacheLoading = Boolean.getBoolean(CACHE_LOAD_ASYNC_PROPERTY);
-				LOGGER.debug("loading Cache asynchronously: " + asyncCacheLoading + " using index: " + useIndex);
+				LOGGER
+						.debug("loading Cache using js object index: " + useJsIndex + " with fallback to parsing JSON asynchronously: " + asyncCacheLoading + " using index: " + useIndex);
+				if (useJsIndex) {
+					JSObject jsIndex = loadIndexObject();
 
-				if (useIndex) {
+					JSObject arabicClassQualifierEntriesJSObject = (JSObject) jsIndex
+							.getMember("arabicClassQualifierEntries");
+					Map<String, String> arabicClassQualifiers = JSBridge
+							.toMap(arabicClassQualifierEntriesJSObject, String::valueOf);
+					LOGGER.debug("js Index arabicClassQualifiers: " + arabicClassQualifiers);
+
+					JSObject builtinFunctionsJSObject = (JSObject) jsIndex.getMember("builtinFunctions");
+					BuiltinFunctionInfo[] builtinFunctions = JSBridge
+							.toArray(builtinFunctionsJSObject, BuiltinFunctionInfo.class, arrayValue -> {
+								JSObject jsArrayValue = (JSObject) arrayValue;
+								String methodName = String.valueOf(jsArrayValue.getMember("methodName"));
+								String className = String.valueOf(jsArrayValue.getMember("className"));
+								String[] methodParameterTypes = JSBridge
+										.toArray(   (JSObject) jsArrayValue.getMember("methodParameterTypes"),
+													String.class,
+													String::valueOf);
+								String canonicalKey = String.valueOf(jsArrayValue.getMember("canonicalKey"));
+								String[] qualifiedAliases = JSBridge
+										.toArray(   (JSObject) jsArrayValue.getMember("qualifiedAliases"),
+													String.class,
+													String::valueOf);
+
+								return new BuiltinFunctionInfo( methodName,
+																className,
+																methodParameterTypes,
+																canonicalKey,
+																qualifiedAliases);
+							});
+
+					LOGGER.debug("js Index builtinFunctions: " + Arrays.toString(builtinFunctions));
+
+					ClassScanningIndex classScanningIndex = new ClassScanningIndex( null,
+																					null,
+																					arabicClassQualifiers,
+																					builtinFunctions);
+					LOGGER.debug("js Object Index: " + jsIndex);
+
+					bootstrapPlayground(classScanningIndex);
+				}
+				else if (useIndex) {
 					ClassScanningIndex classScanningIndex = ClassScanningLoader
 							.loadClassScanningIndexFromJson(shouldScanClasspath ?
 									INDEX_CACHE_PATH :
