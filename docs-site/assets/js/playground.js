@@ -250,6 +250,10 @@ async function Java_org_daiitech_naftah_playground_NaftahPlayground_setBootstrap
 	}
 }
 
+async function Java_org_daiitech_naftah_playground_NaftahPlayground_loadIndexObject(lib) {
+	return globalThis.CLASS_SCANNING_INDEX;
+}
+
 /**
  * Initializes the CheerpJ runtime environment.
  *
@@ -277,12 +281,14 @@ async function initRuntime() {
                 Java_org_daiitech_naftah_playground_NaftahPlayground_sendToLog,
                 Java_org_daiitech_naftah_playground_NaftahPlayground_nativeSetApplication,
                 Java_org_daiitech_naftah_playground_NaftahPlayground_setBootstrapState,
+                Java_org_daiitech_naftah_playground_NaftahPlayground_loadIndexObject,
             },
 
 			javaProperties: [
 				`naftah.playground.log.level=${LOG_LEVEL}`,
 				`naftah.scanClassPath=${SCAN_CLASS_PATH}`,
 				`naftah.playground.index.active=${USE_INDEX}`,
+				`naftah.playground.index.js.active=${globalThis.CLASS_SCANNING_INDEX != null}`,
 				`naftah.cache.async=${CACHE_LOAD_ASYNC}`,
 				`${SCAN_CLASS_PATH ? "naftah.cache.path=/app/assets/data/class-scanning-result.json.gz"
                    		   : (USE_INDEX ? "naftah.cache.index.minimal.path=/app/assets/data/minimal-class-scanning-index.json.gz"
