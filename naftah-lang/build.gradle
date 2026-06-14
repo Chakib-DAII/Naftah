@@ -829,6 +829,38 @@ tasks.register('exportNaftahFunctions') {
 
             new File(dataDir, "minimal-class-scanning-index.json").text = JsonOutput.prettyPrint(JsonOutput.toJson(minimalClassScanningIndex))
             println "Exported minimal class scanning index to ${dataDir}/minimal-class-scanning-index.json"
+
+			def minimalJsClassScanningIndex = [
+			        arabicClassQualifiers: minimalClassScanningIndex.arabicClassQualifiers,
+			        arabicClassQualifierEntries: minimalClassScanningIndex.arabicClassQualifiers.entrySet().collect { e ->
+						[e.key, e.value]
+					},
+			        builtinFunctions: minimalClassScanningIndex.builtinFunctions
+			]
+
+            def jsContent = """// AUTO-GENERATED FILE - DO NOT EDIT
+// Naftah Class Scanning Index (JS Module)
+
+globalThis.jsLength = (obj) => obj.length;
+globalThis.jsGet = (obj, key) => obj[key];
+globalThis.jsGetAtIndex = (obj, i) => obj[i];
+globalThis.jsGetEntryAtIndex = function(obj, i) {
+    result = obj[i];
+    return {
+        key: result[0],
+        value: result[1]
+    };
+};
+globalThis.jsKeys = (obj) => Object.keys(obj);
+globalThis.jsEntries = (obj) => Object.entries(obj);
+
+globalThis.CLASS_SCANNING_INDEX = ${JsonOutput.toJson(minimalJsClassScanningIndex)};
+"""
+
+            def jsDir = new File("${rootProjectDir}/docs-site/assets/js")
+
+			new File(jsDir, "minimal-class-scanning-index.js").text = jsContent
+			println "Exported minimal class scanning index JS module to ${jsDir}/minimal-class-scanning-index.js"
         ''')
 	}
 }
