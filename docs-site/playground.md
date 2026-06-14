@@ -6,6 +6,7 @@ permalink: /playground
 rtl: true
 head_scripts: [
 	{ src: "https://cjrtnc.leaningtech.com/4.3/loader.js", defer: true },
+	{ src: "/assets/js/minimal-class-scanning-index.js", defer: true },
 	{ src: "/assets/js/playground.js", type: "module", defer: true }
 ]
 head_styles: [
