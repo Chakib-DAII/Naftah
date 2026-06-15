@@ -160,8 +160,14 @@ loadScripts(document, 'script');</script>
 <div class="block">System property used to configure the playground logging level.</div>
 </div>
 <div class="col-first even-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color"><code><a href="#NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY" class="member-name-link">NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY</a></code></div>
+<div class="col-second even-row-color"><code><a href="#NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_FROM_JS_PROPERTY" class="member-name-link">NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_FROM_JS_PROPERTY</a></code></div>
 <div class="col-last even-row-color">
+<div class="block">System property key used to enable or disable usage of the classpath index
+ when accessed from JavaScript (JS bridge context).</div>
+</div>
+<div class="col-first odd-row-color"><code>private static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY" class="member-name-link">NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">System property used to enable or disable the classpath index in the playground.</div>
 </div>
 </div>
@@ -196,34 +202,39 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Bootstraps the Naftah playground runtime.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#main(java.lang.String%5B%5D)" class="member-name-link">main</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;args)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/jdk.jsobject/netscape/javascript/JSObject.html" title="class or interface in netscape.javascript" class="external-link">JSObject</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadIndexObject()" class="member-name-link">loadIndexObject</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Loads and returns the JavaScript-based index object from the host environment.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#main(java.lang.String%5B%5D)" class="member-name-link">main</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]&nbsp;args)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Initializes and starts the playground runtime.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nativeSetApplication(org.daiitech.naftah.playground.NaftahPlayground)" class="member-name-link">nativeSetApplication</a><wbr>(<a href="NaftahPlayground.html" title="class in org.daiitech.naftah.playground">NaftahPlayground</a>&nbsp;app)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nativeSetApplication(org.daiitech.naftah.playground.NaftahPlayground)" class="member-name-link">nativeSetApplication</a><wbr>(<a href="NaftahPlayground.html" title="class in org.daiitech.naftah.playground">NaftahPlayground</a>&nbsp;app)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Registers the playground runtime instance with the browser environment.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#run(java.lang.String)" class="member-name-link">run</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;code)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#run(java.lang.String)" class="member-name-link">run</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;code)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Executes a snippet of Naftah source code.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToHTML(java.lang.String)" class="member-name-link">sendToHTML</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToHTML(java.lang.String)" class="member-name-link">sendToHTML</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sends text to the playground output area in the browser.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToLog(java.lang.String)" class="member-name-link">sendToLog</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#sendToLog(java.lang.String)" class="member-name-link">sendToLog</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sends a message to the browser-side logging system.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBootstrapState(java.lang.String)" class="member-name-link">setBootstrapState</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;state)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBootstrapState(java.lang.String)" class="member-name-link">setBootstrapState</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;state)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Updates the bootstrap state visible to the browser UI.</div>
 </div>
 </div>
@@ -284,6 +295,28 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="see-list">
 <li><a href="../../../../constant-values.html#org.daiitech.naftah.playground.NaftahPlayground.NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_PROPERTY">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_FROM_JS_PROPERTY">
+<h3>NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_FROM_JS_PROPERTY</h3>
+<div class="member-signature"><span class="modifiers">private static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_FROM_JS_PROPERTY</span></div>
+<div class="block">System property key used to enable or disable usage of the classpath index
+ when accessed from JavaScript (JS bridge context).
+
+ <p>When set to <code>true</code>, JavaScript-driven lookups will use the same
+ precomputed classpath index for improved performance instead of falling back
+ to dynamic resolution.</p>
+
+ <p>If the property is not defined, the default behavior is used.</p></div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list">
+<li><a href="../../../../constant-values.html#org.daiitech.naftah.playground.NaftahPlayground.NAFTAH_PLAYGROUND_USE_CLASSPATH_INDEX_FROM_JS_PROPERTY">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
@@ -418,6 +451,21 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>state</code> - the current runtime state</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="loadIndexObject()">
+<h3>loadIndexObject</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/jdk.jsobject/netscape/javascript/JSObject.html" title="class or interface in netscape.javascript" class="external-link">JSObject</a></span>&nbsp;<span class="element-name">loadIndexObject</span>()</div>
+<div class="block">Loads and returns the JavaScript-based index object from the host environment.
+
+ <p>This method is implemented natively in the JavaScript bridge and provides
+ access to the precomputed index structure used by the runtime for faster
+ lookup and resolution.</p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/jdk.jsobject/netscape/javascript/JSObject.html" title="class or interface in netscape.javascript" class="external-link"><code>JSObject</code></a> representing the loaded index object</dd>
 </dl>
 </section>
 </li>

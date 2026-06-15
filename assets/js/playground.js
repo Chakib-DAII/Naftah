@@ -250,6 +250,10 @@ async function Java_org_daiitech_naftah_playground_NaftahPlayground_setBootstrap
 	}
 }
 
+async function Java_org_daiitech_naftah_playground_NaftahPlayground_loadIndexObject(lib) {
+	return globalThis.CLASS_SCANNING_INDEX;
+}
+
 /**
  * Initializes the CheerpJ runtime environment.
  *
@@ -277,12 +281,14 @@ async function initRuntime() {
                 Java_org_daiitech_naftah_playground_NaftahPlayground_sendToLog,
                 Java_org_daiitech_naftah_playground_NaftahPlayground_nativeSetApplication,
                 Java_org_daiitech_naftah_playground_NaftahPlayground_setBootstrapState,
+                Java_org_daiitech_naftah_playground_NaftahPlayground_loadIndexObject,
             },
 
 			javaProperties: [
 				`naftah.playground.log.level=${LOG_LEVEL}`,
 				`naftah.scanClassPath=${SCAN_CLASS_PATH}`,
 				`naftah.playground.index.active=${USE_INDEX}`,
+				`naftah.playground.index.js.active=${globalThis.CLASS_SCANNING_INDEX != null}`,
 				`naftah.cache.async=${CACHE_LOAD_ASYNC}`,
 				`${SCAN_CLASS_PATH ? "naftah.cache.path=/app/assets/data/class-scanning-result.json.gz"
                    		   : (USE_INDEX ? "naftah.cache.index.minimal.path=/app/assets/data/minimal-class-scanning-index.json.gz"
@@ -337,15 +343,36 @@ const examples = {
 نفطه ليست مجرد مدينة، بل هي تجربة ثقافية وروحية وطبيعية متكاملة. من تاريخها العريق إلى جمالها الطبيعي، ومن تقاليدها العميقة إلى ضيافة أهلها، تجعل من زيارتها رحلة لا تُنسى.")
 ` },
 
-//  // ASSIGNMENT
-//  assignment_basic: { title: "", code: `` },
-//  assignment_typed: { title: "", code: `` },
-//  assignment_multiple: { title: "", code: `` },
-//
-//  // EXPRESSIONS
-//  expressions_basic: { title: "", code: `` },
-//  expressions_arithmetic: { title: "", code: `` },
-//
+  // ASSIGNMENT
+  assignment_basic: { title: "تعريف ثابت", code: `
+--- تعريف ثابت "ا" بضرب عددين صحيحين
+ثابت ا تعيين 1 * 100
+ا
+` },
+  assignment_typed: { title: "تعريف ثابت من نوع عدد_طويل", code: `
+--- تعريف ثابت "ذ" من نوع عدد_طويل (Long Integer) وتعيينه بقيمة أكبر من الحد الأعلى السابق
+ثابت ذ : عدد_طويل_جدا تعيين 9223372036854775808
+ذ
+` },
+  assignment_multiple: { title: "إعلان ثابت مع تعيين قيم مطابقة للتركيبة", code: `
+--- إعلان ثابت مع تعيين قيم مطابقة للتركيبة (Tuple)
+ثابت ت٫ش٬ع،ي تعيين "قبلي"؛400؛9223372036854775807؛(٣٢، ٤٥)
+(ت٫ش٬ع،ي)` },
+  assignment_typed_multiple: { title: "إعلان ثابت بأنواع متعددة وتعيين قيم مطابقة لها", code: `
+--- إعلان ثابت بأنواع متعددة وتعيين قيم مطابقة لها
+ثابت ت٫ش٬ع،ي: تسلسل_رموز؛عدد_طويل؛عدد_طويل؛أي_نوع تعيين "قبلي"؛400؛9223372036854775807؛(٣٢، ٤٥)
+(ت٫ش٬ع،ي)` },
+
+  // EXPRESSIONS
+  expressions_basic: { title: "الجذر التربيعي", code: `
+--- الجذر التربيعي لـ 4 = 2
+"4" ** "0.5"
+` },
+  expressions_arithmetic: { title: "قائمة ضرب نفسها", code: `
+--- قائمة ضرب نفسها
+[٨٥، ٩٠، ٧٨، ٩٢] * [٨٥، ٩٠، ٧٨، ٩٢]
+` },
+
 //  // CONDITIONALS
 //  if_basic: { title: "", code: `` },
 //  if_else: { title: "", code: `` },
@@ -371,10 +398,40 @@ const examples = {
 }
 أنهي
 ` },
-//  ternary_basic: { title: "", code: `` },
-//  ternary_nested: { title: "", code: `` },
-//  nullish_basic: { title: "", code: `` },
-//  nullish_nested: { title: "", code: `` },
+  ternary_basic: { title: "تعبير ثلاثي", code: `
+--- تعريف متغيرين بقيم ابتدائية
+متغير أ تعيين ١
+متغير ب تعيين 4
+
+--- تعبير ثلاثي: إذا كانت أ صحيحة، أ، وإلا ب
+أ ؟ أ : ب أنهي
+` },
+  ternary_nested: { title: "تعبير ثلاثي متداخل", code: `
+--- تعريف متغيرين بقيم ابتدائية
+متغير أ تعيين ١
+متغير ب تعيين 4
+
+(أ زائد ب أصغر_من ١٠) ؟ (أ ؟ أ : ب) : أ أنهي
+` },
+  nullish_basic: { title: "تعبير nullish", code: `
+--- تعريف متغيرين بقيم ابتدائية
+متغير أ تعيين ١
+متغير ب تعيين 4
+
+--- تعبير nullish: إذا كانت أ غير nullish، استخدم أ، وإلا ب
+أ ؟؟ ب أنهي
+` },
+  nullish_nested: { title: "تعبير nullish متداخل", code: `
+--- تعريف متغيرين بقيم ابتدائية
+متغير أ تعيين ١
+متغير ب تعيين 4
+متغير ت تعيين 2
+متغير ث تعيين 3
+متغير ج تعيين 5
+
+--- تعبير nullish متداخل
+أ ؟؟ ب ؟؟ ت ؟؟ ث ؟؟ ج أنهي
+` },
 //
 //  // LOOPS
 //  loop_basic: { title: "", code: `` },

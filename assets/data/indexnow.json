@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T23:36:58.353456+00:00",
+  "generatedAt": "2026-06-15T19:27:50.565332+00:00",
   "host": "naftah.daiitech.org",
   "key": "e302ecbf82c3449183a70048dcef2db0",
   "keyLocation": "https://naftah.daiitech.org/e302ecbf82c3449183a70048dcef2db0.txt",
@@ -42,6 +42,7 @@
     "https://naftah.daiitech.org/releases",
     "https://naftah.daiitech.org/examples/repeat-statement",
     "https://naftah.daiitech.org/running-naftah",
+    "https://naftah.daiitech.org/site.webmanifest",
     "https://naftah.daiitech.org/sitemap.xml",
     "https://naftah.daiitech.org/examples/switch-expression",
     "https://naftah.daiitech.org/examples/temporal",
