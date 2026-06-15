@@ -36,11 +36,11 @@ public final class JSBridge {
 	 * Converts a JavaScript array of key-value entries into a Java {@link Map}.
 	 *
 	 * @param jsEntries           JavaScript object representing an array of entries
-	 * @param entryValueRetriever function used to convert JS value into type R
+	 * @param entryValueMapper function used to convert JS value into type R
 	 * @param <R>                 value type of resulting map
 	 * @return a {@link LinkedHashMap} preserving JS iteration order
 	 */
-	public static <R> Map<String, R> toMap(JSObject jsEntries, Function<Object, R> entryValueRetriever) {
+	public static <R> Map<String, R> toMap(JSObject jsEntries, Function<Object, R> entryValueMapper) {
 		NaftahPlayground.LOGGER.trace("toMap - jsEntries : " + jsEntries);
 
 		Map<String, R> map = new LinkedHashMap<>();
@@ -61,7 +61,7 @@ public final class JSBridge {
 			}
 
 			String key = String.valueOf(entry.getMember("key"));
-			R value = entryValueRetriever.apply(entry.getMember("value"));
+			R value = entryValueMapper.apply(entry.getMember("value"));
 
 			map.put(key, value);
 		}
