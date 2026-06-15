@@ -50,7 +50,7 @@ head_styles: [
 	<div id="spinner-overlay" class="spinner-overlay">
 	  <div class="spinner"></div>
 	 	<p class="spinner-text">
-			جاري تحميل بيئة نفطه… قد تستغرق العملية دقيقة تقريبًا. شكرًا على انتظارك.
+			جاري تحميل بيئة نفطه… شكرًا على انتظارك.
 		</p>
 	</div>
 
