@@ -35,9 +35,9 @@ public final class JSBridge {
 	/**
 	 * Converts a JavaScript array of key-value entries into a Java {@link Map}.
 	 *
-	 * @param jsEntries           JavaScript object representing an array of entries
+	 * @param jsEntries        JavaScript object representing an array of entries
 	 * @param entryValueMapper function used to convert JS value into type R
-	 * @param <R>                 value type of resulting map
+	 * @param <R>              value type of resulting map
 	 * @return a {@link LinkedHashMap} preserving JS iteration order
 	 */
 	public static <R> Map<String, R> toMap(JSObject jsEntries, Function<Object, R> entryValueMapper) {
