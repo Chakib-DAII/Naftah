@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+    <msapplication>
+        <tile>
+            <square150x150logo src="{{ '/assets/images/mstile-192x192.png' | relative_url }}"/>
+            <TileColor>#e8e3d3</TileColor>
+        </tile>
+    </msapplication>
+</browserconfig>
