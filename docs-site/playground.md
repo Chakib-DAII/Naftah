@@ -9,9 +9,9 @@ head_scripts: [
 	{ src: "/assets/js/minimal-class-scanning-index.js", defer: true },
 	{ src: "/assets/js/playground.js", type: "module", defer: true }
 ]
-head_styles: [
-	{ href: "/assets/css/playground.css" }
-]
+#head_styles: [
+#	{ href: "/assets/css/playground.css" }
+#]
 ---
 
 # ساحة تجارب نفطه (Naftah Playground)
