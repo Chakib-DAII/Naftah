@@ -80,7 +80,7 @@ jobs:
         working-directory: docs-site
         run: JEKYLL_ENV=production bundle exec jekyll build -d ../site-output
 
-      - name: Set up Node.js (for SEO validation)
+      - name: Set up Node.js (for SEO validation and processing CSS and JS files)
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -128,6 +128,12 @@ jobs:
           INDEXNOW_OUTPUT: site-output/assets/data/indexnow.json
         run: |
           python docs-site/prepare-indexnow-payload.py
+
+      - name: Run CSS and JS processing
+        working-directory: docs-site
+        run: npm run minify-and-obfuscate-files
+        env:
+          SITE_DIR: ../site-output
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
