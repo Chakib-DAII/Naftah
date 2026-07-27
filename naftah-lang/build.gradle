@@ -831,7 +831,6 @@ tasks.register('exportNaftahFunctions') {
             println "Exported minimal class scanning index to ${dataDir}/minimal-class-scanning-index.json"
 
 			def minimalJsClassScanningIndex = [
-			        arabicClassQualifiers: minimalClassScanningIndex.arabicClassQualifiers,
 			        arabicClassQualifierEntries: minimalClassScanningIndex.arabicClassQualifiers.entrySet().collect { e ->
 						[e.key, e.value]
 					},
