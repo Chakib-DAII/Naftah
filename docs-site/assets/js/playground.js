@@ -300,6 +300,9 @@ async function initRuntime() {
 						   : (USE_INDEX ? "/app/assets/data/minimal-class-scanning-index.json.gz"
 						   				: "/app/assets/data/minimal-class-scanning-result.json.gz")
 				] : [0, 100],
+				"/app/assets/jars/original-dependencies": [0, 100],
+				"/app/assets/jars/lexer-literals": [0, 100],
+				"/app/assets/jars/tokens-symbols.properties": [0, 100],
 			},
 
 			preloadProgress(done, total) {
