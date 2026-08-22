@@ -6,11 +6,12 @@ permalink: /playground
 rtl: true
 head_scripts: [
 	{ src: "https://cjrtnc.leaningtech.com/4.3/loader.js", defer: true },
+	{ src: "/assets/js/minimal-class-scanning-index.js", defer: true },
 	{ src: "/assets/js/playground.js", type: "module", defer: true }
 ]
-head_styles: [
-	{ href: "/assets/css/playground.css" }
-]
+#head_styles: [
+#	{ href: "/assets/css/playground.css" }
+#]
 ---
 
 # ساحة تجارب نفطه (Naftah Playground)
@@ -49,7 +50,7 @@ head_styles: [
 	<div id="spinner-overlay" class="spinner-overlay">
 	  <div class="spinner"></div>
 	 	<p class="spinner-text">
-			جاري تحميل بيئة نفطه… قد تستغرق العملية دقيقة تقريبًا. شكرًا على انتظارك.
+			جاري تحميل بيئة نفطه… شكرًا على انتظارك.
 		</p>
 	</div>
 

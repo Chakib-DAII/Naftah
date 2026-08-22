@@ -1,11 +1,18 @@
 {
 	"name": "docs-site",
 	"private": true,
-  "dependencies": {
-    "cheerio": "^1.2.0"
-  },
-
+	"dependencies": {
+		"cheerio": "^1.2.0",
+		"clean-css": "^5.3.3",
+		"glob": "^13.0.6",
+		"javascript-obfuscator": "^5.4.3",
+		"terser": "^5.48.0"
+	},
 	"scripts": {
-		"seo": "node seo-audit.js"
+		"seo": "node seo-audit.js",
+		"minify-css": "node scripts/minify-css.js",
+		"minify-js": "node scripts/minify-js.js",
+		"obfuscate-js": "node scripts/obfuscate-js.js",
+		"minify-and-obfuscate-files": "node scripts/minify-css.js && node scripts/minify-js.js && node scripts/obfuscate-js.js"
 	}
 }

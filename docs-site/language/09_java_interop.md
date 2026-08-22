@@ -7,8 +7,7 @@ head_scripts: [
 	{ src: "https://code.jquery.com/jquery-3.6.0.min.js", defer: true },
 	{ src: "https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js", defer: true },
 	{ src: "https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js", defer: true },
-	{ src: "/assets/js/jvm-class-initializers.js", defer: true },
-	{ src: "/assets/js/jvm-functions.js", defer: true }
+	{ src: "/assets/js/jvm-tables.js", type: "module", defer: true }
 ]
 head_styles: [
 	{ href: "https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" }

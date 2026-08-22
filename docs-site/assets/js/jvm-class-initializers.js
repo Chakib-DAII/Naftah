@@ -15,6 +15,9 @@
  *
  */
 
+const TABLE_ID = '#jvm-class-initializers-table';
+const DATA_URL = '/assets/data/jvm-class-initializers.json';
+
 /**
  * Scrolls the JVM Class Initializers table into view.
  *
@@ -30,16 +33,16 @@
  * @returns {void}
  */
 function scrollToJvmClassInitializersTable() {
-	var $table = $('#jvm-class-initializers-table');
+	const $table = $(TABLE_ID);
 
 	// Get the table's top relative to the viewport
-	var tableTop = $table[0].getBoundingClientRect().top + window.pageYOffset;
+	const tableTop = $table[0].getBoundingClientRect().top + window.pageYOffset;
 
 	// Consider the fixed site header height
-	var siteHeaderHeight = $('.site-header').outerHeight() || 0;
+	const siteHeaderHeight = $('.site-header').outerHeight() || 0;
 
 	// DataTables FixedHeader is active, subtract its height as well
-	var fixedHeaderHeight = 0;
+	let fixedHeaderHeight = 0;
 	if ($.fn.DataTable.FixedHeader) {
 		fixedHeaderHeight = $('.fixedHeader-floating').outerHeight() || 0;
 	}
@@ -50,52 +53,99 @@ function scrollToJvmClassInitializersTable() {
 	}, 300);
 }
 
-$(document).ready(function() {
+/**
+ * Initialize DataTable
+ */
+function initDataTable() {
 	// JVM Class Initializers
-	var table = $('#jvm-class-initializers-table').DataTable({
-		ajax: {
-			url: '/assets/data/jvm-class-initializers.json',
-			dataSrc: ''
-		},
-		deferRender: true,
-		processing: true,
-		pageLength: 50,
-		scrollX: true,
-		responsive: true,
-		autoWidth: true,
-		fixedHeader: true,
-		columns: [
-			{ data: 'className', render: val => `<code class="language-plaintext highlighter-rouge">${val}</code>` },
-			{ data: 'qualifiedName', render: val => `<code class="language-plaintext highlighter-rouge">${val}</code>` },
-			{ data: 'constructorParameterTypes', render: arr => arr && arr.length ? arr.join(', ') : '-' },
-			{ data: 'isInvocable', render: val => val ? '✅' : '❌' }
-		],
-		language: { url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json" }
-	});
+  return $(TABLE_ID).DataTable({
+    ajax: {
+      url: DATA_URL,
+      dataSrc: ''
+    },
+    deferRender: true,
+    processing: true,
+    pageLength: 50,
+    scrollX: true,
+    responsive: true,
+    autoWidth: true,
+    fixedHeader: true,
 
-	// Track user interactions: pagination, length, search input
+    columns: [
+      {
+        data: 'className',
+        render: val =>
+          `<code class="language-plaintext highlighter-rouge">${val}</code>`
+      },
+      {
+        data: 'qualifiedName',
+        render: val =>
+          `<code class="language-plaintext highlighter-rouge">${val}</code>`
+      },
+      {
+        data: 'constructorParameterTypes',
+        render: arr =>
+          Array.isArray(arr) && arr.length ? arr.join(', ') : '-'
+      },
+      {
+        data: 'isInvocable',
+        render: val => (val ? '✅' : '❌')
+      }
+    ],
+
+    language: {
+      url:
+        'https://cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json'
+    }
+  });
+}
+
+/**
+ * Bind UI events
+ * Tracks user interactions: pagination, length, search input
+ */
+function bindEvents() {
+	const scroll = () => scrollToJvmClassInitializersTable();
+
 	$(document).on(
-		"input",
-		"#jvm-class-initializers-table_filter > label > input[type=search]",
-		scrollToJvmClassInitializersTable);
-
-    $(document).on(
-        "change",
-        "#jvm-class-initializers-table_length > label > select",
-    	scrollToJvmClassInitializersTable);
+		'input',
+		`${TABLE_ID}_filter > label > input[type=search]`,
+		scroll
+	);
 
 	$(document).on(
-		"click",
-		"#jvm-class-initializers-table_paginate > span > a.paginate_button:not(.current)",
-		scrollToJvmClassInitializersTable);
+		'change',
+		`${TABLE_ID}_length > label > select`,
+		scroll
+	);
 
 	$(document).on(
-		"click",
-		"#jvm-class-initializers-table_previous",
-		scrollToJvmClassInitializersTable);
+		'click',
+		`${TABLE_ID}_paginate > span > a.paginate_button:not(.current)`,
+		scroll
+	);
 
 	$(document).on(
-		"click",
-		"#jvm-class-initializers-table_next",
-		scrollToJvmClassInitializersTable);
-});
+		'click',
+		`${TABLE_ID}_previous`,
+		scroll
+	);
+
+	$(document).on(
+		'click',
+		`${TABLE_ID}_next`,
+		scroll
+	);
+}
+
+/**
+ * Module entry point
+ */
+function initJvmClassInitializersTable() {
+  $(document).ready(() => {
+    initDataTable();
+    bindEvents();
+  });
+}
+
+export default initJvmClassInitializersTable;

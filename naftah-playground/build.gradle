@@ -44,9 +44,13 @@ shadowJar {
 }
 
 tasks.register('copyPlaygroundJar', Copy) {
-	dependsOn shadowJar
+	dependsOn shadowJar, ':naftah-lang:extractLexerLiterals'
 
 	from(shadowJar.archiveFile)
+
+	from(project(':naftah-lang').layout.buildDirectory.dir("libs")) {
+		include 'lexer-literals', 'original-dependencies', 'tokens-symbols.properties'
+	}
 
 	into(rootProject.file('docs-site/assets/jars'))
 

@@ -17,6 +17,8 @@
  *
  */
 
+const TABLE_ID = '#jvm-functions-table';
+
 /** Metadata describing dataset structure (chunk size, totals, file name). */
 let META = null;
 
@@ -42,7 +44,9 @@ let READY = false;
  * @returns {void}
  */
 function scrollToJvmFunctionsTable() {
-	const $table = $('#jvm-functions-table');
+  	const $table = $(TABLE_ID);
+
+  	if (!$table) return;
 
 	// Get the table's top relative to the viewport
 	const tableTop = $table[0].getBoundingClientRect().top + window.pageYOffset;
@@ -179,7 +183,7 @@ function searchData(query) {
 			: new Set(ids);
 	}
 
-	return Array.from(resultSet);
+	return Array.from(resultSet || []);
 }
 
 /**
@@ -229,128 +233,119 @@ function limitConcurrency(items, limit, fn) {
  */
 function debounce(fn, delay) {
 	let t;
-	return function (...args) {
+	return (...args) => {
 		clearTimeout(t);
-		t = setTimeout(() => fn.apply(this, args), delay);
+		t = setTimeout(() => fn(...args), delay);
 	};
 }
 
 /**
  * Loads metadata + search index before table initialization.
  */
-Promise.all([
-	fetch('/assets/data/jvm-functions-meta.json').then(r => r.json()),
-	loadSearchIndex()
-])
-.then(([meta, index]) => {
-	META = meta;
+async function initJvmFunctionsTable() {
+	const [metaRes, index] = await Promise.all([
+		fetch('/assets/data/jvm-functions-meta.json').then(r => r.json()),
+		loadSearchIndex()
+	]);
+
+	META = metaRes;
 	SEARCH_INDEX = index;
 	READY = true;
-})
-.catch(err => console.warn("Init failed", err));
-
-// MAIN
-$(document).ready(function () {
 
 	// DataTable
-	const table = $('#jvm-functions-table').DataTable({
-
+	const table = $(TABLE_ID).DataTable({
 		ajax: function (data, callback) {
-
 			// wait for readiness instead of failing once
 			if (!READY || !META || !META.chunk_size) {
-				setTimeout(() => table.ajax.reload(null, false), 50);
+			setTimeout(() => table.ajax.reload(null, false), 50);
 
+			return callback({
+			  draw: data.draw,
+			  data: [],
+			  recordsTotal: 0,
+			  recordsFiltered: 0
+			});
+		  }
+
+
+		const requestId = ++currentRequestId;
+
+		const query = $(`${TABLE_ID}_filter input`).val() || '';
+		const baseName = META.file.replace('.json', '');
+		const chunkSize = META.chunk_size;
+
+// SEARCH MODE
+		if (query && Object.keys(SEARCH_INDEX).length > 0) {
+        	const ids = searchData(query);
+
+        	if (requestId !== currentRequestId) return;
+
+			if (!ids.length) {
 				callback({
 					draw: data.draw,
 					data: [],
-					recordsTotal: 0,
+					recordsTotal: META.total_items,
 					recordsFiltered: 0
 				});
 				return;
 			}
 
-			const requestId = ++currentRequestId;
-
-			const query = $('#jvm-functions-table_filter input').val() || '';
-			const baseName = META.file.replace('.json', '');
-			const chunkSize = META.chunk_size;
-
-			// SEARCH MODE
-			if (query && Object.keys(SEARCH_INDEX).length > 0) {
-
-				const ids = searchData(query);
-
-				if (requestId !== currentRequestId) return;
-
-				if (!ids.length) {
-					callback({
-						draw: data.draw,
-						data: [],
-						recordsTotal: META.total_items,
-						recordsFiltered: 0
-					});
-					return;
-				}
-
-				const pages = [...new Set(
-					ids.slice(0, 100).map(id =>
-						Math.floor((id - 1) / chunkSize) + 1
-					)
-				)];
-
-				limitConcurrency(
-					pages,
-					4,
-					p => loadChunk(baseName, p)
+			const pages = [...new Set(
+				ids.slice(0, 100).map(id =>
+					Math.floor((id - 1) / chunkSize) + 1
 				)
-				.then(chunks => {
+			)];
 
-						if (requestId !== currentRequestId) return;
+			return limitConcurrency(
+									pages,
+									4,
+									p => loadChunk(baseName, p)
+									)
+					.then(chunks => {
 
-						const all = chunks.flat();
-						const idSet = new Set(ids);
+							if (requestId !== currentRequestId) return;
 
-						const filtered = all.filter(r => idSet.has(r.id));
+							const all = chunks.flat();
+							const idSet = new Set(ids);
 
-						callback({
-							draw: data.draw,
-							data: filtered,
-							recordsTotal: META.total_items,
-							recordsFiltered: ids.length
+							const filtered = all.filter(r => idSet.has(r.id));
+
+							callback({
+								draw: data.draw,
+								data: filtered,
+								recordsTotal: META.total_items,
+								recordsFiltered: ids.length
+							});
+						})
+						.catch(err => {
+							console.error(err);
+							callback({
+								draw: data.draw,
+								data: [],
+								recordsTotal: META.total_items,
+								recordsFiltered: 0
+							});
 						});
-					})
-					.catch(err => {
-						console.error(err);
-						callback({
-							draw: data.draw,
-							data: [],
-							recordsTotal: META.total_items,
-							recordsFiltered: 0
-						});
-					});
+		  }
 
-				return;
-			}
+// PAGINATION MODE
+		const start = data.start;
+		const length = data.length;
 
-			// PAGINATION MODE
-			const start = data.start;
-			const length = data.length;
+		const firstChunk = Math.floor(start / chunkSize) + 1;
+		const lastChunk = Math.floor((start + length - 1) / chunkSize) + 1;
 
-			const firstChunk = Math.floor(start / chunkSize) + 1;
-			const lastChunk = Math.floor((start + length - 1) / chunkSize) + 1;
+		const pages = [];
 
-			const pages = [];
+		for (let p = firstChunk; p <= lastChunk; p++) {
+			pages.push(p);
+		}
 
-			for (let p = firstChunk; p <= lastChunk; p++) {
-				pages.push(p);
-			}
-
-			limitConcurrency(
-				pages,
-				4,
-				p => loadChunk(baseName, p)
-			)
+		return limitConcurrency(
+							pages,
+							4,
+							p => loadChunk(baseName, p)
+						)
 			.then(chunks => {
 
 					if (requestId !== currentRequestId) return;
@@ -404,30 +399,32 @@ $(document).ready(function () {
 
 	// Track user interactions: pagination, length, search input
 	$(document).on(
-		"input",
-		"#jvm-functions-table_filter > label > input[type=search]",
-		function () {
+		'input',
+		`${TABLE_ID}_filter > label > input[type=search]`,
+		() => {
 			debouncedSearch();
 			table.ajax.reload();
 		});
 
-    $(document).on(
-        "change",
-        "#jvm-functions-table_length > label > select",
-    	scrollToJvmFunctionsTable);
-
 	$(document).on(
-		"click",
-		"#jvm-functions-table_paginate > span > a.paginate_button:not(.current)",
+		'change',
+		`${TABLE_ID}_length > label > select`,
 		scrollToJvmFunctionsTable);
 
 	$(document).on(
-		"click",
-		"#jvm-functions-table_previous",
+		'click',
+		`${TABLE_ID}_paginate > span > a.paginate_button:not(.current)`,
 		scrollToJvmFunctionsTable);
 
 	$(document).on(
-		"click",
-		"#jvm-functions-table_next",
+		'click',
+		`${TABLE_ID}_previous`,
 		scrollToJvmFunctionsTable);
-});
+
+	$(document).on(
+		'click',
+		`${TABLE_ID}_next`,
+		scrollToJvmFunctionsTable);
+}
+
+export default initJvmFunctionsTable;

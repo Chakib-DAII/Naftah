@@ -35,6 +35,7 @@ exclude:
   - seo-summary.json
   - indexnow.json
   - prepare-indexnow-payload.py
+  - scripts
 
 data_chunk_size: 100
 
