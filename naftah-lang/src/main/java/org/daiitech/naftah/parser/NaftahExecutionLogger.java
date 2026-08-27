@@ -487,12 +487,8 @@ public final class NaftahExecutionLogger {
 													ProgramContext::statement -> {
 														%s
 													}
-											ProgramContext::END -> {
-											%s
-											}
 											"""
-										.formatted( join(context.statement()),
-													join(context.END())));
+										.formatted(join(context.statement())));
 	}
 
 	public static String logExecution(  boolean doLog,
@@ -573,10 +569,11 @@ public final class NaftahExecutionLogger {
 											DeclarationStatementContext::declaration -> {
 												%s
 											}
+											DeclarationStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.declaration()) ?
 												context.declaration().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -589,10 +586,11 @@ public final class NaftahExecutionLogger {
 											ChannelDeclarationStatementContext::channelDeclaration -> {
 												%s
 											}
+											ChannelDeclarationStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.channelDeclaration()) ?
 												context.channelDeclaration().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -605,10 +603,11 @@ public final class NaftahExecutionLogger {
 											ActorDeclarationStatementContext::actorDeclaration -> {
 												%s
 											}
+											ActorDeclarationStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.actorDeclaration()) ?
 												context.actorDeclaration().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -620,10 +619,11 @@ public final class NaftahExecutionLogger {
 											AssignmentStatementContext::assignment -> {
 												%s
 											}
+											AssignmentStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.assignment()) ?
 												context.assignment().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -635,10 +635,11 @@ public final class NaftahExecutionLogger {
 											FunctionDeclarationStatementContext::functionDeclaration: -> {
 												%s
 											}
+											FunctionDeclarationStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.functionDeclaration()) ?
 												context.functionDeclaration().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -650,10 +651,11 @@ public final class NaftahExecutionLogger {
 											ImplementationDeclarationStatementContext::implementationDeclaration: -> {
 												%s
 											}
+											ImplementationDeclarationStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.implementationDeclaration()) ?
 												context.implementationDeclaration().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -665,10 +667,11 @@ public final class NaftahExecutionLogger {
 											IfStatementStatementContext::ifStatement -> {
 												%s
 											}
+											IfStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.ifStatement()) ?
 												context.ifStatement().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -681,10 +684,11 @@ public final class NaftahExecutionLogger {
 											ForStatementStatementContext::forStatement -> {
 												%s
 											}
+											ForStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.forStatement()) ?
 												context.forStatement().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -696,10 +700,11 @@ public final class NaftahExecutionLogger {
 											WhileStatementStatementContext::whileStatement -> {
 												%s
 											}
+											WhileStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.whileStatement()) ?
 												context.whileStatement().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -711,10 +716,11 @@ public final class NaftahExecutionLogger {
 											RepeatStatementStatementContext::repeatStatement -> {
 												%s
 											}
+											RepeatStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.repeatStatement()) ?
 												context.repeatStatement().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -726,10 +732,11 @@ public final class NaftahExecutionLogger {
 											CaseStatementStatementContext::caseStatement -> {
 												%s
 											}
+											CaseStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.caseStatement()) ?
 												context.caseStatement().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -741,10 +748,11 @@ public final class NaftahExecutionLogger {
 											ExpressionStatementContext::expression -> {
 												%s
 											}
+											ExpressionStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.expression()) ?
 												context.expression().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -756,10 +764,11 @@ public final class NaftahExecutionLogger {
 											BreakStatementStatementContext::breakStatement -> {
 												%s
 											}
+											BreakStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.breakStatement()) ?
 												context.breakStatement().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -786,10 +795,11 @@ public final class NaftahExecutionLogger {
 											ContinueStatementStatementContext::continueStatement -> {
 												%s
 											}
+											ContinueStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.continueStatement()) ?
 												context.continueStatement().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -818,10 +828,11 @@ public final class NaftahExecutionLogger {
 											ReturnStatementStatementContext::returnStatement -> {
 												%s
 											}
+											ReturnStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.returnStatement()) ?
 												context.returnStatement().getText() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -898,10 +909,11 @@ public final class NaftahExecutionLogger {
 											ScopeBlockStatementContext::scopeBlock -> {
 												%s
 											}
+											ScopeBlockStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.scopeBlock()) ?
 												context.scopeBlock() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -913,10 +925,11 @@ public final class NaftahExecutionLogger {
 											BlockStatementContext::block -> {
 												%s
 											}
+											BlockStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.block()) ?
 												context.block() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -928,10 +941,11 @@ public final class NaftahExecutionLogger {
 											ImportStatementStatementContext::importStatement -> {
 												%s
 											}
+											ImportStatementStatementContext::END -> %s
 											"""
 										.formatted(Objects.nonNull(context.importStatement()) ?
 												context.importStatement() :
-												null));
+												null, context.END()));
 
 	}
 
@@ -1386,13 +1400,14 @@ public final class NaftahExecutionLogger {
 		return doLogExecution(  doLog,
 								ctx,
 								context -> """
-											ImplementationFunctionsContext::END -> %s
 											ImplementationFunctionsContext::functionDeclaration -> {
 												%s
 											}
+											ImplementationFunctionsContext::END -> %s
 											"""
-										.formatted( join(context.END()),
-													join(context.functionDeclaration())));
+										.formatted(
+													join(context.functionDeclaration()),
+													join(context.END())));
 
 	}
 
@@ -1712,16 +1727,12 @@ public final class NaftahExecutionLogger {
 												%s
 											}
 											BlockContext::RBRACE -> %s
-											BlockContext::END -> {
-														%s
-													}
 											"""
 										.formatted( Objects.nonNull(context.LBRACE()) ?
 															context.LBRACE().getText() :
 															null,
 													join(context.statement()),
-													context.RBRACE(),
-													join(context.END())));
+													context.RBRACE()));
 
 	}
 
@@ -3146,11 +3157,13 @@ public final class NaftahExecutionLogger {
 											TryStatementStatementContext::tryStatement -> {
 											%s
 											}
+											TryStatementStatementContext::END -> %s
 											"""
 										.formatted(
 													Objects.nonNull(context.tryStatement()) ?
 															context.tryStatement().getText() :
-															null
+															null,
+													context.END()
 										));
 
 	}
