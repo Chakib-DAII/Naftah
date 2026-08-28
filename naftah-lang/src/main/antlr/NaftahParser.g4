@@ -18,29 +18,29 @@ options {
     tokenVocab = NaftahLexer;
 }
 
-// Top-level rule: A Naftah program consists of statements
-program: (statement END?)+;
+// Top-level rule: A Naftah program consists of statements.
+program: statement+;
 
-// Statement: Can be an assignment, function call, or control flow
-statement: scopeBlock #scopeBlockStatement
-		 | block #blockStatement
-         | importStatement #importStatementStatement
-         | ifStatement #ifStatementStatement
-         | forStatement #forStatementStatement
-         | whileStatement #whileStatementStatement
-         | repeatStatement #repeatStatementStatement
-         | caseStatement #caseStatementStatement
-         | tryStatement #tryStatementStatement
-         | functionDeclaration #functionDeclarationStatement
-         | implementationDeclaration #implementationDeclarationStatement
-         | declaration #declarationStatement
-         | channelDeclaration #channelDeclarationStatement
-         | actorDeclaration #actorDeclarationStatement
-         | assignment #assignmentStatement
-         | returnStatement #returnStatementStatement
-         | breakStatement #breakStatementStatement
-         | continueStatement #continueStatementStatement
-         | expression #expressionStatement
+// Statement: Can be an assignment, function call, or control flow.
+statement: scopeBlock END? #scopeBlockStatement
+		 | block END? #blockStatement
+         | importStatement END? #importStatementStatement
+         | ifStatement END? #ifStatementStatement
+         | forStatement END? #forStatementStatement
+         | whileStatement END? #whileStatementStatement
+         | repeatStatement END? #repeatStatementStatement
+         | caseStatement END? #caseStatementStatement
+         | tryStatement END? #tryStatementStatement
+         | functionDeclaration END? #functionDeclarationStatement
+         | implementationDeclaration END? #implementationDeclarationStatement
+         | declaration END? #declarationStatement
+         | channelDeclaration END? #channelDeclarationStatement
+         | actorDeclaration END? #actorDeclarationStatement
+         | assignment END? #assignmentStatement
+         | returnStatement END? #returnStatementStatement
+         | breakStatement END? #breakStatementStatement
+         | continueStatement END? #continueStatementStatement
+         | expression END? #expressionStatement
          ;
 
 /**
@@ -82,7 +82,7 @@ singleAssignment: ID | qualifiedName | qualifiedObjectAccess | collectionAccess;
 multipleAssignments: singleAssignment ((COMMA | SEMI) singleAssignment)+;
 
 // Function declaration: Can have parameters and return values
-functionDeclaration: ASYNC? FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? (block | (statement END?));
+functionDeclaration: ASYNC? FUNCTION ID LPAREN parameterDeclarationList? RPAREN (COLON returnType)? (block | statement);
 
 // Function declaration parameter list: parameterDeclarations separated by commas or semicolons
 parameterDeclarationList: parameterDeclaration ((COMMA | SEMI) parameterDeclaration)*;
@@ -224,7 +224,7 @@ singleReturn: RETURN expression?;
 multipleReturns: RETURN ((LPAREN tupleElements? RPAREN) | collectionMultipleElements);
 
 // Block: A block of statements enclosed in curly braces
-block: LBRACE (statement END?)* RBRACE;
+block: LBRACE statement* RBRACE;
 
 // Expressions: Can be value, binary operations... with optional Concurrency Spawn / Await
 expression: ternaryExpression;
@@ -280,7 +280,7 @@ objectAccess: qualifiedName
 // Implementation
 implementationDeclaration: IMPLEMENTATION ID LBRACE implementationFunctions RBRACE;
 
-implementationFunctions: functionDeclaration (END? functionDeclaration)*;
+implementationFunctions: (functionDeclaration END?)+;
 
 // Collections:  can be a list, tuple, set, map
 collection: LBRACK elements? RBRACK #listValue

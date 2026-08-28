@@ -27,6 +27,19 @@ public class WhileStatementProvider implements ArgumentsProvider {
 							أنهي
 							""",
 							None.get(),
-							null));
+							null),
+					Arguments
+							.of(
+								true,
+								"""
+								متغير أ تعيين ١
+
+								بينما أ أصغر_من ١٠ افعل {
+									إطبع(أ)
+									زد أ
+								}
+								""",
+								None.get(),
+								null));
 	}
 }

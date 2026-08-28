@@ -61,10 +61,10 @@ class SyntaxHighlighterTests {
 		AttributedString result = highlighter.highlight(reader, buffer);
 		assertNotNull(result);
 		if (ScriptUtils.shouldReshape()) {
-			assertEquals(124, result.toAnsi().length());
+			assertEquals(131, result.toAnsi().length());
 		}
 		else {
-			assertEquals(66, result.toAnsi().length());
+			assertEquals(77, result.toAnsi().length());
 		}
 	}
 
