@@ -141,6 +141,41 @@ ext.sharedJvmArgs = [
 		'--add-opens', 'java.base/jdk.internal.module=ALL-UNNAMED'
 ]
 
+def javaToolchainVersion = java.toolchain.languageVersion
+
+tasks.register('generateJavaRuntimeMetadata') {
+	group = 'build setup'
+	description = 'Generates Java runtime requirements for Naftah installers.'
+
+	def outputFile = layout.buildDirectory.file(
+			'generated/naftah-runtime/java-version.properties'
+	)
+
+	inputs.property('javaToolchainVersion', javaToolchainVersion)
+	outputs.file(outputFile)
+
+	doLast {
+		def version = javaToolchainVersion.get()
+		def output = outputFile.get().asFile
+
+		output.parentFile.mkdirs()
+
+		// Write deterministic content; do not add a timestamp.
+		output.setText(
+				"# AUTO-GENERATED FILE - DO NOT EDIT\n" +
+						"requiredJavaVersion=${version}\n" +
+						"minimumJavaVersion=${version}\n" +
+						"previewFeatures=true\n" +
+						"requiredJdkModules=jdk.incubator.vector\n",
+				'UTF-8'
+		)
+
+		logger.lifecycle(
+				"Generated Naftah Java runtime metadata: Java ${version}"
+		)
+	}
+}
+
 tasks.register('javadocAll', Javadoc) {
 	description = 'Generates combined Javadoc for all subprojects (annotations + main)'
 	group = 'documentation'
