@@ -23,6 +23,22 @@ function Get-RequiredJavaVersion {
     return [int](($line -split '=', 2)[1])
 }
 
+function Get-JavaMajorVersion {
+    param(
+        [string]$VersionText
+    )
+
+    if ($VersionText -match '^1\.(\d+)') {
+        return [int]$Matches[1]
+    }
+
+    if ($VersionText -match '^(\d+)') {
+        return [int]$Matches[1]
+    }
+
+    return $null
+}
+
 function Test-Jdk {
     param(
         [string]$JavaHome,
@@ -44,6 +60,8 @@ function Test-Jdk {
     }
 
     try {
+        # java -version and javac -version normally write to stderr.
+        # Capture their output without treating it as a PowerShell error.
         $javaOutput = (& $java -version 2>&1 | Out-String)
         $javaExitCode = $LASTEXITCODE
 
@@ -69,26 +87,10 @@ function Test-Jdk {
             return $false
         }
 
-        $javaVersionText = $javaMatch.Groups[1].Value
-        $javacVersionText = $javacMatch.Groups[1].Value
+        $javaMajor = Get-JavaMajorVersion $javaMatch.Groups[1].Value
+        $javacMajor = Get-JavaMajorVersion $javacMatch.Groups[1].Value
 
-        if ($javaVersionText -match '^1\.(\d+)') {
-            $javaMajor = [int]$Matches[1]
-        }
-        elseif ($javaVersionText -match '^(\d+)') {
-            $javaMajor = [int]$Matches[1]
-        }
-        else {
-            return $false
-        }
-
-        if ($javacVersionText -match '^1\.(\d+)') {
-            $javacMajor = [int]$Matches[1]
-        }
-        elseif ($javacVersionText -match '^(\d+)') {
-            $javacMajor = [int]$Matches[1]
-        }
-        else {
+        if ($null -eq $javaMajor -or $null -eq $javacMajor) {
             return $false
         }
 
@@ -102,95 +104,177 @@ function Test-Jdk {
     }
 }
 
-function Install-NaftahJava {
-    $requiredVersion = Get-RequiredJavaVersion
-
-    Write-Host "Naftah requires JDK $requiredVersion or newer."
+function Find-CompatibleJdk {
+    param(
+        [int]$RequiredVersion
+    )
 
     $candidateHomes = @(
         $env:JAVA_HOME,
         [Environment]::GetEnvironmentVariable("JAVA_HOME", "User"),
         [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
-    ) |
-            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
-            Select-Object -Unique
-
-    $jdkHome = $null
+    )
 
     foreach ($candidateHome in $candidateHomes) {
         if (
-        Test-Jdk `
-                -JavaHome $candidateHome `
-                -RequiredVersion $requiredVersion
+        -not [string]::IsNullOrWhiteSpace($candidateHome) -and
+                (Test-Jdk -JavaHome $candidateHome -RequiredVersion $RequiredVersion)
         ) {
-            $jdkHome = $candidateHome
+            return $candidateHome
+        }
+    }
+
+    # Check common Eclipse Temurin installation directories.
+    $roots = @(
+        "$env:ProgramFiles\Eclipse Adoptium",
+        "$env:LOCALAPPDATA\Programs\Eclipse Adoptium"
+    )
+
+    foreach ($root in $roots) {
+        if (-not (Test-Path -LiteralPath $root)) {
+            continue
+        }
+
+        foreach ($directory in Get-ChildItem -LiteralPath $root -Directory) {
+            if (
+            Test-Jdk `
+                    -JavaHome $directory.FullName `
+                    -RequiredVersion $RequiredVersion
+            ) {
+                return $directory.FullName
+            }
+        }
+    }
+
+    # Check the Java executable available through PATH.
+    $javaCommand = Get-Command java.exe -ErrorAction SilentlyContinue
+
+    if ($javaCommand) {
+        $javaHome = Split-Path -Parent (
+        Split-Path -Parent $javaCommand.Source
+        )
+
+        if (
+        Test-Jdk `
+                -JavaHome $javaHome `
+                -RequiredVersion $RequiredVersion
+        ) {
+            return $javaHome
+        }
+    }
+
+    return $null
+}
+
+function Install-JdkWithWinget {
+    param(
+        [int]$RequiredVersion
+    )
+
+    $winget = Get-Command winget.exe -ErrorAction SilentlyContinue
+
+    if (-not $winget) {
+        throw "winget is unavailable. Install JDK $RequiredVersion or newer manually."
+    }
+
+    $packageId = "EclipseAdoptium.Temurin.$RequiredVersion.JDK"
+
+    Write-Host "Attempting to install $packageId..."
+
+    & $winget.Source install `
+        --id $packageId `
+        --exact `
+        --silent `
+        --accept-package-agreements `
+        --accept-source-agreements
+
+    $installExitCode = $LASTEXITCODE
+
+    if ($installExitCode -eq 0) {
+        return
+    }
+
+    if ($installExitCode -eq 1618) {
+        Write-Warning (
+        "Another installation is already in progress. " +
+                "Waiting briefly and checking whether the required JDK becomes available."
+        )
+
+        # Do not start another installer while Windows Installer is busy.
+        # Check for an installation completed by another process.
+        for ($attempt = 1; $attempt -le 6; $attempt++) {
+            Start-Sleep -Seconds 10
+
+            $installedHome = Find-CompatibleJdk `
+                -RequiredVersion $RequiredVersion
+
+            if ($installedHome) {
+                Write-Host "A compatible JDK was found at: $installedHome"
+                return
+            }
+        }
+
+        throw (
+        "Another installation is still in progress (exit code 1618). " +
+                "Wait for the other installation to finish, then rerun this script. " +
+                "No second installation was started."
+        )
+    }
+
+    throw "Failed to install package $packageId. Exit code: $installExitCode"
+}
+
+function Set-UserPathEntry {
+    param(
+        [string]$Entry
+    )
+
+    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    $pathEntries = @(
+    $userPath -split ';' |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+
+    $alreadyPresent = $false
+
+    foreach ($pathEntry in $pathEntries) {
+        if ($pathEntry.TrimEnd('\') -ieq $Entry.TrimEnd('\')) {
+            $alreadyPresent = $true
             break
         }
     }
 
+    if (-not $alreadyPresent) {
+        $newPath = if ([string]::IsNullOrWhiteSpace($userPath)) {
+            $Entry
+        }
+        else {
+            "$userPath;$Entry"
+        }
+
+        [Environment]::SetEnvironmentVariable(
+                "Path",
+                $newPath,
+                "User"
+        )
+    }
+}
+
+function Install-NaftahJava {
+    $requiredVersion = Get-RequiredJavaVersion
+
+    Write-Host "Naftah requires JDK $requiredVersion or newer."
+
+    # Check existing installations before invoking winget.
+    $jdkHome = Find-CompatibleJdk -RequiredVersion $requiredVersion
+
     if (-not $jdkHome) {
         Write-Host "No compatible JDK found. Attempting installation..."
 
-        $winget = Get-Command winget.exe -ErrorAction SilentlyContinue
+        Install-JdkWithWinget -RequiredVersion $requiredVersion
 
-        if (-not $winget) {
-            throw "winget is unavailable. Install JDK $requiredVersion or newer manually."
-        }
-
-        $packageId = "EclipseAdoptium.Temurin.$requiredVersion.JDK"
-
-        & $winget.Source install `
-            --id $packageId `
-            --exact `
-            --silent `
-            --accept-package-agreements `
-            --accept-source-agreements
-
-        if ($LASTEXITCODE -ne 0) {
-            throw "Failed to install package $packageId."
-        }
-
-        $roots = @(
-            "$env:ProgramFiles\Eclipse Adoptium",
-            "$env:LOCALAPPDATA\Programs\Eclipse Adoptium"
-        )
-
-        foreach ($root in $roots) {
-            if (-not (Test-Path -LiteralPath $root)) {
-                continue
-            }
-
-            foreach ($directory in Get-ChildItem -LiteralPath $root -Directory) {
-                if (
-                Test-Jdk `
-                        -JavaHome $directory.FullName `
-                        -RequiredVersion $requiredVersion
-                ) {
-                    $jdkHome = $directory.FullName
-                    break
-                }
-            }
-
-            if ($jdkHome) {
-                break
-            }
-        }
-
-        # Check JAVA_HOME again in case the installer updated it.
-        if (-not $jdkHome) {
-            $installedHome = [Environment]::GetEnvironmentVariable(
-                    "JAVA_HOME",
-                    "Machine"
-            )
-
-            if (
-            Test-Jdk `
-                    -JavaHome $installedHome `
-                    -RequiredVersion $requiredVersion
-            ) {
-                $jdkHome = $installedHome
-            }
-        }
+        # Discover the JDK after installation.
+        $jdkHome = Find-CompatibleJdk -RequiredVersion $requiredVersion
     }
 
     if (-not $jdkHome) {
@@ -202,47 +286,45 @@ function Install-NaftahJava {
     # Update the current PowerShell process.
     $env:JAVA_HOME = $jdkHome
 
-    if (($env:PATH -split ';') -notcontains $jdkBin) {
+    $currentPathEntries = @(
+    $env:PATH -split ';' |
+            Where-Object { $_ }
+    )
+
+    $jdkBinPresent = $false
+
+    foreach ($pathEntry in $currentPathEntries) {
+        if ($pathEntry.TrimEnd('\') -ieq $jdkBin.TrimEnd('\')) {
+            $jdkBinPresent = $true
+            break
+        }
+    }
+
+    if (-not $jdkBinPresent) {
         $env:PATH = "$jdkBin;$env:PATH"
     }
 
-    # Persist JAVA_HOME for the current Windows user.
+    # Persist JAVA_HOME and PATH for the current Windows user.
     [Environment]::SetEnvironmentVariable(
             "JAVA_HOME",
             $jdkHome,
             "User"
     )
 
-    # Add the JDK bin directory to the user's PATH.
-    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $pathEntries = @(
-    $userPath -split ';' |
-            Where-Object { $_ }
-    )
-
-    if ($pathEntries -notcontains $jdkBin) {
-        $newPath = if ($userPath) {
-            "$userPath;$jdkBin"
-        }
-        else {
-            $jdkBin
-        }
-
-        [Environment]::SetEnvironmentVariable(
-                "Path",
-                $newPath,
-                "User"
-        )
-    }
+    Set-UserPathEntry -Entry $jdkBin
 
     Write-Host "Compatible JDK found at: $jdkHome"
 
+    Write-Host "Java runtime version:"
     & "$jdkBin\java.exe" -version
+
     if ($LASTEXITCODE -ne 0) {
         throw "Failed to execute java.exe."
     }
 
+    Write-Host "Java compiler version:"
     & "$jdkBin\javac.exe" -version
+
     if ($LASTEXITCODE -ne 0) {
         throw "Failed to execute javac.exe."
     }
@@ -252,26 +334,7 @@ try {
     Install-NaftahJava
 
     # Register the Naftah bin directory in the user's PATH.
-    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $pathEntries = @(
-    $userPath -split ';' |
-            Where-Object { $_ }
-    )
-
-    if ($pathEntries -notcontains $BinDir) {
-        $newPath = if ($userPath) {
-            "$userPath;$BinDir"
-        }
-        else {
-            $BinDir
-        }
-
-        [Environment]::SetEnvironmentVariable(
-                "Path",
-                $newPath,
-                "User"
-        )
-    }
+    Set-UserPathEntry -Entry $BinDir
 
     Write-Host ""
     Write-Host "Naftah Java setup completed successfully."
