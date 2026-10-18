@@ -8,16 +8,16 @@ $NaftahHome = Split-Path -Parent $BinDir
 $MetadataFile = Join-Path $NaftahHome "installer\java-version.properties"
 
 function Get-RequiredJavaVersion {
-    if (-not (Test-Path $MetadataFile)) {
-        throw "ملف معلومات إصدار Java غير موجود: $MetadataFile"
+    if (-not (Test-Path -LiteralPath $MetadataFile)) {
+        throw "Java version metadata not found: $MetadataFile"
     }
 
-    $line = Get-Content $MetadataFile |
+    $line = Get-Content -LiteralPath $MetadataFile |
             Where-Object { $_ -match '^requiredJavaVersion=\d+$' } |
             Select-Object -First 1
 
     if (-not $line) {
-        throw "خاصية requiredJavaVersion مفقودة أو غير صالحة."
+        throw "The requiredJavaVersion property is missing or invalid."
     }
 
     return [int](($line -split '=', 2)[1])
@@ -29,53 +29,112 @@ function Test-Jdk {
         [int]$RequiredVersion
     )
 
-    if (-not $JavaHome) {
+    if ([string]::IsNullOrWhiteSpace($JavaHome)) {
         return $false
     }
 
     $java = Join-Path $JavaHome "bin\java.exe"
     $javac = Join-Path $JavaHome "bin\javac.exe"
 
-    if (-not (Test-Path $java) -or -not (Test-Path $javac)) {
+    if (
+    -not (Test-Path -LiteralPath $java) -or
+            -not (Test-Path -LiteralPath $javac)
+    ) {
         return $false
     }
 
-    $javaOutput = (& $java -version 2>&1 | Out-String)
-    $javacOutput = (& $javac -version 2>&1 | Out-String)
+    try {
+        $javaOutput = (& $java -version 2>&1 | Out-String)
+        $javaExitCode = $LASTEXITCODE
 
-    return (
-    $javaOutput -match "version `"$RequiredVersion(?:\.|`")" -and
-            $javacOutput -match "javac $RequiredVersion(?:\.|$)"
-    )
+        $javacOutput = (& $javac -version 2>&1 | Out-String)
+        $javacExitCode = $LASTEXITCODE
+
+        if ($javaExitCode -ne 0 -or $javacExitCode -ne 0) {
+            return $false
+        }
+
+        # Support both modern Java versions and legacy 1.x version strings.
+        $javaMatch = [regex]::Match(
+                $javaOutput,
+                'version "([^"]+)"'
+        )
+
+        $javacMatch = [regex]::Match(
+                $javacOutput,
+                'javac ([^\s]+)'
+        )
+
+        if (-not $javaMatch.Success -or -not $javacMatch.Success) {
+            return $false
+        }
+
+        $javaVersionText = $javaMatch.Groups[1].Value
+        $javacVersionText = $javacMatch.Groups[1].Value
+
+        if ($javaVersionText -match '^1\.(\d+)') {
+            $javaMajor = [int]$Matches[1]
+        }
+        elseif ($javaVersionText -match '^(\d+)') {
+            $javaMajor = [int]$Matches[1]
+        }
+        else {
+            return $false
+        }
+
+        if ($javacVersionText -match '^1\.(\d+)') {
+            $javacMajor = [int]$Matches[1]
+        }
+        elseif ($javacVersionText -match '^(\d+)') {
+            $javacMajor = [int]$Matches[1]
+        }
+        else {
+            return $false
+        }
+
+        return (
+        $javaMajor -ge $RequiredVersion -and
+                $javacMajor -ge $RequiredVersion
+        )
+    }
+    catch {
+        return $false
+    }
 }
 
 function Install-NaftahJava {
     $requiredVersion = Get-RequiredJavaVersion
 
-    Write-Host "يتطلب نفطه تثبيت JDK $requiredVersion."
+    Write-Host "Naftah requires JDK $requiredVersion or newer."
 
     $candidateHomes = @(
         $env:JAVA_HOME,
         [Environment]::GetEnvironmentVariable("JAVA_HOME", "User"),
         [Environment]::GetEnvironmentVariable("JAVA_HOME", "Machine")
-    ) | Where-Object { $_ } | Select-Object -Unique
+    ) |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+            Select-Object -Unique
 
     $jdkHome = $null
 
     foreach ($candidateHome in $candidateHomes) {
-        if (Test-Jdk $candidateHome $requiredVersion) {
+        if (
+        Test-Jdk `
+                -JavaHome $candidateHome `
+                -RequiredVersion $requiredVersion
+        ) {
             $jdkHome = $candidateHome
             break
         }
     }
 
     if (-not $jdkHome) {
-        Write-Host "لم يتم العثور على إصدار JDK المطلوب. جارٍ محاولة التثبيت..."
+        Write-Host "No compatible JDK found. Attempting installation..."
 
         $winget = Get-Command winget.exe -ErrorAction SilentlyContinue
 
         if (-not $winget) {
-            throw "تعذر العثور على winget. يرجى تثبيت JDK $requiredVersion يدويًا."
+            throw "winget is unavailable. Install JDK $requiredVersion or newer manually."
         }
 
         $packageId = "EclipseAdoptium.Temurin.$requiredVersion.JDK"
@@ -88,7 +147,7 @@ function Install-NaftahJava {
             --accept-source-agreements
 
         if ($LASTEXITCODE -ne 0) {
-            throw "فشل تثبيت الحزمة $packageId."
+            throw "Failed to install package $packageId."
         }
 
         $roots = @(
@@ -97,12 +156,18 @@ function Install-NaftahJava {
         )
 
         foreach ($root in $roots) {
-            if (Test-Path $root) {
-                foreach ($directory in Get-ChildItem $root -Directory) {
-                    if (Test-Jdk $directory.FullName $requiredVersion) {
-                        $jdkHome = $directory.FullName
-                        break
-                    }
+            if (-not (Test-Path -LiteralPath $root)) {
+                continue
+            }
+
+            foreach ($directory in Get-ChildItem -LiteralPath $root -Directory) {
+                if (
+                Test-Jdk `
+                        -JavaHome $directory.FullName `
+                        -RequiredVersion $requiredVersion
+                ) {
+                    $jdkHome = $directory.FullName
+                    break
                 }
             }
 
@@ -110,17 +175,36 @@ function Install-NaftahJava {
                 break
             }
         }
+
+        # Check JAVA_HOME again in case the installer updated it.
+        if (-not $jdkHome) {
+            $installedHome = [Environment]::GetEnvironmentVariable(
+                    "JAVA_HOME",
+                    "Machine"
+            )
+
+            if (
+            Test-Jdk `
+                    -JavaHome $installedHome `
+                    -RequiredVersion $requiredVersion
+            ) {
+                $jdkHome = $installedHome
+            }
+        }
     }
 
     if (-not $jdkHome) {
-        throw "تعذر العثور على تثبيت صالح لـ JDK $requiredVersion."
+        throw "Could not locate a compatible JDK $requiredVersion or newer."
     }
 
     $jdkBin = Join-Path $jdkHome "bin"
 
-    # Update the current PowerShell session.
+    # Update the current PowerShell process.
     $env:JAVA_HOME = $jdkHome
-    $env:PATH = "$jdkBin;$env:PATH"
+
+    if (($env:PATH -split ';') -notcontains $jdkBin) {
+        $env:PATH = "$jdkBin;$env:PATH"
+    }
 
     # Persist JAVA_HOME for the current Windows user.
     [Environment]::SetEnvironmentVariable(
@@ -129,17 +213,18 @@ function Install-NaftahJava {
             "User"
     )
 
-    # Add the JDK bin directory to the user's PATH if necessary.
+    # Add the JDK bin directory to the user's PATH.
     $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
     $pathEntries = @(
-    $userPath -split ";" |
+    $userPath -split ';' |
             Where-Object { $_ }
     )
 
     if ($pathEntries -notcontains $jdkBin) {
         $newPath = if ($userPath) {
             "$userPath;$jdkBin"
-        } else {
+        }
+        else {
             $jdkBin
         }
 
@@ -150,12 +235,17 @@ function Install-NaftahJava {
         )
     }
 
-    Write-Host "تم العثور على JDK في: $jdkHome"
-    Write-Host "إصدار بيئة تشغيل Java:"
-    & "$jdkBin\java.exe" -version
+    Write-Host "Compatible JDK found at: $jdkHome"
 
-    Write-Host "إصدار مترجم Java:"
+    & "$jdkBin\java.exe" -version
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to execute java.exe."
+    }
+
     & "$jdkBin\javac.exe" -version
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to execute javac.exe."
+    }
 }
 
 try {
@@ -164,14 +254,15 @@ try {
     # Register the Naftah bin directory in the user's PATH.
     $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
     $pathEntries = @(
-    $userPath -split ";" |
+    $userPath -split ';' |
             Where-Object { $_ }
     )
 
     if ($pathEntries -notcontains $BinDir) {
         $newPath = if ($userPath) {
             "$userPath;$BinDir"
-        } else {
+        }
+        else {
             $BinDir
         }
 
@@ -183,10 +274,13 @@ try {
     }
 
     Write-Host ""
-    Write-Host "اكتمل إعداد Java وتثبيت نفطه بنجاح."
-    Write-Host "افتح نافذة طرفية جديدة لاستخدام متغيرات البيئة المحدّثة."
+    Write-Host "Naftah Java setup completed successfully."
+    Write-Host "Open a new terminal to use the updated environment."
 }
 catch {
-    Write-Error "فشل التثبيت: $($_.Exception.Message)"
+    [Console]::Error.WriteLine(
+            "Installation failed: {0}",
+            $_.Exception.Message
+    )
     exit 1
 }
