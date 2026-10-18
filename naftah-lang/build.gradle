@@ -450,6 +450,20 @@ tasks.register('baseDistZip', Zip) {
 	enabled = false
 }
 
+def configureJavaRuntimeMetadata = { Zip task ->
+	task.dependsOn(
+			rootProject.tasks.named('generateJavaRuntimeMetadata')
+	)
+
+	task.from(
+			rootProject.layout.buildDirectory.file(
+					'generated/naftah-runtime/java-version.properties'
+			)
+	) {
+		into "${zipBaseFolder}/installer"
+	}
+}
+
 tasks.register('dist', Zip) {
 	dependsOn tasks.named("processResources"), tasks.named("copyDependencies"),
 			tasks.named("jar"), tasks.named("extractLexerLiterals"),
@@ -466,6 +480,8 @@ tasks.register('dist', Zip) {
 		include 'lib/*.jar', "${project.name}-${project.version}.jar"
 		into "${zipBaseFolder}/lib"
 	}
+
+	configureJavaRuntimeMetadata.call(delegate as Zip)
 }
 
 tasks.register('distStandalone', Zip) {
@@ -482,6 +498,8 @@ tasks.register('distStandalone', Zip) {
 		include "${project.name}-standalone-${project.version}.jar"
 		into "${zipBaseFolder}/lib"
 	}
+
+	configureJavaRuntimeMetadata.call(delegate as Zip)
 }
 
 tasks.register('compileJmh', JavaCompile) {
