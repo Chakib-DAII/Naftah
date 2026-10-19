@@ -3,13 +3,16 @@
 
 $ErrorActionPreference = "Stop"
 
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+[Console]::InputEncoding = [System.Text.UTF8Encoding]::new()
+
 $BinDir = $PSScriptRoot
 $NaftahHome = Split-Path -Parent $BinDir
 $MetadataFile = Join-Path $NaftahHome "installer\java-version.properties"
 
 function Get-RequiredJavaVersion {
     if (-not (Test-Path -LiteralPath $MetadataFile)) {
-        throw "Java version metadata not found: $MetadataFile"
+        throw "لم يتم العثور على ملف معلومات إصدار Java: $MetadataFile"
     }
 
     $line = Get-Content -LiteralPath $MetadataFile |
@@ -17,7 +20,7 @@ function Get-RequiredJavaVersion {
             Select-Object -First 1
 
     if (-not $line) {
-        throw "The requiredJavaVersion property is missing or invalid."
+        throw "خاصية requiredJavaVersion مفقودة أو غير صالحة."
     }
 
     return [int](($line -split '=', 2)[1])
@@ -174,12 +177,12 @@ function Install-JdkWithWinget {
     $winget = Get-Command winget.exe -ErrorAction SilentlyContinue
 
     if (-not $winget) {
-        throw "winget is unavailable. Install JDK $RequiredVersion or newer manually."
+        throw "الأداة winget غير متاحة. يُرجى تثبيت JDK بالإصدار $RequiredVersion أو إصدار أحدث يدويًا."
     }
 
     $packageId = "EclipseAdoptium.Temurin.$RequiredVersion.JDK"
 
-    Write-Host "Attempting to install $packageId..."
+    Write-Host "جارٍ محاولة تثبيت الحزمة: $packageId ..."
 
     & $winget.Source install `
         --id $packageId `
@@ -196,8 +199,8 @@ function Install-JdkWithWinget {
 
     if ($installExitCode -eq 1618) {
         Write-Warning (
-        "Another installation is already in progress. " +
-                "Waiting briefly and checking whether the required JDK becomes available."
+        "هناك عملية تثبيت أخرى قيد التنفيذ. " +
+                "سيتم الانتظار قليلًا والتحقق من توفر إصدار JDK المطلوب."
         )
 
         # Do not start another installer while Windows Installer is busy.
@@ -209,19 +212,19 @@ function Install-JdkWithWinget {
                 -RequiredVersion $RequiredVersion
 
             if ($installedHome) {
-                Write-Host "A compatible JDK was found at: $installedHome"
+                Write-Host "تم العثور على إصدار JDK متوافق في المسار: $installedHome"
                 return
             }
         }
 
         throw (
-        "Another installation is still in progress (exit code 1618). " +
-                "Wait for the other installation to finish, then rerun this script. " +
-                "No second installation was started."
+        "لا تزال عملية تثبيت أخرى قيد التنفيذ (رمز الخروج 1618). " +
+                "انتظر حتى تنتهي عملية التثبيت الأخرى، ثم أعد تشغيل هذا السكربت. " +
+                "لم يتم بدء عملية تثبيت ثانية."
         )
     }
 
-    throw "Failed to install package $packageId. Exit code: $installExitCode"
+    throw "فشل تثبيت الحزمة $packageId. رمز الخروج: $installExitCode"
 }
 
 function Set-UserPathEntry {
@@ -263,13 +266,13 @@ function Set-UserPathEntry {
 function Install-NaftahJava {
     $requiredVersion = Get-RequiredJavaVersion
 
-    Write-Host "Naftah requires JDK $requiredVersion or newer."
+    Write-Host "يتطلب Naftah تثبيت JDK بالإصدار $requiredVersion أو إصدار أحدث."
 
     # Check existing installations before invoking winget.
     $jdkHome = Find-CompatibleJdk -RequiredVersion $requiredVersion
 
     if (-not $jdkHome) {
-        Write-Host "No compatible JDK found. Attempting installation..."
+        Write-Host "لم يتم العثور على إصدار JDK متوافق. جارٍ محاولة التثبيت..."
 
         Install-JdkWithWinget -RequiredVersion $requiredVersion
 
@@ -278,7 +281,7 @@ function Install-NaftahJava {
     }
 
     if (-not $jdkHome) {
-        throw "Could not locate a compatible JDK $requiredVersion or newer."
+        throw "تعذر العثور على JDK بالإصدار $requiredVersion أو إصدار أحدث."
     }
 
     $jdkBin = Join-Path $jdkHome "bin"
@@ -313,20 +316,20 @@ function Install-NaftahJava {
 
     Set-UserPathEntry -Entry $jdkBin
 
-    Write-Host "Compatible JDK found at: $jdkHome"
+    Write-Host "تم العثور على JDK متوافق في المسار: $jdkHome"
 
-    Write-Host "Java runtime version:"
+    Write-Host "إصدار بيئة تشغيل Java:"
     & "$jdkBin\java.exe" -version
 
     if ($LASTEXITCODE -ne 0) {
-        throw "Failed to execute java.exe."
+        throw "فشل تشغيل java.exe."
     }
 
-    Write-Host "Java compiler version:"
+    Write-Host "إصدار مترجم Java:"
     & "$jdkBin\javac.exe" -version
 
     if ($LASTEXITCODE -ne 0) {
-        throw "Failed to execute javac.exe."
+        throw "فشل تشغيل javac.exe."
     }
 }
 
@@ -337,12 +340,12 @@ try {
     Set-UserPathEntry -Entry $BinDir
 
     Write-Host ""
-    Write-Host "Naftah Java setup completed successfully."
-    Write-Host "Open a new terminal to use the updated environment."
+    Write-Host "اكتمل إعداد Java الخاص بـ Naftah بنجاح."
+    Write-Host "افتح نافذة طرفية جديدة لاستخدام إعدادات البيئة المحدّثة."
 }
 catch {
     [Console]::Error.WriteLine(
-            "Installation failed: {0}",
+            "فشل التثبيت: {0}",
             $_.Exception.Message
     )
     exit 1
