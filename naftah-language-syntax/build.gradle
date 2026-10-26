@@ -1,0 +1,34 @@
+plugins {
+	id 'antlr'
+}
+
+description = "Shared Naftah syntax, text, and transliteration APIs"
+
+dependencies {
+	antlr "org.antlr:antlr4:4.9.3"
+	api "org.antlr:antlr4-runtime:4.9.3"
+	api "com.ibm.icu:icu4j:76.1"
+}
+
+generateGrammarSource {
+	maxHeapSize = "128m"
+	arguments += ['-encoding', 'UTF-8', '-package', 'org.daiitech.naftah.parser', '-visitor', '-no-listener']
+}
+
+compileJava.dependsOn generateGrammarSource
+
+sourceSets {
+	main {
+		java.srcDir layout.buildDirectory.dir('generated-src/antlr/main')
+	}
+}
+
+clean {
+	delete "generated-src"
+}
+
+tasks.named('sourcesJar', Jar) {
+	dependsOn(tasks.named('generateGrammarSource'))
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
