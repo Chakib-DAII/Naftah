@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.syntax.CommonScriptUtils;
 import org.daiitech.naftah.utils.OS;
 import org.daiitech.naftah.utils.function.ThrowingBiFunction;
 import org.daiitech.naftah.utils.function.ThrowingFunction;
@@ -948,7 +949,7 @@ public final class ScriptUtils {
 	 */
 	public static String[] transliterateToArabicScriptDefault(  boolean removeDiacritics,
 																String... text) {
-		return transliterateScript(LATIN_ARABIC_TRANSLITERATION_ID, removeDiacritics, CUSTOM_RULES, text);
+		return CommonScriptUtils.transliterateToArabicScriptDefault(removeDiacritics, text);
 	}
 
 	/**
@@ -986,7 +987,7 @@ public final class ScriptUtils {
 	 * @return transliterated Arabic script strings
 	 */
 	public static String[] transliterateToArabicScriptDefault(String... text) {
-		return transliterateToArabicScript(true, CUSTOM_RULES, text);
+		return CommonScriptUtils.transliterateToArabicScriptDefault(text);
 	}
 
 	/**
