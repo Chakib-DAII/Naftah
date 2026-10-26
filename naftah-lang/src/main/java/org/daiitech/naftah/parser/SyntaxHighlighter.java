@@ -96,7 +96,7 @@ public class SyntaxHighlighter extends BaseHighlighter {
 			CharStream input = CharStreams.fromString(cleanedLine);
 
 			// Tokenize this line
-			CommonTokenStream tokens = NaftahParserHelper.getCommonTokenStream(input);
+			CommonTokenStream tokens = NaftahParserHelper.getCommonTokenStream(input, false);
 			tokens.fill();
 
 			int lastIndex = 0;

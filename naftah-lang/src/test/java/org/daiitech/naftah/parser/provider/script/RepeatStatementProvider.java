@@ -28,6 +28,20 @@ public class RepeatStatementProvider implements ArgumentsProvider {
 							أنهي
 							""",
 							None.get(),
-							null));
+							null),
+					Arguments
+							.of(
+								true,
+								"""
+								متغير أ تعيين ١
+
+								كرر {
+									إطبع(أ)
+									زد أ
+								}
+								حتى أ أكبر_من 9
+								""",
+								None.get(),
+								null));
 	}
 }

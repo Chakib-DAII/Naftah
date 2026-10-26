@@ -60,19 +60,26 @@ public final class NaftahDateParserHelper {
 	}
 
 	/**
-	 * Creates a {@link CommonTokenStream} and associated {@link NaftahDateLexer} from a given
-	 * {@link CharStream} and list of ANTLR error listeners.
+	 * Creates and configures a {@link NaftahDateLexer} and its associated
+	 * {@link CommonTokenStream} from the supplied {@link CharStream}.
 	 *
-	 * @param charStream     the input character stream
-	 * @param errorListeners the list of ANTLR error listeners
-	 * @return a pair containing the lexer and token stream
+	 * <p>The provided error listeners are registered with the lexer. Token
+	 * processing is delegated to the common parser helper without printing
+	 * incoming tokens.
+	 *
+	 * @param charStream     the character stream containing the date input to be
+	 *                       tokenized
+	 * @param errorListeners the error listeners to register with the lexer
+	 * @return a {@link Pair} containing the configured {@link NaftahDateLexer} and
+	 *         its associated {@link CommonTokenStream}
 	 */
 	public static Pair<NaftahDateLexer, CommonTokenStream> getCommonTokenStream(
 																				CharStream charStream,
 																				List<ANTLRErrorListener> errorListeners) {
 		return NaftahParserHelper
 				.getCommonTokenStream(  () -> new NaftahDateLexer(charStream),
-										errorListeners);
+										errorListeners,
+										false);
 	}
 
 	/**
@@ -87,13 +94,20 @@ public final class NaftahDateParserHelper {
 	}
 
 	/**
-	 * Prepares an {@link NaftahDateParser} for parsing using a list of error listeners.
+	 * Creates and configures a {@link NaftahDateParser} for the supplied input.
 	 *
-	 * <p>Also optionally prints token stream information if debug mode is enabled.</p>
+	 * <p>This method creates the date lexer and token stream, registers the
+	 * supplied error listeners, and optionally prints the generated token stream
+	 * when debug mode is enabled.
 	 *
-	 * @param input          the input character stream
-	 * @param errorListeners the list of ANTLR error listeners
-	 * @return a configured {@link NaftahDateParser} instance
+	 * <p>The resulting parser is configured with the prepared token stream and
+	 * the supplied error listeners and is ready to parse the input.
+	 *
+	 * @param input          the character stream containing the date input to be
+	 *                       parsed
+	 * @param errorListeners the error listeners to register with the lexer and
+	 *                       parser
+	 * @return a fully configured {@link NaftahDateParser} ready for parsing
 	 */
 	public static NaftahDateParser prepareRun(  CharStream input,
 												List<ANTLRErrorListener> errorListeners) {
@@ -103,7 +117,7 @@ public final class NaftahDateParserHelper {
 		CommonTokenStream tokens = lexerCommonTokenStreamPair.getRight();
 
 		if (Boolean.getBoolean(DEBUG_PROPERTY)) {
-			printTokens(tokens, lexerCommonTokenStreamPair.getLeft().getVocabulary());
+			printTokens("Date Tokens:", tokens, lexerCommonTokenStreamPair.getLeft().getVocabulary());
 		}
 
 		// Create a parser
