@@ -1,4 +1,4 @@
 rootProject.name = 'naftah'
 
-include("naftah-builtin-core", "naftah-lang", "naftah-playground")
+include("naftah-builtin-core", "naftah-language-syntax", "naftah-lang", "naftah-playground")
 
