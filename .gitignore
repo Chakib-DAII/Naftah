@@ -74,3 +74,5 @@ out/
 /docs-site/indexnow.json
 /docs-site/_data/class-scanning-index.json
 /docs-site/_data/minimal-class-scanning-index.json
+/gen/
+/naftah-language-syntax/src/main/gen/
