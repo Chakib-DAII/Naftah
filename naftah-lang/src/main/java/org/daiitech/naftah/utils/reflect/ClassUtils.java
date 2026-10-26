@@ -25,6 +25,7 @@ import org.daiitech.naftah.builtin.lang.JvmFunction;
 import org.daiitech.naftah.builtin.utils.tuple.ImmutablePair;
 import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.syntax.CommonScriptUtils;
 import org.daiitech.naftah.utils.script.ScriptUtils;
 
 import static org.daiitech.naftah.Naftah.UNDERSCORE;
@@ -161,8 +162,8 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedName(String className) {
 		return String
-				.join(  QUALIFIED_NAME_SEPARATOR,
-						org.daiitech.naftah.syntax.ScriptUtils
+				.join(QUALIFIED_NAME_SEPARATOR,
+					  CommonScriptUtils
 								.transliterateToArabicScriptDefault(className.split(CLASS_SEPARATORS_REGEX)));
 	}
 
@@ -179,8 +180,8 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, Method method) {
 		return "%s::%s"
-				.formatted( qualifiedName,
-							org.daiitech.naftah.syntax.ScriptUtils
+				.formatted(qualifiedName,
+						   CommonScriptUtils
 									.transliterateToArabicScriptDefault(method.getName())[0]);
 	}
 
@@ -197,8 +198,8 @@ public final class ClassUtils {
 	 */
 	public static String getQualifiedCall(String qualifiedName, String methodName) {
 		return "%s::%s"
-				.formatted( qualifiedName,
-							org.daiitech.naftah.syntax.ScriptUtils.transliterateToArabicScriptDefault(methodName)[0]);
+				.formatted(qualifiedName,
+						   CommonScriptUtils.transliterateToArabicScriptDefault(methodName)[0]);
 	}
 
 
@@ -251,8 +252,8 @@ public final class ClassUtils {
 		return classQualifiers
 				.stream()
 				.map(strings -> String
-						.join(  QUALIFIED_NAME_SEPARATOR,
-								org.daiitech.naftah.syntax.ScriptUtils.transliterateToArabicScriptDefault(strings)))
+						.join(QUALIFIED_NAME_SEPARATOR,
+							  CommonScriptUtils.transliterateToArabicScriptDefault(strings)))
 				.collect(Collectors.toSet());
 	}
 
@@ -276,8 +277,8 @@ public final class ClassUtils {
 				.map(strings -> Map
 						.entry(
 								String
-										.join(  QUALIFIED_NAME_SEPARATOR,
-												org.daiitech.naftah.syntax.ScriptUtils
+										.join(QUALIFIED_NAME_SEPARATOR,
+											  CommonScriptUtils
 														.transliterateToArabicScriptDefault(strings
 																.getRight()
 																.clone())),

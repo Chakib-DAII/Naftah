@@ -244,8 +244,8 @@ public final class ImplicitEndTokenSource implements TokenSource {
 		}
 
 		return nextToken.getType() == Token.EOF || (nextToken.getLine() > previousToken.getLine() && canStartStatement(
-				nextToken
-						.getType()));
+																														nextToken
+																																.getType()));
 	}
 
 	/**
@@ -267,19 +267,19 @@ public final class ImplicitEndTokenSource implements TokenSource {
 	private boolean canEndStatement(int tokenType) {
 		return switch (tokenType) {
 			case org.daiitech.naftah.parser.NaftahLexer.ID,
-				 org.daiitech.naftah.parser.NaftahLexer.SELF,
-				 org.daiitech.naftah.parser.NaftahLexer.NUMBER,
-				 org.daiitech.naftah.parser.NaftahLexer.BASE_RADIX,
-				 org.daiitech.naftah.parser.NaftahLexer.TRUE,
-				 org.daiitech.naftah.parser.NaftahLexer.FALSE,
-				 org.daiitech.naftah.parser.NaftahLexer.NULL,
-				 org.daiitech.naftah.parser.NaftahLexer.CHARACTER,
-				 org.daiitech.naftah.parser.NaftahLexer.STRING,
-				 org.daiitech.naftah.parser.NaftahLexer.NAN,
-				 org.daiitech.naftah.parser.NaftahLexer.RPAREN,
-				 org.daiitech.naftah.parser.NaftahLexer.RBRACK,
-				 org.daiitech.naftah.parser.NaftahLexer.INCREMENT,
-				 org.daiitech.naftah.parser.NaftahLexer.DECREMENT -> true;
+					org.daiitech.naftah.parser.NaftahLexer.SELF,
+					org.daiitech.naftah.parser.NaftahLexer.NUMBER,
+					org.daiitech.naftah.parser.NaftahLexer.BASE_RADIX,
+					org.daiitech.naftah.parser.NaftahLexer.TRUE,
+					org.daiitech.naftah.parser.NaftahLexer.FALSE,
+					org.daiitech.naftah.parser.NaftahLexer.NULL,
+					org.daiitech.naftah.parser.NaftahLexer.CHARACTER,
+					org.daiitech.naftah.parser.NaftahLexer.STRING,
+					org.daiitech.naftah.parser.NaftahLexer.NAN,
+					org.daiitech.naftah.parser.NaftahLexer.RPAREN,
+					org.daiitech.naftah.parser.NaftahLexer.RBRACK,
+					org.daiitech.naftah.parser.NaftahLexer.INCREMENT,
+					org.daiitech.naftah.parser.NaftahLexer.DECREMENT -> true;
 			default -> false;
 		};
 	}
@@ -302,44 +302,44 @@ public final class ImplicitEndTokenSource implements TokenSource {
 	private boolean canStartStatement(int tokenType) {
 		return switch (tokenType) {
 			case org.daiitech.naftah.parser.NaftahLexer.SCOPE,
-				 org.daiitech.naftah.parser.NaftahLexer.LBRACE,
-				 org.daiitech.naftah.parser.NaftahLexer.IMPORT,
-				 org.daiitech.naftah.parser.NaftahLexer.IF,
-				 org.daiitech.naftah.parser.NaftahLexer.FOR,
-				 org.daiitech.naftah.parser.NaftahLexer.WHILE,
-				 org.daiitech.naftah.parser.NaftahLexer.REPEAT,
-				 org.daiitech.naftah.parser.NaftahLexer.CASE,
-				 org.daiitech.naftah.parser.NaftahLexer.TRY,
-				 org.daiitech.naftah.parser.NaftahLexer.ASYNC,
-				 org.daiitech.naftah.parser.NaftahLexer.FUNCTION,
-				 org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
-				 org.daiitech.naftah.parser.NaftahLexer.VARIABLE,
-				 org.daiitech.naftah.parser.NaftahLexer.CONSTANT,
-				 org.daiitech.naftah.parser.NaftahLexer.CHANNEL,
-				 org.daiitech.naftah.parser.NaftahLexer.ACTOR,
-				 org.daiitech.naftah.parser.NaftahLexer.RETURN,
-				 org.daiitech.naftah.parser.NaftahLexer.BREAK,
-				 org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
-				 org.daiitech.naftah.parser.NaftahLexer.SPAWN,
-				 org.daiitech.naftah.parser.NaftahLexer.AWAIT,
-				 org.daiitech.naftah.parser.NaftahLexer.NOT,
-				 org.daiitech.naftah.parser.NaftahLexer.BITWISE_NOT,
-				 org.daiitech.naftah.parser.NaftahLexer.TYPE_OF,
-				 org.daiitech.naftah.parser.NaftahLexer.SIZE_OF,
-				 org.daiitech.naftah.parser.NaftahLexer.INCREMENT,
-				 org.daiitech.naftah.parser.NaftahLexer.DECREMENT,
-				 org.daiitech.naftah.parser.NaftahLexer.AT_SIGN,
-				 org.daiitech.naftah.parser.NaftahLexer.LBRACK,
-				 org.daiitech.naftah.parser.NaftahLexer.LPAREN,
-				 org.daiitech.naftah.parser.NaftahLexer.ID,
-				 org.daiitech.naftah.parser.NaftahLexer.SELF,
-				 org.daiitech.naftah.parser.NaftahLexer.NUMBER,
-				 org.daiitech.naftah.parser.NaftahLexer.TRUE,
-				 org.daiitech.naftah.parser.NaftahLexer.FALSE,
-				 org.daiitech.naftah.parser.NaftahLexer.NULL,
-				 org.daiitech.naftah.parser.NaftahLexer.CHARACTER,
-				 org.daiitech.naftah.parser.NaftahLexer.STRING,
-				 org.daiitech.naftah.parser.NaftahLexer.NAN -> true;
+					org.daiitech.naftah.parser.NaftahLexer.LBRACE,
+					org.daiitech.naftah.parser.NaftahLexer.IMPORT,
+					org.daiitech.naftah.parser.NaftahLexer.IF,
+					org.daiitech.naftah.parser.NaftahLexer.FOR,
+					org.daiitech.naftah.parser.NaftahLexer.WHILE,
+					org.daiitech.naftah.parser.NaftahLexer.REPEAT,
+					org.daiitech.naftah.parser.NaftahLexer.CASE,
+					org.daiitech.naftah.parser.NaftahLexer.TRY,
+					org.daiitech.naftah.parser.NaftahLexer.ASYNC,
+					org.daiitech.naftah.parser.NaftahLexer.FUNCTION,
+					org.daiitech.naftah.parser.NaftahLexer.IMPLEMENTATION,
+					org.daiitech.naftah.parser.NaftahLexer.VARIABLE,
+					org.daiitech.naftah.parser.NaftahLexer.CONSTANT,
+					org.daiitech.naftah.parser.NaftahLexer.CHANNEL,
+					org.daiitech.naftah.parser.NaftahLexer.ACTOR,
+					org.daiitech.naftah.parser.NaftahLexer.RETURN,
+					org.daiitech.naftah.parser.NaftahLexer.BREAK,
+					org.daiitech.naftah.parser.NaftahLexer.CONTINUE,
+					org.daiitech.naftah.parser.NaftahLexer.SPAWN,
+					org.daiitech.naftah.parser.NaftahLexer.AWAIT,
+					org.daiitech.naftah.parser.NaftahLexer.NOT,
+					org.daiitech.naftah.parser.NaftahLexer.BITWISE_NOT,
+					org.daiitech.naftah.parser.NaftahLexer.TYPE_OF,
+					org.daiitech.naftah.parser.NaftahLexer.SIZE_OF,
+					org.daiitech.naftah.parser.NaftahLexer.INCREMENT,
+					org.daiitech.naftah.parser.NaftahLexer.DECREMENT,
+					org.daiitech.naftah.parser.NaftahLexer.AT_SIGN,
+					org.daiitech.naftah.parser.NaftahLexer.LBRACK,
+					org.daiitech.naftah.parser.NaftahLexer.LPAREN,
+					org.daiitech.naftah.parser.NaftahLexer.ID,
+					org.daiitech.naftah.parser.NaftahLexer.SELF,
+					org.daiitech.naftah.parser.NaftahLexer.NUMBER,
+					org.daiitech.naftah.parser.NaftahLexer.TRUE,
+					org.daiitech.naftah.parser.NaftahLexer.FALSE,
+					org.daiitech.naftah.parser.NaftahLexer.NULL,
+					org.daiitech.naftah.parser.NaftahLexer.CHARACTER,
+					org.daiitech.naftah.parser.NaftahLexer.STRING,
+					org.daiitech.naftah.parser.NaftahLexer.NAN -> true;
 			default -> false;
 		};
 	}
@@ -361,16 +361,16 @@ public final class ImplicitEndTokenSource implements TokenSource {
 
 		switch (token.getType()) {
 			case org.daiitech.naftah.parser.NaftahLexer.LPAREN ->
-					parenthesisDepth++;
+				parenthesisDepth++;
 
 			case org.daiitech.naftah.parser.NaftahLexer.RPAREN ->
-					parenthesisDepth = Math.max(0, parenthesisDepth - 1);
+				parenthesisDepth = Math.max(0, parenthesisDepth - 1);
 
 			case org.daiitech.naftah.parser.NaftahLexer.LBRACK ->
-					bracketDepth++;
+				bracketDepth++;
 
 			case org.daiitech.naftah.parser.NaftahLexer.RBRACK ->
-					bracketDepth = Math.max(0, bracketDepth - 1);
+				bracketDepth = Math.max(0, bracketDepth - 1);
 
 			default -> {
 				// No nesting state to update.
@@ -402,14 +402,14 @@ public final class ImplicitEndTokenSource implements TokenSource {
 	 */
 	private static Token newImplicitEndToken(Token previousToken, Token nextToken) {
 		CommonToken end = new CommonToken(
-				org.daiitech.naftah.parser.NaftahLexer.END,
-				IMPLICIT_END_TEXT
+											org.daiitech.naftah.parser.NaftahLexer.END,
+											IMPLICIT_END_TEXT
 		);
 
 		end.setLine(previousToken.getLine());
 		end
 				.setCharPositionInLine(
-						previousToken.getCharPositionInLine() + previousToken.getText().length()
+										previousToken.getCharPositionInLine() + previousToken.getText().length()
 				);
 		end.setStartIndex(nextToken.getStartIndex());
 		end.setStopIndex(nextToken.getStartIndex() - 1);

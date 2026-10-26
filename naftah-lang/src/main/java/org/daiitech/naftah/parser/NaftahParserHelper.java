@@ -60,8 +60,8 @@ import org.daiitech.naftah.builtin.utils.tuple.Pair;
 import org.daiitech.naftah.builtin.utils.tuple.Triple;
 import org.daiitech.naftah.errors.ExceptionUtils;
 import org.daiitech.naftah.errors.NaftahBugError;
+import org.daiitech.naftah.syntax.CommonScriptUtils;
 import org.daiitech.naftah.syntax.ImplicitEndTokenSource;
-import org.daiitech.naftah.syntax.ScriptUtils;
 import org.daiitech.naftah.utils.function.TriFunction;
 import org.daiitech.naftah.utils.reflect.ClassUtils;
 import org.daiitech.naftah.utils.reflect.ObjectAccessUtils;
@@ -918,7 +918,7 @@ public final class NaftahParserHelper {
 	 * @return a {@link CharStream} representing the normalized script
 	 */
 	public static CharStream getCharStream(String script) {
-		script = ScriptUtils.normalize(script);
+		script = CommonScriptUtils.normalize(script);
 
 		if (Boolean.getBoolean(DEBUG_PROPERTY)) {
 			getRawHexBytes(script);
