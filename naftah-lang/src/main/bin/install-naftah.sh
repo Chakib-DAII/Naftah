@@ -3,6 +3,79 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright © The Naftah Project Authors
 
+set -e
+
+# ------------------------------------------------------------
+# Java runtime installation
+#
+# Naftah currently targets Java 17.
+# Install OpenJDK 17 only when Java 17+ is unavailable.
+# ------------------------------------------------------------
+
+JAVA_REQUIRED_VERSION=17
+
+install_java() {
+    local java_version=""
+
+    if command -v java >/dev/null 2>&1; then
+        java_version=$(java -version 2>&1 |
+            sed -nE 's/.*version "([0-9]+).*/\1/p' |
+            head -n 1)
+
+        if [[ "$java_version" =~ ^[0-9]+$ ]] &&
+           (( java_version >= JAVA_REQUIRED_VERSION )); then
+            echo "جافا $java_version مثبتة بالفعل."
+            return 0
+        fi
+    fi
+
+    echo "يتطلب نفطه جافا بالإصدار $JAVA_REQUIRED_VERSION أو إصدار أحدث."
+    echo "جارٍ تثبيت OpenJDK $JAVA_REQUIRED_VERSION..."
+
+    if command -v apt-get >/dev/null 2>&1; then
+        sudo apt-get update
+        sudo apt-get install -y openjdk-17-jdk
+
+    elif command -v dnf >/dev/null 2>&1; then
+        sudo dnf install -y java-17-openjdk-devel
+
+    elif command -v yum >/dev/null 2>&1; then
+        sudo yum install -y java-17-openjdk-devel
+
+    elif command -v pacman >/dev/null 2>&1; then
+        sudo pacman -Sy --noconfirm --needed jdk17-openjdk
+
+    elif command -v zypper >/dev/null 2>&1; then
+        sudo zypper install -y java-17-openjdk-devel
+
+    elif command -v apk >/dev/null 2>&1; then
+        sudo apk add openjdk17
+
+    else
+        echo "خطأ: لم يتم العثور على مدير حزم مدعوم."
+        echo "يرجى تثبيت JDK $JAVA_REQUIRED_VERSION يدويًا."
+        return 1
+    fi
+
+    if ! command -v java >/dev/null 2>&1; then
+        echo "خطأ: فشل تثبيت جافا."
+        return 1
+    fi
+
+    java_version=$(java -version 2>&1 |
+        sed -nE 's/.*version "([0-9]+).*/\1/p' |
+        head -n 1)
+
+    if [[ ! "$java_version" =~ ^[0-9]+$ ]] ||
+       (( java_version < JAVA_REQUIRED_VERSION )); then
+        echo "خطأ: يتطلب نفطه جافا بالإصدار $JAVA_REQUIRED_VERSION أو إصدار أحدث."
+        echo "إصدار جافا المكتشف: ${java_version:-غير معروف}"
+        return 1
+    fi
+
+    echo "تم تثبيت جافا بالإصدار $java_version بنجاح."
+}
+
 # ------------------------------------------------------------
 # install_arabic_fonts
 #
@@ -39,9 +112,9 @@
 install_arabic_fonts() {
     echo "جاري تثبيت الخطوط العربية..."
 
-    if command -v apt >/dev/null; then
-        sudo apt update
-        sudo apt install -y \
+    if command -v apt-get >/dev/null 2>&1; then
+        sudo apt-get update
+        sudo apt-get install -y \
             fonts-kacst \
             fonts-kacst-one \
             fonts-amiri-core \
@@ -50,58 +123,57 @@ install_arabic_fonts() {
             fonts-noto-ui-core \
             fonts-noto-color-emoji \
             fonts-dejavu-core \
-            fonts-ibm-plex || true 
+            fonts-ibm-plex || true
 
-    elif command -v dnf >/dev/null; then
+    elif command -v dnf >/dev/null 2>&1; then
         sudo dnf install -y \
             kacst-fonts \
             amiri-fonts \
             google-noto-sans-arabic-fonts \
             dejavu-sans-fonts \
-            ibm-plex-fonts --skip-unavailable
+            ibm-plex-fonts --skip-unavailable || true
 
-    elif command -v yum >/dev/null; then
+    elif command -v yum >/dev/null 2>&1; then
         sudo yum install -y \
             kacst-fonts \
             amiri-fonts \
             google-noto-sans-arabic-fonts \
             dejavu-sans-fonts \
-            ibm-plex-fonts --skip-broken
+            ibm-plex-fonts --skip-broken || true
 
-    elif command -v pacman >/dev/null; then
+    elif command -v pacman >/dev/null 2>&1; then
         sudo pacman -Sy --noconfirm --needed \
             ttf-kacst \
             ttf-amiri \
             noto-fonts \
             ttf-dejavu \
-            ttf-ibm-plex || true 
+            ttf-ibm-plex || true
 
-    elif command -v zypper >/dev/null; then
+    elif command -v zypper >/dev/null 2>&1; then
         sudo zypper install -y \
             kacst-fonts \
             amiri-fonts \
             google-noto-sans-arabic-fonts \
             dejavu-sans-fonts \
-            ibm-plex-fonts || true 
+            ibm-plex-fonts || true
 
-    elif command -v apk >/dev/null; then
+    elif command -v apk >/dev/null 2>&1; then
         sudo apk add \
             ttf-kacst \
             ttf-amiri \
             noto-fonts \
-            ttf-dejavu || true 
+            ttf-dejavu || true
 
     else
         echo "لا يوجد مدير حزم مدعوم لتثبيت الخطوط تلقائياً."
         echo "الرجاء تثبيت الخطوط العربية يدوياً."
     fi
 
-
-    echo "إعادة بناء ذاكرة الخطوط..."
-    fc-cache -f -v
+    if command -v fc-cache >/dev/null 2>&1; then
+        echo "إعادة بناء ذاكرة الخطوط..."
+        fc-cache -f || true
+    fi
 }
-
-
 
 # ------------------------------------------------------------
 # install_xterm
@@ -130,28 +202,30 @@ install_arabic_fonts() {
 #
 # ------------------------------------------------------------
 install_xterm() {
-    if command -v xterm >/dev/null; then
+    if command -v xterm >/dev/null 2>&1; then
         echo "xterm مثبت بالفعل."
+        return 0
     fi
 
     echo "xterm غير مثبت. محاولة التثبيت..."
 
-    if command -v apt >/dev/null; then
-        sudo apt update && sudo apt install -y xterm
+    if command -v apt-get >/dev/null 2>&1; then
+        sudo apt-get update
+        sudo apt-get install -y xterm
 
-    elif command -v dnf >/dev/null; then
+    elif command -v dnf >/dev/null 2>&1; then
         sudo dnf install -y xterm
 
-    elif command -v yum >/dev/null; then
+    elif command -v yum >/dev/null 2>&1; then
         sudo yum install -y xterm
 
-    elif command -v pacman >/dev/null; then
-        sudo pacman -Sy --noconfirm xterm
+    elif command -v pacman >/dev/null 2>&1; then
+        sudo pacman -Sy --noconfirm --needed xterm
 
-    elif command -v zypper >/dev/null; then
+    elif command -v zypper >/dev/null 2>&1; then
         sudo zypper install -y xterm
 
-    elif command -v apk >/dev/null; then
+    elif command -v apk >/dev/null 2>&1; then
         sudo apk add xterm
 
     else
@@ -186,21 +260,29 @@ is_wsl() {
     grep -qi microsoft /proc/version 2>/dev/null
 }
 
-
-# Ensure UTF-8 is set for Arabic (only if not already in .bashrc)
-if ! grep -q "export LANG=en_US.UTF-8" ~/.bashrc; then
-    echo 'export LANG=en_US.UTF-8' >> ~/.bashrc
-fi
-if ! grep -q "export LC_ALL=en_US.UTF-8" ~/.bashrc; then
-    echo 'export LC_ALL=en_US.UTF-8' >> ~/.bashrc
-fi
-source ~/.bashrc
+# ------------------------------------------------------------
+# Installation
+# ------------------------------------------------------------
 
 # Directory where original scripts live (bin/)
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # NAFTAH_HOME is parent of bin/
 NAFTAH_HOME="$(dirname "$SRC_DIR")"
+
+# Install Java before proceeding with the rest.
+install_java
+
+# Configure UTF-8 without sourcing the user's entire .bashrc.
+touch "$HOME/.bashrc"
+
+if ! grep -qF 'export LANG=en_US.UTF-8' "$HOME/.bashrc"; then
+    echo 'export LANG=en_US.UTF-8' >> "$HOME/.bashrc"
+fi
+
+if ! grep -qF 'export LC_ALL=en_US.UTF-8' "$HOME/.bashrc"; then
+    echo 'export LC_ALL=en_US.UTF-8' >> "$HOME/.bashrc"
+fi
 
 # Target for wrappers
 if is_wsl; then
@@ -214,7 +296,14 @@ fi
 mkdir -p "$BIN_DIR"
 
 # Scripts to install
-SCRIPTS=(naftah-shell.sh naftah-shell-wrapper.sh naftah-repl.sh naftah-man.sh naftah-init.sh naftah.sh)
+SCRIPTS=(
+    naftah-shell.sh
+    naftah-shell-wrapper.sh
+    naftah-repl.sh
+    naftah-man.sh
+    naftah-init.sh
+    naftah.sh
+)
 
 echo "جاري تثبيت سكريبتات نفطه..."
 
@@ -227,8 +316,14 @@ install_xterm
 
 # Fix CRLFs and make originals executable
 echo "معالجة السكريبتات الأصلية في $SRC_DIR ..."
+
 for script in "${SCRIPTS[@]}"; do
     original="$SRC_DIR/$script"
+
+    if [[ ! -f "$original" ]]; then
+        echo "خطأ: سكريبت التثبيت غير موجود: $original"
+        exit 1
+    fi
 
     # Fix Windows CRLF endings
     sed -i 's/\r$//' "$original"
@@ -238,19 +333,21 @@ for script in "${SCRIPTS[@]}"; do
 
 		# Ensure NAFTAH_HOME is exported in original
 		# Only add if not already present
-		if ! grep -q "export NAFTAH_HOME=" "$original"; then
+    if ! grep -q 'export NAFTAH_HOME=' "$original"; then
 				# Insert after shebang (line 1)
-				sed -i "1a export NAFTAH_HOME=\"$NAFTAH_HOME\"" "$original"
-		fi
+        sed -i "1a export NAFTAH_HOME=\"$NAFTAH_HOME\"" "$original"
+    fi
 done
 
 # Install wrappers in /usr/local/bin
 echo "جاري إنشاء الملفات المُلّفَّفة في $BIN_DIR ..."
+
 for script in "${SCRIPTS[@]}"; do
     base_name="${script%.sh}"  # wrapper without .sh
     wrapper="$BIN_DIR/$base_name"
 
     echo "تثبيت الملف المُلّفَّف $base_name ..."
+
     sudo tee "$wrapper" > /dev/null <<EOF
 #!/usr/bin/env bash
 export NAFTAH_HOME="$NAFTAH_HOME"
@@ -263,3 +360,4 @@ done
 echo
 echo "تم اكتمال التثبيت!"
 echo "يمكنك الآن تشغيل: ${SCRIPTS[*]/.sh/} من أي مكان."
+echo "بيئة تشغيل جافا: $(java -version 2>&1 | head -n 1)"
