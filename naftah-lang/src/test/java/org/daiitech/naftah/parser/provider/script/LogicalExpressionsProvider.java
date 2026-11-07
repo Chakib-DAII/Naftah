@@ -258,7 +258,11 @@ public class LogicalExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, "'6' مثيل_من رمز", true, null),
 					Arguments.of(true, "'6' مثيل_من حرف", true, null),
 					Arguments.of(true, "'6' مثيل_من أي_نوع", true, null),
-					Arguments.of(true, "نوع \"666\"", "'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز'", null),
+					Arguments
+							.of(true,
+								"نوع \"666\"",
+								"'تسلسل_احرف' أو 'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز'",
+								null),
 					Arguments.of(true, "\"666\" مثيل_من تسلسل_أحرف", true, null),
 					Arguments.of(true, "\"666\" مثيل_من تسلسل_حروف", true, null),
 					Arguments.of(true, "\"666\" مثيل_من تسلسل_رموز", true, null),
@@ -357,9 +361,13 @@ public class LogicalExpressionsProvider implements ArgumentsProvider {
 					Arguments.of(true, """
 										متغير تركيبة_:ثلاثي_القيم<:عدد_طويل,عدد_طويل,عدد_طويل:> تعيين (٣٢، ٤٥، ٤٥)
 										تركيبة_ مثيل_من ثلاثي<:أي_عدد,عدد_طويل,أي_عدد:>""", true, null),
-					Arguments.of(true, """
-																	ثابت درجات تعيين []
-										نوع درجات""", "'قائمة'<: 'أي_نوع' أو 'أي_نمط' :>", null),
+					Arguments
+							.of(true,
+								"""
+															ثابت درجات تعيين []
+								نوع درجات""",
+								"'قائمة'<: 'اي_نوع' أو 'اي_نمط' أو 'أي_نوع' أو 'أي_نمط' :>",
+								null),
 					Arguments.of(true, """
 																	ثابت درجات: قائمة<:أي_عدد:> تعيين [٨٥، ٩٠، ٧٨، ٩٢]
 										نوع درجات""", "'قائمة'<: 'أي_عدد' :>", null),
@@ -385,9 +393,13 @@ public class LogicalExpressionsProvider implements ArgumentsProvider {
 								null),
 
 
-					Arguments.of(true, """
-																	ثابت درجات تعيين #{}
-										نوع درجات""", "'مجموعة'<: 'أي_نوع' أو 'أي_نمط' :>", null),
+					Arguments
+							.of(true,
+								"""
+															ثابت درجات تعيين #{}
+								نوع درجات""",
+								"'مجموعة'<: 'اي_نوع' أو 'اي_نمط' أو 'أي_نوع' أو 'أي_نمط' :>",
+								null),
 					Arguments
 							.of(true,
 								"""
@@ -422,7 +434,7 @@ public class LogicalExpressionsProvider implements ArgumentsProvider {
 								"""
 															ثابت درجات تعيين ${}
 								نوع درجات""",
-								"'مصفوفة_ترابطية'<: 'أي_نوع' أو 'أي_نمط', 'أي_نوع' أو 'أي_نمط' :>",
+								"'مصفوفة_ترابطية'<: 'اي_نوع' أو 'اي_نمط' أو 'أي_نوع' أو 'أي_نمط', 'اي_نوع' أو 'اي_نمط' أو 'أي_نوع' أو 'أي_نمط' :>",
 								null),
 					Arguments
 							.of(true,
@@ -433,7 +445,8 @@ public class LogicalExpressionsProvider implements ArgumentsProvider {
 									"الأرقام": (١٠٠١، ٢٠٠٢)
 								}
 										نوع درجات""",
-								"'مصفوفة_ترابطية'<: 'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز', 'أي_نوع' أو " + "'أي_نمط' :>",
+								"""
+								'مصفوفة_ترابطية'<: 'تسلسل_احرف' أو 'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز', 'اي_نوع' أو 'اي_نمط' أو 'أي_نوع' أو 'أي_نمط' :>""",
 								null),
 					Arguments
 							.of(true,
@@ -444,7 +457,8 @@ public class LogicalExpressionsProvider implements ArgumentsProvider {
 									"الأرقام": (١٠٠١، ٢٠٠٢)
 								}
 										نوع درجات""",
-								"'مصفوفة_ترابطية'<: 'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز', 'أي_نوع' أو " + "'أي_نمط' :>",
+								"""
+								'مصفوفة_ترابطية'<: 'تسلسل_احرف' أو 'تسلسل_أحرف' أو 'تسلسل_حروف' أو 'تسلسل_رموز', 'اي_نوع' أو 'اي_نمط' أو 'أي_نوع' أو 'أي_نمط' :>""",
 								null),
 					Arguments.of(true, """
 																	ثابت درجات تعيين ${}
