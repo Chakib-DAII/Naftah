@@ -2,7 +2,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
-	id 'antlr'
 	id 'jacoco'
 	id 'maven-publish'
 	id 'signing'
@@ -19,8 +18,7 @@ tasks.withType(JavaCompile).configureEach {
 
 dependencies {
 	implementation project(':naftah-builtin-core')
-	antlr "org.antlr:antlr4:4.9.3"
-	implementation "org.antlr:antlr4-runtime:4.9.3"
+	implementation project(':naftah-language-syntax')
 	checkstyle 'com.puppycrawl.tools:checkstyle:10.0'
 	implementation 'info.picocli:picocli:4.7.6'
 	implementation 'org.jline:jline:3.23.0'
@@ -32,39 +30,12 @@ dependencies {
 	annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 }
 
-generateGrammarSource {
-	maxHeapSize = "128m"
-	arguments += ['-encoding', 'UTF-8', '-package', 'org.daiitech.naftah.parser', '-visitor', '-no-listener']
-}
-
-compileJava.dependsOn generateGrammarSource
-
-tasks.named('sourcesJar', Jar) {
-	dependsOn(tasks.named('generateGrammarSource'))
-}
-
 sourceSets {
-	generated {
-		java.srcDir 'generated-src/antlr/main/'
-	}
-
 	benchmark {
 		java.srcDir 'benchmark/java'
 		resources.srcDir 'benchmark/resources'
 		compileClasspath += sourceSets.main.output + configurations.annotationProcessor
 		runtimeClasspath += output + compileClasspath
-	}
-}
-
-compileJava.source sourceSets.generated.java, sourceSets.main.java
-
-clean {
-	delete "generated-src"
-}
-
-idea {
-	module {
-		sourceDirs += file("generated-src/antlr/main/")
 	}
 }
 
@@ -76,8 +47,9 @@ tasks.register('copyJavadoc', Copy) {
 
 tasks.register('extractLexerLiterals') {
 	description = 'Extracts all literal strings from lexer grammar rules.'
+	dependsOn project(':naftah-language-syntax').tasks.named('generateGrammarSource')
 
-	def lexerFile = file("$projectDir/src/main/antlr/NaftahLexer.g4")
+	def lexerFile = project(':naftah-language-syntax').file('src/main/antlr/NaftahLexer.g4')
 	def outputFile = layout.buildDirectory.file("libs/lexer-literals").get().asFile
 
 	def tokensFile = layout.buildDirectory.file("libs/tokens-symbols.properties").get().asFile
@@ -284,10 +256,6 @@ jacocoTestCoverageVerification {
 			}
 		}
 	}
-}
-
-tasks.named("spotlessJava").configure {
-	dependsOn tasks.named("generateGrammarSource")
 }
 
 // This task formats the code, but doesn't run on build by default
@@ -520,7 +488,6 @@ tasks.register('runJmh', JavaExec) {
 }
 
 tasks.withType(Javadoc).configureEach {
-	dependsOn tasks.named("generateGrammarSource")
 	source = sourceSets.main.allJava
 	classpath = sourceSets.main.compileClasspath
 	destinationDir = layout.buildDirectory.file("docs/javadoc").get().asFile

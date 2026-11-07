@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright © The Naftah Project Authors
 
-package org.daiitech.naftah.parser;
+package org.daiitech.naftah.syntax;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

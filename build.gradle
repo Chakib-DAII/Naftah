@@ -600,6 +600,9 @@ subprojects {
 	}
 
 	tasks.withType(Javadoc).configureEach {
+		if (project.name == 'naftah-language-syntax') {
+			dependsOn(tasks.named('generateGrammarSource'))
+		}
 		source = sourceSets.main.allJava
 		classpath = sourceSets.main.compileClasspath
 		destinationDir = layout.buildDirectory.file("docs/javadoc").get().asFile
