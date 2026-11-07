@@ -77,6 +77,7 @@ import static org.daiitech.naftah.Naftah.INSIDE_MAN_PROPERTY;
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
 import static org.daiitech.naftah.Naftah.MINIMAL_CACHE_PATH_PROPERTY;
 import static org.daiitech.naftah.Naftah.SCAN_CLASSPATH_PROPERTY;
+import static org.daiitech.naftah.Naftah.USER_HOME_PROPERTY;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toAliasGroupedByName;
 import static org.daiitech.naftah.builtin.utils.AliasHashMap.toInfoAliasGroupedByName;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
@@ -130,12 +131,13 @@ public class DefaultContext {
 	/**
 	 * The path used for caching runtime data.
 	 */
-	public static final Path CACHE_PATH = Paths.get(System.getProperty(CACHE_PATH_PROPERTY, ".naftah/.naftah_cache"));
+	public static final Path CACHE_PATH = resolveCachePath(CACHE_PATH_PROPERTY, ".naftah_cache");
+
 	/**
 	 * The path used for caching minimal runtime data.
 	 */
-	public static final Path MINIMAL_CACHE_PATH = Paths
-			.get(System.getProperty(MINIMAL_CACHE_PATH_PROPERTY, ".naftah/.naftah_minimal_cache"));
+	public static final Path MINIMAL_CACHE_PATH = resolveCachePath( MINIMAL_CACHE_PATH_PROPERTY,
+																	".naftah_minimal_cache");
 
 	/**
 	 * Global map holding contexts indexed by their depth.
@@ -464,6 +466,44 @@ public class DefaultContext {
 		}
 		CONTEXTS.computeIfAbsent(depth, d -> new CopyOnWriteArrayList<>()).add(this);
 		CURRENT_CONTEXT.set(this);
+	}
+
+	/**
+	 * Resolves a cache path using a system property or the default user home directory.
+	 *
+	 * @param property  the system property used to override the cache path
+	 * @param cachePath the cache directory name relative to the user home directory
+	 * @return the resolved cache path
+	 */
+	private static Path resolveCachePath(String property, String cachePath) {
+		String userHome = System.getProperty(USER_HOME_PROPERTY);
+		String configuredPath = System.getProperty(property);
+
+		String defaultPath = Paths
+				.get(
+						userHome,
+						".naftah",
+						cachePath
+				)
+				.toString();
+
+		Path resolvedPath = Paths
+				.get(
+						configuredPath == null || configuredPath.trim().isEmpty() ? defaultPath : configuredPath
+				);
+
+
+		if (Boolean.getBoolean(DEBUG_PROPERTY) || Boolean.getBoolean(INSIDE_INIT_PROPERTY) || Boolean
+				.getBoolean(INSIDE_MAN_PROPERTY)) {
+			padText("إعدادات ذاكرة التخزين المؤقت (Cache configuration):", true);
+			padText("مجلد المستخدم الرئيسي (User home): " + userHome, true);
+			padText("خاصية ذاكرة التخزين (Cache property): " + property, true);
+			padText("القيمة المحددة (Configured value): " + configuredPath, true);
+			padText("القيمة الافتراضية (Default value): " + defaultPath, true);
+			padText("المسار النهائي (Resolved path): " + resolvedPath.toAbsolutePath().normalize(), true);
+		}
+
+		return resolvedPath;
 	}
 
 	/**
