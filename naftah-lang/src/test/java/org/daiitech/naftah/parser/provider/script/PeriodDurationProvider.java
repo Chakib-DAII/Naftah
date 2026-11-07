@@ -1258,7 +1258,7 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								null,
 								new NaftahBugError(
 													"""
-													العملية '''أصغر_من' أو>'' غير مدعومة للنوعين: ''فترة_و_مدة'' و''فترة''.""",
+													العملية '''اصغر_من' أو'أصغر_من' أو>'' غير مدعومة للنوعين: ''فترة_و_مدة'' و''فترة''.""",
 													1,
 													0)),
 					Arguments
@@ -1269,7 +1269,7 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								null,
 								new NaftahBugError(
 													"""
-													العملية '''أكبر_من' أو<'' غير مدعومة للنوعين: ''مدة'' و''فترة''.""",
+													العملية '''اكبر_من' أو'أكبر_من' أو<'' غير مدعومة للنوعين: ''مدة'' و''فترة''.""",
 													1,
 													0)),
 					Arguments
@@ -1280,7 +1280,7 @@ public class PeriodDurationProvider implements ArgumentsProvider {
 								null,
 								new NaftahBugError(
 													"""
-													العملية ''=>' أو 'أصغر_أو_يساوي'' غير مدعومة للنوعين: ''فترة_و_مدة'' و''مدة''.""",
+													العملية ''=>' أو 'اصغر_او_يساوي' أو 'اصغر_أو_يساوي' أو 'أصغر_او_يساوي' أو 'أصغر_أو_يساوي'' غير مدعومة للنوعين: ''فترة_و_مدة'' و''مدة''.""",
 													1,
 													0)),
 					Arguments
