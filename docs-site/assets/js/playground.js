@@ -787,9 +787,14 @@ function loadExample(key) {
   if (!ex) return;
 
   const textarea = document.getElementById("input");
-  textarea.value = ex.code || "";
+  const newCode = ex.code || "";
 
-  // Force line‑number update & reset scroll
+  // Skip only if the content is identical
+  if (textarea.value === newCode) return;
+
+  textarea.value = newCode;
+
+  // Force line-number update & reset scroll
   updateLineNumbers();
   textarea.scrollTop = 0;
   syncLineNumberScroll();
@@ -824,7 +829,7 @@ function initExamplesSelect() {
   }
 
   // single clean handler
-  select.addEventListener("change", (e) => {
+  select.addEventListener("click", (e) => {
     loadExample(e.target.value);
   });
 }
