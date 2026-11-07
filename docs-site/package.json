@@ -8,7 +8,11 @@
 		"javascript-obfuscator": "^5.4.3",
 		"terser": "^5.48.0"
 	},
+	"devDependencies": {
+		"http-server": "^14.1.1"
+	},
 	"scripts": {
+		"serve": "http-server _site -p 4000",
 		"seo": "node seo-audit.js",
 		"minify-css": "node scripts/minify-css.js",
 		"minify-js": "node scripts/minify-js.js",
