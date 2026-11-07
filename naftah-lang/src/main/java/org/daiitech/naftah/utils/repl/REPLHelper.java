@@ -73,6 +73,7 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 
 import static org.daiitech.naftah.Naftah.INSIDE_REPL_PROPERTY;
+import static org.daiitech.naftah.Naftah.USER_HOME_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultContext.getCompletions;
 import static org.daiitech.naftah.parser.NaftahParserHelper.LEXER_LITERALS;
@@ -326,7 +327,14 @@ public final class REPLHelper {
 	 * @param historyPath the path of history to use
 	 */
 	public static void setupHistoryConfig(LineReader reader, String historyPath) {
-		reader.setVariable(LineReader.HISTORY_FILE, Paths.get(historyPath));
+		String userHome = System.getProperty(USER_HOME_PROPERTY);
+		Path resolvedHistoryPath = Paths
+				.get(
+						userHome,
+						".naftah",
+						historyPath
+				);
+		reader.setVariable(LineReader.HISTORY_FILE, resolvedHistoryPath);
 		reader.setVariable(LineReader.HISTORY_SIZE, 1000);
 		reader.setVariable(LineReader.HISTORY_FILE_SIZE, 2000);
 

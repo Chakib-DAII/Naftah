@@ -140,6 +140,10 @@ public final class Naftah {
 	 */
 	public static final String JAVA_VM_VENDOR_PROPERTY = "java.vm.vendor";
 	/**
+	 * System property key for the User Home.
+	 */
+	public static final String USER_HOME_PROPERTY = "user.home";
+	/**
 	 * Property to enable scanning the Java classpath for Naftah types.
 	 */
 	public static final String SCAN_CLASSPATH_PROPERTY = "naftah.scanClassPath";
@@ -1087,7 +1091,7 @@ public final class Naftah {
 
 				reader = getLineReader(terminal, topics.keySet());
 
-				setupHistoryConfig(reader, ".naftah/.naftah_man_history");
+				setupHistoryConfig(reader, ".naftah_man_history");
 
 				setupKeyBindingsConfig(reader);
 
@@ -2252,7 +2256,7 @@ public final class Naftah {
 
 				LineReader reader = getLineReader(terminal);
 
-				setupHistoryConfig(reader, ".naftah/.naftah_history");
+				setupHistoryConfig(reader, ".naftah_history");
 
 				setupKeyBindingsConfig(reader);
 

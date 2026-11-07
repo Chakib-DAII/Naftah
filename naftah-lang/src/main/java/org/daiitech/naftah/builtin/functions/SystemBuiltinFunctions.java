@@ -11,6 +11,7 @@ import org.daiitech.naftah.builtin.NaftahFnProvider;
 import org.daiitech.naftah.builtin.lang.NaftahObject;
 import org.daiitech.naftah.errors.NaftahBugError;
 
+import static org.daiitech.naftah.Naftah.USER_HOME_PROPERTY;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.utils.OS.OS_NAME_PROPERTY;
 
@@ -328,6 +329,6 @@ public final class SystemBuiltinFunctions {
 				returnType = String.class
 	)
 	public static String userHome() {
-		return System.getProperty("user.home");
+		return System.getProperty(USER_HOME_PROPERTY);
 	}
 }
