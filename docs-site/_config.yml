@@ -36,6 +36,7 @@ exclude:
   - indexnow.json
   - prepare-indexnow-payload.py
   - scripts
+  - README.md
 
 data_chunk_size: 100
 
