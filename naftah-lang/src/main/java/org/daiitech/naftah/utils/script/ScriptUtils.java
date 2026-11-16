@@ -14,14 +14,15 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.daiitech.naftah.errors.NaftahBugError;
 import org.daiitech.naftah.utils.OS;
-import org.daiitech.naftah.utils.function.ThrowingBiFunction;
 import org.daiitech.naftah.utils.function.ThrowingFunction;
+import org.daiitech.naftah.utils.function.ThrowingTriFunction;
 
 import com.ibm.icu.impl.Pair;
 import com.ibm.icu.text.ArabicShaping;
@@ -471,20 +472,25 @@ public final class ScriptUtils {
 	}
 
 	/**
-	 * Applies a bi-function to each line in the input text.
+	 * Applies a tri-function to each line in the input text.
 	 * <p>
-	 * If the input is multiline, applies the function to each line individually,
-	 * preserving line separators. Otherwise, applies the function once to the whole input.
+	 * If the input is multiline, applies the function to each non-blank line
+	 * individually, preserving the original line separators. Otherwise, applies
+	 * the function once to the entire input.
 	 * </p>
 	 *
 	 * @param input    the input text (possibly multiline)
-	 * @param print    if true, the result is printed to the console; if false, the result is returned
-	 * @param function a bi-function taking a line and the print flag, returning the processed line
-	 * @return the processed text if {@code print} is false; otherwise, null
+	 * @param print    if true, the processed lines are printed using the supplied
+	 *                 {@code printer}; otherwise, the processed text is returned
+	 * @param printer  the consumer used to print each processed line
+	 * @param function the tri-function taking a line, the print flag, and the
+	 *                 printer, and returning the processed line
+	 * @return the processed text if {@code print} is false; otherwise null
 	 */
-	public static String applyBiFunction(   String input,
+	public static String applyTriFunction(  String input,
 											boolean print,
-											ThrowingBiFunction<String, Boolean, String> function) {
+											Consumer<String> printer,
+											ThrowingTriFunction<String, Boolean, Consumer<String>, String> function) {
 		if (isMultiline(input)) {
 			Matcher matcher = getTextMatcher(input).reset();
 
@@ -495,7 +501,7 @@ public final class ScriptUtils {
 				String newline = matcher.group(2); // might be "" on last line
 
 				if (!line.trim().isEmpty()) {
-					String result = function.apply(line, print);
+					String result = function.apply(line, print, printer);
 					if (!print) {
 						output.append(result);
 					}
@@ -509,7 +515,7 @@ public final class ScriptUtils {
 
 		}
 		else {
-			String result = function.apply(input, print);
+			String result = function.apply(input, print, printer);
 			return print ? null : result;
 		}
 	}
@@ -580,25 +586,49 @@ public final class ScriptUtils {
 	/**
 	 * Pads the input text to align it within the terminal width.
 	 * <p>
-	 * If {@code print} is true, prints the padded text; otherwise, returns it.
+	 * If {@code print} is true, prints the padded text using
+	 * {@link System#out}; otherwise, returns it.
 	 * </p>
 	 *
 	 * @param input the input text to pad
-	 * @param print if true, print the padded text; else return it
+	 * @param print if true, print the padded text; otherwise, return it
 	 * @return the padded text if {@code print} is false; otherwise null
 	 */
 	public static String padText(String input, boolean print) {
-		return applyBiFunction(input, print, ScriptUtils::doPadText);
+		return applyTriFunction(input, print, System.out::println, ScriptUtils::doPadText);
 	}
 
 	/**
-	 * Pads the input text to align within the terminal width, adjusting for overflow.
+	 * Pads the input text to align it within the terminal width.
+	 * <p>
+	 * If {@code print} is true, prints the padded text using the supplied
+	 * {@code printer}; otherwise, returns it.
+	 * </p>
 	 *
-	 * @param input the input text to pad
-	 * @param print if true, prints the padded lines; else returns them as a single string
+	 * @param input   the input text to pad
+	 * @param print   if true, print the padded text; otherwise, return it
+	 * @param printer the consumer used to print the padded text
 	 * @return the padded text if {@code print} is false; otherwise null
 	 */
-	private static String doPadText(String input, boolean print) {
+	public static String padText(String input, boolean print, Consumer<String> printer) {
+		return applyTriFunction(input, print, printer, ScriptUtils::doPadText);
+	}
+
+	/**
+	 * Pads the input text to align it within the terminal width, adjusting for
+	 * overflow.
+	 * <p>
+	 * If {@code print} is true, prints the padded text using the supplied
+	 * {@code printer}; otherwise, returns the padded text.
+	 * </p>
+	 *
+	 * @param input   the input text to pad
+	 * @param print   if true, print the padded lines; otherwise, return them as a
+	 *                single string
+	 * @param printer the consumer used to print the padded text
+	 * @return the padded text if {@code print} is false; otherwise null
+	 */
+	private static String doPadText(String input, boolean print, Consumer<String> printer) {
 		Integer terminalWidth = Integer.getInteger(TERMINAL_WIDTH_PROPERTY);
 
 		if (terminalWidth != null) {
@@ -613,7 +643,7 @@ public final class ScriptUtils {
 		}
 
 		if (print) {
-			System.out.println(input);
+			printer.accept(input);
 			return null;
 		}
 		else {
