@@ -23,7 +23,6 @@ import static org.daiitech.naftah.errors.ExceptionUtils.EMPTY_ARGUMENTS_ERROR;
 import static org.daiitech.naftah.errors.ExceptionUtils.newNaftahBugInvalidUsageError;
 import static org.daiitech.naftah.parser.DefaultNaftahParserVisitor.PARSER_VOCABULARY;
 import static org.daiitech.naftah.parser.NaftahParserHelper.NULL;
-import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 /**
  * Provides built-in functions used within the Naftah language for performing various
@@ -58,6 +57,7 @@ import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 										"نقصان_قبلي",
 										"القيمة_المطلقة",
 										"إطبع",
+										"إطبع_سطر",
 										"إلى_نص",
 										"أرضي",
 										"إرفع",
@@ -114,12 +114,42 @@ public final class Builtin {
 				usage = "إطبع(ش)",
 				parameterTypes = {Object.class})
 	public static void print(Object o) {
-		if (Objects.nonNull(o)) {
-			padText(getNaftahValueToString(o), true);
-		}
-		else {
-			System.out.println(padText(NULL, false));
-		}
+		ObjectUtils.print(o, System.out::print);
+	}
+
+	/**
+	 * Prints the string representation of the given object to the standard output
+	 * followed by a new line.
+	 * <p>
+	 * If the object is {@code null}, a predefined NULL representation is printed.
+	 *
+	 * @param o the object to print; may be {@code null}
+	 */
+	@NaftahFn(  name = "إطبع_سطر",
+				aliases = { "ڨول_سطر",
+							"قول_سطر",
+							"قل_سطر",
+							"ڨلي_سطر",
+							"ڨلّي_سطر",
+							"قلي_سطر",
+							"قلّي_سطر",
+							"إكتب_سطر",
+							"اطبع_سطر",
+							"ڨول_س",
+							"قول_س",
+							"قل_س",
+							"ڨلي_س",
+							"ڨلّي_س",
+							"قلي_س",
+							"قلّي_س",
+							"إكتب_س",
+							"اطبع_س"},
+				description = """
+								تعليمة الطباعة (إطبع_سطر) هي التعليمة التي تُستخدم في البرمجة لإظهار نص معين على الشاشة مع الانتقال إلى سطر جديد، مثل إظهار رسالة ترحيبية للمستخدم.""",
+				usage = "إطبع_سطر(ش)",
+				parameterTypes = {Object.class})
+	public static void println(Object o) {
+		ObjectUtils.print(o, System.out::println);
 	}
 
 
