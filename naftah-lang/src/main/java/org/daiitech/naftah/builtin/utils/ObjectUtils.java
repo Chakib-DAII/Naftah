@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -69,6 +70,7 @@ import static org.daiitech.naftah.parser.NaftahParserHelper.getQualifiedName;
 import static org.daiitech.naftah.parser.NaftahParserHelper.hasChild;
 import static org.daiitech.naftah.parser.NaftahParserHelper.visit;
 import static org.daiitech.naftah.utils.script.ScriptUtils.NUMBER_FORMAT;
+import static org.daiitech.naftah.utils.script.ScriptUtils.padText;
 
 /**
  * Utility class providing various helper methods for working with Java objects in the context of the Naftah language
@@ -1469,5 +1471,26 @@ public final class ObjectUtils {
 			}
 		}
 		return count;
+	}
+
+	/**
+	 * Prints the Naftah string representation of the given object using the specified
+	 * printer.
+	 * <p>
+	 * If the object is {@code null}, prints the predefined {@link org.daiitech.naftah.parser.NaftahParserHelper#NULL}
+	 * representation.
+	 * The resulting text is processed by {@code padText} before being passed to the printer.
+	 *
+	 * @param o       the object to print; may be {@code null}
+	 * @param printer the consumer used to output the resulting string
+	 * @throws NullPointerException if {@code printer} is {@code null}
+	 */
+	public static void print(Object o, Consumer<String> printer) {
+		if (Objects.nonNull(o)) {
+			padText(getNaftahValueToString(o), true, printer);
+		}
+		else {
+			padText(NULL, true, printer);
+		}
 	}
 }
